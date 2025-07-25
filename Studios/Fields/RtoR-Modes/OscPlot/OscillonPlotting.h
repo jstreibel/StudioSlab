@@ -41,17 +41,17 @@ namespace Studios {
 
         Parameters osc_params{};
         FunctionSum many_osc;
-        Slab::Pointer<Function> rendered_phi = nullptr;
-        Slab::Pointer<Function> rendered_dphi= nullptr;
+        Slab::TPointer<Function> rendered_phi = nullptr;
+        Slab::TPointer<Function> rendered_dphi= nullptr;
 
-        Slab::Pointer<Slab::Models::KGRtoR::HistogramsViewer_KG> histograms_viewer;
-        Slab::Pointer<Slab::Models::KGRtoR::EnergyViewer_KG> energy_viewer;
+        Slab::TPointer<Slab::Models::KGRtoR::HistogramsViewer_KG> histograms_viewer;
+        Slab::TPointer<Slab::Models::KGRtoR::EnergyViewer_KG> energy_viewer;
 
         bool oscillons_dirty = true;
         bool ddt_oscillons_dirty = true;
         void setupOscillons();
 
-        Slab::Pointer<Function>
+        Slab::TPointer<Function>
         renderManyOsc();
         void renderOscillons();
         void renderOscillonsTimeDerivative();
@@ -60,7 +60,7 @@ namespace Studios {
         OscillonPlotting();
 
         auto
-        getFunctionTimeDerivative() -> Slab::Pointer<Slab::Math::R2toR::FNumericFunction> override;
+        getFunctionTimeDerivative() -> Slab::TPointer<Slab::Math::R2toR::FNumericFunction> override;
         void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
     };
 

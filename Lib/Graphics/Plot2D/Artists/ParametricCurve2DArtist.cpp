@@ -35,7 +35,7 @@ namespace Slab::Graphics {
         return bReturnValue;
     }
 
-    void ParametricCurve2DArtist::setCurve(Slab::Pointer<RtoR2::ParametricCurve> curve) {
+    void ParametricCurve2DArtist::setCurve(Slab::TPointer<RtoR2::ParametricCurve> curve) {
         this->curve = std::move(curve);
     }
 

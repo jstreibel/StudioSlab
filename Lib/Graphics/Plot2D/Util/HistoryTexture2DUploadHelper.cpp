@@ -10,7 +10,7 @@
 namespace Slab::Graphics {
 
     HistoryTexture2DUploadHelper::HistoryTexture2DUploadHelper(NumericFunction_Ptr history,
-                                                               Pointer<FieldTextureKontraption> texture)
+                                                               TPointer<FieldTextureKontraption> texture)
     : function(history)
     , textureKontraption(texture)
     {

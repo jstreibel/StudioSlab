@@ -32,8 +32,8 @@ namespace Slab::Models::MolecularDynamics {
         Core::RegisterCLInterface(Interface);
     }
 
-    Vector<Pointer<Math::Socket>> Recipe::buildOutputSockets() {
-        Vector<Pointer<Math::Socket>> sockets;
+    Vector<TPointer<Math::Socket>> Recipe::buildOutputSockets() {
+        Vector<TPointer<Math::Socket>> sockets;
 
         auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(numeric_config);
 
@@ -49,13 +49,13 @@ namespace Slab::Models::MolecularDynamics {
         const auto WindowManager = New<Graphics::SlabWindowManager>();
         MainPlatformWindow->AddAndOwnEventListener(WindowManager);
 
-        WindowManager->AddSlabWindow(Pointer<Graphics::FSlabWindow>(monitor), false);
+        WindowManager->AddSlabWindow(TPointer<Graphics::FSlabWindow>(monitor), false);
         sockets.emplace_back(monitor);
 
         return sockets;
     }
 
-    Pointer<Math::Stepper> Recipe::buildStepper() {
+    TPointer<Math::Stepper> Recipe::buildStepper() {
         auto c = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(numeric_config);
 
         fix T = *temperature;

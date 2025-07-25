@@ -22,7 +22,7 @@ namespace Slab::Math::Base {
                             public NumericAlgebra<NumericFunction<InCategory, OutCategory>>,
                             public Data
     {
-        Pointer<DiscreteSpace> space;
+        TPointer<DiscreteSpace> space;
 
     protected:
         Device dev=CPU;
@@ -75,7 +75,7 @@ namespace Slab::Math::Base {
 
         virtual ~NumericFunction() = default;
 
-        virtual Pointer<NumericFunction> CloneWithSize(UInt N) const { NOT_IMPLEMENTED }
+        virtual TPointer<NumericFunction> CloneWithSize(UInt N) const { NOT_IMPLEMENTED }
         virtual NumericFunction &Set(const MyBase &func) = 0;
         virtual NumericFunction &SetArb(const NumericFunction &func){
             space->setToValue(func.getSpace());

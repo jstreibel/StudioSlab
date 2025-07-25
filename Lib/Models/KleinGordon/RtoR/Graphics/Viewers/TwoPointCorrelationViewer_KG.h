@@ -24,15 +24,15 @@ namespace Slab::Models::KGRtoR {
     using Function = Math::R2toR::FNumericFunction;
 
     class TwoPointCorrelationViewer_KG : public KGViewer {
-        Pointer<FunctionArtist> twoPointArtist = New<FunctionArtist>();
-        Pointer<SectionArtist> sectionArtist = New<SectionArtist>();
-        Pointer<Graphics::RtoRFunctionArtist> ddt2ptSection;
+        TPointer<FunctionArtist> twoPointArtist = New<FunctionArtist>();
+        TPointer<SectionArtist> sectionArtist = New<SectionArtist>();
+        TPointer<Graphics::RtoRFunctionArtist> ddt2ptSection;
 
-        Pointer<SectionLine> time_slice = New<SectionLine>();
-        Pointer<SectionLine> space_slice = New<SectionLine>();
-        Pointer<Section> section_map = New<Section>();
+        TPointer<SectionLine> time_slice = New<SectionLine>();
+        TPointer<SectionLine> space_slice = New<SectionLine>();
+        TPointer<Section> section_map = New<Section>();
 
-        Pointer<Function> twoPointFunction;
+        TPointer<Function> twoPointFunction;
         TwoPointCorrelation twoPointCorrelationAnalytic;
         CorrelationDecay powerDecayCorrelation;
 
@@ -42,13 +42,13 @@ namespace Slab::Models::KGRtoR {
         float Δt{1};
         void computeTwoPointCorrelation();
     public:
-        explicit TwoPointCorrelationViewer_KG(const Pointer<Graphics::FGUIWindow> &guiWindow,
-                                     const Pointer<R2toR::FNumericFunction> &func = nullptr,
-                                     const Pointer<R2toR::FNumericFunction> &ddtFunc = nullptr);
+        explicit TwoPointCorrelationViewer_KG(const TPointer<Graphics::FGUIWindow> &guiWindow,
+                                     const TPointer<R2toR::FNumericFunction> &func = nullptr,
+                                     const TPointer<R2toR::FNumericFunction> &ddtFunc = nullptr);
 
         Str GetName() const override;
 
-        void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
+        void SetFunction(TPointer<Math::R2toR::FNumericFunction> function) override;
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
     };

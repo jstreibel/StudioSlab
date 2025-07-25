@@ -12,20 +12,20 @@ namespace Slab::Core {
     void Finish();
 
     void StartBackend(const FBackendIdentifier&);
-    Pointer<FBackend> GetBackend();
+    TPointer<FBackend> GetBackend();
 
     void LoadModule(const FModuleIdentifier&);
-    Pointer<SlabModule> GetModule(const FModuleIdentifier&);
+    TPointer<SlabModule> GetModule(const FModuleIdentifier&);
 
     template <typename ModuleType>
-    Pointer<ModuleType>
+    TPointer<ModuleType>
     GetModule(const FModuleIdentifier& name) {
         auto module_raw = GetModule(name);
 
         return DynamicPointerCast<ModuleType>(module_raw);
     }
 
-    void RegisterCLInterface(const Pointer<FCommandLineInterface>&);
+    void RegisterCLInterface(const TPointer<FCommandLineInterface>&);
     void ParseCLArgs(int, const char**);
 }
 

@@ -219,18 +219,18 @@ namespace Slab::Graphics {
 
     auto
     R2toRFunctionArtist::getFieldTextureKontraption() const
-    -> Pointer<FieldTextureKontraption> { return textureKontraptions; }
+    -> TPointer<FieldTextureKontraption> { return textureKontraptions; }
 
     void
-    R2toRFunctionArtist::setPainter(Pointer<R2toRPainter> dPainter) {
+    R2toRFunctionArtist::setPainter(TPointer<R2toRPainter> dPainter) {
         current_painter = std::move(dPainter);
     }
 
     auto
     R2toRFunctionArtist::getPainter()
-    -> Pointer<R2toRPainter> { return current_painter; }
+    -> TPointer<R2toRPainter> { return current_painter; }
 
-    auto R2toRFunctionArtist::getPainter(const Str &name) -> Pointer<R2toRPainter> {
+    auto R2toRFunctionArtist::getPainter(const Str &name) -> TPointer<R2toRPainter> {
         return painters[name];
     }
 

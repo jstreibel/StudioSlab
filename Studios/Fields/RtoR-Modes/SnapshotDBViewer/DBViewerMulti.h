@@ -37,17 +37,17 @@ namespace Modes::DatabaseViewer {
         Math::PointSet underXHair;
         Graphics::PointSetArtist_ptr mainModesArtist;
 
-        Pointer<Math::PointSet> KGRelation;
-        Pointer<Math::PointSet> KGRelation_high_k;
+        TPointer<Math::PointSet> KGRelation;
+        TPointer<Math::PointSet> KGRelation_high_k;
         Graphics::PointSetArtist_ptr KGRelation_artist;
         Graphics::PointSetArtist_ptr KGRelation_high_k_artist;
 
-        using FullField_ptr = Pointer<Math::R2toR::NumericFunction_CPU>;
+        using FullField_ptr = TPointer<Math::R2toR::NumericFunction_CPU>;
         Vector<FullField_ptr> fullFields;
         Vector<Graphics::R2toRFunctionArtist_ptr> fullFieldsArtist;
         Vector<Utils::MaxInfo> maxValues;
 
-        std::map<Str, Pointer<Math::R2toR::NumericFunction_CPU>> fullHistoriesMap;
+        std::map<Str, TPointer<Math::R2toR::NumericFunction_CPU>> fullHistoriesMap;
 
         int index_XHair=-1;
 

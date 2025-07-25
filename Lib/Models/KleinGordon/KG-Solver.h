@@ -22,12 +22,12 @@ namespace Slab::Models {
 
         using Potential =               Base::FunctionT<OutCategory, OutCategory>;
         using NonHomogenousFunc =       FieldBase;
-        using NonHomogenousFunc_ptr =   Pointer<NonHomogenousFunc>;
+        using NonHomogenousFunc_ptr =   TPointer<NonHomogenousFunc>;
         using Operator =                Math::Operator<Field>;
 
         KGSolver(Base::BoundaryConditions_ptr du,
-                 Pointer<Operator> O,
-                 Pointer<Potential> potential,
+                 TPointer<Operator> O,
+                 TPointer<Potential> potential,
                  NonHomogenousFunc_ptr nonHomogenousFunc=nullptr)
         : Base::LinearStepSolver(du)
         , O(O)
@@ -95,10 +95,10 @@ namespace Slab::Models {
             return stateOut;
         }
 
-        Pointer<Operator> O;
-        Pointer<Field> temp1 = nullptr, temp2 = nullptr;
-        Pointer<Potential> V;
-        Pointer<Potential> dVDPhi = nullptr;
+        TPointer<Operator> O;
+        TPointer<Field> temp1 = nullptr, temp2 = nullptr;
+        TPointer<Potential> V;
+        TPointer<Potential> dVDPhi = nullptr;
         NonHomogenousFunc_ptr f = nullptr;
     };
 

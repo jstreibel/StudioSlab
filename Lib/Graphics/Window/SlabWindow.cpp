@@ -137,7 +137,7 @@ namespace Slab::Graphics {
         return Config.Flags & SlabWindowWantsFullscreen;
     }
 
-    auto FSlabWindow::GetMouseState() const -> Pointer<const FMouseState>
+    auto FSlabWindow::GetMouseState() const -> TPointer<const FMouseState>
     {
         return MouseState;
     }

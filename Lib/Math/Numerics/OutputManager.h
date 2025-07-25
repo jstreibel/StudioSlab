@@ -29,7 +29,7 @@ namespace Slab::Math {
         auto computeNStepsToNextOutput(UInt currStep) -> UInt;
 
         /****** INPUT/OUTPUT ******/
-        void addOutputChannel(Pointer<Socket> out);
+        void addOutputChannel(TPointer<Socket> out);
 
 
     private:

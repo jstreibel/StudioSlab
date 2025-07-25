@@ -28,7 +28,7 @@ namespace Slab::Core {
         static void LoadModule(const FModuleIdentifier&);
 
     public:
-        static Pointer<FBackend> GetBackend();
+        static TPointer<FBackend> GetBackend();
 
         static void Startup(const Str& BackendName);
 
@@ -41,7 +41,7 @@ namespace Slab::Core {
             RegisterAvailableModule(Name, [](){ return new ModuleClass(); });
         };
 
-        static Pointer<SlabModule> GetModule(const FModuleIdentifier&);
+        static TPointer<SlabModule> GetModule(const FModuleIdentifier&);
         static bool IsModuleAvailable(const FModuleIdentifier&);
         static bool IsModuleLoaded(const FModuleIdentifier&);
 

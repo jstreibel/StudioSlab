@@ -21,7 +21,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    Monitor::Monitor(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, const Str &name)
+    Monitor::Monitor(const TPointer<KGNumericConfig> &params, KGEnergy &hamiltonian, const Str &name)
     : BaseMonitor(params->getn(), Str("ℝ↦ℝ ") + name, 10)
     , hamiltonian(hamiltonian)
     , fullHistoryGraph(   Slab::New<FPlot2DWindow>("Full field history"))
@@ -55,7 +55,7 @@ namespace Slab::Models::KGRtoR {
         setDataView(0);
     }
 
-    void Monitor::addDataView(const Pointer<FRtoRPanel>
+    void Monitor::addDataView(const TPointer<FRtoRPanel>
  &dataView) {
         dataViews.emplace_back(dataView);
     }
@@ -99,7 +99,7 @@ namespace Slab::Models::KGRtoR {
         return BaseMonitor::NotifyKeyboard(key, state, modKeys);
     }
 
-    void Monitor::setSimulationHistory(const Pointer<const R2toR::FNumericFunction> &simHistory) {
+    void Monitor::setSimulationHistory(const TPointer<const R2toR::FNumericFunction> &simHistory) {
         simulationHistory = simHistory;
 
         fullHistoryArtist->setFunction(simulationHistory);
@@ -109,7 +109,7 @@ namespace Slab::Models::KGRtoR {
             dataView->SetSimulationHistory(simHistory, fullHistoryArtist);
     }
 
-    void Monitor::SetSpaceFourierHistory(const Pointer<const R2toR::FNumericFunction> &sftHistory,
+    void Monitor::SetSpaceFourierHistory(const TPointer<const R2toR::FNumericFunction> &sftHistory,
                                                const FDFTDataHistory &_dftData) {
         spaceFTHistory = sftHistory;
         fullSFTHistoryArtist->setFunction(spaceFTHistory);

@@ -78,7 +78,7 @@ namespace Slab::Math::RtoR {
         Compute(const RtoR::NumericFunction &in)
         -> DFTResult;
 
-        static Pointer<RtoR::NumericFunction> Magnitudes(const DFTResult&);
+        static TPointer<RtoR::NumericFunction> Magnitudes(const DFTResult&);
     };
 
 

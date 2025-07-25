@@ -15,16 +15,16 @@ namespace Slab::Graphics {
     using namespace Math;
 
     class HistoryTexture2DUploadHelper {
-        typedef Slab::Pointer<const R2toR::FNumericFunction> NumericFunction_Ptr;
+        typedef Slab::TPointer<const R2toR::FNumericFunction> NumericFunction_Ptr;
 
-        Pointer<FieldTextureKontraption> textureKontraption;
+        TPointer<FieldTextureKontraption> textureKontraption;
         NumericFunction_Ptr function;
 
         CountType nextRow = 0;
         DevFloat lastUpdatedTime = -1.0;
     public:
         HistoryTexture2DUploadHelper(NumericFunction_Ptr history,
-                                     Pointer<FieldTextureKontraption> texture);
+                                     TPointer<FieldTextureKontraption> texture);
 
         void uploadUpTo(const DevFloat time);
     };

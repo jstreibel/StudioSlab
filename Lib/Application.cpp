@@ -14,7 +14,7 @@
 namespace Slab {
 
 
-    Pointer<Platform> FApplication::CreatePlatform() {
+    TPointer<Platform> FApplication::CreatePlatform() {
         return Slab::DynamicPointerCast<Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
     }
 

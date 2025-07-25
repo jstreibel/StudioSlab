@@ -14,18 +14,18 @@ namespace Slab::Core {
     class FCommandLineInterfaceManager {
         static FCommandLineInterfaceManager *instance;
 
-        Vector<Pointer<FCommandLineInterface>> interfaces;
+        Vector<TPointer<FCommandLineInterface>> interfaces;
 
     public:
         static auto getInstance() -> FCommandLineInterfaceManager &;
 
         // static auto NewInterface(String name, InterfaceOwner *owner) -> Interface::Ptr;
 
-        void registerInterface(const Pointer<FCommandLineInterface> &anInterface);
+        void registerInterface(const TPointer<FCommandLineInterface> &anInterface);
 
-        auto getInterfaces() -> Vector<Pointer<const FCommandLineInterface>>;
+        auto getInterfaces() -> Vector<TPointer<const FCommandLineInterface>>;
 
-        auto getInterface(const char *string) -> Pointer<const FCommandLineInterface>;
+        auto getInterface(const char *string) -> TPointer<const FCommandLineInterface>;
 
         void feedInterfaces(const CLVariablesMap &vm);
 
@@ -36,7 +36,7 @@ namespace Slab::Core {
 
         auto getParametersValues(const StrVector &params) const -> Vector<Pair<Str, Str>>;
 
-        auto getParameter(const Str &name) const -> Pointer<const FCommandLineParameter>;
+        auto getParameter(const Str &name) const -> TPointer<const FCommandLineParameter>;
 
     };
 

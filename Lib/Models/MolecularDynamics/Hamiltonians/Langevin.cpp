@@ -6,7 +6,7 @@ namespace Slab::Models::MolecularDynamics {
 
     using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
 
-    Langevin::Langevin(Pointer<Config> config, DevFloat T)
+    Langevin::Langevin(TPointer<Config> config, DevFloat T)
     : NewtonMechanics(config), T(T) {    }
 
     Graphics::Point2D Langevin::xi() {

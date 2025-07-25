@@ -74,7 +74,7 @@ namespace Slab::Math::RtoR {
         return DataAlloc<NumericFunction_CPU> (this->get_data_name() + " [clone]", *this);
     }
 
-    Pointer<Base::NumericFunction <DevFloat, DevFloat>> NumericFunction_CPU::CloneWithSize(UInt outN) const {
+    TPointer<Base::NumericFunction <DevFloat, DevFloat>> NumericFunction_CPU::CloneWithSize(UInt outN) const {
         auto newFunc = DataAlloc<NumericFunction_CPU>(this->get_data_name() + "[decimated " + ToStr(outN) + "/" + ToStr(this->N) + " clone]", outN, xMin, xMax, laplacianType);
 
         const RealArray &X = getSpace().getHostData();

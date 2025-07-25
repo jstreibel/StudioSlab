@@ -86,8 +86,8 @@ namespace Slab::Graphics {
         return *DynamicPointerCast<GLFWBackend>(guiBackend);
     }
 
-    Pointer<FPlatformWindow> GLFWBackend::CreatePlatformWindow(const Str& title) {
-        Pointer<FGLFWPlatformWindow> NewPlatformWindow = New<FGLFWPlatformWindow>();
+    TPointer<FPlatformWindow> GLFWBackend::CreatePlatformWindow(const Str& title) {
+        TPointer<FGLFWPlatformWindow> NewPlatformWindow = New<FGLFWPlatformWindow>();
         NewPlatformWindow->ProvideSelfReference(NewPlatformWindow);
 
         return NewPlatformWindow;

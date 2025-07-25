@@ -29,7 +29,7 @@ namespace Slab::Math {
         explicit DataManager();
 
         static DataName
-        RegisterData(DataName, Pointer<Data>);
+        RegisterData(DataName, TPointer<Data>);
 
         static void Prune();
 
@@ -39,7 +39,7 @@ namespace Slab::Math {
 
         static auto
         AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation)
-        -> Pointer<R2toR::FNumericFunction>;
+        -> TPointer<R2toR::FNumericFunction>;
 
         static DataWrap GetData(const DataName&);
 

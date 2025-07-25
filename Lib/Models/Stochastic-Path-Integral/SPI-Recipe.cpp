@@ -25,7 +25,7 @@ namespace Slab::Models::StochasticPathIntegrals {
     const auto my_description = "Recipe for generating relevant field configurations in the (1+1) dimensional, real valued "
         "fields quantum path integral formalism.";
 
-    SPIRecipe::SPIRecipe(const Pointer<SPINumericConfig> &numeric_config)
+    SPIRecipe::SPIRecipe(const TPointer<SPINumericConfig> &numeric_config)
     : NumericalRecipe(numeric_config, my_name, my_description, true)
     , SPI_NumericConfig(numeric_config) {
     }
@@ -43,7 +43,7 @@ namespace Slab::Models::StochasticPathIntegrals {
         return sockets;
     }
 
-    auto SPIRecipe::buildStepper() -> Pointer<Stepper> {
+    auto SPIRecipe::buildStepper() -> TPointer<Stepper> {
         fix L = SPI_NumericConfig->getL();
         fix t = SPI_NumericConfig->gett();
         fix N = SPI_NumericConfig->getN();

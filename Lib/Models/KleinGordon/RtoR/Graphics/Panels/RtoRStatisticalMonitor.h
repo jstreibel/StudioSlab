@@ -25,7 +25,7 @@ namespace Slab::Models::KGRtoR {
 
     class RtoRStatisticsPanel final : public FRtoRPanel {
 
-        Pointer<RtoR2::StraightLine>
+        TPointer<RtoR2::StraightLine>
  correlationLine;
         RtoR::Section1D_ptr mSpaceCorrelation;
         R2toR::FNumericFunction_ptr mCorrelationComputed;
@@ -57,13 +57,13 @@ namespace Slab::Models::KGRtoR {
         void updateEnergyData();
 
     public:
-        RtoRStatisticsPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, Graphics::FGUIWindow &guiWindow);
+        RtoRStatisticsPanel(const TPointer<KGNumericConfig> &params, KGEnergy &hamiltonian, Graphics::FGUIWindow &guiWindow);
 
         void ImmediateDraw(const FPlatformWindow&) override;
 
         void SetTransientHint(DevFloat);
 
-        void SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
+        void SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
  simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;
     };

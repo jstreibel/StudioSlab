@@ -9,7 +9,7 @@ namespace Slab::Core {
 
     }
 
-    void FInterfaceManager::AddInterface(Pointer<FInterface>) {
+    void FInterfaceManager::AddInterface(TPointer<FInterface>) {
 
     }
 

@@ -15,9 +15,9 @@ namespace Slab::Models::KGRtoR {
 
     // Grapha34f ics::Viewer
     class EnergyViewer_KG : public KGViewer {
-        Pointer<Graphics::FPlot2DWindow> TotalEnergiesWindow;
-        Pointer<Graphics::FPlot2DWindow> TemperaturesWindow;
-        Pointer<Graphics::FPlot2DWindow> FullHistoriesWindow;
+        TPointer<Graphics::FPlot2DWindow> TotalEnergiesWindow;
+        TPointer<Graphics::FPlot2DWindow> TemperaturesWindow;
+        TPointer<Graphics::FPlot2DWindow> FullHistoriesWindow;
 
         Graphics::R2toRFunctionArtist_ptr Func_Artist{};
         Graphics::R2toRFunctionArtist_ptr ddtFunc_Artist{};
@@ -33,17 +33,17 @@ namespace Slab::Models::KGRtoR {
         Graphics::PointSetArtist_ptr GradHistoryArtist{};
         Graphics::PointSetArtist_ptr PotentialHistoryArtist{};
 
-        Pointer<PointSet> EnergyHistory    = New<PointSet>();
-        Pointer<PointSet> KineticHistory   = New<PointSet>();
-        Pointer<PointSet> GradHistory      = New<PointSet>();
-        Pointer<PointSet> PotentialHistory = New<PointSet>();
+        TPointer<PointSet> EnergyHistory    = New<PointSet>();
+        TPointer<PointSet> KineticHistory   = New<PointSet>();
+        TPointer<PointSet> GradHistory      = New<PointSet>();
+        TPointer<PointSet> PotentialHistory = New<PointSet>();
 
     public:
-        explicit EnergyViewer_KG(const Pointer<Graphics::FGUIWindow> &pointer);
+        explicit EnergyViewer_KG(const TPointer<Graphics::FGUIWindow> &pointer);
 
         Str GetName() const override;
 
-        void SetFunction(Pointer<R2toR::FNumericFunction> function) override;
+        void SetFunction(TPointer<R2toR::FNumericFunction> function) override;
 
         void SetFunctionDerivative(FuncPointer pointer) override;
 

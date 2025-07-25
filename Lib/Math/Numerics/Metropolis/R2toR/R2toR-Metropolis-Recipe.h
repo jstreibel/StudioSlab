@@ -18,19 +18,19 @@ namespace Slab::Math {
     using R2toRMetropolis = MetropolisAlgorithm<RandomSite, NewValue>;
 
     class R2toRMetropolisRecipe : public Base::NumericalRecipe {
-        Pointer<R2toR::NumericFunction_CPU> field_data;
+        TPointer<R2toR::NumericFunction_CPU> field_data;
 
         using Site = struct{UInt i; UInt j;};
         using R2toRMetropolisSetup = R2toRMetropolis::Setup;
 
     public:
-        auto getField() -> Pointer<R2toR::NumericFunction_CPU>;
+        auto getField() -> TPointer<R2toR::NumericFunction_CPU>;
 
         explicit R2toRMetropolisRecipe(UInt max_steps);
 
-        auto buildOutputSockets() -> Vector<Pointer<Socket>> override;
+        auto buildOutputSockets() -> Vector<TPointer<Socket>> override;
 
-        auto buildStepper() -> Pointer<Stepper> override;
+        auto buildStepper() -> TPointer<Stepper> override;
     };
 
 } // Slab::Math

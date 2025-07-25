@@ -9,7 +9,7 @@
 namespace Slab::Math {
 
     // Function to interpolate using Lagrange's method
-    DevFloat LagrangeInterpolate(const RealVector& x, const RealVector& y, DevFloat t, int order) {
+    DevFloat LagrangeInterpolate(const FRealVector& x, const FRealVector& y, DevFloat t, int order) {
         int n = x.size();
         DevFloat result = 0.0;
         for (int i = 0; i < order + 1; ++i) {
@@ -25,7 +25,7 @@ namespace Slab::Math {
     }
 
     // Derivative of the Lagrange polynomial
-    DevFloat LagrangeDerivative(const RealVector& x, const RealVector& y, DevFloat t, int order) {
+    DevFloat LagrangeDerivative(const FRealVector& x, const FRealVector& y, DevFloat t, int order) {
         int n = x.size();
         DevFloat result = 0.0;
         for (int i = 0; i < order + 1; ++i) {
@@ -48,7 +48,7 @@ namespace Slab::Math {
     }
 
     // Function to find the peak using Newton's method
-    DevFloat FindPeak(const RealVector& x, const RealVector& y, DevFloat initial_guess, int order) {
+    DevFloat FindPeak(const FRealVector& x, const FRealVector& y, DevFloat initial_guess, int order) {
         DevFloat t = initial_guess;
         for (int i = 0; i < 100; ++i) {
             DevFloat f = LagrangeInterpolate(x, y, t, order);

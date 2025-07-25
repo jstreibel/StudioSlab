@@ -119,7 +119,6 @@ namespace Slab::Graphics {
                         ImGui::Spacing();
                     }
                 }
-
             }
 
             Stats.clear();

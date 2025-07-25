@@ -14,15 +14,15 @@ namespace Slab::Models::KGRtoR {
         Graphics::Scene3DWindow_ptr scene;
 
     public:
-        RtoRScenePanel(const Pointer<KGNumericConfig> &params,
+        RtoRScenePanel(const TPointer<KGNumericConfig> &params,
                        FGUIWindow &guiWindow,
                        KGEnergy &hamiltonian);
 
-        void SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
+        void SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
  simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;
 
-        void SetSpaceFourierHistory(Pointer<const R2toR::FNumericFunction>
+        void SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction>
  sftHistory, const FDFTDataHistory &history,
                                     const R2toRFunctionArtist_ptr &sftHistoryGraph) override;
     };

@@ -41,7 +41,7 @@ namespace Slab::Graphics {
         return !delegateResponders.empty();
     }
 
-    void FPlatformWindowEventListener::RemoveResponder(const Pointer<FPlatformWindowEventListener>& to_remove) {
+    void FPlatformWindowEventListener::RemoveResponder(const TPointer<FPlatformWindowEventListener>& to_remove) {
         auto responder = delegateResponders.begin();
 
         while(responder != delegateResponders.end()) {

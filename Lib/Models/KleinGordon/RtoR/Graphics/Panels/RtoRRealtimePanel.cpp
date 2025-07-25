@@ -35,7 +35,7 @@
 namespace Slab::Models::KGRtoR {
 
     FRealtimePanel::FRealtimePanel(
-        const Pointer<KGNumericConfig> &Params,
+        const TPointer<KGNumericConfig> &Params,
         KGEnergy &Hamiltonian,
         FGUIWindow &GUIWindow)
     : FRtoRPanel(
@@ -121,7 +121,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void FRealtimePanel::SetSimulationHistory(
-        Pointer<const R2toR::FNumericFunction> SimHistory,
+        TPointer<const R2toR::FNumericFunction> SimHistory,
         const R2toRFunctionArtist_ptr &SimHistoryGraph)
     {
         FRtoRPanel::SetSimulationHistory(SimHistory, SimHistoryGraph);
@@ -134,7 +134,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void FRealtimePanel::SetSpaceFourierHistory(
-        Pointer<const R2toR::FNumericFunction> SftHistory,
+        TPointer<const R2toR::FNumericFunction> SftHistory,
         const FDFTDataHistory &DFTData,
         const R2toRFunctionArtist_ptr &SftHistoryArtist)
     {

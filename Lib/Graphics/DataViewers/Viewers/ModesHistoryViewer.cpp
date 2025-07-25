@@ -14,7 +14,7 @@
 
 namespace Slab::Graphics {
 
-    ModesHistoryViewer::ModesHistoryViewer(const Pointer<FGUIWindow> &guiWindow)
+    ModesHistoryViewer::ModesHistoryViewer(const TPointer<FGUIWindow> &guiWindow)
     : Viewer(guiWindow, nullptr)
     , curves_artists(0)
     {
@@ -53,7 +53,7 @@ namespace Slab::Graphics {
         curves_artists.clear();
         modes_artist->clearSections();
 
-        Vector<Pointer<Math::RtoR2::StraightLine>> sections;
+        Vector<TPointer<Math::RtoR2::StraightLine>> sections;
         fix t_0 = xFourierTransform->y0;
         fix t_f = t_0 + xFourierTransform->Ly;
 
@@ -81,7 +81,7 @@ namespace Slab::Graphics {
         modes_window->ReviewGraphRanges();
     }
 
-    void ModesHistoryViewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {
+    void ModesHistoryViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
         Viewer::SetFunction(function);
 
         xFourierTransform = nullptr;

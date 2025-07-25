@@ -65,13 +65,13 @@ namespace Slab::Graphics {
 
     #include "colormaps/all_colormaps.inl"
 
-    std::map<Str, Pointer<const ColorMap>> ColorMaps_local = {
+    std::map<Str, TPointer<const ColorMap>> ColorMaps_local = {
             Map(blues),
             Map(BrBG),
             Map(rainbow),
             Map(afmhot)};
 
-    using ColorMapMap = std::map<Str, Pointer<const ColorMap>>;
+    using ColorMapMap = std::map<Str, TPointer<const ColorMap>>;
     ColorMapMap ColorMaps = [](){
         ColorMapMap full_map_of_colormaps(ColorMaps_local.begin(), ColorMaps_local.end());
         full_map_of_colormaps.insert(ColorMaps_auto.begin(), ColorMaps_auto.end());
@@ -156,7 +156,7 @@ namespace Slab::Graphics {
         return {name+"_r", type, newColors, saturated, clipped};
     }
 
-    auto ColorMap::clone() const -> Pointer<ColorMap> {
+    auto ColorMap::clone() const -> TPointer<ColorMap> {
         return New<ColorMap>(*this);
     }
 

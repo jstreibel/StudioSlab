@@ -8,17 +8,17 @@
 
 namespace Slab::Graphics {
 
-    Viewer::Viewer(Pointer<FGUIWindow> gui_window, Pointer<Math::R2toR::FNumericFunction> func)
+    Viewer::Viewer(TPointer<FGUIWindow> gui_window, TPointer<Math::R2toR::FNumericFunction> func)
     : Graphics::WindowPanel(FSlabWindowConfig{{}})
     , gui_window(std::move(gui_window))
     , base_function(std::move(func))
     {}
 
-    void Viewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {
+    void Viewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
         base_function = std::move(function);
     }
 
-    auto Viewer::getFunction() const -> Pointer<const Math::R2toR::FNumericFunction> {
+    auto Viewer::getFunction() const -> TPointer<const Math::R2toR::FNumericFunction> {
         return base_function;
     }
 

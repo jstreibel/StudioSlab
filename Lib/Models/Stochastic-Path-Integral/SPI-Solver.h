@@ -16,15 +16,15 @@ namespace Slab::Models::StochasticPathIntegrals {
     class SPISolver : public Math::Base::LinearStepSolver {
         using SPINumericFunction = Math::Base::NumericFunction<Math::Real2D, DevFloat>;
 
-        Pointer<Math::R2toR::FNumericFunction> langevinImpulses = nullptr;
+        TPointer<Math::R2toR::FNumericFunction> langevinImpulses = nullptr;
         void ComputeImpulses(DevFloat dτ) const;
 
-        Pointer<Math::Operator<SPINumericFunction>> O;
-        Pointer<SPINumericFunction> temp1, temp2;
-        Pointer<Math::RtoR::Function> dVdϕ_ptr;
+        TPointer<Math::Operator<SPINumericFunction>> O;
+        TPointer<SPINumericFunction> temp1, temp2;
+        TPointer<Math::RtoR::Function> dVdϕ_ptr;
 
     public:
-        explicit SPISolver(const Pointer<SPIBC>&);
+        explicit SPISolver(const TPointer<SPIBC>&);
         ~SPISolver() override;
 
         Math::Base::EquationState &

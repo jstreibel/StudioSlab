@@ -25,7 +25,7 @@ namespace Slab::Graphics {
         AddResponder(MouseState);
     }
 
-    void SlabWindowManager::AddSlabWindow(const Pointer<FSlabWindow>& slab_window, bool hidden) {
+    void SlabWindowManager::AddSlabWindow(const TPointer<FSlabWindow>& slab_window, bool hidden) {
         const auto MetaWinData = New<WindowMetaInformation>(slab_window, false, hidden);
 
         SlabWindows.push_back(MetaWinData);
@@ -111,7 +111,7 @@ namespace Slab::Graphics {
         FWindowManager::NotifyMouseButton(button, state, keys); // Update delegates
 
         if(state==Press) {
-            const auto First = FindFirst_If(SlabWindows, [this](const Pointer<WindowMetaInformation> &meta) {
+            const auto First = FindFirst_If(SlabWindows, [this](const TPointer<WindowMetaInformation> &meta) {
                 fix is_mouse_in = meta->Window->IsMouseInside();
                 fix is_decorated = !(meta->Window->GetFlags() & SlabWindowNoDecoration);
                 fix is_mouse_over_grab_region = Decorator.isMouseOverGrabRegion(*meta->Window,
@@ -219,7 +219,7 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void SlabWindowManager::SetFocus(const Pointer<WindowMetaInformation>& meta)
+    void SlabWindowManager::SetFocus(const TPointer<WindowMetaInformation>& meta)
     {
         if(CurrentlyFocused != nullptr) CurrentlyFocused->Window->NotifyBecameInactive();
 

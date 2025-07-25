@@ -16,32 +16,32 @@
 namespace Slab::Graphics {
 
     class MainViewer : public FWindowRow {
-        Pointer<FGUIWindow> gui_window;
+        TPointer<FGUIWindow> gui_window;
 
-        Vector<Pointer<Viewer>> viewers;
-        Pointer<Viewer> current_viewer;
+        Vector<TPointer<Viewer>> viewers;
+        TPointer<Viewer> current_viewer;
 
-        Pointer<Math::R2toR::FNumericFunction> base_function;
+        TPointer<Math::R2toR::FNumericFunction> base_function;
 
     protected:
         virtual bool setCurrentViewer(Index i);
 
-        auto getCurrentViewer() -> Pointer<Viewer>;
+        auto getCurrentViewer() -> TPointer<Viewer>;
 
     public:
-        explicit MainViewer(Pointer<Math::R2toR::FNumericFunction> baseFunction=nullptr);
+        explicit MainViewer(TPointer<Math::R2toR::FNumericFunction> baseFunction=nullptr);
 
         void ImmediateDraw(const FPlatformWindow&) override;
 
         bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
-        void setFunction(Pointer<Math::R2toR::FNumericFunction>);
+        void setFunction(TPointer<Math::R2toR::FNumericFunction>);
 
-        auto getCurrentViewer() const -> Pointer<const Viewer>;
+        auto getCurrentViewer() const -> TPointer<const Viewer>;
 
-        auto getGUIWindow() -> Pointer<FGUIWindow>;
+        auto getGUIWindow() -> TPointer<FGUIWindow>;
 
-        void addViewer(const Pointer<Viewer>&);
+        void addViewer(const TPointer<Viewer>&);
     };
 
 } // Studios::Viewers

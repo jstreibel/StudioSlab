@@ -17,7 +17,7 @@ namespace Slab::Models::MolecularDynamics {
 
     public:
         using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
-        Langevin(Pointer<Config> config, DevFloat T);
+        Langevin(TPointer<Config> config, DevFloat T);
 
         void setTemperature(DevFloat T);
     };

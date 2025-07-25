@@ -26,7 +26,7 @@ namespace Slab::Math {
     class RungeKutta4 : public Stepper {
         Mutex mutey;
 
-        Pointer<Base::LinearStepSolver> _H;
+        TPointer<Base::LinearStepSolver> _H;
 
         Base::EquationState_ptr _f, _k1, _k2, _k3, _k4;
         Base::EquationState_ptr _temp;
@@ -39,7 +39,7 @@ namespace Slab::Math {
         DevFloat dt;
     public:
 
-        explicit RungeKutta4(const Pointer<Base::LinearStepSolver> &solver, DevFloat dt, CountType totalSwapStates = 5);
+        explicit RungeKutta4(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt, CountType totalSwapStates = 5);
 
         ~RungeKutta4() override = default;
 

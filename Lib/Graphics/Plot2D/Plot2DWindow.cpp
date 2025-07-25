@@ -179,8 +179,8 @@ namespace Slab::Graphics {
             const auto Viewport = GetViewport();
             ImGui::SetNextWindowPos(
                 {
-                    static_cast<float>(Viewport.xMin+200),
-                    static_cast<float>(Viewport.yMin+200)
+                    static_cast<float>(Viewport.xMin),
+                    static_cast<float>(Viewport.yMin)
                 },
                 ImGuiCond_Appearing);
             ImGui::SetNextWindowSize(
@@ -194,7 +194,7 @@ namespace Slab::Graphics {
 
             constexpr auto Flags = 0x0;
                 // ImGuiWindowFlags_NoCollapse |
-                // ImGuiWindowFlags_NoResize; //   |
+                // ImGuiWindowFlags_NoResize;  |
                 // ImGuiWindowFlags_NoMove     |
                 // ImGuiWindowFlags_NoTitleBar |
                 // ImGuiWindowFlags_NoBringToFrontOnFocus;
@@ -227,11 +227,9 @@ namespace Slab::Graphics {
                     if(increment_iterator) ++it;
                 }
 
-
                 auto avail_region = ImGui::GetContentRegionAvail();
                 ImGui::BeginChild(AddUniqueIdToString(Title + " :)").c_str(), {avail_region.x, 0},
-                                  ImGuiChildFlags_Border
-                                  | ImGuiChildFlags_AutoResizeY);
+                                  ImGuiChildFlags_Border);
 
                 for (IN cont: Content) {
                     IN artie = cont.second;
@@ -282,7 +280,7 @@ namespace Slab::Graphics {
     FPlot2DWindow::toggleShowInterface() { ShowInterface = !ShowInterface; }
 
     void
-    FPlot2DWindow::RequireLabelOverlay(const Str& label, const Pointer<Graphics::PlotStyle>& style) const {
+    FPlot2DWindow::RequireLabelOverlay(const Str& label, const TPointer<Graphics::PlotStyle>& style) const {
         const_cast<FLabelsArtist*>(&LabelsArtist)->add(label, style);
     }
 

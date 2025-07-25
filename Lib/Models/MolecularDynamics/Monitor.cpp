@@ -24,7 +24,7 @@ namespace Slab::Models::MolecularDynamics {
 
     #define SFML_Backend DynamicPointerCast<Graphics::SFMLBackend>(Slab::Graphics::GetGraphicsBackend())
 
-    Monitor::Monitor(const Pointer<Config>& config, Model model)
+    Monitor::Monitor(const TPointer<Config>& config, Model model)
     : Socket("Particle dynamics monitor", 10)
     , FSlabWindow(Graphics::FSlabWindowConfig("Particle Dynamics Monitor"))
     , renderWindow(*(sf::RenderWindow*)SFML_Backend->GetMainSystemWindow()->GetRawPlatformWindowPointer())

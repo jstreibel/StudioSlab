@@ -15,9 +15,9 @@ namespace Slab::Models::KGRtoR {
 
     Str TimeFTViewer::GetName() const { return "Time-DFT space-average viewer"; }
 
-    TimeFTViewer::TimeFTViewer(const Pointer<Graphics::FGUIWindow> &GuiWindow,
-                               const Pointer<R2toR::FNumericFunction> &func,
-                               const Pointer<R2toR::FNumericFunction> &ddtFunc)
+    TimeFTViewer::TimeFTViewer(const TPointer<Graphics::FGUIWindow> &GuiWindow,
+                               const TPointer<R2toR::FNumericFunction> &func,
+                               const TPointer<R2toR::FNumericFunction> &ddtFunc)
     : KGViewer(GuiWindow, func, ddtFunc) {
         using Plotter = Graphics::Plotter;
         using Themes = Graphics::PlotThemeManager;
@@ -173,7 +173,7 @@ namespace Slab::Models::KGRtoR {
         WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void TimeFTViewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {
+    void TimeFTViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
         Viewer::SetFunction(function);
 
         t0 = (float)getFunction()->getDomain().yMin;

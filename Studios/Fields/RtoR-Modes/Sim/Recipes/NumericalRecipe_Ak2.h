@@ -30,7 +30,7 @@ namespace Modes {
         RealParameter mass             = RealParameter   (-1.0,  "mass", "Mass of for computing angular frequency. If negative, mass is set to 4k²/(πι)");
         BoolParameter driving_force  = BoolParameter   (false,"F,driving_force", "Compute with non-homogenous driving force.");
 
-        Pointer<Modes::SquareWave> squareWave;
+        TPointer<Modes::SquareWave> squareWave;
     protected:
         auto buildOpenGLOutput() -> void * override;
 
@@ -42,7 +42,7 @@ namespace Modes {
 
         auto getBoundary() -> Slab::Math::Base::BoundaryConditions_ptr override;
 
-        Pointer<Base::FunctionT<DevFloat, DevFloat>> getNonHomogenous() override;
+        TPointer<Base::FunctionT<DevFloat, DevFloat>> getNonHomogenous() override;
 
         auto NotifyCLArgsSetupFinished() -> void override;
     };

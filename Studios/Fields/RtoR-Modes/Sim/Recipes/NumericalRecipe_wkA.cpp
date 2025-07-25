@@ -134,7 +134,7 @@ namespace Modes {
         return KGRtoR::KGRtoRBuilder::suggestFileName() + SEPARATOR + strParams;
     }
 
-    Pointer<Base::FunctionT<DevFloat, DevFloat>> NumericalRecipe_wkA::getNonHomogenous() {
+    TPointer<Base::FunctionT<DevFloat, DevFloat>> NumericalRecipe_wkA::getNonHomogenous() {
         if(*driving_force && squareWave == nullptr) squareWave = Slab::New<Modes::SquareWave>(1);
 
         return squareWave;

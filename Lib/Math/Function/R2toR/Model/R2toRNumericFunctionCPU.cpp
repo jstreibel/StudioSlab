@@ -19,7 +19,7 @@ namespace Slab::Math::R2toR {
 
     }
 
-    Pointer<Base::NumericFunction<Real2D, Real>> NumericFunction_CPU::CloneWithSize(UInt outN) const {
+    TPointer<Base::NumericFunction<Real2D, Real>> NumericFunction_CPU::CloneWithSize(UInt outN) const {
         assert(M==N); // (por enquanto so vai funcionar assim.
 
         auto myClone = DataAlloc<NumericFunction_CPU>(get_data_name() + " [clone]", outN, outN, xMin, yMin, hx, hy);;

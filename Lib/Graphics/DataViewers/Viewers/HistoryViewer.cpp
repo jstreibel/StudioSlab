@@ -18,7 +18,7 @@ namespace Slab::Graphics {
         return "History viewer";
     }
 
-    HistoryViewer::HistoryViewer(const Pointer<FGUIWindow> &gui_window, const Pointer<R2toR::FNumericFunction> &function)
+    HistoryViewer::HistoryViewer(const TPointer<FGUIWindow> &gui_window, const TPointer<R2toR::FNumericFunction> &function)
     : Viewer(gui_window, function)
     {
         history_window = New<FPlot2DWindow>("Function", gui_window->GetGUIWindowContext());
@@ -46,7 +46,7 @@ namespace Slab::Graphics {
         xft_history_window->TieRegion_yMaxMin(*history_window);
     }
 
-    void HistoryViewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {
+    void HistoryViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
         Viewer::SetFunction(function);
 
         auto funky = getFunction();

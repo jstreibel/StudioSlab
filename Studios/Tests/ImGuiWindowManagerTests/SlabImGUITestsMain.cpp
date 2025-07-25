@@ -35,7 +35,7 @@ protected:
             (GUIContext);
 
 
-        Slab::Pointer<Slab::Graphics::FWindowManager> WindowManager;
+        Slab::TPointer<Slab::Graphics::FWindowManager> WindowManager;
         if constexpr (false)
             WindowManager = Slab::New<Slab::Graphics::SlabWindowManager>();
         else
@@ -43,7 +43,7 @@ protected:
 
         MainSystemWindow->AddAndOwnEventListener(WindowManager);
 
-        const auto Window = Slab::New<Tests::BezierTests>(ImGuiContext);
+        const auto Window = Slab::New<Tests::FBezierTests>(ImGuiContext);
         // Slab::Graphics::FSlabWindow::Config config;
         // config.parent_syswin = &*MainSystemWindow;
         // config.title = "Slab ImGui Test Window";

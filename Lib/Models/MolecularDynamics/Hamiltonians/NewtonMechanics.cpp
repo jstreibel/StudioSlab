@@ -15,7 +15,7 @@
 
 namespace Slab::Models::MolecularDynamics {
 
-    NewtonMechanics::NewtonMechanics(Pointer<Config> config)
+    NewtonMechanics::NewtonMechanics(TPointer<Config> config)
     : dissipation(DISSIPATION_FACTOR)
     , spaceHash(HASH_SUBDIVS, config->GetL())
     , numeric_config(config)

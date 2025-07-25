@@ -10,7 +10,7 @@
 #define REAL_PART 0
 
 namespace Slab::Math::R2toR {
-    Pointer<R2toR::FNumericFunction> FourierTransform::Compute(const R2toR::FNumericFunction &inFunc) {
+    TPointer<R2toR::FNumericFunction> FourierTransform::Compute(const R2toR::FNumericFunction &inFunc) {
         if(inFunc.getSpace().dataOnGPU()) throw "DFT of GPU data is not implemented";
 
         fix N = inFunc.getN();

@@ -52,7 +52,7 @@ namespace Modes::DatabaseViewer {
         void checkIntervalConsistency() const;
 
     public:
-        using Ptr = Pointer<Modes::DatabaseViewer::DBParser>;
+        using Ptr = TPointer<Modes::DatabaseViewer::DBParser>;
 
         explicit DBParser(Str rootDBFolder,
                           Str  criticalParameter,
@@ -66,7 +66,7 @@ namespace Modes::DatabaseViewer {
 
         auto getRootDatabaseFolder() const -> const Str&;
 
-        auto buildSnapshotMashup() const -> Pointer<Math::R2toR::NumericFunction_CPU>;
+        auto buildSnapshotMashup() const -> TPointer<Math::R2toR::NumericFunction_CPU>;
 
     };
 } // Modes::DatabaseViewer

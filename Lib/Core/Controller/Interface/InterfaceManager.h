@@ -14,12 +14,12 @@ namespace Slab::Core {
         UniqueID CurrentInterface=0;
         UniqueID CurrentProtocol=0;
 
-        List<Pointer<FInterface>> Interfaces;
+        TList<TPointer<FInterface>> Interfaces;
 
     public:
         FInterfaceManager();
 
-        void AddInterface(Pointer<FInterface>);
+        void AddInterface(TPointer<FInterface>);
 
         static UniqueID GenerateUniqueID();
     };

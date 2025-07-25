@@ -51,14 +51,14 @@ namespace Slab::Graphics::OpenGL {
         ScalingFunction scalingFunction;
         ScalingFunction inverseScalingFunction;
 
-        Pointer<const ColorMap> colorMap;
+        TPointer<const ColorMap> colorMap;
 
         void updateTexture();
         void setLocation(RectI loc);
     public:
         explicit ColorBarArtist(RectI loc={50,150, 50, 750});
 
-        void setColorMap(const Pointer<const ColorMap>& colorMap);
+        void setColorMap(const TPointer<const ColorMap>& colorMap);
         auto getTexture() -> CMapTexturePtr;
 
         bool HasGUI() override;

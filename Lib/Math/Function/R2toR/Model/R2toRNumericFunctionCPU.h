@@ -21,7 +21,7 @@ namespace Slab::Math::R2toR {
         NumericFunction_CPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy);
 
         [[nodiscard]]
-        Pointer<Base::NumericFunction<Real2D, Real>>
+        TPointer<Base::NumericFunction<Real2D, Real>>
         CloneWithSize(UInt N) const override;
 
         auto

@@ -11,10 +11,10 @@
 namespace Slab::Math {
 
     class MathApp : public Core::AppBase {
-        Pointer<Base::NumericalRecipe> Recipe;
+        TPointer<Base::NumericalRecipe> Recipe;
 
     public:
-        MathApp(int argc, const char **argv, Pointer<Base::NumericalRecipe> SimBuilder);
+        MathApp(int argc, const char **argv, TPointer<Base::NumericalRecipe> SimBuilder);
 
         auto run() -> int override;
 

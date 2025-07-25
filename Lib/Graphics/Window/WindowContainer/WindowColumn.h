@@ -13,8 +13,8 @@
 namespace Slab::Graphics {
 
     class WindowColumn : public FSlabWindow {
-        std::list<Pointer<FSlabWindow>> Windows;
-        RealVector heights;
+        std::list<TPointer<FSlabWindow>> Windows;
+        FRealVector heights;
 
         bool assertConsistency() const;
 
@@ -23,9 +23,9 @@ namespace Slab::Graphics {
     public:
         WindowColumn();
 
-        void addWindow(const Pointer<FSlabWindow>& window, float windowHeight = -1);
+        void addWindow(const TPointer<FSlabWindow>& window, float windowHeight = -1);
 
-        bool removeWindow(const Pointer<FSlabWindow>&);
+        bool removeWindow(const TPointer<FSlabWindow>&);
 
         bool isEmpty() const;
 

@@ -5,23 +5,24 @@
 #ifndef STUDIOSLAB_BEZIER_TESTS_H
 #define STUDIOSLAB_BEZIER_TESTS_H
 
-#include "Graphics/Window/WindowContainer/WindowRow.h"
+#include "Graphics/ImGui/ImGui-Multi-SlabWindow-Wrapper.h"
 #include "Graphics/Window/GUIWindow.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Window/WindowContainer/WindowRow.h"
 
 
 namespace Tests {
 
     using namespace Slab;
 
-    class BezierTests : public Graphics::FWindowRow {
+    class FBezierTests final : public Graphics::FWindowRow {
         Graphics::FGUIWindow Stats;
         Graphics::FPlot2DWindow Graph;
 
         Math::PointSet CurrentPoint;
 
     public:
-        explicit BezierTests(const Pointer<Graphics::FImGuiContext>& GuiContext);
+        explicit FBezierTests(const TPointer<Graphics::FImGuiContext>& GuiContext);
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 

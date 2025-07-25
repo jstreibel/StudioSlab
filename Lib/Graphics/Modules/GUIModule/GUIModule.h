@@ -15,7 +15,7 @@ namespace Slab::Graphics {
         explicit FGUIModule(const Str& name);
         ~FGUIModule() override = default;
 
-        virtual auto CreateContext(FOwnerPlatformWindow) -> Pointer<GUIContext> = 0;
+        virtual auto CreateContext(FOwnerPlatformWindow) -> TPointer<GUIContext> = 0;
 
     };
 

@@ -90,7 +90,7 @@ namespace Modes::DatabaseViewer {
         mashupDisplay.GetRegion().setReference_xMin(massesGraph.GetRegion().getReference_xMin());
         mashupDisplay.GetRegion().setReference_xMax(massesGraph.GetRegion().getReference_xMax());
 
-        const Pointer<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
+        const TPointer<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
         winCol->addWindow(Naked(massesGraph));
         winCol->addWindow(Naked(topRow), 0.75);
 
@@ -320,7 +320,7 @@ namespace Modes::DatabaseViewer {
         mashupArtists.clear();
 
         const auto cmap = Graphics::ColorMaps["blues"]->inverse().clone();
-        Pointer<Graphics::R2toRPainter> rPainter;
+        TPointer<Graphics::R2toRPainter> rPainter;
         for (IN dbParser: dbParsers) {
             auto mashup = dbParser->buildSnapshotMashup();
             // auto dbRootFolder = ReplaceAll(dbParser->getRootDatabaseFolder(), "./", "");

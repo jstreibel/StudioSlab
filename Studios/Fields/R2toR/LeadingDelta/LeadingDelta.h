@@ -19,16 +19,16 @@ namespace Studios::Fields::R2toRLeadingDelta {
     using namespace Slab;
     using namespace Math;
 
-    extern Pointer<RingDeltaFunc> ringDelta1;
+    extern TPointer<RingDeltaFunc> ringDelta1;
 
     class BoundaryCondition : public Slab::Math::Base::BoundaryConditions {
-        Pointer<RingDeltaFunc> ringDelta;
+        TPointer<RingDeltaFunc> ringDelta;
         Real tf;
         bool deltaSpeedOp;
 
     public:
-        explicit BoundaryCondition(const Pointer<const R2toR::EquationState>& prototype,
-                                   Pointer<RingDeltaFunc> ringDelta,
+        explicit BoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
+                                   TPointer<RingDeltaFunc> ringDelta,
                                    Real tf, bool deltaOperatesOnSpeed);
         void apply(Slab::Math::Base::EquationState &function, Real t) const override;
     };
@@ -45,7 +45,7 @@ class Builder : public Models::KGR2toR::Builder {
                                                     "The duration of regularized delta. Negative "
                                                     "values mean forever;");
 
-        Pointer<RingDeltaFunc> drivingFunc;
+        TPointer<RingDeltaFunc> drivingFunc;
 
     protected:
         auto buildOpenGLOutput() -> Models::KGR2toR::OutputOpenGL * override;

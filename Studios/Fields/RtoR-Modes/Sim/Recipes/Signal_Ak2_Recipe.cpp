@@ -22,7 +22,7 @@ namespace Modes {
     Signal_Ak2_Recipe::Signal_Ak2_Recipe(bool doRegister)
     : KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
-        Interface->AddParameters(List<FCommandLineParameter*>{&A, &omega});
+        Interface->AddParameters(TList<FCommandLineParameter*>{&A, &omega});
 
         if(doRegister) RegisterCLInterface(Interface);
     }

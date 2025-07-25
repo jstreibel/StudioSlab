@@ -17,8 +17,8 @@
 #include "Models/Stochastic-Path-Integral/SPI-Recipe.h"
 
 class SPIApp final : public Slab::FApplication {
-    Slab::Pointer<Slab::Models::StochasticPathIntegrals::SPIRecipe> recipe;
-    Slab::Pointer<Slab::Math::NumericTask> numeric_task;
+    Slab::TPointer<Slab::Models::StochasticPathIntegrals::SPIRecipe> recipe;
+    Slab::TPointer<Slab::Math::NumericTask> numeric_task;
 
 public:
     SPIApp(const int argc, const char *argv[])
@@ -30,7 +30,7 @@ public:
     ~SPIApp() override = default;
 
 protected:
-    Slab::Pointer<Slab::Graphics::MainViewer> main_viewer;
+    Slab::TPointer<Slab::Graphics::MainViewer> main_viewer;
     void OnStart() override {
         GET task_manager = Slab::GetModule<Slab::Core::MTaskManager>("TaskManager");
 

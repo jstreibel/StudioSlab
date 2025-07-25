@@ -8,7 +8,7 @@
 
 namespace Slab::Math {
 
-    Measure::Measure(RealVector linearValues) : linearValues(std::move(linearValues)) {
+    Measure::Measure(FRealVector linearValues) : linearValues(std::move(linearValues)) {
 
     }
 

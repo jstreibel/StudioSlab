@@ -6,7 +6,7 @@
 
 namespace Slab::Graphics {
 
-    Plotter::Plotter(Pointer<Graphics::FPlot2DWindow> win) : Core::FInterface("Plot2D:Plotter"), plottingWindow(win) {}
+    Plotter::Plotter(TPointer<Graphics::FPlot2DWindow> win) : Core::FInterface("Plot2D:Plotter"), plottingWindow(win) {}
 
     PointSetArtist_ptr Plotter::addPointSet(const Math::PointSet_ptr &data, PlotStyle style, Str name, bool affectsGraphRanges, int zOrder) {
         return Plotter::AddPointSet(plottingWindow, data, style, std::move(name), affectsGraphRanges, zOrder);
@@ -38,7 +38,7 @@ namespace Slab::Graphics {
     }
 
     PointSetArtist_ptr
-    Plotter::AddPointSet(const Pointer<FPlot2DWindow>& graph, const Math::PointSet_ptr &pointSet, PlotStyle plotStyle, Str label, bool affectsGraphRanges, int zOrder) {
+    Plotter::AddPointSet(const TPointer<FPlot2DWindow>& graph, const Math::PointSet_ptr &pointSet, PlotStyle plotStyle, Str label, bool affectsGraphRanges, int zOrder) {
         auto artist = Slab::New<PointSetArtist>(pointSet, plotStyle);
         artist->SetLabel(std::move(label));
 
@@ -50,7 +50,7 @@ namespace Slab::Graphics {
     }
 
     ParametricCurve2DArtist_ptr
-    Plotter::AddCurve(const Pointer<FPlot2DWindow>& graph, const RtoR2::ParametricCurve_ptr &curve, PlotStyle plotStyle, Str label, int zOrder) {
+    Plotter::AddCurve(const TPointer<FPlot2DWindow>& graph, const RtoR2::ParametricCurve_ptr &curve, PlotStyle plotStyle, Str label, int zOrder) {
         auto artist = Slab::New<ParametricCurve2DArtist>(curve, plotStyle);
         artist->SetLabel(std::move(label));
 
@@ -60,7 +60,7 @@ namespace Slab::Graphics {
     }
 
     RtoRFunctionArtist_ptr
-    Plotter::AddRtoRFunction(const Pointer<FPlot2DWindow>& graph, const RtoR::Function_ptr &function, PlotStyle plotStyle, Str label, Resolution samples, int zOrder) {
+    Plotter::AddRtoRFunction(const TPointer<FPlot2DWindow>& graph, const RtoR::Function_ptr &function, PlotStyle plotStyle, Str label, Resolution samples, int zOrder) {
         auto artist = Slab::New<RtoRFunctionArtist>(function, plotStyle, samples);
         artist->SetLabel(std::move(label));
 
@@ -70,11 +70,11 @@ namespace Slab::Graphics {
     }
 
     RtoRFunctionArtist_ptr
-    Plotter::AddRtoRNumericFunction(Pointer<FPlot2DWindow>, const RtoR::NumericFunction_ptr &, PlotStyle, Str label, int zOrder) {
+    Plotter::AddRtoRNumericFunction(TPointer<FPlot2DWindow>, const RtoR::NumericFunction_ptr &, PlotStyle, Str label, int zOrder) {
         NOT_IMPLEMENTED
     }
 
-    R2toRFunctionArtist_ptr Plotter::AddR2toRFunction(const Pointer<FPlot2DWindow>& graph, const R2toR::FNumericFunction_constptr &function, Str name, const int zOrder) {
+    R2toRFunctionArtist_ptr Plotter::AddR2toRFunction(const TPointer<FPlot2DWindow>& graph, const R2toR::FNumericFunction_constptr &function, Str name, const int zOrder) {
         auto artist = Slab::New<R2toRFunctionArtist>();
         artist->SetLabel(std::move(name));
         artist->setFunction(function);
@@ -87,7 +87,7 @@ namespace Slab::Graphics {
         return artist;
     }
 
-    HistoryArtist_ptr Plotter::AddRtoRHistory(const Pointer<FPlot2DWindow>& graph, const R2toR::FNumericFunction_constptr &function, Str label, int zOrder) {
+    HistoryArtist_ptr Plotter::AddRtoRHistory(const TPointer<FPlot2DWindow>& graph, const R2toR::FNumericFunction_constptr &function, Str label, int zOrder) {
         auto artist = Slab::New<HistoryArtist>();
         artist->SetLabel(std::move(label));
 
@@ -99,7 +99,7 @@ namespace Slab::Graphics {
     }
 
     R2SectionArtist_ptr
-    Plotter::AddR2Section(const Pointer<FPlot2DWindow>& graph, const R2toR::Function_constptr &function, Str name, int zOrder) {
+    Plotter::AddR2Section(const TPointer<FPlot2DWindow>& graph, const R2toR::Function_constptr &function, Str name, int zOrder) {
         auto artist = Slab::New<R2SectionArtist>();
         artist->SetLabel(std::move(name));
         artist->setFunction(function);

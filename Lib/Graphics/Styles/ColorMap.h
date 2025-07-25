@@ -43,7 +43,7 @@ namespace Slab::Graphics {
         ColorMap(const ColorMap &colorMap);
         virtual ~ColorMap() = default;
 
-        auto clone() const -> Pointer<ColorMap>;
+        auto clone() const -> TPointer<ColorMap>;
 
         auto mapValueToColor(DevFloat value) const -> FColor;
 
@@ -73,7 +73,7 @@ namespace Slab::Graphics {
         CategoryToString(ColorMapType category);
     };
 
-    extern std::map<Str, Pointer<const ColorMap>> ColorMaps;
+    extern std::map<Str, TPointer<const ColorMap>> ColorMaps;
 
 }
 

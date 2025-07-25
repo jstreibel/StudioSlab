@@ -25,7 +25,7 @@ int run(int argc, const char **argv) {
 
     auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
     auto input    = dynamic_cast<Models::KGR2toR::Builder*>(selectedInterface->GetOwner());
-    auto input_ptr = Pointer<Models::KGR2toR::Builder>(input);
+    auto input_ptr = TPointer<Models::KGR2toR::Builder>(input);
 
     Slab::Core::FCommandLineInterfaceManager::getInstance().registerInterface(input->GetInterface());
 

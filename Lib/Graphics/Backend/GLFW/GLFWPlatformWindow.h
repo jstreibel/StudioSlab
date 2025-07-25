@@ -19,7 +19,7 @@ namespace Slab::Graphics {
     class FGLFWPlatformWindow : public FPlatformWindow {
         friend class GLFWBackend;
 
-        List<TVolatile<FGLFWListener>> GLFWListeners{};
+        TList<TVolatile<FGLFWListener>> GLFWListeners{};
 
         GLFWcursor* arrowCursor;
         GLFWcursor* IBeamCursor;

@@ -20,10 +20,10 @@
 namespace Slab::Graphics {
 
     class Colormap1DPainter final : public R2toRPainter {
-        Pointer<OpenGL::Texture1D_Color> cmap_texture;
-        Pointer<ColorMap> colormap = ColorMaps["BrBG"]->clone();
-        Pointer<OpenGL::ColorBarArtist> colorbarArtist = New<OpenGL::ColorBarArtist>();
-        void setColormapTexture(Pointer<OpenGL::Texture1D_Color>);
+        TPointer<OpenGL::Texture1D_Color> cmap_texture;
+        TPointer<ColorMap> colormap = ColorMaps["BrBG"]->clone();
+        TPointer<OpenGL::ColorBarArtist> colorbarArtist = New<OpenGL::ColorBarArtist>();
+        void setColormapTexture(TPointer<OpenGL::Texture1D_Color>);
 
         bool dirty_minmax = true;
         DevFloat field_min = 0.0;
@@ -45,9 +45,9 @@ namespace Slab::Graphics {
     public:
         Colormap1DPainter();
 
-        void setColorMap(const Pointer<ColorMap> &colorMap);
+        void setColorMap(const TPointer<ColorMap> &colorMap);
 
-        auto getColorBarArtist() -> Pointer<OpenGL::ColorBarArtist>;
+        auto getColorBarArtist() -> TPointer<OpenGL::ColorBarArtist>;
 
         void labelUpdateEvent(const Str&) override;
 

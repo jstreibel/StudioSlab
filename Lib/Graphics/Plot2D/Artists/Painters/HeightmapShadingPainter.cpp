@@ -19,7 +19,7 @@ namespace Slab::Graphics {
         setTexelSize(dr);
     }
 
-    void HeightmapShadingPainter::setFieldDataTexture(Pointer<OpenGL::Texture2D_Real> pointer) {
+    void HeightmapShadingPainter::setFieldDataTexture(TPointer<OpenGL::Texture2D_Real> pointer) {
         auto dx = 1./pointer->getWidth();
         auto dy = 1./pointer->getHeight();
 

@@ -8,7 +8,7 @@ namespace Slab::Models::MolecularDynamics {
 
     using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
 
-    SoftDisk::SoftDisk(Pointer<Config> config, DevFloat T)
+    SoftDisk::SoftDisk(TPointer<Config> config, DevFloat T)
     : Langevin(config, T) {
 
     }

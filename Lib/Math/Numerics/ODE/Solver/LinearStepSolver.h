@@ -11,10 +11,10 @@ namespace Slab::Math::Base {
 
     class LinearStepSolver {
     protected:
-        Pointer<BoundaryConditions> du;
+        TPointer<BoundaryConditions> du;
 
     public:
-        explicit LinearStepSolver(Pointer<BoundaryConditions> du)
+        explicit LinearStepSolver(TPointer<BoundaryConditions> du)
         : du(std::move(du)) {}
 
         virtual ~LinearStepSolver() = default;

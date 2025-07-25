@@ -39,7 +39,7 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    RtoRStatisticsPanel::RtoRStatisticsPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian,
+    RtoRStatisticsPanel::RtoRStatisticsPanel(const TPointer<KGNumericConfig> &params, KGEnergy &hamiltonian,
                                              Graphics::FGUIWindow &guiWindow)
             : FRtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel", "panel for statistic analysis of simulation data")
             , hamiltonian(hamiltonian)
@@ -105,7 +105,7 @@ namespace Slab::Models::KGRtoR {
             histogramsPanel->AddWindow(mHistogramsGraphK);
             histogramsPanel->AddWindow(mHistogramsGraphE);
 
-            AddWindow(Pointer<FSlabWindow>(histogramsPanel), true);
+            AddWindow(TPointer<FSlabWindow>(histogramsPanel), true);
         }
 
         // setColumnRelativeWidth(0, 0.125);
@@ -113,7 +113,7 @@ namespace Slab::Models::KGRtoR {
         SetColumnRelativeWidth(1, 0.40);
     }
 
-    void RtoRStatisticsPanel::SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
+    void RtoRStatisticsPanel::SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
  simulationHistory,
                                                    const R2toRFunctionArtist_ptr &simHistoryArtist) {
         FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryArtist);

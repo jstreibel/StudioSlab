@@ -22,7 +22,7 @@ namespace Studios::Fields::RtoRThermal {
     public:
         Builder(const Str &name, const Str &generalDescription, bool doRegister=false);
 
-        auto buildSolver() -> Pointer<Base::LinearStepSolver> override;
+        auto buildSolver() -> TPointer<Base::LinearStepSolver> override;
 
         auto suggestFileName() const -> Str override;
 

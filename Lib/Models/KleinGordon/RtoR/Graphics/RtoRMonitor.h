@@ -33,17 +33,17 @@ namespace Slab::Models::KGRtoR {
     class Monitor : public Graphics::BaseMonitor {
     protected:
         Vector<FRtoRPanel_ptr> dataViews;
-        Pointer<FRtoRPanel> currentDataView;
+        TPointer<FRtoRPanel> currentDataView;
 
-        Pointer<const R2toR::FNumericFunction> simulationHistory;
-        Pointer<FPlot2DWindow> fullHistoryGraph;
+        TPointer<const R2toR::FNumericFunction> simulationHistory;
+        TPointer<FPlot2DWindow> fullHistoryGraph;
         HistoryArtist_ptr fullHistoryArtist = Slab::New<HistoryArtist>();
 
-        Pointer<const R2toR::FNumericFunction> spaceFTHistory;
-        Pointer<FPlot2DWindow> fullSFTHistoryGraph;
+        TPointer<const R2toR::FNumericFunction> spaceFTHistory;
+        TPointer<FPlot2DWindow> fullSFTHistoryGraph;
         HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<HistoryArtist>();
 
-        Pointer<RtoRHistoryPanel> historyPanel;
+        TPointer<RtoRHistoryPanel> historyPanel;
 
         KGEnergy &hamiltonian;
 
@@ -57,19 +57,19 @@ namespace Slab::Models::KGRtoR {
         void handleOutput(const OutputPacket &outInfo) override;
 
     public:
-        Monitor(const Pointer<KGNumericConfig> &params,
+        Monitor(const TPointer<KGNumericConfig> &params,
                 KGEnergy &hamiltonian,
                 const Str& name = "general graphic monitor");
 
         void ImmediateDraw(const FPlatformWindow&) override;
 
-        virtual void setSimulationHistory  (const Pointer<const R2toR::FNumericFunction> &simulationHistory);
-        virtual void SetSpaceFourierHistory(const Pointer<const R2toR::FNumericFunction> &sftHistory,
+        virtual void setSimulationHistory  (const TPointer<const R2toR::FNumericFunction> &simulationHistory);
+        virtual void SetSpaceFourierHistory(const TPointer<const R2toR::FNumericFunction> &sftHistory,
                                             const FDFTDataHistory &dftData);
 
         bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
-        void addDataView(const Pointer<FRtoRPanel>
+        void addDataView(const TPointer<FRtoRPanel>
 &);
     };
 

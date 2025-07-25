@@ -24,7 +24,7 @@ namespace Slab {
     //typename Vector<T> Vector;
 
     typedef Array<DevFloat> RealArray;
-    typedef Vector<DevFloat> RealVector;
+    typedef Vector<DevFloat> FRealVector;
     typedef const RealArray RealArray_I;
     typedef RealArray RealArray_O;
     typedef RealArray VecFloat_IO;

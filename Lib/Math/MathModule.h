@@ -13,7 +13,7 @@ namespace Slab::Math {
     public:
         MathModule();
 
-        void RegisterData(const DataName&, Pointer<Data>);
+        void RegisterData(const DataName&, TPointer<Data>);
         DataWrap GetData(const DataName&);
         Vector<DataManager::EntryDescription> GetDataEntries();
 

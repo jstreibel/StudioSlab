@@ -26,18 +26,18 @@ namespace Slab::Core {
         virtual
         FMessage SendRequest(FRequest);
 
-        [[nodiscard]] auto GetParameters() const -> Vector<Pointer<const FParameter>>;
-        [[nodiscard]] auto GetParameter(const Str& Key) const -> Pointer<FParameter>;
+        [[nodiscard]] auto GetParameters() const -> Vector<TPointer<const FParameter>>;
+        [[nodiscard]] auto GetParameter(const Str& Key) const -> TPointer<FParameter>;
 
     protected:
-        void AddParameter(const Pointer<FParameter>& Parameter);
-        void AddParameters(BasicList<Pointer<FParameter>> parameters);
+        void AddParameter(const TPointer<FParameter>& Parameter);
+        void AddParameters(BasicList<TPointer<FParameter>> parameters);
 
     private:
         friend FInterfaceManager;
         const UniqueID Id;
         Str Name;
-        Set<Pointer<FParameter>> Parameters;
+        Set<TPointer<FParameter>> Parameters;
 
     };
 

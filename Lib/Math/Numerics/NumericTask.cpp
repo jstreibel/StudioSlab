@@ -10,7 +10,7 @@ namespace Slab::Math {
 
     using Core::Log;
 
-    NumericTask::NumericTask(const Pointer <Base::NumericalRecipe> &recipe, const bool pre_init)
+    NumericTask::NumericTask(const TPointer <Base::NumericalRecipe> &recipe, const bool pre_init)
     : FTask("Numeric Integration")
     , recipe(recipe)
     , totalSteps(0)

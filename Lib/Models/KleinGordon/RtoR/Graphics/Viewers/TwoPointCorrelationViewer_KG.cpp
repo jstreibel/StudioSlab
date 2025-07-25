@@ -15,9 +15,9 @@ namespace Slab::Models::KGRtoR {
     using Plotter = Graphics::Plotter;
     using Themes = Graphics::PlotThemeManager;
 
-    TwoPointCorrelationViewer_KG::TwoPointCorrelationViewer_KG(const Pointer<Graphics::FGUIWindow> &guiWindow,
-                                                               const Pointer<R2toR::FNumericFunction> &func,
-                                                               const Pointer<R2toR::FNumericFunction> &ddtFunc)
+    TwoPointCorrelationViewer_KG::TwoPointCorrelationViewer_KG(const TPointer<Graphics::FGUIWindow> &guiWindow,
+                                                               const TPointer<R2toR::FNumericFunction> &func,
+                                                               const TPointer<R2toR::FNumericFunction> &ddtFunc)
     : KGViewer(guiWindow, func, ddtFunc)
     {
         twoPointArtist->SetLabel("avg[ϕ(x)ϕ(x+r)]");
@@ -40,7 +40,7 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    void TwoPointCorrelationViewer_KG::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {
+    void TwoPointCorrelationViewer_KG::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
         Viewer::SetFunction(function);
 
         {

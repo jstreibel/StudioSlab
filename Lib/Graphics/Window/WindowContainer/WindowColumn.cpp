@@ -34,12 +34,12 @@ namespace Slab::Graphics {
 
     using namespace Core;
 
-    void WindowColumn::addWindow(const Pointer<FSlabWindow>& window, float windowHeight) {
+    void WindowColumn::addWindow(const TPointer<FSlabWindow>& window, float windowHeight) {
         Windows.emplace_back(window);
         heights.emplace_back(windowHeight);
     }
 
-    bool WindowColumn::removeWindow(const Pointer<FSlabWindow>& window) {
+    bool WindowColumn::removeWindow(const TPointer<FSlabWindow>& window) {
 
         auto it = Windows.begin();
         for(auto i=0; i<Windows.size(); ++i){

@@ -34,11 +34,11 @@ namespace Slab::Graphics {
 
         Unit funcUnit;
 
-        Pointer<FieldTextureKontraption> textureKontraptions;
+        TPointer<FieldTextureKontraption> textureKontraptions;
         bool anti_alias=false;
 
-        Map<Str, Pointer<R2toRPainter>> painters;
-        Pointer<R2toRPainter> current_painter;
+        Map<Str, TPointer<R2toRPainter>> painters;
+        TPointer<R2toRPainter> current_painter;
         R2toR::Function_constptr func;
 
         void invalidateTextureData();
@@ -58,9 +58,9 @@ namespace Slab::Graphics {
 
         void setDataMutable(bool);
 
-        void setPainter(Pointer<R2toRPainter>);
-        auto getPainter() -> Pointer<R2toRPainter>;
-        auto getPainter(const Str &name) -> Pointer<R2toRPainter>;
+        void setPainter(TPointer<R2toRPainter>);
+        auto getPainter() -> TPointer<R2toRPainter>;
+        auto getPainter(const Str &name) -> TPointer<R2toRPainter>;
 
         void updateMinMax(bool force=false) const;
 
@@ -68,7 +68,7 @@ namespace Slab::Graphics {
 
         auto GetXHairInfo(const Point2D &XHairCoord) const -> Str override;
 
-        auto getFieldTextureKontraption() const -> Pointer<FieldTextureKontraption>;
+        auto getFieldTextureKontraption() const -> TPointer<FieldTextureKontraption>;
 
         void SetLabel(Str label) override;
     };

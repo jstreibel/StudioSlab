@@ -23,7 +23,7 @@ namespace Slab::Math::RtoR {
 
         DevFloat operator()(DevFloat x) const override;
 
-        Pointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
+        TPointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
 
         AnalyticOscillon &swap();
 

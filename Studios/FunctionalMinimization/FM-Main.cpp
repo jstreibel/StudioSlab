@@ -21,10 +21,10 @@
 
 using Themes = Slab::Graphics::PlotThemeManager;
 
-void setup_viewer(Slab::Pointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
+void setup_viewer(Slab::TPointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
     Slab::Core::StartBackend("GLFW");
 
-    Slab::Pointer<Slab::Math::RtoR::Function> trajectory;
+    Slab::TPointer<Slab::Math::RtoR::Function> trajectory;
     {
         fix N = field->N;
         OUT data = field->getSpace().getHostData();

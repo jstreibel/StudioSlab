@@ -11,10 +11,10 @@
 namespace Slab::Math {
 
     class Measure {
-        RealVector linearValues;
+        FRealVector linearValues;
 
     public:
-        Measure(RealVector linearValues);
+        Measure(FRealVector linearValues);
 
         DevFloat operator*();
     };

@@ -44,7 +44,7 @@ namespace Slab::Graphics {
         Resolution hAxisPaddingInPixels;
     };
 
-    typedef Slab::Pointer <PlottingTheme> GraphTheme_ptr;
+    typedef Slab::TPointer <PlottingTheme> GraphTheme_ptr;
 
 }
 

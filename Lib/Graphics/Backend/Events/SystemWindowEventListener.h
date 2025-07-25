@@ -27,7 +27,7 @@ namespace Slab::Graphics {
     protected:
 
         void AddResponder(const TVolatile<FPlatformWindowEventListener>& responder);
-        void RemoveResponder(const Pointer<FPlatformWindowEventListener>& responder);
+        void RemoveResponder(const TPointer<FPlatformWindowEventListener>& responder);
         [[nodiscard]] bool HasResponders() const;
 
     public:

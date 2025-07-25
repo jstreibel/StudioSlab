@@ -15,7 +15,7 @@ WindowPanelTest::WindowPanelTest()
     FSlabWindow *window = nullptr;
 
     window = new FSlabWindow(Slab::Graphics::FSlabWindowConfig{"Main Window"});
-    typedef Slab::Pointer<FSlabWindow> Ptr;
+    typedef Slab::TPointer<FSlabWindow> Ptr;
     panel->AddWindow(Ptr(window));
 
     if(true) {

@@ -12,7 +12,7 @@
 namespace Slab::Math {
 
     class OutputPacket {
-        Pointer<const Base::EquationState> stateData = nullptr;
+        TPointer<const Base::EquationState> stateData = nullptr;
         size_t currentStep = 0;
 
     public:

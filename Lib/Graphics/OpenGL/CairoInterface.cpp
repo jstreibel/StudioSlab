@@ -7,7 +7,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    Pointer<Texture2D>
+    TPointer<Texture2D>
     BuildTexture2DFromCairoSurface(Cairo::RefPtr<const Cairo::ImageSurface> surface) {
         if(surface->get_format() != Cairo::FORMAT_ARGB32) NOT_IMPLEMENTED;
 

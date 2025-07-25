@@ -19,7 +19,7 @@ namespace Slab::Core {
         BackendManager::Startup(name);
     }
 
-    Pointer<FBackend> GetBackend() {
+    TPointer<FBackend> GetBackend() {
         return BackendManager::GetBackend();
     }
 
@@ -35,12 +35,12 @@ namespace Slab::Core {
     void LoadModule(const FModuleIdentifier &name) {
         GetModule(name);
     }
-    Pointer<SlabModule> GetModule(const FModuleIdentifier &module) {
+    TPointer<SlabModule> GetModule(const FModuleIdentifier &module) {
         if(!Slab::IsStarted()) Slab::Startup();
         return BackendManager::GetModule(module);
     }
 
-    void RegisterCLInterface(const Pointer<FCommandLineInterface>& interface) {
+    void RegisterCLInterface(const TPointer<FCommandLineInterface>& interface) {
         FCommandLineInterfaceManager::getInstance().registerInterface(interface);
     }
 

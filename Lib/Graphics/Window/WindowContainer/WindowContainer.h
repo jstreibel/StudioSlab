@@ -12,12 +12,12 @@
 namespace Slab::Graphics {
 
     class WindowContainer : public FSlabWindow {
-        std::list<Pointer<FSlabWindow>> windows;
+        std::list<TPointer<FSlabWindow>> windows;
 
     public:
         WindowContainer() = default;
 
-        bool removeWindow(const Pointer<FSlabWindow>&);
+        bool removeWindow(const TPointer<FSlabWindow>&);
         bool isEmpty() const;
 
         void ImmediateDraw(const FPlatformWindow&) override;

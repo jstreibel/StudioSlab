@@ -8,7 +8,7 @@
 #include "3rdParty/ImGui.h"
 
 #include "Graphics/Utils.h"
-#include "Graphics/ImGui/ImGuiWindow.h"
+#include "Graphics/ImGui/ImGui-SingleSlabWindow-Wrapper.h"
 #include "Graphics/Window/SlabWindow.h"
 
 #include "Utils/Types.h"

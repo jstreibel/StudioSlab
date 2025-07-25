@@ -104,7 +104,7 @@ namespace Modes::DatabaseViewer {
     }
 
     void DBParser::checkIntervalConsistency() const {
-        RealVector values;
+        FRealVector values;
 
         for(IN [value, filename] : fileSet) {
             values.emplace_back(value);

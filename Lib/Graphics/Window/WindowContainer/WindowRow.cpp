@@ -39,8 +39,8 @@ namespace Slab::Graphics {
 
     }
 
-    RealVector FWindowRow::_widthsVector() const {
-        auto widths = RealVector(WindowsList.size());
+    FRealVector FWindowRow::_widthsVector() const {
+        auto widths = FRealVector(WindowsList.size());
 
         auto i = 0;
         for (auto &winData: WindowsList) {
@@ -51,7 +51,7 @@ namespace Slab::Graphics {
         return widths;
     }
 
-    bool FWindowRow::AddWindow(const Pointer<FSlabWindow> &window, RelativePosition relPosition,
+    bool FWindowRow::AddWindow(const TPointer<FSlabWindow> &window, RelativePosition relPosition,
                               float windowWidth) {
         if (std::ranges::find_if(WindowsList,
                                  [&window](WinMetaData &winMetaData) {
@@ -74,7 +74,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    void FWindowRow::removeWindow(const Pointer<FSlabWindow> &window) {
+    void FWindowRow::removeWindow(const TPointer<FSlabWindow> &window) {
         WindowsList.remove_if([&window](WinMetaData &toComp) {
             return toComp.window == window;
         });

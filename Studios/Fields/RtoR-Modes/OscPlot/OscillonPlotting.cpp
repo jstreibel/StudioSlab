@@ -19,11 +19,11 @@ namespace Studios {
     using R2Function = Slab::Math::R2toR::Function;
 
     class PeriodicInX : public R2Function {
-        Slab::Pointer<R2Function> function;
+        Slab::TPointer<R2Function> function;
         Slab::DevFloat L;
 
     public:
-        PeriodicInX(Slab::Pointer<R2Function> func, Slab::DevFloat L)
+        PeriodicInX(Slab::TPointer<R2Function> func, Slab::DevFloat L)
         : function(std::move(func)), L(L) { }
 
         Slab::DevFloat operator()(Slab::Math::Real2D r) const override {
@@ -151,7 +151,7 @@ namespace Studios {
     }
 
     auto
-    OscillonPlotting::renderManyOsc() -> Slab::Pointer<OscillonPlotting::Function> {
+    OscillonPlotting::renderManyOsc() -> Slab::TPointer<OscillonPlotting::Function> {
         PeriodicInX periodic(Slab::Naked(many_osc), L);
         auto new_rendered = Slab::Math::DataAlloc<Slab::Math::R2toR::NumericFunction_CPU>(
                 periodic.Symbol() + " [rendered]",
@@ -192,7 +192,7 @@ namespace Studios {
         ddt_oscillons_dirty = false;
     }
 
-    Slab::Pointer<Slab::Math::R2toR::FNumericFunction> OscillonPlotting::getFunctionTimeDerivative() {
+    Slab::TPointer<Slab::Math::R2toR::FNumericFunction> OscillonPlotting::getFunctionTimeDerivative() {
         renderOscillonsTimeDerivative();
 
         return rendered_dphi;

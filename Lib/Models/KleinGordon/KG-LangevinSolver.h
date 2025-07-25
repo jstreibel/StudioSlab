@@ -32,7 +32,7 @@ namespace Slab::Models::KGRtoR {
         void ComputeImpulses();
     public:
         KGLangevinSolver(Base::BoundaryConditions_ptr du,
-                         const Pointer<Potential>& potential);
+                         const TPointer<Potential>& potential);
 
         void setTemperature(DevFloat value);
         void setDissipationCoefficient(DevFloat value);

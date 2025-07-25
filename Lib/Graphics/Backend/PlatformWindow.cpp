@@ -15,7 +15,7 @@
 
 namespace Slab::Graphics {
 
-    FPlatformWindow::FPlatformWindow(void *window_ptr, Pointer<FEventTranslator> EventTranslator)
+    FPlatformWindow::FPlatformWindow(void *window_ptr, TPointer<FEventTranslator> EventTranslator)
     : EventTranslator(std::move(EventTranslator))
     , r_Window(window_ptr)
     , MouseState(New<FMouseState>()){
@@ -31,7 +31,7 @@ namespace Slab::Graphics {
         return EventTranslator->AddGUIEventListener(Listener);
     }
 
-    auto FPlatformWindow::AddAndOwnEventListener(const Pointer<FPlatformWindowEventListener> &Listener) -> bool {
+    auto FPlatformWindow::AddAndOwnEventListener(const TPointer<FPlatformWindowEventListener> &Listener) -> bool {
         if(!AddEventListener(Listener)) return false;
 
         Stash.push_back(Listener);
@@ -93,11 +93,11 @@ namespace Slab::Graphics {
         return r_Window;
     }
 
-    auto FPlatformWindow::GetMouseState() const -> Pointer<const FMouseState> {
+    auto FPlatformWindow::GetMouseState() const -> TPointer<const FMouseState> {
         return MouseState;
     }
 
-    Pointer<GUIContext> FPlatformWindow::GetGUIContext() {
+    TPointer<GUIContext> FPlatformWindow::GetGUIContext() {
         if(GuiContext == nullptr)
             GetGraphicsBackend()->SetupGUI(this);
 

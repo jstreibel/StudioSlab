@@ -23,7 +23,7 @@ namespace Modes {
         𝜕ₜϕ.getSpace().getHostData()[0] = A*ω*cos(ω*t);
     }
 
-    DrivenBC::DrivenBC(const KGRtoR::EquationState_ptr &prototype, Pointer<SquareWave> sqrWave)
+    DrivenBC::DrivenBC(const KGRtoR::EquationState_ptr &prototype, TPointer<SquareWave> sqrWave)
     : BoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ()),
       sqrWave(std::move(sqrWave)) { }
 

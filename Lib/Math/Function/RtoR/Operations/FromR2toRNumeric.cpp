@@ -7,7 +7,7 @@
 #include "Math/Data/DataAllocator.h"
 
 namespace Slab::Math::RtoR {
-    Pointer<RtoR::NumericFunction> FromR2toR(Pointer<const R2toR::FNumericFunction> func, Index j,
+    TPointer<RtoR::NumericFunction> FromR2toR(TPointer<const R2toR::FNumericFunction> func, Index j,
                                              NumericFunction::LaplacianType laplacian_type) {
         if(j > func->getM()-1) return nullptr;
 
@@ -24,7 +24,7 @@ namespace Slab::Math::RtoR {
         return slice;
     }
 
-    Pointer<RtoR::NumericFunction> FromR2toRAt(Pointer<const R2toR::FNumericFunction> func, DevFloat t) {
+    TPointer<RtoR::NumericFunction> FromR2toRAt(TPointer<const R2toR::FNumericFunction> func, DevFloat t) {
         if(t > func->getDomain().yMax) return nullptr;
 
         fix dt = func->getDomain().getLy() / (func->getM()-1);

@@ -28,13 +28,13 @@ namespace Modes {
 
 
     class DrivenBC final : public KGRtoR::BoundaryCondition {
-        Slab::Pointer<Modes::SquareWave> sqrWave;
+        Slab::TPointer<Modes::SquareWave> sqrWave;
 
     protected:
         void applyKG(KGRtoR::EquationState &, DevFloat t) const override;
 
     public:
-        DrivenBC(const KGRtoR::EquationState_ptr &prototype, Slab::Pointer<Modes::SquareWave> sqrWave);
+        DrivenBC(const KGRtoR::EquationState_ptr &prototype, Slab::TPointer<Modes::SquareWave> sqrWave);
     };
 
 } // Modes

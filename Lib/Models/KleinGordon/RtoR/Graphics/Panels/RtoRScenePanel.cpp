@@ -7,7 +7,7 @@
 #include "Graphics/Plot3D/Actors/R2toRFunctionActor.h"
 
 namespace Slab::Models::KGRtoR {
-    RtoRScenePanel::RtoRScenePanel(const Pointer<KGNumericConfig> &params,
+    RtoRScenePanel::RtoRScenePanel(const TPointer<KGNumericConfig> &params,
                                    FGUIWindow &guiWindow,
                                    KGEnergy &hamiltonian)
     : FRtoRPanel(params, guiWindow, hamiltonian, "Scene", "3D view of some data")
@@ -20,7 +20,7 @@ namespace Slab::Models::KGRtoR {
         // scene->addActor(testy);
     }
 
-    void RtoRScenePanel::SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
+    void RtoRScenePanel::SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
  simulationHistory,
                                               const R2toRFunctionArtist_ptr &simHistoryArtist) {
         /*
@@ -34,7 +34,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void
-    RtoRScenePanel::SetSpaceFourierHistory(Pointer<const R2toR::FNumericFunction>
+    RtoRScenePanel::SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction>
  sftHistory, const FDFTDataHistory &history,
                                            const R2toRFunctionArtist_ptr &sftHistoryGraph) {
         auto functionActor = Slab::New<Slab::Graphics::R2toRFunctionActor>(sftHistory);

@@ -13,8 +13,8 @@
 namespace Slab::Core {
 
         class MTaskManager final : public SlabModule {
-            using FTaskPointer = Pointer<FTask>;
-            typedef Pair<FTaskPointer, Pointer<std::thread>> Job;
+            using FTaskPointer = TPointer<FTask>;
+            typedef Pair<FTaskPointer, TPointer<std::thread>> Job;
             Vector<Job> Jobs;
 
             std::mutex AddJobMutex;
@@ -41,7 +41,7 @@ namespace Slab::Core {
             /**
              * Add a task to the manager and start it immediately in a new thread.
              */
-            Job AddTask(const Pointer<FTask>& Task);
+            Job AddTask(const TPointer<FTask>& Task);
 
             void AbortAllTasks() const;
 

@@ -14,7 +14,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    HistogramsViewer_KG::HistogramsViewer_KG(const Pointer<Graphics::FGUIWindow> &gui_window)
+    HistogramsViewer_KG::HistogramsViewer_KG(const TPointer<Graphics::FGUIWindow> &gui_window)
     : KGViewer(gui_window) {
 
         auto energy_window    = New<PlotWindow>("Energy histogram", gui_window->GetGUIWindowContext());
@@ -101,7 +101,7 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    void HistogramsViewer_KG::SetFunction(Slab::Pointer<Slab::Math::R2toR::FNumericFunction> function) {
+    void HistogramsViewer_KG::SetFunction(Slab::TPointer<Slab::Math::R2toR::FNumericFunction> function) {
         auto domain = function->getDomain();
 
         t_min = domain.yMin;

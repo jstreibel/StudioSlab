@@ -34,7 +34,7 @@ namespace Slab::Math::R2toR {
         *this = AnalyticOscillon_1plus1d(parameters);
     }
 
-    Pointer<Base::FunctionT<Real2D, DevFloat>::Type> AnalyticOscillon_1plus1d::Clone() const {
+    TPointer<Base::FunctionT<Real2D, DevFloat>::Type> AnalyticOscillon_1plus1d::Clone() const {
         return New<AnalyticOscillon_1plus1d>(oscParams);
     }
 

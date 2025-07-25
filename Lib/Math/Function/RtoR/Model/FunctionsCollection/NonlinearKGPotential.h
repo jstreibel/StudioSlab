@@ -12,7 +12,7 @@ namespace Slab::Math::RtoR {
     Real128 lambda(int n, int N);
 
     class VPrime : public RtoR::Function {
-        RealVector coeffs;
+        FRealVector coeffs;
         CountType N;
         DevFloat A;
         DevFloat s;
@@ -40,7 +40,7 @@ namespace Slab::Math::RtoR {
         auto setN(CountType N) -> void;
 
 
-        static RealVector
+        static FRealVector
         CalcCoefficients(int N, DevFloat s);
     };
 
@@ -49,7 +49,7 @@ namespace Slab::Math::RtoR {
         NonlinearKGPotential(DevFloat A, CountType N, DevFloat s);
         DevFloat operator()(DevFloat phi) const override;
 
-        Pointer<Type> diff(int n) const override;
+        TPointer<Type> diff(int n) const override;
     };
 
 } // Slab::Math::RtoR

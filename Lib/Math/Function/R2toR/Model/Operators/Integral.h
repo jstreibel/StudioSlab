@@ -20,7 +20,7 @@ namespace Slab::Math::R2toR {
 
         explicit Integral(Config config);
 
-        auto operator[](Pointer<NumericFunction_CPU>) -> Pointer<RtoR::NumericFunction_CPU> override;
+        auto operator[](TPointer<NumericFunction_CPU>) -> TPointer<RtoR::NumericFunction_CPU> override;
     };
 
 } // Slab::Math::R2toR

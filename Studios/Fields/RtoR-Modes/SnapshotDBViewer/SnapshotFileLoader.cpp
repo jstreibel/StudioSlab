@@ -26,7 +26,7 @@ namespace Modes {
 
         char *endPtr;
 
-        Pointer<Math::RtoR::NumericFunction_CPU> snapshotField;
+        TPointer<Math::RtoR::NumericFunction_CPU> snapshotField;
 
         SnapshotData::SnapshotDataType snapshotDataType = SnapshotData::unknownSnapshot;
 
@@ -87,7 +87,7 @@ namespace Modes {
         throw Exception("file \"" + filePath + "\" does not contain Python dictionary header");
     }
 
-    auto SnapshotFileLoader::ReadData(const Str& filePath) -> RealVector {
+    auto SnapshotFileLoader::ReadData(const Str& filePath) -> FRealVector {
         std::ifstream inFile(filePath, std::ios::binary);
 
         if (!inFile) throw Exception(Str("Error opening file '") + filePath + "'");
@@ -98,7 +98,7 @@ namespace Modes {
         while (std::getline(inFile, line)) if (line == separator) break;
 
         // Read binary data into a vector of doubles
-        RealVector doubleData;
+        FRealVector doubleData;
         double value;
         while (inFile.read(reinterpret_cast<char*>(&value), sizeof(double)))
             doubleData.emplace_back(value);

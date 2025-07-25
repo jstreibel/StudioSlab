@@ -20,7 +20,7 @@ namespace Slab::Math::RtoR {
 
         [[nodiscard]] auto Clone() const -> Function_ptr override;
 
-        [[nodiscard]] auto CloneWithSize(UInt N) const -> Pointer<Base::NumericFunction<DevFloat, DevFloat>> override;
+        [[nodiscard]] auto CloneWithSize(UInt N) const -> TPointer<Base::NumericFunction<DevFloat, DevFloat>> override;
 
     DevFloat max() const override;
 

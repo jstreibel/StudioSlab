@@ -54,21 +54,21 @@ namespace Slab::Core {
 
         [[nodiscard]] auto GetGeneralDescription() const -> Str;
 
-        void AddSubInterface(const Pointer<FCommandLineInterface>& subInterface);
+        void AddSubInterface(const TPointer<FCommandLineInterface>& subInterface);
 
         auto AddListener(FCommandLineInterfaceListener *) -> void;
 
-        void AddParameter(const Pointer<FCommandLineParameter>& parameter);
+        void AddParameter(const TPointer<FCommandLineParameter>& parameter);
 
-        void AddParameters(const List<Pointer<FCommandLineParameter>>& parameters);
+        void AddParameters(const TList<TPointer<FCommandLineParameter>>& parameters);
 
-        void AddParameters(const List<FCommandLineParameter *>& parameters);
+        void AddParameters(const TList<FCommandLineParameter *>& parameters);
 
-        [[nodiscard]] auto GetSubInterfaces() const -> Vector<Pointer<FCommandLineInterface>>;
+        [[nodiscard]] auto GetSubInterfaces() const -> Vector<TPointer<FCommandLineInterface>>;
 
-        [[nodiscard]] auto GetParameters() const -> Vector<Pointer<const FCommandLineParameter>>;
+        [[nodiscard]] auto GetParameters() const -> Vector<TPointer<const FCommandLineParameter>>;
 
-        [[nodiscard]] auto GetParameter(const Str& key) const -> Pointer<FCommandLineParameter>;
+        [[nodiscard]] auto GetParameter(const Str& key) const -> TPointer<FCommandLineParameter>;
 
         [[nodiscard]] auto GetOwner() const -> FCommandLineInterfaceOwner *;
 
@@ -110,8 +110,8 @@ namespace Slab::Core {
 
         Vector<FRequest> Protocols;
 
-        std::set<Pointer<FCommandLineParameter>> Parameters;
-        std::set<Pointer<FCommandLineInterface>> SubInterfaces;
+        std::set<TPointer<FCommandLineParameter>> Parameters;
+        std::set<TPointer<FCommandLineInterface>> SubInterfaces;
     };
 
     DefinePointers(FCommandLineInterface)

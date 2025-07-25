@@ -20,7 +20,7 @@
 
 namespace Slab::Models::StochasticPathIntegrals {
 
-    SPISolver::SPISolver(const Pointer<SPIBC>& du) : LinearStepSolver(du) {
+    SPISolver::SPISolver(const TPointer<SPIBC>& du) : LinearStepSolver(du) {
         O = New<Math::R2toR::R2toRLaplacian>();
         dVdϕ_ptr = Math::RtoR::AbsFunction().diff(0);
     }

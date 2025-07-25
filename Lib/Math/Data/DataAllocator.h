@@ -11,7 +11,7 @@
 namespace Slab::Math {
 
     template<typename T, typename... Args>
-    Pointer<T> DataAlloc(const DataName &name, Args&&... args) {
+    TPointer<T> DataAlloc(const DataName &name, Args&&... args) {
         auto data = New<T>(std::forward<Args>(args)...);
 
         DataManager::RegisterData(name, data);

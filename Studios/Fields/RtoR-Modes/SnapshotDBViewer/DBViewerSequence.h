@@ -30,11 +30,11 @@ namespace Modes::DatabaseViewer {
         Graphics::FPlot2DWindow mashupDisplay;
 
         using SnapshotMashup = Math::R2toR::NumericFunction_CPU;
-        Vector<Pointer<SnapshotMashup>> allMashups;
+        Vector<TPointer<SnapshotMashup>> allMashups;
         Vector<Graphics::R2toRFunctionArtist_ptr> mashupArtists;
         Vector<Utils::MaxInfo> maxValues;
 
-        Pointer<SnapshotMashup> currentMashup;
+        TPointer<SnapshotMashup> currentMashup;
         Graphics::R2toRFunctionArtist_ptr currentMeshupArtist;
 
 
@@ -46,7 +46,7 @@ namespace Modes::DatabaseViewer {
         Math::PointSet underXHair;
         Graphics::PointSetArtist_ptr mainModesArtist;
 
-        Pointer<Math::PointSet> KGRelation;
+        TPointer<Math::PointSet> KGRelation;
         Graphics::PointSetArtist_ptr KGRelation_artist;
 
         int index_XHair=-1;

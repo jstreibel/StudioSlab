@@ -12,17 +12,17 @@
 #include "Utils/Pointer.h"
 
 namespace Slab::Models::KGRtoR {
-    using FuncPointer = Pointer<Math::R2toR::FNumericFunction>;
-    using ConstFuncPointer = Pointer<const Math::R2toR::FNumericFunction>;
+    using FuncPointer = TPointer<Math::R2toR::FNumericFunction>;
+    using ConstFuncPointer = TPointer<const Math::R2toR::FNumericFunction>;
 
     class KGViewer : public Graphics::Viewer {
 
         FuncPointer ddt_base_function;
 
     public:
-        explicit KGViewer(const Pointer<Graphics::FGUIWindow> &
-               , const Pointer<Math::R2toR::FNumericFunction> &func = nullptr
-               , const Pointer<Math::R2toR::FNumericFunction> &ddt_func = nullptr);
+        explicit KGViewer(const TPointer<Graphics::FGUIWindow> &
+               , const TPointer<Math::R2toR::FNumericFunction> &func = nullptr
+               , const TPointer<Math::R2toR::FNumericFunction> &ddt_func = nullptr);
 
         virtual void
         SetFunctionDerivative(FuncPointer);

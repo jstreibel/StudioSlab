@@ -16,7 +16,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     KGLangevinSolver::KGLangevinSolver(Base::BoundaryConditions_ptr du,
-                                       const Pointer<Potential>& potential)
+                                       const TPointer<Potential>& potential)
     : KGRtoRSolver(du, New<RtoR::RtoRLaplacian>(), potential){
 
     }

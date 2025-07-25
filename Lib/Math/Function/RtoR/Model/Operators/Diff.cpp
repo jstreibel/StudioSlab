@@ -7,7 +7,7 @@
 #include <utility>
 
 namespace Slab::Math::RtoR {
-    Diff::Diff(Pointer<const RtoR::Function> base_function, DevFloat dx)
+    Diff::Diff(TPointer<const RtoR::Function> base_function, DevFloat dx)
     : base_function(std::move(base_function)), dx(dx) {
 
     }

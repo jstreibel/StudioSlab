@@ -21,7 +21,7 @@ namespace Slab::Models::KGRtoR {
         Slab::Math::PointSet histogram_data_potential;
 
         using Func = Slab::Math::R2toR::FNumericFunction;
-        using FuncPointer = Slab::Pointer<Func>;
+        using FuncPointer = Slab::TPointer<Func>;
 
         int nbins = 200;
         bool pretty = true;
@@ -30,10 +30,10 @@ namespace Slab::Models::KGRtoR {
         Slab::DevFloat t_min;
         Slab::DevFloat t_delta;
 
-        Slab::Vector<Slab::Pointer<PlotWindow>> histogram_windows;
+        Slab::Vector<Slab::TPointer<PlotWindow>> histogram_windows;
 
         struct HarnessData {
-            using Array = Slab::Pointer<Slab::RealArray>;
+            using Array = Slab::TPointer<Slab::RealArray>;
             Array energy, kinetic, gradient, potential;
 
             explicit HarnessData(size_t sheer_size)
@@ -46,14 +46,14 @@ namespace Slab::Models::KGRtoR {
         HarnessData harness();
 
     public:
-        explicit HistogramsViewer_KG(const Slab::Pointer<Slab::Graphics::FGUIWindow> &);
+        explicit HistogramsViewer_KG(const Slab::TPointer<Slab::Graphics::FGUIWindow> &);
 
         Str GetName() const override;
 
         void updateHistograms();
 
         void
-        SetFunction(Slab::Pointer<Slab::Math::R2toR::FNumericFunction> function)
+        SetFunction(Slab::TPointer<Slab::Math::R2toR::FNumericFunction> function)
         override;
 
         void SetFunctionDerivative(FuncPointer pointer) override;

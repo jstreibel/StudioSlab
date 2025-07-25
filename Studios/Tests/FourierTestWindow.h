@@ -18,7 +18,7 @@ namespace Tests {
     using namespace Slab;
 
     class FourierTestWindow : public Graphics::FWindowRow {
-        Pointer<Graphics::PlottingTheme> theme;
+        TPointer<Graphics::PlottingTheme> theme;
 
         Graphics::WindowColumn col;
 

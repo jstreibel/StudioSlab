@@ -10,7 +10,7 @@
 namespace Slab::Graphics {
 
     class PlottingRegion2D {
-        Pointer<DevFloat> xMin, xMax, yMin, yMax;
+        TPointer<DevFloat> xMin, xMax, yMin, yMax;
     public:
         explicit PlottingRegion2D(RectR);
 
@@ -27,15 +27,15 @@ namespace Slab::Graphics {
         void set_x_limits(DevFloat x_min, DevFloat x_max);
         void set_y_limits(DevFloat y_min, DevFloat y_max);
 
-        void setReference_xMin(Pointer<DevFloat>);
-        void setReference_xMax(Pointer<DevFloat>);
-        void setReference_yMin(Pointer<DevFloat>);
-        void setReference_yMax(Pointer<DevFloat>);
+        void setReference_xMin(TPointer<DevFloat>);
+        void setReference_xMax(TPointer<DevFloat>);
+        void setReference_yMin(TPointer<DevFloat>);
+        void setReference_yMax(TPointer<DevFloat>);
 
-        auto getReference_xMin() const -> Pointer<DevFloat>;
-        auto getReference_xMax() const -> Pointer<DevFloat>;
-        auto getReference_yMin() const -> Pointer<DevFloat>;
-        auto getReference_yMax() const -> Pointer<DevFloat>;
+        auto getReference_xMin() const -> TPointer<DevFloat>;
+        auto getReference_xMax() const -> TPointer<DevFloat>;
+        auto getReference_yMin() const -> TPointer<DevFloat>;
+        auto getReference_yMax() const -> TPointer<DevFloat>;
 
         DevFloat getXMin() const;
         DevFloat getXMax() const;

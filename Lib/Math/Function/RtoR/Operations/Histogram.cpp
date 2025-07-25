@@ -48,7 +48,7 @@ namespace Slab::Math::RtoR {
         Compute(F, _nBins);
     }
 
-    Pointer<RtoR::Function> Histogram::asPDFFunction() const {
+    TPointer<RtoR::Function> Histogram::asPDFFunction() const {
         auto func = DataAlloc<RtoR::NumericFunction_CPU>("", bins.size(), vMin, vMax);
 
         auto &F = func->getSpace().getHostData();

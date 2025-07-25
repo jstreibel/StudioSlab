@@ -30,7 +30,7 @@ namespace Slab::Math::RtoR {
         return A;
     }
 
-    Pointer<DFTInverse::DFTInverseFunction> DFTInverse::Compute(const DFTResult &dftResult,
+    TPointer<DFTInverse::DFTInverseFunction> DFTInverse::Compute(const DFTResult &dftResult,
                                                            DevFloat xMin,
                                                            DevFloat L,
                                                            Filter *filter)
@@ -84,7 +84,7 @@ namespace Slab::Math::RtoR {
         fftw_execute(p);
 
         // Move data to function
-        Pointer<DFTInverseFunction> func(new NumericFunction_CPU(N, xMin, xMin+L));
+        TPointer<DFTInverseFunction> func(new NumericFunction_CPU(N, xMin, xMin+L));
         auto &vals = func->getSpace().getHostData(true);
         // fix N_inv = 1./N;
         for(int i=0; i<N; ++i)

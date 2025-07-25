@@ -16,7 +16,7 @@
 #include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.h"
 
 #include "Models/KleinGordon/RtoR/Graphics/RtoRPanel.h"
-#include "Graphics/ImGui/ImGuiWindow.h"
+#include "Graphics/ImGui/ImGui-SingleSlabWindow-Wrapper.h"
 #include "Models/KleinGordon/KG-NumericConfig.h"
 
 namespace Slab::Models::KGRtoR {
@@ -24,15 +24,15 @@ namespace Slab::Models::KGRtoR {
     class FRealtimePanel : public FRtoRPanel {
 
     public:
-        FRealtimePanel(const Pointer<KGNumericConfig> &Params,
+        FRealtimePanel(const TPointer<KGNumericConfig> &Params,
                       KGEnergy &Hamiltonian,
                       Graphics::FGUIWindow &GUIWindow);
 
-        void SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
+        void SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
  simulationHistory,
                                   const R2toRFunctionArtist_ptr &SimHistoryGraph) override;
 
-        void SetSpaceFourierHistory(Pointer<const R2toR::FNumericFunction>
+        void SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction>
  SftHistory,
                                     const FDFTDataHistory &DFTData,
                                     const R2toRFunctionArtist_ptr &sftHistoryGraph) override;

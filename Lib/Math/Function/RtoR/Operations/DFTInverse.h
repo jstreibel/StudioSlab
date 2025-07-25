@@ -29,7 +29,7 @@ namespace Slab::Math::RtoR {
             Complex operator()(const Complex &A, DevFloat k) override;
         };
 
-        static Pointer<DFTInverseFunction> Compute(const DFTResult &dftResult,
+        static TPointer<DFTInverseFunction> Compute(const DFTResult &dftResult,
                                               DevFloat xMin,
                                               DevFloat L,
                                               Filter *filter=nullptr);

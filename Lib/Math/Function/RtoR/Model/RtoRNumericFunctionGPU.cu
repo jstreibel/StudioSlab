@@ -85,7 +85,7 @@ namespace Slab::Math::RtoR {
         return outFunc;
     }
 
-    Pointer<Base::FunctionT <DevFloat, DevFloat>> NumericFunctionGPU::Clone() const {
+    TPointer<Base::FunctionT <DevFloat, DevFloat>> NumericFunctionGPU::Clone() const {
         return New<NumericFunctionGPU>(N, xMin, xMax, laplacianType);
     }
 

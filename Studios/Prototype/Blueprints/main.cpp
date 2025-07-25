@@ -8,8 +8,8 @@
 #include "Graphics/SlabGraphics.h"
 
 class App : public Slab::FApplication {
-    Slab::Pointer<Slab::Blueprints::BlueprintRenderer> blueprint_renderer;
-    Slab::Pointer<Slab::Blueprints::Blueprint> blueprint;
+    Slab::TPointer<Slab::Blueprints::BlueprintRenderer> blueprint_renderer;
+    Slab::TPointer<Slab::Blueprints::Blueprint> blueprint;
 
 public:
     App(const int argc, const char *argv[])
@@ -17,7 +17,7 @@ public:
     }
 
 protected:
-    Slab::Pointer<Slab::Platform> CreatePlatform() override {
+    Slab::TPointer<Slab::Platform> CreatePlatform() override {
         return Slab::DynamicPointerCast<Slab::Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
     }
 

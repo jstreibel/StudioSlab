@@ -76,8 +76,8 @@ namespace Slab::Models::KGRtoR {
         if (doRegister) RegisterCLInterface(Interface);
     }
 
-    auto KGRtoRBuilder::buildOutputSockets() -> Vector<Pointer<Socket>> {
-        Vector<Pointer<Socket>> Sockets;
+    auto KGRtoRBuilder::buildOutputSockets() -> Vector<TPointer<Socket>> {
+        Vector<TPointer<Socket>> Sockets;
 
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
@@ -150,7 +150,7 @@ namespace Slab::Models::KGRtoR {
         if (shouldOutputOpenGL) {
             auto GuiBackend = Slab::Graphics::GetGraphicsBackend();
 
-            auto outputOpenGL = Pointer<Monitor>(static_cast<Monitor *>(buildOpenGLOutput()));
+            auto outputOpenGL = TPointer<Monitor>(static_cast<Monitor *>(buildOpenGLOutput()));
 
             if (t > 0) {
                 fix nₒᵤₜ = ((Nₒᵤₜ / L) * t);
@@ -174,7 +174,7 @@ namespace Slab::Models::KGRtoR {
             const auto WindowManager = New<SlabWindowManager>();
             GuiBackend->GetMainSystemWindow()->AddAndOwnEventListener(WindowManager);
 
-            auto Window = Pointer<FSlabWindow>(outputOpenGL);
+            auto Window = TPointer<FSlabWindow>(outputOpenGL);
             WindowManager->AddSlabWindow(Window, false);
 
             Sockets.emplace_back(outputOpenGL);
@@ -186,7 +186,7 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    Vector<Pointer<Socket>> KGRtoRBuilder::getTimeDFTSnapshots() {
+    Vector<TPointer<Socket>> KGRtoRBuilder::getTimeDFTSnapshots() {
         auto &c = *kg_numeric_config;
 
         fix t = c.gett();
@@ -203,7 +203,7 @@ namespace Slab::Models::KGRtoR {
                     ", yielding a snapshot count of " + ToStr(snapshot_count) + ", which is above the " +
                 ToStr(MAX_SNAPSHOTS) + " limit.");
 
-        RealVector x_locations;
+        FRealVector x_locations;
         {
             fix L = c.GetL();
             fix xMin = c.getxMin();
@@ -223,7 +223,7 @@ namespace Slab::Models::KGRtoR {
         }
 
         int i=0;
-        Vector<Pointer<Socket>> sockets;
+        Vector<TPointer<Socket>> sockets;
         do {
             fix t_end   = t - i*Δt;
             fix t_start = Common::max(t_end-t_len, 0.0);
@@ -238,8 +238,8 @@ namespace Slab::Models::KGRtoR {
         return sockets;
     }
 
-    Pointer<Socket>
-    KGRtoRBuilder::_newTimeDFTSnapshotOutput(const Str& folder, const DevFloat t_start, const DevFloat t_end, const RealVector &x_locations) const {
+    TPointer<Socket>
+    KGRtoRBuilder::_newTimeDFTSnapshotOutput(const Str& folder, const DevFloat t_start, const DevFloat t_end, const FRealVector &x_locations) const {
 
         Utils::TouchFolder(folder);
 
@@ -277,7 +277,7 @@ namespace Slab::Models::KGRtoR {
                                        this->newFunctionArbitrary());
     }
 
-    Pointer<Base::LinearStepSolver> KGRtoRBuilder::buildSolver() {
+    TPointer<Base::LinearStepSolver> KGRtoRBuilder::buildSolver() {
         auto potential = getPotential();
         auto nonHomogenous = getNonHomogenous();
         auto dphi = getBoundary();
@@ -335,7 +335,7 @@ namespace Slab::Models::KGRtoR {
         throw Exception("Unknown potential");
     }
 
-    Pointer<Base::FunctionT<DevFloat, DevFloat>> KGRtoRBuilder::getNonHomogenous() {
+    TPointer<Base::FunctionT<DevFloat, DevFloat>> KGRtoRBuilder::getNonHomogenous() {
         return {};
     }
 

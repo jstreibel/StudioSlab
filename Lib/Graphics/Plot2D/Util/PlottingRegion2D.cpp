@@ -24,27 +24,27 @@ namespace Slab {
         void PlottingRegion2D::animate_yMin(DevFloat val) { Graphics::Animator::Set(*yMin, val, animationTimeSeconds);}
         void PlottingRegion2D::animate_yMax(DevFloat val) { Graphics::Animator::Set(*yMax, val, animationTimeSeconds);}
 
-        void PlottingRegion2D::setReference_xMin(Pointer<DevFloat> ref) {
+        void PlottingRegion2D::setReference_xMin(TPointer<DevFloat> ref) {
             if(ref == nullptr) ref = New<DevFloat>(0.0);
             xMin = ref;
         }
-        void PlottingRegion2D::setReference_xMax(Pointer<DevFloat> ref) {
+        void PlottingRegion2D::setReference_xMax(TPointer<DevFloat> ref) {
             if(ref == nullptr) ref = New<DevFloat>(1.0);
             xMax = ref;
         }
-        void PlottingRegion2D::setReference_yMin(Pointer<DevFloat> ref) {
+        void PlottingRegion2D::setReference_yMin(TPointer<DevFloat> ref) {
             if(ref == nullptr) ref = New<DevFloat>(0.0);
             yMin = ref;
         }
-        void PlottingRegion2D::setReference_yMax(Pointer<DevFloat> ref) {
+        void PlottingRegion2D::setReference_yMax(TPointer<DevFloat> ref) {
             if(ref == nullptr) ref = New<DevFloat>(1.0);
             yMax = ref;
         }
 
-        auto PlottingRegion2D::getReference_xMin() const -> Pointer<DevFloat> { return xMin; }
-        auto PlottingRegion2D::getReference_xMax() const -> Pointer<DevFloat> { return xMax; }
-        auto PlottingRegion2D::getReference_yMin() const -> Pointer<DevFloat> { return yMin; }
-        auto PlottingRegion2D::getReference_yMax() const -> Pointer<DevFloat> { return yMax; }
+        auto PlottingRegion2D::getReference_xMin() const -> TPointer<DevFloat> { return xMin; }
+        auto PlottingRegion2D::getReference_xMax() const -> TPointer<DevFloat> { return xMax; }
+        auto PlottingRegion2D::getReference_yMin() const -> TPointer<DevFloat> { return yMin; }
+        auto PlottingRegion2D::getReference_yMax() const -> TPointer<DevFloat> { return yMax; }
 
         DevFloat PlottingRegion2D::width()   const { return *xMax - *xMin; }
         DevFloat PlottingRegion2D::height()  const { return *yMax - *yMin; }

@@ -16,33 +16,33 @@
 namespace Slab::Graphics {
 
     class HistoryViewer : public Viewer {
-        Pointer<FPlot2DWindow> history_window = nullptr;
-        Pointer<FPlot2DWindow> xft_history_window = nullptr;
+        TPointer<FPlot2DWindow> history_window = nullptr;
+        TPointer<FPlot2DWindow> xft_history_window = nullptr;
 
-        Pointer<Math::R2toC::NumericFunction> xFourierTransform = nullptr;
-        Pointer<Math::R2toR::FNumericFunction> xft_amplitudes = nullptr;
+        TPointer<Math::R2toC::NumericFunction> xFourierTransform = nullptr;
+        TPointer<Math::R2toR::FNumericFunction> xft_amplitudes = nullptr;
 
-        Pointer<R2toRFunctionArtist> function_artist = nullptr;
-        Pointer<R2toRFunctionArtist> xft_amplitudes_artist = nullptr;
+        TPointer<R2toRFunctionArtist> function_artist = nullptr;
+        TPointer<R2toRFunctionArtist> xft_amplitudes_artist = nullptr;
 
-        Pointer<R2SectionArtist> section_artist = nullptr;
-        Pointer<R2SectionArtist> dft_section_artist = nullptr;
+        TPointer<R2SectionArtist> section_artist = nullptr;
+        TPointer<R2SectionArtist> dft_section_artist = nullptr;
 
         int oversampling = 12;
         DevFloat curr_t = .0;
 
-        Pointer<RtoR2::StraightLine> function_section = nullptr;
-        Pointer<RtoR2::StraightLine> dft_section = nullptr;
+        TPointer<RtoR2::StraightLine> function_section = nullptr;
+        TPointer<RtoR2::StraightLine> dft_section = nullptr;
 
         void computeTransform();
     public:
-        explicit HistoryViewer(const Pointer<FGUIWindow> &guiWindow, const Pointer<R2toR::FNumericFunction> &function = nullptr);
+        explicit HistoryViewer(const TPointer<FGUIWindow> &guiWindow, const TPointer<R2toR::FNumericFunction> &function = nullptr);
 
         Str GetName() const override;
 
         void ImmediateDraw(const FPlatformWindow&) override;
 
-        void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
+        void SetFunction(TPointer<Math::R2toR::FNumericFunction> function) override;
 
         void NotifyBecameVisible() override;
     };

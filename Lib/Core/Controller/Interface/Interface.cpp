@@ -16,28 +16,28 @@ namespace Slab::Core {
 
     FInterface::~FInterface() = default;
 
-    auto FInterface::GetParameters() const -> Vector<Pointer<const FParameter>> {
-        Vector<Pointer<const FParameter>> ConstParameters;
+    auto FInterface::GetParameters() const -> Vector<TPointer<const FParameter>> {
+        Vector<TPointer<const FParameter>> ConstParameters;
 
         std::copy(Parameters.begin(), Parameters.end(), std::back_inserter(ConstParameters));
 
         return ConstParameters;
     }
 
-    void FInterface::AddParameter(const Pointer<FParameter>& Parameter) {
+    void FInterface::AddParameter(const TPointer<FParameter>& Parameter) {
         auto insertionSuccessful = Parameters.insert(Parameter).second;
 
         if (!insertionSuccessful) {
             throw Exception("Error while inserting parameter in interface.");
         }
     }
-    void FInterface::AddParameters(std::initializer_list<Pointer<FParameter>> ParametersList) {
+    void FInterface::AddParameters(std::initializer_list<TPointer<FParameter>> ParametersList) {
         for (const auto& Param: ParametersList)
             AddParameter(Param);
     }
 
-    auto FInterface::GetParameter(const Str& Key) const -> Pointer<FParameter> {
-        auto compareFunc = [Key](const Pointer<FParameter>& Parameter) {
+    auto FInterface::GetParameter(const Str& Key) const -> TPointer<FParameter> {
+        auto compareFunc = [Key](const TPointer<FParameter>& Parameter) {
             return *Parameter == Key;
         };
 

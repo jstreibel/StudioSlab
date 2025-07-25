@@ -85,7 +85,7 @@ namespace Slab::Math::R2toR {
         parameters = parameters1;
     }
 
-    auto AnalyticOscillon1p1_FourierImpl::Clone() const -> Pointer<Base::FunctionT<Real2D, DevFloat>::Type> {
+    auto AnalyticOscillon1p1_FourierImpl::Clone() const -> TPointer<Base::FunctionT<Real2D, DevFloat>::Type> {
         auto clone = New<AnalyticOscillon1p1_FourierImpl>(parameters, n_max);
         clone->f = this->f;
 

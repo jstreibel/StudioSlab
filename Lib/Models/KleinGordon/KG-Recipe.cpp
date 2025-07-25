@@ -12,7 +12,7 @@
 
 namespace Slab::Models {
 
-    KGRecipe::KGRecipe(const Pointer<KGNumericConfig>& numeric_config,
+    KGRecipe::KGRecipe(const TPointer<KGNumericConfig>& numeric_config,
                        const Str &name, const Str& generalDescription, bool doRegister)
             : NumericalRecipe(numeric_config, name, generalDescription, DONT_REGISTER)
             , kg_numeric_config(numeric_config)
@@ -48,7 +48,7 @@ namespace Slab::Models {
         }
     }
 
-    auto KGRecipe::buildStepper() -> Pointer<Stepper> {
+    auto KGRecipe::buildStepper() -> TPointer<Stepper> {
         auto solver = buildSolver();
 
         return New <RungeKutta4> (solver, kg_numeric_config->Getdt());

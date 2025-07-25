@@ -25,7 +25,7 @@ namespace Slab::Graphics {
 
     bool GraphicBackend::IsHeadless() const { return false; }
 
-    Pointer<FPlatformWindow> GraphicBackend::NewSystemWindow(const Str&title) {
+    TPointer<FPlatformWindow> GraphicBackend::NewSystemWindow(const Str&title) {
         auto win = this->CreatePlatformWindow(title);
 
         SystemWindows.emplace_back(win);
@@ -39,7 +39,7 @@ namespace Slab::Graphics {
 
     void GraphicBackend::Terminate() { UnloadAllModules(); }
 
-    void GraphicBackend::NotifyModuleLoaded(const Pointer<Core::SlabModule> &module) {
+    void GraphicBackend::NotifyModuleLoaded(const TPointer<Core::SlabModule> &module) {
         if(module->bRequiresGraphicsBackend) {
             auto GraphicModule = DynamicPointerCast<GraphicsModule>(module);
 
@@ -47,7 +47,7 @@ namespace Slab::Graphics {
         }
     }
 
-    Pointer<FPlatformWindow> GraphicBackend::GetMainSystemWindow() {
+    TPointer<FPlatformWindow> GraphicBackend::GetMainSystemWindow() {
         if(SystemWindows.empty()) return NewSystemWindow("Main window");
 
         return SystemWindows.front();

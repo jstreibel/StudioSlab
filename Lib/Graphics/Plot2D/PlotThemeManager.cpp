@@ -76,7 +76,7 @@ namespace Slab::Graphics {
         return sty;
     }
 
-    Pointer<PlotThemeManager> mePointer=nullptr;
+    TPointer<PlotThemeManager> mePointer=nullptr;
     PlotThemeManager::PlotThemeManager()
     : Singleton("Styles manager") {
         Core::LoadModule("GUI");

@@ -102,7 +102,7 @@ namespace Slab::Graphics {
         Painter::drawGUI();
     }
 
-    void Colormap1DPainter::setColormapTexture(Pointer<OpenGL::Texture1D_Color> texture) {
+    void Colormap1DPainter::setColormapTexture(TPointer<OpenGL::Texture1D_Color> texture) {
         cmap_texture = std::move(texture);
         SetUniform("colormap", cmap_texture->getTextureUnit());
     }
@@ -171,7 +171,7 @@ namespace Slab::Graphics {
         setEpsilon(.0);
     }
 
-    void Colormap1DPainter::setColorMap(const Pointer<ColorMap> &colorMap) {
+    void Colormap1DPainter::setColorMap(const TPointer<ColorMap> &colorMap) {
         colormap = colorMap;
 
         const auto type = colormap->getType();
@@ -181,7 +181,7 @@ namespace Slab::Graphics {
         updateColorbar();
     }
 
-    auto Colormap1DPainter::getColorBarArtist() -> Pointer<OpenGL::ColorBarArtist> {
+    auto Colormap1DPainter::getColorBarArtist() -> TPointer<OpenGL::ColorBarArtist> {
         return colorbarArtist;
     }
 

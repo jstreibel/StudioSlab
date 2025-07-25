@@ -12,7 +12,7 @@ namespace Slab::Core {
 
     class FCommandLineInterfaceOwner : public FCommandLineInterfaceListener {
     protected:
-        Pointer<FCommandLineInterface> Interface;
+        TPointer<FCommandLineInterface> Interface;
 
     public:
         explicit FCommandLineInterfaceOwner(bool IKnowIMustCallLateStart = false);
@@ -26,9 +26,9 @@ namespace Slab::Core {
 
         auto RegisterToManager() const -> void;
 
-        auto GetInterface() -> Pointer<FCommandLineInterface>;
+        auto GetInterface() -> TPointer<FCommandLineInterface>;
 
-        auto GetInterface() const -> Pointer<FCommandLineInterface>;
+        auto GetInterface() const -> TPointer<FCommandLineInterface>;
 
         auto NotifyCLArgsSetupFinished() -> void override;
     };

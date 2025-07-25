@@ -18,7 +18,7 @@
 #include "Graphics/Plot2D/Plotter.h"
 #include "Utils/RandUtils.h"
 
-void setup_viewer(const Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU>& field) {
+void setup_viewer(const Slab::TPointer<Slab::Math::R2toR::NumericFunction_CPU>& field) {
     Slab::Core::StartBackend("GLFW");
 
     {

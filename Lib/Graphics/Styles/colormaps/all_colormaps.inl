@@ -24,7 +24,7 @@
 #include "cmocean_balance.inl"
 #include "cmocean_diff.inl"
 
-std::map<Str, Pointer<const ColorMap>> ColorMaps_auto = {
+std::map<Str, TPointer<const ColorMap>> ColorMaps_auto = {
 	Map(crameri_vikO),
 	Map(crameri_corkO),
 	Map(crameri_berlin),

@@ -10,12 +10,12 @@
 namespace Slab::Graphics {
 
     class WindowProxy : public FSlabWindow {
-        Pointer<FSlabWindow> window;
+        TPointer<FSlabWindow> window;
 
     public:
         explicit WindowProxy(FSlabWindowConfig ConfigArg);
 
-        void setWindow(Pointer<FSlabWindow>);
+        void setWindow(TPointer<FSlabWindow>);
     };
 
 } // Slab::Graphics

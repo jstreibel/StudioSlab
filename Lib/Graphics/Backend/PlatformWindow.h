@@ -21,25 +21,25 @@ namespace Slab::Graphics {
     class FPlatformWindow {
         friend class GraphicBackend;
 
-        Vector<Pointer<FPlatformWindowEventListener>> Stash;
-        Pointer<GUIContext> GuiContext = nullptr;
+        Vector<TPointer<FPlatformWindowEventListener>> Stash;
+        TPointer<GUIContext> GuiContext = nullptr;
 
         TVolatile<FPlatformWindow> SelfReference;
 
     protected:
         virtual bool ProvideSelfReference(const TVolatile<FPlatformWindow>&);
 
-        Pointer<FEventTranslator> EventTranslator;
+        TPointer<FEventTranslator> EventTranslator;
         RawPlatformWindow_Ptr r_Window;
 
         virtual void ClearListeners();
 
-        Pointer<FMouseState> MouseState = nullptr;
+        TPointer<FMouseState> MouseState = nullptr;
 
         virtual void Cycle() = 0;
     public:
         FPlatformWindow() = delete;
-        explicit FPlatformWindow(void *window_ptr, Pointer<FEventTranslator>);
+        explicit FPlatformWindow(void *window_ptr, TPointer<FEventTranslator>);
 
         virtual ~FPlatformWindow() = default;
 
@@ -51,14 +51,14 @@ namespace Slab::Graphics {
         virtual void SignalClose() = 0;
         [[nodiscard]] virtual bool ShouldClose() const = 0;
 
-        Pointer<GUIContext> GetGUIContext();
+        TPointer<GUIContext> GetGUIContext();
 
         RawPlatformWindow_Ptr GetRawPlatformWindowPointer() const;
 
         auto AddEventListener(const TVolatile<FPlatformWindowEventListener> &Listener) const -> bool;
-        auto AddAndOwnEventListener(const Pointer<FPlatformWindowEventListener> &Listener) -> bool;
+        auto AddAndOwnEventListener(const TPointer<FPlatformWindowEventListener> &Listener) -> bool;
 
-        [[nodiscard]] auto GetMouseState() const -> Pointer<const FMouseState>;
+        [[nodiscard]] auto GetMouseState() const -> TPointer<const FMouseState>;
         virtual void SetMouseCursor(FMouseCursor);
 
         virtual

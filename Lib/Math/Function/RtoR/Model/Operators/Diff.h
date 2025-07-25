@@ -10,11 +10,11 @@
 namespace Slab::Math::RtoR {
 
     class Diff : public RtoR::Function {
-        Pointer<const RtoR::Function> base_function;
+        TPointer<const RtoR::Function> base_function;
         DevFloat dx;
     public:
 
-        explicit Diff(Pointer<const RtoR::Function> base_function, DevFloat dx=1.e-3);
+        explicit Diff(TPointer<const RtoR::Function> base_function, DevFloat dx=1.e-3);
 
         DevFloat operator()(DevFloat x) const override;
     };

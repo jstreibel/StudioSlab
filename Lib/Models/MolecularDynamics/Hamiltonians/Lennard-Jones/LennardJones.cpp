@@ -11,7 +11,7 @@
 
 namespace Slab::Models::MolecularDynamics {
 
-    LennardJones::LennardJones(Pointer<Config> config, DevFloat T)
+    LennardJones::LennardJones(TPointer<Config> config, DevFloat T)
             : Langevin(config, T) {}
 
     inline Graphics::Point2D LennardJones::dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {

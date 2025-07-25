@@ -34,7 +34,7 @@ namespace Slab::Models::MolecularDynamics {
 
         [[nodiscard]] auto category() const -> Str override;
 
-        auto replicate() const -> Pointer<EquationState> override {
+        auto replicate() const -> TPointer<EquationState> override {
             NOT_IMPLEMENTED_CLASS_METHOD
         }
 

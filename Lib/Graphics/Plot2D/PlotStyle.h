@@ -55,7 +55,7 @@ namespace Slab::Graphics {
                            FColor fillColor=Nil,
                            float thickness=1.3);
 
-        Pointer<PlotStyle> clone();
+        TPointer<PlotStyle> clone();
         
         PlotStyle permuteColors(bool odd=false) const;
 

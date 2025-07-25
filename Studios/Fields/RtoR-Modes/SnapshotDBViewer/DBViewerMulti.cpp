@@ -36,7 +36,7 @@ namespace Modes::DatabaseViewer {
 
         this->AddWindow(Naked(guiWindow));
 
-        Pointer<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
+        TPointer<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
 
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];

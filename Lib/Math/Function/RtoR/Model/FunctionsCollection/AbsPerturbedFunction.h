@@ -18,7 +18,7 @@ namespace Slab::Math::RtoR {
 
         RtoR::Function_ptr diff(int n) const override;
 
-        Pointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
+        TPointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
 
     private:
         const UInt Ns;
@@ -32,7 +32,7 @@ namespace Slab::Math::RtoR {
 
         RtoR::Function_ptr diff(int n) const override;
 
-        Pointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
+        TPointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
 
     public:
         DevFloat Fold(floatt eta, const int Ns);

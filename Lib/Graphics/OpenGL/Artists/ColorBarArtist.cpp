@@ -209,7 +209,7 @@ namespace Slab::Graphics::OpenGL {
 
     }
 
-    void ColorBarArtist::setColorMap(const Pointer<const ColorMap>& map) {
+    void ColorBarArtist::setColorMap(const TPointer<const ColorMap>& map) {
         this->colorMap = map;
 
         textureDirty = true;

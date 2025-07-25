@@ -12,28 +12,28 @@
 namespace Slab::Graphics {
 
     class GraphicBackend : public Core::FBackend {
-        void NotifyModuleLoaded(const Pointer<Slab::Core::SlabModule> &pointer) override;
+        void NotifyModuleLoaded(const TPointer<Slab::Core::SlabModule> &pointer) override;
 
     protected:
 
         explicit GraphicBackend(const Str &name);
 
         Vector<TVolatile<GraphicsModule>> GraphicModules;
-        List<Pointer<FPlatformWindow>> SystemWindows;
+        TList<TPointer<FPlatformWindow>> SystemWindows;
 
         virtual void ClearModules();
         void UnloadAllModules();
 
         virtual
-        Pointer<FPlatformWindow> CreatePlatformWindow(const Str& title) = 0;
+        TPointer<FPlatformWindow> CreatePlatformWindow(const Str& title) = 0;
 
     public:
         ~GraphicBackend() override;
 
-        Pointer<FPlatformWindow>
+        TPointer<FPlatformWindow>
         NewSystemWindow(const Str& title);
 
-        Pointer<FPlatformWindow>
+        TPointer<FPlatformWindow>
         GetMainSystemWindow();
 
         void SetupGUI(const FPlatformWindow *) const;

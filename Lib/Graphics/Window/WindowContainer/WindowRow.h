@@ -14,13 +14,13 @@ namespace Slab::Graphics {
 
     class FWindowRow : public FSlabWindow {
         struct WinMetaData {
-            Pointer<FSlabWindow> window;
+            TPointer<FSlabWindow> window;
             DevFloat width;
         };
 
         std::list<WinMetaData> WindowsList;
 
-        RealVector _widthsVector() const;
+        FRealVector _widthsVector() const;
 
         bool assertConsistency() const;
 
@@ -31,9 +31,9 @@ namespace Slab::Graphics {
             Left, Right
         };
 
-        bool AddWindow(const Pointer<FSlabWindow> &window, RelativePosition= Right, float windowWidth = -1);
+        bool AddWindow(const TPointer<FSlabWindow> &window, RelativePosition= Right, float windowWidth = -1);
 
-        void removeWindow(const Pointer<FSlabWindow> &window);
+        void removeWindow(const TPointer<FSlabWindow> &window);
 
         void arrangeWindows();
 

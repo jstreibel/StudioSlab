@@ -18,7 +18,7 @@
 
 using Themes = Slab::Graphics::PlotThemeManager;
 
-void setup_viewer(Slab::Pointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
+void setup_viewer(Slab::TPointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
     Slab::Core::StartBackend("GLFW");
 
     auto plot_window = Slab::New<Slab::Graphics::FPlot2DWindow>("Plot");

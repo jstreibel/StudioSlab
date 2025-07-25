@@ -19,7 +19,7 @@ namespace Slab::Math::R2toR {
 
         explicit AnalyticOscillon_1plus1d(OscillonParameters);
 
-        auto Clone() const -> Pointer<Type> override;
+        auto Clone() const -> TPointer<Type> override;
 
         void setParams(OscillonParameters);
 

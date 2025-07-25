@@ -29,7 +29,7 @@ namespace Slab::Math::R2toR {
 
         DevFloat operator()(Real2D x) const override;
 
-        auto Clone() const -> Pointer<Type> override;
+        auto Clone() const -> TPointer<Type> override;
 
         void setParams(Parameters);
 

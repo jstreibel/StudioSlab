@@ -14,7 +14,7 @@
 
 namespace Slab::Math {
 
-    DevFloat avg(const RealVector &v) {
+    DevFloat avg(const FRealVector &v) {
         const DevFloat zero = 0.0;
         const DevFloat N = v.size();
         return std::accumulate(v.begin(), v.end(), zero) / N;

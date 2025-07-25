@@ -6,7 +6,7 @@
 
 
 namespace Slab::Math {
-    RungeKutta4::RungeKutta4(const Pointer<Base::LinearStepSolver> &solver, DevFloat dt, Slab::CountType totalSwapStates)
+    RungeKutta4::RungeKutta4(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt, Slab::CountType totalSwapStates)
     : Stepper()
     , _H(solver)
     , _f(solver->NewEqState())

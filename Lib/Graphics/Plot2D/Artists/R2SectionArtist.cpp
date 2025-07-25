@@ -15,7 +15,7 @@
 namespace Slab::Graphics {
     void R2SectionArtist::setFunction(R2toR::Function_constptr func)  { function2D = std::move(func); }
 
-    void R2SectionArtist::addSection(const RtoR2::ParametricCurve_ptr& section, const Pointer<PlotStyle>& style, const Str& name) {
+    void R2SectionArtist::addSection(const RtoR2::ParametricCurve_ptr& section, const TPointer<PlotStyle>& style, const Str& name) {
         sections.emplace_back(section, style, name);
     }
 

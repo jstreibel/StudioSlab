@@ -12,9 +12,9 @@ namespace Slab::Math::RtoR {
     public:
         DevFloat operator()(DevFloat x) const override;
 
-        Pointer<FunctionT> diff(int n) const override;
+        TPointer<FunctionT> diff(int n) const override;
 
-        Pointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
+        TPointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
 
         Str Symbol() const override;
     };

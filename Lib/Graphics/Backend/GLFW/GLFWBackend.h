@@ -25,7 +25,7 @@ namespace Slab::Graphics {
 
         static GLFWBackend &GetInstance();
 
-        Pointer<Slab::Graphics::FPlatformWindow> CreatePlatformWindow(const Str& title) override;
+        TPointer<Slab::Graphics::FPlatformWindow> CreatePlatformWindow(const Str& title) override;
     public:
         explicit GLFWBackend();
 

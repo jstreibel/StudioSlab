@@ -18,7 +18,7 @@ namespace Slab::Math::RtoR {
 
         DevFloat operator()(DevFloat x) const override;
 
-        auto Clone() const -> Pointer<Type> override;
+        auto Clone() const -> TPointer<Type> override;
     };
 
 } // Slab::Math::RtoR

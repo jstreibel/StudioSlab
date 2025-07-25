@@ -36,7 +36,7 @@ namespace Tests {
     }
 
 
-    BezierTests::BezierTests(const Pointer<Graphics::FImGuiContext>& GuiContext)
+    FBezierTests::FBezierTests(const TPointer<Graphics::FImGuiContext>& GuiContext)
     : FWindowRow("Bezier Tests")
     , Stats(Graphics::FSlabWindowConfig("Stats"), Graphics::FImGuiWindowContext{GuiContext, GetUniqueName()})
     , Graph("Graph", Graphics::FImGuiWindowContext{GuiContext, GetUniqueName()}) {
@@ -66,7 +66,7 @@ namespace Tests {
         AddWindow(Dummy(Graph));
     }
 
-    void BezierTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FBezierTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         CurrentPoint.clear();
         const auto &GraphRegion = Graph.GetRegion();
         if(Graphics::Animator::Contains(*GraphRegion.getReference_xMin())){
@@ -96,7 +96,7 @@ namespace Tests {
         FWindowRow::ImmediateDraw(PlatformWindow);
     }
 
-    void BezierTests::RegisterDeferredDrawCalls(const Graphics::FPlatformWindow& PlatformWindow)
+    void FBezierTests::RegisterDeferredDrawCalls(const Graphics::FPlatformWindow& PlatformWindow)
     {
         // Stats.Set_x(this->Get_x());
         // Stats.Set_y(this->Get_y());

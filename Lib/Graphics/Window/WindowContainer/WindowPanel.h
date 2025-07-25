@@ -28,9 +28,9 @@ namespace Slab::Graphics {
     public:
         explicit WindowPanel(FSlabWindowConfig);
 
-        void AddWindow(const Pointer<FSlabWindow>& window, bool newColumn = false, float newColumnWidth = -1);
+        void AddWindow(const TPointer<FSlabWindow>& window, bool newColumn = false, float newColumnWidth = -1);
 
-        bool removeWindow(const Pointer<FSlabWindow>& window);
+        bool removeWindow(const TPointer<FSlabWindow>& window);
 
         /**
          * Add window to column columnId.
@@ -38,7 +38,7 @@ namespace Slab::Graphics {
          * @param columnId zero-based index of column.
          * @return true if success, false otherwise.
          */
-        bool addWindowToColumn(const Pointer<FSlabWindow> &window, int columnId);
+        bool addWindowToColumn(const TPointer<FSlabWindow> &window, int columnId);
 
         /**
          * Set the the relative width of a column.

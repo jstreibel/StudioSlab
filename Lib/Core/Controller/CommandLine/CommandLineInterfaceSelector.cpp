@@ -19,7 +19,7 @@ namespace Slab::Core {
         Interface->AddParameters({&selection});
     };
 
-    auto CLInterfaceSelector::getCurrentCandidate() const -> Pointer<FCommandLineInterface> {
+    auto CLInterfaceSelector::getCurrentCandidate() const -> TPointer<FCommandLineInterface> {
         if (currentSelection > candidates.size() - 1)
             throw Str("Unknown sim type: ") + ToStr(currentSelection);
 
@@ -66,7 +66,7 @@ namespace Slab::Core {
         return *this;
     }
 
-    void CLInterfaceSelector::registerOption(Pointer<FCommandLineInterface> interface) {
+    void CLInterfaceSelector::registerOption(TPointer<FCommandLineInterface> interface) {
         candidates.push_back(interface);
 
         generateHelpDescription();

@@ -14,7 +14,7 @@ namespace Slab::Math::RtoR {
     public:
         NumericFunctionGPU(UInt N, DevFloat xMin, DevFloat xMax, LaplacianType laplacianType);
 
-        auto Clone() const -> Pointer<FunctionT> override;
+        auto Clone() const -> TPointer<FunctionT> override;
 
         /*! This function operates on the host and then transfers information to device. Therefore, it is
          * not efficient. */

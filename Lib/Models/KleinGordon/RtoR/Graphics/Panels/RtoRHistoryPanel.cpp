@@ -15,7 +15,7 @@
 namespace Slab::Models::KGRtoR {
 
     RtoRHistoryPanel::RtoRHistoryPanel
-    (const Pointer<KGNumericConfig> &params,
+    (const TPointer<KGNumericConfig> &params,
      FGUIWindow &guiWindow,
      KGEnergy &hamiltonian)
     : FRtoRPanel(params, guiWindow, hamiltonian, "Histories", "Panel to view 1-d sections of histories.")
@@ -115,7 +115,7 @@ namespace Slab::Models::KGRtoR {
         FRtoRPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void RtoRHistoryPanel::SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
+    void RtoRHistoryPanel::SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
  simulationHistory,
                                                 const R2toRFunctionArtist_ptr &simHistoryGraph) {
         FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryGraph);
@@ -128,7 +128,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void
-    RtoRHistoryPanel::SetSpaceFourierHistory(Pointer<const R2toR::FNumericFunction>
+    RtoRHistoryPanel::SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction>
  sftHistory, const FDFTDataHistory &history,
                                              const R2toRFunctionArtist_ptr &sftHistoryGraph) {
         FRtoRPanel::SetSpaceFourierHistory(sftHistory, history, sftHistoryGraph);
@@ -143,7 +143,7 @@ namespace Slab::Models::KGRtoR {
         kSpaceHistory->AddArtist(sftHistoryGraph);
     }
 
-    auto RtoRHistoryPanel::get_kSectionWindow() -> Pointer<Graphics::FPlot2DWindow> {
+    auto RtoRHistoryPanel::get_kSectionWindow() -> TPointer<Graphics::FPlot2DWindow> {
         return kSection;
     }
 } // Slab::Models::RGRtoR

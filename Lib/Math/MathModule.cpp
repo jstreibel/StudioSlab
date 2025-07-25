@@ -13,7 +13,7 @@ namespace Slab::Math {
 
     }
 
-    void MathModule::RegisterData(const DataName &name, Pointer<Data> data) {
+    void MathModule::RegisterData(const DataName &name, TPointer<Data> data) {
         DataManager::RegisterData(name, data);
     }
 

@@ -96,7 +96,7 @@ namespace Slab::Graphics {
         }
     }
 
-    Pointer<FieldTextureThingy> FieldTextureKontraption::getBlock(int i, int j) {
+    TPointer<FieldTextureThingy> FieldTextureKontraption::getBlock(int i, int j) {
         assert(i < n && j < m);
 
         return blocks[i + j * n];

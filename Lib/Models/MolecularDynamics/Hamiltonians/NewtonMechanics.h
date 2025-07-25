@@ -37,11 +37,11 @@ namespace Slab::Models::MolecularDynamics {
          */
         virtual Graphics::Point2D F_nh(DevFloat t) { return {0,0}; }
 
-        Pointer<Config> numeric_config;
+        TPointer<Config> numeric_config;
 
     public:
 
-        explicit NewtonMechanics(Pointer<Config> config);
+        explicit NewtonMechanics(TPointer<Config> config);
 
         ~NewtonMechanics();
 

@@ -5,7 +5,7 @@
 #include "KGMainViewer.h"
 
 namespace Slab::Models::KGRtoR {
-    void KGMainViewer::addKGViewer(const Pointer<KGViewer> &kg_viewer) {
+    void KGMainViewer::addKGViewer(const TPointer<KGViewer> &kg_viewer) {
         kg_viewers.emplace_back(kg_viewer);
         addViewer(kg_viewer);
     }
@@ -22,17 +22,17 @@ namespace Slab::Models::KGRtoR {
         return value;
     }
 
-    void KGMainViewer::setFunctionTimeDerivative(Pointer<R2toR::FNumericFunction> func) {
+    void KGMainViewer::setFunctionTimeDerivative(TPointer<R2toR::FNumericFunction> func) {
         ddtbase_function = std::move(func);
 
         for(auto &kg_viewer : kg_viewers) kg_viewer->SetFunctionDerivative(ddtbase_function);
     }
 
-    Pointer<R2toR::FNumericFunction> KGMainViewer::getFunctionTimeDerivative() {
+    TPointer<R2toR::FNumericFunction> KGMainViewer::getFunctionTimeDerivative() {
         return ddtbase_function;
     }
 
-    Slab::Pointer<KGViewer> KGMainViewer::getCurrentKGViewer() {
+    Slab::TPointer<KGViewer> KGMainViewer::getCurrentKGViewer() {
         auto curr_viewer = getCurrentViewer();
 
         if(!Slab::Contains(kg_viewers, curr_viewer))

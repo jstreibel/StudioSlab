@@ -21,13 +21,13 @@ namespace Slab::Models::MolecularDynamics {
         NewtonMechanicsModel mechanicsModel;
 
         Graphics::PointContainer q, p;
-        Pointer<MoleculesState> state;
+        TPointer<MoleculesState> state;
         CountType currStep=0;
 
         DevFloat dt;
 
     public:
-        using Config = Pointer<Models::MolecularDynamics::MolDynNumericConfig>;
+        using Config = TPointer<Models::MolecularDynamics::MolDynNumericConfig>;
 
         explicit VerletStepper(Config config, NewtonMechanicsModel mechModel);
 

@@ -39,12 +39,12 @@ namespace Slab::Math::R2toR {
 
 //
 // Created by joao on 27/09/2019.
-    Pointer<Base::FunctionT <Real2D, DevFloat>> R2toR::NumericFunction_GPU::Clone() const {
+    TPointer<Base::FunctionT <Real2D, DevFloat>> R2toR::NumericFunction_GPU::Clone() const {
         auto &h = getSpace().getMetaData().geth();
         return New<NumericFunction_GPU>(N, M, xMin, yMin, h[0], h[1]);
     }
 
-    Pointer<Base::NumericFunction<Real2D, DevFloat>> R2toR::NumericFunction_GPU::CloneWithSize(UInt N) const {
+    TPointer<Base::NumericFunction<Real2D, DevFloat>> R2toR::NumericFunction_GPU::CloneWithSize(UInt N) const {
         NOT_IMPLEMENTED_CLASS_METHOD
     }
 

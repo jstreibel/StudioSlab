@@ -14,7 +14,7 @@ namespace Slab::Models::MolecularDynamics {
         Graphics::Point2D dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
 
     public:
-        LennardJones(Pointer<Config> config, DevFloat T);
+        LennardJones(TPointer<Config> config, DevFloat T);
 
         static DevFloat U(DevFloat r);
     };

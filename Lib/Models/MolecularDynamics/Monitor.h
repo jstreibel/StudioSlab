@@ -40,7 +40,7 @@ namespace Slab::Models::MolecularDynamics {
 
         using Config = Models::MolecularDynamics::MolDynNumericConfig;
 
-        Monitor(const Pointer<Config>&, Model);
+        Monitor(const TPointer<Config>&, Model);
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 

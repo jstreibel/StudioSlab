@@ -14,10 +14,10 @@ namespace Slab::Models::KGRtoR {
     class CorrelationsPanel : public FRtoRPanel {
         FPlot2DWindow DFT2DGraph;
 
-        Pointer<R2toRFunctionArtist> ftAmplitudesArtist = Slab::New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> ftPhasesArtist =     Slab::New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> ftRealPartsArtist =  Slab::New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> ftImagPartsArtist =  Slab::New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> ftAmplitudesArtist = Slab::New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> ftPhasesArtist =     Slab::New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> ftRealPartsArtist =  Slab::New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> ftImagPartsArtist =  Slab::New<R2toRFunctionArtist>();
 
         R2toC::NumericFunction_ptr dftFunction;
 
@@ -30,7 +30,7 @@ namespace Slab::Models::KGRtoR {
 
 
     public:
-        CorrelationsPanel(const Pointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian);
+        CorrelationsPanel(const TPointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian);
 
         void SetSimulationHistory(R2toR::FNumericFunction_constptr simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;

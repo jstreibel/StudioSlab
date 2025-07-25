@@ -21,8 +21,8 @@ namespace Slab::Math::R2toR {
 
         auto Laplacian        (FNumericFunction &outFunc)            const -> FNumericFunction & override;
 
-        auto Clone()                                                 const -> Pointer<Type>     override;
-        auto CloneWithSize    (UInt N)                             const -> Pointer<DiscrBase>  override;
+        auto Clone()                                                 const -> TPointer<Type>     override;
+        auto CloneWithSize    (UInt N)                             const -> TPointer<DiscrBase>  override;
 
         auto Set              (const MyBase &func)                         -> FNumericFunction & override;
         auto SetArb           (const NumericFunctionBase &func)            -> FNumericFunction & override;

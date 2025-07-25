@@ -21,7 +21,7 @@ namespace Slab::Blueprints {
 
     using ax::Widgets::IconType;
 
-    BlueprintRenderer::BlueprintRenderer(Pointer<Slab::Blueprints::Blueprint> blueprint)
+    BlueprintRenderer::BlueprintRenderer(TPointer<Slab::Blueprints::Blueprint> blueprint)
     : blueprint(std::move(blueprint))
     {
         auto GuiContext = Graphics::GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext();

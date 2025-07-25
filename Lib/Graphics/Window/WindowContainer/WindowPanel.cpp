@@ -12,7 +12,7 @@ namespace Slab::Graphics {
 
     WindowPanel::WindowPanel(FSlabWindowConfig config) : FSlabWindow(config) {    }
 
-    void WindowPanel::AddWindow(const Pointer<FSlabWindow>& window, bool newColumn, float newColumnWidth) {
+    void WindowPanel::AddWindow(const TPointer<FSlabWindow>& window, bool newColumn, float newColumnWidth) {
         if (newColumn) {
             columns.emplace_back();
             widths.emplace_back(newColumnWidth);
@@ -27,7 +27,7 @@ namespace Slab::Graphics {
         column->addWindow(window);
     }
 
-    bool WindowPanel::removeWindow(const Pointer<FSlabWindow> &windowToRemove) {
+    bool WindowPanel::removeWindow(const TPointer<FSlabWindow> &windowToRemove) {
         int i=0;
         for(auto &column : columns){
             if(column.removeWindow(windowToRemove)) {
@@ -45,7 +45,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool WindowPanel::addWindowToColumn(const Pointer<FSlabWindow> &window, int columnId) {
+    bool WindowPanel::addWindowToColumn(const TPointer<FSlabWindow> &window, int columnId) {
         if (columns.size() - 1 < columnId) return false;
 
         auto *column = &columns[columnId];

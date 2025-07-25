@@ -144,7 +144,7 @@ namespace Slab::Graphics {
     }
 
     void
-    FLabelsArtist::add(const Str& label, const Pointer<PlotStyle>& style)
+    FLabelsArtist::add(const Str& label, const TPointer<PlotStyle>& style)
     { labelsRequired.emplace_back(label, style); }
 
     bool FLabelsArtist::HasGUI() {

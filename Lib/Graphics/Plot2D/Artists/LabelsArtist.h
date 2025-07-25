@@ -16,7 +16,7 @@ namespace Slab::Graphics {
         CountType cols = 1;
         int max_cols = 4;
 
-        Vector<Pair<Str, Pointer<PlotStyle>>> labelsRequired;
+        Vector<Pair<Str, TPointer<PlotStyle>>> labelsRequired;
 
         float dx = .080f,
               dy = .060f;
@@ -37,7 +37,7 @@ namespace Slab::Graphics {
     public:
 
         bool Draw(const FPlot2DWindow &window) override;
-        void add(const Str& label, const Pointer<PlotStyle>& style);
+        void add(const Str& label, const TPointer<PlotStyle>& style);
 
         bool HasGUI() override;
 

@@ -11,7 +11,7 @@
 
 namespace Slab::Graphics {
 
-    MainViewer::MainViewer(Pointer<Math::R2toR::FNumericFunction> baseFunction)
+    MainViewer::MainViewer(TPointer<Math::R2toR::FNumericFunction> baseFunction)
     : gui_window(New<FGUIWindow>(FSlabWindowConfig("Main Viewer")))
     , base_function(std::move(baseFunction)) {
 
@@ -28,7 +28,7 @@ namespace Slab::Graphics {
         arrangeWindows();
     }
 
-    void MainViewer::addViewer(const Pointer<Viewer>& viewer) {
+    void MainViewer::addViewer(const TPointer<Viewer>& viewer) {
         viewers.emplace_back(viewer);
         if(base_function!= nullptr) viewer->SetFunction(base_function);
 
@@ -112,21 +112,21 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void MainViewer::setFunction(Pointer<Math::R2toR::FNumericFunction> function) {
+    void MainViewer::setFunction(TPointer<Math::R2toR::FNumericFunction> function) {
         base_function = std::move(function);
 
         for(auto &viewer : viewers) viewer->SetFunction(base_function);
     }
 
-    auto MainViewer::getGUIWindow() -> Pointer<FGUIWindow> {
+    auto MainViewer::getGUIWindow() -> TPointer<FGUIWindow> {
         return gui_window;
     }
 
-    auto MainViewer::getCurrentViewer() const -> Pointer<const Viewer> {
+    auto MainViewer::getCurrentViewer() const -> TPointer<const Viewer> {
         return current_viewer;
     }
 
-    auto MainViewer::getCurrentViewer() -> Pointer<Viewer> {
+    auto MainViewer::getCurrentViewer() -> TPointer<Viewer> {
         return current_viewer;
     }
 

@@ -11,11 +11,11 @@ namespace Slab::Math::RtoR {
         return Abs(x);
     }
 
-    Pointer<Function> AbsFunction::Clone() const {
+    TPointer<Function> AbsFunction::Clone() const {
         return New<AbsFunction>();
     }
 
-    Pointer<Function> AbsFunction::diff(int n) const {
+    TPointer<Function> AbsFunction::diff(int n) const {
         return New<SignumFunction>();
     }
 

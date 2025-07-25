@@ -54,7 +54,7 @@ namespace Slab::Models::KGRtoR {
         Socket::notifyIntegrationHasFinished(theVeryLastOutputInformation);
         using DFT = Slab::Math::RtoR::DFT;
 
-        Vector<Pointer<RtoR::NumericFunction>> maggies;
+        Vector<TPointer<RtoR::NumericFunction>> maggies;
         for(auto &data : dataset) {
             auto slice = New<Math::RtoR::NumericFunction_CPU>(RealArray(data.data(), data.size()), t_start, t_end);
             auto result = DFT::Compute(*slice.get());

@@ -16,7 +16,7 @@
 
 namespace Slab::Math {
 
-    MathApp::MathApp(int argc, const char **argv, Pointer<Base::NumericalRecipe> SimBuilder)
+    MathApp::MathApp(int argc, const char **argv, TPointer<Base::NumericalRecipe> SimBuilder)
             : AppBase(argc, argv), Recipe(std::move(SimBuilder)) {
 
         Core::CLArgsManager::Parse(argc, argv);

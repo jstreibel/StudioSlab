@@ -36,8 +36,8 @@ namespace Slab::Models::KGR2toR {
     Builder::Builder(const Str& name, const Str& description, bool do_register)
             : Models::KGRecipe(New<Models::KGNumericConfig>(false), name, description, do_register) {    }
 
-    Vector<Pointer<Socket>> Builder::buildOutputSockets() {
-        Vector<Pointer<Socket>> sockets;
+    Vector<TPointer<Socket>> Builder::buildOutputSockets() {
+        Vector<TPointer<Socket>> sockets;
 
         ///********************************************************************************************/
         if(*takeSnapshot) {
@@ -130,7 +130,7 @@ namespace Slab::Models::KGR2toR {
         throw Exception("Error while instantiating Field: device not recognized.");
     }
 
-    Pointer<Base::LinearStepSolver> Builder::buildSolver() {
+    TPointer<Base::LinearStepSolver> Builder::buildSolver() {
         auto thePotential = New<RtoR::AbsFunction>();
         auto dphi = getBoundary();
 

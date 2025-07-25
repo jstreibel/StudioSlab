@@ -14,7 +14,7 @@
 namespace Studios::MolecularDynamics {
 
     class App : public Slab::Core::AppBase {
-        Slab::Pointer<Slab::Math::NumericTask> numericTask;
+        Slab::TPointer<Slab::Math::NumericTask> numericTask;
     public:
         App(int argc, const char *argv[]);
 

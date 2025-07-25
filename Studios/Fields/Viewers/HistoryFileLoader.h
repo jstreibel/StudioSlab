@@ -18,7 +18,7 @@ namespace Modes {
         static auto ReadPyDict(std::ifstream& file) -> PythonUtils::PyDict;
         static auto ReadData(std::ifstream &filePath, PythonUtils::PyDict pyDict) -> RealArray ;
     public:
-        static auto Load(const Str &filename) -> Pointer<Math::R2toR::NumericFunction_CPU>;
+        static auto Load(const Str &filename) -> TPointer<Math::R2toR::NumericFunction_CPU>;
     };
 
 } // Modes

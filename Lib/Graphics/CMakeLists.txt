@@ -262,8 +262,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/LegacyGL/SceneSetup.cpp
         Plot2D/Util/PlottingRegion2D.cpp
         Plot2D/Util/PlottingRegion2D.h
-        ImGui/ImGuiWindow.cpp
-        ImGui/ImGuiWindow.h
+		ImGui/ImGui-SingleSlabWindow-Wrapper.cpp
+		ImGui/ImGui-SingleSlabWindow-Wrapper.h
         Plot2D/Util/FieldTextureKontraption.cpp
         Plot2D/Util/PlotStyleGUI.cpp
         Plot2D/Util/PlotStyleGUI.h
@@ -317,6 +317,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		Window/WindowManager.h
 		OpenGL/GLStateGuard.cpp
 		OpenGL/GLStateGuard.h
+		ImGui/ImGui-Multi-SlabWindow-Wrapper.cpp
+		ImGui/ImGui-Multi-SlabWindow-Wrapper.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

@@ -13,12 +13,12 @@ namespace Slab::Math::Base {
 
     class BoundaryConditions {
 
-        Pointer<const EquationState> prototype;
+        TPointer<const EquationState> prototype;
 
     public:
         virtual ~BoundaryConditions() = default;
 
-        explicit BoundaryConditions(Pointer<const EquationState> prototype);
+        explicit BoundaryConditions(TPointer<const EquationState> prototype);
 
         [[nodiscard]] EquationState_ptr newEqState() const;
 

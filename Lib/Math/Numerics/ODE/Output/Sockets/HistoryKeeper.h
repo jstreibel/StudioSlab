@@ -20,7 +20,7 @@ namespace Slab::Math {
         SpaceFilterBase &spaceFilter;
 
         Vector<DiscreteSpacePair> spaceDataHistory; // pair: phi and dphidt
-        RealVector stepHistory;
+        FRealVector stepHistory;
         size_t count;
         size_t countTotal;
 

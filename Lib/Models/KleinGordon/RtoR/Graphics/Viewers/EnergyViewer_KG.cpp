@@ -9,7 +9,7 @@
 
 namespace Slab::Models {
 
-    KGRtoR::EnergyViewer_KG::EnergyViewer_KG(const Pointer<Graphics::FGUIWindow> &gui_window)
+    KGRtoR::EnergyViewer_KG::EnergyViewer_KG(const TPointer<Graphics::FGUIWindow> &gui_window)
     : KGViewer(gui_window)
     , TotalEnergiesWindow(New<Graphics::FPlot2DWindow>("Energy",      gui_window->GetGUIWindowContext()))
     , TemperaturesWindow (New<Graphics::FPlot2DWindow>("Temperature", gui_window->GetGUIWindowContext()))
@@ -47,7 +47,7 @@ namespace Slab::Models {
 
     }
 
-    void KGRtoR::EnergyViewer_KG::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {
+    void KGRtoR::EnergyViewer_KG::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
         Viewer::SetFunction(function);
 
         Func_Artist->setFunction(getFunction());

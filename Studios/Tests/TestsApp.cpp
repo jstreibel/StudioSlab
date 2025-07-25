@@ -36,7 +36,7 @@ TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::AppBase(argc, argv
 int TestsApp::run() {
     using namespace Slab;
 
-    Pointer<Graphics::GraphicBackend> Backend = nullptr;
+    TPointer<Graphics::GraphicBackend> Backend = nullptr;
 
     if(true) {
         Core::BackendManager::Startup("GLFW");
@@ -52,7 +52,7 @@ int TestsApp::run() {
         WindowManager->AddSlabWindow(New<Tests::VShapeExpansionTest>(), false);
         WindowManager->AddSlabWindow(New<Tests::ModernGLTests>(), false);
         WindowManager->AddSlabWindow(New<Tests::Graph3DTests>(), false);
-        WindowManager->AddSlabWindow(New<Tests::BezierTests>(ImGuiContext), false);
+        WindowManager->AddSlabWindow(New<Tests::FBezierTests>(ImGuiContext), false);
         WindowManager->AddSlabWindow(New<Tests::FourierTestWindow>(), false);
         WindowManager->AddSlabWindow(Tests::GetImGuiTestWindow(), false);
 
@@ -75,7 +75,7 @@ int TestsApp::run() {
         Core::BackendManager::Startup("GLFW");
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
         Backend = guiBackend;
-        guiBackend->GetMainSystemWindow()->AddEventListener(Pointer<Graphics::FPlatformWindowEventListener>(new Tests::NuklearTests()));
+        guiBackend->GetMainSystemWindow()->AddEventListener(TPointer<Graphics::FPlatformWindowEventListener>(new Tests::NuklearTests()));
     }
 
     Backend->Run();

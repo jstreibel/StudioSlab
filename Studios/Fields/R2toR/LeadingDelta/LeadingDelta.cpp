@@ -9,10 +9,10 @@
 #include "Monitor.h"
 
 namespace Studios::Fields::R2toRLeadingDelta {
-    Pointer<RingDeltaFunc> ringDelta1;
+    TPointer<RingDeltaFunc> ringDelta1;
 
-    BoundaryCondition::BoundaryCondition(const Pointer<const R2toR::EquationState>& prototype,
-                                         Pointer<RingDeltaFunc> ringDelta,
+    BoundaryCondition::BoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
+                                         TPointer<RingDeltaFunc> ringDelta,
                                          Real tf,
                                          bool deltaOperatesOnSpeed)
             : Slab::Math::Base::BoundaryConditions(prototype)
@@ -103,7 +103,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
         ringDelta1 = drivingFunc;
     }
 
-    auto Builder::getBoundary() -> Pointer<Base::BoundaryConditions> {
+    auto Builder::getBoundary() -> TPointer<Base::BoundaryConditions> {
         auto eqStatePrototype = newFieldState();
 
         return New<BoundaryCondition>(eqStatePrototype, drivingFunc, *deltaDuration, false);

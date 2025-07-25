@@ -55,7 +55,7 @@ namespace Slab::Math::RtoR {
         return value;
     }
 
-    RealVector VPrime::CalcCoefficients(int N, DevFloat s) {
+    FRealVector VPrime::CalcCoefficients(int N, DevFloat s) {
         Vector<DevFloat> coeffs;
 
         if(!(N%2)) throw Exception(Str(__PRETTY_FUNCTION__) + " works with odd-valued N.");
@@ -116,7 +116,7 @@ namespace Slab::Math::RtoR {
     NonlinearKGPotential::NonlinearKGPotential(DevFloat A, CountType N, DevFloat s)
     : VPrime(A, (int)N, s) {    }
 
-    Pointer<Base::FunctionT<DevFloat, DevFloat>::Type> NonlinearKGPotential::diff(int n) const {
+    TPointer<Base::FunctionT<DevFloat, DevFloat>::Type> NonlinearKGPotential::diff(int n) const {
         if(n!=0) return New<RtoR::NullFunction>();
 
         // The _actual_ derivative (not as \phi^{-1}V(\phi))

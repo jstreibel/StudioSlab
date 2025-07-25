@@ -28,9 +28,9 @@ namespace Slab::Models {
         typedef DevFloat OutCategory;
         typedef Base::NumericFunction<InCategory, OutCategory> Field;
         typedef Base::FunctionT<InCategory, OutCategory> FieldBase;
-        typedef Pointer<Field> Field_ptr;
+        typedef TPointer<Field> Field_ptr;
 
-        KGState(Pointer<Field> phi, Pointer<Field> dPhiDt)
+        KGState(TPointer<Field> phi, TPointer<Field> dPhiDt)
         : phi(phi), dPhiDt(dPhiDt) {}
 
         KGState(const KGState& state)

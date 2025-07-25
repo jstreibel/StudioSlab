@@ -76,7 +76,7 @@ namespace Slab::Graphics {
         NOT_IMPLEMENTED;
     }
 
-    Pointer<GUIContext> FImGuiModule::CreateContext(FOwnerPlatformWindow ParentSystemWindow) {
+    TPointer<GUIContext> FImGuiModule::CreateContext(FOwnerPlatformWindow ParentSystemWindow) {
         auto NewContext = New<FImGuiContext>(CallSet);
 
         // Setup Dear ImGui style

@@ -22,7 +22,7 @@ namespace Slab::Graphics {
 
     constexpr auto KeepRedundantModes = false;
 
-    FourierViewer::FourierViewer(const Pointer<FGUIWindow>& gui_window) : Viewer(gui_window)
+    FourierViewer::FourierViewer(const TPointer<FGUIWindow>& gui_window) : Viewer(gui_window)
     {
         auto ImGuiContextPtr = gui_window->GetGUIWindowContext();
 
@@ -174,8 +174,8 @@ namespace Slab::Graphics {
         WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
-    auto FourierViewer::FilterSpace(const Pointer<const R2toR::FNumericFunction>& func, DevFloat tMin,
-                                    DevFloat tMax) -> Pointer<R2toR::FNumericFunction> {
+    auto FourierViewer::FilterSpace(const TPointer<const R2toR::FNumericFunction>& func, DevFloat tMin,
+                                    DevFloat tMax) -> TPointer<R2toR::FNumericFunction> {
 
         fix t_min = func->getDomain().yMin;
         fix t_max = func->getDomain().yMax;

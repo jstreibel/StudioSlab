@@ -27,9 +27,9 @@ namespace Slab::Models::MolecularDynamics {
     public:
         Recipe();
 
-        auto buildOutputSockets() -> Vector<Pointer<Math::Socket>> override;
+        auto buildOutputSockets() -> Vector<TPointer<Math::Socket>> override;
 
-        auto buildStepper() -> Pointer<Math::Stepper> override;
+        auto buildStepper() -> TPointer<Math::Stepper> override;
 
         auto NotifyCLArgsSetupFinished() -> void override;
 

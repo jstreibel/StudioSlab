@@ -17,33 +17,33 @@
 namespace Slab::Models::KGRtoR {
 
     class HistoryViewer : public KGViewer {
-        Pointer<Graphics::FPlot2DWindow> history_window = nullptr;
-        Pointer<Graphics::FPlot2DWindow> slice_window = nullptr;
+        TPointer<Graphics::FPlot2DWindow> history_window = nullptr;
+        TPointer<Graphics::FPlot2DWindow> slice_window = nullptr;
 
-        Pointer<Graphics::R2toRFunctionArtist> function_artist = nullptr;
-        Pointer<Graphics::R2toRFunctionArtist> ddt_function_artist = nullptr;
-        Pointer<Graphics::R2toRFunctionArtist> d2dt2_function_artist = nullptr;
+        TPointer<Graphics::R2toRFunctionArtist> function_artist = nullptr;
+        TPointer<Graphics::R2toRFunctionArtist> ddt_function_artist = nullptr;
+        TPointer<Graphics::R2toRFunctionArtist> d2dt2_function_artist = nullptr;
 
-        Pointer<Graphics::R2SectionArtist> function_section_artist = nullptr;
-        Pointer<Graphics::R2SectionArtist> ddt_function_section_artist = nullptr;
-        Pointer<Graphics::R2SectionArtist> d2dt2_function_section_artist = nullptr;
+        TPointer<Graphics::R2SectionArtist> function_section_artist = nullptr;
+        TPointer<Graphics::R2SectionArtist> ddt_function_section_artist = nullptr;
+        TPointer<Graphics::R2SectionArtist> d2dt2_function_section_artist = nullptr;
 
-        Pointer<RtoR2::StraightLine> function_section = nullptr;
+        TPointer<RtoR2::StraightLine> function_section = nullptr;
 
-        Pointer<R2toR::FNumericFunction> d2dt2_function = nullptr;
+        TPointer<R2toR::FNumericFunction> d2dt2_function = nullptr;
 
         int oversampling = 12;
         DevFloat dt = -1;
         int curr_ti = 0;
 
     public:
-        explicit HistoryViewer(const Pointer<Graphics::FGUIWindow> &guiWindow);
+        explicit HistoryViewer(const TPointer<Graphics::FGUIWindow> &guiWindow);
 
         Str GetName() const override;
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
-        void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
+        void SetFunction(TPointer<Math::R2toR::FNumericFunction> function) override;
 
         void SetFunctionDerivative(FuncPointer pointer) override;
     };

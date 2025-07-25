@@ -17,7 +17,7 @@
 
 #include "Artists/AxisArtist.h"
 #include "Artists/XHairArtist.h"
-#include "Graphics/ImGui/ImGuiWindow.h"
+#include "Graphics/ImGui/ImGui-SingleSlabWindow-Wrapper.h"
 #include "Graphics/Plot2D/Util/PlottingRegion2D.h"
 #include "Graphics/Plot2D/Artists/BackgroundArtist.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
@@ -97,7 +97,7 @@ namespace Slab::Graphics {
         void TieRegion_xMaxMin(const FPlot2DWindow&);
         void TieRegion_yMaxMin(const FPlot2DWindow&);
 
-        void RequireLabelOverlay(const Str& label, const Pointer<PlotStyle>& style) const;
+        void RequireLabelOverlay(const Str& label, const TPointer<PlotStyle>& style) const;
 
         void SetAnimationTime(float value);
         [[nodiscard]] float GetAnimationTime() const;

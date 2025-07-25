@@ -14,9 +14,9 @@ namespace Slab::Graphics {
 
     public:
 
-        void AddSlabWindow(const Pointer<FSlabWindow>&);
+        void AddSlabWindow(const TPointer<FSlabWindow>&);
 
-        virtual void AddSlabWindow(const Pointer<FSlabWindow>&, bool hidden) = 0;
+        virtual void AddSlabWindow(const TPointer<FSlabWindow>&, bool hidden) = 0;
 
     };
 

@@ -18,7 +18,7 @@ namespace Slab::Core {
         return *instance;
     }
 
-    void FCommandLineInterfaceManager::registerInterface(const Pointer<FCommandLineInterface> &anInterface) {
+    void FCommandLineInterfaceManager::registerInterface(const TPointer<FCommandLineInterface> &anInterface) {
         auto &log = Log::Note();
         log << "InterfaceManager registering interface \"" << Log::FGBlue << anInterface->GetName()
             << Log::ResetFormatting << "\" [ "
@@ -46,8 +46,8 @@ namespace Slab::Core {
             registerInterface(subInterface);
     }
 
-    auto FCommandLineInterfaceManager::getInterfaces() -> Vector<Pointer<const FCommandLineInterface>> {
-        Vector<Pointer<const FCommandLineInterface>> V(interfaces.size());
+    auto FCommandLineInterfaceManager::getInterfaces() -> Vector<TPointer<const FCommandLineInterface>> {
+        Vector<TPointer<const FCommandLineInterface>> V(interfaces.size());
 
         std::copy(interfaces.begin(), interfaces.end(), V.begin());
 
@@ -57,7 +57,7 @@ namespace Slab::Core {
     void FCommandLineInterfaceManager::feedInterfaces(const CLVariablesMap &vm) {
         Log::Critical() << "InterfaceManager started feeding interfaces." << Log::Flush;
 
-        auto comp = [](const Pointer<FCommandLineInterface> &a, const Pointer<FCommandLineInterface> &b) { return *a < *b; };
+        auto comp = [](const TPointer<FCommandLineInterface> &a, const TPointer<FCommandLineInterface> &b) { return *a < *b; };
         std::sort(interfaces.begin(), interfaces.end(), comp);
 
         auto &log = Log::Info();
@@ -117,8 +117,8 @@ namespace Slab::Core {
         return str.ends_with(separator) ? str.substr(0, str.length() - separator.length()) : str;
     }
 
-    auto FCommandLineInterfaceManager::getInterface(const char *target) -> Pointer<const FCommandLineInterface> {
-        auto compFunc = [target](const Pointer<const FCommandLineInterface> &anInterface) { return anInterface->operator==(target); };
+    auto FCommandLineInterfaceManager::getInterface(const char *target) -> TPointer<const FCommandLineInterface> {
+        auto compFunc = [target](const TPointer<const FCommandLineInterface> &anInterface) { return anInterface->operator==(target); };
 
         auto it = std::find_if(interfaces.begin(), interfaces.end(), compFunc);
 
@@ -145,7 +145,7 @@ namespace Slab::Core {
         return values;
     }
 
-    auto FCommandLineInterfaceManager::getParameter(const Str &name) const -> Pointer<const FCommandLineParameter> {
+    auto FCommandLineInterfaceManager::getParameter(const Str &name) const -> TPointer<const FCommandLineParameter> {
         for (const auto &interface: interfaces) {
             auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters) {

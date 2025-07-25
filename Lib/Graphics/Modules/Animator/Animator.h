@@ -30,7 +30,7 @@ namespace Slab::Graphics {
     };
 
     template<typename T>
-    using AnimationMap = std::unordered_map<Pointer<T>, Animation<T>>;
+    using AnimationMap = std::unordered_map<TPointer<T>, Animation<T>>;
 
     class Animator {
         static Animator& Instance();

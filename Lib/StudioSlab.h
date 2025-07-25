@@ -24,7 +24,7 @@ namespace Slab {
         return Run(app);
     }
 
-    Pointer<Core::FBackend> CreatePlatform(Core::FBackendIdentifier);
+    TPointer<Core::FBackend> CreatePlatform(Core::FBackendIdentifier);
 
     template<typename ModuleType = Core::SlabModule>
     ModuleType &GetModule(const Core::FModuleIdentifier &name){

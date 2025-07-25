@@ -11,7 +11,7 @@ namespace Slab::Graphics {
 
     }
 
-    void WindowProxy::setWindow(Pointer<FSlabWindow> win) {
+    void WindowProxy::setWindow(TPointer<FSlabWindow> win) {
         window = std::move(win);
 
         window->NotifyReshape(GetWidth(), GetHeight());

@@ -17,7 +17,7 @@ namespace Slab::Math {
 
     // inline Real sqr(const Real &v){ return v*v; }
 
-    auto RtoRActionMetropolisRecipe::getField() -> Pointer<RtoR::NumericFunction_CPU> {
+    auto RtoRActionMetropolisRecipe::getField() -> TPointer<RtoR::NumericFunction_CPU> {
         if(field_data == nullptr){
             fix t_min=0.;
             fix t=2.;
@@ -34,7 +34,7 @@ namespace Slab::Math {
         // Core::RegisterCLInterface(interface);
     }
 
-    Vector<Pointer<Socket>> RtoRActionMetropolisRecipe::buildOutputSockets() {
+    Vector<TPointer<Socket>> RtoRActionMetropolisRecipe::buildOutputSockets() {
         fix total_steps = getNumericConfig()->getn();
 
         auto console_monitor = New<OutputConsoleMonitor>(total_steps);
@@ -43,7 +43,7 @@ namespace Slab::Math {
         return {console_monitor};
     }
 
-    Pointer<Stepper> RtoRActionMetropolisRecipe::buildStepper() {
+    TPointer<Stepper> RtoRActionMetropolisRecipe::buildStepper() {
         RtoRMetropolisSetup setup;
 
         Temperature T=1E-2;

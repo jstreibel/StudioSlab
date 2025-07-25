@@ -21,7 +21,7 @@ namespace Slab::Graphics {
 
         struct SectionData {
             RtoR2::ParametricCurve_ptr section;
-            Pointer<PlotStyle> style;
+            TPointer<PlotStyle> style;
             Str name;
             bool visible = true;
         };
@@ -37,7 +37,7 @@ namespace Slab::Graphics {
         void setFunction(R2toR::Function_constptr);
         auto getFunction() const -> R2toR::Function_constptr;
 
-        void addSection(const RtoR2::ParametricCurve_ptr&, const Pointer<PlotStyle>&, const Str& name);
+        void addSection(const RtoR2::ParametricCurve_ptr&, const TPointer<PlotStyle>&, const Str& name);
         Vector<SectionData>& getSections();
         void clearSections();
 

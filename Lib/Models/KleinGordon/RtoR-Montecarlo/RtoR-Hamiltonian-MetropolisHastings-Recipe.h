@@ -16,7 +16,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
 
     // Site type is Int (not UInt) to help with periodic BC.
     using RtoRMetropolis = MetropolisAlgorithm<Int, RealPair>;
-    struct FieldPair { Pointer<RtoR::NumericFunction_CPU> ϕ, π; };
+    struct FieldPair { TPointer<RtoR::NumericFunction_CPU> ϕ, π; };
 
     class RtoRHamiltonianMetropolisHastingsRecipe : public Base::NumericalRecipe {
         FieldPair field_data;
@@ -27,9 +27,9 @@ namespace Slab::Models::KGRtoR::Metropolis {
 
         auto getField() -> FieldPair;
 
-        auto buildOutputSockets() -> Vector<Pointer<Socket>> override;
+        auto buildOutputSockets() -> Vector<TPointer<Socket>> override;
 
-        auto buildStepper() -> Pointer<Stepper> override;
+        auto buildStepper() -> TPointer<Stepper> override;
     };
 
 } // Slab::Math

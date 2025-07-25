@@ -45,7 +45,7 @@ namespace Slab::Graphics {
 
         [[nodiscard]] bool SetupViewport(const FPlatformWindow& PlatformWindow) const;
 
-        Pointer<FMouseState> MouseState;
+        TPointer<FMouseState> MouseState;
 
     protected:
         FSlabWindowConfig Config;
@@ -93,7 +93,7 @@ namespace Slab::Graphics {
         [[nodiscard]] auto IsActive()                    const -> bool;
         [[nodiscard]] auto WantsFullscreen()             const -> bool;
 
-        [[nodiscard]] auto GetMouseState()               const -> Pointer<const FMouseState>;
+        [[nodiscard]] auto GetMouseState()               const -> TPointer<const FMouseState>;
         [[nodiscard]] auto IsMouseInside()               const -> bool;
         [[nodiscard]] auto GetMouseViewportCoord()       const -> Point2D;
         [[nodiscard]] virtual

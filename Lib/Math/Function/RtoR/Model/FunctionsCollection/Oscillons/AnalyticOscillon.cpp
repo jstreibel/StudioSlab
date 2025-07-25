@@ -61,7 +61,7 @@ namespace Slab::Math::RtoR {
         return s1 * l * l * psi(t0 / l, (s2 * x - x0) / l, v, -u);
     }
 
-    auto AnalyticOscillon::Clone() const -> Pointer<FunctionT> {
+    auto AnalyticOscillon::Clone() const -> TPointer<FunctionT> {
         return New<AnalyticOscillon>(*this);
     }
 

@@ -17,7 +17,7 @@ namespace Slab::Models::MolecularDynamics {
 
     public:
         using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
-        SoftDisk(Pointer<Config> config, DevFloat T);
+        SoftDisk(TPointer<Config> config, DevFloat T);
 
         static DevFloat U(DevFloat r);
     };

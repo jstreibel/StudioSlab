@@ -18,7 +18,7 @@ namespace Slab::Math::RtoR {
         void Compute(const RealArray &, int nbins=100);
         void Compute(RtoR::NumericFunction_constptr func, int nBins = 100);
 
-        Pointer<RtoR::Function> asPDFFunction() const;
+        TPointer<RtoR::Function> asPDFFunction() const;
 
         auto asPDFPointSet(bool beautiful = true) const -> PointSet_ptr;
 
@@ -32,7 +32,7 @@ namespace Slab::Math::RtoR {
 
     private:
         unsigned long count;
-        RealVector bins;
+        FRealVector bins;
 
     };
 

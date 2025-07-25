@@ -21,11 +21,11 @@ namespace Slab::Math::RtoR {
         return Vp;
     }
 
-    Pointer<Base::FunctionT<DevFloat, DevFloat>> AbsPerturbedDiffFunction::diff(int n) const {
+    TPointer<Base::FunctionT<DevFloat, DevFloat>> AbsPerturbedDiffFunction::diff(int n) const {
         return New<AbsPerturbedDiffFunction>(Ns);
     }
 
-    Pointer<Base::FunctionT<DevFloat,DevFloat>> AbsPerturbedDiffFunction::Clone() const {
+    TPointer<Base::FunctionT<DevFloat,DevFloat>> AbsPerturbedDiffFunction::Clone() const {
         return New<AbsPerturbedDiffFunction>(Ns);
     }
 
@@ -45,11 +45,11 @@ namespace Slab::Math::RtoR {
         return V;
     }
 
-    Pointer<Base::FunctionT<DevFloat, DevFloat>> AbsPerturbedFunction::diff(int n) const {
+    TPointer<Base::FunctionT<DevFloat, DevFloat>> AbsPerturbedFunction::diff(int n) const {
         return New<AbsPerturbedDiffFunction>(Ns);
     }
 
-    Pointer<Base::FunctionT<DevFloat,DevFloat>> AbsPerturbedFunction::Clone() const {
+    TPointer<Base::FunctionT<DevFloat,DevFloat>> AbsPerturbedFunction::Clone() const {
         return New<AbsPerturbedFunction>(Ns);
     }
 

@@ -32,7 +32,7 @@ namespace Slab::Graphics {
         void setMode(int);
         void setTexelSize(const Math::Real2D&);
 
-        void setFieldDataTexture(Pointer<OpenGL::Texture2D_Real> pointer) override;
+        void setFieldDataTexture(TPointer<OpenGL::Texture2D_Real> pointer) override;
 
     };
 

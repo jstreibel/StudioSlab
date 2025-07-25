@@ -14,11 +14,11 @@ namespace Modes {
 
     using Log = Core::Log;
 
-    RealVector remove_first_column(RealVector &vec, Int N, Int M) {
+    FRealVector remove_first_column(FRealVector &vec, Int N, Int M) {
         assert(vec.size()/N==M);
 
         auto N_new = N-1;
-        RealVector new_vec(N_new * M);
+        FRealVector new_vec(N_new * M);
 
         // Iterate over each row
         for (int j = 0; j < M; ++j) {
@@ -32,7 +32,7 @@ namespace Modes {
         return new_vec;
     }
 
-    auto HistoryFileLoader::Load(const Str &filename) -> Pointer<Math::R2toR::NumericFunction_CPU> {
+    auto HistoryFileLoader::Load(const Str &filename) -> TPointer<Math::R2toR::NumericFunction_CPU> {
         fix base_msg = Str("Error opening file '") + filename + "'";
 
         if(!std::filesystem::exists(filename)) throw Exception(base_msg + ": file does not exist.");
@@ -108,7 +108,7 @@ namespace Modes {
 
         size_t timestamp_size = lines_contain_timestamp ? 1 : 0;
         size_t data_count = (N+timestamp_size)*M;
-        RealVector double_data(data_count);
+        FRealVector double_data(data_count);
 
         if(dataType == fp32){
             auto type_size = sizeof(float);

@@ -14,7 +14,7 @@ namespace Slab::Math {
     using UniqueID = CountType;
     using DataType = Str;
     using DataName = Str;
-    using DataChangeCallback = std::function<void(Pointer<Data>)>;
+    using DataChangeCallback = std::function<void(TPointer<Data>)>;
 
     enum DataBehavior {
         MutableData,
@@ -61,7 +61,7 @@ namespace Slab::Math {
         DataType get_type() const;
 
         virtual auto
-        get_data() const -> Pointer<Data>;
+        get_data() const -> TPointer<Data>;
 
         bool is_valid() const;
 

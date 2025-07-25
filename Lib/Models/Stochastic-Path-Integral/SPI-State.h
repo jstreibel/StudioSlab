@@ -11,9 +11,9 @@
 namespace Slab::Models::StochasticPathIntegrals {
 
     class SPIState final : public Math::Base::EquationState {
-        Pointer<Math::R2toR::FNumericFunction> data;
+        TPointer<Math::R2toR::FNumericFunction> data;
     public:
-        explicit SPIState(Pointer<Math::R2toR::FNumericFunction> data);
+        explicit SPIState(TPointer<Math::R2toR::FNumericFunction> data);
 
         EquationState & StoreAddition(const EquationState &, const EquationState &) override;
 
@@ -29,13 +29,13 @@ namespace Slab::Models::StochasticPathIntegrals {
 
         [[nodiscard]] auto category() const -> Str override;
 
-        [[nodiscard]] auto replicate() const -> Pointer<EquationState> override;
+        [[nodiscard]] auto replicate() const -> TPointer<EquationState> override;
 
-        [[nodiscard]] auto getPhi() const -> Pointer<Math::R2toR::FNumericFunction>;
-        [[nodiscard]] auto getPhi() -> Pointer<Math::R2toR::FNumericFunction>;
+        [[nodiscard]] auto getPhi() const -> TPointer<Math::R2toR::FNumericFunction>;
+        [[nodiscard]] auto getPhi() -> TPointer<Math::R2toR::FNumericFunction>;
 
         auto setData(const EquationState &) -> void override;
-        [[nodiscard]] auto cloneData() const -> Pointer<Math::R2toR::FNumericFunction>;
+        [[nodiscard]] auto cloneData() const -> TPointer<Math::R2toR::FNumericFunction>;
     };
 
 } // StochasticPathIntegral::Models::Slab

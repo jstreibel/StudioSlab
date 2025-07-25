@@ -26,7 +26,7 @@ namespace Studios::Fields::RtoRThermal {
         if(doRegister) RegisterToManager();
     }
 
-    auto Builder::buildSolver() -> Pointer<Base::LinearStepSolver> {
+    auto Builder::buildSolver() -> TPointer<Base::LinearStepSolver> {
         if(!(*temperature>0)) {
             Log::Info() << "Temperature is set to ZERO. Using usual non-stochastic Klein-Gordon solver." << Log::Flush;
             return KGRtoR::KGRtoRBuilder::buildSolver();

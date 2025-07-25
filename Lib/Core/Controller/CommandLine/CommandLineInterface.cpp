@@ -25,23 +25,23 @@ namespace Slab::Core {
         Log::Note() << "Interface '" << Log::FGGreen << Name << Log::ResetFormatting << "' created. " << Log::Flush;
     }
 
-    auto FCommandLineInterface::GetParameters() const -> Vector<Pointer<const FCommandLineParameter>> {
-        Vector<Pointer<const FCommandLineParameter>> constParameters;
+    auto FCommandLineInterface::GetParameters() const -> Vector<TPointer<const FCommandLineParameter>> {
+        Vector<TPointer<const FCommandLineParameter>> constParameters;
 
         std::copy(Parameters.begin(), Parameters.end(), std::back_inserter(constParameters));
 
         return constParameters;
     }
 
-    auto FCommandLineInterface::GetSubInterfaces() const -> Vector<Pointer<FCommandLineInterface>> {
-        Vector<Pointer<FCommandLineInterface>> interfaces;
+    auto FCommandLineInterface::GetSubInterfaces() const -> Vector<TPointer<FCommandLineInterface>> {
+        Vector<TPointer<FCommandLineInterface>> interfaces;
 
         std::copy(SubInterfaces.begin(), SubInterfaces.end(), std::back_inserter(interfaces));
 
         return interfaces;
     }
 
-    void FCommandLineInterface::AddParameter(const Pointer<FCommandLineParameter>& parameter) {
+    void FCommandLineInterface::AddParameter(const TPointer<FCommandLineParameter>& parameter) {
         auto insertionSuccessful = Parameters.insert(parameter).second;
 
         if (!insertionSuccessful) {
@@ -53,18 +53,18 @@ namespace Slab::Core {
                     << "\".";
     }
 
-    void FCommandLineInterface::AddParameters(const List<Pointer<FCommandLineParameter>>& parametersList) {
+    void FCommandLineInterface::AddParameters(const TList<TPointer<FCommandLineParameter>>& parametersList) {
         for (const auto& param: parametersList)
             AddParameter(param);
     }
 
-    void FCommandLineInterface::AddParameters(const List<FCommandLineParameter *>& parametersList) {
+    void FCommandLineInterface::AddParameters(const TList<FCommandLineParameter *>& parametersList) {
         for (const auto param: parametersList)
             AddParameter(Naked(*param));
     }
 
 
-    void FCommandLineInterface::AddSubInterface(const Pointer<FCommandLineInterface>& subInterface) {
+    void FCommandLineInterface::AddSubInterface(const TPointer<FCommandLineInterface>& subInterface) {
         if (Contains(SubInterfaces, subInterface))
             throw Exception(Str("Error while inserting sub-interface '") + subInterface->GetName()
                   + Str("' in interface '") + this->GetName() + Str("': interface contains sub interface already"));
@@ -80,8 +80,8 @@ namespace Slab::Core {
         return Description != "<empty>" ? Description : "";
     }
 
-    auto FCommandLineInterface::GetParameter(const Str& key) const -> Pointer<FCommandLineParameter> {
-        auto compareFunc = [key](const Pointer<FCommandLineParameter>& parameter) {
+    auto FCommandLineInterface::GetParameter(const Str& key) const -> TPointer<FCommandLineParameter> {
+        auto compareFunc = [key](const TPointer<FCommandLineParameter>& parameter) {
             return *parameter == key;
         };
 

@@ -15,10 +15,10 @@ namespace Slab::Graphics {
 
     struct FImGuiWindowContext
     {
-        explicit FImGuiWindowContext(const Pointer<FImGuiContext>& Context, const Str& WindowId="")
+        explicit FImGuiWindowContext(const TPointer<FImGuiContext>& Context, const Str& WindowId="")
         : Context(Context), WindowId(WindowId) { }
 
-        Pointer<FImGuiContext> Context;
+        TPointer<FImGuiContext> Context;
         Str WindowId;
     };
 
@@ -26,8 +26,8 @@ namespace Slab::Graphics {
         static Atomic<CountType> Count;
         Str Id;
 
-        Pointer<FSlabWindow> SlabWindow;
-        Pointer<FImGuiContext> Context;
+        TPointer<FSlabWindow> SlabWindow;
+        TPointer<FImGuiContext> Context;
 
         /**
          * Thread carefully, o lander
@@ -44,7 +44,7 @@ namespace Slab::Graphics {
          * @param Context The ImGui context within which to show this window. If nullptr, then the
          * main context from the main window is used.
          */
-        explicit FSlabWindow_ImGuiWrapper(Pointer<FSlabWindow> SlabWindow, Pointer<FImGuiContext> Context);
+        explicit FSlabWindow_ImGuiWrapper(TPointer<FSlabWindow> SlabWindow, TPointer<FImGuiContext> Context);
 
         auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
 };

@@ -14,7 +14,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    HistoryViewer::HistoryViewer(const Pointer<Graphics::FGUIWindow> &gui_window)
+    HistoryViewer::HistoryViewer(const TPointer<Graphics::FGUIWindow> &gui_window)
     : KGViewer(gui_window)
     {
         history_window = New<Graphics::FPlot2DWindow>("Function", gui_window->GetGUIWindowContext());
@@ -58,7 +58,7 @@ namespace Slab::Models::KGRtoR {
         WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void HistoryViewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {
+    void HistoryViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
         Viewer::SetFunction(function);
 
         dt = function->getDomain().getLy() / (DevFloat)function->getM();

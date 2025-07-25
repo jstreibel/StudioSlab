@@ -24,7 +24,7 @@ namespace Slab::Graphics {
         void Terminate() override;
 
     protected:
-        Pointer<FPlatformWindow> CreatePlatformWindow(const Str &title) override;
+        TPointer<FPlatformWindow> CreatePlatformWindow(const Str &title) override;
 
     public:
 

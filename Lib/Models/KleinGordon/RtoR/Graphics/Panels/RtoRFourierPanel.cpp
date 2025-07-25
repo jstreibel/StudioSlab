@@ -17,7 +17,7 @@ namespace Slab::Models::KGRtoR {
 
     constexpr auto NoModeDiscard = false;
 
-    RtoRFourierPanel::RtoRFourierPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, FGUIWindow &guiWindow)
+    RtoRFourierPanel::RtoRFourierPanel(const TPointer<KGNumericConfig> &params, KGEnergy &hamiltonian, FGUIWindow &guiWindow)
     : FRtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params->gett()+10.0})
     {
@@ -169,7 +169,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void
-    RtoRFourierPanel::SetSpaceFourierHistory(Pointer<const R2toR::FNumericFunction>
+    RtoRFourierPanel::SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction>
  sftHistory,
                                              const FDFTDataHistory &dftDataHistory,
                                              const R2toRFunctionArtist_ptr &dftFunctionArtist) {
@@ -257,7 +257,7 @@ namespace Slab::Models::KGRtoR {
         ωSpaceArtist->SetLabel(Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
     }
 
-    void RtoRFourierPanel::SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
+    void RtoRFourierPanel::SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
  simulationHistory,
                                                 const R2toRFunctionArtist_ptr &simHistoryArtist) {
         FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryArtist);
@@ -309,8 +309,8 @@ namespace Slab::Models::KGRtoR {
         powerArtist->setFunction(powerSpectrum);
     }
 
-    Pointer<R2toR::FNumericFunction>
-    RtoRFourierPanel::FilterSpace(Pointer<const R2toR::FNumericFunction> func, DevFloat tMin, DevFloat tMax) {
+    TPointer<R2toR::FNumericFunction>
+    RtoRFourierPanel::FilterSpace(TPointer<const R2toR::FNumericFunction> func, DevFloat tMin, DevFloat tMax) {
         fix N = func->getN();
         fix xMin = func->getDomain().xMin;
         fix dx = func->getDomain().getLx()/N;

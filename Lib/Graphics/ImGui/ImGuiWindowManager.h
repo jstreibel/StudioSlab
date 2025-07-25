@@ -5,7 +5,7 @@
 #ifndef IMGUI_WINDOW_MANAGER_H
 #define IMGUI_WINDOW_MANAGER_H
 
-#include "ImGuiWindow.h"
+#include "ImGui-SingleSlabWindow-Wrapper.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "Graphics/Window/WindowManager.h"
 
@@ -14,16 +14,16 @@ namespace Slab::Graphics {
     class FImGuiWindowManager final : public FWindowManager {
 
     public:
-        explicit FImGuiWindowManager(const Pointer<FImGuiContext>& Context=nullptr);
+        explicit FImGuiWindowManager(const TPointer<FImGuiContext>& Context=nullptr);
 
-        void AddSlabWindow(const Pointer<FSlabWindow>&, bool Hidden) override;
+        void AddSlabWindow(const TPointer<FSlabWindow>&, bool Hidden) override;
         bool NotifyRender(const FPlatformWindow&) override;
 
     private:
         FImGuiWindowManager() = delete;
 
-        Vector<Pointer<FSlabWindow_ImGuiWrapper>> Windows;
-        Pointer<FImGuiContext> Context;
+        Vector<TPointer<FSlabWindow_ImGuiWrapper>> Windows;
+        TPointer<FImGuiContext> Context;
     };
 
 } // Slab::Graphics
