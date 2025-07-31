@@ -23,7 +23,7 @@ namespace Slab::Graphics {
             bool operator<=(const WindowMetaInformation &rhs) const;
             bool operator>=(const WindowMetaInformation &rhs) const;
             bool operator==(const WindowMetaInformation &rhs) const;
-            bool operator==(const nullptr_t &rhs) const;
+            bool operator==(const std::nullptr_t &rhs) const;
         };
 
         List<Pointer<WindowMetaInformation>> slab_windows;

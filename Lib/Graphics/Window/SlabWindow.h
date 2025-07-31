@@ -5,8 +5,6 @@
 #ifndef V_SHAPE_WINDOW_H
 #define V_SHAPE_WINDOW_H
 
-#include <crude_json.h>
-
 #include "Graphics/Styles/Colors.h"
 
 #include "Graphics/Backend/Events/MouseState.h"

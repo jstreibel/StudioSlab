@@ -4,7 +4,6 @@
 
 #include "SystemWindowEventListener.h"
 
-#include <crude_json.h>
 #include <Core/Tools/Log.h>
 
 #include "Utils/ReferenceIterator.h"
