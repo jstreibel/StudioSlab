@@ -81,3 +81,6 @@ Studios/.DEPR_UNTRACKED_MEMORABLE_SOURCES
 /Slab/bin/R2toR-sw-=1.000000-=0.000000-=1.000000-=0.000000-=0.000000-N=1024.oscb
 /Slab/bin/RtoR--E=1.000000-n=100-N=1024.oscb
 /Slab/bin/RtoR--v=0.000000-V=0.000000-alpha=0.000000-asym=False-N=1024.oscb
+Build/
+cmake-build-debug-no-gpu/
+cmake-build-release-no-gpu/
