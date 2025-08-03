@@ -103,7 +103,7 @@ for n in range(n_min, n_max+1):
 
     k = n*dk
     omega = n*dohm
-    mass_sqr = 1
+    mass_sqr = 0
 
     if args.adjust_omega_to_mass:
         if V == SignumGordonPotential:

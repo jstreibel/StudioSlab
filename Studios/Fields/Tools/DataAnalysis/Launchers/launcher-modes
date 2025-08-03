@@ -85,7 +85,8 @@ f = '{:.6f}'.format
 for omega in unique(linspace(omega_min, omega_max, omega_steps)):
     for k in unique(linspace(k_min, k_max, k_steps)):
 
-        arg_list = ["RtoR-Modes",
+        arg_list = ["Fields-RtoR-Modes",
+                    '--dev=0',
                     '-t' + f(t), '-L' + f(L), '-N'+str(N),
                     '-A' + f(A),
                     '--omega='+f(omega),
