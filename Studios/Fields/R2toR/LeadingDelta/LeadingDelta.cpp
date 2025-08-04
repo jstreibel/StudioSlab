@@ -20,7 +20,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
             , tf(tf)
             , deltaSpeedOp(deltaOperatesOnSpeed) { }
 
-    void BoundaryCondition::apply(Slab::Math::Base::EquationState &state, Real t) const {
+    void BoundaryCondition::Apply(Slab::Math::Base::EquationState &state, Real t) const {
         const bool applyDelta = t<tf || tf<0;
 
         auto stateKG = dynamic_cast<Slab::Math::R2toR::EquationState&>(state);
@@ -29,8 +29,8 @@ namespace Studios::Fields::R2toRLeadingDelta {
             RtoR::NullFunction nullFunction;
             R2toR::FunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
 
-            stateKG.setPhi(fullNull);
-            stateKG.setDPhiDt(fullNull);
+            stateKG.SetPhi(fullNull);
+            stateKG.SetDPhiDt(fullNull);
         } else {
             if(!applyDelta) {
                 auto a = ringDelta->getA();
@@ -82,12 +82,12 @@ namespace Studios::Fields::R2toRLeadingDelta {
     Builder::Builder(bool do_register) : Models::KGR2toR::Builder("Leading Delta", "simulation builder for (2+1)-d "
                                                                      "signum-Gordon shockwave as the "
                                                                      "trail of a driving delta.", false) {
-        interface->addParameters({&W_0, &eps, &deltaDuration});
+        Interface->addParameters({&W_0, &eps, &deltaDuration});
 
         if(do_register) registerToManager();
     }
-    auto Builder::notifyCLArgsSetupFinished()    ->       void {
-        CLInterfaceOwner::notifyCLArgsSetupFinished();
+    auto Builder::NotifyCLArgsSetupFinished()    ->       void {
+        CLInterfaceOwner::NotifyCLArgsSetupFinished();
 
         auto &p = *kg_numeric_config;
         const Real L = p.getL();
@@ -113,10 +113,10 @@ namespace Studios::Fields::R2toRLeadingDelta {
         return new OutGL(kg_numeric_config->getn(), ringDelta1);
     }
 
-    Str Builder::suggestFileName() const {
-        auto fname = NumericalRecipe::suggestFileName();
+    Str Builder::SuggestFileName() const {
+        auto fname = NumericalRecipe::SuggestFileName();
 
-        return fname + " " + interface->toString({"W", "eps", "delta_duration"});
+        return fname + " " + Interface->ToString({"W", "eps", "delta_duration"});
     }
 
     void *Builder::getHamiltonian() {

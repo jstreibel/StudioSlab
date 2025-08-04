@@ -49,7 +49,7 @@ namespace Slab::Models {
 
         auto geth() const -> Real;
 
-        auto notifyCLArgsSetupFinished() -> void override;
+        auto NotifyCLArgsSetupFinished() -> void override;
 
 
     };

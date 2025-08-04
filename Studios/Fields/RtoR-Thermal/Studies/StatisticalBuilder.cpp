@@ -20,7 +20,7 @@ namespace Studios::Fields::RtoRThermal {
 
     StatisticalBuilder::StatisticalBuilder()
             : Builder("Statistical", "Energy and density of oscillons statistical input") {
-        interface->addParameters({&E, &n});
+        Interface->addParameters({&E, &n});
     }
 
     auto StatisticalBuilder::getDetailedDescription() -> Str {
@@ -34,7 +34,7 @@ namespace Studios::Fields::RtoRThermal {
                    "on a bath of small oscillons (some sort of thermal equilibrium) could find subsidy to remain stable.");
     }
 
-    auto StatisticalBuilder::getBoundary() -> Base::BoundaryConditions_ptr {
+    auto StatisticalBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
         auto L = kg_numeric_config->getL();
         auto xLeft = kg_numeric_config->getxMin();
 
@@ -59,7 +59,7 @@ namespace Studios::Fields::RtoRThermal {
                     << " and total energy E=" << *n*(2*a*a/(3.*ε)) << Log::Flush;
 
         using namespace Slab::Models::KGRtoR;
-        auto proto = newFieldState();
+        auto proto = NewFieldState();
         return New<KGRtoR::BoundaryCondition>(proto, RtoR::NullFunction().Clone(), dPhidt0.Clone());
     }
 

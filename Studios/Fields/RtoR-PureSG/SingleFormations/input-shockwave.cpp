@@ -13,10 +13,10 @@
 namespace Studios::PureSG {
 
     InputShockwave::InputShockwave() : Builder("1d shockwave", "Shockwave in 1-dim") {
-        interface->addParameters({Naked(a0), Naked(E)});
+        Interface->addParameters({Naked(a0), Naked(E)});
     }
 
-    auto InputShockwave::getBoundary() -> Math::Base::BoundaryConditions_ptr {
+    auto InputShockwave::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
         //deltaType = vm["delta"].as<unsigned int>();
 
         auto a = 2 * a0.getValue();
@@ -24,7 +24,7 @@ namespace Studios::PureSG {
         const Real eps = a * a / (3 * E.getValue());
 
         Slab::Math::RtoR::AnalyticShockwave1D shockwave1D(*a0);
-        auto proto = newFieldState();
+        auto proto = NewFieldState();
         auto reggy = RtoR::RegularDiracDelta::Regularization(deltaType);
         auto DiracMateyMate = New <RtoR::RegularDiracDelta> (eps, a, reggy);
 

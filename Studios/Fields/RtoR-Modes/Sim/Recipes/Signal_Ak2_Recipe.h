@@ -19,16 +19,16 @@ namespace Modes {
         RealParameter omega          = RealParameter(1.0, "w,omega", "Angular frequency 'ω=2πT' of input signal.");
 
     protected:
-        auto buildOpenGLOutput() -> void * override;
+        auto BuildOpenGLOutput() -> void * override;
 
     public:
-        auto suggestFileName() const -> Str override;
+        auto SuggestFileName() const -> Str override;
 
         explicit Signal_Ak2_Recipe(bool doRegister=true);
 
-        auto getBoundary() -> Base::BoundaryConditions_ptr override;
+        auto GetBoundary() -> Base::BoundaryConditions_ptr override;
 
-        auto notifyCLArgsSetupFinished() -> void override;
+        auto NotifyCLArgsSetupFinished() -> void override;
     };
 
 } // Modes

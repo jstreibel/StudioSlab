@@ -30,7 +30,7 @@ namespace Slab::Models {
         auto gett() const -> Real;
         auto sett(Real) -> void;
 
-        auto notifyCLArgsSetupFinished() -> void override;
+        auto NotifyCLArgsSetupFinished() -> void override;
     };
 
 } // Models

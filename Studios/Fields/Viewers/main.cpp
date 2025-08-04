@@ -46,8 +46,8 @@ public:
     App(int argc, const char **argv)
             : AppBase(argc, argv, false)
     {
-        interface->addParameters({&filename});
-        Core::RegisterCLInterface(interface);
+        Interface->addParameters({&filename});
+        Core::RegisterCLInterface(Interface);
 
         Core::BackendManager::Startup("GLFW");
 

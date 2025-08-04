@@ -21,21 +21,21 @@ namespace Slab::Math::Base {
     NumericalRecipe::NumericalRecipe(const Pointer<NumericConfig>& numeric_config, const Str &name,
                                      const Str& generalDescription, bool doRegister)
             : CLInterfaceOwner(name, 100, DONT_REGISTER), numeric_config(numeric_config), name(name) {
-        interface->addSubInterface(numeric_config->getInterface());
+        Interface->addSubInterface(numeric_config->getInterface());
 
         if (doRegister) {
-            Core::RegisterCLInterface(interface);
+            Core::RegisterCLInterface(Interface);
         }
 
-        Core::Log::Status() << "SimulationBuilder '" << interface->getName() << "': \""
-                      << interface->getGeneralDescription() << "\" instantiated." << Core::Log::Flush;
+        Core::Log::Status() << "SimulationBuilder '" << Interface->getName() << "': \""
+                      << Interface->getGeneralDescription() << "\" instantiated." << Core::Log::Flush;
     }
 
     auto NumericalRecipe::getNumericConfig() const -> const Pointer<NumericConfig> & {
         return numeric_config;
     }
 
-    Str NumericalRecipe::suggestFileName() const {
+    Str NumericalRecipe::SuggestFileName() const {
         return name + " " + numeric_config->to_string();
     }
 

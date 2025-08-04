@@ -31,7 +31,7 @@ namespace Slab::Models::MolecularDynamics {
 
         auto buildStepper() -> Pointer<Math::Stepper> override;
 
-        auto notifyCLArgsSetupFinished() -> void override;
+        auto NotifyCLArgsSetupFinished() -> void override;
 
     };
 

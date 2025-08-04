@@ -65,7 +65,7 @@ namespace Slab::Core {
             Log::Note() << "Logging system initiated." << Log::Flush;
 
             me->LateStart("Log Manager", -10);
-            me->interface->addParameters({me->logDebug, me->logNotes, me->verbose});
+            me->Interface->addParameters({me->logDebug, me->logNotes, me->verbose});
         }
 
         return *Log::myInstance;
@@ -199,8 +199,8 @@ namespace Slab::Core {
         *Log::GetSingleton().mainStream << Log::Flush;
     }
 
-    void Log::notifyCLArgsSetupFinished() {
-        CLInterfaceOwner::notifyCLArgsSetupFinished();
+    void Log::NotifyCLArgsSetupFinished() {
+        CLInterfaceOwner::NotifyCLArgsSetupFinished();
 
 
 #if !FORCE_VERBOSE

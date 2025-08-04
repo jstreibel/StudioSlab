@@ -17,7 +17,7 @@ class App : public Slab::Core::AppBase {
 public:
     App(int argc, const char **argv) : AppBase(argc, argv, false) {
         // interface->addParameters({&snapshotDBFolders, &criticalParameter});
-        Slab::Core::RegisterCLInterface(interface);
+        Slab::Core::RegisterCLInterface(Interface);
 
         Slab::Core::BackendManager::Startup("GLFW");
 

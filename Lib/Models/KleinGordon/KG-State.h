@@ -31,17 +31,17 @@ namespace Slab::Models {
         typedef Pointer<Field> Field_ptr;
 
         KGState(Pointer<Field> phi, Pointer<Field> dPhiDt)
-        : phi(phi), dPhiDt(dPhiDt) {}
+        : Phi(phi), dPhiDt(dPhiDt) {}
 
         KGState(const KGState& state)
-        : KGState(state.phi, state.dPhiDt) {};
+        : KGState(state.Phi, state.dPhiDt) {};
 
-        virtual ~KGState() = default;
+        ~KGState() override = default;
 
         State &Add(const State &state) override {
             auto &kgState = dynamic_cast<const KGState&>(state);
 
-            phi   ->Add(kgState.getPhi());
+            Phi   ->Add(kgState.getPhi());
             dPhiDt->Add(kgState.getDPhiDt());
 
             return *this;
@@ -49,7 +49,7 @@ namespace Slab::Models {
         State &Subtract(const State &state) override {
             auto &kgState = dynamic_cast<const KGState&>(state);
 
-            phi   ->Subtract(kgState.getPhi());
+            Phi   ->Subtract(kgState.getPhi());
             dPhiDt->Subtract(kgState.getDPhiDt());
 
             return *this;
@@ -58,13 +58,13 @@ namespace Slab::Models {
             auto &kgState1 = dynamic_cast<const KGState&>(state1);
             auto &kgState2 = dynamic_cast<const KGState&>(state2);
 
-            phi->StoreAddition(kgState1.getPhi(), kgState2.getPhi());
+            Phi->StoreAddition(kgState1.getPhi(), kgState2.getPhi());
             dPhiDt->StoreAddition(kgState1.getDPhiDt(), kgState2.getDPhiDt());
 
             return *this;
         }
         State &Multiply(floatt a) override {
-            phi->Multiply(a);
+            Phi->Multiply(a);
             dPhiDt->Multiply(a);
 
             return *this;
@@ -73,14 +73,14 @@ namespace Slab::Models {
             auto &kgState1 = dynamic_cast<const KGState&>(state1);
             auto &kgState2 = dynamic_cast<const KGState&>(state2);
 
-            phi->StoreSubtraction(kgState1.getPhi(), kgState2.getPhi());
+            Phi->StoreSubtraction(kgState1.getPhi(), kgState2.getPhi());
             dPhiDt->StoreSubtraction(kgState1.getDPhiDt(), kgState2.getDPhiDt());
 
             return *this;
         }
         State &StoreScalarMultiplication(const State &state, const Real a) override {
             auto &kgState = dynamic_cast<const KGState&>(state);
-            phi->StoreScalarMultiplication(kgState.getPhi(), a);
+            Phi->StoreScalarMultiplication(kgState.getPhi(), a);
             dPhiDt->StoreScalarMultiplication(kgState.getDPhiDt(), a);
 
             return *this;
@@ -89,26 +89,26 @@ namespace Slab::Models {
         void setData(const State &state) override {
             auto &kgState = dynamic_cast<const KGState&>(state);
 
-            setPhi(kgState.getPhi());
-            setDPhiDt(kgState.getDPhiDt());
+            SetPhi(kgState.getPhi());
+            SetDPhiDt(kgState.getDPhiDt());
         }
 
         /*! Basicamente utilizado por BoundaryConditions */
-        void setPhi(const FieldBase &function) {
-            phi->Set(function);
+        void SetPhi(const FieldBase &function) {
+            Phi->Set(function);
         }
         /*! Basicamente utilizado por BoundaryConditions */
-        void setDPhiDt(const FieldBase &function) {
+        void SetDPhiDt(const FieldBase &function) {
             dPhiDt->Set(function);
         }
 
-        Field &getPhi() { return *phi; }
-        Field &getPhi() const { return *phi; }
+        Field &getPhi() { return *Phi; }
+        Field &getPhi() const { return *Phi; }
         Field &getDPhiDt() { return *dPhiDt; }
         Field &getDPhiDt() const { return *dPhiDt; }
 
         void outputPhi(OStream &out, Str separator) const override {
-            DiscreteSpace &space = phi->getSpace();
+            DiscreteSpace &space = Phi->getSpace();
 
             const UInt N = space.getTotalDiscreteSites();
             const RealArray &vec = space.getHostData(true);
@@ -127,7 +127,7 @@ namespace Slab::Models {
         }
 
     protected:
-        Field_ptr phi;
+        Field_ptr Phi;
         Field_ptr dPhiDt;
     };
 

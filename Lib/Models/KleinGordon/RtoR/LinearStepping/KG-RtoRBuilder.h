@@ -11,7 +11,6 @@
 #include "Math/Function/RtoR/Model/RtoRNumericFunction.h"
 
 #include "KG-RtoRBoundaryCondition.h"
-#include "Math/Numerics/ODE/Solver/EquationState.h"
 
 
 namespace Slab::Models::KGRtoR {
@@ -36,24 +35,23 @@ namespace Slab::Models::KGRtoR {
         Vector<Pointer<Socket>> getTimeDFTSnapshots();
         auto _newTimeDFTSnapshotOutput(const Str& folder, Real t_start, Real t_end, const RealVector &x_locations) const -> Pointer<Socket>;
 
-        virtual auto buildOpenGLOutput() -> void*;
+        virtual auto BuildOpenGLOutput() -> void*;
 
-        void setLaplacianPeriodicBC();    // Gambiarris
-        void setLaplacianFixedBC();       // Gambiarris
-        bool usesPeriodicBC() const;      // Gambiarris
-
-    public:
-        auto suggestFileName() const -> Str override;
+        void SetLaplacianPeriodicBC();    // Gambiarris
+        void SetLaplacianFixedBC();       // Gambiarris
+        [[nodiscard]] bool usesPeriodicBC() const;      // Gambiarris
 
     public:
+        [[nodiscard]] auto SuggestFileName() const -> Str override;
+
         explicit KGRtoRBuilder(const Str& name,
                            const Str& generalDescription,
                            bool doRegister=false);
 
-        virtual ~KGRtoRBuilder() = default;
+        ~KGRtoRBuilder() override = default;
 
-        RtoR::Function_ptr getPotential() const;
-        virtual Pointer<Base::FunctionT<Real, Real>> getNonHomogenous();
+        [[nodiscard]] RtoR::Function_ptr getPotential() const;
+        virtual Pointer<Base::FunctionT<Real, Real>> GetNonHomogenousTerm();
 
         auto buildOutputSockets()   -> Vector<Pointer<Socket>> override;
 
@@ -61,10 +59,10 @@ namespace Slab::Models::KGRtoR {
 
         void *getHamiltonian() override;
 
-        auto getInitialState() const      -> KGRtoR::EquationState_ptr;
-        virtual auto getBoundary()  -> Base::BoundaryConditions_ptr = 0;
-        auto newFunctionArbitrary() const -> Math::RtoR::NumericFunction_ptr;
-        auto newFieldState() const        -> KGRtoR::EquationState_ptr;
+        [[nodiscard]] auto getInitialState() const      -> KGRtoR::EquationState_ptr;
+        virtual auto GetBoundary()  -> Base::BoundaryConditions_ptr = 0;
+        [[nodiscard]] auto newFunctionArbitrary() const -> Math::RtoR::NumericFunction_ptr;
+        [[nodiscard]] auto NewFieldState() const        -> KGRtoR::EquationState_ptr;
 
     };
 

@@ -48,8 +48,8 @@ message(NOTICE "Added executable Fields-RtoR-Modes-wkA")
 
 add_executable ( Fields-RtoR-PlaneWaves
         Sim/Main-RtoR-Modes.cpp
-        Sim/Recipes/NumericalRecipe_wkA.cpp
-        Sim/Recipes/NumericalRecipe_wkA.h
+        Sim/Recipes/NumericalRecipe_PlaneWaves.cpp
+        Sim/Recipes/NumericalRecipe_PlaneWaves.h
         Sim/Monitor.cpp
         Sim/Monitor.h
         Sim/BoundaryCondition.cpp

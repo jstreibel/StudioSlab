@@ -22,7 +22,7 @@ namespace Slab::Math::R2toR {
 
 
 
-        void apply(Base::EquationState &toFunction, Real t) const final;
+        void Apply(Base::EquationState &toFunction, Real t) const final;
 
     protected:
         virtual void apply_KGR2toR(EquationState &fieldState, Real t) const;

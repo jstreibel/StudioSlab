@@ -11,7 +11,7 @@ namespace Slab::Math {
     using namespace Slab::Core;
 
     class DeviceConfig : public CLInterfaceOwner {
-        auto notifyCLArgsSetupFinished() -> void override;
+        auto NotifyCLArgsSetupFinished() -> void override;
 
     public:
         auto notifyAllCLArgsSetupFinished() -> void override;

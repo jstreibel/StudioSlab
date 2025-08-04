@@ -73,7 +73,10 @@ namespace Modes::DatabaseViewer {
 
         char *endPtr;
         if(criticalParameter == "omega") return 1.0;
-        if(criticalParameter == "omega_n") NOT_IMPLEMENTED
+        if(criticalParameter == "omega_n") {
+            fix L = std::strtod(metaData.at("L").first.c_str(), &endPtr);
+            return 2*M_PI/L; // yes, scaling is 'L' instead of total time. Ask jstreibel@gmail.com
+        }
         if(criticalParameter == "harmonic") {
             //fix L = PythonUtils::Get<Real>(Str("L"), metaData);
             fix L = std::strtod(metaData.at("L").first.c_str(), &endPtr);

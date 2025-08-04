@@ -11,4 +11,4 @@ target_link_libraries(testsuite PRIVATE Catch2::Catch2WithMain)
 include(CTest)
 add_test(NAME StudioSlab-Catch2 COMMAND testsuite)
 
-message(STATUS "HOOLEEHOHO")
+# message(STATUS "All Catch2 setup")

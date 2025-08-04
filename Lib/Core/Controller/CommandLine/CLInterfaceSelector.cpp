@@ -16,7 +16,7 @@ namespace Slab::Core {
 
 
     CLInterfaceSelector::CLInterfaceSelector(Str name) : CLInterfaceOwner(name + " interface selector", -1, true) {
-        interface->addParameters({&selection});
+        Interface->addParameters({&selection});
     };
 
     auto CLInterfaceSelector::getCurrentCandidate() const -> CLInterface_ptr {
@@ -48,7 +48,7 @@ namespace Slab::Core {
         }
 
         auto currSelection = getCurrentCandidate();
-        Log::Critical() << "InterfaceSelector '" << interface->getName()
+        Log::Critical() << "InterfaceSelector '" << Interface->getName()
                         << "' has pre-parsed its options. Selection is '"
                         << currSelection->getName() << "'." << Log::Flush;
 

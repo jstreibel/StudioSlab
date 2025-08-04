@@ -19,7 +19,7 @@
 #define DONT_SELF_REGISTER false
 
 XY::App::App(int argc, const char **argv) : Slab::Core::AppBase(argc, argv, DONT_SELF_REGISTER) {
-    interface->addParameters({&N, &T, &MCSteps, &transient});
+    Interface->addParameters({&N, &T, &MCSteps, &transient});
 
     registerToManager();
 

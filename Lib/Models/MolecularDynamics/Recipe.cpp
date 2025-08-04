@@ -28,8 +28,8 @@ namespace Slab::Models::MolecularDynamics {
     , molDynamicsInterface(New <CLInterface> ("Molecular dynamics 2-d", this, 100))
     {
         molDynamicsInterface->addParameters({&temperature, &dissipation, &model});
-        interface->addSubInterface(molDynamicsInterface);
-        Core::RegisterCLInterface(interface);
+        Interface->addSubInterface(molDynamicsInterface);
+        Core::RegisterCLInterface(Interface);
     }
 
     Vector<Pointer<Math::Socket>> Recipe::buildOutputSockets() {
@@ -76,8 +76,8 @@ namespace Slab::Models::MolecularDynamics {
         throw Exception(Str("Unknown particle dynamics model '") + ToStr(*model) + "'.");
     }
 
-    void Recipe::notifyCLArgsSetupFinished() {
-        CLInterfaceOwner::notifyCLArgsSetupFinished();
+    void Recipe::NotifyCLArgsSetupFinished() {
+        CLInterfaceOwner::NotifyCLArgsSetupFinished();
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
 

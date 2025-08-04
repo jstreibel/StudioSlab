@@ -21,10 +21,10 @@ namespace Slab::Models::KGRtoR {
     , rightdPhiDtBoundaryCondition(rightdPhiDtBoundaryCondition) { }
 
 
-    void BoundaryCondition::applyKG(EquationState &kgState, Real t) const {
+    void BoundaryCondition::ApplyKG(EquationState &kgState, Real t) const {
         if (t == 0.0) {
-            kgState.setPhi(*initialPhiCondition);
-            kgState.setDPhiDt(*initialdPhiDtCondition);
+            kgState.SetPhi(*initialPhiCondition);
+            kgState.SetDPhiDt(*initialdPhiDtCondition);
         } else {
             kgState.getPhi();
 
@@ -36,10 +36,10 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void BoundaryCondition::apply(Base::EquationState &state, const floatt t) const {
-        auto &kgState = dynamic_cast<KGRtoR::EquationState&>(state);
+    void BoundaryCondition::Apply(Base::EquationState &state, const floatt t) const {
+        auto &KGState = dynamic_cast<EquationState&>(state);
 
-        this->applyKG(kgState, t);
+        this->ApplyKG(KGState, t);
 
     }
 

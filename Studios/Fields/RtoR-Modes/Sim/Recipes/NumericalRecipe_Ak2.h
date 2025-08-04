@@ -32,19 +32,19 @@ namespace Modes {
 
         Pointer<Modes::SquareWave> squareWave;
     protected:
-        auto buildOpenGLOutput() -> void * override;
+        auto BuildOpenGLOutput() -> void * override;
 
     public:
-        auto suggestFileName() const -> Str override;
+        auto SuggestFileName() const -> Str override;
 
     public:
         explicit NumericalRecipe_Ak2(bool doRegister=true);
 
-        auto getBoundary() -> Slab::Math::Base::BoundaryConditions_ptr override;
+        auto GetBoundary() -> Slab::Math::Base::BoundaryConditions_ptr override;
 
-        Pointer<Base::FunctionT<Real, Real>> getNonHomogenous() override;
+        Pointer<Base::FunctionT<Real, Real>> GetNonHomogenousTerm() override;
 
-        auto notifyCLArgsSetupFinished() -> void override;
+        auto NotifyCLArgsSetupFinished() -> void override;
     };
 
 } // Modes

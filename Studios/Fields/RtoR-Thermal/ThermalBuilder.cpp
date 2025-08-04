@@ -19,9 +19,9 @@ namespace Studios::Fields::RtoRThermal {
 
     Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister)
     : KGRtoRBuilder(name, generalDescription, DONT_SELF_REGISTER) {
-        interface->addParameters({&temperature, &dissipation, &transientGuess});
+        Interface->addParameters({&temperature, &dissipation, &transientGuess});
 
-        setLaplacianPeriodicBC();
+        SetLaplacianPeriodicBC();
 
         if(doRegister) registerToManager();
     }
@@ -32,7 +32,7 @@ namespace Studios::Fields::RtoRThermal {
             return KGRtoR::KGRtoRBuilder::buildSolver();
         }
 
-        auto ϕ_at_𝜕Ω = getBoundary();
+        auto ϕ_at_𝜕Ω = GetBoundary();
         auto V = getPotential();
 
         using Solver = Slab::Models::KGRtoR::KGLangevinSolver;
@@ -44,11 +44,11 @@ namespace Studios::Fields::RtoRThermal {
         return solver;
     }
 
-    Str Builder::suggestFileName() const {
-        auto str = NumericalRecipe::suggestFileName();
+    Str Builder::SuggestFileName() const {
+        auto str = NumericalRecipe::SuggestFileName();
 
-        auto extra1 = interface->toString({"T", "k"}, " ", SHORT_NAME);
-        auto extra2 = interface->toString({"E", "n"}, " ", LONG_NAME);
+        auto extra1 = Interface->ToString({"T", "k"}, " ", SHORT_NAME);
+        auto extra2 = Interface->ToString({"E", "n"}, " ", LONG_NAME);
 
         return str + " " + extra1 + " " + extra2;
     }

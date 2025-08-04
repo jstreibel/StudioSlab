@@ -15,7 +15,7 @@ namespace Slab::Math {
     {
     }
 
-    void R2toR::BoundaryCondition::apply(Base::EquationState &state, Real t) const {
+    void R2toR::BoundaryCondition::Apply(Base::EquationState &state, Real t) const {
         auto kgState = dynamic_cast<EquationState&>(state);
 
         this->apply_KGR2toR(kgState, t);
@@ -24,8 +24,8 @@ namespace Slab::Math {
 
     void R2toR::BoundaryCondition::apply_KGR2toR(EquationState &fieldState, Real t) const {
         if (t == 0.0) {
-            fieldState.setPhi(*initialPhiCondition);
-            fieldState.setDPhiDt(*initialdPhiDtCondition);
+            fieldState.SetPhi(*initialPhiCondition);
+            fieldState.SetDPhiDt(*initialdPhiDtCondition);
         } else {
 
         }

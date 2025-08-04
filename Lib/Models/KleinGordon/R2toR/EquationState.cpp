@@ -7,8 +7,8 @@
 namespace Slab::Math::R2toR {
 
     auto R2toR::EquationState::replicate() const -> Pointer<Base::EquationState> {
-        auto clone1 = DynamicPointerCast<NumericFunction>(phi->Clone());
-        auto clone2 = DynamicPointerCast<NumericFunction>(phi->Clone());
+        auto clone1 = DynamicPointerCast<NumericFunction>(Phi->Clone());
+        auto clone2 = DynamicPointerCast<NumericFunction>(Phi->Clone());
 
         return New<R2toR::EquationState>(clone1, clone2);
     }

@@ -25,7 +25,7 @@ namespace Slab::Core {
         /**
          * Notify listeners that this interface has finished being set up from command line.
          */
-        virtual auto notifyCLArgsSetupFinished() -> void {};
+        virtual auto NotifyCLArgsSetupFinished() -> void {};
 
         /**
          * Notify listeners that all interfaces have finished being set up from command line.
@@ -99,7 +99,7 @@ namespace Slab::Core {
          * @param longName Whether to use long parameter name, if available.
          * @return A formated string, with all parameters and their values.
          */
-        auto toString(const StrVector &paramNames = {}, const Str& separator = " ", bool longName = true) const -> Str;
+        auto ToString(const StrVector &paramNames = {}, const Str& separator = " ", bool longName = true) const -> Str;
 
         void setupFromCommandLine(CLVariablesMap vm);
 

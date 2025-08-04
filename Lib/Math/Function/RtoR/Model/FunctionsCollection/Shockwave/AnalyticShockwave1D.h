@@ -11,6 +11,7 @@
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
 namespace Slab::Math::RtoR {
+
     class AnalyticShockwave1D : public RtoR::Function {
         Vector<Real> xk;
         Vector<Real> ak;

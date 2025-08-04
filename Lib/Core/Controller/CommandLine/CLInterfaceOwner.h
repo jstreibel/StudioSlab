@@ -12,7 +12,7 @@ namespace Slab::Core {
 
     class CLInterfaceOwner : public CLInterfaceListener {
     protected:
-        Pointer<CLInterface> interface;
+        Pointer<CLInterface> Interface;
 
     public:
         explicit CLInterfaceOwner(bool IKnowIMustCallLateStart = false);
@@ -30,7 +30,7 @@ namespace Slab::Core {
 
         auto getInterface() const -> Pointer<CLInterface>;
 
-        auto notifyCLArgsSetupFinished() -> void override;
+        auto NotifyCLArgsSetupFinished() -> void override;
     };
 
 

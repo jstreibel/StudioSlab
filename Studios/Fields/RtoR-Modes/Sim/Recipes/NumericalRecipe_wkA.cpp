@@ -24,13 +24,13 @@ namespace Modes {
     NumericalRecipe_wkA::NumericalRecipe_wkA(bool doRegister)
     : KGRtoR::KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
-        interface->addParameters({&BCSelection, &omega, &k, &A, &driving_force});
+        Interface->addParameters({&BCSelection, &omega, &k, &A, &driving_force});
 
-        if(doRegister) RegisterCLInterface(interface);
+        if(doRegister) RegisterCLInterface(Interface);
     }
 
-    Math::Base::BoundaryConditions_ptr NumericalRecipe_wkA::getBoundary() {
-        auto prototype = KGRtoR::KGRtoRBuilder::newFieldState();
+    Math::Base::BoundaryConditions_ptr NumericalRecipe_wkA::GetBoundary() {
+        auto prototype = KGRtoR::KGRtoRBuilder::NewFieldState();
 
         fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->getL();
         fix A_0 = this->A.getValue();
@@ -56,7 +56,7 @@ namespace Modes {
             return New <KGRtoR::BoundaryCondition> (prototype, f_0, ddtf_0);
         }
         if(*BCSelection == 2){
-            if(getNonHomogenous() == nullptr) getNonHomogenous();
+            if(GetNonHomogenousTerm() == nullptr) GetNonHomogenousTerm();
 
             return New <Modes::DrivenBC> (prototype, squareWave);
         }
@@ -64,8 +64,8 @@ namespace Modes {
         throw Exception(Str("Unknown initial condition ") + ToStr(*BCSelection));
     }
 
-    void NumericalRecipe_wkA::notifyCLArgsSetupFinished() {
-        CLInterfaceOwner::notifyCLArgsSetupFinished();
+    void NumericalRecipe_wkA::NotifyCLArgsSetupFinished() {
+        CLInterfaceOwner::NotifyCLArgsSetupFinished();
 
         auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
 
@@ -75,11 +75,11 @@ namespace Modes {
 
         switch (*BCSelection) {
             case 0:
-                this->setLaplacianFixedBC();
+                this->SetLaplacianFixedBC();
                 break;
             case 1:
             case 2:
-                this->setLaplacianPeriodicBC();
+                this->SetLaplacianPeriodicBC();
                 break;
             default: NOT_IMPLEMENTED;
         }
@@ -107,7 +107,7 @@ namespace Modes {
                     << static_cast<int>(res * a) << " sites/linear period)g " << Log::ResetFormatting << Log::Flush;
     }
 
-    void *NumericalRecipe_wkA::buildOpenGLOutput() {
+    void *NumericalRecipe_wkA::BuildOpenGLOutput() {
         auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
 
 
@@ -124,17 +124,17 @@ namespace Modes {
         return monitor;
     }
 
-    Str NumericalRecipe_wkA::suggestFileName() const {
+    Str NumericalRecipe_wkA::SuggestFileName() const {
         const auto SEPARATOR = " ";
 
-        StrVector params = {"omega", "k", "A"};
+        const StrVector Params = {"omega_n", "k", "A"};
         // if(*BCSelection == 1) params.emplace_back("harmonic");
 
-        auto strParams = interface->toString(params, SEPARATOR);
-        return KGRtoR::KGRtoRBuilder::suggestFileName() + SEPARATOR + strParams;
+        fix StringRenderedParams = Interface->ToString(Params, SEPARATOR);
+        return KGRtoR::KGRtoRBuilder::SuggestFileName() + SEPARATOR + StringRenderedParams;
     }
 
-    Pointer<Base::FunctionT<Real, Real>> NumericalRecipe_wkA::getNonHomogenous() {
+    Pointer<Base::FunctionT<Real, Real>> NumericalRecipe_wkA::GetNonHomogenousTerm() {
         if(*driving_force && squareWave == nullptr) squareWave = Slab::New<Modes::SquareWave>(1);
 
         return squareWave;

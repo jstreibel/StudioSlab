@@ -8,7 +8,7 @@ namespace Slab::Models::MolecularDynamics {
     MolDynNumericConfig::MolDynNumericConfig(bool do_register)
     : DynamicsNumericConfig(false)
     {
-        interface->addParameters({n});
+        Interface->addParameters({n});
 
         if(do_register) registerToManager();
     }

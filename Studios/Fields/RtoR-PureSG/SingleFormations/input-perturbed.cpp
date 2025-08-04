@@ -11,11 +11,11 @@ namespace Studios::PureSG {
 
     InputPerturbations::InputPerturbations()
             : Builder("Perturbations", "Perturbed oscillon in its reference frame") {
-        interface->addParameters({Naked(l), Naked(eps)});
+        Interface->addParameters({Naked(l), Naked(eps)});
     };
 
-    auto InputPerturbations::getBoundary() -> Math::Base::BoundaryConditions_ptr {
-        auto proto = newFieldState();
+    auto InputPerturbations::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
+        auto proto = NewFieldState();
 
         auto pertOscillon = New <RtoR::PerturbedOscillonTimeDerivative> (l.getValue(), eps.getValue());
 

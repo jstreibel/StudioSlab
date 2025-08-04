@@ -16,7 +16,7 @@ namespace Slab::Math {
     {
         Log::Info() << "Device integration type is " << sizeof(Real)*8 << " bits." << Log::Flush;
 
-        interface->addParameters(
+        Interface->addParameters(
         {
     #if USE_CUDA
             deviceChoice,
@@ -30,8 +30,8 @@ namespace Slab::Math {
         return dev;
     }
 
-    void DeviceConfig::notifyCLArgsSetupFinished() {
-        CLInterfaceOwner::notifyCLArgsSetupFinished();
+    void DeviceConfig::NotifyCLArgsSetupFinished() {
+        CLInterfaceOwner::NotifyCLArgsSetupFinished();
 
     #if USE_CUDA
         unsigned int dev_n = **deviceChoice;

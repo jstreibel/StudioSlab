@@ -44,7 +44,7 @@ namespace Slab::Models::KGR2toR {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
-            auto snapshotFilename = snapshotsFolder + suggestFileName() + ".kg2d.snapshot.oscb";
+            auto snapshotFilename = snapshotsFolder + SuggestFileName() + ".kg2d.snapshot.oscb";
 
             sockets.emplace_back(Slab::New<KG2DSnapshotOutput>(snapshotFilename));
 
@@ -86,7 +86,7 @@ namespace Slab::Models::KGR2toR {
             const Real r = kg_numeric_config->getr();
             const auto stepsInterval = UInt(N / (Np * r));
 
-            auto outputFileName = this->suggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
+            auto outputFileName = this->SuggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
 
             auto out = New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
 
@@ -157,8 +157,8 @@ namespace Slab::Models::KGR2toR {
 
         auto u_0 = newFieldState();
 
-        u_0->setPhi(fullNull);
-        u_0->setDPhiDt(fullNull);
+        u_0->SetPhi(fullNull);
+        u_0->SetDPhiDt(fullNull);
 
         return u_0;
     }

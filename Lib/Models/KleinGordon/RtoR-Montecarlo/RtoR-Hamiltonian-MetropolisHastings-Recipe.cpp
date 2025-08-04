@@ -16,7 +16,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
 
     RtoRHamiltonianMetropolisHastingsRecipe::RtoRHamiltonianMetropolisHastingsRecipe(UInt max_steps)
     : Base::NumericalRecipe(New<MetropolisRtoRConfig>(max_steps), "Metropolis-Hastings ℝ↦ℝ", "", DONT_REGISTER) {
-        Core::RegisterCLInterface(interface);
+        Core::RegisterCLInterface(Interface);
     }
 
     auto RtoRHamiltonianMetropolisHastingsRecipe::getField() -> FieldPair {

@@ -91,7 +91,7 @@ namespace Slab::Core {
         return *result;
     }
 
-    auto CLInterface::toString(const StrVector &paramNames, const Str& separator, bool longName) const -> Str {
+    auto CLInterface::ToString(const StrVector &paramNames, const Str& separator, bool longName) const -> Str {
         std::stringstream ss("");
 
         std::map<Str, int> paramCount;
@@ -134,7 +134,7 @@ namespace Slab::Core {
             }
 
             for (auto listener: listeners)
-                listener->notifyCLArgsSetupFinished();
+                listener->NotifyCLArgsSetupFinished();
 
         } catch (cxxopts::exceptions::exception &exception) {
             Log::Error() << "Exception happened in Interface \"" << getGeneralDescription() << "\"" << Log::Flush;

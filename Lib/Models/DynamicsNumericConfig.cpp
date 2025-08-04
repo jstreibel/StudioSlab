@@ -11,7 +11,7 @@ namespace Slab::Models {
     DynamicsNumericConfig::DynamicsNumericConfig(bool do_register)
     : Math::NumericConfig(false)
     {
-        interface->addParameters({N, L, t});
+        Interface->addParameters({N, L, t});
 
         if(do_register) registerToManager();
     }
@@ -29,8 +29,8 @@ namespace Slab::Models {
         t->setValue(t_max);
     }
 
-    void DynamicsNumericConfig::notifyCLArgsSetupFinished() {
-        Math::NumericConfig::notifyCLArgsSetupFinished();
+    void DynamicsNumericConfig::NotifyCLArgsSetupFinished() {
+        Math::NumericConfig::NotifyCLArgsSetupFinished();
 
         if (**t < 0) {
             *t = **L * .5;

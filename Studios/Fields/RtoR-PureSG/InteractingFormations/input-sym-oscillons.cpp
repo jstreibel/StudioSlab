@@ -12,10 +12,10 @@ namespace Studios::PureSG {
     InputSymmetricOscillon::InputSymmetricOscillon()
             : PureSG::Builder("Symmetric scattering",
                               "Symmetric / antisymmetric oscillon scattering in (1+1) dimensions.") {
-        interface->addParameters({&v, &V, &alpha, &isAntiSymmetric});
+        Interface->addParameters({&v, &V, &alpha, &isAntiSymmetric});
     }
 
-    auto InputSymmetricOscillon::getBoundary() -> Math::Base::BoundaryConditions_ptr {
+    auto InputSymmetricOscillon::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
         auto initCondPhi    = New <RtoR::FunctionSummable> ();
         auto initCondDPhiDt = New <RtoR::FunctionSummable> ();
 
@@ -27,7 +27,7 @@ namespace Studios::PureSG {
         *initCondPhi += oscRight + oscLeft;
         *initCondDPhiDt += oscRight.swap() + oscLeft.swap();
 
-        auto proto = newFieldState();
+        auto proto = NewFieldState();
         return New<BoundaryCondition>(proto, initCondPhi, initCondDPhiDt);
     }
 

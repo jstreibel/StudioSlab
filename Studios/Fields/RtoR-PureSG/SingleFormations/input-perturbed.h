@@ -16,7 +16,7 @@ namespace Studios::PureSG {
     public:
         InputPerturbations();
 
-        auto getBoundary() -> Math::Base::BoundaryConditions_ptr override;
+        auto GetBoundary() -> Math::Base::BoundaryConditions_ptr override;
     };
 }
 

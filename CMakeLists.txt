@@ -19,7 +19,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmodules-ts")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmodules -Wno-module-import-in-extern-c")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmodules -Wno-module-import-in-extern-c -Wno-mathematical-notation-identifier-extension")
 endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Build/lib)

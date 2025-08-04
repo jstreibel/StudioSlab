@@ -22,7 +22,7 @@ namespace Studios::PureSG {
     public:
         InputSingleOscillon();
 
-        auto getBoundary() -> Math::Base::BoundaryConditions_ptr override;
+        auto GetBoundary() -> Math::Base::BoundaryConditions_ptr override;
 
 
     };

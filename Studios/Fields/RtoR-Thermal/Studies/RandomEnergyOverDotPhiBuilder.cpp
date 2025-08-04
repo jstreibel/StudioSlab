@@ -16,17 +16,17 @@ namespace Studios::Fields::RtoRThermal {
 
     RandomEnergyOverDotPhiBuilder::RandomEnergyOverDotPhiBuilder()
             : Builder("Random dphipt", "Energy density over time-derivative of field") {
-        interface->addParameters({&E});
+        Interface->addParameters({&E});
     }
 
-    auto RandomEnergyOverDotPhiBuilder::getBoundary() -> Base::BoundaryConditions_ptr {
+    auto RandomEnergyOverDotPhiBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
         auto N = kg_numeric_config->getN();
         auto h = kg_numeric_config->geth();
         auto dotPhi = newFunctionArbitrary();
 
         auto &p = dotPhi->getSpace().getHostData(false);
 
-        auto proto = newFieldState();
+        auto proto = NewFieldState();
 
         if (1) {
             Real E_rand = .0;

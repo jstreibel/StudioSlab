@@ -14,7 +14,7 @@ namespace Slab::Models::StochasticPathIntegrals {
             : BoundaryConditions(prototype) {
         }
 
-        void apply(Math::Base::EquationState &toFunction, Real t) const override;
+        void Apply(Math::Base::EquationState &toFunction, Real t) const override;
     };
 
 }

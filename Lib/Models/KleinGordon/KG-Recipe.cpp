@@ -27,7 +27,7 @@ namespace Slab::Models {
         plotTheme.setDescription(available_themes);
         plotTheme.setValue(default_theme);
 
-        interface->addParameters({&plotTheme,
+        Interface->addParameters({&plotTheme,
                                   &noHistoryToFile,
                                   &outputResolution,
                                   &VisualMonitor,
@@ -41,7 +41,7 @@ namespace Slab::Models {
                                   // &snapshotTime,
                                   });
 
-        interface->addSubInterface(device_config.getInterface());
+        Interface->addSubInterface(device_config.getInterface());
 
         if (doRegister) {
             registerToManager();

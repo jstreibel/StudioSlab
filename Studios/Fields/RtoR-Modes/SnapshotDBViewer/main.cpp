@@ -36,8 +36,8 @@ public:
     App(int argc, const char **argv)
     : AppBase(argc, argv, false)
     {
-        interface->addParameters({&snapshotDBFolders, &criticalParameter});
-        Core::RegisterCLInterface(interface);
+        Interface->addParameters({&snapshotDBFolders, &criticalParameter});
+        Core::RegisterCLInterface(Interface);
 
         Core::BackendManager::Startup("GLFW");
 
