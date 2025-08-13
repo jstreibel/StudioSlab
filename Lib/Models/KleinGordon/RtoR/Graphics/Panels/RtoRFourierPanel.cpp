@@ -17,7 +17,7 @@ namespace Slab::Models::KGRtoR {
 
     constexpr auto NoModeDiscard = false;
 
-    RtoRFourierPanel::RtoRFourierPanel(const TPointer<FKGNumericConfig> &params, KGEnergy &hamiltonian, FGUIWindow &guiWindow)
+    RtoRFourierPanel::RtoRFourierPanel(const TPointer<FKGNumericConfig> &params, FKGEnergy &hamiltonian, FGUIWindow &guiWindow)
     : FRtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params->gett()+10.0})
     {

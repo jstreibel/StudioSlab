@@ -41,7 +41,7 @@ namespace Slab::Math {
         return Socket::shouldOutput(timestep);;
     }
 
-    void HistoryKeeper::handleOutput(const OutputPacket &packet) {
+    void HistoryKeeper::HandleOutput(const OutputPacket &packet) {
         if (getUtilMemLoadBytes() > 4 * ONE_GB) {
             Core::Log::Critical() << "Dumping " << (getUtilMemLoadBytes() * 4e-6) << "GB of data." << Core::Log::Flush;
             this->_dump(false);

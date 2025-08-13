@@ -14,10 +14,10 @@
 
 namespace Slab::Models::KGRtoR {
 
-    RtoRHistoryPanel::RtoRHistoryPanel
+    FRtoRHistoryPanel::FRtoRHistoryPanel
     (const TPointer<FKGNumericConfig> &params,
      FGUIWindow &guiWindow,
-     KGEnergy &hamiltonian)
+     FKGEnergy &hamiltonian)
     : FRtoRPanel(params, guiWindow, hamiltonian, "Histories", "Panel to view 1-d sections of histories.")
     {
         fix xMin = params->getxMin();
@@ -87,7 +87,7 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void RtoRHistoryPanel::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+    void FRtoRHistoryPanel::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         guiWindow.AddExternalDraw([this]() {
             static float t = 0;
             auto t_max = (float) LastPacket.GetSteps() * Params->Getdt();
@@ -115,7 +115,7 @@ namespace Slab::Models::KGRtoR {
         FRtoRPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void RtoRHistoryPanel::SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
+    void FRtoRHistoryPanel::SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
  simulationHistory,
                                                 const R2toRFunctionArtist_ptr &simHistoryGraph) {
         FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryGraph);
@@ -128,7 +128,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void
-    RtoRHistoryPanel::SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction>
+    FRtoRHistoryPanel::SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction>
  sftHistory, const FDFTDataHistory &history,
                                              const R2toRFunctionArtist_ptr &sftHistoryGraph) {
         FRtoRPanel::SetSpaceFourierHistory(sftHistory, history, sftHistoryGraph);
@@ -143,7 +143,7 @@ namespace Slab::Models::KGRtoR {
         kSpaceHistory->AddArtist(sftHistoryGraph);
     }
 
-    auto RtoRHistoryPanel::get_kSectionWindow() -> TPointer<Graphics::FPlot2DWindow> {
+    auto FRtoRHistoryPanel::get_kSectionWindow() -> TPointer<Graphics::FPlot2DWindow> {
         return kSection;
     }
 } // Slab::Models::RGRtoR

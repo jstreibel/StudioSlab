@@ -14,7 +14,7 @@ namespace Slab::Models::KGR2toR {
         Str filename;
 
     protected:
-        auto handleOutput(const Math::OutputPacket &packet) -> void override;
+        auto HandleOutput(const Math::OutputPacket &packet) -> void override;
 
     public:
         explicit KG2DSnapshotOutput(Str filename);

@@ -108,7 +108,7 @@ namespace Modes {
 
 
         // fix amp = (*A) * 1.1;
-        auto monitor = new Modes::Monitor(config, *(KGRtoR::KGEnergy*)getHamiltonian(), "Modes monitor");
+        auto monitor = new Modes::Monitor(config, *(KGRtoR::FKGEnergy*)getHamiltonian(), "Modes monitor");
 
         fix L = config->GetL();
         fix λ = L / *wavelengths;

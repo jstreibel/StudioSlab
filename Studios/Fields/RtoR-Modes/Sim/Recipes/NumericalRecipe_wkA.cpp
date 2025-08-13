@@ -112,7 +112,7 @@ namespace Modes {
 
 
         // fix amp = (*A) * 1.1;
-        auto monitor = new Modes::Monitor(config, *static_cast<KGRtoR::KGEnergy *>(getHamiltonian()), "Modes monitor");
+        auto monitor = new Modes::Monitor(config, *static_cast<KGRtoR::FKGEnergy *>(getHamiltonian()), "Modes monitor");
 
         fix k_0 = *k;
         fix A_0 = *A;

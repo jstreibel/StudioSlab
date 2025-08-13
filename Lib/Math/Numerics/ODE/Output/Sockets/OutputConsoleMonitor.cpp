@@ -14,11 +14,11 @@ namespace Slab::Math {
         // Isso aqui eh para aparecer o 100% completo (se nao fica uns quebrados).
         OutputPacket dummyInfo = OutputPacket(nullptr, total_steps);
 
-        this->handleOutput(dummyInfo);
+        this->HandleOutput(dummyInfo);
         return true;
     }
 
-    void OutputConsoleMonitor::handleOutput(const OutputPacket &outputInfo) {
+    void OutputConsoleMonitor::HandleOutput(const OutputPacket &outputInfo) {
         static Vector<DevFloat> measures;
         auto elTime = timer.GetElapsedTime_Seconds();
 

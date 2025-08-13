@@ -55,7 +55,7 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void SimHistory::handleOutput(const OutputPacket &packet) {
+    void SimHistory::HandleOutput(const OutputPacket &packet) {
         if (packet.GetSteps() > max_steps)
             return;
 

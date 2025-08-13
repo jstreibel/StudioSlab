@@ -58,7 +58,7 @@ namespace Modes {
 
 
         // fix amp = (*A) * 1.1;
-        auto monitor = new Modes::Monitor(config, *static_cast<KGRtoR::KGEnergy *>(getHamiltonian()), "Modes monitor");
+        auto monitor = new Modes::Monitor(config, *static_cast<KGRtoR::FKGEnergy *>(getHamiltonian()), "Modes monitor");
 
         monitor->setInputModes({*A}, {*omega}, {*omega});
 

@@ -36,7 +36,7 @@ namespace Slab::Graphics {
         bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
         // ********************* From Socket ********************* //
-        void handleOutput(const OutputPacket &outInfo) override;
+        void HandleOutput(const OutputPacket &outInfo) override;
         // ********************* END Socket ********************** //
 
     };

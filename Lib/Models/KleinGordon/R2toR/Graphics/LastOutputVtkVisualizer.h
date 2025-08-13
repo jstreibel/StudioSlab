@@ -12,7 +12,7 @@ namespace Slab::Models::KGR2toR {
     class LastOutputVTKVisualizer : public Math::Socket {
         int outN;
     protected:
-        auto handleOutput(const Math::OutputPacket &packet) -> void override {};
+        auto HandleOutput(const Math::OutputPacket &packet) -> void override {};
 
     public:
         explicit LastOutputVTKVisualizer(Count total_steps, int outN=256);

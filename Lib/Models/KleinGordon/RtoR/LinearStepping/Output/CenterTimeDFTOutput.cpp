@@ -27,7 +27,7 @@ namespace Slab::Models::KGRtoR {
     , step_end  ((int)(t_end  /t_max * (DevFloat)max_steps))
     {    }
 
-    void Slab::Models::KGRtoR::CenterTimeDFTOutput::handleOutput(const Slab::Math::OutputPacket &packet) {
+    void Slab::Models::KGRtoR::CenterTimeDFTOutput::HandleOutput(const Slab::Math::OutputPacket &packet) {
         assert(x_measure.size() == dataset.size());
 
         fix curr_step = packet.GetSteps();

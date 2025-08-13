@@ -167,7 +167,7 @@ namespace Slab::Models::KGRtoR {
                 Sockets.emplace_back(simHistory);
                 Sockets.emplace_back(ftHistory);
 
-                outputOpenGL->setSimulationHistory(Slab::Naked(simHistory->getData()));
+                outputOpenGL->SetSimulationHistory(Slab::Naked(simHistory->getData()));
                 outputOpenGL->SetSpaceFourierHistory(Slab::Naked(ftHistory->getData()),
                                                      ftHistory->GetDFTDataHistory());
             }
@@ -299,7 +299,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     auto FKGRtoR_Recipe::BuildOpenGLOutput() -> void * {
-        return new Monitor(KGNumericConfig, *static_cast<KGEnergy *>(getHamiltonian()));
+        return new Monitor(KGNumericConfig, *static_cast<FKGEnergy *>(getHamiltonian()));
     }
 
     auto FKGRtoR_Recipe::getInitialState() const -> KGRtoR::EquationState_ptr {
@@ -313,7 +313,7 @@ namespace Slab::Models::KGRtoR {
 
     void *FKGRtoR_Recipe::getHamiltonian() {
         static auto potential = RtoR::Function_ptr(getPotential());
-        static auto hamiltonian = new KGEnergy(potential);
+        static auto hamiltonian = new FKGEnergy(potential);
 
         return hamiltonian;
     }

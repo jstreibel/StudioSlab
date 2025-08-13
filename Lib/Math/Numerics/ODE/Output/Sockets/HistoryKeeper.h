@@ -14,7 +14,7 @@ namespace Slab::Math {
          * because history will be purged. */
         virtual void _dump(bool integrationIsFinished) = 0;
 
-        void handleOutput(const OutputPacket &outInfo) final;
+        void HandleOutput(const OutputPacket &outInfo) final;
 
     protected:
         SpaceFilterBase &spaceFilter;

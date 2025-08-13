@@ -20,7 +20,7 @@ namespace Slab::Models::KGRtoR {
         Str outputFileName;
 
     protected:
-        auto handleOutput(const OutputPacket &packet) -> void override;
+        auto HandleOutput(const OutputPacket &packet) -> void override;
 
         virtual auto filterData(const OutputPacket &packet) -> RtoR::NumericFunction_CPU;
 

@@ -28,7 +28,7 @@ namespace Slab::Graphics {
         Log::Status() << "Graphic monitor '" << ChannelName << "'. instantiated " << Log::Flush;
     }
 
-    void BaseMonitor::handleOutput(const OutputPacket &outInfo) {
+    void BaseMonitor::HandleOutput(const OutputPacket &outInfo) {
         step = outInfo.GetSteps();
     }
 

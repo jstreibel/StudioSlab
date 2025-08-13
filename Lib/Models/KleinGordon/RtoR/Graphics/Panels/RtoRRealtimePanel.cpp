@@ -36,7 +36,7 @@ namespace Slab::Models::KGRtoR {
 
     FRealtimePanel::FRealtimePanel(
         const TPointer<FKGNumericConfig> &Params,
-        KGEnergy &Hamiltonian,
+        FKGEnergy &Hamiltonian,
         FGUIWindow &GUIWindow)
     : FRtoRPanel(
         Params,

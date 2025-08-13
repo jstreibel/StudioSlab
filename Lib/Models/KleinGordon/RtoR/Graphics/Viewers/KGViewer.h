@@ -31,7 +31,7 @@ namespace Slab::Models::KGRtoR {
         getFunctionDerivative() const
         -> ConstFuncPointer;
 
-        static KGEnergy getHamiltonian();
+        static FKGEnergy getHamiltonian();
 
         bool areFunctionsConsistent() const;
 

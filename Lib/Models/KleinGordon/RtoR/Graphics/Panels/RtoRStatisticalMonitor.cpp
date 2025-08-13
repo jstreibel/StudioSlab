@@ -39,7 +39,7 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    RtoRStatisticsPanel::RtoRStatisticsPanel(const TPointer<FKGNumericConfig> &params, KGEnergy &hamiltonian,
+    RtoRStatisticsPanel::RtoRStatisticsPanel(const TPointer<FKGNumericConfig> &params, FKGEnergy &hamiltonian,
                                              Graphics::FGUIWindow &guiWindow)
             : FRtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel", "panel for statistic analysis of simulation data")
             , hamiltonian(hamiltonian)

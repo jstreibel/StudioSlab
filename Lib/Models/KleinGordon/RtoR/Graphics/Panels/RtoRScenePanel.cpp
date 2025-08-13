@@ -9,7 +9,7 @@
 namespace Slab::Models::KGRtoR {
     RtoRScenePanel::RtoRScenePanel(const TPointer<FKGNumericConfig> &params,
                                    FGUIWindow &guiWindow,
-                                   KGEnergy &hamiltonian)
+                                   FKGEnergy &hamiltonian)
     : FRtoRPanel(params, guiWindow, hamiltonian, "Scene", "3D view of some data")
     , scene(Slab::New<Scene3DWindow>())
     {

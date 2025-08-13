@@ -21,58 +21,58 @@
 
 namespace Slab::Models::KGRtoR {
 
-    Monitor::Monitor(const TPointer<FKGNumericConfig> &params, KGEnergy &hamiltonian, const Str &name)
+    Monitor::Monitor(const TPointer<FKGNumericConfig> &params, FKGEnergy &hamiltonian, const Str &name)
     : BaseMonitor(params->getn(), Str("ℝ↦ℝ ") + name, 10)
-    , hamiltonian(hamiltonian)
-    , fullHistoryGraph(   Slab::New<FPlot2DWindow>("Full field history"))
-    , fullSFTHistoryGraph(Slab::New<FPlot2DWindow>("Full space FT history"))
+    , Hamiltonian(hamiltonian)
+    , FullHistoryGraph(   Slab::New<FPlot2DWindow>("Full field history"))
+    , FullSFTHistoryGraph(Slab::New<FPlot2DWindow>("Full space FT history"))
     {
-        fullHistoryArtist->SetLabel("ϕ(t,x)");
-        fullHistoryArtist->SetAffectGraphRanges(true);
+        FullHistoryArtist->SetLabel("ϕ(t,x)");
+        FullHistoryArtist->SetAffectGraphRanges(true);
 
-        fullHistoryGraph->AddArtist(fullHistoryArtist);
-        fullHistoryGraph->GetAxisArtist().setVerticalAxisLabel("t");
-        fullHistoryGraph->SetAutoReviewGraphRanges(true);
+        FullHistoryGraph->AddArtist(FullHistoryArtist);
+        FullHistoryGraph->GetAxisArtist().setVerticalAxisLabel("t");
+        FullHistoryGraph->SetAutoReviewGraphRanges(true);
 
-        fullSFTHistoryArtist->SetLabel("ℱₓ(t,k)");
-        fullSFTHistoryArtist->SetAffectGraphRanges(true);
+        FullSFTHistoryArtist->SetLabel("ℱₓ(t,k)");
+        FullSFTHistoryArtist->SetAffectGraphRanges(true);
 
-        fullSFTHistoryGraph->AddArtist(fullSFTHistoryArtist);
-        fullSFTHistoryGraph->GetAxisArtist().SetHorizontalAxisLabel("k");
-        fullSFTHistoryGraph->GetAxisArtist().setVerticalAxisLabel("t");
-        fullSFTHistoryGraph->SetAutoReviewGraphRanges(true);
+        FullSFTHistoryGraph->AddArtist(FullSFTHistoryArtist);
+        FullSFTHistoryGraph->GetAxisArtist().SetHorizontalAxisLabel("k");
+        FullSFTHistoryGraph->GetAxisArtist().setVerticalAxisLabel("t");
+        FullSFTHistoryGraph->SetAutoReviewGraphRanges(true);
 
 
         auto currStyle = Graphics::PlotThemeManager::GetCurrent();
 
-        addDataView(Slab::New<FRealtimePanel>(params, hamiltonian, *GuiWindow));
-        addDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, *GuiWindow));
-        addDataView(historyPanel = Slab::New<RtoRHistoryPanel>(params, *GuiWindow, hamiltonian));
+        AddDataView(Slab::New<FRealtimePanel>(params, hamiltonian, *GuiWindow));
+        AddDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, *GuiWindow));
+        AddDataView(HistoryPanel = Slab::New<FRtoRHistoryPanel>(params, *GuiWindow, hamiltonian));
         //addDataView(Slab::New<CorrelationsPanel>(params, guiWindow, hamiltonian));
-        addDataView(Slab::New<RtoRStatisticsPanel>(params, hamiltonian, *GuiWindow));
-        addDataView(Slab::New<RtoRScenePanel>(params, *GuiWindow, hamiltonian));
+        AddDataView(Slab::New<RtoRStatisticsPanel>(params, hamiltonian, *GuiWindow));
+        AddDataView(Slab::New<RtoRScenePanel>(params, *GuiWindow, hamiltonian));
 
-        setDataView(0);
+        SetDataView(0);
     }
 
-    void Monitor::addDataView(const TPointer<FRtoRPanel>
+    void Monitor::AddDataView(const TPointer<FRtoRPanel>
  &dataView) {
-        dataViews.emplace_back(dataView);
+        DataViews.emplace_back(dataView);
     }
 
-    void Monitor::setDataView(int index) {
-        if (index > dataViews.size() - 1) return;
+    void Monitor::SetDataView(int index) {
+        if (index > DataViews.size() - 1) return;
 
-        auto oldDataView = currentDataView;
-        auto newDataView = dataViews[index];
+        auto oldDataView = CurrentDataView;
+        auto newDataView = DataViews[index];
 
         if (newDataView == oldDataView) return;
 
-        removeWindow(currentDataView);
+        removeWindow(CurrentDataView);
 
-        currentDataView = newDataView;
+        CurrentDataView = newDataView;
 
-        AddWindow(currentDataView, true, -1);
+        AddWindow(CurrentDataView, true, -1);
 
         ArrangeWindows();
 
@@ -80,11 +80,11 @@ namespace Slab::Models::KGRtoR {
         if (oldDataView != nullptr) oldDataView->notifyBecameInvisible();
     }
 
-    void Monitor::handleOutput(const OutputPacket &outInfo) {
-        for (const auto &dataView: dataViews)
+    void Monitor::HandleOutput(const OutputPacket &outInfo) {
+        for (const auto &dataView: DataViews)
             dataView->output(outInfo);
 
-        Graphics::BaseMonitor::handleOutput(outInfo);
+        Graphics::BaseMonitor::HandleOutput(outInfo);
     }
 
     bool Monitor::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
@@ -92,38 +92,38 @@ namespace Slab::Models::KGRtoR {
         auto number = key - '0';
 
         if (modKeys.nonePressed() && state == EKeyState::Press && (number >= 1 && number <= 9)) {
-            setDataView(number - 1);
+            SetDataView(number - 1);
             return true;
         }
 
         return BaseMonitor::NotifyKeyboard(key, state, modKeys);
     }
 
-    void Monitor::setSimulationHistory(const TPointer<const R2toR::FNumericFunction> &simHistory) {
-        simulationHistory = simHistory;
+    void Monitor::SetSimulationHistory(const TPointer<const R2toR::FNumericFunction> &simHistory) {
+        SimulationHistory = simHistory;
 
-        fullHistoryArtist->setFunction(simulationHistory);
+        FullHistoryArtist->setFunction(SimulationHistory);
         // fullHistoryArtist->setColorMap(Graphics::ColorMaps["BrBG"]->inverse().clone());
 
-        for (const auto &dataView: dataViews)
-            dataView->SetSimulationHistory(simHistory, fullHistoryArtist);
+        for (const auto &dataView: DataViews)
+            dataView->SetSimulationHistory(simHistory, FullHistoryArtist);
     }
 
     void Monitor::SetSpaceFourierHistory(const TPointer<const R2toR::FNumericFunction> &sftHistory,
                                                const FDFTDataHistory &_dftData) {
-        spaceFTHistory = sftHistory;
-        fullSFTHistoryArtist->setFunction(spaceFTHistory);
+        SpaceFTHistory = sftHistory;
+        FullSFTHistoryArtist->setFunction(SpaceFTHistory);
         // fullSFTHistoryArtist->setColorMap(Graphics::ColorMaps["blues"]->inverse().bgr().clone());
-        fullSFTHistoryGraph->GetAxisArtist().setHorizontalUnit(Constants::π);
-        fullSFTHistoryGraph->GetAxisArtist().SetHorizontalAxisLabel("k");
-        fullSFTHistoryGraph->GetAxisArtist().setVerticalAxisLabel("t");
+        FullSFTHistoryGraph->GetAxisArtist().setHorizontalUnit(Constants::π);
+        FullSFTHistoryGraph->GetAxisArtist().SetHorizontalAxisLabel("k");
+        FullSFTHistoryGraph->GetAxisArtist().setVerticalAxisLabel("t");
 
-        for (const auto &dataView: dataViews)
-            dataView->SetSpaceFourierHistory(sftHistory, _dftData, fullSFTHistoryArtist);
+        for (const auto &dataView: DataViews)
+            dataView->SetSpaceFourierHistory(sftHistory, _dftData, FullSFTHistoryArtist);
     }
 
-    void Monitor::updateHistoryGraph() {
-        if (simulationHistory == nullptr) return;
+    void Monitor::UpdateHistoryGraph() {
+        if (SimulationHistory == nullptr) return;
 
         static bool isSetup = false;
         if (not isSetup && LastPacket.hasValidData()) {
@@ -132,7 +132,7 @@ namespace Slab::Models::KGRtoR {
                     (LastPacket.GetNakedStateData<EquationState>()->getPhi());
 
             if (phi.getLaplacianType() == RtoR::NumericFunction::Standard1D_PeriodicBorder)
-                fullHistoryArtist->set_xPeriodicOn();
+                FullHistoryArtist->set_xPeriodicOn();
 
             isSetup = true;
         }
@@ -144,13 +144,13 @@ namespace Slab::Models::KGRtoR {
         fix steps = FCommandLineInterfaceManager::getInstance().getParameter("m")->getValueAs<Int>();
         fix dt = t/(DevFloat)steps;
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-            fullHistoryArtist->set_t((DevFloat)LastPacket.GetSteps()*dt);
+            FullHistoryArtist->set_t((DevFloat)LastPacket.GetSteps()*dt);
         lastStepMod = stepMod;
 
     }
 
-    void Monitor::updateSFTHistoryGraph() {
-        if (spaceFTHistory == nullptr) return;
+    void Monitor::UpdateSFTHistoryGraph() {
+        if (SpaceFTHistory == nullptr) return;
 
         fix step = LastPacket.GetSteps();
 
@@ -160,7 +160,7 @@ namespace Slab::Models::KGRtoR {
         fix r = FCommandLineInterfaceManager::getInstance().getParameter("r_dt")->getValueAs<DevFloat>();
         fix dt = h*r;
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-            fullSFTHistoryArtist->set_t((DevFloat)LastPacket.GetSteps()*dt);
+            FullSFTHistoryArtist->set_t((DevFloat)LastPacket.GetSteps()*dt);
         lastStepMod = stepMod;
     }
 
@@ -169,10 +169,10 @@ namespace Slab::Models::KGRtoR {
 
         auto &phi = dynamic_cast<RtoR::NumericFunction&>(fieldState.getPhi());
         auto &ddtPhi = dynamic_cast<RtoR::NumericFunction&>(fieldState.getDPhiDt());
-        hamiltonian.computeEnergies(phi, ddtPhi);
+        Hamiltonian.computeEnergies(phi, ddtPhi);
 
-        updateHistoryGraph();
-        updateSFTHistoryGraph();
+        UpdateHistoryGraph();
+        UpdateSFTHistoryGraph();
 
         Slab::Graphics::BaseMonitor::ImmediateDraw(PlatformWindow);
     }

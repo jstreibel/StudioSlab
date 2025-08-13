@@ -18,7 +18,7 @@ namespace Slab::Math {
         OutputPacket LastPacket;
         Str name, description;
 
-        virtual auto handleOutput(const OutputPacket &) -> void = 0;
+        virtual auto HandleOutput(const OutputPacket &) -> void = 0;
 
     public:
         explicit Socket(Str name = "", int nStepsInterval = 1, Str description = "");

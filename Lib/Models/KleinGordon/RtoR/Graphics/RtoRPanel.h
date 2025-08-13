@@ -26,7 +26,7 @@ namespace Slab::Models::KGRtoR {
     protected:
         FGUIWindow &guiWindow;
         TPointer<FKGNumericConfig> Params;
-        KGEnergy &Hamiltonian;
+        FKGEnergy &Hamiltonian;
 
         R2toR::FNumericFunction_constptr simulationHistory;
         R2toRFunctionArtist_ptr simulationHistoryArtist{};
@@ -35,12 +35,12 @@ namespace Slab::Models::KGRtoR {
         R2toRFunctionArtist_ptr spaceFTHistoryArtist{};
         const FDFTDataHistory *dftData{};
 
-        auto handleOutput(const OutputPacket &packet) -> void override;
+        auto HandleOutput(const OutputPacket &packet) -> void override;
 
     public:
         FRtoRPanel(TPointer<FKGNumericConfig>params,
                   FGUIWindow &guiWindow,
-                  KGEnergy &hamiltonian,
+                  FKGEnergy &hamiltonian,
                   const Str &name,
                   const Str &description);
 

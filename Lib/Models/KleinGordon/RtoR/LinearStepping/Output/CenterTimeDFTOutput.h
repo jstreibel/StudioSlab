@@ -24,7 +24,7 @@ namespace Slab::Models::KGRtoR {
         int step_start, step_end;
 
     protected:
-        auto handleOutput(const Math::OutputPacket &packet) -> void override;
+        auto HandleOutput(const Math::OutputPacket &packet) -> void override;
 
     public:
         auto computeNextRecStep(UInt currStep) -> size_t override;
