@@ -28,13 +28,13 @@ namespace Slab::Models {
         plotTheme.SetValue(default_theme);
 
         Interface->AddParameters({&plotTheme,
-                                  &noHistoryToFile,
-                                  &outputResolution,
+                                  &NoHistoryToFile,
+                                  &OutputResolution,
                                   &VisualMonitor,
                                   &VisualMonitor_startPaused,
-                                  &takeSnapshot,
-                                  &takeSpaceDFTSnapshot,
-                                  &takeTimeDFTSnapshot,
+                                  &TakeSnapshot,
+                                  &TakeSpaceDFTSnapshot,
+                                  &TakeTimeDFTSnapshot,
                                   // &timeDFTSnapshot_tStart,
                                   &timeDFTSnapshot_tLength,
                                   &timeDFTSnapshot_tDelta,

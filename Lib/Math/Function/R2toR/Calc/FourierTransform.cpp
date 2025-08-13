@@ -35,7 +35,7 @@ namespace Slab::Math::R2toR {
         fftw_execute(p);
 
         // Now, out contains the Fourier coefficients.
-        // out[k][l][0] will contain the real part and out[k][l][1] will contain the imaginary part
+        // out[k][l][0] will contain the DevFloat part and out[k][l][1] will contain the imaginary part
         // for the Fourier mode corresponding to the wave numbers k and l.
         for (auto k=0; k<outN; ++k) {
             for (auto l = 0; l < outM; l++) {

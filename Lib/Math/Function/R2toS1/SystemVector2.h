@@ -21,7 +21,7 @@ namespace R2toS1 {
               V(V), dVDPhi(*V.diff(0).release()) {
     }
 
-    FieldState &dtF(const FieldState &fieldStateIn, FieldState &fieldStateOut, Real t, Real dt) override {
+    FieldState &dtF(const FieldState &fieldStateIn, FieldState &fieldStateOut, DevFloat t, DevFloat dt) override {
         const auto &iPhi = fieldStateIn.getPhi();
         const auto &iDPhi = fieldStateIn.getDPhiDt();
         auto &oPhi = fieldStateOut.getPhi();

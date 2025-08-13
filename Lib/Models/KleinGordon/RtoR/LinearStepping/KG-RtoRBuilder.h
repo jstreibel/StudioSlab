@@ -53,7 +53,7 @@ namespace Slab::Models::KGRtoR {
         [[nodiscard]] RtoR::Function_ptr getPotential() const;
         virtual TPointer<Base::FunctionT<DevFloat, DevFloat>> GetNonHomogenousTerm();
 
-        auto buildOutputSockets()   -> Vector<TPointer<Socket>> override;
+        auto BuildOutputSockets()   -> Vector<TPointer<Socket>> override;
 
         auto buildSolver()  -> TPointer<Base::LinearStepSolver> override;
 

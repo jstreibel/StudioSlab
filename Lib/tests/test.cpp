@@ -6,7 +6,7 @@
 #include <catch2/catch_all.hpp>
 #include <Math/Formalism/Categories.h>
 
-using RealT = double;    // if Real is an alias (e.g., double)
+using RealT = double;    // if DevFloat is an alias (e.g., double)
 using Real2D = Slab::Math::Real2D;
 
 TEST_CASE("Real2D explicit constructor initializes x and y correctly", "[Real2D]") {

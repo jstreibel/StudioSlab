@@ -8,7 +8,7 @@
 namespace Slab::Math::R2toR {
     auto R2toRFunctionRenderer::renderToDiscrete(const R2toR::Function &function,
                                                  Resolution N, Resolution M,
-                                                 R2toR::Domain domain, Real scale) -> R2toR::FNumericFunction_ptr {
+                                                 R2toR::Domain domain, DevFloat scale) -> R2toR::FNumericFunction_ptr {
         fix xMin = domain.xMin;
         fix yMin = domain.yMin;
         fix dx = domain.getLx() / N;
@@ -20,7 +20,7 @@ namespace Slab::Math::R2toR {
 
     auto R2toRFunctionRenderer::renderToDiscrete(const R2toR::Function &function,
                                                  R2toR::FNumericFunction_ptr out,
-                                                 Real scale) -> R2toR::FNumericFunction_ptr {
+                                                 DevFloat scale) -> R2toR::FNumericFunction_ptr {
         assert(out != nullptr);
 
         fix &domain = out->getDomain();

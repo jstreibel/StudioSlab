@@ -35,7 +35,7 @@ namespace Slab::Math::R2toR {
         bool showAnalytic = true;
         bool showDPhidt = false;
 
-        Real xMin, xMax, yMin, yMax, phiMin, phiMax;
+        DevFloat xMin, xMax, yMin, yMax, phiMin, phiMax;
         GraphR2toR phiGraph, dPhiGraph;
 
         //Vector<Base::SectionPair> sections;

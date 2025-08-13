@@ -7,17 +7,17 @@
 
 namespace Studios::Fields::R2toRLeadingDelta {
 
-    RingDeltaFunc::RingDeltaFunc(Real eps, Real a, Real dt, bool asTheta)
+    RingDeltaFunc::RingDeltaFunc(DevFloat eps, DevFloat a, DevFloat dt, bool asTheta)
     : eps(eps), a(a), dt(dt), radius(0), asTheta(asTheta) {  }
 
-    auto RingDeltaFunc::getEps()                      const -> Real   { return eps;       }
-    auto RingDeltaFunc::setEps(Real _eps)                   -> void   { eps = _eps;       }
+    auto RingDeltaFunc::getEps()                      const -> DevFloat   { return eps;       }
+    auto RingDeltaFunc::setEps(DevFloat _eps)                   -> void   { eps = _eps;       }
 
-    auto RingDeltaFunc::getA()                        const -> Real   { return a;         }
-    auto RingDeltaFunc::setA(Real _a)                        -> void  { a = _a;           }
+    auto RingDeltaFunc::getA()                        const -> DevFloat   { return a;         }
+    auto RingDeltaFunc::setA(DevFloat _a)                        -> void  { a = _a;           }
 
-    auto RingDeltaFunc::setRadius(Real _radius)             -> void   { radius = _radius; }
-    auto RingDeltaFunc::getRadius()                   const -> Real   { return radius;    }
+    auto RingDeltaFunc::setRadius(DevFloat _radius)             -> void   { radius = _radius; }
+    auto RingDeltaFunc::getRadius()                   const -> DevFloat   { return radius;    }
 
     auto RingDeltaFunc::domainContainsPoint(Real2D x) const -> bool   {
         // const auto rad = radius + dt;
@@ -26,7 +26,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     }
     auto RingDeltaFunc::generalName()                 const -> Str { return "ring Dirac-δ"; }
 
-    auto RingDeltaFunc::operator()         (Real2D x) const -> Real   {
+    auto RingDeltaFunc::operator()         (Real2D x) const -> DevFloat   {
         const auto r = x.norm();
         const auto t = radius;
 

@@ -31,7 +31,7 @@ namespace Slab::Math {
         stepper = recipe->buildStepper();
         outputManager = New<OutputManager>(totalSteps);
         benchmarkData = New<Core::BenchmarkData>(totalSteps/100);
-        for(auto sockets = recipe->buildOutputSockets();
+        for(auto sockets = recipe->BuildOutputSockets();
             const auto &socket : sockets)
             outputManager->addOutputChannel(socket);
 

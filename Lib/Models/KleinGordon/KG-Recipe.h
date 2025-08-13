@@ -24,7 +24,7 @@ namespace Slab::Models {
 
 
 
-        BoolParameter    takeSnapshot                   = BoolParameter(false, "s,snapshot",
+        BoolParameter    TakeSnapshot                   = BoolParameter(false, "s,snapshot",
                                                                         "Take a snapshot of simulation at the end.");
         RealParameter    snapshotTime                   = RealParameter(-1.0, "ss,snapshotTime",
                                                                         "Force snapshot to be taken at some time prior "
@@ -32,12 +32,12 @@ namespace Slab::Models {
 
 
 
-        BoolParameter    takeSpaceDFTSnapshot           = BoolParameter(false, "dft_snapshot",
+        BoolParameter    TakeSpaceDFTSnapshot           = BoolParameter(false, "dft_snapshot",
                                                                         "Take a snapshot of discrete Fourier transform "
                                                                         "(DFT) of field at the end.");
 
 
-        BoolParameter    takeTimeDFTSnapshot            = BoolParameter(false, "time_dft_snapshot",
+        BoolParameter    TakeTimeDFTSnapshot            = BoolParameter(false, "time_dft_snapshot",
                                                                         "Take time domain dft's of field from "
                                                                         "'--time_dft_tstart' until that plus "
                                                                         "'time_dft_length', and repeat every "
@@ -56,10 +56,10 @@ namespace Slab::Models {
 
 
 
-        BoolParameter    noHistoryToFile                = BoolParameter(false, "o,no_history_to_file",
+        BoolParameter    NoHistoryToFile                = BoolParameter(false, "o,no_history_to_file",
                                                                         "Don't output history to file.");
 
-        IntegerParameter outputResolution               = IntegerParameter(512, "outN",
+        IntegerParameter OutputResolution               = IntegerParameter(512, "outN",
                                                                            "Output resolution of space dimension in "
                                                                            "history output.");
         BoolParameter    VisualMonitor                  = BoolParameter(false, "g,visual_monitor",

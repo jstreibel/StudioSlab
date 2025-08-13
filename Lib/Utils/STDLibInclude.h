@@ -36,10 +36,10 @@
 // Se a linguagem for C++17, usamos stdlib. Se nao, usamos boost.
 #if __cplusplus == 201703L // ver https://stackoverflow.com/questions/2324658/how-to-determine-the-version-of-the-c-standard-used-by-the-compiler
 #include <variant>
-typedef std::map<std::string, std::variant<std::string, int, Real>> UserParamMap;
+typedef std::map<std::string, std::variant<std::string, int, DevFloat>> UserParamMap;
 #else
 #include <boost/variant.hpp>
-typedef std::map<std::string, boost::variant<std::string, int, Real>> UserParamMap;
+typedef std::map<std::string, boost::variant<std::string, int, DevFloat>> UserParamMap;
 #endif
 #endif
 

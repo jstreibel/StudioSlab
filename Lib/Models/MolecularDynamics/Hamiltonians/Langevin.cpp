@@ -30,8 +30,8 @@ namespace Slab::Models::MolecularDynamics {
 
     /*
     // Reference equilibrium implementation (no dp/dt ⟺ equilibrium ⟺ very high dissipation factor ):
-    void Langevin::operator()(const MoleculeContainer &m, MoleculeContainer &dmdt, const Real t ) {
-        const Real alpha = sqrt(2 * T / dt);
+    void Langevin::operator()(const MoleculeContainer &m, MoleculeContainer &dmdt, const DevFloat t ) {
+        const DevFloat alpha = sqrt(2 * T / dt);
 
         for (auto &dm: dmdt) {
             dm.m_q = alpha * xi();

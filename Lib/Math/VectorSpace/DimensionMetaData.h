@@ -14,7 +14,7 @@ namespace Slab::Math {
         /*!
          * Constructor.
          * @param N A vector of size=dim and the discrete size of each dimension in
-         * each of its entry. For example, a discretization of real space x, y, z
+         * each of its entry. For example, a discretization of DevFloat space x, y, z
          * with 256x512x64 sites would have N={256,512,64}.
          */
         explicit DimensionMetaData(const UIntArray &N, RealArray _h) : nDim(N.size()), N(N), h(std::move(_h)) {

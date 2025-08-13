@@ -14,14 +14,14 @@
 
 namespace Slab::Math::R2toR {
 
-    typedef floatt Real;
+    typedef floatt DevFloat;
 
     class NumericFunction_CPU : public FNumericFunction {
     public:
-        NumericFunction_CPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy);
+        NumericFunction_CPU(UInt N, UInt M, DevFloat xMin, DevFloat yMin, DevFloat hx, DevFloat hy);
 
         [[nodiscard]]
-        TPointer<Base::NumericFunction<Real2D, Real>>
+        TPointer<Base::NumericFunction<Real2D, DevFloat>>
         CloneWithSize(UInt N) const override;
 
         auto
@@ -31,10 +31,10 @@ namespace Slab::Math::R2toR {
         FNumericFunction &
         Laplacian(FNumericFunction &outFunc) const override;
 
-        const Real &
+        const DevFloat &
         At(UInt n, UInt m) const override;
 
-        Real &
+        DevFloat &
         At(UInt n, UInt m) override;
 
         NumericFunction_CPU &

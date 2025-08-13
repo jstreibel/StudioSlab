@@ -47,16 +47,16 @@ void ZoomPanRotate::zprMouseMotion(int x, int y) {
 
     if (_mouseMiddle || (_mouseLeft && _mouseRight))
     {
-        scale *= 1.00 +  (Real)dy*0.01;
+        scale *= 1.00 +  (DevFloat)dy*0.01;
     }
     else if (_mouseLeft)
     {
-        xAngle += dy / (Real) (vpW + 1) * 2;
-        zAngle += dx / (Real) (vpH + 1) * 2;
+        xAngle += dy / (DevFloat) (vpW + 1) * 2;
+        zAngle += dx / (DevFloat) (vpH + 1) * 2;
     }
     else if (_mouseRight)
     {
-        yScale += dy / (Real) (vpW + 1) * 2;
+        yScale += dy / (DevFloat) (vpW + 1) * 2;
     }
 
     _mouseX = x;

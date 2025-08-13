@@ -23,14 +23,14 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
     class BoundaryCondition : public Slab::Math::Base::BoundaryConditions {
         TPointer<RingDeltaFunc> ringDelta;
-        Real tf;
+        DevFloat tf;
         bool deltaSpeedOp;
 
     public:
         explicit BoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
                                    TPointer<RingDeltaFunc> ringDelta,
-                                   Real tf, bool deltaOperatesOnSpeed);
-        void Apply(Slab::Math::Base::EquationState &function, Real t) const override;
+                                   DevFloat tf, bool deltaOperatesOnSpeed);
+        void Apply(Slab::Math::Base::EquationState &function, DevFloat t) const override;
     };
 
 

@@ -33,7 +33,7 @@ int RunBasicSim(int argc, char **argv){
                          "\n"
                          "Utilizacao:  ./Ising L N_mc N_eq T\n"
                          "\n"
-                         "Em detalhes: ./Ising <<L (int)>> <<N passos de Monte carlo (int)>> <<N passos para transiente (int)>> <<T (real)>>\n"
+                         "Em detalhes: ./Ising <<L (int)>> <<N passos de Monte carlo (int)>> <<N passos para transiente (int)>> <<T (DevFloat)>>\n"
                          "\n"
                          "\n"
                          "EXEMPLO:\n"

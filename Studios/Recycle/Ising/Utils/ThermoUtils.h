@@ -11,17 +11,17 @@
 namespace ThermoUtils {
     extern std::map<double, double> eT_Onsager_by_T;
 
-    // typedef long double Real;
+    // typedef long double DevFloat;
 
-    Real BoltzmannWeight_betaE(Real betaE);
-    Real BoltzmannWeight(Real T, Real E);
+    DevFloat BoltzmannWeight_betaE(DevFloat betaE);
+    DevFloat BoltzmannWeight(DevFloat T, DevFloat E);
 
-    void GenerateBoltzmannWeightLookUpTable(Real T);
-    Real BoltzmannWeightDeltaE_h0(int deltaE);
+    void GenerateBoltzmannWeightLookUpTable(DevFloat T);
+    DevFloat BoltzmannWeightDeltaE_h0(int deltaE);
 
-    Real f_Gibbs  (Real T, Real Z, Real N);
-    Real c_v(Real T, Real e_av, Real e2_av, Real N);
-    Real chi(Real T, Real m_av, Real m2_av, Real N);
+    DevFloat f_Gibbs  (DevFloat T, DevFloat Z, DevFloat N);
+    DevFloat c_v(DevFloat T, DevFloat e_av, DevFloat e2_av, DevFloat N);
+    DevFloat chi(DevFloat T, DevFloat m_av, DevFloat m2_av, DevFloat N);
 
 
 }

@@ -18,7 +18,7 @@ namespace Slab::Math {
             return NaN;
         }
 
-        //return (ratio >= 0 && ratio < 1) ? (unsigned)(ratio*(Real)X.size()) : NaN;
+        //return (ratio >= 0 && ratio < 1) ? (unsigned)(ratio*(DevFloat)X.size()) : NaN;
     }
 
     void RtoR::ResizableNumericFunction::insertBack(DevFloat y) {

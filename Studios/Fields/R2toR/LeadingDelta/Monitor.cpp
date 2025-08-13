@@ -81,7 +81,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
         // const auto h = p.geth();
 
         const auto ldInterface = FCommandLineInterfaceManager::getInstance().getInterface("Leading Delta");
-        const auto epsilon = *(Real *) ldInterface->GetParameter("eps")->GetValueVoid();
+        const auto epsilon = *(DevFloat *) ldInterface->GetParameter("eps")->GetValueVoid();
 
         static auto lastStep = 0;
         static auto energyIntegrationRadius = (float) (-epsilon);
@@ -120,9 +120,9 @@ namespace Studios::Fields::R2toRLeadingDelta {
             // auto E = energy.computeRadial_method2(eqState, E_radius);
             // numericEnergyData->addPoint({t, E});
             // auto analyticEnergy = (2. / 3.) * M_PI * t * t;
-            // analyticEnergyData->addPoint({t, (Real) analyticEnergy});
+            // analyticEnergyData->addPoint({t, (DevFloat) analyticEnergy});
 //
-            // if (analyticEnergy != 0) energyRatioData->addPoint({t, E / (Real) analyticEnergy});
+            // if (analyticEnergy != 0) energyRatioData->addPoint({t, E / (DevFloat) analyticEnergy});
 //
             // {
             //     const auto R = E_radius;
@@ -202,7 +202,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
         // // Essas funcs precisam ficar do lado de fora do 'if', pra não serem deletadas antes da chamada ao
         // // panel->draw
         // static RtoR::AnalyticShockwave2DRadialSymmetry radialShockwave;
-        // radialShockwave.sett(t - dt - Real(timeOffset));
+        // radialShockwave.sett(t - dt - DevFloat(timeOffset));
         // static FunctionAzimuthalSymmetry shockwave(&radialShockwave, 1, 0, 0, false);
         // if (analytic)
         //     mSectionGraph.addFunction(
@@ -217,7 +217,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
         //             GetCurrent()->funcPlotStyles[0]);
 //
         // static RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivativeB ddtRadialShockwave(2 * h);
-        // ddtRadialShockwave.sett(t - dt - Real(timeOffset));
+        // ddtRadialShockwave.sett(t - dt - DevFloat(timeOffset));
         // static FunctionAzimuthalSymmetry ddtShockwave(&ddtRadialShockwave, 1, 0, 0, false);
         // if (analyticSpeed)
         //     mSpeedsGraph.addFunction(&ddtShockwave, "Analytic speed", GetCurrent()->funcPlotStyles[2]);

@@ -76,7 +76,7 @@ namespace Slab::Models::KGRtoR {
         if (doRegister) RegisterCLInterface(Interface);
     }
 
-    auto KGRtoRBuilder::buildOutputSockets() -> Vector<TPointer<Socket>> {
+    auto KGRtoRBuilder::BuildOutputSockets() -> Vector<TPointer<Socket>> {
         Vector<TPointer<Socket>> Sockets;
 
         UseScientificNotation = false;
@@ -85,39 +85,39 @@ namespace Slab::Models::KGRtoR {
         auto outputFileName = Common::GetPWD() + "/" + this->SuggestFileName();
 
         const auto shouldOutputOpenGL = *VisualMonitor;
-        const auto shouldOutputHistory = !*noHistoryToFile;
+        const auto shouldOutputHistory = !*NoHistoryToFile;
 
         // if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
         // else                Core::BackendManager::Startup("Headless");
 
-        const KGNumericConfig &p = dynamic_cast<KGNumericConfig&>(*numeric_config);
+        const KGNumericConfig &p = dynamic_cast<KGNumericConfig&>(*NumericConfig);
 
         fix t = p.gett();
         fix max_steps = p.getn();
         fix N = static_cast<DevFloat>(p.getN());
         fix L = p.GetL();
         fix xMin = p.getxMin();
-        fix Nₒᵤₜ = *outputResolution > N ? N : *outputResolution;
+        fix Nₒᵤₜ = *OutputResolution > N ? N : *OutputResolution;
         fix r = p.getr();
 
         /* ****************************************************************************************
            *************************** SNAPSHOT OUTPUT ********************************************
            **************************************************************************************** */
-        if (*takeSnapshot) {
+        if (*TakeSnapshot) {
             const auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + SuggestFileName();
             Sockets.emplace_back(Slab::New<SnapshotOutput>(snapshotFilename));
         }
-        if (*takeSpaceDFTSnapshot) {
+        if (*TakeSpaceDFTSnapshot) {
             const auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + SuggestFileName();
             Sockets.emplace_back(Slab::New<DFTSnapshotOutput>(N, L, snapshotFilename));
         }
-        if(*takeTimeDFTSnapshot) {
+        if(*TakeTimeDFTSnapshot) {
             auto time_dftsnapshots = getTimeDFTSnapshots();
 
             for(auto &socket : time_dftsnapshots)
@@ -132,7 +132,7 @@ namespace Slab::Models::KGRtoR {
         if (shouldOutputHistory) {
             OutputFormatterBase *outputFilter = new BinarySOF;
 
-            const auto dimData = DimensionMetaData({(unsigned) *outputResolution}, {L / *outputResolution});
+            const auto dimData = DimensionMetaData({(unsigned) *OutputResolution}, {L / *OutputResolution});
             // auto *spaceFilter = new ResolutionReductionFilter(dimData);
             auto *spaceFilter = new Filter1D(dimData);
 
@@ -150,7 +150,7 @@ namespace Slab::Models::KGRtoR {
         if (shouldOutputOpenGL) {
             auto GuiBackend = Slab::Graphics::GetGraphicsBackend();
 
-            auto outputOpenGL = TPointer<Monitor>(static_cast<Monitor *>(buildOpenGLOutput()));
+            auto outputOpenGL = TPointer<Monitor>(static_cast<Monitor *>(BuildOpenGLOutput()));
 
             if (t > 0) {
                 fix nₒᵤₜ = ((Nₒᵤₜ / L) * t);

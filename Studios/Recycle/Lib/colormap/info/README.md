@@ -7,7 +7,7 @@ independent from this application. It's components are split amongs several head
 
 * `color.hpp`: Provides a `colormap::color` class representing a grayscale, RGB,
   or RGBA color, including the ability to mix colors.
-* `map.hpp`: Provides the `colormap::map`, a functor that maps real numbers to a
+* `map.hpp`: Provides the `colormap::map`, a functor that maps DevFloat numbers to a
   color by interpolating between colors at pre-defined support points.
 * `palettes.hpp`: Defines a variety of ready-to-use `colormap::map`s, mostly
   inspired by [ColorBrewer][4] and the [gnuplot-palettes][5] repository by

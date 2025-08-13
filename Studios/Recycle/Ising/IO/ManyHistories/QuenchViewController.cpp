@@ -141,8 +141,8 @@ namespace ThermoOutput {
     void QuenchViewController::_stepSims() {
         ++MCStep;
 
-        Real mag = .0;
-        Real e = .0;
+        DevFloat mag = .0;
+        DevFloat e = .0;
         int i=0;
         for (auto sim : simulations) {
             auto calc = sim.first;
@@ -175,7 +175,7 @@ namespace ThermoOutput {
         if(MCStep < tau_eq) return true;
         else if(MCStep > MCSteps) return false;
 
-        const Real ΔT = 1.0 / total_measures;
+        const DevFloat ΔT = 1.0 / total_measures;
         if(!((MCStep-tau_eq)%(3*tau_corr))){
             auto e=0., e2=0., m=0., m2=0., m4=0.;
 
@@ -351,7 +351,7 @@ namespace ThermoOutput {
             file << "# 1   2    3   4    5    6    7     8    9   10\n";
             file << "# T   e   e2   m   m2   m4   C_v   Xi   σ_e  σ_m\n";
 
-            Real e, e2, m, m2, m4, T;
+            DevFloat e, e2, m, m2, m4, T;
             for (auto data : boost::combine(av_e, av_e2, av_m, av_m2, av_m4, T_values)) {
                 boost::tie(e, e2, m, m2, m4, T) = data;
                 auto N=L*L;

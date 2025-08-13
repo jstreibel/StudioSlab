@@ -14,8 +14,8 @@
 
 extern size_t lastBufferDumpedSamplesCount;
 extern Vector<Real> damps;
-extern Real jackProbeLocation;
-extern Real t0;
+extern DevFloat jackProbeLocation;
+extern DevFloat t0;
 Real __t=0;
 
 
@@ -86,7 +86,7 @@ void RtoR::Signal::JackControl::draw( ) {
  *    \_______  /|   __/  \___  >|___|  / \______  /|_______ \
  *            \/ |__|         \/      \/         \/         \/
  */
-RtoR::Signal::OutGL::OutGL(const NumericConfig &params, Real phiMin, Real phiMax)
+RtoR::Signal::OutGL::OutGL(const NumericConfig &params, DevFloat phiMin, DevFloat phiMax)
         : RtoR::Monitor(params, phiMin, phiMax) {
 
     panel.addWindow(&jackControlWindow);

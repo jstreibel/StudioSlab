@@ -20,7 +20,7 @@ namespace Slab::Models::StochasticPathIntegrals {
         public:
         explicit SPIRecipe(const TPointer<SPINumericConfig> &numeric_config = New<SPINumericConfig>());
 
-        auto buildOutputSockets() -> Math::Base::OutputSockets override;
+        auto BuildOutputSockets() -> Math::Base::OutputSockets override;
 
         auto buildStepper() -> TPointer<Math::Stepper> override;
     };

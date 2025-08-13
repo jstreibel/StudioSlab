@@ -36,11 +36,11 @@ namespace Slab::Models::KGR2toR {
     Builder::Builder(const Str& name, const Str& description, bool do_register)
             : Models::KGRecipe(New<Models::KGNumericConfig>(false), name, description, do_register) {    }
 
-    Vector<TPointer<Socket>> Builder::buildOutputSockets() {
+    Vector<TPointer<Socket>> Builder::BuildOutputSockets() {
         Vector<TPointer<Socket>> sockets;
 
         ///********************************************************************************************/
-        if(*takeSnapshot) {
+        if(*TakeSnapshot) {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
@@ -57,8 +57,8 @@ namespace Slab::Models::KGR2toR {
 
 
         ///********************************************************************************************/
-        if (!*noHistoryToFile) {
-            // const Real t = kg_numeric_config->gett();
+        if (!*NoHistoryToFile) {
+            // const DevFloat t = kg_numeric_config->gett();
 
             RtoR2::StraightLine section;
             auto angleDegrees = 22.5;
@@ -74,7 +74,7 @@ namespace Slab::Models::KGR2toR {
                 section = RtoR2::StraightLine(R * x0, R * xf);
             }
 
-            const UInt outputResolutionX = *outputResolution;
+            const UInt outputResolutionX = *OutputResolution;
 
             OutputFormatterBase *outputFilter = new BinarySOF;
 

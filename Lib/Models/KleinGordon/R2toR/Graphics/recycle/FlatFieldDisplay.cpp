@@ -71,8 +71,8 @@ bool Graphics::FlatFieldDisplay::removeFunction(R2toR::Function_constptr functio
 
 bool Graphics::FlatFieldDisplay::notifyMouseWheel(double dx, double dy) {
 
-    constexpr const Real factor = 1.1;
-    const Real d = pow(factor, -dy);
+    constexpr const DevFloat factor = 1.1;
+    const DevFloat d = pow(factor, -dy);
 
     static auto targetRegion = getRegion();
 
@@ -85,8 +85,8 @@ bool Graphics::FlatFieldDisplay::notifyMouseWheel(double dx, double dy) {
     }
 
     {
-        const Real x0 = targetRegion.xCenter();
-        const Real hw = .5 * targetRegion.width() * d;
+        const DevFloat x0 = targetRegion.xCenter();
+        const DevFloat hw = .5 * targetRegion.width() * d;
 
         targetRegion.xMin = x0-hw;
         targetRegion.xMax = x0+hw;
@@ -95,8 +95,8 @@ bool Graphics::FlatFieldDisplay::notifyMouseWheel(double dx, double dy) {
         set_xMax(targetRegion.xMax);
 
 
-        const Real y0 = targetRegion.yCenter();
-        const Real hh = .5 * targetRegion.height() * d;
+        const DevFloat y0 = targetRegion.yCenter();
+        const DevFloat hh = .5 * targetRegion.height() * d;
 
         targetRegion.yMin = y0-hh;
         targetRegion.yMax = y0+hh;

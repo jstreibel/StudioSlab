@@ -25,7 +25,7 @@ namespace Slab::Math::RtoR {
             delete &dVDPhi;
         }
 
-        FieldState &dtF(const FieldState &fieldStateIn, FieldState &fieldStateOut, Real t, Real dt) override {
+        FieldState &dtF(const FieldState &fieldStateIn, FieldState &fieldStateOut, DevFloat t, DevFloat dt) override {
             const auto &iPhi = fieldStateIn.getPhi();
             const auto &iDPhi = fieldStateIn.getDPhiDt();
             auto &oPhi = fieldStateOut.getPhi();
@@ -43,10 +43,10 @@ namespace Slab::Math::RtoR {
                 const auto &phidV = iPhi.Apply(dVDPhi, temp2).getSpace().getX();
 
                 auto &oVec = oDPhi.getSpace().getX();
-                const Real invhsqr = 1./iPhi.getSpace().geth();
+                const DevFloat invhsqr = 1./iPhi.getSpace().geth();
 
                 OMP_PARALLEL_FOR(i, oVec.size()){
-                    const Real lapl = invhsqr * ((vPhi[i-1] + vPhi[i+1]) - 2.0*vPhi[i]);
+                    const DevFloat lapl = invhsqr * ((vPhi[i-1] + vPhi[i+1]) - 2.0*vPhi[i]);
 
                     oVec[i] = dt*(lapl - phidV[i]);
                 }

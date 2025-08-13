@@ -36,12 +36,12 @@ public:
     Dynamic aDynamic;
     Sweeping sweeping;
 private:
-    Real T;
-    Real h;
+    DevFloat T;
+    DevFloat h;
 
     IsingNetwork S;
 
-    static bool __shouldAccept(Real deltaE) ;
+    static bool __shouldAccept(DevFloat deltaE) ;
 
 
     void __MCStepMetropolis();
@@ -50,12 +50,12 @@ private:
     void _shake(double h);
 public:
 
-    explicit IsingMonteCarloCalculator(int L, Real T, Real h, ThermoOutput::ViewControlBase *viewer, InitialConditions ic, Dynamic dynamic, Sweeping sweeping);
+    explicit IsingMonteCarloCalculator(int L, DevFloat T, DevFloat h, ThermoOutput::ViewControlBase *viewer, InitialConditions ic, Dynamic dynamic, Sweeping sweeping);
 
     ~IsingMonteCarloCalculator() = default;
 
-    void set_T(Real T);
-    void set_h(Real h);
+    void set_T(DevFloat T);
+    void set_h(DevFloat h);
     void MCStep();
     void Simulate(int MCSteps, int transientSize);
 

@@ -38,10 +38,10 @@ void R2toRInputShockwaveAt_t0::YoureTheChosenOne(CLVariablesMap &vm) {
 
     RtoR2::StraightLine section1, section2;
     {
-        const Real rMin = -5;
-        const Real rMax =  5;
+        const DevFloat rMin = -5;
+        const DevFloat rMax =  5;
         const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
-        Real theta = 0.0;
+        DevFloat theta = 0.0;
 
         Rotation R;
         R = Rotation(theta);

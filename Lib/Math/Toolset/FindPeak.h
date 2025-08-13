@@ -105,7 +105,7 @@ namespace Slab::Math {
         // Solve the quadratic equation for the derivative
         double discriminant = b*b - 3*a*c;
         if (discriminant < 0) {
-            throw std::runtime_error("Discriminant is negative, no real roots.");
+            throw std::runtime_error("Discriminant is negative, no DevFloat roots.");
         }
 
         double x1 = (-b + sqrt(discriminant)) / (3*a);

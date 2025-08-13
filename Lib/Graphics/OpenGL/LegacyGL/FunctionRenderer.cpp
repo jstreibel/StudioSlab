@@ -76,7 +76,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
                 glBegin(GL_LINE_STRIP);
                 for (DevFloat y = yMin; y < yMax; y += dy) {
                     const DevFloat val = func({x, y});
-                    //const Real colorVal = .5 + .5*sin(atan(func.diff(0, {x, y})));
+                    //const DevFloat colorVal = .5 + .5*sin(atan(func.diff(0, {x, y})));
                     //glColor3d(colorVal, colorVal, colorVal);
                     glVertex3d(x, y, scale * val);
                 }
@@ -88,7 +88,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
                 glBegin(GL_LINE_STRIP);
                 for (DevFloat x = xMin; x < xMax; x += dy) {
                     const DevFloat val = func({x, y});
-                    //const Real colorVal = .5 + .5*sin(atan(func.diff(0, {x, y})));
+                    //const DevFloat colorVal = .5 + .5*sin(atan(func.diff(0, {x, y})));
                     //glColor3d(colorVal, colorVal, colorVal);
                     glVertex3d(x, y, scale * val);
                 }

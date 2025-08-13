@@ -15,7 +15,7 @@ namespace Slab::Math {
     {
     }
 
-    void R2toR::BoundaryCondition::apply(Base::EquationState &state, DevFloat t) const {
+    void R2toR::BoundaryCondition::Apply(Base::EquationState &state, DevFloat t) const {
         auto kgState = dynamic_cast<EquationState&>(state);
 
         this->apply_KGR2toR(kgState, t);

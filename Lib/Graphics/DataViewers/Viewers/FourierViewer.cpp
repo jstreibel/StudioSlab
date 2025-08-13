@@ -297,7 +297,7 @@ namespace Slab::Graphics {
             auto *out = &rebuiltHistory->At(0, _n);
             auto *in = &func->getSpace().getHostData(true)[0];
 
-            memcpy(out, in, N*sizeof(Real));
+            memcpy(out, in, N*sizeof(DevFloat));
 
             ++_n;
         }

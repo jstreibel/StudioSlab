@@ -43,11 +43,11 @@ struct OutputHelper {
 
 struct StringsOfMarylou {
 
-    const Real beta, alpha_phi;
+    const DevFloat beta, alpha_phi;
 
     inline void RHS(const Funcs &V, Funcs &dVdx, const double x) const;
 
-    void operator()(const Funcs &V, Funcs &dVdx, const Real x);
+    void operator()(const Funcs &V, Funcs &dVdx, const DevFloat x);
 };
 
 class MaryApp : public AppBase {

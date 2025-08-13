@@ -8,7 +8,7 @@
 
 namespace Slab::Math {
 
-//RtoR::AnalyticShockwave2DRadialSymmetry::AnalyticShockwave2DRadialSymmetry(Real a0) : a0(a0) {
+//RtoR::AnalyticShockwave2DRadialSymmetry::AnalyticShockwave2DRadialSymmetry(DevFloat a0) : a0(a0) {
 //
 //}
 

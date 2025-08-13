@@ -13,9 +13,9 @@ namespace Slab::Math::R2toR {
 
     class R2toRInputShockwaveAt_t0 : public Base::BCInterface {
     private:
-        Real theta=0.;
-        Real e=0.;
-        Real t0=0;
+        DevFloat theta=0.;
+        DevFloat e=0.;
+        DevFloat t0=0;
     public:
 
         void YoureTheChosenOne(CLVariablesMap &vm) override;

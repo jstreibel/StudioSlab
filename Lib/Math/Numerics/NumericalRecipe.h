@@ -15,7 +15,7 @@ namespace Slab::Math::Base {
 
     class NumericalRecipe : public Core::FCommandLineInterfaceOwner {
     protected:
-        TPointer<NumericConfig> numeric_config;
+        TPointer<NumericConfig> NumericConfig;
 
         Str name;
 
@@ -29,7 +29,7 @@ namespace Slab::Math::Base {
          */
         virtual void setupForCurrentThread() { };
 
-        virtual auto buildOutputSockets()         -> OutputSockets = 0;
+        virtual auto BuildOutputSockets()         -> OutputSockets = 0;
         virtual auto buildStepper()               -> TPointer<Stepper> = 0;
 
         [[nodiscard]] virtual auto SuggestFileName()      const -> Str;

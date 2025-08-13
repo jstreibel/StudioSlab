@@ -14,7 +14,7 @@
 
 namespace Slab::Math {
 
-    // inline Real sqr(const Real &v){ return v*v; }
+    // inline DevFloat sqr(const DevFloat &v){ return v*v; }
 
     // Don't touch:
     #define DONT_REGISTER false
@@ -25,7 +25,7 @@ namespace Slab::Math {
         // Core::RegisterCLInterface(interface);
     }
 
-    Vector<TPointer<Socket>> R2toRMetropolisRecipe::buildOutputSockets() {
+    Vector<TPointer<Socket>> R2toRMetropolisRecipe::BuildOutputSockets() {
         fix total_steps = getNumericConfig()->getn();
 
         auto console_monitor = New<OutputConsoleMonitor>(total_steps);

@@ -34,7 +34,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
         return field_data;
     }
 
-    auto RtoRHamiltonianMetropolisHastingsRecipe::buildOutputSockets() -> Vector<TPointer<Socket>> {
+    auto RtoRHamiltonianMetropolisHastingsRecipe::BuildOutputSockets() -> Vector<TPointer<Socket>> {
         fix total_steps = getNumericConfig()->getn();
 
         auto console_monitor = New<OutputConsoleMonitor>(total_steps);

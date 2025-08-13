@@ -32,10 +32,10 @@ namespace Slab::Models::MolecularDynamics {
         Core::RegisterCLInterface(Interface);
     }
 
-    Vector<TPointer<Math::Socket>> Recipe::buildOutputSockets() {
+    Vector<TPointer<Math::Socket>> Recipe::BuildOutputSockets() {
         Vector<TPointer<Math::Socket>> sockets;
 
-        auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(numeric_config);
+        auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(NumericConfig);
 
         sockets.emplace_back(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig->getn()));
 
@@ -56,7 +56,7 @@ namespace Slab::Models::MolecularDynamics {
     }
 
     TPointer<Math::Stepper> Recipe::buildStepper() {
-        auto c = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(numeric_config);
+        auto c = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(NumericConfig);
 
         fix T = *temperature;
         fix k = *dissipation;

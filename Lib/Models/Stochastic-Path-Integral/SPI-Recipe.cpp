@@ -22,7 +22,7 @@
 namespace Slab::Models::StochasticPathIntegrals {
 
     const auto my_name = "Stochastic Path Integrals Recipe";
-    const auto my_description = "Recipe for generating relevant field configurations in the (1+1) dimensional, real valued "
+    const auto my_description = "Recipe for generating relevant field configurations in the (1+1) dimensional, DevFloat valued "
         "fields quantum path integral formalism.";
 
     SPIRecipe::SPIRecipe(const TPointer<SPINumericConfig> &numeric_config)
@@ -30,7 +30,7 @@ namespace Slab::Models::StochasticPathIntegrals {
     , SPI_NumericConfig(numeric_config) {
     }
 
-    auto SPIRecipe::buildOutputSockets() -> Base::OutputSockets {
+    auto SPIRecipe::BuildOutputSockets() -> Base::OutputSockets {
         Base::OutputSockets sockets;
 
         auto monitor = New<KGR2toR::OutputOpenGL>(SPI_NumericConfig->getn());
