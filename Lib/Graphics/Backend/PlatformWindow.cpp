@@ -28,6 +28,11 @@ namespace Slab::Graphics {
     }
 
      auto FPlatformWindow::AddEventListener(const TVolatile<FPlatformWindowEventListener> &Listener) const -> bool {
+        auto Listener_Ptr = Listener.lock();
+        if(Listener_Ptr == nullptr) return false;
+
+        Listener_Ptr->NotifySystemWindowReshape(GetWidth(), GetHeight());
+
         return EventTranslator->AddGUIEventListener(Listener);
     }
 

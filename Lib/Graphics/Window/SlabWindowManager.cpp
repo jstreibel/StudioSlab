@@ -145,6 +145,8 @@ namespace Slab::Graphics {
     }
 
     bool SlabWindowManager::NotifyMouseMotion(int x, int y, int dx, int dy) {
+        FWindowManager::NotifyMouseMotion(x, y, dx, dy); // Update delegates
+
         if(Grabbed.window != nullptr) {
             auto p = Grabbed.anchor;
 
@@ -180,6 +182,8 @@ namespace Slab::Graphics {
     }
 
     bool SlabWindowManager::NotifyMouseWheel(double dx, double dy) {
+        FWindowManager::NotifyMouseWheel(dx, dy); // Update delegates
+
         if(CurrentlyFocused == nullptr) return false;
 
         return CurrentlyFocused->Window->NotifyMouseWheel(dx, dy);
