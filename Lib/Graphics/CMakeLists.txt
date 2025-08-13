@@ -319,6 +319,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/GLStateGuard.h
 		ImGui/ImGui-Multi-SlabWindow-Wrapper.cpp
 		ImGui/ImGui-Multi-SlabWindow-Wrapper.h
+		Window/SingleWindowManager.cpp
+		Window/SingleWindowManager.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

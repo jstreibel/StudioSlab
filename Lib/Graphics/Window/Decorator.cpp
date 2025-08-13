@@ -25,7 +25,6 @@ namespace Slab::Graphics {
         // SETUP
         glViewport(0, 0, SysWin_Width, SysWin_Height);
 
-        OpenGL::Legacy::PushLegacyMode();
         glDisable(GL_TEXTURE_2D);
 
         glEnable(GL_LINE_SMOOTH);
@@ -38,8 +37,6 @@ namespace Slab::Graphics {
         glLoadIdentity();
 
         OpenGL::Legacy::SetupOrtho({0, static_cast<DevFloat>(SysWin_Width), static_cast<DevFloat>(SysWin_Height), 0});
-
-        OpenGL::Legacy::RestoreFromLegacyMode();
     }
 
     void FDecorator::BeginDecoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
@@ -52,6 +49,7 @@ namespace Slab::Graphics {
         fix TitleHeight = ShouldDecorate ? Title_Height : 0; // // 34 = 24x => x=34/24
         fix BordersSize = ShouldDecorate ? WindowStyle::BorderSize : 0;
 
+        OpenGL::Legacy::PushLegacyMode();
         Setup();
 
         auto rect = slab_window.GetViewport();
@@ -72,23 +70,25 @@ namespace Slab::Graphics {
             glVertex2d(x, y+h);
         }
         glEnd();
+        OpenGL::Legacy::RestoreFromLegacyMode();
     }
 
     void FDecorator::FinishDecoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
-        auto flags = slab_window.GetFlags();
-        fix should_decorate = !(flags & SlabWindowNoDecoration);
+        fix Flags = slab_window.GetFlags();
+        fix ShouldDecorate = !(Flags & SlabWindowNoDecoration);
 
-        if(!should_decorate) return;
+        if(!ShouldDecorate) return;
 
-        fix title_height = Title_Height; // // 34 = 24x => x=34/24
-        fix borders_size = WindowStyle::BorderSize;
+        fix TitleHeight = Title_Height; // // 34 = 24x => x=34/24
+        fix BordersSize = WindowStyle::BorderSize;
 
         auto rect = slab_window.GetViewport();
-        auto x = rect.xMin - borders_size,
-             y = rect.yMin - borders_size - title_height,
-             w = rect.GetWidth()  + 2*borders_size,
-             h = rect.GetHeight() + 2*borders_size + title_height;
+        auto x = rect.xMin - BordersSize,
+             y = rect.yMin - BordersSize - TitleHeight,
+             w = rect.GetWidth()  + 2*BordersSize,
+             h = rect.GetHeight() + 2*BordersSize + TitleHeight;
 
+        OpenGL::Legacy::PushLegacyMode();
         Setup();
 
         // *** DECORATE ********************************
@@ -131,10 +131,16 @@ namespace Slab::Graphics {
             }
             glEnd();
         }
+        OpenGL::Legacy::RestoreFromLegacyMode();
 
-        fix h_font = Writer.GetFontHeightInPixels();
-        auto color = FColor(32./255,32./255,32./255, 1);
-        Writer.Write(slab_window.GetTitle(), {(DevFloat)x+WindowStyle::font_size/2, SysWin_Height-(DevFloat)y - h_font}, color);
+        fix FontHeightInPixels = Writer.GetFontHeightInPixels();
+        fix FontColor = FColor(32./255,32./255,32./255, 1);
+        Writer.Write(slab_window.GetTitle(),
+            {
+                static_cast<DevFloat>(x)+WindowStyle::font_size/2,
+                SysWin_Height-static_cast<DevFloat>(y) - FontHeightInPixels
+            },
+            FontColor);
     }
 
     void FDecorator::SetSystemWindowShape(int w, int h) {

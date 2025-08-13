@@ -212,7 +212,7 @@ namespace Slab::Graphics {
     bool SlabWindowManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
         for (IN MetaSlabWindow : std::ranges::reverse_view(SlabWindows)) {
             Decorator.BeginDecoration(*MetaSlabWindow->Window, MouseState->x, MouseState->y);
-            // MetaSlabWindow->Window->ImmediateDraw(PlatformWindow);
+            MetaSlabWindow->Window->ImmediateDraw(PlatformWindow);
             Decorator.FinishDecoration(*MetaSlabWindow->Window, MouseState->x, MouseState->y);
         }
 
