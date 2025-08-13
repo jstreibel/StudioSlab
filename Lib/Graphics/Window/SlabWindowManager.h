@@ -28,7 +28,7 @@ namespace Slab::Graphics {
 
         TList<TPointer<WindowMetaInformation>> SlabWindows;
 
-        Decorator Decorator;
+        FDecorator Decorator;
 
         Int w_system_window=10, h_system_window=10;
 

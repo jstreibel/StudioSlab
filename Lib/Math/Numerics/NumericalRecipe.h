@@ -15,11 +15,11 @@ namespace Slab::Math::Base {
 
     class NumericalRecipe : public Core::FCommandLineInterfaceOwner {
     protected:
-        TPointer<NumericConfig> NumericConfig;
+        TPointer<FNumericConfig> NumericConfig;
 
         Str name;
 
-        explicit NumericalRecipe(const TPointer<NumericConfig>& numeric_config,
+        explicit NumericalRecipe(const TPointer<FNumericConfig>& numeric_config,
                                  const Str& name,
                                  const Str& generalDescription, bool doRegister = false);
 
@@ -34,7 +34,7 @@ namespace Slab::Math::Base {
 
         [[nodiscard]] virtual auto SuggestFileName()      const -> Str;
 
-        auto getNumericConfig()             const -> const TPointer<NumericConfig> &;
+        auto getNumericConfig()             const -> const TPointer<FNumericConfig> &;
     };
 
     DefinePointers(NumericalRecipe)

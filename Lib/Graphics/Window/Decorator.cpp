@@ -17,13 +17,13 @@ namespace Slab::Graphics {
     #define Title_Height (int(WindowStyle::font_size*5./3))
 
     // Fontes candidatas: 9, 13, 14
-    Decorator::Decorator() : writer(Core::Resources::GetIndexedFontFileName(10), (float)WindowStyle::font_size) {
+    FDecorator::FDecorator() : Writer(Core::Resources::GetIndexedFontFileName(10), (float)WindowStyle::font_size) {
 
     }
 
-    void Decorator::setup() const {
+    void FDecorator::Setup() const {
         // SETUP
-        glViewport(0, 0, syswin_w, syswin_h);
+        glViewport(0, 0, SysWin_Width, SysWin_Height);
 
         OpenGL::Legacy::PushLegacyMode();
         glDisable(GL_TEXTURE_2D);
@@ -37,12 +37,12 @@ namespace Slab::Graphics {
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
-        OpenGL::Legacy::SetupOrtho({0, (DevFloat)syswin_w, (DevFloat)syswin_h, 0});
+        OpenGL::Legacy::SetupOrtho({0, static_cast<DevFloat>(SysWin_Width), static_cast<DevFloat>(SysWin_Height), 0});
 
         OpenGL::Legacy::RestoreFromLegacyMode();
     }
 
-    void Decorator::begin_decoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
+    void FDecorator::BeginDecoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
         auto flags = slab_window.GetFlags();
         fix should_clear    = !(flags & SlabWindowDontClear);
         fix should_decorate = !(flags & SlabWindowNoDecoration);
@@ -52,7 +52,7 @@ namespace Slab::Graphics {
         fix title_height = should_decorate ? Title_Height : 0; // // 34 = 24x => x=34/24
         fix borders_size = should_decorate ? WindowStyle::border_size : 0;
 
-        setup();
+        Setup();
 
         auto rect = slab_window.GetViewport();
         auto x = rect.xMin - borders_size,
@@ -74,7 +74,7 @@ namespace Slab::Graphics {
         glEnd();
     }
 
-    void Decorator::FinishDecoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
+    void FDecorator::FinishDecoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
         auto flags = slab_window.GetFlags();
         fix should_decorate = !(flags & SlabWindowNoDecoration);
 
@@ -89,7 +89,7 @@ namespace Slab::Graphics {
              w = rect.GetWidth()  + 2*borders_size,
              h = rect.GetHeight() + 2*borders_size + title_height;
 
-        setup();
+        Setup();
 
         // *** DECORATE ********************************
 
@@ -122,7 +122,7 @@ namespace Slab::Graphics {
         glEnd();
 
         // *** Resize ***
-        if(isMouseOverCorner(slab_window, x_mouse, y_mouse)) {
+        if(IsMouseOverCorner(slab_window, x_mouse, y_mouse)) {
             glBegin(GL_TRIANGLES);
             {
                 glVertex2d(x + w - corner_size, y + h);
@@ -132,19 +132,19 @@ namespace Slab::Graphics {
             glEnd();
         }
 
-        fix h_font = writer.GetFontHeightInPixels();
+        fix h_font = Writer.GetFontHeightInPixels();
         auto color = FColor(32./255,32./255,32./255, 1);
-        writer.Write(slab_window.GetTitle(), {(DevFloat)x+WindowStyle::font_size/2, syswin_h-(DevFloat)y - h_font}, color);
+        Writer.Write(slab_window.GetTitle(), {(DevFloat)x+WindowStyle::font_size/2, SysWin_Height-(DevFloat)y - h_font}, color);
     }
 
-    void Decorator::setSystemWindowShape(int w, int h) {
-        syswin_w = w;
-        syswin_h = h;
+    void FDecorator::SetSystemWindowShape(int w, int h) {
+        SysWin_Width = w;
+        SysWin_Height = h;
 
-        writer.Reshape(w, h);
+        Writer.Reshape(w, h);
     }
 
-    bool Decorator::isMouseOverTitlebar(const FSlabWindow &window, int x_mouse, int y_mouse) {
+    bool FDecorator::IsMouseOverTitlebar(const FSlabWindow &window, int x_mouse, int y_mouse) {
         fix rect = window.GetViewport();
 
         auto x_full = rect.xMin - WindowStyle::border_size,
@@ -153,7 +153,7 @@ namespace Slab::Graphics {
 
         return x_mouse>x_full && x_mouse<x_full+w_full && y_mouse>y_full && y_mouse<y_full+Title_Height;    }
 
-    bool Decorator::isMouseOverCorner(const FSlabWindow &window, int x_mouse, int y_mouse) {
+    bool FDecorator::IsMouseOverCorner(const FSlabWindow &window, int x_mouse, int y_mouse) {
         fix rect = window.GetViewport();
 
         auto x_full = rect.xMin - WindowStyle::border_size,
@@ -167,11 +167,11 @@ namespace Slab::Graphics {
             && y_mouse>y_full+h_full-corner_size;
     }
 
-    bool Decorator::isMouseOverGrabRegion(const FSlabWindow &window, int x_mouse, int y_mouse) {
-        return isMouseOverTitlebar(window, x_mouse, y_mouse) || isMouseOverCorner(window, x_mouse, y_mouse);
+    bool FDecorator::IsMouseOverGrabRegion(const FSlabWindow &window, int x_mouse, int y_mouse) {
+        return IsMouseOverTitlebar(window, x_mouse, y_mouse) || IsMouseOverCorner(window, x_mouse, y_mouse);
     }
 
-    int Decorator::titlebar_height() {
+    int FDecorator::TitlebarHeight() {
         return Title_Height;
     }
 

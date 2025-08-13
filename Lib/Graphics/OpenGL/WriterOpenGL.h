@@ -17,7 +17,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    class FWriterOpenGL final : public Writer {
+    class FWriterOpenGL final : public FWriter {
         ftgl::texture_font_t *Font = nullptr;
         ftgl::texture_atlas_t *Atlas = nullptr;
 

@@ -24,7 +24,7 @@ int run(int argc, const char *argv[]) {
 
     using namespace Slab::Math;
 
-    auto prog = MathApp(argc, argv, Slab::Models::KGRtoR::KGRtoRBuilder_ptr(builder));
+    auto prog = MathApp(argc, argv, Slab::Models::KGRtoR::FKGRtoR_Recipe_ptr(builder));
 
     return prog.run();
 }

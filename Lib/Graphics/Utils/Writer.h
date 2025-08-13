@@ -12,10 +12,10 @@
 
 namespace Slab::Graphics {
 
-    class Writer {
+    class FWriter {
     public:
-        Writer() = default;
-        virtual ~Writer() = default;
+        FWriter() = default;
+        virtual ~FWriter() = default;
 
         virtual void Write(const Str &text, Point2D penLocation, FColor color=White, bool vertical=false) = 0;
         [[nodiscard]] virtual DevFloat GetFontHeightInPixels() const = 0;

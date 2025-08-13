@@ -15,7 +15,7 @@ namespace Slab::Math {
 
     /* ********** CONFIG **************/
 
-    class MetropolisRtoRConfig : public NumericConfig {
+    class MetropolisRtoRConfig : public FNumericConfig {
         UInt max_steps;
 
     public:

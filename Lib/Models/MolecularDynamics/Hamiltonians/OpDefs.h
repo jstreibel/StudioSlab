@@ -13,7 +13,7 @@
     auto &STATE_NAME = Cast(STATE);          \
     AssertCompatibility(*this, STATE_NAME);
 
-#define Setup(STATE, TYPE, NAME) \
+#define SetupOperation(STATE, TYPE, NAME) \
     AssertSizes(STATE)                    \
     TYPE  q##NAME = (STATE).first();     \
     TYPE  p##NAME = (STATE).second();
@@ -27,8 +27,8 @@
 #define Operation(OP)                   \
     {                                   \
         TinySetup(eqState, state)       \
-        Setup(state, IN, _IN)   \
-        Setup(*this, OUT, _OUT) \
+        SetupOperation(state, IN, _IN)   \
+        SetupOperation(*this, OUT, _OUT) \
                                         \
         fix N = first().size();         \
         for(int i=0; i<N; ++i){         \
@@ -42,9 +42,9 @@
         TinySetup(eqState1, state1)     \
         TinySetup(eqState2, state2)     \
         \
-        Setup(state1, IN, 1_IN)         \
-        Setup(state2, IN, 2_IN)         \
-        Setup(*this, OUT, _OUT)         \
+        SetupOperation(state1, IN, 1_IN)         \
+        SetupOperation(state2, IN, 2_IN)         \
+        SetupOperation(*this, OUT, _OUT)         \
         \
         fix N = first().size();         \
         for(int i=0; i<N; ++i){         \
@@ -55,7 +55,7 @@
 
 #define ScalarOperation(OP)             \
     {                                   \
-        Setup(*this, OUT, _OUT)         \
+        SetupOperation(*this, OUT, _OUT)         \
                                         \
         fix N = first().size();         \
         for(int i=0; i<N; ++i){         \
@@ -67,8 +67,8 @@
 #define StoreScalarOperation(OP)        \
     {                                   \
         TinySetup(eqState, state)       \
-        Setup(state, IN, _IN)           \
-        Setup(*this, OUT, _OUT)         \
+        SetupOperation(state, IN, _IN)           \
+        SetupOperation(*this, OUT, _OUT)         \
                                         \
         fix N = first().size();         \
         for(int i=0; i<N; ++i){         \

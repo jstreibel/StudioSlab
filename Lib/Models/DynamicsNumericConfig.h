@@ -13,7 +13,7 @@ namespace Slab::Models {
 
     using namespace Core;
 
-    class DynamicsNumericConfig : public Math::NumericConfig {
+    class DynamicsNumericConfig : public Math::FNumericConfig {
     protected:
         IntegerParameter::Ptr N = IntegerParameter::New(1024, "N", "Discretization of space dimensions. "
                                                                    "Has to be POT for GPU");

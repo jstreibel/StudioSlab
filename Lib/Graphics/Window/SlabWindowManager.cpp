@@ -114,7 +114,7 @@ namespace Slab::Graphics {
             const auto First = FindFirst_If(SlabWindows, [this](const TPointer<WindowMetaInformation> &meta) {
                 fix is_mouse_in = meta->Window->IsMouseInside();
                 fix is_decorated = !(meta->Window->GetFlags() & SlabWindowNoDecoration);
-                fix is_mouse_over_grab_region = Decorator.isMouseOverGrabRegion(*meta->Window,
+                fix is_mouse_over_grab_region = Decorator.IsMouseOverGrabRegion(*meta->Window,
                                                                                 MouseState->x,
                                                                                 MouseState->y);
 
@@ -124,11 +124,11 @@ namespace Slab::Graphics {
             if(First != SlabWindows.end()) {
                 SetFocus(*First);
 
-                if (Decorator.isMouseOverTitlebar(*CurrentlyFocused->Window, MouseState->x, MouseState->y)) {
+                if (Decorator.IsMouseOverTitlebar(*CurrentlyFocused->Window, MouseState->x, MouseState->y)) {
                     Grabbed = {Point2D(MouseState->x - CurrentlyFocused->Window->Get_x(), MouseState->y - CurrentlyFocused->Window->Get_y()),
                                Grabbed::Titlebar,
                                CurrentlyFocused->Window};
-                } else if(Decorator.isMouseOverGrabRegion(*CurrentlyFocused->Window, MouseState->x, MouseState->y)
+                } else if(Decorator.IsMouseOverGrabRegion(*CurrentlyFocused->Window, MouseState->x, MouseState->y)
                       && !CurrentlyFocused->Window->WantsFullscreen()) {
                     Grabbed = {Point2D(CurrentlyFocused->Window->GetWidth() + CurrentlyFocused->Window->Get_x() - MouseState->x,
                                        CurrentlyFocused->Window->GetHeight() + CurrentlyFocused->Window->Get_y() - MouseState->y),
@@ -150,7 +150,7 @@ namespace Slab::Graphics {
 
             if(Grabbed.what == Grabbed::Titlebar) {
                 fix x_min = -Grabbed.window->GetWidth() + 200;
-                fix y_min = Decorator.titlebar_height() + WindowStyle::menu_height;
+                fix y_min = Decorator.TitlebarHeight() + WindowStyle::menu_height;
 
                 fix x_max = w_system_window-200;
                 fix y_max = h_system_window-200;
@@ -193,7 +193,7 @@ namespace Slab::Graphics {
         w_system_window = w;
         h_system_window = h;
 
-        Decorator.setSystemWindowShape(w, h);
+        Decorator.SetSystemWindowShape(w, h);
 
         for(auto &meta : SlabWindows) {
             auto slab_window = meta->Window;
@@ -211,8 +211,8 @@ namespace Slab::Graphics {
 
     bool SlabWindowManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
         for (IN MetaSlabWindow : std::ranges::reverse_view(SlabWindows)) {
-            Decorator.begin_decoration(*MetaSlabWindow->Window, MouseState->x, MouseState->y);
-            MetaSlabWindow->Window->ImmediateDraw(PlatformWindow);
+            Decorator.BeginDecoration(*MetaSlabWindow->Window, MouseState->x, MouseState->y);
+            // MetaSlabWindow->Window->ImmediateDraw(PlatformWindow);
             Decorator.FinishDecoration(*MetaSlabWindow->Window, MouseState->x, MouseState->y);
         }
 

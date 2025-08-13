@@ -30,7 +30,7 @@ int run(int argc, const char **argv){
     auto selection = dynamic_cast<Slab::Models::KGRtoR::FKGRtoR_Recipe*>(
             selector.preParse(argc, argv).getCurrentCandidate()->GetOwner());
 
-    auto prog = MathApp(argc, argv, Slab::Models::KGRtoR::KGRtoRBuilder_ptr(selection));
+    auto prog = MathApp(argc, argv, Slab::Models::KGRtoR::FKGRtoR_Recipe_ptr(selection));
 
     return prog.run();
 }

@@ -19,11 +19,11 @@
 
 namespace Slab::Math {
 
-    class NumericConfig : public Core::FCommandLineInterfaceOwner {
+    class FNumericConfig : public Core::FCommandLineInterfaceOwner {
     public:
-        explicit NumericConfig(bool do_register = true);
+        explicit FNumericConfig(bool do_register = true);
 
-        NumericConfig(const NumericConfig &) = delete;
+        FNumericConfig(const FNumericConfig &) = delete;
 
         virtual
         auto getn() const -> UInt = 0;
