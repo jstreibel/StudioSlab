@@ -14,7 +14,7 @@
 
 namespace Slab::Graphics {
 
-    using ColorSequence = Vector<Color>;
+    using ColorSequence = Vector<FColor>;
 
     class ColorMap final {
     public:
@@ -28,8 +28,8 @@ namespace Slab::Graphics {
         };
 
     private:
-        Vector<Color> colors;
-        Color clipped, saturated;
+        Vector<FColor> colors;
+        FColor clipped, saturated;
         Str name;
         ColorMapType type = Unknown;
 
@@ -38,20 +38,20 @@ namespace Slab::Graphics {
         ColorMap(Str name,
                  ColorMapType,
                  ColorSequence colorSeq,
-                 Color clipped=Nil,
-                 Color saturated=Nil);
+                 FColor clipped=Nil,
+                 FColor saturated=Nil);
         ColorMap(const ColorMap &colorMap);
         virtual ~ColorMap() = default;
 
-        auto clone() const -> Pointer<ColorMap>;
+        auto clone() const -> TPointer<ColorMap>;
 
-        auto mapValueToColor(Real value) const -> Color;
-
-        virtual auto
-        getColorCount() const -> Count;
+        auto mapValueToColor(DevFloat value) const -> FColor;
 
         virtual auto
-        getColor(int) const -> Color;
+        getColorCount() const -> CountType;
+
+        virtual auto
+        getColor(int) const -> FColor;
 
         auto begin() -> ColorSequence::iterator;
         auto end() -> ColorSequence::iterator;
@@ -63,8 +63,8 @@ namespace Slab::Graphics {
         auto inverse() const -> ColorMap;
         auto reverse() const -> ColorMap;
 
-        Color getClippedColor() const;
-        Color getSaturatedColor() const;
+        FColor getClippedColor() const;
+        FColor getSaturatedColor() const;
 
         auto getName() const -> Str;
         auto getType() const -> ColorMapType;
@@ -73,7 +73,7 @@ namespace Slab::Graphics {
         CategoryToString(ColorMapType category);
     };
 
-    extern std::map<Str, Pointer<const ColorMap>> ColorMaps;
+    extern std::map<Str, TPointer<const ColorMap>> ColorMaps;
 
 }
 

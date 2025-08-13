@@ -16,25 +16,23 @@
 namespace Slab::Core {
 
     class BenchmarkData {
-        CPUTimer timer;
-        Vector<Nanosecond> measures;
+        CPUTimer Timer;
+        Vector<Nanosecond> Measures;
 
     public:
-        explicit BenchmarkData(Count reserveMemory=0);
+        explicit BenchmarkData(CountType reserveMemory=0);
 
         ~BenchmarkData();
 
-        void startMeasure();
+        void StartMeasure();
 
-        void storeMeasure(int nSteps = 1);
+        void StoreMeasure(int nSteps = 1);
 
-        auto getAverage() const -> boost::timer::nanosecond_type;
+        auto GetAverage() const -> boost::timer::nanosecond_type;
 
-        void print(OStream &out = Log::Info()) const;
+        void Print(OStream &out = Log::Info()) const;
 
         friend OStream &operator<<(OStream &os, const BenchmarkData &hist);
-
-    private:
 
     };
 

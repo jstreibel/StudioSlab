@@ -6,7 +6,7 @@
 #include "DataManager.h"
 
 namespace Slab::Math {
-    Count Data::n = 0;
+    CountType Data::n = 0;
 
     Data::Data(DataName name) : id(name=="[invalid]" ? 0 : ++n /* zero is reserved */), data_name(name) {}
 
@@ -31,7 +31,7 @@ namespace Slab::Math {
 
 
 
-    DataWrap::DataWrap(Volatile<Data> data) : data(data) { }
+    DataWrap::DataWrap(TVolatile<Data> data) : data(data) { }
 
     UniqueID DataWrap::get_id() const {
         if(!is_valid()) return 0;
@@ -51,7 +51,7 @@ namespace Slab::Math {
         return data.lock()->get_data_type();
     }
 
-    auto DataWrap::get_data() const -> Pointer<Data> {
+    auto DataWrap::get_data() const -> TPointer<Data> {
         if(!is_valid()) return nullptr;
 
         return data.lock();

@@ -17,15 +17,15 @@ namespace Tests {
 
     using namespace Slab;
 
-    class FourierTestWindow : public Graphics::WindowRow {
-        Pointer<Graphics::PlottingTheme> theme;
+    class FourierTestWindow : public Graphics::FWindowRow {
+        TPointer<Graphics::PlottingTheme> theme;
 
         Graphics::WindowColumn col;
 
-        Graphics::GUIWindow gui;
-        Graphics::Plot2DWindow mFuncGraph;
-        Graphics::Plot2DWindow mDFTGraph;
-        Graphics::Plot2DWindow mFTGraph;
+        Graphics::FGUIWindow gui;
+        Graphics::FPlot2DWindow mFuncGraph;
+        Graphics::FPlot2DWindow mDFTGraph;
+        Graphics::FPlot2DWindow mFTGraph;
 
         Graphics::PointSetArtist realFTArtist;
         Graphics::PointSetArtist imagFTArtist;
@@ -38,7 +38,7 @@ namespace Tests {
     public:
         FourierTestWindow();
 
-        void draw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
     };
 
 } // Tests

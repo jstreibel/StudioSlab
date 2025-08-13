@@ -11,7 +11,7 @@ namespace Slab::Math::RtoR {
 
     class Bypass : public Function {
     public:
-        inline Real operator()(Real x) const override { return x; };
+        inline DevFloat operator()(DevFloat x) const override { return x; };
     };
 
 } // RtoR

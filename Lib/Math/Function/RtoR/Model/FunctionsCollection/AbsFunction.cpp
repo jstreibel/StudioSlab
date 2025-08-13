@@ -7,19 +7,19 @@
 
 namespace Slab::Math::RtoR {
 
-    Real AbsFunction::operator()(Real x) const {
+    DevFloat AbsFunction::operator()(DevFloat x) const {
         return Abs(x);
     }
 
-    Pointer<Function> AbsFunction::Clone() const {
+    TPointer<Function> AbsFunction::Clone() const {
         return New<AbsFunction>();
     }
 
-    Pointer<Function> AbsFunction::diff(int n) const {
+    TPointer<Function> AbsFunction::diff(int n) const {
         return New<SignumFunction>();
     }
 
-    Str AbsFunction::symbol() const {
+    Str AbsFunction::Symbol() const {
         return "|ϕ|";
     }
 

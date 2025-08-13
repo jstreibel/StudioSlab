@@ -12,17 +12,17 @@
 namespace Slab::Math {
 
     class AAHyperCube : Space {
-        Real L;
+        DevFloat L;
         Measure *measure;
 
     public:
-        AAHyperCube(UInt dim, Real L);
+        AAHyperCube(UInt dim, DevFloat L);
 
         ~AAHyperCube();
 
         [[nodiscard]] auto getMeasure() const -> const Measure override;
 
-        auto getSide() const -> const Real;
+        auto getSide() const -> const DevFloat;
 
     };
 

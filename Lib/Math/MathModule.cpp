@@ -9,11 +9,11 @@
 #include "Data/DataManager.h"
 
 namespace Slab::Math {
-    MathModule::MathModule() : Core::Module("Math") {
+    MathModule::MathModule() : Core::SlabModule("Math") {
 
     }
 
-    void MathModule::RegisterData(const DataName &name, Pointer<Data> data) {
+    void MathModule::RegisterData(const DataName &name, TPointer<Data> data) {
         DataManager::RegisterData(name, data);
     }
 

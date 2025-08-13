@@ -12,25 +12,25 @@
 
 namespace Slab::Math::RtoR2 {
 
-    class ParametricCurve : public Base::FunctionT<Real, Real2D> {
-        Real sMin=.0, sMax=1.;
+    class ParametricCurve : public Base::FunctionT<DevFloat, Real2D> {
+        DevFloat sMin=.0, sMax=1.;
 
     public:
         typedef std::shared_ptr<ParametricCurve> Ptr;
 
         ParametricCurve() = default;
-        ParametricCurve(Real sMin, Real sMax) : sMin(sMin), sMax(sMax) {};
+        ParametricCurve(DevFloat sMin, DevFloat sMax) : sMin(sMin), sMax(sMax) {};
 
-        auto normalize(Real s) const -> Real {
+        auto normalize(DevFloat s) const -> DevFloat {
             fix Δs = getΔs();
 
             return (s-sMin)/Δs;
         };
 
-        inline Real getΔs() const {return sMax - sMin;}
-        inline Real get_sMin() const {return sMin;}
-        inline Real get_sMax() const {return sMax;}
-        inline void set_s(Real min, Real max) { sMin = min; sMax = max; }
+        inline DevFloat getΔs() const {return sMax - sMin;}
+        inline DevFloat get_sMin() const {return sMin;}
+        inline DevFloat get_sMax() const {return sMax;}
+        inline void set_s(DevFloat min, DevFloat max) { sMin = min; sMax = max; }
     };
 
     DefinePointers(ParametricCurve)

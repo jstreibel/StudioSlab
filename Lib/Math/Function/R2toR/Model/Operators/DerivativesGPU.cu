@@ -7,8 +7,8 @@ namespace Slab::Math::R2toR {
     typedef Indices::iterator IndexIterator;
     typedef thrust::permutation_iterator<ElementIterator, IndexIterator> ElementPermutationIterator;
 
-    typedef thrust::tuple<Real, Real, Real> Triple;
-    typedef thrust::tuple<Real, Real, Real, Real> Quadruple;
+    typedef thrust::tuple<DevFloat, DevFloat, DevFloat> Triple;
+    typedef thrust::tuple<DevFloat, DevFloat, DevFloat, DevFloat> Quadruple;
 
 
     Indices next;
@@ -18,12 +18,12 @@ namespace Slab::Math::R2toR {
     //*******************************************************************************
     struct Laplacian2D {
         int N, M;
-        Real invhsqr;
+        DevFloat invhsqr;
 
-        Laplacian2D(int N, int M, Real h) : N(N), M(M), invhsqr(1. / (h * h)) {}
+        Laplacian2D(int N, int M, DevFloat h) : N(N), M(M), invhsqr(1. / (h * h)) {}
 
         __host__ __device__
-        inline Real operator()(const thrust::tuple<Real, Real, Real, Real, Real> &d) const {
+        inline DevFloat operator()(const thrust::tuple<DevFloat, DevFloat, DevFloat, DevFloat, DevFloat> &d) const {
             /* Kernel
              *  1  / 0  1  0 \
              * --- | 1  4  1 |
@@ -35,14 +35,14 @@ namespace Slab::Math::R2toR {
              * | x10 x11 x12 |    | x10 x11 x12 |    | W C E |
              * \ x20 x21 x22 /    \     x21     /    \   S   /
              */
-            const Real x01 = thrust::get<0>(d);
-            const Real x10 = thrust::get<1>(d);
-            const Real x11 = thrust::get<2>(d);
-            const Real x12 = thrust::get<3>(d);
-            const Real x21 = thrust::get<4>(d);
+            const DevFloat x01 = thrust::get<0>(d);
+            const DevFloat x10 = thrust::get<1>(d);
+            const DevFloat x11 = thrust::get<2>(d);
+            const DevFloat x12 = thrust::get<3>(d);
+            const DevFloat x21 = thrust::get<4>(d);
 
-            const Real vx = x10 + x12;
-            const Real vy = x01 + x21;
+            const DevFloat vx = x10 + x12;
+            const DevFloat vy = x01 + x21;
 
             return invhsqr * ((vx + vy) - 4. * x11);
         }
@@ -50,7 +50,7 @@ namespace Slab::Math::R2toR {
 
     __host__ DeviceVector &d2dx2(const DeviceVector &in,
                                  DeviceVector &out,
-                                 const Real h, const size_t N, const size_t M) {
+                                 const DevFloat h, const size_t N, const size_t M) {
         assert(M == N);
 
         // TODO

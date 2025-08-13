@@ -24,15 +24,15 @@ namespace Slab::Graphics {
 
         void drawGUI() override;
 
-        void setLightZenith(Real rads);
-        void setLightAzimuth(Real rads);
-        void setLightIntensity(Real);
-        void setSigma(Real);
-        void setScale(Real);
+        void setLightZenith(DevFloat rads);
+        void setLightAzimuth(DevFloat rads);
+        void setLightIntensity(DevFloat);
+        void setSigma(DevFloat);
+        void setScale(DevFloat);
         void setMode(int);
         void setTexelSize(const Math::Real2D&);
 
-        void setFieldDataTexture(Pointer<OpenGL::Texture2D_Real> pointer) override;
+        void setFieldDataTexture(TPointer<OpenGL::Texture2D_Real> pointer) override;
 
     };
 

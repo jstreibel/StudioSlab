@@ -18,7 +18,7 @@ namespace Modes {
     FNumericalRecipe_PlaneWaves::FNumericalRecipe_PlaneWaves()
     : KGRtoRBuilder("Plane Waves", "Analytic plane waves initial condition", DONT_REGISTER)
     {
-        Interface->addParameters({&Q, &harmonic});
+        Interface->AddParameters({&Q, &harmonic});
 
         if constexpr (true) RegisterCLInterface(Interface);
 
@@ -26,9 +26,9 @@ namespace Modes {
     }
 
     Base::BoundaryConditions_ptr FNumericalRecipe_PlaneWaves::GetBoundary() {
-        fix L = DynamicPointerCast<KGNumericConfig>(this->getNumericConfig())->getL();
+        fix L = DynamicPointerCast<KGNumericConfig>(this->getNumericConfig())->GetL();
         // k=2πn/L
-        fix n = static_cast<Real>(*harmonic);
+        fix n = static_cast<DevFloat>(*harmonic);
         fix dk = 2*M_PI/L;
         fix k = n*dk;
         Log::Info() << "Using L=" << L << " and harmonic n=" << n << " to compute k=" << k << Log::Flush;

@@ -25,23 +25,23 @@ namespace Slab::Models::KGRtoR {
         RtoR::NumericFunction_ptr langevinImpulses = nullptr;
         RtoR::NumericFunction_ptr scaledImpulses   = nullptr;
 
-        Real T=.0;
-        Real γ=.0; // dissipation
-        Real α=.0; // helper: α=sqrt(2Tγ/dt);
+        DevFloat T=.0;
+        DevFloat γ=.0; // dissipation
+        DevFloat α=.0; // helper: α=sqrt(2Tγ/dt);
 
         void ComputeImpulses();
     public:
         KGLangevinSolver(Base::BoundaryConditions_ptr du,
-                         const Pointer<Potential>& potential);
+                         const TPointer<Potential>& potential);
 
-        void setTemperature(Real value);
-        void setDissipationCoefficient(Real value);
+        void setTemperature(DevFloat value);
+        void setDissipationCoefficient(DevFloat value);
 
     protected:
-        void startStep_KG(const FieldState &state, Real t, Real dt) override;
+        void startStep_KG(const FieldState &state, DevFloat t, DevFloat dt) override;
 
 
-        FieldState &F_KG(const FieldState &stateIn, FieldState &stateOut, Real t) override;
+        FieldState &F_KG(const FieldState &stateIn, FieldState &stateOut, DevFloat t) override;
 
 
     };

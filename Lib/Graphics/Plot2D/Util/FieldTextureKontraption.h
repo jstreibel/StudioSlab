@@ -12,27 +12,27 @@
 
 namespace Slab::Graphics {
 
-    using FieldDataTexturePtr = Slab::Pointer<Graphics::OpenGL::Texture2D_Real>;
+    using FieldDataTexturePtr = Slab::TPointer<Graphics::OpenGL::Texture2D_Real>;
 
     struct FieldTextureThingy {
         FieldTextureThingy(int x_res, int y_res, RectR sub_region);
 
         FieldDataTexturePtr texture = nullptr;
-        Pointer<Graphics::OpenGL::VertexBuffer> vertexBuffer = nullptr;
+        TPointer<Graphics::OpenGL::FVertexBuffer> vertexBuffer = nullptr;
     };
 
     struct FieldTextureKontraption {
-        Vector <Pointer<FieldTextureThingy>> blocks={};
+        Vector <TPointer<FieldTextureThingy>> blocks={};
         Resolution n=0, m=0;
         Resolution xres=0, yres=0;
 
         FieldTextureKontraption() = default;
         FieldTextureKontraption(Resolution full_xres, Resolution full_yres, RectR region);
 
-        void setValue(int i, int j, Real value);
-        Pointer <FieldTextureThingy> getBlock(int i, int j);
+        void setValue(int i, int j, DevFloat value);
+        TPointer <FieldTextureThingy> getBlock(int i, int j);
 
-        bool upload(Index begin, Count count);
+        bool upload(Index begin, CountType count);
 
         auto get_xres() const -> Resolution;
         auto get_yres() const -> Resolution;

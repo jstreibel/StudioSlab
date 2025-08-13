@@ -10,13 +10,13 @@
 
 namespace Slab::Math::RtoR {
 
-    class RtoRLaplacian : public Operator<Base::NumericFunction<Real,Real>> {
+    class RtoRLaplacian : public Operator<Base::NumericFunction<DevFloat,DevFloat>> {
     public:
-        using Operator<Base::NumericFunction<Real,Real>>::operator*;
+        using Operator<Base::NumericFunction<DevFloat,DevFloat>>::operator*;
 
     protected:
-        Base::NumericFunction<Real, Real> &operateAndStoreResult(Base::NumericFunction<Real, Real> &output,
-                                                                 const Base::NumericFunction<Real, Real> &input) const override;
+        Base::NumericFunction<DevFloat, DevFloat> &operateAndStoreResult(Base::NumericFunction<DevFloat, DevFloat> &output,
+                                                                 const Base::NumericFunction<DevFloat, DevFloat> &input) const override;
         // NumericFunction &operateAndStoreResult(NumericFunction &output, const NumericFunction &input) const override;
     };
 

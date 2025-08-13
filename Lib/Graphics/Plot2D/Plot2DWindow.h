@@ -17,6 +17,7 @@
 
 #include "Artists/AxisArtist.h"
 #include "Artists/XHairArtist.h"
+#include "Graphics/ImGui/ImGui-SingleSlabWindow-Wrapper.h"
 #include "Graphics/Plot2D/Util/PlottingRegion2D.h"
 #include "Graphics/Plot2D/Artists/BackgroundArtist.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
@@ -25,86 +26,90 @@
 
 namespace Slab::Graphics {
 
-    class Plot2DWindow final : public SlabWindow {
-        static Count WindowCount;
-        Count id;
-        static std::map<Str, Plot2DWindow*> graphMap;
+    class FPlot2DWindow final : public FSlabWindow {
+        static CountType WindowCount;
+        CountType Id;
+        static std::map<Str, FPlot2DWindow*> GraphMap;
 
     protected: typedef Int zOrder_t;
-    public:    typedef std::multimap<zOrder_t, Artist_ptr> ContentMap;
+    public:    typedef std::multimap<zOrder_t, FArtist_ptr> ContentMap;
 
     private:
-        ContentMap content;
+        ContentMap Content;
 
-        bool showInterface = false;
+        bool ShowInterface = false;
 
-        bool popupOn = false;
-        bool autoReviewGraphRanges=false;
+        bool PopupOn = false;
+        bool AutoReviewGraphRanges=false;
 
-        PlottingRegion2D region;
+        PlottingRegion2D Region;
 
-        Real animationTimeSeconds = 0.2;
+        float AnimationTimeSeconds = 0.2f;
 
-        Math::PointSet XHair;
+        FImGuiWindowContext WindowContext;
 
-        bool gui_context_is_local;
-        Pointer<SlabImGuiContext> gui_context;
+        void SetupOrtho() const;
 
     protected:
-        Str title;
+        Str Title;
 
-        void artistsDraw();
+        void ArtistsDraw();
         void toggleShowInterface();
-        virtual void drawGUI();
+        void RegisterGUIDraws();
 
-        friend class Artist;
+        friend class FArtist;
 
-        AxisArtist axisArtist;
-        XHairArtist artistXHair;
-        LabelsArtist labelsArtist;
+        FAxisArtist AxisArtist;
+        XHairArtist ArtistXHair;
+        FLabelsArtist LabelsArtist;
         BackgroundArtist bgArtist;
 
-        Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str title = "no_title");
+        FPlot2DWindow(
+            DevFloat xMin,
+            DevFloat xMax,
+            DevFloat yMin,
+            DevFloat yMax,
+            Str title,
+            const FImGuiWindowContext& ImGuiWindowContext);
 
     public:
 
-        explicit Plot2DWindow(Str title);
+        explicit FPlot2DWindow(Str Title, const FImGuiWindowContext& ImGuiWindowContext = FImGuiWindowContext{nullptr});
 
-        void draw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
+        auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
 
-        void addArtist(const Artist_ptr& pArtist, zOrder_t zOrder=0);
-        bool removeArtist(const Artist_ptr& pArtist);
-        void removeArtists(const Vector<Artist_ptr> &artists);
+        void AddArtist(const FArtist_ptr& pArtist, zOrder_t zOrder=0);
+        bool RemoveArtist(const FArtist_ptr& pArtist);
+        void RemoveArtists(const Vector<FArtist_ptr> &artists);
 
-        AxisArtist &getAxisArtist();
+        FAxisArtist &GetAxisArtist();
 
-        auto getLastXHairPosition() const -> Point2D;
-        virtual Str getXHairLabel(const Point2D &coords) const;
+        auto GetLastXHairPosition() const -> Point2D;
+        virtual Str GetXHairLabel(const Point2D &coords) const;
 
-        void setupOrtho() const;
+        void SetAutoReviewGraphRanges(bool);
+        void ReviewGraphRanges();
 
-        void setAutoReviewGraphRanges(bool);
-        void reviewGraphRanges();
+        auto GetRegion() const -> const PlottingRegion2D&;
+        auto GetRegion() -> PlottingRegion2D&;
 
-        auto getRegion() const -> const PlottingRegion2D&;
-        auto getRegion() -> PlottingRegion2D&;
+        void TieRegion_xMaxMin(const FPlot2DWindow&);
+        void TieRegion_yMaxMin(const FPlot2DWindow&);
 
-        void tieRegion_xMaxMin(const Plot2DWindow&);
-        void tieRegion_yMaxMin(const Plot2DWindow&);
+        void RequireLabelOverlay(const Str& label, const TPointer<PlotStyle>& style) const;
 
-        void requireLabelOverlay(const Str& label, const Pointer<PlotStyle>& style) const;
+        void SetAnimationTime(float value);
+        [[nodiscard]] float GetAnimationTime() const;
 
-        void setAnimationTime(Real value);
-        Real getAnimationTime() const;
-
-        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
-        bool notifyMouseWheel(double dx, double dy) override;
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) override;
+        bool NotifyMouseWheel(double dx, double dy) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
     };
 
-    DefinePointers(Plot2DWindow)
+    DefinePointers(FPlot2DWindow)
 
 }
 

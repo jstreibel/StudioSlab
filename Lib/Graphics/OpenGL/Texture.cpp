@@ -7,7 +7,7 @@
 #include "Core/Tools/Log.h"
 #include "Utils.h"
 
-#define CHECK_GL_ERRORS(count) checkGLErrors(Str(__PRETTY_FUNCTION__) \
+#define CHECK_GL_ERRORS(count) CheckGLErrors(Str(__PRETTY_FUNCTION__) \
     + " from " + Common::getClassName(this)                                        \
     + " (check " + ToStr((count)) + ")");
 
@@ -35,7 +35,7 @@ namespace Slab::Graphics::OpenGL {
         glActiveTexture(GL_TEXTURE0);
     }
 
-    void Texture::bind() const {
+    void Texture::Bind() const {
         activate();
         CHECK_GL_ERRORS(0)
         glBindTexture(target, handle);
@@ -48,7 +48,7 @@ namespace Slab::Graphics::OpenGL {
 
     GLuint Texture::getGLtextureUnit()  const { return textureUnit; }
 
-    void Texture::setBorderColor(Color color) const {
+    void Texture::setBorderColor(FColor color) const {
         float borderColor[] = { color.r, color.g, color.b, color.a };
         glTexParameterfv(target, GL_TEXTURE_BORDER_COLOR, borderColor);
     }
@@ -56,7 +56,7 @@ namespace Slab::Graphics::OpenGL {
     auto Texture::getData() const -> const PixelData & { return *pixelData; }
 
     void Texture::setData(const PixelData &data) {
-        bind();
+        Bind();
 
         if(data.nDim == 1){
             assert(target == GL_TEXTURE_1D);

@@ -22,7 +22,7 @@ namespace Slab::Math {
         for(auto i=i_start; i<=i_end; ++i) {
             if(odd && i==0) continue;
             fix y_i = y_vec[idx + i];
-            fix x_i = x_min + dx*(static_cast<Real>(idx) + static_cast<Real>(i));
+            fix x_i = x_min + dx*(static_cast<DevFloat>(idx) + static_cast<DevFloat>(i));
             x_avg += x_i*y_i;
             y_avg += y_i;
         }
@@ -63,7 +63,7 @@ namespace Slab::Math {
 
         // Construct the system of equations
         // A * coeffs = Y, where A is the matrix of x values and coeffs is [a, b, c, d]
-        auto idxd = (Real)idx;
+        auto idxd = (DevFloat)idx;
         double A[4][4] = {
                 {pow(idxd-1, 3), pow(idxd-1, 2), idxd-1, 1},
                 {pow(idxd, 3),   pow(idxd, 2),   idxd,   1},

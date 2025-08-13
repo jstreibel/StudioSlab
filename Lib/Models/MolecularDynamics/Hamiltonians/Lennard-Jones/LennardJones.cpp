@@ -11,14 +11,14 @@
 
 namespace Slab::Models::MolecularDynamics {
 
-    LennardJones::LennardJones(Pointer<Config> config, Real T)
+    LennardJones::LennardJones(TPointer<Config> config, DevFloat T)
             : Langevin(config, T) {}
 
     inline Graphics::Point2D LennardJones::dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
-        Real sqrCutoffRadius = CUTOFF_RADIUS * CUTOFF_RADIUS;
-        Real distSqr;
+        DevFloat sqrCutoffRadius = CUTOFF_RADIUS * CUTOFF_RADIUS;
+        DevFloat distSqr;
 
-        fix L = numeric_config->getL();
+        fix L = numeric_config->GetL();
 
         const Graphics::Point2D points[] = {
                 q2 - q1,
@@ -52,16 +52,16 @@ namespace Slab::Models::MolecularDynamics {
         return resultForce;
     }
 
-    Real MolecularDynamics::LennardJones::U(Real r) {
+    DevFloat MolecularDynamics::LennardJones::U(DevFloat r) {
         auto inv_n = σ / r;
         return 4. * ε * (POW12(inv_n) - POW6(inv_n));
     }
 
-    Real MolecularDynamics::LennardJones::U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
-        const Real SIGMA_SQR = σ * σ;
-        Real distSqr;
+    DevFloat MolecularDynamics::LennardJones::U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
+        const DevFloat SIGMA_SQR = σ * σ;
+        DevFloat distSqr;
 
-        fix L = numeric_config->getL();
+        fix L = numeric_config->GetL();
 
         const Graphics::Point2D points[] = {
                 q2 - q1,
@@ -80,7 +80,7 @@ namespace Slab::Models::MolecularDynamics {
         for (auto r: points) {
             distSqr = r.lengthSqr();
             if (distSqr < SIGMA_SQR) {
-                const Real dist = sqrt(distSqr);
+                const DevFloat dist = sqrt(distSqr);
                 const DoubleAccess arg = {1 - dist / σ};
 
                 return ε / 1. * pow(arg.val, 1.) * arg.isPositive();

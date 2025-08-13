@@ -4,22 +4,22 @@
 #include "Stepper.h"
 #include "Math/Numerics/Socket.h"
 
-#include "Core/Controller/CommandLine/CLInterface.h"
+#include "Core/Controller/CommandLine/CommandLineInterface.h"
 #include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
 #include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
-#include "Core/Controller/CommandLine/CLInterfaceOwner.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceOwner.h"
 
 namespace Slab::Math::Base {
 
-    using OutputSockets = Vector<Pointer<Socket>>;
+    using OutputSockets = Vector<TPointer<Socket>>;
 
-    class NumericalRecipe : public Core::CLInterfaceOwner {
+    class NumericalRecipe : public Core::FCommandLineInterfaceOwner {
     protected:
-        Pointer<NumericConfig> numeric_config;
+        TPointer<NumericConfig> numeric_config;
 
         Str name;
 
-        explicit NumericalRecipe(const Pointer<NumericConfig>& numeric_config,
+        explicit NumericalRecipe(const TPointer<NumericConfig>& numeric_config,
                                  const Str& name,
                                  const Str& generalDescription, bool doRegister = false);
 
@@ -30,11 +30,11 @@ namespace Slab::Math::Base {
         virtual void setupForCurrentThread() { };
 
         virtual auto buildOutputSockets()         -> OutputSockets = 0;
-        virtual auto buildStepper()               -> Pointer<Stepper> = 0;
+        virtual auto buildStepper()               -> TPointer<Stepper> = 0;
 
         [[nodiscard]] virtual auto SuggestFileName()      const -> Str;
 
-        auto getNumericConfig()             const -> const Pointer<NumericConfig> &;
+        auto getNumericConfig()             const -> const TPointer<NumericConfig> &;
     };
 
     DefinePointers(NumericalRecipe)

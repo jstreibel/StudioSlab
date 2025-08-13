@@ -39,7 +39,7 @@ namespace Slab::Lost::ThermoOutput {
     const float isingSpriteSize = (WinH- 3 * _border) / 2; //2l + 3b = H => 2l = H-3b => l = (H-3b)/2
     const int _graphsWidth = int(WinW-isingSpriteSize- (Cols+1+1) * _border) / Cols;
     const int _graphsHeight = int(WinH- (Rows+1) * _border) / Rows;
-    Real GAP = .0; // in degrees, used to view the Dirac strings between field twists.
+    DevFloat GAP = .0; // in degrees, used to view the Dirac strings between field twists.
 
     // user input parameters to manip T and h.
     const float delta = .01;
@@ -59,12 +59,12 @@ namespace Slab::Lost::ThermoOutput {
         auto main_syswin = Graphics::GetGraphicsBackend()->GetMainSystemWindow();
         auto nkModule_abstract = Core::GetModule("Nuklear");
         auto &nkModule = *dynamic_cast<Graphics::NuklearModule*>(nkModule_abstract.get());
-        nkContext = nkModule.createContext(main_syswin.get());
+        nkContext = nkModule.CreateContext(main_syswin);
         timer.restart();
 
         const float isingSpriteScale = isingSpriteSize/(float)L;
 
-        if (!font.loadFromFile(Slab::Core::Resources::fontFileName(10)))
+        if (!font.loadFromFile(Slab::Core::Resources::GetIndexedFontFileName(10)))
             throw "SFML error while loading font.";
 
         text = sf::Text("Ising", font, fontSize);
@@ -205,7 +205,7 @@ namespace Slab::Lost::ThermoOutput {
         auto t_total = upToMCStep - t0;
         auto tCorrMax_local = fmin(t_total, t_max);
 
-        Vector<Real> c((size_t)tCorrMax_local);
+        Vector<DevFloat> c((size_t)tCorrMax_local);
 
         for (auto t=0; t < tCorrMax_local; ++t){
             auto corr = .0;
@@ -264,7 +264,7 @@ namespace Slab::Lost::ThermoOutput {
                     val -= floor(val);
                     val *= 360.0;
 
-                    auto rgbColor = Graphics::hsv2rgb({static_cast<Real>(val), 1, 1});
+                    auto rgbColor = Graphics::hsv2rgb({static_cast<DevFloat>(val), 1, 1});
                     auto color = sf::Color((float)rgbColor.r * 255., (float)rgbColor.g * 255., (float)rgbColor.b * 255.);
 
                     if(val>(360.0-.5*GAP) || val<(.5*GAP)){ color.r*=0; color.g*=0; color.b*=0; }
@@ -430,7 +430,7 @@ namespace Slab::Lost::ThermoOutput {
             return;
         }
 
-        Real dT = (T_max-T_min)/totalSamples;
+        DevFloat dT = (T_max-T_min)/totalSamples;
         if((currStep % ((transientToSamplesRatio+1 )*transientSize)) == 0){
             auto lastT = params.T;
             params.T += dT;
@@ -477,7 +477,7 @@ namespace Slab::Lost::ThermoOutput {
         //window.draw(*C_v_View);
     }
 
-    void SingleSimViewController::manipulationOfParametersHasHappened(Real last_T, Real last_h, Real N) {
+    void SingleSimViewController::manipulationOfParametersHasHappened(DevFloat last_T, DevFloat last_h, DevFloat N) {
         //mag_t_View->manipulationOfParametersHasHappened(last_T, N/last_T);
         //en_t_View->manipulationOfParametersHasHappened(last_T, N/(last_T*last_T));
     }
@@ -499,7 +499,7 @@ namespace Slab::Lost::ThermoOutput {
 
             myfile.open(fileLoc + fileName + ".dat");
             myfile << "# History output\n# t    T(t)    h(t)    e(t)    m(t)\n";
-            Pair<Real, double> T, h, e, m;
+            Pair<DevFloat, double> T, h, e, m;
             for (auto data : boost::combine(T_t, h_t, en_t, mag_t)) {
                 boost::tie(T, h, e, m) = data;
                 const auto t = T.first; // ou h.first ou e.first ou m.first. Eles devem (!) todos retornar a mesma coisa.

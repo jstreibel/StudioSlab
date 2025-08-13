@@ -7,8 +7,8 @@
 namespace Slab::Math::R2toR {
     Integral::Integral(Integral::Config config) : config(config) {}
 
-    Pointer<RtoR::NumericFunction_CPU>
-    Integral::operator[](Pointer<NumericFunction_CPU> func) {
+    TPointer<RtoR::NumericFunction_CPU>
+    Integral::operator[](TPointer<NumericFunction_CPU> func) {
         if(config.direction!=Config::dx || !config.compute_avg) NOT_IMPLEMENTED
 
         IN data = func->getSpace().getHostData(true);

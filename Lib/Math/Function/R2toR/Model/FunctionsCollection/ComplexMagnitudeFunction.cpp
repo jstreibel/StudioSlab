@@ -12,7 +12,7 @@ namespace Slab::Math::R2toR {
     : function(func) {
     }
 
-    Real ComplexMagnitudeFunction::operator()(Real2D x) const {
+    DevFloat ComplexMagnitudeFunction::operator()(Real2D x) const {
         if(function== nullptr) return NaN;
 
         auto val = (*function)(x);

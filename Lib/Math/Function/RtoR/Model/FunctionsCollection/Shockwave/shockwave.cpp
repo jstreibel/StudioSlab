@@ -6,13 +6,13 @@
 
 namespace Slab {
 
-    Math::RtoR::ShockwavePhi::ShockwavePhi(Real h) : h(h) {}
+    Math::RtoR::ShockwavePhi::ShockwavePhi(DevFloat h) : h(h) {}
 
-    Real Math::RtoR::ShockwavePhi::operator()(Real x) const { return 0.0; }
+    DevFloat Math::RtoR::ShockwavePhi::operator()(DevFloat x) const { return 0.0; }
 
-    Math::RtoR::ShockwaveDPhiDt::ShockwaveDPhiDt(Real h) : h(h) {}
+    Math::RtoR::ShockwaveDPhiDt::ShockwaveDPhiDt(DevFloat h) : h(h) {}
 
-    Real Math::RtoR::ShockwaveDPhiDt::operator()(Real x) const { return deltaTri(x, 50.0 * h); }
+    DevFloat Math::RtoR::ShockwaveDPhiDt::operator()(DevFloat x) const { return deltaTri(x, 50.0 * h); }
 
 
 }

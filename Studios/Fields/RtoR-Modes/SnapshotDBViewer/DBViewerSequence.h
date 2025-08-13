@@ -20,25 +20,25 @@ namespace Modes::DatabaseViewer {
 
     using namespace Slab;
 
-    class DBViewerSequence final : public Graphics::WindowRow {
-        Graphics::GUIWindow guiWindow;
-        WindowRow topRow;
+    class DBViewerSequence final : public Graphics::FWindowRow {
+        Graphics::FGUIWindow guiWindow;
+        FWindowRow topRow;
 
         int current_database = -1;
 
         Vector<DBParser::Ptr> dbParsers;
-        Graphics::Plot2DWindow mashupDisplay;
+        Graphics::FPlot2DWindow mashupDisplay;
 
         using SnapshotMashup = Math::R2toR::NumericFunction_CPU;
-        Vector<Pointer<SnapshotMashup>> allMashups;
+        Vector<TPointer<SnapshotMashup>> allMashups;
         Vector<Graphics::R2toRFunctionArtist_ptr> mashupArtists;
         Vector<Utils::MaxInfo> maxValues;
 
-        Pointer<SnapshotMashup> currentMashup;
+        TPointer<SnapshotMashup> currentMashup;
         Graphics::R2toRFunctionArtist_ptr currentMeshupArtist;
 
 
-        Graphics::Plot2DWindow massesGraph;
+        Graphics::FPlot2DWindow massesGraph;
 
         Math::PointSet maxValuesPointSet;
         Math::PointSet massesReal_pointSet;
@@ -46,25 +46,25 @@ namespace Modes::DatabaseViewer {
         Math::PointSet underXHair;
         Graphics::PointSetArtist_ptr mainModesArtist;
 
-        Pointer<Math::PointSet> KGRelation;
+        TPointer<Math::PointSet> KGRelation;
         Graphics::PointSetArtist_ptr KGRelation_artist;
 
         int index_XHair=-1;
 
-        Real KG_mass = 1.0;
+        DevFloat KG_mass = 1.0;
         int masses_avg_samples = 1;
         void updateKGDispersion(bool visible);
         void reloadData();
         void computeMasses();
         void drawTable(int specialIndex) const;
 
-        Graphics::KeyState shiftKey = Graphics::Release;
+        Graphics::EKeyState shiftKey = Graphics::Release;
     public:
         explicit DBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam);
 
-        void draw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
-        bool notifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) override;
+        bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override;
     };
 }
 

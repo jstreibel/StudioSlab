@@ -7,11 +7,8 @@
 #include <utility>
 
 #include "3rdParty/ImGui.h"
-#include "Core/Tools/Log.h"
 #include "Models/KleinGordon/KG-Solver.h"
-#include "Math/Function/RtoR/Operations/DiscreteFourierTransform.h"
 #include "Graphics/Plot2D/Plotter.h"
-// #include "Math/Function/R2toR/DFT.h"
 
 // Don't touch these:
 #define max(a, b) ((a)>(b)?(a):(b))
@@ -25,7 +22,7 @@
         firstTimer = false;         \
         code                        \
     }
-#define CHECK_GL_ERRORS(count) Graphics::OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
+#define CHECK_GL_ERRORS(count) Graphics::OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
 
 // Ok to touch these:
 #define HISTOGRAM_SHOULD_BE_PRETTY false
@@ -37,65 +34,71 @@
 
 namespace Slab::Models::KGRtoR {
 
-    RealtimePanel::RealtimePanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian,
-                                       Graphics::GUIWindow &guiWindow)
-            : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ realtime monitor",
-                                  "realtime monitoring of simulation state")
-            , mFieldsGraph("Fields")
-            , mEnergyGraph("Energy")
-            // , imGuiWindow(Naked(mEnergyGraph))
+    FRealtimePanel::FRealtimePanel(
+        const TPointer<KGNumericConfig> &Params,
+        KGEnergy &Hamiltonian,
+        FGUIWindow &GUIWindow)
+    : FRtoRPanel(
+        Params,
+        GUIWindow,
+        Hamiltonian,
+        "ℝ↦ℝ realtime monitor",
+        "realtime monitoring of simulation state")
+    , FieldsGraph("Fields", GUIWindow.GetGUIWindowContext())
+    , EnergyGraph("Energy", GUIWindow.GetGUIWindowContext())
+    // , imGuiWindow(Naked(mEnergyGraph))
     {
-        auto currStyle = Graphics::PlotThemeManager::GetCurrent();
-
         {
-            auto sty = currStyle->funcPlotStyles.begin();
+            const auto CurrStyle = PlotThemeManager::GetCurrent();
 
-            Graphics::Plotter::AddPointSet(Slab::Naked(mEnergyGraph),
-                                           Slab::Naked(UHistoryData),
+            auto sty = CurrStyle->FuncPlotStyles.begin();
+
+            Plotter::AddPointSet(Naked(EnergyGraph),
+                                           Naked(UHistoryData),
                                            *sty, "U/L");
-            Graphics::Plotter::AddPointSet(Slab::Naked(mEnergyGraph),
-                                           Slab::Naked(KHistoryData),
+            Plotter::AddPointSet(Naked(EnergyGraph),
+                                           Naked(KHistoryData),
                                            *++sty, "K/L");
-            Graphics::Plotter::AddPointSet(Slab::Naked(mEnergyGraph),
-                                           Slab::Naked(WHistoryData),
+            Plotter::AddPointSet(Naked(EnergyGraph),
+                                           Naked(WHistoryData),
                                            *++sty, "<(𝜕ₓϕ)²>/2=∫(𝜕ₓϕ)²dx/2L");
-            Graphics::Plotter::AddPointSet(Slab::Naked(mEnergyGraph),
-                                           Slab::Naked(VHistoryData),
+            Plotter::AddPointSet(Naked(EnergyGraph),
+                                           Naked(VHistoryData),
                                            *++sty, "<V(ϕ)>=∫V(ϕ)dx/L");
 
-            mEnergyGraph.setAutoReviewGraphRanges(false);
-            mEnergyGraph.getAxisArtist().setHorizontalAxisLabel("t");
-            mEnergyGraph.getAxisArtist().setHorizontalAxisLabel("e");
+            EnergyGraph.SetAutoReviewGraphRanges(false);
+            EnergyGraph.GetAxisArtist().SetHorizontalAxisLabel("t");
+            EnergyGraph.GetAxisArtist().SetHorizontalAxisLabel("e");
         }
 
         {
-            fix V_str = hamiltonian.getThePotential()->symbol();
-            vArtist = Graphics::Plotter::AddRtoRFunction(Slab::Naked(mFieldsGraph),
-                                                         hamiltonian.getPotentialDensity(), V_style,
+            fix V_str = Hamiltonian.GetThePotential()->Symbol();
+            vArtist = Plotter::AddRtoRFunction(Naked(FieldsGraph),
+                                                         Hamiltonian.getPotentialDensity(), V_style,
                                                          Str("V(ϕ)=") + V_str, 1024);
-            kArtist = Graphics::Plotter::AddRtoRFunction(Slab::Naked(mFieldsGraph),
-                                                         hamiltonian.getKineticDensity(), K_style, "K/L", 1024);
-            wArtist = Graphics::Plotter::AddRtoRFunction(Slab::Naked(mFieldsGraph),
-                                                         hamiltonian.getGradientDensity(), W_style, "(𝜕ₓϕ)²", 1024);
-            uArtist = Graphics::Plotter::AddRtoRFunction(Slab::Naked(mFieldsGraph),
-                                                         hamiltonian.getEnergyDensity(), U_style, "E/L", 1024);
+            kArtist = Plotter::AddRtoRFunction(Naked(FieldsGraph),
+                                                         Hamiltonian.getKineticDensity(), K_style, "K/L", 1024);
+            wArtist = Plotter::AddRtoRFunction(Naked(FieldsGraph),
+                                                         Hamiltonian.getGradientDensity(), W_style, "(𝜕ₓϕ)²", 1024);
+            uArtist = Plotter::AddRtoRFunction(Naked(FieldsGraph),
+                                                         Hamiltonian.getEnergyDensity(), U_style, "E/L", 1024);
         }
 
-        addWindow(Slab::Naked(mFieldsGraph));
-        addWindow(Slab::Naked(mEnergyGraph));
+        AddWindow(Naked(FieldsGraph));
+        AddWindow(Naked(EnergyGraph));
 
-        setColumnRelativeWidth(0, 0.4);
-        setColumnRelativeWidth(1, -1);
+        SetColumnRelativeWidth(0, 0.4);
+        SetColumnRelativeWidth(1, -1);
     }
 
-    void RealtimePanel::draw() {
-        updateEnergyData();
+    void FRealtimePanel::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+        UpdateEnergyData();
 
-        fix V_str = hamiltonian.getThePotential()->symbol();
+        fix V_str = Hamiltonian.GetThePotential()->Symbol();
 
-        int errorCount = 0;
+        int ErrorCount = 0;
 
-        CHECK_GL_ERRORS(errorCount++)
+        CHECK_GL_ERRORS(ErrorCount++)
 
         // imGuiWindow.draw();
 
@@ -103,56 +106,60 @@ namespace Slab::Models::KGRtoR {
         guiWindow.AddExternalDraw([this, V_str]() {
             if (ImGui::CollapsingHeader("Real-time monitor")) {
 
-                if (ImGui::Checkbox(("Show V(ϕ)=" + V_str).c_str(), &showPot)) { vArtist->setVisibility(showPot); }
-                if (ImGui::Checkbox("Show (𝜕ₜϕ)²/2", &showKineticEnergy)) { kArtist->setVisibility(showKineticEnergy); }
-                if (ImGui::Checkbox("Show (𝜕ₓϕ)²/2", &showGradientEnergy)) {
-                    wArtist->setVisibility(showGradientEnergy);
+                if (ImGui::Checkbox(("Show V(ϕ)=" + V_str).c_str(), &bShowPot)) { vArtist->SetVisibility(bShowPot); }
+                if (ImGui::Checkbox("Show (𝜕ₜϕ)²/2", &bShowKineticEnergy)) { kArtist->SetVisibility(bShowKineticEnergy); }
+                if (ImGui::Checkbox("Show (𝜕ₓϕ)²/2", &bShowGradientEnergy)) {
+                    wArtist->SetVisibility(bShowGradientEnergy);
                 }
-                if (ImGui::Checkbox("Show e", &showEnergyDensity)) { uArtist->setVisibility(showEnergyDensity); }
+                if (ImGui::Checkbox("Show e", &bShowEnergyDensity)) { uArtist->SetVisibility(bShowEnergyDensity); }
             }
         });
 
-        CHECK_GL_ERRORS(errorCount++)
+        CHECK_GL_ERRORS(ErrorCount++)
 
-        RtoRPanel::draw();
+        FRtoRPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void RealtimePanel::setSimulationHistory(R2toR::NumericFunction_constptr simHistory,
-                                             const Graphics::R2toRFunctionArtist_ptr &simHistoryGraph) {
-        RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
+    void FRealtimePanel::SetSimulationHistory(
+        TPointer<const R2toR::FNumericFunction> SimHistory,
+        const R2toRFunctionArtist_ptr &SimHistoryGraph)
+    {
+        FRtoRPanel::SetSimulationHistory(SimHistory, SimHistoryGraph);
 
-        auto simulationHistoryGraph = Slab::New<Graphics::Plot2DWindow>("Simulation history");
-        simulationHistoryGraph->addArtist(simHistoryGraph);
+        auto simulationHistoryGraph = Slab::New<Graphics::FPlot2DWindow>("Simulation history", guiWindow.GetGUIWindowContext());
+        simulationHistoryGraph->AddArtist(SimHistoryGraph);
 
-        addWindow(simulationHistoryGraph, ADD_NEW_COLUMN);
-        setColumnRelativeWidth(1, -1);
+        AddWindow(simulationHistoryGraph, ADD_NEW_COLUMN);
+        SetColumnRelativeWidth(1, -1);
     }
 
-    void RealtimePanel::setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
-                                               const DFTDataHistory &dftData,
-                                               const Graphics::R2toRFunctionArtist_ptr &sftHistoryArtist) {
-        RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryArtist);
+    void FRealtimePanel::SetSpaceFourierHistory(
+        TPointer<const R2toR::FNumericFunction> SftHistory,
+        const FDFTDataHistory &DFTData,
+        const R2toRFunctionArtist_ptr &SftHistoryArtist)
+    {
+        FRtoRPanel::SetSpaceFourierHistory(SftHistory, DFTData, SftHistoryArtist);
 
-        auto sftHistoryGraph = Slab::New<Plot2DWindow>("Space Fourier transform");
-        sftHistoryGraph->addArtist(sftHistoryArtist);
+        auto sftHistoryGraph = Slab::New<FPlot2DWindow>("Space Fourier transform", guiWindow.GetGUIWindowContext());
+        sftHistoryGraph->AddArtist(SftHistoryArtist);
 
-        addWindow(sftHistoryGraph);
+        AddWindow(sftHistoryGraph);
     }
 
-    void RealtimePanel::updateEnergyData() {
-        const auto t = lastPacket.getSteps()*params->getdt();
+    void FRealtimePanel::UpdateEnergyData() {
+        const auto t = static_cast<DevFloat>(LastPacket.GetSteps()) * Params->Getdt();
 
-        auto U = hamiltonian.getTotalEnergy();
-        auto K = hamiltonian.getTotalKineticEnergy();
-        auto W = hamiltonian.getTotalGradientEnergy();
-        auto V = hamiltonian.getTotalPotentialEnergy();
+        auto U = Hamiltonian.GetTotalEnergy();
+        auto K = Hamiltonian.GetTotalKineticEnergy();
+        auto W = Hamiltonian.GetTotalGradientEnergy();
+        auto V = Hamiltonian.GetTotalPotentialEnergy();
 
-        auto factor = 1.0 / params->getL();
+        auto Factor = 1.0 / Params->GetL();
 
-        UHistoryData.addPoint({t, U * factor});
-        KHistoryData.addPoint({t, K * factor});
-        WHistoryData.addPoint({t, W * factor});
-        VHistoryData.addPoint({t, V * factor});
+        UHistoryData.AddPoint({t, U * Factor});
+        KHistoryData.AddPoint({t, K * Factor});
+        WHistoryData.AddPoint({t, W * Factor});
+        VHistoryData.AddPoint({t, V * Factor});
 
         auto xMax = t;
 
@@ -161,10 +168,10 @@ namespace Slab::Models::KGRtoR {
         auto yMax = max(UHistoryData.getMax().y,
                         min(KHistoryData.getMax().y, min(WHistoryData.getMax().y, VHistoryData.getMax().y)));
 
-        mEnergyGraph.getRegion().animate_yMax(yMax);
-        mEnergyGraph.getRegion().animate_yMin(yMin);
+        EnergyGraph.GetRegion().animate_yMax(yMax);
+        EnergyGraph.GetRegion().animate_yMin(yMin);
 
-        mEnergyGraph.getRegion().animate_xMax(xMax);
+        EnergyGraph.GetRegion().animate_xMax(xMax);
     }
 
 }

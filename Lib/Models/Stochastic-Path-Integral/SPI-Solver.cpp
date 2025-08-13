@@ -20,16 +20,16 @@
 
 namespace Slab::Models::StochasticPathIntegrals {
 
-    SPISolver::SPISolver(const Pointer<SPIBC>& du) : LinearStepSolver(du) {
+    SPISolver::SPISolver(const TPointer<SPIBC>& du) : LinearStepSolver(du) {
         O = New<Math::R2toR::R2toRLaplacian>();
         dVdϕ_ptr = Math::RtoR::AbsFunction().diff(0);
     }
 
     SPISolver::~SPISolver() = default;
 
-    inline Real ξ() { return RandUtils::GaussianNoise(.0, 1.0); }
+    inline DevFloat ξ() { return RandUtils::GaussianNoise(.0, 1.0); }
 
-    void SPISolver::ComputeImpulses(Real dτ) const {
+    void SPISolver::ComputeImpulses(DevFloat dτ) const {
         if (langevinImpulses == nullptr) return;
 
         auto &langevin_space = langevinImpulses->getSpace();
@@ -45,7 +45,7 @@ namespace Slab::Models::StochasticPathIntegrals {
         langevin_space.upload();
     }
 
-    void SPISolver::startStep(const Math::Base::EquationState &in, Real t, Real dτ) {
+    void SPISolver::startStep(const Math::Base::EquationState &in, DevFloat t, DevFloat dτ) {
         if (temp1 == nullptr) {
             auto &refState = dynamic_cast<const SPIState &>(in);
 
@@ -63,7 +63,7 @@ namespace Slab::Models::StochasticPathIntegrals {
     Math::Base::EquationState &
     SPISolver::F(const Math::Base::EquationState &in,
                  Math::Base::EquationState &out,
-                 Real t) {
+                 DevFloat t) {
         auto &spiStateIn = dynamic_cast<const SPIState &>(in);
         auto &spiStateOut = dynamic_cast<SPIState &>(out);
 

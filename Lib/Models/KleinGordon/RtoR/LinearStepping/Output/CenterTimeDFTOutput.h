@@ -11,16 +11,16 @@ namespace Slab::Models::KGRtoR {
 
     struct TimeDFTOutputConfig {
         const Str &filename;
-        Vector<Real> x_measure;
-        Real t_start;
-        Real t_end;
+        Vector<DevFloat> x_measure;
+        DevFloat t_start;
+        DevFloat t_end;
     };
 
     class CenterTimeDFTOutput final : public Math::Socket {
         Str filename;
-        Vector<RealVector> dataset;
-        Vector<Real> x_measure;
-        Real t_start, t_end;
+        Vector<FRealVector> dataset;
+        Vector<DevFloat> x_measure;
+        DevFloat t_start, t_end;
         int step_start, step_end;
 
     protected:
@@ -33,7 +33,7 @@ namespace Slab::Models::KGRtoR {
         auto notifyIntegrationHasFinished(const Math::OutputPacket &theVeryLastOutputInformation) -> bool override;
 
     public:
-        CenterTimeDFTOutput(Real t_max, Count max_steps, TimeDFTOutputConfig timeDFTSnapshotConfig);
+        CenterTimeDFTOutput(DevFloat t_max, CountType max_steps, TimeDFTOutputConfig timeDFTSnapshotConfig);
 
     };
 }

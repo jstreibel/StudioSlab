@@ -7,41 +7,40 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    bool Legacy::RenderPointSet(const Math::PointSet_constptr& pSet, PlotStyle style) noexcept {
+    bool Legacy::RenderPointSett(const Math::PointSet_constptr& pSet, PlotStyle style) noexcept {
         if(pSet== nullptr) return true;
 
         IN pts = pSet->getPoints();
 
         if(pts.empty()) return true;
 
-        Shader::remove();
-
-        if (style.filled && !(style.getPrimitive() == Point || style.getPrimitive() == LinePrimitive::Lines)) {
+        if (style.filled && !(style.getPrimitive() == Point || style.getPrimitive() == Lines)) {
             const auto color = style.fillColor;
 
             glColor4f(color.r, color.g, color.b, color.a);
             glBegin(GL_QUADS);
             {
-                auto iMax = (long) pts.size() - 1;
+                const auto iMax = static_cast<long>(pts.size()) - 1;
                 for (auto i = 0; i < iMax; ++i) {
-                    auto pLeft = pts[i];
-                    auto pRite = pts[i + 1];
+                    const auto pLeft = pts[i], pRite = pts[i + 1];
 
-                    const Real xmin = pLeft.x;
-                    const Real xmax = pRite.x;
+                    const DevFloat
+                    xMin = pLeft.x,
+                    xMax = pRite.x,
+                    yMin = 0,
+                    yMax1 = pLeft.y,
+                    yMax2 = pRite.y;
 
-                    const Real ymin = 0,
-                            ymax1 = pLeft.y,
-                            ymax2 = pRite.y;
-
-                    glVertex2d(xmin, ymin);
-                    glVertex2d(xmin, ymax1);
-                    glVertex2d(xmax, ymax2);
-                    glVertex2d(xmax, ymin);
+                    glVertex2d(xMin, yMin);
+                    glVertex2d(xMin, yMax1);
+                    glVertex2d(xMax, yMax2);
+                    glVertex2d(xMax, yMin);
                 }
             }
             glEnd();
         }
+
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
 
         {
             glLineWidth(style.thickness);
@@ -92,7 +91,7 @@ namespace Slab::Graphics::OpenGL {
 
         }
 
-        return !OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__));
+        return !CheckGLErrors(Str(__PRETTY_FUNCTION__));
     }
 
 

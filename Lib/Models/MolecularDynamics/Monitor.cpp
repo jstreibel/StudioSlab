@@ -24,14 +24,14 @@ namespace Slab::Models::MolecularDynamics {
 
     #define SFML_Backend DynamicPointerCast<Graphics::SFMLBackend>(Slab::Graphics::GetGraphicsBackend())
 
-    Monitor::Monitor(const Pointer<Config>& config, Model model)
+    Monitor::Monitor(const TPointer<Config>& config, Model model)
     : Socket("Particle dynamics monitor", 10)
-    , SlabWindow()
-    , renderWindow(*(sf::RenderWindow*)SFML_Backend->GetMainSystemWindow()->getRawPlatformWindowPointer())
+    , FSlabWindow(Graphics::FSlabWindowConfig("Particle Dynamics Monitor"))
+    , renderWindow(*(sf::RenderWindow*)SFML_Backend->GetMainSystemWindow()->GetRawPlatformWindowPointer())
     , molShapes(2*config->getN())
     , molShape(CUTOFF_RADIUS, 36)
     , molTexture()
-    , N(config->getN()), L(float(config->getL()))
+    , N(config->getN()), L(float(config->GetL()))
     {
         sf::Color skyBlue(135, 206, 235, 255);
         sf::Color someRed(235, 206, 135, 255);
@@ -59,8 +59,8 @@ namespace Slab::Models::MolecularDynamics {
                     else if(r < 0.5*1.12*σ && SHOW_DOT)
                         molImg.setPixel(i, j, sf::Color(255, 255, 255, 255));
                     else if(!SHOW_DOT){
-                        Real U;
-                        Real factor;
+                        DevFloat U;
+                        DevFloat factor;
 
                         if     (model == Model::LennardJones){ U = LennardJones::U(r); factor = U/ε; }
                         else if(model == Model::SoftDisk)    { U = SoftDisk::    U(r); factor = U; }
@@ -105,10 +105,10 @@ namespace Slab::Models::MolecularDynamics {
 
     void Monitor::handleOutput(const Math::OutputPacket &packet) {    }
 
-    void Monitor::draw() {
+    void Monitor::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         // Window::draw();
 
-        auto state = lastPacket.GetNakedStateData<MoleculesState>();
+        auto state = LastPacket.GetNakedStateData<MoleculesState>();
         auto v_q = state->first();
         auto v_p = state->second();
 

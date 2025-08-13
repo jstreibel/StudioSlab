@@ -12,20 +12,20 @@
 
 namespace Slab::Math {
 
-    using RtoRMetropolis = MetropolisAlgorithm<UInt, Real>;
+    using RtoRMetropolis = MetropolisAlgorithm<UInt, DevFloat>;
 
     class RtoRActionMetropolisRecipe : public Base::NumericalRecipe {
-        Pointer<RtoR::NumericFunction_CPU> field_data;
-        using RtoRMetropolisSetup = MetropolisSetup<UInt, Real>;
+        TPointer<RtoR::NumericFunction_CPU> field_data;
+        using RtoRMetropolisSetup = MetropolisSetup<UInt, DevFloat>;
 
     public:
-        auto getField() -> Pointer<RtoR::NumericFunction_CPU>;
+        auto getField() -> TPointer<RtoR::NumericFunction_CPU>;
 
         explicit RtoRActionMetropolisRecipe(UInt max_steps);
 
-        auto buildOutputSockets() -> Vector<Pointer<Socket>> override;
+        auto buildOutputSockets() -> Vector<TPointer<Socket>> override;
 
-        auto buildStepper() -> Pointer<Stepper> override;
+        auto buildStepper() -> TPointer<Stepper> override;
     };
 
 } // Slab::Math

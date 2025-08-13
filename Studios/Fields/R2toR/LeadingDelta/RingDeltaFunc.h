@@ -20,16 +20,16 @@
 
 namespace Studios::Fields::R2toRLeadingDelta {
 
-    using Real = Slab::Real;
+    using Real = Slab::DevFloat;
     using Real2D = Slab::Math::Real2D;
     using Str = Slab::Str;
 
-    using ArbFunc = Slab::Math::Base::NumericFunction<Slab::Math::Real2D, Slab::Real>;
+    using ArbFunc = Slab::Math::Base::NumericFunction<Slab::Math::Real2D, Slab::DevFloat>;
 
     class RingDeltaFunc : public Slab::Math::R2toR::Function {
     protected:
-        Slab::Real eps, a, dt;
-        Slab::Real radius;
+        Slab::DevFloat eps, a, dt;
+        Slab::DevFloat radius;
         bool asTheta;
 
     public:

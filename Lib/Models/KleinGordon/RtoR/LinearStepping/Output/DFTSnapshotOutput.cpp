@@ -13,7 +13,7 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    DFTSnapshotOutput::DFTSnapshotOutput(const Resolution N, const Real L, const Str &fileName)
+    DFTSnapshotOutput::DFTSnapshotOutput(const Resolution N, const DevFloat L, const Str &fileName)
     : SnapshotOutput(fileName + ".dft", "DFT snapshot output", "outputs the DFT of the last simulation instant")
     , N_DFT_modes(NDFTModes)
     , k_max(kMaxDFT)

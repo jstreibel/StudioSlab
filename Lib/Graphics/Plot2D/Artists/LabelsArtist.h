@@ -11,12 +11,12 @@
 
 namespace Slab::Graphics {
 
-    class LabelsArtist : public Artist {
-        Count currItem=0;
-        Count cols = 1;
+    class FLabelsArtist : public FArtist {
+        CountType currItem=0;
+        CountType cols = 1;
         int max_cols = 4;
 
-        Vector<Pair<Str, Pointer<PlotStyle>>> labelsRequired;
+        Vector<Pair<Str, TPointer<PlotStyle>>> labelsRequired;
 
         float dx = .080f,
               dy = .060f;
@@ -25,23 +25,23 @@ namespace Slab::Graphics {
         float xGap = 0.015f,
               yGap = .025f;
 
-        void setTotalItems(Count tot);
+        void setTotalItems(CountType tot);
 
-        Count row() const;
-        Count col() const;
+        [[nodiscard]] CountType row() const;
+        [[nodiscard]] CountType col() const;
 
-        LabelsArtist& operator++();
+        FLabelsArtist& operator++();
 
         void draw_label(PlotStyle &style, const Str& label, const RectI &viewport);
 
     public:
 
-        bool draw(const Plot2DWindow &window) override;
-        void add(const Str& label, const Pointer<PlotStyle>& style);
+        bool Draw(const FPlot2DWindow &window) override;
+        void add(const Str& label, const TPointer<PlotStyle>& style);
 
-        bool hasGUI() override;
+        bool HasGUI() override;
 
-        void drawGUI() override;
+        void DrawGUI() override;
     };
 
 }

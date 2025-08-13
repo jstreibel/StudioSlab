@@ -7,8 +7,41 @@
 #include "Graphics/Types2D.h"
 #include "SceneSetup.h"
 
+#include "Core/Backend/BackendManager.h"
+
 
 namespace Slab::Graphics::OpenGL::Legacy {
+
+    static GLint LastProgramUsed = 0;
+
+    void PushLegacyMode()
+    {
+        if (IsInLegacyMode()) return;
+
+        if(!Core::BackendManager::IsModuleLoaded("ModernOpenGL")) return;
+
+        GLint CurrentProgram;;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &CurrentProgram);
+
+        if(CurrentProgram == 0) return; // so we don't lose LastProgramUsed
+
+        LastProgramUsed = CurrentProgram;
+        glUseProgram(0);
+    }
+    void RestoreFromLegacyMode()
+    {
+        if(!Core::BackendManager::IsModuleLoaded("ModernOpenGL")) return;
+
+        glUseProgram(LastProgramUsed);
+    }
+
+    bool IsInLegacyMode()
+    {
+        GLint CurrentProgram;;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &CurrentProgram);
+
+        return CurrentProgram == 0;
+    }
 
     void PushScene() {
         glEnable(GL_BLEND);
@@ -23,14 +56,18 @@ namespace Slab::Graphics::OpenGL::Legacy {
         glPushMatrix();
     }
 
-    void ResetModelview() {
+    void ResetModelView() {
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
     }
 
-    void SetupOrtho(const RectR &region, Real zNear, Real zFar) {
-        OpenGL::Shader::remove();
+    void SetupOrtho(const RectR &region, DevFloat zNear, DevFloat zFar) {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(region.xMin, region.xMax, region.yMin, region.yMax, zNear, zFar);
+    }
 
+    void SetupOrthoI(const RectI &region, DevFloat zNear, DevFloat zFar) {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         glOrtho(region.xMin, region.xMax, region.yMin, region.yMax, zNear, zFar);

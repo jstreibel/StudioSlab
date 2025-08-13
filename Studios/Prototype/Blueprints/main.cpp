@@ -7,30 +7,32 @@
 #include "BlueprintRenderer.h"
 #include "Graphics/SlabGraphics.h"
 
-class App : public Slab::Application {
-    Slab::Pointer<Slab::Blueprints::BlueprintRenderer> blueprint_renderer;
-    Slab::Pointer<Slab::Blueprints::Blueprint> blueprint;
+class App : public Slab::FApplication {
+    Slab::TPointer<Slab::Blueprints::BlueprintRenderer> blueprint_renderer;
+    Slab::TPointer<Slab::Blueprints::Blueprint> blueprint;
 
 public:
-    App(const int argc, const char *argv[]) : Slab::Application("Blueprints prototype", argc, argv) {
+    App(const int argc, const char *argv[])
+    : Slab::FApplication("Blueprints prototype", argc, argv) {
     }
 
 protected:
-    Slab::Pointer<Slab::Platform> CreatePlatform() override {
+    Slab::TPointer<Slab::Platform> CreatePlatform() override {
         return Slab::DynamicPointerCast<Slab::Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
     }
 
 
 
     void OnStart() override {
-        Application::OnStart();
+        FApplication::OnStart();
 
         using namespace Slab::Blueprints;
 
         blueprint = Slab::New<Blueprint>();
         auto main_platform_window = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
-        blueprint_renderer = Slab::New<BlueprintRenderer>(blueprint, main_platform_window.get());
-        addResponder(blueprint_renderer);
+        blueprint_renderer = Slab::New<BlueprintRenderer>(blueprint);
+        // main_platform_window->AddEventListener(blueprint_renderer);
+        AddResponder(blueprint_renderer);
 
         Node* node;
         node = blueprint->SpawnInputActionNode();      ed::SetNodePosition(node->ID, ImVec2(-252, 220));

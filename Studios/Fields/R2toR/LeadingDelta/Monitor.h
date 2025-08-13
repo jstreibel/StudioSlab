@@ -16,26 +16,26 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
     class OutGL : public Models::KGR2toR::OutputOpenGL {
 
-        Pointer<R2toR::Function> drivingFunction;
+        TPointer<R2toR::Function> drivingFunction;
 
-        Pointer<PointSet> totalEnergyData;
-        Graphics::Plot2DWindow mTotalEnergyGraph;
+        TPointer<PointSet> totalEnergyData;
+        Graphics::FPlot2DWindow mTotalEnergyGraph;
 
-        Pointer<PointSet> numericEnergyData;
-        Pointer<PointSet> analyticEnergyData;
-        Graphics::Plot2DWindow mEnergyGraph;
+        TPointer<PointSet> numericEnergyData;
+        TPointer<PointSet> analyticEnergyData;
+        Graphics::FPlot2DWindow mEnergyGraph;
 
-        Pointer<PointSet> energyRatioData;
-        Graphics::Plot2DWindow mEnergyRatioGraph;
+        TPointer<PointSet> energyRatioData;
+        Graphics::FPlot2DWindow mEnergyRatioGraph;
 
-        Graphics::Plot2DWindow mSpeedsGraph;
-        Graphics::Plot2DWindow mEnergyDensityGraph;
+        Graphics::FPlot2DWindow mSpeedsGraph;
+        Graphics::FPlot2DWindow mEnergyDensityGraph;
 
     public:
 
-        OutGL(Count max_steps, Pointer<R2toR::Function> drivingFunction);
+        OutGL(CountType max_steps, TPointer<R2toR::Function> drivingFunction);
 
-        auto draw() -> void override;
+        auto ImmediateDraw(const Graphics::FPlatformWindow&) -> void override;
 
     };
 }

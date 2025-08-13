@@ -9,11 +9,11 @@
 
 namespace Tests {
 
-    class Graph3DTests : public Slab::Graphics::WindowRow {
+    class Graph3DTests : public Slab::Graphics::FWindowRow {
     public:
         Graph3DTests();
 
-        void draw() override;
+        void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
     };
 
 } // Tests

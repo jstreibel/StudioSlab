@@ -15,10 +15,10 @@ namespace Slab::Math::RtoR {
         DFTResult modes;
     public:
         InverseFourier() = default;
-        explicit InverseFourier(DFTResult modes, Real L)
+        explicit InverseFourier(DFTResult modes, DevFloat L)
         : modes(std::move(modes)) {};
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
         void setModes(DFTResult _modes) { modes = std::move(_modes); }
     };

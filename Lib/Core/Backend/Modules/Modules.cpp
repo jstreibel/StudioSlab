@@ -5,7 +5,7 @@
 #include "Modules.h"
 
 namespace Slab::Core {
-    Vector<ModuleName> AvailableModules = {
+    Vector<FModuleIdentifier> AvailableModules = {
         "ImGui",
         "Nuklear",
         "NanoGUI",

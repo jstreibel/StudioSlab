@@ -15,25 +15,25 @@ namespace Slab::Math {
 
 // NaN: uncomment one of the following 3 methods of defining a global NaN
 // you can test by verifying that (NaN != NaN) is true
-    static const Real NaN = std::numeric_limits<Real>::quiet_NaN();
+    static const DevFloat NaN = std::numeric_limits<DevFloat>::quiet_NaN();
 //Uint proto_nan[2]={0xffffffff, 0x7fffffff};
 //double NaN = *( double* )proto_nan;
 //Doub NaN = sqrt(-1.);
 
-    typedef Pair<Real, Real> RealPair;
+    typedef Pair<DevFloat, DevFloat> RealPair;
 
     class Real1D : public Category {
     public:
-        Real x;
+        DevFloat x;
     };
 
     class Real2D : public Category {
     public:
         Real2D() = default;
 
-        Real2D(Real x, Real y) : x(x), y(y) {}
+        Real2D(DevFloat x, DevFloat y) : x(x), y(y) {}
 
-        Real x, y;
+        DevFloat x, y;
 
         Real2D operator-(const Real2D &p) const {
             return {x - p.x, y - p.y};
@@ -45,7 +45,7 @@ namespace Slab::Math {
             return *this;
         }
 
-        friend Real2D operator*(const Real2D &p, const Real &r) {
+        friend Real2D operator*(const Real2D &p, const DevFloat &r) {
             return {p.x * r, p.y * r};
         }
 
@@ -53,7 +53,7 @@ namespace Slab::Math {
             return {p1.x + p2.x, p1.y + p2.y};
         }
 
-        [[nodiscard]] Real norm() const {
+        [[nodiscard]] DevFloat norm() const {
             return sqrt(x * x + y * y);
         }
     };
@@ -62,7 +62,7 @@ namespace Slab::Math {
 
     class Real3D : public Category {
     public:
-        Real x, y, z;
+        DevFloat x, y, z;
     };
 
     class Rational final : public Category {
@@ -71,7 +71,7 @@ namespace Slab::Math {
 
         Rational(Int numerator, Int denominator);
 
-        explicit Rational(Real val, Real epsilon = 1e-9, Int maxIter = 1000);
+        explicit Rational(DevFloat val, DevFloat epsilon = 1e-9, Int maxIter = 1000);
 
         Str ToString() const override;
 
@@ -81,20 +81,20 @@ namespace Slab::Math {
 
     class Unit : public Category {
         Str sym;
-        Real baseValue;
+        DevFloat baseValue;
         unsigned maxNumerator;
         unsigned maxDenominator;
     public:
 
-        explicit Unit(Str symbol = "", Real val = 1.0, unsigned maxNumerator = 4, unsigned maxDenominator = 4);
+        explicit Unit(Str symbol = "", DevFloat val = 1.0, unsigned maxNumerator = 4, unsigned maxDenominator = 4);
 
         Unit(const Unit &unit);
 
-        Real value() const;
+        DevFloat value() const;
 
         Str symbol() const;
 
-        Str operator()(const Real &val, Count rounding) const;
+        Str operator()(const DevFloat &val, CountType rounding) const;
 
         Str ToString() const override;
 

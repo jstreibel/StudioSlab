@@ -11,15 +11,15 @@ namespace Slab::Models::MolecularDynamics {
 
     class SoftDisk : public Langevin {
     protected:
-        Real U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
+        DevFloat U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
 
         Graphics::Point2D dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
 
     public:
         using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
-        SoftDisk(Pointer<Config> config, Real T);
+        SoftDisk(TPointer<Config> config, DevFloat T);
 
-        static Real U(Real r);
+        static DevFloat U(DevFloat r);
     };
 
 }

@@ -14,18 +14,18 @@ namespace Slab::Math::R2toR {
         RtoR::AnalyticOscillon oscillon;
     public:
         struct OscillonParameters {
-            Real x0, l, v, u, alpha;
+            DevFloat x0, l, v, u, alpha;
         } oscParams;
 
         explicit AnalyticOscillon_1plus1d(OscillonParameters);
 
-        auto Clone() const -> Pointer<Type> override;
+        auto Clone() const -> TPointer<Type> override;
 
         void setParams(OscillonParameters);
 
         void setBit(RtoR::AnalyticOscillon::Bit);
 
-        Real operator()(Real2D x) const override;
+        DevFloat operator()(Real2D x) const override;
     };
 
 } // Slab::Math::R2toR

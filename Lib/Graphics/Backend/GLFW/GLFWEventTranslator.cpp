@@ -7,6 +7,7 @@
 #include "Utils/ReferenceIterator.h"
 
 #include "glfw.h"
+#include "GLFWPlatformWindow.h"
 
 // Don't touch:
 #define STOP_ON_FIRST_RESPONDER true
@@ -23,15 +24,16 @@
 
 namespace Slab::Graphics {
 
-    GLFWEventTranslator::GLFWEventTranslator() : EventTranslator() {}
+    FGLFWEventTranslator::FGLFWEventTranslator(FGLFWPlatformWindow *Owner)
+    : Owner(Owner) {}
 
-    bool GLFWEventTranslator::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    bool FGLFWEventTranslator::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
         // action: GLFW_PRESS, GLFW_REPEAT or GLFW_RELEASE
         // const int _scancode = glfwGetKeyScancode(GLFW_KEY_X); // scancodes table change with platform
 
-        auto mappedKey = static_cast<KeyMap>(key);
-        auto state = static_cast<KeyState>(action);
-        ModKeys modKeys{
+        auto mappedKey = static_cast<EKeyMap>(key);
+        auto state = static_cast<EKeyState>(action);
+        EModKeys modKeys{
                 (mods & GLFW_MOD_SHIFT)     != 0 ? Press : Release,
                 (mods & GLFW_MOD_CONTROL)   != 0 ? Press : Release,
                 (mods & GLFW_MOD_ALT)       != 0 ? Press : Release,
@@ -40,14 +42,14 @@ namespace Slab::Graphics {
                 (mods & GLFW_MOD_NUM_LOCK)  != 0 ? Press : Release,
         };
 
-        return IterateReferences(sysWin_listeners, Func(notifyKeyboard, mappedKey, state, modKeys), StopOnFirstResponder);
+        return IterateReferences(SysWinListeners, Func(NotifyKeyboard, mappedKey, state, modKeys), StopOnFirstResponder);
     }
 
-    bool GLFWEventTranslator::CharEvent(GLFWwindow *, UInt codepoint) {
-        return IterateReferences(sysWin_listeners, Func(notifyCharacter, codepoint), StopOnFirstResponder);
+    bool FGLFWEventTranslator::CharEvent(GLFWwindow *, UInt codepoint) {
+        return IterateReferences(SysWinListeners, Func(NotifyCharacter, codepoint), StopOnFirstResponder);
     }
 
-    bool GLFWEventTranslator::MouseMotion(GLFWwindow *window, double xpos, double ypos) {
+    bool FGLFWEventTranslator::MouseMotion(GLFWwindow *window, double xpos, double ypos) {
         static auto last_x=0, last_y=0;
 
         fix dx=xpos-last_x;
@@ -56,17 +58,17 @@ namespace Slab::Graphics {
         last_x = xpos;
         last_y = ypos;
 
-        return IterateReferences(sysWin_listeners, Func(notifyMouseMotion, xpos, ypos, dx, dy), StopOnFirstResponder);
+        return IterateReferences(SysWinListeners, Func(NotifyMouseMotion, xpos, ypos, dx, dy), StopOnFirstResponder);
     }
 
-    void GLFWEventTranslator::CursorEnter(GLFWwindow *window, int entered) {
-        GLFWListener::CursorEnter(window, entered);
+    void FGLFWEventTranslator::CursorEnter(GLFWwindow *window, int entered) {
+        FGLFWListener::CursorEnter(window, entered);
     }
 
-    bool GLFWEventTranslator::MouseButton(GLFWwindow *window, int button, int action, int mods) {
-        auto mappedButton = static_cast<enum MouseButton>(button);
-        auto state = static_cast<KeyState>(action);
-        ModKeys modKeys{
+    bool FGLFWEventTranslator::MouseButton(GLFWwindow *window, int button, int action, int mods) {
+        auto mappedButton = static_cast<enum EMouseButton>(button);
+        auto state = static_cast<EKeyState>(action);
+        EModKeys modKeys{
                 (mods & GLFW_MOD_SHIFT)     != 0 ? Press : Release,
                 (mods & GLFW_MOD_CONTROL)   != 0 ? Press : Release,
                 (mods & GLFW_MOD_ALT)       != 0 ? Press : Release,
@@ -76,36 +78,33 @@ namespace Slab::Graphics {
         };
 
         if(state == Release)
-            return IterateReferences(sysWin_listeners, Func(notifyMouseButton, mappedButton, state, modKeys), IterateAll);
+            return IterateReferences(SysWinListeners, Func(NotifyMouseButton, mappedButton, state, modKeys), IterateAll);
         else
-            return IterateReferences(sysWin_listeners, Func(notifyMouseButton, mappedButton, state, modKeys), StopOnFirstResponder);
+            return IterateReferences(SysWinListeners, Func(NotifyMouseButton, mappedButton, state, modKeys), StopOnFirstResponder);
     }
 
-    bool GLFWEventTranslator::MouseWheel(GLFWwindow *window, double xoffset, double yoffset) {
-        return IterateReferences(sysWin_listeners, Func(notifyMouseWheel, xoffset, yoffset), StopOnFirstResponder);
+    bool FGLFWEventTranslator::MouseWheel(GLFWwindow *window, double xoffset, double yoffset) {
+        return IterateReferences(SysWinListeners, Func(NotifyMouseWheel, xoffset, yoffset), StopOnFirstResponder);
     }
 
-    bool GLFWEventTranslator::DroppedFiles(GLFWwindow *window, int count, const char **paths) {
-        StrVector pathsVec;
+    bool FGLFWEventTranslator::DroppedFiles(GLFWwindow *window, int count, const char **Paths_raw) {
+        StrVector PathsVec;
 
-        int i;
-        for (i = 0;  i < count;  i++)
-            pathsVec.emplace_back(paths[i]);
+        for (int i = 0;  i < count;  i++)
+            PathsVec.emplace_back(Paths_raw[i]);
 
-        auto funky = [&](Pointer<SystemWindowEventListener>& listener){
-            return listener->
-            notifyFilesDropped(pathsVec);
+        return IterateReferences(SysWinListeners, Func(NotifyFilesDropped, PathsVec), StopOnFirstResponder);
+    }
+
+    void FGLFWEventTranslator::Render(GLFWwindow *window) {
+        auto Funky = [this] (const auto &obj) {
+            return obj->NotifyRender(*Owner);
         };
-
-        return IterateReferences(sysWin_listeners, Func(notifyFilesDropped, pathsVec), StopOnFirstResponder);
+        IterateReferences(SysWinListeners, Funky);
     }
 
-    void GLFWEventTranslator::Render(GLFWwindow *window) {
-        IterateReferences(sysWin_listeners, Func(notifyRender));
-    }
-
-    void GLFWEventTranslator::ScreenReshape(GLFWwindow *window, int width, int height) {
-        IterateReferences(sysWin_listeners, Func(notifySystemWindowReshape, width, height));
+    void FGLFWEventTranslator::ScreenReshape(GLFWwindow *window, int width, int height) {
+        IterateReferences(SysWinListeners, Func(NotifySystemWindowReshape, width, height));
     }
 
 

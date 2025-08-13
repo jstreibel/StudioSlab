@@ -24,7 +24,7 @@ namespace Modes {
     NumericalRecipe_Ak2::NumericalRecipe_Ak2(bool doRegister)
     : KGRtoR::KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
-        Interface->addParameters({&BCSelection, &Ak2, &wavelengths, &driving_force});
+        Interface->AddParameters({&BCSelection, &Ak2, &wavelengths, &driving_force});
 
         if(doRegister) RegisterCLInterface(Interface);
     }
@@ -32,8 +32,8 @@ namespace Modes {
     Math::Base::BoundaryConditions_ptr NumericalRecipe_Ak2::GetBoundary() {
         auto prototype = KGRtoR::KGRtoRBuilder::NewFieldState();
 
-        fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->getL();
-        fix λ = L / (Real)*wavelengths;;
+        fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->GetL();
+        fix λ = L / (DevFloat)*wavelengths;;
         fix ι = *Ak2;
         fix k = 2*M_PI/λ;
         fix A = ι/(k*k);
@@ -64,11 +64,11 @@ namespace Modes {
     }
 
     void NumericalRecipe_Ak2::NotifyCLArgsSetupFinished() {
-        CLInterfaceOwner::NotifyCLArgsSetupFinished();
+        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
         auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
 
-        fix L = config->getL();
+        fix L = config->GetL();
         fix n = config->getn();
         fix a = config->getr();
 
@@ -110,7 +110,7 @@ namespace Modes {
         // fix amp = (*A) * 1.1;
         auto monitor = new Modes::Monitor(config, *(KGRtoR::KGEnergy*)getHamiltonian(), "Modes monitor");
 
-        fix L = config->getL();
+        fix L = config->GetL();
         fix λ = L / *wavelengths;
         fix ι = *Ak2;
         fix k = 2*M_PI/λ;
@@ -133,7 +133,7 @@ namespace Modes {
         return KGRtoR::KGRtoRBuilder::SuggestFileName() + SEPARATOR + strParams;
     }
 
-    Pointer<Base::FunctionT<Real, Real>> NumericalRecipe_Ak2::GetNonHomogenousTerm() {
+    TPointer<Base::FunctionT<DevFloat, DevFloat>> NumericalRecipe_Ak2::GetNonHomogenousTerm() {
         if(*driving_force && squareWave == nullptr) squareWave = Slab::New<Modes::SquareWave>(1);
 
         return squareWave;

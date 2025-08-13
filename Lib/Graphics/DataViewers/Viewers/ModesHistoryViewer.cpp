@@ -14,25 +14,25 @@
 
 namespace Slab::Graphics {
 
-    ModesHistoryViewer::ModesHistoryViewer(const Pointer<GUIWindow> &guiWindow)
+    ModesHistoryViewer::ModesHistoryViewer(const TPointer<FGUIWindow> &guiWindow)
     : Viewer(guiWindow, nullptr)
     , curves_artists(0)
     {
-        xft_history_window = New<Plot2DWindow>("Space DFT");
-        xft_history_window->getAxisArtist().setHorizontalAxisLabel("k");
-        xft_history_window->getAxisArtist().setVerticalAxisLabel("t");
+        xft_history_window = New<FPlot2DWindow>("Space DFT", guiWindow->GetGUIWindowContext());
+        xft_history_window->GetAxisArtist().SetHorizontalAxisLabel("k");
+        xft_history_window->GetAxisArtist().setVerticalAxisLabel("t");
         xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
-        addWindow(xft_history_window);
+        AddWindow(xft_history_window);
 
-        modes_window = New<Plot2DWindow>("Modes");
-        modes_window->getAxisArtist().setHorizontalAxisLabel("t");
-        modes_window->getAxisArtist().setVerticalAxisLabel("|ℱₓ[ϕ]|");
+        modes_window = New<FPlot2DWindow>("Modes", guiWindow->GetGUIWindowContext());
+        modes_window->GetAxisArtist().SetHorizontalAxisLabel("t");
+        modes_window->GetAxisArtist().setVerticalAxisLabel("|ℱₓ[ϕ]|");
         modes_artist = Plotter::AddR2Section(modes_window, nullptr, "Modes artist");
-        modes_artist->setAffectGraphRanges(true);
-        addWindow(modes_window);
+        modes_artist->SetAffectGraphRanges(true);
+        AddWindow(modes_window);
     }
 
-    void ModesHistoryViewer::draw() {
+    void ModesHistoryViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         if(getFunction() == nullptr) return;
 
         gui_window->AddExternalDraw([this]() {
@@ -45,20 +45,20 @@ namespace Slab::Graphics {
                 setupModes();
         });
 
-        WindowPanel::draw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void ModesHistoryViewer::setupModes() {
-        xft_history_window->removeArtists(curves_artists);
+        xft_history_window->RemoveArtists(curves_artists);
         curves_artists.clear();
         modes_artist->clearSections();
 
-        Vector<Pointer<Math::RtoR2::StraightLine>> sections;
+        Vector<TPointer<Math::RtoR2::StraightLine>> sections;
         fix t_0 = xFourierTransform->y0;
         fix t_f = t_0 + xFourierTransform->Ly;
 
-        auto styles_begin = PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
-        auto styles_end = PlotThemeManager::GetCurrent()->funcPlotStyles.end();
+        auto styles_begin = PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
+        auto styles_end = PlotThemeManager::GetCurrent()->FuncPlotStyles.end();
         auto style = styles_begin;
 
         for(int i=0; i<n_modes; ++i) {
@@ -78,11 +78,11 @@ namespace Slab::Graphics {
             if (++style == styles_end) style = styles_begin;
         }
 
-        modes_window->reviewGraphRanges();
+        modes_window->ReviewGraphRanges();
     }
 
-    void ModesHistoryViewer::setFunction(Pointer<Math::R2toR::NumericFunction> function) {
-        Viewer::setFunction(function);
+    void ModesHistoryViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
+        Viewer::SetFunction(function);
 
         xFourierTransform = nullptr;
 
@@ -95,7 +95,7 @@ namespace Slab::Graphics {
 
         xFourierTransform = Math::R2toR::R2toRDFT::SpaceDFTReal(*func);
 
-        xft_amplitudes = Math::Convert(xFourierTransform, Math::R2toC_to_R2toR_Mode::Magnitude);
+        xft_amplitudes = Math::Convert(xFourierTransform, Math::ER2toC_to_R2toR_Mode::Magnitude);
 
         xft_amplitudes_artist->setFunction(xft_amplitudes);
         modes_artist->setFunction(xft_amplitudes);
@@ -118,13 +118,13 @@ namespace Slab::Graphics {
         setupModes();
     }
 
-    void ModesHistoryViewer::notifyBecameVisible() {
-        Viewer::notifyBecameVisible();
+    void ModesHistoryViewer::NotifyBecameVisible() {
+        Viewer::NotifyBecameVisible();
 
         if(xFourierTransform == nullptr) computeTransform();
     }
 
-    Str ModesHistoryViewer::getName() const {
+    Str ModesHistoryViewer::GetName() const {
         return "Modes history viewer";
     }
 

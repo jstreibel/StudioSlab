@@ -8,16 +8,16 @@ namespace Slab::Models::MolecularDynamics {
 
     using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
 
-    SoftDisk::SoftDisk(Pointer<Config> config, Real T)
+    SoftDisk::SoftDisk(TPointer<Config> config, DevFloat T)
     : Langevin(config, T) {
 
     }
 
     inline Graphics::Point2D SoftDisk::dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
-        const Real SIGMA_SQR = σ * σ;
-        Real normSqr;
+        const DevFloat SIGMA_SQR = σ * σ;
+        DevFloat normSqr;
 
-        fix L = numeric_config->getL();
+        fix L = numeric_config->GetL();
 
         const Graphics::Point2D points[] = {
                 q2 - q1,
@@ -37,9 +37,9 @@ namespace Slab::Models::MolecularDynamics {
             normSqr = r.lengthSqr();
 
             if (normSqr < SIGMA_SQR) {
-                const Real norm = r.length();
+                const DevFloat norm = r.length();
                 const DoubleAccess arg = {1.0 - norm / σ};
-                const Real mag = ε / σ * pow(arg.val, ALPHA - 1.0) * arg.isPositive();
+                const DevFloat mag = ε / σ * pow(arg.val, ALPHA - 1.0) * arg.isPositive();
 
                 const Graphics::Point2D force = -(mag / norm) * r;
 
@@ -50,9 +50,9 @@ namespace Slab::Models::MolecularDynamics {
         return resultForce;
     }
 
-    Real SoftDisk::U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
-        const Real SIGMA_SQR = σ * σ;
-        Real normSqr;
+    DevFloat SoftDisk::U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
+        const DevFloat SIGMA_SQR = σ * σ;
+        DevFloat normSqr;
 
         const Graphics::Point2D points[] = {
                 q2 - q1,
@@ -72,7 +72,7 @@ namespace Slab::Models::MolecularDynamics {
         for (auto r: points) {
             normSqr = r.lengthSqr();
             if (normSqr < SIGMA_SQR) {
-                const Real norm = sqrt(normSqr);
+                const DevFloat norm = sqrt(normSqr);
                 const DoubleAccess arg = {1 - norm / σ};
 
                 return ε / ALPHA * pow(arg.val, ALPHA) * arg.isPositive();
@@ -82,7 +82,7 @@ namespace Slab::Models::MolecularDynamics {
         return 0.0;
     }
 
-    Real SoftDisk::U(Real r) {
+    DevFloat SoftDisk::U(DevFloat r) {
 
         if( r > σ) return .0;
 

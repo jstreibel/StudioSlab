@@ -7,7 +7,7 @@
 
 namespace Slab::Math {
 
-    inline Str applySymbol(Str to_symbol, Math::R2toC_to_R2toR_Mode mode) {
+    inline Str applySymbol(Str to_symbol, Math::ER2toC_to_R2toR_Mode mode) {
         switch (mode) {
             case Phase:
                 return "arg(" + to_symbol + ")";
@@ -24,8 +24,8 @@ namespace Slab::Math {
         return to_symbol;
     }
 
-    R2toR::NumericFunction_ptr
-    Convert(const R2toC::NumericFunction_constptr &in, Math::R2toC_to_R2toR_Mode mode) {
+    R2toR::FNumericFunction_ptr
+    Convert(const R2toC::NumericFunction_constptr &in, Math::ER2toC_to_R2toR_Mode mode) {
         fix N = in->N,
                 M = in->M;
         fix Lx = in->Lx,
@@ -53,8 +53,8 @@ namespace Slab::Math {
         throw Exception("unknown Complex conversion mode");
     }
 
-    R2toR::NumericFunction_ptr
-    ConvertToAbs(const R2toC::NumericFunction_constptr &in, R2toR::NumericFunction_ptr out) {
+    R2toR::FNumericFunction_ptr
+    ConvertToAbs(const R2toC::NumericFunction_constptr &in, R2toR::FNumericFunction_ptr out) {
         if(out == nullptr) return Convert(in, Magnitude);
 
         assert(in->N == out->getN() && in->M == out->getM());
@@ -74,8 +74,8 @@ namespace Slab::Math {
         return out;
     }
 
-    R2toR::NumericFunction_ptr ConvertToPowerSpectrum(const R2toC::NumericFunction_constptr &in,
-                                                             R2toR::NumericFunction_ptr out) {
+    R2toR::FNumericFunction_ptr ConvertToPowerSpectrum(const R2toC::NumericFunction_constptr &in,
+                                                             R2toR::FNumericFunction_ptr out) {
         if(out == nullptr) return Convert(in, PowerSpectrum);
 
         assert(in->N == out->getN() && in->M == out->getM());
@@ -95,8 +95,8 @@ namespace Slab::Math {
         return out;
     }
 
-    R2toR::NumericFunction_ptr
-    ConvertToPhase(const R2toC::NumericFunction_constptr &in, R2toR::NumericFunction_ptr out) {
+    R2toR::FNumericFunction_ptr
+    ConvertToPhase(const R2toC::NumericFunction_constptr &in, R2toR::FNumericFunction_ptr out) {
         if(out == nullptr) return Convert(in, Phase);
 
         assert(in->N == out->getN() && in->M == out->getM());
@@ -111,8 +111,8 @@ namespace Slab::Math {
         return out;
     }
 
-    R2toR::NumericFunction_ptr
-    ConvertToReal(const R2toC::NumericFunction_constptr &in, R2toR::NumericFunction_ptr out) {
+    R2toR::FNumericFunction_ptr
+    ConvertToReal(const R2toC::NumericFunction_constptr &in, R2toR::FNumericFunction_ptr out) {
         if(out == nullptr) return Convert(in, RealPart);
 
         assert(in->N == out->getN() && in->M == out->getM());
@@ -127,8 +127,8 @@ namespace Slab::Math {
         return out;
     }
 
-    R2toR::NumericFunction_ptr
-    ConvertToImaginary(const R2toC::NumericFunction_constptr &in, R2toR::NumericFunction_ptr out) {
+    R2toR::FNumericFunction_ptr
+    ConvertToImaginary(const R2toC::NumericFunction_constptr &in, R2toR::FNumericFunction_ptr out) {
         if(out == nullptr) return Convert(in, ImaginaryPart);
 
         assert(in->N == out->getN() && in->M == out->getM());

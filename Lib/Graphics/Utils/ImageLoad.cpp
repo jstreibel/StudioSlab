@@ -7,7 +7,7 @@
 
 namespace Slab::Graphics::Image {
 
-    Pointer<OpenGL::Texture2D_Color> LoadTexture(const Str &path) {
+    TPointer<OpenGL::Texture2D_Color> LoadTexture(const Str &path) {
         NOT_IMPLEMENTED
 
         int width = 0, height = 0, component = 0;
@@ -20,6 +20,6 @@ namespace Slab::Graphics::Image {
         else
             return nullptr;
 
-        return Slab::Pointer<OpenGL::Texture2D_Color>();
+        return Slab::TPointer<OpenGL::Texture2D_Color>();
     }
 }

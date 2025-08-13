@@ -36,8 +36,8 @@ namespace Slab::Models::KGR2toR {
     Builder::Builder(const Str& name, const Str& description, bool do_register)
             : Models::KGRecipe(New<Models::KGNumericConfig>(false), name, description, do_register) {    }
 
-    Vector<Pointer<Socket>> Builder::buildOutputSockets() {
-        Vector<Pointer<Socket>> sockets;
+    Vector<TPointer<Socket>> Builder::buildOutputSockets() {
+        Vector<TPointer<Socket>> sockets;
 
         ///********************************************************************************************/
         if(*takeSnapshot) {
@@ -63,8 +63,8 @@ namespace Slab::Models::KGR2toR {
             RtoR2::StraightLine section;
             auto angleDegrees = 22.5;
             {
-                const Real rMin = kg_numeric_config->getxMin();
-                const Real rMax = kg_numeric_config->getxMax();
+                const DevFloat rMin = kg_numeric_config->getxMin();
+                const DevFloat rMax = kg_numeric_config->getxMax();
                 const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
 
                 using Rotation = Math::R2toR::Rotation;
@@ -79,11 +79,11 @@ namespace Slab::Models::KGR2toR {
             OutputFormatterBase *outputFilter = new BinarySOF;
 
             SpaceFilterBase *spaceFilter = new Slab::Math::R2toR::DimensionReductionFilter(
-                    outputResolutionX, section, kg_numeric_config->getL());
+                    outputResolutionX, section, kg_numeric_config->GetL());
 
-            const auto N = (Real) kg_numeric_config->getN();
-            const Real Np = outputResolutionX;
-            const Real r = kg_numeric_config->getr();
+            const auto N = (DevFloat) kg_numeric_config->getN();
+            const DevFloat Np = outputResolutionX;
+            const DevFloat r = kg_numeric_config->getr();
             const auto stepsInterval = UInt(N / (Np * r));
 
             auto outputFileName = this->SuggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
@@ -97,13 +97,15 @@ namespace Slab::Models::KGR2toR {
 
         ///********************************************************************************************/
         if (*VisualMonitor) {
-            auto backend = Slab::Graphics::GetGraphicsBackend();
+            auto Backend = Slab::Graphics::GetGraphicsBackend();
 
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
 
-            auto wm = New<Graphics::SlabWindowManager>(backend->GetMainSystemWindow().get());
-            wm->addSlabWindow(glOut);
-            backend->GetMainSystemWindow()->addAndOwnEventListener(wm);
+            const auto WindowManager = New<Graphics::SlabWindowManager>();
+            Backend->GetMainSystemWindow()->AddAndOwnEventListener(WindowManager);
+
+            WindowManager->AddSlabWindow(glOut, false);
+
             sockets.emplace_back(glOut);
         }
         else sockets.emplace_back(New<OutputConsoleMonitor>(kg_numeric_config->getn()));
@@ -112,7 +114,7 @@ namespace Slab::Models::KGR2toR {
 
     }
 
-    R2toR::NumericFunction_ptr Builder::newFunctionArbitrary() {
+    R2toR::FNumericFunction_ptr Builder::newFunctionArbitrary() {
         const size_t N = kg_numeric_config->getN();
         const floatt xLeft = kg_numeric_config->getxMin();
         fix h = kg_numeric_config->geth();
@@ -128,7 +130,7 @@ namespace Slab::Models::KGR2toR {
         throw Exception("Error while instantiating Field: device not recognized.");
     }
 
-    Pointer<Base::LinearStepSolver> Builder::buildSolver() {
+    TPointer<Base::LinearStepSolver> Builder::buildSolver() {
         auto thePotential = New<RtoR::AbsFunction>();
         auto dphi = getBoundary();
 

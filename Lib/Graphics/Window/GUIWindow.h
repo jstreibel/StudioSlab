@@ -8,6 +8,7 @@
 #include "3rdParty/ImGui.h"
 
 #include "Graphics/Utils.h"
+#include "Graphics/ImGui/ImGui-SingleSlabWindow-Wrapper.h"
 #include "Graphics/Window/SlabWindow.h"
 
 #include "Utils/Types.h"
@@ -16,23 +17,23 @@
 
 namespace Slab::Graphics {
 
-    class GUIWindow : public SlabWindow {
-        Vector<Pair<Str, Color>> stats;
+    class FGUIWindow : public FSlabWindow {
+        Vector<Pair<Str, FColor>> Stats;
 
-        Pointer<SlabImGuiContext> gui_context;
+        FImGuiWindowContext WindowContext;
 
-        void begin() const;
-        void end() const;
+        void Begin() const;
+        void End() const;
     public:
-        explicit GUIWindow(Config={});
+        explicit FGUIWindow(FSlabWindowConfig, const FImGuiWindowContext& WindowContext = FImGuiWindowContext{nullptr});
 
-        void addVolatileStat(const Str &stat, Color color = {-1, -1, -1});
+        void AddVolatileStat(const Str &stat, FColor color = {-1, -1, -1});
 
-        void AddExternalDraw(const DrawCall&);
+        void AddExternalDraw(const FDrawCall&) const;
 
-        Pointer<SlabImGuiContext> GetGUIContext();
+        FImGuiWindowContext GetGUIWindowContext();
 
-        void draw() override;
+        auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
     };
 
 

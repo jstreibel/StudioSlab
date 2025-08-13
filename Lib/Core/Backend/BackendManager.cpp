@@ -11,14 +11,14 @@
 #include <utility>
 
 namespace Slab::Core {
-    Str BackendManager::backend_name = "Uninitialized";
-    std::shared_ptr<Backend> BackendManager::instance = nullptr;
+    Str BackendManager::BackendName = "Uninitialized";
+    std::shared_ptr<FBackend> BackendManager::instance = nullptr;
 
-    Map<ModuleName, ModuleAllocator> BackendManager::availableModules{};
-    Map<ModuleName , std::shared_ptr<Module>> BackendManager::loadedModules{};
-    Map<BackendName, BackendAllocator> BackendManager::availableBackends{};
+    Map<FModuleIdentifier, FModuleAllocator> BackendManager::AvailableModules{};
+    Map<FModuleIdentifier , std::shared_ptr<SlabModule>> BackendManager::LoadedModules{};
+    Map<FBackendIdentifier, FBackendAllocator> BackendManager::AvailableBackends{};
 
-    Pointer<Backend>  BackendManager::GetBackend() {
+    TPointer<FBackend>  BackendManager::GetBackend() {
         if (!BackendManager::instance) {
             BackendManager::Startup("Headless");
             Log::Info() << "Backend initializing to default headless backend." << Log::Flush;
@@ -37,40 +37,40 @@ namespace Slab::Core {
     }
      */
 
-    void BackendManager::Startup(const BackendName& backend_id) {
+    void BackendManager::Startup(const FBackendIdentifier& backend_id) {
         if(BackendManager::instance != nullptr)
             throw Exception("Backend already initialized");
-        if(availableBackends.find(backend_id) == availableBackends.end() )
+        if(AvailableBackends.find(backend_id) == AvailableBackends.end() )
             throw Exception("Unknown backend '" + backend_id + "'");
 
-        BackendManager::backend_name = backend_id;
+        BackendManager::BackendName = backend_id;
 
-        auto alloc_backend = availableBackends[backend_id];
+        auto alloc_backend = AvailableBackends[backend_id];
         BackendManager::instance = alloc_backend();
     }
 
-    void BackendManager::LoadModule(const ModuleName& module_name) {
+    void BackendManager::LoadModule(const FModuleIdentifier& module_name) {
         if(IsModuleLoaded(module_name)) return;
 
         if(!IsModuleAvailable(module_name)) throw Exception("Unkonwn module '" + module_name + "'");
 
-        auto alloc_module = availableModules[module_name];
-        auto module = Pointer<Module>(alloc_module());
+        auto alloc_module = AvailableModules[module_name];
+        auto module = TPointer<SlabModule>(alloc_module());
 
-        loadedModules[module_name] = Pointer<Module>(module);
+        LoadedModules[module_name] = TPointer<SlabModule>(module);
 
-        GetBackend()->notifyModuleLoaded(module);
+        GetBackend()->NotifyModuleLoaded(module);
 
         Log::Info() << "Loaded module '" << Log::FGBlue << module_name << Log::ResetFormatting << "'." << Log::Flush;
     }
 
-    ModuleName BackendManager::ParseName(const ModuleName& requested_module_name) {
+    FModuleIdentifier BackendManager::ParseName(const FModuleIdentifier& requested_module_name) {
         if(IsModuleAvailable(requested_module_name)) return requested_module_name;
 
         auto split_reqmod_name = Split(requested_module_name, ":");
         if(split_reqmod_name.size() != 1) goto bad;
 
-        for(const auto& pair : availableModules) {
+        for(const auto& pair : AvailableModules) {
             auto name = pair.first;
 
             auto split_name = Split(name, ":");
@@ -87,40 +87,40 @@ namespace Slab::Core {
         throw Exception("Unknown module '" + requested_module_name + "'");
     }
 
-    Pointer<Module> BackendManager::GetModule(const ModuleName& module_name) {
+    TPointer<SlabModule> BackendManager::GetModule(const FModuleIdentifier& module_name) {
         auto parsed_name = ParseName(module_name);
 
         if(!IsModuleLoaded(parsed_name)) LoadModule(parsed_name);
 
-        return loadedModules[parsed_name];
+        return LoadedModules[parsed_name];
     }
-    bool BackendManager::IsModuleAvailable(const ModuleName &module_name) {
-        return Contains(availableModules, module_name);
-    }
-
-    bool BackendManager::IsModuleLoaded(const ModuleName& module_name) {
-        return Contains(loadedModules, module_name);
+    bool BackendManager::IsModuleAvailable(const FModuleIdentifier &module_name) {
+        return Contains(AvailableModules, module_name);
     }
 
-    void BackendManager::RegisterAvailableBackend(const BackendName &name, BackendAllocator alloc) {
-
-        BackendManager::availableBackends[name] = std::move(alloc);
-
-        Log::Note() << "Backend '" << Log::FGBlue << name << Log::ResetFormatting << "' available." << Log::Flush;
+    bool BackendManager::IsModuleLoaded(const FModuleIdentifier& module_name) {
+        return Contains(LoadedModules, module_name);
     }
 
-    void BackendManager::RegisterAvailableModule(const ModuleName &name, ModuleAllocator alloc) {
-        BackendManager::availableModules[name] = std::move(alloc);
+    void BackendManager::RegisterAvailableBackend(const FBackendIdentifier &Name, FBackendAllocator Alloc) {
 
-        Log::Note() << "Module '"  << Log::FGBlue << name << Log::ResetFormatting << "' available." << Log::Flush;
+        BackendManager::AvailableBackends[Name] = std::move(Alloc);
+
+        Log::Note() << "Backend '" << Log::FGBlue << Name << Log::ResetFormatting << "' available." << Log::Flush;
+    }
+
+    void BackendManager::RegisterAvailableModule(const FModuleIdentifier &Name, FModuleAllocator Alloc) {
+        BackendManager::AvailableModules[Name] = std::move(Alloc);
+
+        Log::Note() << "Module '"  << Log::FGBlue << Name << Log::ResetFormatting << "' available." << Log::Flush;
     }
 
     Str BackendManager::GetBackendName() {
-        return backend_name;
+        return BackendName;
     }
 
     void BackendManager::UnloadAllModules() {
-        loadedModules.clear();
+        LoadedModules.clear();
     }
 
 

@@ -18,7 +18,7 @@
 #include "Graphics/Plot2D/Plotter.h"
 #include "Utils/RandUtils.h"
 
-void setup_viewer(const Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU>& field) {
+void setup_viewer(const Slab::TPointer<Slab::Math::R2toR::NumericFunction_CPU>& field) {
     Slab::Core::StartBackend("GLFW");
 
     {
@@ -38,11 +38,11 @@ void setup_viewer(const Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU>& f
         }
     }
 
-    auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>("Field plot");
-    plot_window->setx(1700);
-    plot_window->notifyReshape(1200, 800);
+    auto plot_window = Slab::New<Slab::Graphics::FPlot2DWindow>("Field plot");
+    plot_window->Set_x(1700);
+    plot_window->NotifyReshape(1200, 800);
     fix lims = field->getDomain();
-    plot_window->getRegion().setLimits(lims.xMin, lims.xMax, lims.yMin, lims.yMax);
+    plot_window->GetRegion().setLimits(lims.xMin, lims.xMax, lims.yMin, lims.yMax);
     auto arts = Slab::Graphics::Plotter::AddR2toRFunction(plot_window, field, "ϕ(t,x)");
     arts->setDataMutable(true);
 
@@ -51,17 +51,17 @@ void setup_viewer(const Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU>& f
     viewer->setFunction(field);
 
     auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
-    wm->addSlabWindow(plot_window);
-    wm->addSlabWindow(viewer);
+    wm->AddSlabWindow(plot_window, false);
+    wm->AddSlabWindow(viewer, false);
 
     auto main_syswin = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
-    main_syswin->addAndOwnEventListener(wm);
+    main_syswin->AddAndOwnEventListener(wm);
 }
 
 int run(int argc, const char **argv) {
     constexpr unsigned long max_steps = -1;
     auto mc_recipe = Slab::New<Slab::Math::R2toRMetropolisRecipe>(max_steps);
-    Slab::Core::RegisterCLInterface(mc_recipe->getInterface());
+    Slab::Core::RegisterCLInterface(mc_recipe->GetInterface());
 
     auto prog = Slab::New<Slab::Math::MathApp> (argc, argv, mc_recipe);
 

@@ -5,12 +5,11 @@
 #include "TestsApp.h"
 
 #include "AppBase.h"
-#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Graphics/Window/SlabWindowManager.h"
 
 #include "BezierTests.h"
 #include "WindowPanelTest.h"
-#include "WindowTreeBuilderTest.h"
 #include "GLFreeTypeTests.h"
 #include "FourierTestWindow.h"
 #include "ModernGLTests.h"
@@ -21,12 +20,14 @@
 #include "VShapeExpansionTest.h"
 #include "LaTeXTests.h"
 #include "ImGuiUITest.h"
+#include "Graphics/ImGui/ImGuiWindowManager.h"
+#include "Graphics/SFML/Graph.h"
 
 #define DONT_REGISTER false
 
 TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::AppBase(argc, argv, DONT_REGISTER) {
 
-    AppBase::registerToManager();
+    AppBase::RegisterToManager();
 
     Slab::Core::CLArgsManager::Parse(argc, argv);
 }
@@ -35,23 +36,25 @@ TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::AppBase(argc, argv
 int TestsApp::run() {
     using namespace Slab;
 
-    Pointer<Graphics::GraphicBackend> backend = nullptr;
+    TPointer<Graphics::GraphicBackend> Backend = nullptr;
 
     if(true) {
         Core::BackendManager::Startup("GLFW");
 
-        backend = Slab::Graphics::GetGraphicsBackend();
-        auto main_syswin = backend->GetMainSystemWindow();
-        auto wm = New<Graphics::SlabWindowManager>();
-        main_syswin->addAndOwnEventListener(wm);
+        Backend = Slab::Graphics::GetGraphicsBackend();
+        auto MainSystemWindow = Backend->GetMainSystemWindow();
+        // auto wm = New<Graphics::SlabWindowManager>();
+        auto ImGuiContext = DynamicPointerCast<Graphics::FImGuiContext>(MainSystemWindow->GetGUIContext());
+        auto WindowManager = New<Graphics::FImGuiWindowManager>(ImGuiContext);
+        MainSystemWindow->AddAndOwnEventListener(WindowManager);
 
-        wm->addSlabWindow(New<Tests::LaTeXTests>());
-        wm->addSlabWindow(New<Tests::VShapeExpansionTest>());
-        wm->addSlabWindow(New<Tests::ModernGLTests>());
-        wm->addSlabWindow(New<Tests::Graph3DTests>());
-        wm->addSlabWindow(New<Tests::BezierTests>());
-        wm->addSlabWindow(New<Tests::FourierTestWindow>());
-        wm->addSlabWindow(Tests::GetImGuiTestWindow());
+        WindowManager->AddSlabWindow(New<Tests::LaTeXTests>(), false);
+        WindowManager->AddSlabWindow(New<Tests::VShapeExpansionTest>(), false);
+        WindowManager->AddSlabWindow(New<Tests::ModernGLTests>(), false);
+        WindowManager->AddSlabWindow(New<Tests::Graph3DTests>(), false);
+        WindowManager->AddSlabWindow(New<Tests::FBezierTests>(ImGuiContext), false);
+        WindowManager->AddSlabWindow(New<Tests::FourierTestWindow>(), false);
+        WindowManager->AddSlabWindow(Tests::GetImGuiTestWindow(), false);
 
         // temp = New<WindowTreeBuilderTest>();
         // wm->addSlabWindow(temp);
@@ -71,11 +74,11 @@ int TestsApp::run() {
     } else {
         Core::BackendManager::Startup("GLFW");
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
-        backend = guiBackend;
-        guiBackend->GetMainSystemWindow()->addEventListener(Pointer<Graphics::SystemWindowEventListener>(new Tests::NuklearTests()));
+        Backend = guiBackend;
+        guiBackend->GetMainSystemWindow()->AddEventListener(TPointer<Graphics::FPlatformWindowEventListener>(new Tests::NuklearTests()));
     }
 
-    backend->run();
+    Backend->Run();
 
     return 0;
 }

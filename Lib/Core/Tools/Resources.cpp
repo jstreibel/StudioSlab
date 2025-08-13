@@ -7,13 +7,13 @@
 
 namespace Slab::Core {
 
-    Str Resources::fontFileName(int index) {
-        if (index > fonts.size() - 1) {
-            Log::Error() << "Resources: no font for (index+1) " << index + 1 << ". Total fonts is " << fonts.size();
+    Str Resources::GetIndexedFontFileName(int Index) {
+        if (Index > ExportedFonts.size() - 1) {
+            Log::Error() << "Resources: no font for (index+1) " << Index + 1 << ". Total fonts is " << ExportedFonts.size();
             throw "No such font";
         }
 
-        return FontsFolder + fonts[index];
+        return FontsFolder + ExportedFonts[Index];
     }
 
 

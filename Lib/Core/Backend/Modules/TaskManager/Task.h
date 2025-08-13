@@ -11,7 +11,7 @@
 
 namespace Slab::Core {
 
-    enum TaskStatus {
+    enum ETaskStatus {
         TaskNotInitialized,
         TaskRunning,
         TaskSuccess,
@@ -19,49 +19,50 @@ namespace Slab::Core {
         TaskAborted
     };
 
-    enum ThreadStatus {
+    enum EThreadStatus {
         ThreadNotInitialized,
         ThreadRunning,
         ThreadWaitingRelease,
         ThreadFinished
     };
 
-    class Task {
-        Str                  m_name;
-        Atomic<TaskStatus>   m_taskStatus = TaskNotInitialized;
-        Atomic<ThreadStatus> m_threadStatus = ThreadNotInitialized;
-        Mutex                m_finishMutex;
-        Condition            m_releaseCondition;
-        bool                 m_continueFlag = false;
-
-    protected:
-        virtual TaskStatus run() = 0;
-
+    class FTask {
     public:
 
-        Task() = delete;
-        explicit Task(Str name);
-        virtual ~Task() = default;
+        FTask() = delete;
+        explicit FTask(Str name);
+        virtual ~FTask() = default;
 
         /**
          * The entirety of the thread work starts and ends here.
          */
         void start();
 
-        [[nodiscard]] bool isTaskRunning() const;
-        [[nodiscard]] bool isThreadRunning() const;
-        [[nodiscard]] Str getName() const;
-        [[nodiscard]] TaskStatus getStatus() const;
+        [[nodiscard]] bool IsTaskRunning() const;
+        [[nodiscard]] bool IsThreadRunning() const;
+        [[nodiscard]] Str GetName() const;
+        [[nodiscard]] ETaskStatus GetStatus() const;
 
-        virtual void abort() = 0;
+        virtual void Abort() = 0;
 
         /**
          * When the Task finishes running, it waits until it is released to finish.s
          */
-        void release();
+        void Release();
+
+    protected:
+        virtual ETaskStatus Run() = 0;
+
+    private:
+        Str                   Name;
+        Atomic<ETaskStatus>   TaskStatus = TaskNotInitialized;
+        Atomic<EThreadStatus> ThreadStatus = ThreadNotInitialized;
+        Mutex                 FinishMutex;
+        Condition             ReleaseCondition;
+        bool                  bContinueFlag = false;
     };
 
-    DefinePointers(Task)
+    DefinePointers(FTask)
 
 }
 

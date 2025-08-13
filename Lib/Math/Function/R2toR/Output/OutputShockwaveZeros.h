@@ -16,10 +16,10 @@ namespace Slab::Math::R2toR {
     private:
         std::fstream file;
         int outputResolution;
-        Real t0;
+        DevFloat t0;
 
     public:
-        OutputShockwaveZeros(int N, int outputResolution, Real t0=0);
+        OutputShockwaveZeros(int N, int outputResolution, DevFloat t0=0);
         // ~OutputShockwaveZeros() override;
 
         // auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;

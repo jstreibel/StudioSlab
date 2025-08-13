@@ -16,23 +16,23 @@
 
 namespace Slab::Models::KGRtoR {
 
-    using PlottingWindow = Graphics::Plot2DWindow;
+    using PlottingWindow = Graphics::FPlot2DWindow;
     using FunctionArtist = Graphics::R2toRFunctionArtist;
     using SectionArtist = Graphics::R2SectionArtist;
     using SectionLine = Math::RtoR2::StraightLine;
     using Section = Math::RtoR::Section1D;
-    using Function = Math::R2toR::NumericFunction;
+    using Function = Math::R2toR::FNumericFunction;
 
     class TwoPointCorrelationViewer_KG : public KGViewer {
-        Pointer<FunctionArtist> twoPointArtist = New<FunctionArtist>();
-        Pointer<SectionArtist> sectionArtist = New<SectionArtist>();
-        Pointer<Graphics::RtoRFunctionArtist> ddt2ptSection;
+        TPointer<FunctionArtist> twoPointArtist = New<FunctionArtist>();
+        TPointer<SectionArtist> sectionArtist = New<SectionArtist>();
+        TPointer<Graphics::RtoRFunctionArtist> ddt2ptSection;
 
-        Pointer<SectionLine> time_slice = New<SectionLine>();
-        Pointer<SectionLine> space_slice = New<SectionLine>();
-        Pointer<Section> section_map = New<Section>();
+        TPointer<SectionLine> time_slice = New<SectionLine>();
+        TPointer<SectionLine> space_slice = New<SectionLine>();
+        TPointer<Section> section_map = New<Section>();
 
-        Pointer<Function> twoPointFunction;
+        TPointer<Function> twoPointFunction;
         TwoPointCorrelation twoPointCorrelationAnalytic;
         CorrelationDecay powerDecayCorrelation;
 
@@ -42,15 +42,15 @@ namespace Slab::Models::KGRtoR {
         float Δt{1};
         void computeTwoPointCorrelation();
     public:
-        explicit TwoPointCorrelationViewer_KG(const Pointer<Graphics::GUIWindow> &guiWindow,
-                                     const Pointer<R2toR::NumericFunction> &func = nullptr,
-                                     const Pointer<R2toR::NumericFunction> &ddtFunc = nullptr);
+        explicit TwoPointCorrelationViewer_KG(const TPointer<Graphics::FGUIWindow> &guiWindow,
+                                     const TPointer<R2toR::FNumericFunction> &func = nullptr,
+                                     const TPointer<R2toR::FNumericFunction> &ddtFunc = nullptr);
 
-        Str getName() const override;
+        Str GetName() const override;
 
-        void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;
+        void SetFunction(TPointer<Math::R2toR::FNumericFunction> function) override;
 
-        void draw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
     };
 
 } // Slab::Models::KGRtoR

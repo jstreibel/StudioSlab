@@ -21,7 +21,7 @@ namespace Slab::Graphics {
 
     using namespace Math;
 
-    class R2toRFunctionArtist : public Artist {
+    class R2toRFunctionArtist : public FArtist {
         enum Scale {
             Linear,
             Log,
@@ -34,43 +34,43 @@ namespace Slab::Graphics {
 
         Unit funcUnit;
 
-        Pointer<FieldTextureKontraption> textureKontraptions;
+        TPointer<FieldTextureKontraption> textureKontraptions;
         bool anti_alias=false;
 
-        Map<Str, Pointer<R2toRPainter>> painters;
-        Pointer<R2toRPainter> current_painter;
+        Map<Str, TPointer<R2toRPainter>> painters;
+        TPointer<R2toRPainter> current_painter;
         R2toR::Function_constptr func;
 
         void invalidateTextureData();
         void repopulateTextureBuffer();
 
-        void drawGUI() override;
+        void DrawGUI() override;
 
     public:
         explicit R2toRFunctionArtist();
 
-        bool draw(const Plot2DWindow &) override;
+        bool Draw(const FPlot2DWindow &) override;
 
-        bool hasGUI() override;
+        bool HasGUI() override;
 
         void setFunction(R2toR::Function_constptr, const Unit& unit=Constants::One);
         auto getFunction() const -> R2toR::Function_constptr;
 
         void setDataMutable(bool);
 
-        void setPainter(Pointer<R2toRPainter>);
-        auto getPainter() -> Pointer<R2toRPainter>;
-        auto getPainter(const Str &name) -> Pointer<R2toRPainter>;
+        void setPainter(TPointer<R2toRPainter>);
+        auto getPainter() -> TPointer<R2toRPainter>;
+        auto getPainter(const Str &name) -> TPointer<R2toRPainter>;
 
         void updateMinMax(bool force=false) const;
 
         void set_xPeriodicOn() const;
 
-        auto getXHairInfo(const Point2D &XHairCoord) const -> Str override;
+        auto GetXHairInfo(const Point2D &XHairCoord) const -> Str override;
 
-        auto getFieldTextureKontraption() const -> Pointer<FieldTextureKontraption>;
+        auto getFieldTextureKontraption() const -> TPointer<FieldTextureKontraption>;
 
-        void setLabel(Str label) override;
+        void SetLabel(Str label) override;
     };
 
     DefinePointers(R2toRFunctionArtist)

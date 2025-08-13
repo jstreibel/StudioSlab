@@ -13,16 +13,16 @@ namespace Slab::Math {
     R2toR::CorrelationFunction::CorrelationFunction(R2toR::Function_constptr baseFunc, Sampler_ptr sampler)
             : baseFunction(std::move(baseFunc)), sampler(std::move(sampler)) {}
 
-    Real R2toR::CorrelationFunction::operator()(Real2D x) const {
+    DevFloat R2toR::CorrelationFunction::operator()(Real2D x) const {
         if (baseFunction == nullptr) return 0;
 
         auto samples = sampler->getSamples();
 
         IN func = *baseFunction;
 
-        Real av_s₁s₂ = 0.0;
-        Real av_s₁ = 0.0;
-        Real av_s₂ = 0.0;
+        DevFloat av_s₁s₂ = 0.0;
+        DevFloat av_s₁ = 0.0;
+        DevFloat av_s₂ = 0.0;
         for (IN s: samples) {
             Real2D x_s₁ = s;
             Real2D x_s₂ = s + x;
@@ -35,7 +35,7 @@ namespace Slab::Math {
             av_s₂ += s₂;
         }
 
-        IN n = (Real) samples.size();
+        IN n = (DevFloat) samples.size();
 
         return av_s₁s₂/n - av_s₁*av_s₂/(n * n);
     }

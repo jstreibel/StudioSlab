@@ -83,7 +83,7 @@ namespace Slab::Math {
         X[n] = fVec[n];
     }
 
-    DiscreteComplexSpace &DiscreteComplexSpace::StoreScalarMultiplication(const DiscreteComplexSpace &space1, const Real a) {
+    DiscreteComplexSpace &DiscreteComplexSpace::StoreScalarMultiplication(const DiscreteComplexSpace &space1, const DevFloat a) {
         assert(getTotalDiscreteSites() == space1.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.
 
         auto &f1Vec = space1.data;

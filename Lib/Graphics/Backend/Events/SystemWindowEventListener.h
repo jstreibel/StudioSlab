@@ -14,45 +14,44 @@
 
 namespace Slab::Graphics {
 
-    class SystemWindow;
+    class FPlatformWindow;
 
-    using ParentSystemWindow = SystemWindow*;
+    using FOwnerPlatformWindow = TVolatile<FPlatformWindow>;
 
-    class SystemWindowEventListener {
-        Vector<Volatile<SystemWindowEventListener>> delegateResponders;
-        friend class SystemWindow;
-        void setParentSystemWindow(SystemWindow *);
+    class FPlatformWindowEventListener {
+        Vector<TVolatile<FPlatformWindowEventListener>> delegateResponders;
+        friend class FPlatformWindow;
+
+        int Priority;
 
     protected:
-        SystemWindow* parent_system_window = nullptr;
 
-        void addResponder(const Volatile<SystemWindowEventListener>& responder);
-        void removeResponder(const Pointer<SystemWindowEventListener>& responder);
-        [[nodiscard]] bool hasResponders() const;
+        void AddResponder(const TVolatile<FPlatformWindowEventListener>& responder);
+        void RemoveResponder(const TPointer<FPlatformWindowEventListener>& responder);
+        [[nodiscard]] bool HasResponders() const;
 
     public:
 
-        explicit SystemWindowEventListener(ParentSystemWindow parent);
-        explicit SystemWindowEventListener();
-        virtual ~SystemWindowEventListener();
+        explicit FPlatformWindowEventListener();
+        virtual ~FPlatformWindowEventListener();
 
-        virtual bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys);
-        virtual bool notifyCharacter(UInt codepoint);
+        virtual bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys);
+        virtual bool NotifyCharacter(UInt codepoint);
 
-        virtual void cursorEntered(bool);
-        virtual bool notifyMouseButton(MouseButton, KeyState, ModKeys);
-        virtual bool notifyMouseMotion(int x, int y, int dx, int dy);
-        virtual bool notifyMouseWheel(double dx, double dy);
+        virtual void CursorEntered(bool);
+        virtual bool NotifyMouseButton(EMouseButton, EKeyState, EModKeys);
+        virtual bool NotifyMouseMotion(int x, int y, int dx, int dy);
+        virtual bool NotifyMouseWheel(double dx, double dy);
 
-        virtual bool notifyFilesDropped(StrVector paths);
+        virtual bool NotifyFilesDropped(StrVector paths);
 
-        virtual bool notifySystemWindowReshape(int w, int h);
+        virtual bool NotifySystemWindowReshape(int w, int h);
 
-        virtual bool notifyRender();
+        virtual bool NotifyRender(const FPlatformWindow&);
 
     };
 
-    DefinePointers(SystemWindowEventListener)
+    DefinePointers(FPlatformWindowEventListener)
 }
 
 

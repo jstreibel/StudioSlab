@@ -39,10 +39,10 @@ namespace Slab::Graphics {
     LightData light2 = { 0,  1, 0 + zLight, 0, a, b};
     LightData light3 = {-M_SQRT1_2, -M_SQRT1_2, 0 + zLight, b, 0, a};
 
-    void GenerateXYPLane(OpenGL::VertexBuffer &buffer, int N, int M,
+    void GenerateXYPLane(OpenGL::FVertexBuffer &buffer, int N, int M,
                          float width, float height);
 
-    R2toRFunctionActor::R2toRFunctionActor(R2toR::NumericFunction_constptr function)
+    R2toRFunctionActor::R2toRFunctionActor(R2toR::FNumericFunction_constptr function)
     : func(std::move(function))
     , gridMetadata(R2toRFunctionActor::GridMetadata::FromNumericFunction(func))
     , program(Core::Resources::ShadersFolder + "FieldShading.vert",
@@ -58,44 +58,44 @@ namespace Slab::Graphics {
         texture.setSWrap(OpenGL::ClampToEdge);
         texture.setTWrap(OpenGL::ClampToEdge);
 
-        program.setUniform("field", texture.getTextureUnit());
+        program.SetUniform("field", texture.getTextureUnit());
 
-        program.setUniform("light1_position", light1.pos());
-        program.setUniform("light2_position", light2.pos());
-        program.setUniform("light3_position", light3.pos());
-        program.setUniform("light1_color", light1.color());
-        program.setUniform("light2_color", light2.color());
-        program.setUniform("light3_color", light3.color());
+        program.SetUniform("light1_position", light1.pos());
+        program.SetUniform("light2_position", light2.pos());
+        program.SetUniform("light3_position", light3.pos());
+        program.SetUniform("light1_color", light1.color());
+        program.SetUniform("light2_color", light2.color());
+        program.SetUniform("light3_color", light3.color());
 
         const int gridSubdivs = 8;
-        program.setUniform("gridSubdivs", gridSubdivs);
+        program.SetUniform("gridSubdivs", gridSubdivs);
 
-        program.setUniform("scale", 1.f);
+        program.SetUniform("scale", 1.f);
 
         fix gridN = gridMetadata.gridN;
         fix gridM = gridMetadata.gridM;
-        program.setUniform("texelSize", Real2D(1./(Real)gridM, 1./(Real)gridN));
+        program.SetUniform("texelSize", Real2D(1./(DevFloat)gridM, 1./(DevFloat)gridN));
     }
 
     void R2toRFunctionActor::draw(const Scene3DWindow &graph3D) {
-        texture.bind();
+        texture.Bind();
 
         auto camera = graph3D.getCamera();
         auto view = camera.getViewTransform();
         auto proj = camera.getProjection();
         auto model = glm::mat4(1.f);
 
-        program.setUniform("eye", camera.pos);
+        program.SetUniform("eye", camera.pos);
 
-        program.setUniform("modelview", view*model);
-        program.setUniform("projection", proj);
+        program.SetUniform("modelview", view*model);
+        program.SetUniform("projection", proj);
 
-        vertexBuffer.render(GL_TRIANGLES);
+        vertexBuffer.Render(GL_TRIANGLES);
     }
 
-    void R2toRFunctionActor::setAmbientLight(Color color) { program.setUniform("amb", color.array()); }
+    void R2toRFunctionActor::setAmbientLight(FColor color) { program.SetUniform("amb", color.array()); }
 
-    void R2toRFunctionActor::setGridSubdivs(int n) { program.setUniform("gridSubdivs", n); }
+    void R2toRFunctionActor::setGridSubdivs(int n) { program.SetUniform("gridSubdivs", n); }
 
     bool R2toRFunctionActor::hasGUI() {
         return true;
@@ -108,14 +108,14 @@ namespace Slab::Graphics {
 
         static float scale = 1.0;
         if(ImGui::DragFloat("scale", &scale, scale*2.5e-2f, 1e-4f, 1e4f, "%.2e"))
-            program.setUniform("scale", scale);
+            program.SetUniform("scale", scale);
 
         static float gloomPowBase = 50.0;
         static float gloomMultiplier = 1.0;
         if(ImGui::DragFloat("gloom base", &gloomPowBase, gloomPowBase*1.e-2f, 0.1f, 1.e4f))
-            program.setUniform("gloomPowBase", gloomPowBase);
+            program.SetUniform("gloomPowBase", gloomPowBase);
         if(ImGui::DragFloat("gloom multiplier", &gloomMultiplier, 0.1f, 0.1f, 10.f))
-            program.setUniform("gloomMultiplier", gloomMultiplier);
+            program.SetUniform("gloomMultiplier", gloomMultiplier);
 
         static int gridSubdivs = 8;
         if(ImGui::DragInt("Grid subdivs", &gridSubdivs, .1f, 0, 8))
@@ -124,7 +124,7 @@ namespace Slab::Graphics {
         const char *items[] = {"Color", "Normals", "Gloom"};
         static int current = 0;
         if(ImGui::Combo("Shading", &current, items, 3))
-            program.setUniform("shading", current);
+            program.SetUniform("shading", current);
     }
 
     void R2toRFunctionActor::rebuildTextureData() {
@@ -137,7 +137,7 @@ namespace Slab::Graphics {
         texture.upload();
     }
 
-    void R2toRFunctionActor::GridMetadata::generateXYPlane(OpenGL::VertexBuffer &buffer) const {
+    void R2toRFunctionActor::GridMetadata::generateXYPlane(OpenGL::FVertexBuffer &buffer) const {
         Vector<GLuint> indices;
         Vector<Field2DVertex> vertices;
 
@@ -186,7 +186,7 @@ namespace Slab::Graphics {
     }
 
     R2toRFunctionActor::GridMetadata
-    R2toRFunctionActor::GridMetadata::FromNumericFunction(const R2toR::NumericFunction_constptr &func) {
+    R2toRFunctionActor::GridMetadata::FromNumericFunction(const R2toR::FNumericFunction_constptr &func) {
         fix D = func->getDomain();
 
         R2toRFunctionActor::GridMetadata gridMetadata;

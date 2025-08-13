@@ -10,9 +10,16 @@
 #include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
 
 namespace Slab::Graphics {
-    class GLFWEventTranslator final : public EventTranslator, public GLFWListener{
+
+    class FGLFWPlatformWindow;
+
+    class FGLFWEventTranslator final : public FEventTranslator, public FGLFWListener{
+        friend FGLFWPlatformWindow;
+        FGLFWPlatformWindow *Owner;
+
     public:
-        GLFWEventTranslator();
+        FGLFWEventTranslator() = delete;
+        explicit FGLFWEventTranslator(FGLFWPlatformWindow *Owner);
 
         bool KeyboardEvent(GLFWwindow *, int key, int scancode, int action, int mods) override;
         bool CharEvent(GLFWwindow*, UInt codepoint) override;
@@ -20,7 +27,7 @@ namespace Slab::Graphics {
         void CursorEnter(GLFWwindow *, int entered) override;
         bool MouseButton(GLFWwindow *, int button, int action, int mods) override;
         bool MouseWheel(GLFWwindow *, double xoffset, double yoffset) override;
-        bool DroppedFiles(GLFWwindow *, int count, const char **paths) override;
+        bool DroppedFiles(GLFWwindow *, int count, const char **Paths_raw) override;
 
         void Render(GLFWwindow *window) override;
 

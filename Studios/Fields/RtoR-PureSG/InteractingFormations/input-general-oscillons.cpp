@@ -13,16 +13,16 @@ namespace Studios::PureSG {
 
     InputGeneralOscillons::InputGeneralOscillons()
             : Builder("Scattering", "General scattering of any two oscillons.") {
-        Interface->addParameters({&v1, &v2, &alpha1, &alpha2, &l, &V, &xTouchLocation, &mirror});
+        Interface->AddParameters({&v1, &v2, &alpha1, &alpha2, &l, &V, &xTouchLocation, &mirror});
     }
 
     auto InputGeneralOscillons::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
         using namespace Slab::Math::RtoR;
 
-        AnalyticOscillon oscRight = AnalyticOscillon(0.0, v1.getValue(), V.getValue(), alpha1.getValue(),
+        AnalyticOscillon oscRight = AnalyticOscillon(0.0, v1.GetValue(), V.GetValue(), alpha1.GetValue(),
                                                      false, false);
-        AnalyticOscillon oscLeft = AnalyticOscillon(0.0, v2.getValue(), V.getValue(), alpha2.getValue(),
-                                                    true, mirror.getValue());
+        AnalyticOscillon oscLeft = AnalyticOscillon(0.0, v2.GetValue(), V.GetValue(), alpha2.GetValue(),
+                                                    true, mirror.GetValue());
 
         auto initCondPhi = oscRight + oscLeft;
         auto initCondDPhiDt = oscRight.swap() + oscLeft.swap();

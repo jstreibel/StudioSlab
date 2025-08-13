@@ -20,7 +20,7 @@ namespace Slab::Models::MolecularDynamics {
 
     using namespace Slab;
 
-    class Monitor : public Math::Socket, public Graphics::SlabWindow {
+    class Monitor : public Math::Socket, public Graphics::FSlabWindow {
         sf::RenderWindow &renderWindow;
 
         Vector<sf::Vertex> molShapes;
@@ -30,7 +30,7 @@ namespace Slab::Models::MolecularDynamics {
 
         // Vector<sf::Vertex[MOLS_HISTORY_SIZE]> moleculesHistory;
 
-        Count N;
+        CountType N;
         float L;
     public:
         enum Model {
@@ -40,9 +40,9 @@ namespace Slab::Models::MolecularDynamics {
 
         using Config = Models::MolecularDynamics::MolDynNumericConfig;
 
-        Monitor(const Pointer<Config>&, Model);
+        Monitor(const TPointer<Config>&, Model);
 
-        void draw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
     protected:
         auto handleOutput(const Math::OutputPacket &packet) -> void override;

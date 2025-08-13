@@ -20,16 +20,16 @@ namespace Modes::DatabaseViewer {
 
     using namespace Slab;
 
-    class DBViewerMulti : public Graphics::WindowRow {
-        Graphics::GUIWindow guiWindow;
-        WindowRow topRow;
+    class DBViewerMulti : public Graphics::FWindowRow {
+        Graphics::FGUIWindow guiWindow;
+        FWindowRow topRow;
 
         Vector<DBParser::Ptr> dbParsers;
-        Graphics::Plot2DWindow allDataDisplay;
-        Graphics::Plot2DWindow fullParticularHistoryDisplay;
+        Graphics::FPlot2DWindow allDataDisplay;
+        Graphics::FPlot2DWindow fullParticularHistoryDisplay;
         Graphics::R2toRFunctionArtist_ptr currentFullParticularHistoryArtist;
 
-        Graphics::Plot2DWindow massesGraph;
+        Graphics::FPlot2DWindow massesGraph;
 
         Math::PointSet maxValuesPointSet;
         Math::PointSet massesReal_pointSet;
@@ -37,21 +37,21 @@ namespace Modes::DatabaseViewer {
         Math::PointSet underXHair;
         Graphics::PointSetArtist_ptr mainModesArtist;
 
-        Pointer<Math::PointSet> KGRelation;
-        Pointer<Math::PointSet> KGRelation_high_k;
+        TPointer<Math::PointSet> KGRelation;
+        TPointer<Math::PointSet> KGRelation_high_k;
         Graphics::PointSetArtist_ptr KGRelation_artist;
         Graphics::PointSetArtist_ptr KGRelation_high_k_artist;
 
-        using FullField_ptr = Pointer<Math::R2toR::NumericFunction_CPU>;
+        using FullField_ptr = TPointer<Math::R2toR::NumericFunction_CPU>;
         Vector<FullField_ptr> fullFields;
         Vector<Graphics::R2toRFunctionArtist_ptr> fullFieldsArtist;
         Vector<Utils::MaxInfo> maxValues;
 
-        std::map<Str, Pointer<Math::R2toR::NumericFunction_CPU>> fullHistoriesMap;
+        std::map<Str, TPointer<Math::R2toR::NumericFunction_CPU>> fullHistoriesMap;
 
         int index_XHair=-1;
 
-        Real KG_mass = 1.0;
+        DevFloat KG_mass = 1.0;
         int masses_avg_samples = 10;
         void updateKGDispersion(bool visible);
         void reloadData();
@@ -59,17 +59,17 @@ namespace Modes::DatabaseViewer {
         void drawTable(int specialIndex);
         void loadDataUnderMouse();
 
-        Graphics::KeyState shiftKey = Graphics::Release;
+        Graphics::EKeyState shiftKey = Graphics::Release;
     public:
         explicit DBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam);
 
-        void draw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
-        bool notifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) override;
+        bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override;
 
-        bool notifyMouseButton(Graphics::MouseButton button, Graphics::KeyState state, Graphics::ModKeys keys) override;
+        bool NotifyMouseButton(Graphics::EMouseButton button, Graphics::EKeyState state, Graphics::EModKeys keys) override;
 
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
     };
 }
 

@@ -24,7 +24,7 @@ namespace Slab::Graphics::OpenGL {
     public:
         Texture1D_Color(GLsizei length, GLenum textureUnit = GL_TEXTURE0);
 
-        bool setColor(int i, Color color);
+        bool setColor(int i, FColor color);
 
         void setWrap(OpenGL::WrapMode) const;
 
@@ -35,7 +35,7 @@ namespace Slab::Graphics::OpenGL {
 
         void set_sPeriodicOn() const;
 
-        bool upload(UInt from=0, Count n=0);
+        bool upload(UInt from=0, CountType n=0);
 
         GLsizei getSize() const;
     };

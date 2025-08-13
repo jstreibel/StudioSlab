@@ -8,7 +8,7 @@
 
 #include "Math/Function/RtoR/Operations/Histogram.h"
 
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/Plot2D/Plotter.h"
 #include "Utils/Threads.h"
@@ -26,7 +26,7 @@
         firstTimer = false;         \
         code                        \
     }
-#define CHECK_GL_ERRORS(count) Graphics::OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
+#define CHECK_GL_ERRORS(count) Graphics::OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
 
 // Ok to touch these:
 #define HISTOGRAM_SHOULD_BE_PRETTY false
@@ -39,18 +39,18 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    RtoRStatisticsPanel::RtoRStatisticsPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian,
-                                             Graphics::GUIWindow &guiWindow)
-            : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel", "panel for statistic analysis of simulation data")
+    RtoRStatisticsPanel::RtoRStatisticsPanel(const TPointer<KGNumericConfig> &params, KGEnergy &hamiltonian,
+                                             Graphics::FGUIWindow &guiWindow)
+            : FRtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel", "panel for statistic analysis of simulation data")
             , hamiltonian(hamiltonian)
-            , mCorrelationGraph("Correlations"){
+            , mCorrelationGraph("Correlations", guiWindow.GetGUIWindowContext()){
 
-        addWindow(Slab::Naked(mCorrelationGraph));
+        AddWindow(Slab::Naked(mCorrelationGraph));
 
         {
-            auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
+            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
 
-            auto mTemperaturesGraph = Slab::New<Graphics::Plot2DWindow>("T");
+            auto mTemperaturesGraph = Slab::New<Graphics::FPlot2DWindow>("T", guiWindow.GetGUIWindowContext());
 
             Graphics::Plotter::AddPointSet(mTemperaturesGraph,
                                            Slab::Naked(temperature1HistoryData),
@@ -62,11 +62,11 @@ namespace Slab::Models::KGRtoR {
                                            Slab::Naked(temperature3HistoryData),
                                            (*style++).permuteColors(), "τ₂");
             // mTemperaturesGraph.addPointSet(DummyPtr(temperature4HistoryData), (*style++), "(τₖ+τ₂)/2");
-            mTemperaturesGraph->getRegion().animate_xMax(params->gett());
+            mTemperaturesGraph->GetRegion().animate_xMax(params->gett());
 
             addWindowToColumn(mTemperaturesGraph, 0);
 
-            auto TParam = CLInterfaceManager::getInstance().getParametersValues({"T"});
+            auto TParam = FCommandLineInterfaceManager::getInstance().getParametersValues({"T"});
             if (!TParam.empty()) {
                 auto T = std::stod(TParam[0].second);
                 auto pts = Math::Point2DVec({{-.1,                T},
@@ -79,52 +79,53 @@ namespace Slab::Models::KGRtoR {
         }
 
         {
-            auto mHistogramsGraphK = Slab::New<Graphics::Plot2DWindow>   ("k histogram");
-            auto mHistogramsGraphGrad = Slab::New<Graphics::Plot2DWindow>("w histogram");
-            auto mHistogramsGraphV = Slab::New<Graphics::Plot2DWindow>   ("v histogram");
-            auto mHistogramsGraphE = Slab::New<Graphics::Plot2DWindow>   ("e histogram");
+            auto mHistogramsGraphK    = Slab::New<Graphics::FPlot2DWindow>   ("k histogram", guiWindow.GetGUIWindowContext());
+            auto mHistogramsGraphGrad = Slab::New<Graphics::FPlot2DWindow>   ("w histogram", guiWindow.GetGUIWindowContext());
+            auto mHistogramsGraphV    = Slab::New<Graphics::FPlot2DWindow>   ("v histogram", guiWindow.GetGUIWindowContext());
+            auto mHistogramsGraphE    = Slab::New<Graphics::FPlot2DWindow>   ("e histogram", guiWindow.GetGUIWindowContext());
 
 
-            auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
-            Graphics::Plotter::AddPointSet(mHistogramsGraphE,
+            auto style = PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
+            Plotter::AddPointSet(mHistogramsGraphE,
                                            Slab::Naked(histogramEData),
                                            *style++, "E");
-            Graphics::Plotter::AddPointSet(mHistogramsGraphK,
+            Plotter::AddPointSet(mHistogramsGraphK,
                                            Slab::Naked(histogramKData),
                                            *style++, "K");
-            Graphics::Plotter::AddPointSet(mHistogramsGraphGrad,
+            Plotter::AddPointSet(mHistogramsGraphGrad,
                                            Slab::Naked(histogramGradData),
                                            *style++, "grad");
-            Graphics::Plotter::AddPointSet(mHistogramsGraphV,
+            Plotter::AddPointSet(mHistogramsGraphV,
                                            Slab::Naked(histogramVData),
                                            *style++, "V");
 
-            auto *histogramsPanel = new Graphics::WindowPanel();
-            histogramsPanel->addWindow(mHistogramsGraphV);
-            histogramsPanel->addWindow(mHistogramsGraphGrad);
-            histogramsPanel->addWindow(mHistogramsGraphK);
-            histogramsPanel->addWindow(mHistogramsGraphE);
+            auto *histogramsPanel = new WindowPanel(FSlabWindowConfig{"Histograms"});
+            histogramsPanel->AddWindow(mHistogramsGraphV);
+            histogramsPanel->AddWindow(mHistogramsGraphGrad);
+            histogramsPanel->AddWindow(mHistogramsGraphK);
+            histogramsPanel->AddWindow(mHistogramsGraphE);
 
-            addWindow(Pointer<Graphics::SlabWindow>(histogramsPanel), true);
+            AddWindow(TPointer<FSlabWindow>(histogramsPanel), true);
         }
 
         // setColumnRelativeWidth(0, 0.125);
-        setColumnRelativeWidth(0, -1);
-        setColumnRelativeWidth(1, 0.40);
+        SetColumnRelativeWidth(0, -1);
+        SetColumnRelativeWidth(1, 0.40);
     }
 
-    void RtoRStatisticsPanel::setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
+    void RtoRStatisticsPanel::SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
+ simulationHistory,
                                                    const R2toRFunctionArtist_ptr &simHistoryArtist) {
-        RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
+        FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryArtist);
 
-        auto simulationHistoryGraph = Slab::New<Plot2DWindow>("Simulation history");
-        simulationHistoryGraph->addArtist(simulationHistoryArtist);
-        addWindow(simulationHistoryGraph, true, 0.20);
+        auto simulationHistoryGraph = Slab::New<FPlot2DWindow>("Simulation history", guiWindow.GetGUIWindowContext());
+        simulationHistoryGraph->AddArtist(simulationHistoryArtist);
+        AddWindow(simulationHistoryGraph, true, 0.20);
     }
 
 
 
-    void RtoRStatisticsPanel::draw() {
+    void RtoRStatisticsPanel::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         int errorCount = 0;
         CHECK_GL_ERRORS(errorCount++)
 
@@ -164,40 +165,40 @@ namespace Slab::Models::KGRtoR {
 
         // *************************** MY BEAUTY *****************************
 
-        guiWindow.addVolatileStat("<\\br>");
-        for (const auto &p: CLInterfaceManager::getInstance().getParametersValues({"T", "k", "i"})) {
+        guiWindow.AddVolatileStat("<\\br>");
+        for (const auto &p: FCommandLineInterfaceManager::getInstance().getParametersValues({"T", "k", "i"})) {
             auto name = p.first;
             if (name == "i") name = "transient";
-            guiWindow.addVolatileStat(name + " = " + p.second);
+            guiWindow.AddVolatileStat(name + " = " + p.second);
         }
 
-        RtoRPanel::draw();
+        FRtoRPanel::ImmediateDraw(PlatformWindow);
     }
 
     void RtoRStatisticsPanel::drawGUI() {
         guiWindow.AddExternalDraw([this]() {
             if (ImGui::CollapsingHeader("Statistical")) {
                 auto transient = (float) transientHint;
-                if (ImGui::SliderFloat("Transient hint", &transient, .0f, (float) params->gett())) {
-                    setTransientHint((Real) transient);
+                if (ImGui::SliderFloat("Transient hint", &transient, .0f, (float) Params->gett())) {
+                    SetTransientHint((DevFloat) transient);
                 }
             }
         });
     }
 
-    void RtoRStatisticsPanel::setTransientHint(Real value) {
+    void RtoRStatisticsPanel::SetTransientHint(DevFloat value) {
         transientHint = value;
     }
 
     void RtoRStatisticsPanel::updateEnergyData() {
-        auto L = params->getL();
+        auto L = Params->GetL();
 
-        fix t = lastPacket.getSteps()*params->getdt();
+        fix t = LastPacket.GetSteps()*Params->Getdt();
 
-        auto U = hamiltonian.getTotalEnergy();
-        auto K = hamiltonian.getTotalKineticEnergy();
-        auto W = hamiltonian.getTotalGradientEnergy();
-        auto V = hamiltonian.getTotalPotentialEnergy();
+        auto U = hamiltonian.GetTotalEnergy();
+        auto K = hamiltonian.GetTotalKineticEnergy();
+        auto W = hamiltonian.GetTotalGradientEnergy();
+        auto V = hamiltonian.GetTotalPotentialEnergy();
 
         u = U / L;
         barϕ = V / L;
@@ -205,26 +206,26 @@ namespace Slab::Models::KGRtoR {
         tau_indirect = u - .5 * barϕ;
         fix tau_2 = barϕ + 2 * W / L;
 
-        temperature1HistoryData.addPoint({t, tau});
-        temperature2HistoryData.addPoint({t, tau_indirect});
-        temperature3HistoryData.addPoint({t, tau_2});
+        temperature1HistoryData.AddPoint({t, tau});
+        temperature2HistoryData.AddPoint({t, tau_indirect});
+        temperature3HistoryData.AddPoint({t, tau_2});
 
         std::ostringstream ss;
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
-        guiWindow.addVolatileStat("<\\br>");
-        guiWindow.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
-        guiWindow.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
-        guiWindow.addVolatileStat(Str("W = ") + ToStr(W), (style++)->lineColor);
-        guiWindow.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
-        guiWindow.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
+        guiWindow.AddVolatileStat("<\\br>");
+        guiWindow.AddVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
+        guiWindow.AddVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
+        guiWindow.AddVolatileStat(Str("W = ") + ToStr(W), (style++)->lineColor);
+        guiWindow.AddVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
+        guiWindow.AddVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
 
-        style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
+        style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
         fix decimalPlaces = 3;
-        guiWindow.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, decimalPlaces),
+        guiWindow.AddVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, decimalPlaces),
                                   (style++)->lineColor.permute());
-        guiWindow.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, decimalPlaces),
+        guiWindow.AddVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, decimalPlaces),
                                   (style++)->lineColor.permute());
-        guiWindow.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ + 2 * W / L), decimalPlaces),
+        guiWindow.AddVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ + 2 * W / L), decimalPlaces),
                                   (style++)->lineColor.permute());
         // guiWindow.addVolatileStat(Str("(τₖ+τ₂)/2 = ") + ToStr((tau_avg), decimalPlaces),  (style++)->lineColor);
     }

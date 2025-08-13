@@ -9,10 +9,10 @@
 #include "Monitor.h"
 
 namespace Studios::Fields::R2toRLeadingDelta {
-    Pointer<RingDeltaFunc> ringDelta1;
+    TPointer<RingDeltaFunc> ringDelta1;
 
-    BoundaryCondition::BoundaryCondition(const Pointer<const R2toR::EquationState>& prototype,
-                                         Pointer<RingDeltaFunc> ringDelta,
+    BoundaryCondition::BoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
+                                         TPointer<RingDeltaFunc> ringDelta,
                                          Real tf,
                                          bool deltaOperatesOnSpeed)
             : Slab::Math::Base::BoundaryConditions(prototype)
@@ -82,16 +82,16 @@ namespace Studios::Fields::R2toRLeadingDelta {
     Builder::Builder(bool do_register) : Models::KGR2toR::Builder("Leading Delta", "simulation builder for (2+1)-d "
                                                                      "signum-Gordon shockwave as the "
                                                                      "trail of a driving delta.", false) {
-        Interface->addParameters({&W_0, &eps, &deltaDuration});
+        Interface->AddParameters({&W_0, &eps, &deltaDuration});
 
-        if(do_register) registerToManager();
+        if(do_register) RegisterToManager();
     }
     auto Builder::NotifyCLArgsSetupFinished()    ->       void {
-        CLInterfaceOwner::NotifyCLArgsSetupFinished();
+        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
         auto &p = *kg_numeric_config;
-        const Real L = p.getL();
-        const Real dt = p.getdt();
+        const Real L = p.GetL();
+        const Real dt = p.Getdt();
         const auto W₀ = *W_0;
         auto coef = W₀;
 
@@ -103,7 +103,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
         ringDelta1 = drivingFunc;
     }
 
-    auto Builder::getBoundary() -> Pointer<Base::BoundaryConditions> {
+    auto Builder::getBoundary() -> TPointer<Base::BoundaryConditions> {
         auto eqStatePrototype = newFieldState();
 
         return New<BoundaryCondition>(eqStatePrototype, drivingFunc, *deltaDuration, false);

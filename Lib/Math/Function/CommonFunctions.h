@@ -12,11 +12,11 @@ namespace Slab::Math::Base {
 
     template<class OutputCategory>
     struct Functions {
-        typedef FunctionT<Real, OutputCategory> Function1D;
-        typedef SummableFunction<Real, OutputCategory> Function1DSummable;
+        typedef FunctionT<DevFloat, OutputCategory> Function1D;
+        typedef SummableFunction<DevFloat, OutputCategory> Function1DSummable;
 
         typedef FunctionT<Real2D, OutputCategory> Function2D;
-        typedef SummableFunction<Real, OutputCategory> Function2DSummable;
+        typedef SummableFunction<DevFloat, OutputCategory> Function2DSummable;
 
         typedef FunctionT<Real3D, OutputCategory> Function3D;
         // typedef Function<SU2<3>, OutputCategory> Function3D;

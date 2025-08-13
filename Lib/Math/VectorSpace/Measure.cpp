@@ -8,11 +8,11 @@
 
 namespace Slab::Math {
 
-    Measure::Measure(RealVector linearValues) : linearValues(std::move(linearValues)) {
+    Measure::Measure(FRealVector linearValues) : linearValues(std::move(linearValues)) {
 
     }
 
-    Real Measure::operator*() {
+    DevFloat Measure::operator*() {
         auto v = 1.;
         for (auto lv: linearValues)
             v *= lv;

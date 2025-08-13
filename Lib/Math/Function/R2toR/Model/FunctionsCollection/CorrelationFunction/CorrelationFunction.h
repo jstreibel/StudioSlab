@@ -22,7 +22,7 @@ namespace Slab::Math::R2toR {
         void setBaseFunction(R2toR::Function_constptr baseFunc);
         void setSampler(Sampler_ptr sampler);
 
-        Real operator()(Real2D x) const override;
+        DevFloat operator()(Real2D x) const override;
     };
 
 }

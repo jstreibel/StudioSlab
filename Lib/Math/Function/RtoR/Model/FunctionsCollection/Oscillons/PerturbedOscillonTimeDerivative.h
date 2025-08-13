@@ -10,9 +10,9 @@
 namespace Slab::Math::RtoR {
 class PerturbedOscillonTimeDerivative : public RtoR::Function {
     public:
-        PerturbedOscillonTimeDerivative(Real l, Real eps) : l(l), eps(eps) {}
+        PerturbedOscillonTimeDerivative(DevFloat l, DevFloat eps) : l(l), eps(eps) {}
 
-        Real operator()(Real x) const override {
+        DevFloat operator()(DevFloat x) const override {
             if (x / l > -.5 && x / l <= 0.) return (x + .5 * l) * eps;
             else if (x / l > 0. && x / l <= .5) return (-x + .5 * l) * eps;
 
@@ -20,7 +20,7 @@ class PerturbedOscillonTimeDerivative : public RtoR::Function {
         }
 
     private:
-        const Real l, eps;
+        const DevFloat l, eps;
     };
 }
 

@@ -12,18 +12,18 @@
 using namespace Slab;
 
 GLFreeTypeTests::GLFreeTypeTests()
-: Slab::Graphics::SlabWindow({"FreeType tests"})
-, writer1(Core::Resources::fontFileName(17), 24) // Math symb: 6; 10; 17
-, writer2(Core::Resources::fontFileName(7), 22)
+: Slab::Graphics::FSlabWindow(Graphics::FSlabWindowConfig{"FreeType tests"})
+, writer1(Core::Resources::GetIndexedFontFileName(17), 24) // Math symb: 6; 10; 17
+, writer2(Core::Resources::GetIndexedFontFileName(7), 22)
 {   }
 
-void GLFreeTypeTests::draw() {
-    SlabWindow::draw();
+void GLFreeTypeTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    FSlabWindow::ImmediateDraw(PlatformWindow);
 
     glMatrixMode(GL_MODELVIEW);
-    fix ratio = Real(GetWidth()) / GetHeight();
+    fix ratio = DevFloat(GetWidth()) / GetHeight();
     glScaled(1/ratio, 1, 1);
-    static Real angle = 0.0;
+    static DevFloat angle = 0.0;
     glRotated(angle, 0, 0, 1);
     angle+=0.1;
 
@@ -39,23 +39,23 @@ void GLFreeTypeTests::draw() {
     }
 
     {
-        writer1.write(Str("Angle = ") + ToStr(angle) + Str("deg"), {40, 40});
+        writer1.Write(Str("Angle = ") + ToStr(angle) + Str("deg"), {40, 40});
 
-        writer2.write(Str("Hell yeah!"), {40, 80});
+        writer2.Write(Str("Hell yeah!"), {40, 80});
 
-        writer1.write(Str("ℑ(ℱ[ϕ])  ℜ(ℱ[ϕ])  ℐ π² ϵᵢⱼₖ 𝕬𝕭𝕮  𝕬𝕭𝕮"), {40, 120});
-        writer1.write(Str("αβγδεζηθικλμνξοπρστυφχψω"), {40, 160});
+        writer1.Write(Str("ℑ(ℱ[ϕ])  ℜ(ℱ[ϕ])  ℐ π² ϵᵢⱼₖ 𝕬𝕭𝕮  𝕬𝕭𝕮"), {40, 120});
+        writer1.Write(Str("αβγδεζηθικλμνξοπρστυφχψω"), {40, 160});
 
     }
 
 
 }
 
-void GLFreeTypeTests::notifyReshape(int newWinW, int newWinH) {
-    SlabWindow::notifyReshape(newWinW, newWinH);
+void GLFreeTypeTests::NotifyReshape(int newWinW, int newWinH) {
+    FSlabWindow::NotifyReshape(newWinW, newWinH);
 
-    auto vp = getViewport();
+    auto vp = GetViewport();
 
-    writer1.reshape(vp.width(), vp.height());
-    writer2.reshape(vp.width(), vp.height());
+    writer1.Reshape(vp.GetWidth(), vp.GetHeight());
+    writer2.Reshape(vp.GetWidth(), vp.GetHeight());
 }

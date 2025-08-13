@@ -15,26 +15,26 @@ namespace Slab::Models::KGRtoR {
         float t0=0, Δt=1;
         bool auto_update = false;
 
-        Pointer<Graphics::RtoRFunctionArtist> timeDFTAverageArtist;
+        TPointer<Graphics::RtoRFunctionArtist> timeDFTAverageArtist;
         CorrelationDecay powerDecayCorrelation;
 
         void compute();
 
     public:
-        TimeFTViewer(const Pointer<Graphics::GUIWindow> &guiWindow,
-                     const Pointer<R2toR::NumericFunction> &func=nullptr,
-                     const Pointer<R2toR::NumericFunction> &ddtFunc=nullptr);
+        TimeFTViewer(const TPointer<Graphics::FGUIWindow> &guiWindow,
+                     const TPointer<R2toR::FNumericFunction> &func=nullptr,
+                     const TPointer<R2toR::FNumericFunction> &ddtFunc=nullptr);
 
-        void draw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
-        void notifyBecameVisible() override;
+        void NotifyBecameVisible() override;
 
 
-        void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;
+        void SetFunction(TPointer<Math::R2toR::FNumericFunction> function) override;
 
-        void setFunctionDerivative(FuncPointer pointer) override;
+        void SetFunctionDerivative(FuncPointer pointer) override;
 
-        Str getName() const override;
+        Str GetName() const override;
     };
 
 } // Slab::Models::KGRtoR

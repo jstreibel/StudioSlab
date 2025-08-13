@@ -5,12 +5,12 @@
 
 namespace Slab::Math {
 
-    OutputManager::OutputManager(Count max_steps) : maxSteps(max_steps) {}
+    OutputManager::OutputManager(CountType max_steps) : maxSteps(max_steps) {}
 
     OutputManager::~OutputManager() = default; // No need to destroy output objects in vectors;
 
     void OutputManager::output(OutputPacket &infoVolatile, bool force) {
-        const size_t steps = infoVolatile.getSteps();
+        const size_t steps = infoVolatile.GetSteps();
 
         for (auto &out : outputs) {
             auto shouldOutput = out->shouldOutput(steps) || force;
@@ -23,7 +23,7 @@ namespace Slab::Math {
 
 
     auto OutputManager::computeNStepsToNextOutput(UInt currStep) -> UInt {
-        Count nSteps = maxSteps;
+        CountType nSteps = maxSteps;
 
         for (auto &socket: outputs) {
             const size_t nextRecStep = socket->computeNextRecStep(currStep);

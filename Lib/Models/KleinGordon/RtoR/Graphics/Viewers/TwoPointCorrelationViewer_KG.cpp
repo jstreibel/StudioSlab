@@ -15,33 +15,33 @@ namespace Slab::Models::KGRtoR {
     using Plotter = Graphics::Plotter;
     using Themes = Graphics::PlotThemeManager;
 
-    TwoPointCorrelationViewer_KG::TwoPointCorrelationViewer_KG(const Pointer<Graphics::GUIWindow> &guiWindow,
-                                                               const Pointer<R2toR::NumericFunction> &func,
-                                                               const Pointer<R2toR::NumericFunction> &ddtFunc)
+    TwoPointCorrelationViewer_KG::TwoPointCorrelationViewer_KG(const TPointer<Graphics::FGUIWindow> &guiWindow,
+                                                               const TPointer<R2toR::FNumericFunction> &func,
+                                                               const TPointer<R2toR::FNumericFunction> &ddtFunc)
     : KGViewer(guiWindow, func, ddtFunc)
     {
-        twoPointArtist->setLabel("avg[ϕ(x)ϕ(x+r)]");
+        twoPointArtist->SetLabel("avg[ϕ(x)ϕ(x+r)]");
 
-        auto twoPointWindow = New<PlottingWindow>("Two-point correlation");
-        twoPointWindow->addArtist(twoPointArtist);
-        addWindow(twoPointWindow);
+        auto twoPointWindow = New<PlottingWindow>("Two-point correlation", guiWindow->GetGUIWindowContext());
+        twoPointWindow->AddArtist(twoPointArtist);
+        AddWindow(twoPointWindow);
 
-        sectionArtist->setLabel("avg[ϕ(x)ϕ(x+r)] | r=(0,t)");
-        sectionArtist->addSection(time_slice, Themes::GetCurrent()->funcPlotStyles[0].clone(), "x=0");
-        sectionArtist->addSection(space_slice, Themes::GetCurrent()->funcPlotStyles[1].clone(), "t=0");
-        auto timeSliceWindow = New<PlottingWindow>("Two-point time slice");
-        timeSliceWindow->addArtist(sectionArtist);
+        sectionArtist->SetLabel("avg[ϕ(x)ϕ(x+r)] | r=(0,t)");
+        sectionArtist->addSection(time_slice, Themes::GetCurrent()->FuncPlotStyles[0].clone(), "x=0");
+        sectionArtist->addSection(space_slice, Themes::GetCurrent()->FuncPlotStyles[1].clone(), "t=0");
+        auto timeSliceWindow = New<PlottingWindow>("Two-point time slice", guiWindow->GetGUIWindowContext());
+        timeSliceWindow->AddArtist(sectionArtist);
         Plotter::AddRtoRFunction(timeSliceWindow, Naked(twoPointCorrelationAnalytic),
-                                 Themes::GetCurrent()->funcPlotStyles[1], "Analytic, x=0");
+                                 Themes::GetCurrent()->FuncPlotStyles[1], "Analytic, x=0");
         Plotter::AddRtoRFunction(timeSliceWindow, Naked(powerDecayCorrelation),
-                                 Themes::GetCurrent()->funcPlotStyles[1], "Analytic, t=0");
-        addWindow(timeSliceWindow, true);
-        ddt2ptSection = Plotter::AddRtoRFunction(timeSliceWindow, section_map, Themes::GetCurrent()->funcPlotStyles[2], "Section also", 1000);
+                                 Themes::GetCurrent()->FuncPlotStyles[1], "Analytic, t=0");
+        AddWindow(timeSliceWindow, true);
+        ddt2ptSection = Plotter::AddRtoRFunction(timeSliceWindow, section_map, Themes::GetCurrent()->FuncPlotStyles[2], "Section also", 1000);
 
     }
 
-    void TwoPointCorrelationViewer_KG::setFunction(Pointer<Math::R2toR::NumericFunction> function) {
-        Viewer::setFunction(function);
+    void TwoPointCorrelationViewer_KG::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
+        Viewer::SetFunction(function);
 
         {
             fix t_min = (float)function->getDomain().yMin;
@@ -78,7 +78,7 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void TwoPointCorrelationViewer_KG::draw() {
+    void TwoPointCorrelationViewer_KG::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if(getFunction() == nullptr) return;
 
         gui_window->AddExternalDraw([this](){
@@ -190,7 +190,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::draw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void TwoPointCorrelationViewer_KG::computeTwoPointCorrelation() {
@@ -198,8 +198,8 @@ namespace Slab::Models::KGRtoR {
         if(function == nullptr) return;
 
         // Fourier transform *********************************************************************************
-        Real t_0 = (Real)t0;
-        Real t_f = t_0 + (Real)Δt;
+        DevFloat t_0 = (DevFloat)t0;
+        DevFloat t_f = t_0 + (DevFloat)Δt;
         auto toFT = Graphics::FourierViewer::FilterSpace(function, t_0, t_f);
         auto dft2DFunction = Math::R2toR::R2toRDFT::DFTReal(*toFT);
 
@@ -218,12 +218,12 @@ namespace Slab::Models::KGRtoR {
         *section_map = Section(twoPointFunction, time_slice);
         using Diff = Math::RtoR::Diff;
         auto diff = New<Diff>(section_map, twoPointFunction->getSpace().getMetaData().geth(1)*1.2);
-        *ddt2ptSection = Graphics::RtoRFunctionArtist(diff, Themes::GetCurrent()->funcPlotStyles[3], 1000);
-        ddt2ptSection->setLabel("𝜕ₜ (avg[ϕ(x)ϕ(x+r)] | r=(0,t))");
+        *ddt2ptSection = Graphics::RtoRFunctionArtist(diff, Themes::GetCurrent()->FuncPlotStyles[3], 1000);
+        ddt2ptSection->SetLabel("𝜕ₜ (avg[ϕ(x)ϕ(x+r)] | r=(0,t))");
 
     }
 
-    Str TwoPointCorrelationViewer_KG::getName() const {
+    Str TwoPointCorrelationViewer_KG::GetName() const {
         return "[KG] 2-point correlation viewer";
     }
 } // Slab::Models::KGRtoR

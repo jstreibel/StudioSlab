@@ -14,7 +14,7 @@
 namespace Slab::Math::RtoR {
 
     typedef Math::PointSet_ptr DFTModes;
-    typedef Count NumberOfModes;
+    typedef CountType NumberOfModes;
 
     struct DFTResult {
         DFTModes re;
@@ -36,13 +36,13 @@ namespace Slab::Math::RtoR {
 
                 fix A = sqrt(Re_A*Re_A+Im_A*Im_A);
 
-                amps->addPoint({ω, A});
+                amps->AddPoint({ω, A});
             }
 
             return amps;
         }
 
-        Count modeCount() const {
+        CountType modeCount() const {
             assert(re->count() == im->count());
 
             fix n = re->count();
@@ -71,14 +71,14 @@ namespace Slab::Math::RtoR {
     class DFT {
     public:
         static auto
-        Compute(const RtoR::Function &in, NumberOfModes N, Real xMin, Real xMax)
+        Compute(const RtoR::Function &in, NumberOfModes N, DevFloat xMin, DevFloat xMax)
         -> DFTResult;
 
         static auto
         Compute(const RtoR::NumericFunction &in)
         -> DFTResult;
 
-        static Pointer<RtoR::NumericFunction> Magnitudes(const DFTResult&);
+        static TPointer<RtoR::NumericFunction> Magnitudes(const DFTResult&);
     };
 
 

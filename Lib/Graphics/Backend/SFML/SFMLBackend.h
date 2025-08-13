@@ -14,18 +14,17 @@
 namespace Slab::Graphics {
 
     class SFMLBackend : public GraphicBackend {
-        SFMLEventTranslator sfmlEventTranslator;
-        Mutex off_sync;
+        sf::Mutex off_sync;
 
     public:
         SFMLBackend();
 
-        void run() override;
+        void Run() override;
 
-        void terminate() override;
+        void Terminate() override;
 
     protected:
-        Pointer<SystemWindow> CreateSystemWindow(const Str &title) override;
+        TPointer<FPlatformWindow> CreatePlatformWindow(const Str &title) override;
 
     public:
 

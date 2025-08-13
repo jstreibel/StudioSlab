@@ -16,25 +16,25 @@ namespace Slab::Math::RtoR {
     public:
         // AnalyticOscillon(const AnalyticOscillon &);
 
-        AnalyticOscillon(Real t, Real v, Real u, Real alpha, bool xMirrored, bool phiMirrored, Bit bit = phi);
-        AnalyticOscillon(Real t, Real x0, Real l, Real v, Real u, Real alpha, bool xMirrored, bool phiMirrored, Bit bit = phi);
+        AnalyticOscillon(DevFloat t, DevFloat v, DevFloat u, DevFloat alpha, bool xMirrored, bool phiMirrored, Bit bit = phi);
+        AnalyticOscillon(DevFloat t, DevFloat x0, DevFloat l, DevFloat v, DevFloat u, DevFloat alpha, bool xMirrored, bool phiMirrored, Bit bit = phi);
 
-        void set_t(Real t);
+        void set_t(DevFloat t);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
-        Pointer<FunctionT<Real, Real>> Clone() const override;
+        TPointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
 
         AnalyticOscillon &swap();
 
         void setBit(Bit bit);
 
-        Str symbol() const override;
+        Str Symbol() const override;
 
         Str generalName() const override;
 
     private:
-        Real t0, x0, v, u, s1, s2, l, alpha;
+        DevFloat t0, x0, v, u, s1, s2, l, alpha;
         Bit bit;
     };
 }

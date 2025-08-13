@@ -15,12 +15,11 @@
 
 namespace Slab::Graphics {
 
-    class NuklearGLFWModule : public NuklearModule, public GLFWListener{
+    class NuklearGLFWModule : public NuklearModule, public FGLFWListener{
         GLFWwindow *renderWindow = nullptr;
         StrVector text;
 
     public:
-        NuklearGLFWModule();
         ~NuklearGLFWModule() override;
 
         // void beginEvents() override;

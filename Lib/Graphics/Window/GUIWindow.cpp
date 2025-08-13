@@ -7,52 +7,42 @@
 #include <utility>
 
 #include "3rdParty/ImGui.h"
-#include "WindowStyles.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 #include "Core/Backend/BackendManager.h"
 
 #include "Math/SlabMath.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "StudioSlab.h"
 
+#define GLOBAL_IMGUI_CONTEXT Slab::DynamicPointerCast<Slab::Graphics::FImGuiContext>(Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext())
+
 namespace Slab::Graphics {
 
-    GUIWindow::GUIWindow(Config config) : SlabWindow(std::move(config)) {
-        setClear(false);
-        setDecorate(false);
+    FGUIWindow::FGUIWindow(FSlabWindowConfig config, const FImGuiWindowContext& WindowContext)
+    : FSlabWindow(std::move(config))
+    , WindowContext(WindowContext)
+    {
+        if (this->WindowContext.Context == nullptr) this->WindowContext.Context = GLOBAL_IMGUI_CONTEXT;
+        if (this->WindowContext.WindowId == "")     this->WindowContext.WindowId = GetUniqueName();
 
-        auto &gui_module = Slab::GetModule<ImGuiModule>("ImGui");
-        gui_context = DynamicPointerCast<SlabImGuiContext>(gui_module.createContext(parent_system_window));
-
-        if(gui_context == nullptr) throw Exception("Failed to get GUIContext.");
-
-        addResponder(gui_context);
+        SetClear(false);
+        SetDecorate(false);
     }
 
 
-    void GUIWindow::addVolatileStat(const Str &stat, const Color color) {
-        stats.emplace_back(stat, color);
+    void FGUIWindow::AddVolatileStat(const Str &stat, const FColor color) {
+        Stats.emplace_back(stat, color);
     }
 
-    void GUIWindow::draw() {
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (-1)");
-        SlabWindow::draw();
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
+    void FGUIWindow::RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow)
+    {
+        FSlabWindow::RegisterDeferredDrawCalls(PlatformWindow);
 
-        begin();
-        gui_context->AddDrawCall([this]() {
-            auto vp = getViewport();
-            const auto w_ = (float) vp.width(),
-                    h_ = (float) vp.height();
-            const auto x_ = (float) vp.xMin,
-                    y_ = (float) vp.yMin;
-
-            ImGui::SetWindowPos(ImVec2{x_, y_});
-            ImGui::SetWindowSize(ImVec2{w_, h_});
-
-            auto flags = ImGuiTreeNodeFlags_DefaultOpen;
-            if (!stats.empty() && ImGui::CollapsingHeader("Stats", flags)) {
-                for (const auto &stat: stats) {
+        Begin();
+        WindowContext.Context->AddDrawCall([this] {
+            auto Flags = ImGuiTreeNodeFlags_DefaultOpen;
+            if (!Stats.empty() && ImGui::CollapsingHeader("Stats", Flags)) {
+                for (const auto &stat: Stats) {
                     const auto text = stat.first;
 
                     if (text == "<\\br>") {
@@ -94,18 +84,18 @@ namespace Slab::Graphics {
             }
 
 
-            auto allInterfaces = Core::CLInterfaceManager::getInstance().getInterfaces();
-            if (!allInterfaces.empty() && ImGui::CollapsingHeader("Interfaces")) {
+            if (const auto AllInterfaces = Core::FCommandLineInterfaceManager::getInstance().getInterfaces();
+                !AllInterfaces.empty() && ImGui::CollapsingHeader("Interfaces")) {
 
-                for (auto &interface: allInterfaces) {
-                    fix generalDescription = interface->getGeneralDescription();
+                for (auto &Interface: AllInterfaces) {
+                    fix generalDescription = Interface->GetGeneralDescription();
 
-                    fix text = interface->getName() +
+                    fix text = Interface->GetName() +
                                (!generalDescription.empty() ? "(" + generalDescription + ")" : "");
 
 
                     if (ImGui::TreeNode(text.c_str())) {
-                        for (auto &param: interface->getParameters()) {
+                        for (auto &param: Interface->GetParameters()) {
                             fix descr = param->getDescription();
                             fix longName = param->getCommandLineArgumentName(true);
                             fix shortName = param->getCommandLineArgumentName(false);
@@ -118,7 +108,7 @@ namespace Slab::Graphics {
 
                             ImGui::Text("%s", name.c_str());
 
-                            ImGui::Text("\tValue: %s", param->valueToString().c_str());
+                            ImGui::Text("\tValue: %s", param->ValueToString().c_str());
 
                             if (!descr.empty())
                                 ImGui::Text("\tDescr.: %s", descr.c_str());
@@ -129,41 +119,42 @@ namespace Slab::Graphics {
                         ImGui::Spacing();
                     }
                 }
-
             }
 
-            stats.clear();
+            Stats.clear();
         });
-
-        end();
-
-        gui_context->NewFrame();
-        gui_context->Render();
+        End();
     }
 
-    void GUIWindow::begin() const {
-        gui_context->AddDrawCall([this]() {
-            bool closable = false;
+    void FGUIWindow::Begin() const {
+        WindowContext.Context->AddDrawCall([this]
+        {
+            ImGui::Begin(WindowContext.WindowId.c_str());
 
-            ImGui::Begin("Stats", &closable,
-                         ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
-                         ImGuiWindowFlags_NoMove |
-                         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
+            auto Flags = ImGuiChildFlags_Border; //ImGuiChildFlags_FrameStyle;
+            ImGui::BeginChild("##LeftPane",
+                ImVec2(this->GetWidth(), this->GetHeight()), Flags);
         });
     }
 
-    void GUIWindow::end() const {
-        gui_context->AddDrawCall([]() { ImGui::End(); });
+    void FGUIWindow::End() const
+    {
+        WindowContext.Context->AddDrawCall([]
+        {
+            ImGui::EndChild();
+            ImGui::End();
+        });
     }
 
-    void GUIWindow::AddExternalDraw(const DrawCall& draw) {
-        this->begin();
-        gui_context->AddDrawCall(draw);
-        this->end();
+    void FGUIWindow::AddExternalDraw(const FDrawCall& Draw) const
+    {
+        this->Begin();
+        WindowContext.Context->AddDrawCall(Draw);
+        this->End();
     }
 
-    Pointer<SlabImGuiContext> GUIWindow::GetGUIContext() {
-        return gui_context;
+    FImGuiWindowContext FGUIWindow::GetGUIWindowContext() {
+        return WindowContext;
     }
 
 }

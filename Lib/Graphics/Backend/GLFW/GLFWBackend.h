@@ -21,19 +21,19 @@ namespace Slab::Graphics {
 
 
     class GLFWBackend : public GraphicBackend {
-        void mainLoop();
+        void MainLoop();
 
         static GLFWBackend &GetInstance();
 
-        Pointer<Slab::Graphics::SystemWindow> CreateSystemWindow(const Str& title) override;
+        TPointer<Slab::Graphics::FPlatformWindow> CreatePlatformWindow(const Str& title) override;
     public:
         explicit GLFWBackend();
 
         ~GLFWBackend() override;
 
-        void run() override;
+        void Run() override;
 
-        void terminate() override;
+        void Terminate() override;
 
         // auto getScreenHeight() const -> Real override;
     };

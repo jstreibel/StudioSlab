@@ -5,7 +5,7 @@
 #include "GiNaCModule.h"
 
 namespace Slab::Math::GiNaC {
-    GiNaCModule::GiNaCModule() : Core::Module("Math:GiNaC") {
+    GiNaCModule::GiNaCModule() : Core::SlabModule("Math:GiNaC") {
 
     }
 } // Slab::Math::GiNaC

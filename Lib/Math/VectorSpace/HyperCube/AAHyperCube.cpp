@@ -7,8 +7,8 @@
 
 namespace Slab::Math {
 
-    AAHyperCube::AAHyperCube(UInt dim, Real L)
-            : Space(dim), L(L), measure(new Measure(Vector<Real>(dim, L))) {}
+    AAHyperCube::AAHyperCube(UInt dim, DevFloat L)
+            : Space(dim), L(L), measure(new Measure(Vector<DevFloat>(dim, L))) {}
 
     AAHyperCube::~AAHyperCube() {
         delete measure;
@@ -18,7 +18,7 @@ namespace Slab::Math {
         return *measure;
     }
 
-    auto AAHyperCube::getSide() const -> const Real {
+    auto AAHyperCube::getSide() const -> const DevFloat {
         return L;
     }
 

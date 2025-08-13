@@ -9,7 +9,7 @@
 
 namespace Slab::Graphics {
 
-    using DrawCall = std::function<void(void)>;
+    using FDrawCall = std::function<void(void)>;
 
     using MainMenuAction = std::function<void(Str leaf_entry)>;
     using MainMenuLocation = Vector<Str>;
@@ -20,24 +20,26 @@ namespace Slab::Graphics {
         bool enabled=true;
     };
     struct MainMenuItem {
-        MainMenuLocation location;
-        Vector<MainMenuLeafEntry> items;
-        MainMenuAction action=[](const Str&){};
+        MainMenuLocation Location;
+        Vector<MainMenuLeafEntry> SubItems;
+        MainMenuAction Action=[](const Str&){};
     };
 
-    class GUIContext : public SystemWindowEventListener {
+    class GUIContext : public FPlatformWindowEventListener {
     protected:
-        Vector<DrawCall> draw_calls;
+        Vector<FDrawCall> DrawCalls;
 
         void FlushDrawCalls();
+
+
     public:
-        explicit GUIContext(ParentSystemWindow);
+        explicit GUIContext();
 
         virtual void Bind() = 0;
         virtual void NewFrame() = 0;
         virtual void Render() const = 0;
 
-        void AddDrawCall(const DrawCall&);
+        void AddDrawCall(const FDrawCall&);
 
         virtual void AddMainMenuItem(MainMenuItem) = 0;
 

@@ -19,14 +19,14 @@ namespace Studios::Fields::RtoRThermal {
 
     Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister)
     : KGRtoRBuilder(name, generalDescription, DONT_SELF_REGISTER) {
-        Interface->addParameters({&temperature, &dissipation, &transientGuess});
+        Interface->AddParameters({&temperature, &dissipation, &transientGuess});
 
         SetLaplacianPeriodicBC();
 
-        if(doRegister) registerToManager();
+        if(doRegister) RegisterToManager();
     }
 
-    auto Builder::buildSolver() -> Pointer<Base::LinearStepSolver> {
+    auto Builder::buildSolver() -> TPointer<Base::LinearStepSolver> {
         if(!(*temperature>0)) {
             Log::Info() << "Temperature is set to ZERO. Using usual non-stochastic Klein-Gordon solver." << Log::Flush;
             return KGRtoR::KGRtoRBuilder::buildSolver();

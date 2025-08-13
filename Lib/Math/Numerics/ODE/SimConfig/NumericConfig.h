@@ -8,8 +8,8 @@
 #ifndef PARAMS_H_
 #define PARAMS_H_
 
-#include "Core/Controller/CommandLine/CLInterfaceOwner.h"
-#include "Core/Controller/CommandLine/CommonCLParameters.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceOwner.h"
+#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
 #include "Utils/Types.h"
 #include "Utils/NativeTypes.h"
 #include "Utils/List.h"
@@ -19,7 +19,7 @@
 
 namespace Slab::Math {
 
-    class NumericConfig : public Core::CLInterfaceOwner {
+    class NumericConfig : public Core::FCommandLineInterfaceOwner {
     public:
         explicit NumericConfig(bool do_register = true);
 

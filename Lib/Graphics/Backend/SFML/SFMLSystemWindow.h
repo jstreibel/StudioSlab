@@ -7,16 +7,16 @@
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
-#include "Graphics/Backend/SystemWindow.h"
+#include "Graphics/Backend/PlatformWindow.h"
 #include "SFMLEventTranslator.h"
 #include "Utils/Threads.h"
 
 namespace Slab::Graphics {
 
-    class SFMLSystemWindow : public SystemWindow {
+    class SFMLSystemWindow : public FPlatformWindow {
         friend class SFMLBackend;
 
-        Vector<Volatile<SFMLListener>> sfml_listeners;
+        Vector<TVolatile<SFMLListener>> sfml_listeners;
         sf::RenderWindow *sfml_native_window = nullptr;
         sf::Font font;
         sf::Text text;
@@ -31,11 +31,11 @@ namespace Slab::Graphics {
     public:
         SFMLSystemWindow();
 
-        bool addSFMLListener(const Volatile<SFMLListener>& sfmlListener);
+        bool addSFMLListener(const TVolatile<SFMLListener>& sfmlListener);
 
-        Int getHeight() const override;
+        Int GetHeight() const override;
 
-        Int getWidth() const override;
+        Int GetWidth() const override;
 
         bool ShouldClose() const override;
 

@@ -102,29 +102,29 @@ namespace Slab::Graphics {
         Painter::drawGUI();
     }
 
-    void Colormap1DPainter::setColormapTexture(Pointer<OpenGL::Texture1D_Color> texture) {
+    void Colormap1DPainter::setColormapTexture(TPointer<OpenGL::Texture1D_Color> texture) {
         cmap_texture = std::move(texture);
-        setUniform("colormap", cmap_texture->getTextureUnit());
+        SetUniform("colormap", cmap_texture->getTextureUnit());
     }
 
-    void Colormap1DPainter::use() const {
-        if(cmap_texture) cmap_texture->bind();
+    void Colormap1DPainter::Use() const {
+        if(cmap_texture) cmap_texture->Bind();
 
-        R2toRPainter::use();
+        R2toRPainter::Use();
     }
 
     void Colormap1DPainter::updateColorbar() {
-        std::function<Real(Real)> g_inverse;
+        std::function<DevFloat(DevFloat)> g_inverse;
 
         if(true) {
-            g_inverse = [this](Real x) {
+            g_inverse = [this](DevFloat x) {
                 x = x*(field_max-field_min)+field_min;
                 const auto s = Math::SIGN(x);
 
                 return kappa*(exp(s*x) - 1);
             };
         } else {
-            g_inverse = [](Real x) {
+            g_inverse = [](DevFloat x) {
                 return x;
             };
         }
@@ -146,7 +146,7 @@ namespace Slab::Graphics {
         return dirty_minmax;
     }
 
-    void Colormap1DPainter::setMinMax(Real min, Real max) {
+    void Colormap1DPainter::setMinMax(DevFloat min, DevFloat max) {
         field_min = min;
         field_max = max;
 
@@ -164,14 +164,14 @@ namespace Slab::Graphics {
 
     void Colormap1DPainter::setSymmetricMaxMin(const bool is) {
         symmetric_maxmin = is;
-        setUniform("symmetric", (GLboolean ) symmetric_maxmin);
+        SetUniform("symmetric", (GLboolean ) symmetric_maxmin);
         colorbarArtist->setSymmetric(symmetric_maxmin);
 
         // if(symmetric_maxmin) setEpsilon(1.1f/(float)colorBar->getSamples()) else
         setEpsilon(.0);
     }
 
-    void Colormap1DPainter::setColorMap(const Pointer<ColorMap> &colorMap) {
+    void Colormap1DPainter::setColorMap(const TPointer<ColorMap> &colorMap) {
         colormap = colorMap;
 
         const auto type = colormap->getType();
@@ -181,29 +181,29 @@ namespace Slab::Graphics {
         updateColorbar();
     }
 
-    auto Colormap1DPainter::getColorBarArtist() -> Pointer<OpenGL::ColorBarArtist> {
+    auto Colormap1DPainter::getColorBarArtist() -> TPointer<OpenGL::ColorBarArtist> {
         return colorbarArtist;
     }
 
-    void Colormap1DPainter::setKappa(Real) const {
-        this->setUniform("kappa", kappa);
+    void Colormap1DPainter::setKappa(DevFloat) const {
+        this->SetUniform("kappa", kappa);
         colorbarArtist->setKappa(kappa);
     }
 
-    void Colormap1DPainter::setSaturation(const Real sat) {
+    void Colormap1DPainter::setSaturation(const DevFloat sat) {
         saturation_value = static_cast<float>(sat);
 
-        setUniform("phi_sat", saturation_value);
+        SetUniform("phi_sat", saturation_value);
         colorbarArtist->setPhiSaturation(saturation_value);
     }
 
-    void Colormap1DPainter::setEpsilon(Real eps) {
+    void Colormap1DPainter::setEpsilon(DevFloat eps) {
 
         eps_offset = static_cast<float>(eps);
-        setUniform("eps", eps_offset);
+        SetUniform("eps", eps_offset);
     }
 
     void Colormap1DPainter::labelUpdateEvent(const Str &label) {
-        colorbarArtist->setLabel("[colorbar] " + label);
+        colorbarArtist->SetLabel("[colorbar] " + label);
     }
 } // Slab::Graphics

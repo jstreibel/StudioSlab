@@ -15,15 +15,15 @@ namespace Slab::Graphics {
     Point2D FromViewportToSpaceCoord(const Point2D &viewportCoord, const RectR &spaceRegion, const RectI &viewport );
 
     inline Point2D PixelSizeInSpace(const RectR &region, const RectI &viewport) {
-        fix dx = region.width() / (Real)viewport.width();
-        fix dy = region.height() / (Real)viewport.height();
+        fix dx = region.GetWidth() / (DevFloat)viewport.GetWidth();
+        fix dy = region.GetHeight() / (DevFloat)viewport.GetHeight();
 
         return {dx, dy};
     }
 
     inline Point2D SpaceUnitInPixels(const RectR &region, const RectI &viewport) {
-        fix n =  (Real)viewport.width()/region.width();
-        fix m =  (Real)viewport.height()/region.height();
+        fix n =  (DevFloat)viewport.GetWidth()/region.GetWidth();
+        fix m =  (DevFloat)viewport.GetHeight()/region.GetHeight();
 
         return {n, m};
     }

@@ -11,17 +11,17 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class CorrelationsPanel : public RtoRPanel {
-        Plot2DWindow DFT2DGraph;
+    class CorrelationsPanel : public FRtoRPanel {
+        FPlot2DWindow DFT2DGraph;
 
-        Pointer<R2toRFunctionArtist> ftAmplitudesArtist = Slab::New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> ftPhasesArtist =     Slab::New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> ftRealPartsArtist =  Slab::New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> ftImagPartsArtist =  Slab::New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> ftAmplitudesArtist = Slab::New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> ftPhasesArtist =     Slab::New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> ftRealPartsArtist =  Slab::New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> ftImagPartsArtist =  Slab::New<R2toRFunctionArtist>();
 
         R2toC::NumericFunction_ptr dftFunction;
 
-        Plot2DWindow correlationGraph;
+        FPlot2DWindow correlationGraph;
         R2toRFunctionArtist_ptr twoPointCorrArtist = Slab::New<R2toRFunctionArtist>();;
 
         void computeAll(bool discardRedundantModes);
@@ -30,12 +30,12 @@ namespace Slab::Models::KGRtoR {
 
 
     public:
-        CorrelationsPanel(const Pointer<KGNumericConfig> &params, GUIWindow &guiWindow, KGEnergy &hamiltonian);
+        CorrelationsPanel(const TPointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian);
 
-        void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
+        void SetSimulationHistory(R2toR::FNumericFunction_constptr simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;
 
-        void draw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
     };
 
 } // Graphics

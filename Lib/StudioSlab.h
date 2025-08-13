@@ -9,13 +9,13 @@
 #include "Application.h"
 
 namespace Slab {
-    class Application;
+    class FApplication;
 
     void Startup();
     void Finish();
     bool IsStarted();
 
-    int Run(Application&);
+    int Run(FApplication&);
 
     template<typename AppType>
     int Run(const int argc, const char **argv) {
@@ -24,10 +24,10 @@ namespace Slab {
         return Run(app);
     }
 
-    Pointer<Core::Backend> CreatePlatform(Core::BackendName);
+    TPointer<Core::FBackend> CreatePlatform(Core::FBackendIdentifier);
 
-    template<typename ModuleType = Core::Module>
-    ModuleType &GetModule(const Core::ModuleName &name){
+    template<typename ModuleType = Core::SlabModule>
+    ModuleType &GetModule(const Core::FModuleIdentifier &name){
         return dynamic_cast<ModuleType&>(*Core::BackendManager::GetModule(name));
     }
 }

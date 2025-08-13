@@ -13,7 +13,7 @@ namespace Studios::PureSG {
     using namespace Slab::Math;
 
     InputSingleOscillon::InputSingleOscillon() : Builder("Single 1d oscillon", "Single 1+1 dim oscillon") {
-        Interface->addParameters({&v, &V, &alpha, &lambda, &mirror});
+        Interface->AddParameters({&v, &V, &alpha, &lambda, &mirror});
     }
 
     auto InputSingleOscillon::GetBoundary() -> Math::Base::BoundaryConditions_ptr {

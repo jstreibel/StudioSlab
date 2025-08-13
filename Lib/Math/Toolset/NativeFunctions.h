@@ -58,45 +58,45 @@ double absoluteValue(double value) {
 */
 
 
-    inline bool isEqual(const Real a, const Real b,
-                        const Real eps = 1.e-3) {
+    inline bool isEqual(const DevFloat a, const DevFloat b,
+                        const DevFloat eps = 1.e-3) {
         return a > b - eps && a < b + eps;
     }
 
-    inline Real UnitStep(const Real x, const Real eps = 0) {
+    inline DevFloat UnitStep(const DevFloat x, const DevFloat eps = 0) {
         return x < eps ? 0.0 : 1.0;
     }
 
-    DEVICES inline auto deltaGauss(Real x, Real eps) -> Real {
+    DEVICES inline auto deltaGauss(DevFloat x, DevFloat eps) -> DevFloat {
         return 1. / sqrt(4 * M_PI * eps) * exp(-x * x / (4 * eps));
     }
 
-    DEVICES inline Real deltaTri(const Real x, const Real eps = 1.e-5) {
-        const Real invEps = 1. / eps;
-        const Real absx = std::abs(x);
+    DEVICES inline DevFloat deltaTri(const DevFloat x, const DevFloat eps = 1.e-5) {
+        const DevFloat invEps = 1. / eps;
+        const DevFloat absx = std::abs(x);
 
         if (absx < eps) return invEps * (1. - invEps * absx);
 
         return 0.;
     }
 
-    DEVICES inline auto deltaRect(Real x, Real eps) -> Real {
+    DEVICES inline auto deltaRect(DevFloat x, DevFloat eps) -> DevFloat {
         if (std::abs(x) < eps) return .5 / eps;
 
         return 0.;
     }
 
-    DEVICES inline Real logAbs(Real val, Real eps) {
+    DEVICES inline DevFloat logAbs(DevFloat val, DevFloat eps) {
         const auto sign = (val > .0 ? 1.0 : -1.0);
         return log(std::abs(val) / eps + 1) * sign;
     }
 
-    DEVICES inline Real logAbs_inv(Real val, Real eps) {
+    DEVICES inline DevFloat logAbs_inv(DevFloat val, DevFloat eps) {
         const auto sign = (val > .0 ? 1.0 : -1.0);
         return eps * (exp(std::abs(val)) - 1.0) * sign;
     }
 
-    inline Real sqr(const Real x) { return x * x; }
+    inline DevFloat sqr(const DevFloat x) { return x * x; }
 
 }
 

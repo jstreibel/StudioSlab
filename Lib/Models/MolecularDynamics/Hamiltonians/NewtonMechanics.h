@@ -20,13 +20,13 @@ namespace Slab::Models::MolecularDynamics {
         MoleculeSpaceHash spaceHash;
 
         bool *flippedSides;
-        Real dissipation;
+        DevFloat dissipation;
 
     protected:
         virtual void applyBoundaryConditions(Graphics::PointContainer &v_q);      // For velocity Verlet stepper
         virtual void applyBoundaryConditions(MoleculeContainer &m);     // For RK4 stepper
 
-        virtual Real U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) { return 0; };
+        virtual DevFloat U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) { return 0; };
 
         virtual Graphics::Point2D dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) = 0;
 
@@ -35,27 +35,27 @@ namespace Slab::Models::MolecularDynamics {
          * @param t current simulation time
          * @return the non-homogeneous force
          */
-        virtual Graphics::Point2D F_nh(Real t) { return {0,0}; }
+        virtual Graphics::Point2D F_nh(DevFloat t) { return {0,0}; }
 
-        Pointer<Config> numeric_config;
+        TPointer<Config> numeric_config;
 
     public:
 
-        explicit NewtonMechanics(Pointer<Config> config);
+        explicit NewtonMechanics(TPointer<Config> config);
 
         ~NewtonMechanics();
 
-        auto setDissipation(Real k) -> void;
+        auto setDissipation(DevFloat k) -> void;
 
-        Real computeEnergy(const Graphics::PointContainer &v_q, Graphics::PointContainer &v_p);
+        DevFloat computeEnergy(const Graphics::PointContainer &v_q, Graphics::PointContainer &v_p);
 
         // For velocity Verlet stepper
         void operator()(const Graphics::PointContainer &q,
                         const Graphics::PointContainer &p,
-                        Graphics::PointContainer &dpdt, Real /* t */);
+                        Graphics::PointContainer &dpdt, DevFloat /* t */);
 
         // For RK4 stepper
-        void operator()(const MoleculeContainer &m, MoleculeContainer &dmdt, Real /* t */);
+        void operator()(const MoleculeContainer &m, MoleculeContainer &dmdt, DevFloat /* t */);
 
         auto getFlippedSidesMap() const -> const bool*;
 

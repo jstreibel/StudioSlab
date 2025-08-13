@@ -11,7 +11,7 @@
 #include "Math/Function/CommonFunctions.h"
 
 namespace Slab::Math::R2toR {
-    typedef Base::Functions<Real>::Function2D Function;
+    typedef Base::Functions<DevFloat>::Function2D Function;
 
     DefinePointers(Function)
 }

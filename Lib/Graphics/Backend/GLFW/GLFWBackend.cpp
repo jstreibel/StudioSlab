@@ -11,7 +11,7 @@
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
 #include "Graphics/SlabGraphics.h"
-#include "GLFWSystemWindow.h"
+#include "GLFWPlatformWindow.h"
 
 namespace Slab::Graphics {
 
@@ -41,54 +41,55 @@ namespace Slab::Graphics {
     }
 
     GLFWBackend::~GLFWBackend() {
-        system_windows.clear();
+        SystemWindows.clear();
 
         glfwTerminate();
 
         Log::Info() << "GLFWBackend terminated." << Log::Flush;
     }
 
-    void GLFWBackend::run() {
-        mainLoop();
+    void GLFWBackend::Run() {
+        MainLoop();
     }
 
-    void GLFWBackend::terminate() {
+    void GLFWBackend::Terminate() {
         // glfwSetWindowShouldClose(systemWindow, GLFW_TRUE);
         finishFlag = true;
     }
 
-    void GLFWBackend::mainLoop() {
+    void GLFWBackend::MainLoop() {
 
         // static auto BeginEvents = FuncRun(beginEvents);
         // static auto EndEvents   = FuncRun(endEvents);
         static auto Update   = FuncRun(Update);
 
-        while(!system_windows.empty()) {
-            IterateReferences(graphicModules, Update);
+        while(!SystemWindows.empty()) {
+            IterateReferences(GraphicModules, Update);
 
-            for(auto it = system_windows.begin(); it != system_windows.end();) {
+            for(auto it = SystemWindows.begin(); it != SystemWindows.end();) {
                 if((*it)->ShouldClose()) {
-                    it = system_windows.erase(it);
+                    it = SystemWindows.erase(it);
                     continue;
                 }
 
                 (*it)->Render();
-                it++;
+                ++it;
             }
         }
     }
 
     GLFWBackend &GLFWBackend::GetInstance() {
-        // assert(Core::BackendManager::GetImplementation() == Core::GLFW);
+        // TODO: assert(Core::BackendManager::GetImplementation() == Core::GLFW);
 
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         return *DynamicPointerCast<GLFWBackend>(guiBackend);
     }
 
-    Pointer<SystemWindow> GLFWBackend::CreateSystemWindow(const Str& title) {
-        Pointer<GLFWSystemWindow> system_window = New<GLFWSystemWindow>();
+    TPointer<FPlatformWindow> GLFWBackend::CreatePlatformWindow(const Str& title) {
+        TPointer<FGLFWPlatformWindow> NewPlatformWindow = New<FGLFWPlatformWindow>();
+        NewPlatformWindow->ProvideSelfReference(NewPlatformWindow);
 
-        return system_window;
+        return NewPlatformWindow;
     }
 }

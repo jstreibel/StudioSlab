@@ -12,14 +12,14 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    class Overlay : public Artist {
-        VertexBuffer vertexBuffer;
-        Shader shader;
+    class Overlay : public FArtist {
+        FVertexBuffer vertexBuffer;
+        FShader shader;
 
     public:
         explicit Overlay(RectI loc);
 
-        bool draw(const Plot2DWindow &) override;
+        bool Draw(const FPlot2DWindow &) override;
     };
 
 }

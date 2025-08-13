@@ -11,7 +11,7 @@ using namespace Slab::Math::R2toR;
 
 // typedef R2toR::FunctionArbitrary Func;
 
-OutputShockwaveZeros::OutputShockwaveZeros(int N, int outputResolution, Real t0) : outputResolution(outputResolution), t0(t0)
+OutputShockwaveZeros::OutputShockwaveZeros(int N, int outputResolution, DevFloat t0) : outputResolution(outputResolution), t0(t0)
 {
     std::string sFileName = "./swzeros";
 

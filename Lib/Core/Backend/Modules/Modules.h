@@ -10,8 +10,8 @@
 #include "Module.h"
 
 namespace Slab::Core {
-    using ModuleName = Str;
-    using ModuleAllocator = std::function<Module*(void)>;
+    using FModuleIdentifier = Str;
+    using FModuleAllocator = std::function<SlabModule*(void)>;
 }
 
 #endif //STUDIOSLAB_MODULES_H

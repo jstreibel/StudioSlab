@@ -6,17 +6,16 @@
 
 namespace Slab::Graphics {
 
-    GUIContext::GUIContext(ParentSystemWindow parent)
-    : SystemWindowEventListener(parent) { }
+    GUIContext::GUIContext(){ }
 
-    void GUIContext::AddDrawCall(const DrawCall& draw_call) {
-        draw_calls.emplace_back(draw_call);
+    void GUIContext::AddDrawCall(const FDrawCall& DrawCall) {
+        DrawCalls.emplace_back(DrawCall);
     }
 
     void GUIContext::FlushDrawCalls() {
-        for(auto &external_draw : draw_calls) external_draw();
+        for(auto &ExternalDraw : DrawCalls) ExternalDraw();
 
-        draw_calls.clear();
+        DrawCalls.clear();
     }
 
 } // Slab::Graphics

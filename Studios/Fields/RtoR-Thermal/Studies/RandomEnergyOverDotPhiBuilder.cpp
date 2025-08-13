@@ -16,7 +16,7 @@ namespace Studios::Fields::RtoRThermal {
 
     RandomEnergyOverDotPhiBuilder::RandomEnergyOverDotPhiBuilder()
             : Builder("Random dphipt", "Energy density over time-derivative of field") {
-        Interface->addParameters({&E});
+        Interface->AddParameters({&E});
     }
 
     auto RandomEnergyOverDotPhiBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
@@ -29,7 +29,7 @@ namespace Studios::Fields::RtoRThermal {
         auto proto = NewFieldState();
 
         if (1) {
-            Real E_rand = .0;
+            DevFloat E_rand = .0;
             for (int i = 0; i < N; ++i) {
                 auto p_i = RandUtils::RandomUniformReal01() - .5;
 

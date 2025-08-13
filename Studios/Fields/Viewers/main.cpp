@@ -7,7 +7,7 @@
 #include "AppBase.h"
 #include "CrashPad.h"
 
-#include "Core/Controller/CommandLine/CommonCLParameters.h"
+#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
 
 #include "Graphics/Window/WindowStyles.h"
 
@@ -33,7 +33,7 @@
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.h"
 
 #include "Graphics/Window/SlabWindowManager.h"
-#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Core/SlabCore.h"
 #include "Graphics/DataViewers/Viewers/Viewer3D.h"
 
@@ -46,7 +46,7 @@ public:
     App(int argc, const char **argv)
             : AppBase(argc, argv, false)
     {
-        Interface->addParameters({&filename});
+        Interface->AddParameters({&filename});
         Core::RegisterCLInterface(Interface);
 
         Core::BackendManager::Startup("GLFW");
@@ -58,10 +58,10 @@ public:
 
     auto run() -> int override {
         auto function = Modes::HistoryFileLoader::Load(*filename);
-        auto ddt_function = DynamicPointerCast<Slab::Math::R2toR::NumericFunction>(function->diff(1));
+        auto ddt_function = DynamicPointerCast<Slab::Math::R2toR::FNumericFunction>(function->diff(1));
 
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
-        guiBackend->GetMainSystemWindow()->setSystemWindowTitle(*filename);
+        guiBackend->GetMainSystemWindow()->SetSystemWindowTitle(*filename);
 
         auto viewer = Slab::New<Slab::Models::KGRtoR::KGMainViewer>();
 
@@ -80,10 +80,10 @@ public:
         viewer->setFunctionTimeDerivative(ddt_function);
 
         auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
-        wm->addSlabWindow(viewer);
-        guiBackend->GetMainSystemWindow()->addEventListener(wm);
+        wm->AddSlabWindow(viewer, false);
+        guiBackend->GetMainSystemWindow()->AddEventListener(wm);
 
-        guiBackend->run();
+        guiBackend->Run();
 
         return 0;
     }

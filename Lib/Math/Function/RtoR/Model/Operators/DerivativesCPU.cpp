@@ -17,7 +17,7 @@ namespace Slab::Math::RtoR {
               N(in.getSpace().getTotalDiscreteSites()), periodic(RESOLVE_BC) {
     }
 
-    auto DerivativeCPU::dfdx_periodic_3s(const UInt &i) const -> Real {
+    auto DerivativeCPU::dfdx_periodic_3s(const UInt &i) const -> DevFloat {
         const RealArray &f = *f_;
 
         fix LEFT = (i > 0) ? i - 1 : N - 1,
@@ -26,7 +26,7 @@ namespace Slab::Math::RtoR {
         return (f[RIGHT] - f[LEFT]) * inv2h;
     }
 
-    auto DerivativeCPU::dfdx_fixed_3s(const UInt &i) const -> Real {
+    auto DerivativeCPU::dfdx_fixed_3s(const UInt &i) const -> DevFloat {
 
         if (i < 1 || i > N - 2) return 0;
 
@@ -38,7 +38,7 @@ namespace Slab::Math::RtoR {
         return (f[RIGHT] - f[LEFT]) * inv2h;
     }
 
-    auto DerivativeCPU::dfdx_fixed_5s(const UInt &X) const -> Real {
+    auto DerivativeCPU::dfdx_fixed_5s(const UInt &X) const -> DevFloat {
         const size_t &i = X;
         const RealArray &f = *f_;
 
@@ -51,7 +51,7 @@ namespace Slab::Math::RtoR {
         return ((f[i - 2] - f[i + 2]) - 8 * (f[i - 1] - f[i + 1])) * inv12h;
     }
 
-    auto DerivativeCPU::dfdx_loose_3s(UInt X) const -> Real {
+    auto DerivativeCPU::dfdx_loose_3s(UInt X) const -> DevFloat {
         const size_t &i = X;
         const RealArray &f = *f_;
 
@@ -61,7 +61,7 @@ namespace Slab::Math::RtoR {
         return inv2h * (-f[i - 1] + f[i + 1]);
     }
 
-    auto DerivativeCPU::d2fdx2_fixed_3s(const UInt &i) const -> Real {
+    auto DerivativeCPU::d2fdx2_fixed_3s(const UInt &i) const -> DevFloat {
         const RealArray &f = *f_;
 
         if (i == 0) { return 0; }
@@ -72,7 +72,7 @@ namespace Slab::Math::RtoR {
         return (i < 1 || i > N - 2) ? 0 : invhsqr * ((f[LEFT] + f[RIGHT]) - 2.0 * f[CENTER]);
     }
 
-    auto DerivativeCPU::d2fdx2_fixed_5s(UInt X) const -> Real {
+    auto DerivativeCPU::d2fdx2_fixed_5s(UInt X) const -> DevFloat {
         const size_t &i = X;
         const RealArray &f = *f_;
 
@@ -81,7 +81,7 @@ namespace Slab::Math::RtoR {
         return inv12hsqr * ((-(f[i - 2] + f[i + 2]) + 16 * (f[i - 1] + f[i + 1])) - 30 * f[i]);
     }
 
-    auto DerivativeCPU::d2fdx2_periodic_3s(const UInt &i) const -> Real {
+    auto DerivativeCPU::d2fdx2_periodic_3s(const UInt &i) const -> DevFloat {
         const RealArray &f = *f_;
 
         auto LEFT = (i > 0) ? i - 1 : N - 1,
@@ -112,7 +112,7 @@ namespace Slab::Math::RtoR {
         return dfdx_O;
     }
 
-    Real DerivativeCPU::operator()(Real x) const {
+    DevFloat DerivativeCPU::operator()(DevFloat x) const {
         throw "DerivativeCPU::operator() not implemented.";
     }
 

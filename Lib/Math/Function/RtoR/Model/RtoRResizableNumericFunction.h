@@ -11,20 +11,20 @@
 
 namespace Slab::Math::RtoR {
 
-    class ResizableNumericFunction : public Base::FunctionT<Real, Real> {
-        Real yMin=1, yMax=-1;
+    class ResizableNumericFunction : public Base::FunctionT<DevFloat, DevFloat> {
+        DevFloat yMin=1, yMax=-1;
     public:
-        auto getYMin() const -> Real;
-        auto getYMax() const -> Real;
+        auto getYMin() const -> DevFloat;
+        auto getYMax() const -> DevFloat;
 
 
-        Vector<Real> X;
-        Real xMin, xMax;
+        Vector<DevFloat> X;
+        DevFloat xMin, xMax;
 
         ResizableNumericFunction() : xMin(0), xMax(0), X(0) {};
-        ResizableNumericFunction(Real xMin, Real xMax);
+        ResizableNumericFunction(DevFloat xMin, DevFloat xMax);
 
-        auto operator()(Real x) const -> Real override;
+        auto operator()(DevFloat x) const -> DevFloat override;
         auto operator=(const ResizableNumericFunction &func) -> ResizableNumericFunction& {
             X = func.X;
             xMin = func.xMin;
@@ -33,7 +33,7 @@ namespace Slab::Math::RtoR {
             return *this;
         }
 
-        void insertBack(Real y);
+        void insertBack(DevFloat y);
 
     };
 }

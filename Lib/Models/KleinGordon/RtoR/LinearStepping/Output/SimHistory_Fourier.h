@@ -16,22 +16,22 @@
 namespace Slab::Models::KGRtoR {
 
     struct DFTInstantResult {
-        Real t{};
-        RtoR::DFTResult result;
+        DevFloat t{};
+        RtoR::DFTResult Result;
     };
-    typedef Vector<DFTInstantResult> DFTDataHistory;
+    typedef Vector<DFTInstantResult> FDFTDataHistory;
 
     class SimHistory_DFT : public SimHistory {
 
-    private:
-        DFTDataHistory dftDataHistory;
-
-        auto transfer(const OutputPacket &input, ValarrayWrapper<Real> &dataOut) -> void override;
-
     public:
-        explicit SimHistory_DFT(Count max_steps, Real t_max, Resolution N, Real L, Resolution N_time);
+        explicit SimHistory_DFT(CountType max_steps, DevFloat t_max, Resolution N, DevFloat L, Resolution N_time);
 
-        const DFTDataHistory &getDFTDataHistory() const;
+        const FDFTDataHistory &GetDFTDataHistory() const;
+
+    private:
+        FDFTDataHistory DFTDataHistory;
+
+        auto Transfer(const OutputPacket &Input, ValarrayWrapper<DevFloat> &DataOut) -> void override;
     };
 
 

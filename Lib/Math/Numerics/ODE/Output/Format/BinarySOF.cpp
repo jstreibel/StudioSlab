@@ -30,7 +30,7 @@ namespace Slab::Math {
         return data;
     }
 
-    auto BinarySOF::operator()(const Real &out) const -> ByteData {
+    auto BinarySOF::operator()(const DevFloat &out) const -> ByteData {
         ByteDataConvertHelperUnion<float> byteData((float) out);
 
 

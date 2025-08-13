@@ -8,16 +8,16 @@
 
 namespace Slab::Models::StochasticPathIntegrals {
     SPINumericConfig::SPINumericConfig() : NumericConfig(false) {
-        getInterface()->addParameters({&L, &t, &N, &dT, &nT});
+        GetInterface()->AddParameters({&L, &t, &N, &dT, &nT});
     }
 
-    auto SPINumericConfig::getL() const -> Real { return *L; }
+    auto SPINumericConfig::getL() const -> DevFloat { return *L; }
 
-    auto SPINumericConfig::gett() const -> Real { return *t; }
+    auto SPINumericConfig::gett() const -> DevFloat { return *t; }
 
     auto SPINumericConfig::getN() const -> UInt {return *N; }
 
-    auto SPINumericConfig::getdT() const -> Real { return *dT; }
+    auto SPINumericConfig::getdT() const -> DevFloat { return *dT; }
 
     auto SPINumericConfig::getn() const -> UInt { return *nT; }
 

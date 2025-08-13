@@ -10,25 +10,25 @@
 
 namespace Slab::Math::RtoR {
     class HarmonicDerivative : public RtoR::Function {
-        Real m_sqr;
+        DevFloat m_sqr;
     public:
-        explicit HarmonicDerivative(Real m_sqr) : m_sqr(m_sqr) { };
-        Real operator()(Real x) const override { return m_sqr*x; }
+        explicit HarmonicDerivative(DevFloat m_sqr) : m_sqr(m_sqr) { };
+        DevFloat operator()(DevFloat x) const override { return m_sqr*x; }
 
         Function_ptr Clone() const override { return New <HarmonicDerivative> (m_sqr); }
 
-        Str symbol() const override {
+        Str Symbol() const override {
             return "m²ϕ   m=" + ToStr(sqrt(m_sqr), 2);
         }
 
     };
 
     class HarmonicPotential : public RtoR::Function {
-        Real m_sqr;
+        DevFloat m_sqr;
     public:
-        explicit HarmonicPotential(Real massSqr=1.0) : m_sqr(massSqr) { };
+        explicit HarmonicPotential(DevFloat massSqr=1.0) : m_sqr(massSqr) { };
 
-        Real operator()(Real x) const override {
+        DevFloat operator()(DevFloat x) const override {
             return .5*m_sqr*x*x;
         }
 
@@ -40,7 +40,7 @@ namespace Slab::Math::RtoR {
             return New <HarmonicPotential> ();
         }
 
-        Str symbol() const override {
+        Str Symbol() const override {
             return "½m²ϕ²   m=" + ToStr(sqrt(m_sqr), 2);
         }
     };
@@ -49,7 +49,7 @@ namespace Slab::Math::RtoR {
     public:
         Square() = default;
 
-        Real operator()(Real x) const override {
+        DevFloat operator()(DevFloat x) const override {
             return x*x;
         }
     };

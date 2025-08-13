@@ -34,7 +34,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
         return field_data;
     }
 
-    auto RtoRHamiltonianMetropolisHastingsRecipe::buildOutputSockets() -> Vector<Pointer<Socket>> {
+    auto RtoRHamiltonianMetropolisHastingsRecipe::buildOutputSockets() -> Vector<TPointer<Socket>> {
         fix total_steps = getNumericConfig()->getn();
 
         auto console_monitor = New<OutputConsoleMonitor>(total_steps);
@@ -43,7 +43,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
         return {console_monitor};
     }
 
-    auto RtoRHamiltonianMetropolisHastingsRecipe::buildStepper() -> Pointer<Stepper> {
+    auto RtoRHamiltonianMetropolisHastingsRecipe::buildStepper() -> TPointer<Stepper> {
         RtoRMetropolisSetup setup;
 
         Temperature T=1E-2;
@@ -52,7 +52,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
 
         auto field = getField();
 
-        setup.should_accept = [T](Real ΔE) {
+        setup.should_accept = [T](DevFloat ΔE) {
             return RandUtils::RandomUniformReal01() < Min(1.0, exp(-ΔE / T));
         };;
 
@@ -82,7 +82,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
 
             fix Δx = field.ϕ->getSpace().getMetaData().geth(0);
 
-            constexpr auto sign = Slab::Math::SIGN<Real>;
+            constexpr auto sign = Slab::Math::SIGN<DevFloat>;
 
             fix δK = .5 * (sqr(ϖ) - sqr(π));
             fix δV = fabs(φ) - fabs(ϕ);

@@ -2,30 +2,33 @@
 // Created by joao on 8/09/23.
 //
 
-#ifndef STUDIOSLAB_BEZIERTESTS_H
-#define STUDIOSLAB_BEZIERTESTS_H
+#ifndef STUDIOSLAB_BEZIER_TESTS_H
+#define STUDIOSLAB_BEZIER_TESTS_H
 
-#include "Graphics/Window/WindowContainer/WindowRow.h"
+#include "Graphics/ImGui/ImGui-Multi-SlabWindow-Wrapper.h"
 #include "Graphics/Window/GUIWindow.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Window/WindowContainer/WindowRow.h"
 
 
 namespace Tests {
 
     using namespace Slab;
 
-    class BezierTests : public Graphics::WindowRow {
-        Graphics::GUIWindow stats;
-        Graphics::Plot2DWindow graph;
+    class FBezierTests final : public Graphics::FWindowRow {
+        Graphics::FGUIWindow Stats;
+        Graphics::FPlot2DWindow Graph;
 
-        Math::PointSet currentPt;
+        Math::PointSet CurrentPoint;
 
     public:
-        BezierTests();
+        explicit FBezierTests(const TPointer<Graphics::FImGuiContext>& GuiContext);
 
-        void draw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
+
+        auto RegisterDeferredDrawCalls(const Graphics::FPlatformWindow& PlatformWindow) -> void override;
     };
 
 } // Tests
 
-#endif //STUDIOSLAB_BEZIERTESTS_H
+#endif //STUDIOSLAB_BEZIER_TESTS_H

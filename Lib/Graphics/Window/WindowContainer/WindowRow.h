@@ -12,47 +12,49 @@
 
 namespace Slab::Graphics {
 
-    class WindowRow : public SlabWindow {
+    class FWindowRow : public FSlabWindow {
         struct WinMetaData {
-            Pointer<SlabWindow> window;
-            Real width;
+            TPointer<FSlabWindow> window;
+            DevFloat width;
         };
 
-        std::list<WinMetaData> windowsList;
+        std::list<WinMetaData> WindowsList;
 
-        RealVector _widthsVector() const;
+        FRealVector _widthsVector() const;
 
         bool assertConsistency() const;
 
     public:
-        explicit WindowRow(Str title="", Int flags = 0x0);
+        explicit FWindowRow(Str Title="", Int Flags = 0x0);
 
         enum RelativePosition {
             Left, Right
         };
 
-        bool addWindow(const Pointer<SlabWindow> &window, RelativePosition= Right, float windowWidth = -1);
+        bool AddWindow(const TPointer<FSlabWindow> &window, RelativePosition= Right, float windowWidth = -1);
 
-        void removeWindow(const Pointer<SlabWindow> &window);
+        void removeWindow(const TPointer<FSlabWindow> &window);
 
         void arrangeWindows();
 
-        void draw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
-        void notifyReshape(int w, int h) override;
+        auto RegisterDeferredDrawCalls(const FPlatformWindow&) -> void override;
 
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
+        void NotifyReshape(int w, int h) override;
 
-        bool notifyMouseButton(MouseButton button, KeyState state,
-                               ModKeys keys) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
 
-        bool notifyMouseWheel(double dx, double dy) override;
+        bool NotifyMouseButton(EMouseButton button, EKeyState state,
+                               EModKeys keys) override;
 
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyMouseWheel(double dx, double dy) override;
 
-        auto setx(int x) -> void override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
-        auto sety(int y) -> void override;
+        auto Set_x(int x) -> void override;
+
+        auto Set_y(int y) -> void override;
 
     };
 

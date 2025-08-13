@@ -6,7 +6,7 @@
 #define STUDIOSLAB_DYNAMICSNUMERICCONFIG_H
 
 #include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
-#include "Core/Controller/CommandLine/CommonCLParameters.h"
+#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
 #include "Utils/List.h"
 
 namespace Slab::Models {
@@ -25,10 +25,10 @@ namespace Slab::Models {
         explicit DynamicsNumericConfig(bool do_register);
 
         auto getN() const -> UInt;
-        auto getL() const -> Real;
+        auto GetL() const -> DevFloat;
 
-        auto gett() const -> Real;
-        auto sett(Real) -> void;
+        auto gett() const -> DevFloat;
+        auto sett(DevFloat) -> void;
 
         auto NotifyCLArgsSetupFinished() -> void override;
     };

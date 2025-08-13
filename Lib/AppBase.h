@@ -5,12 +5,12 @@
 #ifndef V_SHAPE_APPBASE_H
 #define V_SHAPE_APPBASE_H
 
-#include "Core/Controller/CommandLine/CLInterfaceOwner.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceOwner.h"
 
 
 namespace Slab::Core {
 
-    class AppBase : public CLInterfaceOwner {
+    class AppBase : public FCommandLineInterfaceOwner {
 
     protected:
         AppBase(int argc, const char *argv[], bool doRegister = true);

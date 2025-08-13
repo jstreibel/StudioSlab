@@ -18,14 +18,14 @@ namespace Tests {
     using namespace Slab;
 
     ModernGLTests::ModernGLTests()
-    : Graphics::WindowRow("Modern OpenGL test")
+    : FWindowRow("Modern OpenGL test")
     , program(Core::Resources::ShadersFolder + "tests.vert", Core::Resources::ShadersFolder + "tests.frag")
     , buffer("vertex:2f,tex_coord:2f")
     , texture(texDim, texDim)
     , realTexture(texDim, texDim)
-    , writer(Core::Resources::fontFileName(4), 80)
+    , writer(Core::Resources::GetIndexedFontFileName(4), 80)
     {
-        addWindow(std::make_shared<SlabWindow>());
+        AddWindow(Slab::New<FSlabWindow>(Graphics::FSlabWindowConfig{"Modern OpenGL Tests"}));
 
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
 
@@ -46,7 +46,7 @@ namespace Tests {
             for(auto j=0; j<texDim; ++j){
                 fix y = j/(float)texDim;
                 fix r = sqrt(x*x + y*y);
-                fix color = Graphics::Color(.5f + .5f*sinf(2*M_PI*r), .5f + .5f*cosf(2*M_PI*r), 1);
+                fix color = Graphics::FColor(.5f + .5f*sinf(2*M_PI*r), .5f + .5f*cosf(2*M_PI*r), 1);
                 texture.setColor(i, j, color);
                 realTexture.setValue(i, j, .5f+.5f*cosf(8*M_PI*r));
             }
@@ -55,27 +55,27 @@ namespace Tests {
         texture.upload();
         realTexture.upload();
 
-        program.setUniform("transformMatrix", {1,0,0,
+        program.SetUniform("transformMatrix", {1,0,0,
                                                0,1,0,
                                                0,0,1});
     }
 
-    void ModernGLTests::draw() {
-        WindowRow::draw();
+    void ModernGLTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+        FWindowRow::ImmediateDraw(PlatformWindow);
 
         {
             // texture.bind();
-            realTexture.bind();
-            program.use();
-            program.setUniform("texture", 0);
+            realTexture.Bind();
+            program.Use();
+            program.SetUniform("texture", 0);
 
-            buffer.render(GL_TRIANGLES);
+            buffer.Render(GL_TRIANGLES);
         }
 
         {
-            fix vp = getViewport();
-            writer.reshape(vp.width(), vp.height());
-            writer.write("VertexBuffer + Texture tests", {200, (double) GetHeight() - 200});
+            fix vp = GetViewport();
+            writer.Reshape(vp.GetWidth(), vp.GetHeight());
+            writer.Write("VertexBuffer + Texture tests", {200, GetHeight() - 200});
         }
     }
 } // Tests

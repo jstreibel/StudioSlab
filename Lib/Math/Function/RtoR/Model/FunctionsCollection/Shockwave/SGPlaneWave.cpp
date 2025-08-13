@@ -6,9 +6,9 @@
 
 namespace Slab::Math::RtoR {
 
-    constexpr Real ModeCount = 15;
+    constexpr DevFloat ModeCount = 15;
 
-    FSignumGordonPlaneWave::FSignumGordonPlaneWave(const Real Q, const Real k) : Q(Q), k(k) { }
+    FSignumGordonPlaneWave::FSignumGordonPlaneWave(const DevFloat Q, const DevFloat k) : Q(Q), k(k) { }
 
     FSignumGordonPlaneWave::FSignumGordonPlaneWave(const FSignumGordonPlaneWave& other): RtoR::Function(other),
         Q(other.Q),
@@ -42,14 +42,14 @@ namespace Slab::Math::RtoR {
         return *this;
     }
 
-    Real FSignumGordonPlaneWave::operator()(const Real x) const
+    DevFloat FSignumGordonPlaneWave::operator()(const DevFloat x) const
     {
         // Q=Ak²=Aω²-4/π
         fix A = Q/(k*k);
         // fix ω = sqrt((Q + 4*M_1_PI) / A);
 
-        Real Sum = 0;
-        Real Sign = 1;
+        DevFloat Sum = 0;
+        DevFloat Sign = 1;
         for (Int i=0; i<ModeCount; ++i)
         {
             fix n = 2*i + 1;
@@ -64,7 +64,7 @@ namespace Slab::Math::RtoR {
         return A*Sum;
     }
 
-    FSignumGordonPlaneWave_TimeDerivative::FSignumGordonPlaneWave_TimeDerivative(const Real Q, const Real k)
+    FSignumGordonPlaneWave_TimeDerivative::FSignumGordonPlaneWave_TimeDerivative(const DevFloat Q, const DevFloat k)
     : Q(Q), k(k) { }
 
     FSignumGordonPlaneWave_TimeDerivative::FSignumGordonPlaneWave_TimeDerivative(
@@ -103,14 +103,14 @@ namespace Slab::Math::RtoR {
         return *this;
     }
 
-    Real FSignumGordonPlaneWave_TimeDerivative::operator()(Real x) const
+    DevFloat FSignumGordonPlaneWave_TimeDerivative::operator()(DevFloat x) const
     {
         // Q=Ak²=Aω²-4/π
         fix A = Q/(k*k);
         fix ω = sqrt((Q + 4*M_1_PI) / A);
 
-        Real Sum = 0;
-        Real Sign = 1.0;
+        DevFloat Sum = 0;
+        DevFloat Sign = 1.0;
         for (Int i=0; i<ModeCount; ++i)
         {
             fix n = 2*i + 1;

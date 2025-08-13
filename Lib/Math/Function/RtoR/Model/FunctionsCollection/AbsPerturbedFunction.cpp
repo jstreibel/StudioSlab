@@ -12,7 +12,7 @@ namespace Slab::Math::RtoR {
 
     }
 
-    Real AbsPerturbedDiffFunction::operator()(Real x) const {
+    DevFloat AbsPerturbedDiffFunction::operator()(DevFloat x) const {
         floatt Vp = 0;
         for (int n = -Ns; n <= Ns; ++n) {
             const floatt arg = x - 4.0 * floatt(n);
@@ -21,11 +21,11 @@ namespace Slab::Math::RtoR {
         return Vp;
     }
 
-    Pointer<Base::FunctionT<Real, Real>> AbsPerturbedDiffFunction::diff(int n) const {
+    TPointer<Base::FunctionT<DevFloat, DevFloat>> AbsPerturbedDiffFunction::diff(int n) const {
         return New<AbsPerturbedDiffFunction>(Ns);
     }
 
-    Pointer<Base::FunctionT<Real,Real>> AbsPerturbedDiffFunction::Clone() const {
+    TPointer<Base::FunctionT<DevFloat,DevFloat>> AbsPerturbedDiffFunction::Clone() const {
         return New<AbsPerturbedDiffFunction>(Ns);
     }
 
@@ -35,7 +35,7 @@ namespace Slab::Math::RtoR {
 
     }
 
-    Real AbsPerturbedFunction::operator()(Real x) const {
+    DevFloat AbsPerturbedFunction::operator()(DevFloat x) const {
         floatt V = 0;
         for (int n = -Ns; n <= Ns; ++n) {
             const floatt arg = x - 4.0 * floatt(n);
@@ -45,15 +45,15 @@ namespace Slab::Math::RtoR {
         return V;
     }
 
-    Pointer<Base::FunctionT<Real, Real>> AbsPerturbedFunction::diff(int n) const {
+    TPointer<Base::FunctionT<DevFloat, DevFloat>> AbsPerturbedFunction::diff(int n) const {
         return New<AbsPerturbedDiffFunction>(Ns);
     }
 
-    Pointer<Base::FunctionT<Real,Real>> AbsPerturbedFunction::Clone() const {
+    TPointer<Base::FunctionT<DevFloat,DevFloat>> AbsPerturbedFunction::Clone() const {
         return New<AbsPerturbedFunction>(Ns);
     }
 
-    Real AbsPerturbedFunction::Fold(Real eta, const int Ns) {
+    DevFloat AbsPerturbedFunction::Fold(DevFloat eta, const int Ns) {
         floatt etab = 0;
 
         for (int n = -Ns; n <= Ns; ++n)

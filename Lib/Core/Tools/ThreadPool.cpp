@@ -6,17 +6,17 @@
 
 
 namespace Slab::Core {
-    ThreadPool::ThreadPool(size_t numThreads) {
-        for (size_t i = 0; i < numThreads; ++i) {
-            workers.emplace_back([this] {
+    ThreadPool::ThreadPool(size_t NumThreads) {
+        for (size_t i = 0; i < NumThreads; ++i) {
+            Workers.emplace_back([this] {
                 while (true) {
                     std::function<void()> task;
                     {
-                        std::unique_lock<std::mutex> lock(queueMutex);
-                        condition.wait(lock, [this] { return !tasks.empty() || terminate; });
-                        if (terminate) return;
-                        task = std::move(tasks.front());
-                        tasks.pop();
+                        std::unique_lock<std::mutex> Lock(QueueMutex);
+                        Condition.wait(Lock, [this] { return !Tasks.empty() || bTerminate; });
+                        if (bTerminate) return;
+                        task = std::move(Tasks.front());
+                        Tasks.pop();
                     }
                     task();
                 }
@@ -26,20 +26,20 @@ namespace Slab::Core {
 
     ThreadPool::~ThreadPool() {
         {
-            std::unique_lock<std::mutex> lock(queueMutex);
-            terminate = true;
+            std::unique_lock<std::mutex> Lock(QueueMutex);
+            bTerminate = true;
         }
-        condition.notify_all();
-        for (std::thread& worker : workers) {
-            worker.join();
+        Condition.notify_all();
+        for (std::thread& Worker : Workers) {
+            Worker.join();
         }
     }
 
-    void ThreadPool::enqueue(std::function<void()> task) {
+    void ThreadPool::Enqueue(std::function<void()> task) {
         {
-            std::unique_lock<std::mutex> lock(queueMutex);
-            tasks.push(task);
+            std::unique_lock<std::mutex> Lock(QueueMutex);
+            Tasks.push(task);
         }
-        condition.notify_one();
+        Condition.notify_one();
     }
 } // Core

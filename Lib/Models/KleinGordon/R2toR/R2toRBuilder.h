@@ -25,10 +25,10 @@ namespace Slab::Models::KGR2toR {
         Builder(const Str& name, const Str& description, bool do_register=false);
         virtual ~Builder() = default;
 
-        auto buildOutputSockets()   -> Vector<Pointer<Socket>> override;
-        auto buildSolver()  -> Pointer<Base::LinearStepSolver> override;
+        auto buildOutputSockets()   -> Vector<TPointer<Socket>> override;
+        auto buildSolver()  -> TPointer<Base::LinearStepSolver> override;
 
-        auto newFunctionArbitrary() -> R2toR::NumericFunction_ptr ;
+        auto newFunctionArbitrary() -> R2toR::FNumericFunction_ptr ;
         auto newFieldState()        -> R2toR::EquationState_ptr;
 
         auto getInitialState()      -> R2toR::EquationState_ptr;

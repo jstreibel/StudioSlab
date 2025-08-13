@@ -68,10 +68,10 @@ namespace Slab::Models {
         BoolParameter    VisualMonitor_startPaused      = BoolParameter(false, "p,visual_monitor_paused",
                                                                         "Start visual monitored simulation paused.");
 
-        Pointer<KGNumericConfig> kg_numeric_config;
+        TPointer<KGNumericConfig> kg_numeric_config;
         Math::DeviceConfig device_config;
     public:
-        explicit KGRecipe(const Pointer<KGNumericConfig>& numeric_config, const Str& name="Klein-Gordon",
+        explicit KGRecipe(const TPointer<KGNumericConfig>& numeric_config, const Str& name="Klein-Gordon",
                           const Str& generalDescription="The Klein-Gordon scalar field equation builder",
                           bool doRegister=false);
 
@@ -79,9 +79,9 @@ namespace Slab::Models {
 
         void setupForCurrentThread() override;
 
-        Pointer<Stepper> buildStepper() override;
+        TPointer<Stepper> buildStepper() override;
 
-        virtual auto buildSolver()  -> Pointer<Base::LinearStepSolver> = 0;
+        virtual auto buildSolver()  -> TPointer<Base::LinearStepSolver> = 0;
 
         auto notifyAllCLArgsSetupFinished() -> void override;
     };

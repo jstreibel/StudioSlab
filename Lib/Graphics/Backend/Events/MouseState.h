@@ -10,7 +10,7 @@
 
 namespace Slab::Graphics {
 
-    enum MouseCursor {
+    enum FMouseCursor {
         Mouse_ArrowCursor,
         Mouse_IBeamCursor,
         Mouse_CrossHairCursor,
@@ -19,10 +19,8 @@ namespace Slab::Graphics {
         Mouse_VResizeCursor,
     };
 
-    class MouseState : public SystemWindowEventListener {
+    class FMouseState final : public FPlatformWindowEventListener {
     public:
-        explicit MouseState(ParentSystemWindow);
-
         int x = 0,
             y = 0;
 
@@ -31,21 +29,25 @@ namespace Slab::Graphics {
 
         int wheel_dx = 0, wheel_dy = 0;
 
-        bool leftPressed = false,
-             centerPressed = false,
-             rightPressed = false;
+        EKeyState Left   = Release;
+        EKeyState Center = Release;
+        EKeyState Right  = Release;
 
-        ModKeys mod_keys;
+        bool IsLeftPressed() const { return Left != Release; }
+        bool IsCenterPressed() const { return Center != Release; }
+        bool IsRightPressed() const { return Right != Release; }
 
-        Timer since_left_pressed;
-        Timer since_center_pressed;
-        Timer since_right_pressed;
+        EModKeys mod_keys;
 
-        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+        Timer SinceLeftPressed;
+        Timer SinceCenterPressed;
+        Timer SinceRightPressed;
 
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) override;
 
-        bool notifyMouseWheel(double dx, double dy) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
+
+        bool NotifyMouseWheel(double dx, double dy) override;
     };
 }
 

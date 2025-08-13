@@ -6,7 +6,7 @@
 #define STUDIOSLAB_IMGUICONTEXT_H
 
 #include "Graphics/Modules/GUIModule/GUIContext.h"
-#include "Graphics/Backend/SystemWindow.h"
+#include "Graphics/Backend/PlatformWindow.h"
 #include "3rdParty/ImGui.h"
 
 #include "Utils/Arrays.h"
@@ -15,53 +15,55 @@
 
 namespace Slab::Graphics {
 
-    struct CallSet {
+    struct FCallSet {
         using RawSystemWindowPointer = void*;
 
-        using InitContextCall = std::function<void(RawSystemWindowPointer)>;
+        using InitContextCall = std::function<void(const FCallSet& Call)>;
         using KillContextCall = std::function<void(void)>;
         using NewFrameCall    = std::function<void(void)>;
 
+        RawSystemWindowPointer r_SystemWindow;
+
         InitContextCall Init;
         KillContextCall End;
-        DrawCall        Draw;
+        FDrawCall       Draw;
         NewFrameCall    NewFrame;
     };
 
-    class SlabImGuiContext final : public GUIContext {
-        ImGuiContext *context = nullptr;
+    class FImGuiContext final : public GUIContext {
+        ImGuiContext *r_Context = nullptr;
 
-        CallSet call_set;
+        FCallSet CallSet;
 
     public:
-        explicit SlabImGuiContext(ParentSystemWindow, CallSet);
-        ~SlabImGuiContext() override = default;
+        explicit FImGuiContext(FCallSet);
+        ~FImGuiContext() override = default;
 
-        Real getFontSize() const;
+        [[nodiscard]] DevFloat GetFontSize() const;
 
         void AddMainMenuItem(MainMenuItem) override;
+
+        void *GetContextPointer() override;
+
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
+
+        bool NotifyCharacter(UInt codepoint) override;
+
+        void CursorEntered(bool b) override;
+
+        bool NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) override;
+
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
+
+        bool NotifyMouseWheel(double dx, double dy) override;
+
+        bool NotifySystemWindowReshape(int w, int h) override;
+
+        bool NotifyRender(const FPlatformWindow&) override;
 
         void Bind() override;
         void NewFrame() override;
         void Render() const override;
-
-        void *GetContextPointer() override;
-
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
-
-        bool notifyCharacter(UInt codepoint) override;
-
-        void cursorEntered(bool b) override;
-
-        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
-
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
-
-        bool notifyMouseWheel(double dx, double dy) override;
-
-        bool notifySystemWindowReshape(int w, int h) override;
-
-        bool notifyRender() override;
     };
 
 } // Slab::Graphics

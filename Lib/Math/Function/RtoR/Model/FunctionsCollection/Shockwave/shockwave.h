@@ -6,22 +6,22 @@
 namespace Slab::Math::RtoR {
     class ShockwavePhi : public RtoR::Function {
     public:
-        ShockwavePhi(Real h);
+        ShockwavePhi(DevFloat h);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
     private:
-        Real h;
+        DevFloat h;
     };
 
     class ShockwaveDPhiDt : public RtoR::Function {
     public:
-        ShockwaveDPhiDt(Real h);
+        ShockwaveDPhiDt(DevFloat h);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
     private:
-        Real h;
+        DevFloat h;
     };
 }
 

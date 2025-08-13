@@ -4,33 +4,31 @@
 
 #include "Plot2DWindow.h"
 
-#include "Graphics/SlabGraphics.h"
-
 #include "Core/Tools/Log.h"
 #include "3rdParty/ImGui.h"
 
 namespace Slab {
 
     bool
-    Graphics::Plot2DWindow::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
-        if(Graphics::SlabWindow::notifyMouseButton(button, state, keys)) return true;
+    Graphics::FPlot2DWindow::NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) {
+        if(Graphics::FSlabWindow::NotifyMouseButton(button, state, keys)) return true;
 
         static auto time = Timer();
 
-        if (button == MouseButton::MouseButton_RIGHT) {
-            if (state == KeyState::Press) {
+        if (button == EMouseButton::MouseButton_RIGHT) {
+            if (state == EKeyState::Press) {
                 time.reset();
-            } else if (state == KeyState::Release && time.getElTime_msec() < 200) {
-                popupOn = true;
+            } else if (state == EKeyState::Release && time.getElTime_msec() < 200) {
+                PopupOn = true;
 
-                auto popupName = Str("win_") + title + Str("_popup");
+                auto popupName = Str("win_") + Title + Str("_popup");
                 if (POPUP_ON_MOUSE_CALL) {
                     Core::Log::Info() << "Popup (on mouse call) '" << popupName << "' is on" << Core::Log::Flush;
                     ImGui::OpenPopup(popupName.c_str());
-                    popupOn = false;
+                    PopupOn = false;
                 }
 
-                Graphics::SlabWindow::notifyMouseButton(button, state, keys);
+                Graphics::FSlabWindow::NotifyMouseButton(button, state, keys);
                 return true;
             }
         }
@@ -38,91 +36,91 @@ namespace Slab {
         return false;
     }
 
-    bool Graphics::Plot2DWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
-        if(SlabWindow::notifyMouseMotion(x, y, dx, dy)) return true;
+    bool Graphics::FPlot2DWindow::NotifyMouseMotion(int x, int y, int dx, int dy) {
+        if(FSlabWindow::NotifyMouseMotion(x, y, dx, dy)) return true;
 
-        bool elRet = false;
-        auto mouseState = parent_system_window->getMouseState();
+        bool bReturnValue = false;
+        const auto MouseState = GetMouseState();
 
-        if (isMouseLeftClicked()) {
-            const auto rect = region.getRect();
+        if (MouseState->IsLeftPressed()) {
+            const auto rect = Region.getRect();
 
-            const Real dxClampd = -mouseState->dx / (Real) GetWidth();
-            const Real dyClampd = mouseState->dy / (Real) GetHeight();
-            const Real wGraph = rect.width();
-            const Real hGraph = rect.height();
-            const Real dxGraph = wGraph * dxClampd;
-            const Real dyGraph = hGraph * dyClampd;
+            const DevFloat dxClampd = -MouseState->dx / (DevFloat) GetWidth();
+            const DevFloat dyClampd = MouseState->dy / (DevFloat) GetHeight();
+            const DevFloat wGraph = rect.GetWidth();
+            const DevFloat hGraph = rect.GetHeight();
+            const DevFloat dxGraph = wGraph * dxClampd;
+            const DevFloat dyGraph = hGraph * dyClampd;
 
-            region = RectR{rect.xMin + dxGraph,
+            Region = RectR{rect.xMin + dxGraph,
                            rect.xMax + dxGraph,
                            rect.yMin + dyGraph,
                            rect.yMax + dyGraph};
 
-            elRet = true;
+            bReturnValue = true;
         }
 
-        if (isMouseRightClicked()) {
-            constexpr const Real factor = 0.01;
-            const Real dw = 1 - factor * dx;
-            const Real dh = 1 + factor * dy;
+        if (MouseState->IsRightPressed()) {
+            constexpr const DevFloat factor = 0.01;
+            const DevFloat dw = 1 - factor * dx;
+            const DevFloat dh = 1 + factor * dy;
 
-            const Real x0 = region.xCenter();
-            const Real y0 = region.yCenter();
-            const Real hw = .5 * region.width()  * dw;
-            const Real hh = .5 * region.height() * dh;
+            const DevFloat x0 = Region.xCenter();
+            const DevFloat y0 = Region.yCenter();
+            const DevFloat hw = .5 * Region.width()  * dw;
+            const DevFloat hh = .5 * Region.height() * dh;
 
-            region = {
+            Region = {
                     x0 - hw,
                     x0 + hw,
                     y0 - hh,
                     y0 + hh
             };
 
-            elRet = true;
+            bReturnValue = true;
         }
 
-        return elRet;
+        return bReturnValue;
     }
 
-    bool Graphics::Plot2DWindow::notifyMouseWheel(double dx, double dy) {
-        if(SlabWindow::notifyMouseWheel(dx, dy)) return true;
+    bool Graphics::FPlot2DWindow::NotifyMouseWheel(double dx, double dy) {
+        if(FSlabWindow::NotifyMouseWheel(dx, dy)) return true;
 
-        constexpr const Real factor = 1.2;
-        const Real d = pow(factor, -dy);
+        constexpr const DevFloat factor = 1.2;
+        const DevFloat d = pow(factor, -dy);
 
-        static auto targetRegion = region.getRect();
+        static auto targetRegion = Region.getRect();
 
         // If not animating region at all
-        if (!region.isAnimating())
-            targetRegion = region.getRect();
+        if (!Region.isAnimating())
+            targetRegion = Region.getRect();
 
-        const Real x0 = targetRegion.xCenter();
-        const Real hw = .5 * targetRegion.width() * d;
+        const DevFloat x0 = targetRegion.xCenter();
+        const DevFloat hw = .5 * targetRegion.GetWidth() * d;
 
         targetRegion.xMin = x0 - hw;
         targetRegion.xMax = x0 + hw;
 
-        region.animate_xMin(targetRegion.xMin);
-        region.animate_xMax(targetRegion.xMax);
+        Region.animate_xMin(targetRegion.xMin);
+        Region.animate_xMax(targetRegion.xMax);
 
-        const Real y0 = targetRegion.yCenter();
-        const Real hh = .5 * targetRegion.height() * d;
+        const DevFloat y0 = targetRegion.yCenter();
+        const DevFloat hh = .5 * targetRegion.GetHeight() * d;
 
         targetRegion.yMin = y0 - hh;
         targetRegion.yMax = y0 + hh;
 
-        region.animate_yMin(targetRegion.yMin);
-        region.animate_yMax(targetRegion.yMax);
+        Region.animate_yMin(targetRegion.yMin);
+        Region.animate_yMax(targetRegion.yMax);
 
         return true;
     }
 
-    bool Graphics::Plot2DWindow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
-        if(SlabWindow::notifyKeyboard(key, state, modKeys)) return true;
+    bool Graphics::FPlot2DWindow::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+        if(FSlabWindow::NotifyKeyboard(key, state, modKeys)) return true;
 
-        if(state==KeyState::Release) {
-            if(key == KeyMap::Key_TAB && modKeys.Mod_Shift == Press) {
+        if(state==EKeyState::Release) {
+            if(key == EKeyMap::Key_TAB && modKeys.Mod_Shift == Press) {
                 toggleShowInterface();
                 return true;
             }

@@ -2,19 +2,19 @@
 // Created by joao on 10/19/24.
 //
 
-#ifndef STUDIOSLAB_SLABWINDOWMANAGER_H
-#define STUDIOSLAB_SLABWINDOWMANAGER_H
+#ifndef STUDIOSLAB_SLAB_WINDOW_MANAGER_H
+#define STUDIOSLAB_SLAB_WINDOW_MANAGER_H
 
-#include "Graphics/Backend/Events/SystemWindowEventListener.h"
 #include "SlabWindow.h"
 #include "Utils/List.h"
 #include "Decorator.h"
+#include "WindowManager.h"
 
 namespace Slab::Graphics {
 
-    class SlabWindowManager final : public SystemWindowEventListener {
+    class SlabWindowManager final : public FWindowManager {
         struct WindowMetaInformation {
-            Pointer<SlabWindow> window= nullptr;
+            TPointer<FSlabWindow> Window= nullptr;
             bool is_full_screen = false;
             bool is_hidden = false;
 
@@ -26,39 +26,42 @@ namespace Slab::Graphics {
             bool operator==(const std::nullptr_t &rhs) const;
         };
 
-        List<Pointer<WindowMetaInformation>> slab_windows;
+        TList<TPointer<WindowMetaInformation>> SlabWindows;
 
-        Decorator decorator;
+        Decorator Decorator;
 
         Int w_system_window=10, h_system_window=10;
 
-        Pointer<WindowMetaInformation> focused;
+        TPointer<WindowMetaInformation> CurrentlyFocused;
         using Anchor = Point2D;
-        struct Grabbed {Anchor anchor; enum What {None, Titlebar, Corner} what; Pointer<SlabWindow> window;} grabbed;
+        struct Grabbed {Anchor anchor; enum What {None, Titlebar, Corner} what; TPointer<FSlabWindow> window;} Grabbed;
+
+        TPointer<FMouseState> MouseState;
 
     public:
-        explicit SlabWindowManager(SystemWindow* parent_syswin=nullptr);
+        explicit SlabWindowManager();
         ~SlabWindowManager() override = default;
 
-        void setFocus(const Pointer<WindowMetaInformation>&);
+        void SetFocus(const TPointer<WindowMetaInformation>&);
 
-        void addSlabWindow(const Pointer<SlabWindow>&, bool hidden=false);
+        void AddSlabWindow(const TPointer<FSlabWindow>&, bool hidden) override;
 
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
-        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+        bool NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) override;
 
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
 
-        bool notifyMouseWheel(double dx, double dy) override;
+        bool NotifyMouseWheel(double dx, double dy) override;
 
-        bool notifyFilesDropped(StrVector paths) override;
+        bool NotifyFilesDropped(StrVector paths) override;
 
-        bool notifySystemWindowReshape(int w, int h) override;
+        bool NotifySystemWindowReshape(int w, int h) override;
 
-        bool notifyRender() override;
+        bool NotifyRender(const FPlatformWindow&) override;
+
     };
 
 } // Slab::Graphics
 
-#endif //STUDIOSLAB_SLABWINDOWMANAGER_H
+#endif //STUDIOSLAB_SLAB_WINDOW_MANAGER_H

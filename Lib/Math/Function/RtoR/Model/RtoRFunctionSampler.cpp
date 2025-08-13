@@ -7,15 +7,15 @@
 
 namespace Slab::Math {
 
-    auto RtoR::FunctionRenderer::ToPointSet(const RtoR::Function &func, Real xMin, Real xMax, UInt resolution,
-                                            Real scale) -> Math::PointSet_ptr {
+    auto RtoR::FunctionRenderer::ToPointSet(const RtoR::Function &func, DevFloat xMin, DevFloat xMax, UInt resolution,
+                                            DevFloat scale) -> Math::PointSet_ptr {
         fix Δx = xMax - xMin;
-        fix dx = Δx / (Real) resolution;
+        fix dx = Δx / (DevFloat) resolution;
 
         Vector<Real2D> pts(resolution);
 
         for (auto i = 0; i < resolution; ++i) {
-            fix x = xMin + Real(i) * dx;
+            fix x = xMin + DevFloat(i) * dx;
             pts[i] = {x, func(x)};
         }
 

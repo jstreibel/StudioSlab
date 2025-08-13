@@ -23,20 +23,20 @@ namespace Slab::Graphics {
         updateMinMax();
     }
 
-    bool R2toRFunctionArtist::draw(const Plot2DWindow &graph) {
+    bool R2toRFunctionArtist::Draw(const FPlot2DWindow &graph) {
         if (func == nullptr) return true;
 
         if(dataIsMutable) invalidateTextureData();
 
         if (!validTextureData) repopulateTextureBuffer();
 
-        current_painter->use();
-        current_painter->setRegion(graph.getRegion().getRect());
+        current_painter->Use();
+        current_painter->setRegion(graph.GetRegion().getRect());
 
         for(auto &thingy : textureKontraptions->blocks)
         {
             current_painter->setFieldDataTexture(thingy->texture);
-            thingy->vertexBuffer->render(GL_TRIANGLES);
+            thingy->vertexBuffer->Render(GL_TRIANGLES);
         }
 
         return true;
@@ -49,7 +49,7 @@ namespace Slab::Graphics {
 
         assert(func->isDiscrete());
 
-        auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction&>(*func);
+        auto &discreteFunc = dynamic_cast<const R2toR::FNumericFunction&>(*func);
 
         discreteFunc.getSpace().syncHost();
 
@@ -82,21 +82,21 @@ namespace Slab::Graphics {
         validTextureData = true;
     }
 
-    bool R2toRFunctionArtist::hasGUI() { return true; }
+    bool R2toRFunctionArtist::HasGUI() { return true; }
 
-    void R2toRFunctionArtist::drawGUI() {
+    void R2toRFunctionArtist::DrawGUI() {
         if(func == nullptr) {
             ImGui::TextColored(ImVec4{1,0,0,1}, "nullptr ℝ²↦ℝ function");
             return;
         }
 
-        const auto myName = getLabel();
+        const auto myName = GetLabel();
 
         const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
         ImGui::BeginChild((myName).c_str(), {0,24*TEXT_BASE_HEIGHT}, true/*, ImGuiWindowFlags_AlwaysAutoResize*/);
 
         if (func->isDiscrete()) {
-            auto &dFunc = *dynamic_cast<const R2toR::NumericFunction *>(func.get());
+            auto &dFunc = *dynamic_cast<const R2toR::FNumericFunction *>(func.get());
             ImGui::Text("%ix%i elements", dFunc.getN(), dFunc.getM());
         }
 
@@ -142,7 +142,7 @@ namespace Slab::Graphics {
         if(!func->isDiscrete()) NOT_IMPLEMENTED
 
 
-        auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction&>(*func);
+        auto &discreteFunc = dynamic_cast<const R2toR::FNumericFunction&>(*func);
 
         // 𝒟ℴ𝓂𝒶𝒾𝓃
         {
@@ -166,19 +166,19 @@ namespace Slab::Graphics {
             block->texture->set_sPeriodicOn();
     }
 
-    void R2toRFunctionArtist::setLabel(const Str label) {
+    void R2toRFunctionArtist::SetLabel(const Str label) {
         for(const auto& painter : painters) painter.second->labelUpdateEvent(label);
 
-        Artist::setLabel(label);
+        FArtist::SetLabel(label);
     }
 
-    Str R2toRFunctionArtist::getXHairInfo(const Point2D &coords) const {
+    Str R2toRFunctionArtist::GetXHairInfo(const Point2D &coords) const {
         if(func == nullptr) return {};
 
         fix r = Real2D{coords.x, coords.y};
         assert(func->domainContainsPoint(r));
 
-        auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction &>(*func);
+        auto &discreteFunc = dynamic_cast<const R2toR::FNumericFunction &>(*func);
 
         fix xRes = discreteFunc.getN();
         fix yRes = discreteFunc.getM();
@@ -196,7 +196,7 @@ namespace Slab::Graphics {
         fix rMax = Real2D{coords.x - .5 * hTexturePixelSizeInSpaceCoord,
                           coords.y - .5 * vTexturePixelSizeInSpaceCoord};
 
-        Str info = getLabel() + " = ";
+        Str info = GetLabel() + " = ";
         if (func->domainContainsPoint(r)) {
             fix val = (*func)(r);
             info += funcUnit(val, 5);
@@ -219,18 +219,18 @@ namespace Slab::Graphics {
 
     auto
     R2toRFunctionArtist::getFieldTextureKontraption() const
-    -> Pointer<FieldTextureKontraption> { return textureKontraptions; }
+    -> TPointer<FieldTextureKontraption> { return textureKontraptions; }
 
     void
-    R2toRFunctionArtist::setPainter(Pointer<R2toRPainter> dPainter) {
+    R2toRFunctionArtist::setPainter(TPointer<R2toRPainter> dPainter) {
         current_painter = std::move(dPainter);
     }
 
     auto
     R2toRFunctionArtist::getPainter()
-    -> Pointer<R2toRPainter> { return current_painter; }
+    -> TPointer<R2toRPainter> { return current_painter; }
 
-    auto R2toRFunctionArtist::getPainter(const Str &name) -> Pointer<R2toRPainter> {
+    auto R2toRFunctionArtist::getPainter(const Str &name) -> TPointer<R2toRPainter> {
         return painters[name];
     }
 

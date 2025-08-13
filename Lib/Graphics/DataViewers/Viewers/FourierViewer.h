@@ -19,39 +19,39 @@
 namespace Slab::Graphics{
 
     class FourierViewer : public Viewer {
-        using Function = Pointer<Math::R2toR::NumericFunction>;
+        using Function = TPointer<Math::R2toR::FNumericFunction>;
 
         R2toRFunctionArtist_ptr function_artist;
 
-        Pointer<Plot2DWindow> kSpaceGraph;
-        Pointer<Plot2DWindow> ωSpaceGraph;
-        Pointer<Plot2DWindow> xSpaceGraph;
-        Pointer<Plot2DWindow> ωkSpaceGraph;
+        TPointer<FPlot2DWindow> kSpaceGraph;
+        TPointer<FPlot2DWindow> ωSpaceGraph;
+        TPointer<FPlot2DWindow> xSpaceGraph;
+        TPointer<FPlot2DWindow> ωkSpaceGraph;
 
-        Pointer<R2toRFunctionArtist> kSpace_powerArtist        = New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> kSpace_amplitudesArtist   = New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> kSpace_phasesArtist       = New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> kSpace_realPartsArtist    = New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> kSpace_imagPartsArtist    = New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> kSpace_Ak2                = New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> kSpace_powerArtist        = New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> kSpace_amplitudesArtist   = New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> kSpace_phasesArtist       = New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> kSpace_realPartsArtist    = New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> kSpace_imagPartsArtist    = New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> kSpace_Ak2                = New<R2toRFunctionArtist>();
 
-        Pointer<R2toRFunctionArtist> inv_kSpaceArtist = New<R2toRFunctionArtist>();
-        Pointer<R2toR::NumericFunction> inv_kSpace;
+        TPointer<R2toRFunctionArtist> inv_kSpaceArtist = New<R2toRFunctionArtist>();
+        TPointer<R2toR::FNumericFunction> inv_kSpace;
 
-        Pointer<R2toRFunctionArtist> ωSpaceArtist = New<R2toRFunctionArtist>();
-        Pointer<R2toR::NumericFunction> ωSpace;
-
-
-        Pointer<R2toRFunctionArtist> twoPointCorrArtist = New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> timeFilteredArtist = New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> ωSpaceArtist = New<R2toRFunctionArtist>();
+        TPointer<R2toR::FNumericFunction> ωSpace;
 
 
-        Pointer<R2toRFunctionArtist> powerArtist        = New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> amplitudesArtist   = New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> phasesArtist       = New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> realPartsArtist    = New<R2toRFunctionArtist>();
-        Pointer<R2toRFunctionArtist> imagPartsArtist    = New<R2toRFunctionArtist>();
-        Pointer<R2toC::NumericFunction> dft2DFunction;
+        TPointer<R2toRFunctionArtist> twoPointCorrArtist = New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> timeFilteredArtist = New<R2toRFunctionArtist>();
+
+
+        TPointer<R2toRFunctionArtist> powerArtist        = New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> amplitudesArtist   = New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> phasesArtist       = New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> realPartsArtist    = New<R2toRFunctionArtist>();
+        TPointer<R2toRFunctionArtist> imagPartsArtist    = New<R2toRFunctionArtist>();
+        TPointer<R2toC::NumericFunction> dft2DFunction;
 
         bool auto_update_Ft = false;
         bool auto_update_Ftx = false;
@@ -64,7 +64,7 @@ namespace Slab::Graphics{
 
 
     private:
-        Real kFilterCutoff = 0.0;
+        DevFloat kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
     protected:
         void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
@@ -78,16 +78,16 @@ namespace Slab::Graphics{
 
     public:
         static auto
-        FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real tMin, Real tMax)
-        -> Pointer<R2toR::NumericFunction>;
+        FilterSpace(const TPointer<const R2toR::FNumericFunction>& func, DevFloat tMin, DevFloat tMax)
+        -> TPointer<R2toR::FNumericFunction>;
 
-        Str getName() const override;
+        Str GetName() const override;
 
-        explicit FourierViewer(Pointer<GUIWindow>);
+        explicit FourierViewer(const TPointer<FGUIWindow>&);
 
-        void setFunction(Function func) override;
+        void SetFunction(Function func) override;
 
-        void draw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
     };
 
 } // Studios::Fields

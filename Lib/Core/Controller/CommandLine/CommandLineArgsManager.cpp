@@ -2,9 +2,9 @@
 // Created by joao on 10/13/21.
 //
 
-#include "CLArgsManager.h"
-#include "CLDefs.h"
-#include "CLInterfaceManager.h"
+#include "CommandLineArgsManager.h"
+#include "CommandLineParserDefs.h"
+#include "CommandLineInterfaceManager.h"
 #include "Core/Tools/Log.h"
 
 
@@ -21,7 +21,7 @@ namespace Slab::Core {
 
         allOptions.add_options("General")("help", "Print this help.");
 
-        auto interfaces = CLInterfaceManager::getInstance().getInterfaces();
+        auto interfaces = FCommandLineInterfaceManager::getInstance().getInterfaces();
         for (const auto interface: interfaces) {
             BuildOptionsDescription(*interface, allOptions);
             allOptions.add_options();
@@ -29,7 +29,7 @@ namespace Slab::Core {
 
         let result = allOptions.parse(argc, argv);
 
-        CLInterfaceManager::getInstance().feedInterfaces(result);
+        FCommandLineInterfaceManager::getInstance().feedInterfaces(result);
 
         if (result.count("help")) {
             std::cout << allOptions.help();
@@ -39,20 +39,20 @@ namespace Slab::Core {
         Log::Success() << "CLArgsManager finished parsing command line options." << Log::Flush;
     }
 
-    auto CLArgsManager::BuildOptionsDescription(const CLInterface &anInterface, CLOptionsDescription &opts) -> void {
-        auto desc = anInterface.getGeneralDescription();
-        auto name = anInterface.getName() + (desc != "" ? Str(" (") + desc + ")" : "");
+    auto CLArgsManager::BuildOptionsDescription(const FCommandLineInterface &anInterface, CLOptionsDescription &opts) -> void {
+        auto desc = anInterface.GetGeneralDescription();
+        auto name = anInterface.GetName() + (desc != "" ? Str(" (") + desc + ")" : "");
 
         auto group = opts.add_options(name);
 
-        auto paramMap = anInterface.getParameters();
+        auto paramMap = anInterface.GetParameters();
 
         for (const auto p: paramMap)
             try {
-                p->addToCommandLineOptionsGroup(group);
+                p->AddToCommandLineOptionsGroup(group);
             }
             catch (cxxopts::exceptions::option_already_exists &e) {
-                fix same = CLInterfaceManager::getInstance().getParameter(p->getCommandLineArgumentName());
+                fix same = FCommandLineInterfaceManager::getInstance().getParameter(p->getCommandLineArgumentName());
                 Log::Error() << "Couldn't add CLI option '" << p->getFullCommandLineName() << "' (" << p->getDescription()
                              << "): option already exists as '"
                              << same->getFullCommandLineName() << "' (" << same->getDescription() << ")." << Log::Flush;

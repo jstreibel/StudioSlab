@@ -7,44 +7,44 @@
 
 #include "Core/Backend/Backend.h"
 #include "Graphics/Modules/GraphicsModule.h"
-#include "SystemWindow.h"
+#include "PlatformWindow.h"
 
 namespace Slab::Graphics {
 
-    class GraphicBackend : public Core::Backend {
-        void notifyModuleLoaded(const Pointer<Slab::Core::Module> &pointer) override;
+    class GraphicBackend : public Core::FBackend {
+        void NotifyModuleLoaded(const TPointer<Slab::Core::SlabModule> &pointer) override;
 
     protected:
 
         explicit GraphicBackend(const Str &name);
 
-        Vector<Volatile<GraphicsModule>> graphicModules;
-        List<Pointer<SystemWindow>> system_windows;
+        Vector<TVolatile<GraphicsModule>> GraphicModules;
+        TList<TPointer<FPlatformWindow>> SystemWindows;
 
-        virtual void clearModules();
-        void unloadAllModules();
+        virtual void ClearModules();
+        void UnloadAllModules();
 
         virtual
-        Pointer<SystemWindow> CreateSystemWindow(const Str& title) = 0;
+        TPointer<FPlatformWindow> CreatePlatformWindow(const Str& title) = 0;
 
     public:
         ~GraphicBackend() override;
 
-        Pointer<SystemWindow>
+        TPointer<FPlatformWindow>
         NewSystemWindow(const Str& title);
 
-        Pointer<SystemWindow>
+        TPointer<FPlatformWindow>
         GetMainSystemWindow();
 
-        void SetupGUI(const SystemWindow *) const;
+        void SetupGUI(const FPlatformWindow *) const;
 
-        void addGraphicsModule(const Volatile<GraphicsModule> &module);
+        void AddGraphicsModule(const TVolatile<GraphicsModule> &module);
 
-        auto getGraphicsModules() -> const Vector<Volatile<GraphicsModule>> &;
+        auto GetGraphicsModules() -> const Vector<TVolatile<GraphicsModule>> &;
 
-        void terminate() override;
+        void Terminate() override;
 
-        auto isHeadless() const -> bool final;
+        auto IsHeadless() const -> bool final;
     };
 
 }

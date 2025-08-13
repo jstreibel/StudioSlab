@@ -11,9 +11,9 @@ namespace Slab::Models {
     KGNumericConfig::KGNumericConfig(bool do_register)
             : DynamicsNumericConfig(false)
     {
-        Interface->addParameters({xCenter, rdt, dimMode, h});
+        Interface->AddParameters({xCenter, rdt, dimMode, h});
 
-        if(do_register) registerToManager();
+        if(do_register) RegisterToManager();
     }
 
     auto KGNumericConfig::getxMin() const -> floatt { return **xCenter - **L * .5; }
@@ -24,7 +24,7 @@ namespace Slab::Models {
         return **h;
     }
 
-    auto KGNumericConfig::getdt() const -> floatt {
+    auto KGNumericConfig::Getdt() const -> floatt {
         return **rdt * **h;
     }
 
@@ -53,7 +53,7 @@ namespace Slab::Models {
     Str KGNumericConfig::to_string() const {
         const auto SEPARATOR = " ";
 
-        return getInterface()->ToString({"L", "N"}, SEPARATOR);
+        return GetInterface()->ToString({"L", "N"}, SEPARATOR);
     }
 
     auto KGNumericConfig::getr() const -> floatt { return **rdt; }

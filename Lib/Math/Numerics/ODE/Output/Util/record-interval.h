@@ -8,26 +8,26 @@
 namespace Slab::Math {
 
     struct RecordInterval {
-        RecordInterval(const Real beginT, const Real endT, const Real x);
+        RecordInterval(const DevFloat beginT, const DevFloat endT, const DevFloat x);
 
-        Real deltaT() const;
+        DevFloat deltaT() const;
 
-        const Real beginT, endT;
-        const Real x;
+        const DevFloat beginT, endT;
+        const DevFloat x;
 
-        void add(Real f, Real t);
+        void add(DevFloat f, DevFloat t);
 
-        bool contains(const Real T) const;
+        bool contains(const DevFloat T) const;
 
-        const Real &operator()(const Real &t);
+        const DevFloat &operator()(const DevFloat &t);
 
-        const Vector<Real> &getFVals() const;
+        const Vector<DevFloat> &getFVals() const;
 
-        const Vector<Real> &getTVals() const;
+        const Vector<DevFloat> &getTVals() const;
 
     private:
-        Vector<Real> fVals;
-        Vector<Real> tVals;
+        Vector<DevFloat> fVals;
+        Vector<DevFloat> tVals;
 
     public:
         typedef Vector<RecordInterval>::iterator Iterator;

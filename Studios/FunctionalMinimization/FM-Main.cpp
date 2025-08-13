@@ -21,10 +21,10 @@
 
 using Themes = Slab::Graphics::PlotThemeManager;
 
-void setup_viewer(Slab::Pointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
+void setup_viewer(Slab::TPointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
     Slab::Core::StartBackend("GLFW");
 
-    Slab::Pointer<Slab::Math::RtoR::Function> trajectory;
+    Slab::TPointer<Slab::Math::RtoR::Function> trajectory;
     {
         fix N = field->N;
         OUT data = field->getSpace().getHostData();
@@ -43,28 +43,28 @@ void setup_viewer(Slab::Pointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
 
         using namespace Slab;
         using Poly = Math::RtoR::RtoRPolynomial;
-        Vector<Real> coeffs = {(q_0-v_avg*t_0-t_0*t_f), (v_avg + .5*(t_f+t_0)), -1/2.};
+        Vector<DevFloat> coeffs = {(q_0-v_avg*t_0-t_0*t_f), (v_avg + .5*(t_f+t_0)), -1/2.};
         trajectory = New<Poly>(coeffs);
     }
 
-    auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>("Plot");
-    plot_window->setx(1700);
-    plot_window->notifyReshape(1200, 800);
-    Slab::Graphics::Plotter::AddRtoRFunction(plot_window, field,      Themes::GetCurrent()->funcPlotStyles[0], "functional");
-    auto ground_style = Themes::GetCurrent()->funcPlotStyles[1].permuteColors(true);
+    auto plot_window = Slab::New<Slab::Graphics::FPlot2DWindow>("Plot");
+    plot_window->Set_x(1700);
+    plot_window->NotifyReshape(1200, 800);
+    Slab::Graphics::Plotter::AddRtoRFunction(plot_window, field, Themes::GetCurrent()->FuncPlotStyles[0], "functional");
+    auto ground_style = Themes::GetCurrent()->FuncPlotStyles[1].permuteColors(true);
     ground_style.filled = false;
     Slab::Graphics::Plotter::AddRtoRFunction(plot_window, trajectory, ground_style, "ground truth");
 
     auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
-    wm->addSlabWindow(plot_window);
+    wm->AddSlabWindow(plot_window, false);
 
-    Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->addAndOwnEventListener(wm);
+    Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->AddAndOwnEventListener(wm);
 }
 
 int run(int argc, const char **argv) {
     constexpr unsigned max_steps = -1;
     auto mc_recipe = Slab::New<Slab::Math::RtoRActionMetropolisRecipe>(max_steps);
-    Slab::Core::RegisterCLInterface(mc_recipe->getInterface());
+    Slab::Core::RegisterCLInterface(mc_recipe->GetInterface());
 
     auto prog = Slab::New<Slab::Math::MathApp> (argc, argv, mc_recipe);
 

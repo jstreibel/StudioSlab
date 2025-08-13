@@ -42,6 +42,7 @@ Lib/Docs/
 
 cmake-build-debug
 cmake-build-release
+cmake-build-*
 
 *__pycache__*
 

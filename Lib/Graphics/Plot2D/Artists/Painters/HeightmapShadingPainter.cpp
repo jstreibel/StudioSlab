@@ -19,7 +19,7 @@ namespace Slab::Graphics {
         setTexelSize(dr);
     }
 
-    void HeightmapShadingPainter::setFieldDataTexture(Pointer<OpenGL::Texture2D_Real> pointer) {
+    void HeightmapShadingPainter::setFieldDataTexture(TPointer<OpenGL::Texture2D_Real> pointer) {
         auto dx = 1./pointer->getWidth();
         auto dy = 1./pointer->getHeight();
 
@@ -28,14 +28,14 @@ namespace Slab::Graphics {
         R2toRPainter::setFieldDataTexture(pointer);
     }
 
-    void HeightmapShadingPainter::setScale(Real s) {
+    void HeightmapShadingPainter::setScale(DevFloat s) {
         scale = (float)s;
-        setUniform("scale", scale);
+        SetUniform("scale", scale);
     }
 
     void HeightmapShadingPainter::setTexelSize(const Math::Real2D& size) {
         dr = size;
-        setUniform("dr", dr);
+        SetUniform("dr", dr);
     }
 
     void HeightmapShadingPainter::drawGUI() {
@@ -60,29 +60,29 @@ namespace Slab::Graphics {
         Painter::drawGUI();
     }
 
-    void HeightmapShadingPainter::setLightZenith(Real zenith) {
+    void HeightmapShadingPainter::setLightZenith(DevFloat zenith) {
         light_zenith_rad = (float)zenith;
-        setUniform("light_zenith", light_zenith_rad);
+        SetUniform("light_zenith", light_zenith_rad);
     }
 
-    void HeightmapShadingPainter::setLightAzimuth(Real azimuth) {
+    void HeightmapShadingPainter::setLightAzimuth(DevFloat azimuth) {
         light_azimuth_rad = (float)azimuth;
-        setUniform("light_azimuth", light_azimuth_rad);
+        SetUniform("light_azimuth", light_azimuth_rad);
     }
 
-    void HeightmapShadingPainter::setLightIntensity(Real intensity) {
+    void HeightmapShadingPainter::setLightIntensity(DevFloat intensity) {
         light_intensity = (float)intensity;
-        setUniform("light_intensity", light_intensity);
+        SetUniform("light_intensity", light_intensity);
     }
 
     void HeightmapShadingPainter::setMode(int m) {
         mode = m;
-        setUniform("mode", mode);
+        SetUniform("mode", mode);
     }
 
-    void HeightmapShadingPainter::setSigma(Real s) {
+    void HeightmapShadingPainter::setSigma(DevFloat s) {
         sigma = s;
-        setUniform("sigma", sigma);
+        SetUniform("sigma", sigma);
     }
 
 } // Slab::Graphics

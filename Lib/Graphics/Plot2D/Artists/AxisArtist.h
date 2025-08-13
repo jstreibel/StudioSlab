@@ -12,26 +12,26 @@ namespace Slab::Graphics {
 
     using namespace Math;
 
-    class AxisArtist : public Artist {
+    class FAxisArtist : public FArtist {
     public:
         struct Tick {
-            Real mark;
+            DevFloat mark;
             Str label;
         };
 
         typedef Vector<Tick> Ticks;
 
     private:
-        void computeTicks(const Plot2DWindow &graph);
+        void computeTicks(const FPlot2DWindow &graph);
 
-        void drawXAxis(const Plot2DWindow &graph) const;
-        void drawYAxis(const Plot2DWindow &graph) const;
+        void drawXAxis(const FPlot2DWindow &graph) const;
+        void drawYAxis(const FPlot2DWindow &graph) const;
 
         int y_label_xoffset_in_pixels = 10;
         int y_label_yoffset_in_pixels = 0;
 
         Unit hUnit, vUnit;
-        Real xSpacing=1, ySpacing=1;
+        DevFloat xSpacing=1, ySpacing=1;
         float x_spacing_multiplier = 4.0;
         float y_spacing_multiplier = 2.0;
 
@@ -46,19 +46,19 @@ namespace Slab::Graphics {
         Ticks vTicks;
 
     public:
-        AxisArtist();
-        explicit AxisArtist(const Unit& horizontal, const Unit& vertical  );
+        FAxisArtist();
+        explicit FAxisArtist(const Unit& horizontal, const Unit& vertical  );
 
-        bool draw(const Plot2DWindow &) override;
+        bool Draw(const FPlot2DWindow &) override;
 
-        bool hasGUI() override;
+        bool HasGUI() override;
 
-        void drawGUI() override;
+        void DrawGUI() override;
 
         void setHorizontalUnit(const Unit&);
         auto getHorizontalUnit() const -> const Unit&;
 
-        void setHorizontalAxisLabel(const Str &label);
+        void SetHorizontalAxisLabel(const Str &label);
         auto getHorizontalAxisLabel() const -> Str;
 
         void setVerticalUnit(const Unit&);

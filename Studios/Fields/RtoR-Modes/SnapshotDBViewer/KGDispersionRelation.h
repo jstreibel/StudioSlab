@@ -15,7 +15,7 @@ namespace Slab::Math::RtoR {
     };
 
     class KGDispersionRelation : public RtoR::Function {
-        Real m²;
+        DevFloat m²;
     public:
         KGDispersionRelationMode mode;
 
@@ -24,23 +24,23 @@ namespace Slab::Math::RtoR {
             Negative
         } branch;
 
-        KGDispersionRelation(Real mass, KGDispersionRelationMode, Branch branch=Positive);
+        KGDispersionRelation(DevFloat mass, KGDispersionRelationMode, Branch branch=Positive);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
-        auto domainContainsPoint(Real x) const -> bool override;
+        auto domainContainsPoint(DevFloat x) const -> bool override;
     };
 
     class KGDispersionRelation_high_k : public RtoR::Function {
-        Real m²;
+        DevFloat m²;
     public:
         KGDispersionRelationMode mode;
 
-        explicit KGDispersionRelation_high_k(Real mass, KGDispersionRelationMode);
+        explicit KGDispersionRelation_high_k(DevFloat mass, KGDispersionRelationMode);
 
-        Real operator()(Real k) const override;
+        DevFloat operator()(DevFloat k) const override;
 
-        auto domainContainsPoint(Real k) const -> bool override;
+        auto domainContainsPoint(DevFloat k) const -> bool override;
     };
 
 }

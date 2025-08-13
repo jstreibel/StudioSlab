@@ -9,7 +9,7 @@
 
 namespace Slab::Math {
 
-    RtoR::NoiseFunction::NoiseFunction(Real min, Real max) : min(min), max(max) {
+    RtoR::NoiseFunction::NoiseFunction(DevFloat min, DevFloat max) : min(min), max(max) {
         std::default_random_engine randomEngine(1);
 
         randomEngine();
@@ -17,7 +17,7 @@ namespace Slab::Math {
         throw "Noise function not implemented.";
     }
 
-    Real RtoR::NoiseFunction::operator()(Real x) const {
+    DevFloat RtoR::NoiseFunction::operator()(DevFloat x) const {
         return 0;
     }
 

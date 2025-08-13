@@ -17,27 +17,27 @@ namespace Slab::Models::KGRtoR {
     using namespace Slab::Math;
 
     class SimHistory : public Socket {
-        R2toR::NumericFunction_ptr data;
+        R2toR::FNumericFunction_ptr data;
         IntVector timesteps;
 
-        virtual auto transfer(const OutputPacket &packet, ValarrayWrapper <Real> &dataOut) -> void;
+        virtual auto Transfer(const OutputPacket &packet, ValarrayWrapper <DevFloat> &dataOut) -> void;
 
     protected:
-        const Count max_steps;
-        const Real max_t;
+        const CountType max_steps;
+        const DevFloat max_t;
         const int N_t, N_x;
 
         auto handleOutput(const OutputPacket &packet) -> void override;
 
     public:
-        SimHistory(Count max_steps, Real t_max,
+        SimHistory(CountType max_steps, DevFloat t_max,
                    Resolution N_x,
                    Resolution N_t,
-                   Real xMin,
-                   Real L,
+                   DevFloat xMin,
+                   DevFloat L,
                    const Str &name = "SimulationHistory");
 
-        auto getData() const -> const R2toR::NumericFunction &;
+        auto getData() const -> const R2toR::FNumericFunction &;
 
     };
 

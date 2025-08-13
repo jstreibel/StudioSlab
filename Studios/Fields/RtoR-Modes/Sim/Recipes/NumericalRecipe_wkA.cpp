@@ -24,7 +24,7 @@ namespace Modes {
     NumericalRecipe_wkA::NumericalRecipe_wkA(bool doRegister)
     : KGRtoR::KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
-        Interface->addParameters({&BCSelection, &omega, &k, &A, &driving_force});
+        Interface->AddParameters({&BCSelection, &omega, &k, &A, &driving_force});
 
         if(doRegister) RegisterCLInterface(Interface);
     }
@@ -32,11 +32,11 @@ namespace Modes {
     Math::Base::BoundaryConditions_ptr NumericalRecipe_wkA::GetBoundary() {
         auto prototype = KGRtoR::KGRtoRBuilder::NewFieldState();
 
-        fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->getL();
-        fix A_0 = this->A.getValue();
+        fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->GetL();
+        fix A_0 = this->A.GetValue();
         fix dk = 2*M_PI/L;
-        fix k_0 = dk*this->k.getValue();
-        fix j = this->omega.getValue();
+        fix k_0 = dk*this->k.GetValue();
+        fix j = this->omega.GetValue();
         fix ω = dk*j;
 
         if(*BCSelection == 0) return New <Modes::SignalBC> (prototype, A_0,  ω);
@@ -65,11 +65,11 @@ namespace Modes {
     }
 
     void NumericalRecipe_wkA::NotifyCLArgsSetupFinished() {
-        CLInterfaceOwner::NotifyCLArgsSetupFinished();
+        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
         auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
 
-        fix L = config->getL();
+        fix L = config->GetL();
         fix n = config->getn();
         fix a = config->getr();
 
@@ -85,20 +85,20 @@ namespace Modes {
         }
 
         fix dk = 2*M_PI/L;
-        fix k_0 = dk*this->k.getValue();
+        fix k_0 = dk*this->k.GetValue();
         if(*omega < 0) {
             fix m2 = *massSqr;
             fix ohm_temp = sqrt(k_0*k_0 + m2);
-            omega.setValue(ohm_temp/dk);
+            omega.SetValue(ohm_temp/dk);
 
             Log::Info() << "omega_n parameter is negative. Using KG dispersion relation for its value." << Log::Flush;
         }
-        fix ω = dk*this->omega.getValue();
+        fix ω = dk*this->omega.GetValue();
         fix period = 2*Constants::pi / ω;
         fix res = (period/L)*n;
 
-        Log::Info() << "Setting wavenumber κL/2π=" << this->k.getValue() << " ==> κ=" << k << Log::Flush;
-        Log::Info() << "Setting ang. freq  ωL/2π=" << this->omega.getValue() << " ==> ω=" << ω << Log::Flush;
+        Log::Info() << "Setting wavenumber κL/2π=" << this->k.GetValue() << " ==> κ=" << k << Log::Flush;
+        Log::Info() << "Setting ang. freq  ωL/2π=" << this->omega.GetValue() << " ==> ω=" << ω << Log::Flush;
         Log::Info() << "Relation Aκ²=" << A*k*k << Log::Flush;
         Log::Info() << "Setting wavenumber k=2π/λ = " << k << Log::Flush;
         Log::Info() << "Computed amplitude is A=ι/k² = " << A << Log::Flush;
@@ -134,7 +134,7 @@ namespace Modes {
         return KGRtoR::KGRtoRBuilder::SuggestFileName() + SEPARATOR + StringRenderedParams;
     }
 
-    Pointer<Base::FunctionT<Real, Real>> NumericalRecipe_wkA::GetNonHomogenousTerm() {
+    TPointer<Base::FunctionT<DevFloat, DevFloat>> NumericalRecipe_wkA::GetNonHomogenousTerm() {
         if(*driving_force && squareWave == nullptr) squareWave = Slab::New<Modes::SquareWave>(1);
 
         return squareWave;

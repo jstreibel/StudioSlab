@@ -1,8 +1,8 @@
 set (THIRDPARTY_LIB_BASE_NAME ${STUDIOSLAB_BASE_LIB_NAME}-3rdParty)
 
-message(STATUS "*** freetype-gl [start] ***")
+message("*** freetype-gl [start] ***")
 add_subdirectory(freetype-gl)
-message(STATUS "*** freetype-gl [end] ***")
+message("*** freetype-gl [end] ***")
 
 # ImGui node editor examples:
 #add_subdirectory(imgui-node-editor/examples)

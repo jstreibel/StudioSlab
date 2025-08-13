@@ -15,9 +15,9 @@
 
 namespace Slab::Graphics {
 
-    class Scene3DWindow : public SlabWindow {
-        static Count WindowCount;
-        Count id;
+    class Scene3DWindow : public FSlabWindow {
+        static CountType WindowCount;
+        CountType id;
 
         Str title = "No title";
 
@@ -35,13 +35,13 @@ namespace Slab::Graphics {
     public:
         Scene3DWindow();
 
-        void draw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
         auto getCamera() const -> const Camera&;
 
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
-        bool notifyMouseWheel(double dx, double dy) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyMouseWheel(double dx, double dy) override;
 
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
         bool addActor(const Actor_ptr& actor);
     };

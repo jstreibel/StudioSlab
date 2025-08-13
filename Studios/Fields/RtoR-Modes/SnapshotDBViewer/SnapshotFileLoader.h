@@ -15,7 +15,7 @@ namespace Modes {
     namespace DatabaseViewer { class DBParser; }
 
     struct SnapshotData {
-        Pointer<Math::RtoR::NumericFunction_CPU> data;
+        TPointer<Math::RtoR::NumericFunction_CPU> data;
         PythonUtils::PyDict metaData;
         Str filename;
         enum SnapshotDataType {
@@ -30,7 +30,7 @@ namespace Modes {
         SnapshotData snapshotData;
 
         static auto ReadPyDict(const Str& filePath) -> PythonUtils::PyDict;
-        static auto ReadData(const Str& filePath) -> RealVector;
+        static auto ReadData(const Str& filePath) -> FRealVector;
 
     public:
         explicit SnapshotFileLoader(const Str &filename);

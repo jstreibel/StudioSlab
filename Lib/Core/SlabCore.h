@@ -11,21 +11,21 @@ namespace Slab::Core {
     void Startup();
     void Finish();
 
-    void StartBackend(const BackendName&);
-    Pointer<Backend> GetBackend();
+    void StartBackend(const FBackendIdentifier&);
+    TPointer<FBackend> GetBackend();
 
-    void LoadModule(const ModuleName&);
-    Pointer<Module> GetModule(const ModuleName&);
+    void LoadModule(const FModuleIdentifier&);
+    TPointer<SlabModule> GetModule(const FModuleIdentifier&);
 
     template <typename ModuleType>
-    Pointer<ModuleType>
-    GetModule(const ModuleName& name) {
+    TPointer<ModuleType>
+    GetModule(const FModuleIdentifier& name) {
         auto module_raw = GetModule(name);
 
         return DynamicPointerCast<ModuleType>(module_raw);
     }
 
-    void RegisterCLInterface(const Pointer<CLInterface>&);
+    void RegisterCLInterface(const TPointer<FCommandLineInterface>&);
     void ParseCLArgs(int, const char**);
 }
 

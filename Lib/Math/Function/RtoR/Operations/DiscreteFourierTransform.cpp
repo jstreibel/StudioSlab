@@ -42,8 +42,8 @@ namespace Slab::Math::RtoR {
 
             fix ω = Δk * n;
 
-            result.re->addPoint({ω, A_Re});
-            result.im->addPoint({ω, A_Im});
+            result.re->AddPoint({ω, A_Re});
+            result.im->AddPoint({ω, A_Im});
         }
 
 
@@ -56,9 +56,9 @@ namespace Slab::Math::RtoR {
         return result;
     }
 
-    DFTResult DFT::Compute(const Function &f, NumberOfModes N, Real xMin, Real xMax) {
+    DFTResult DFT::Compute(const Function &f, NumberOfModes N, DevFloat xMin, DevFloat xMax) {
         fix L = xMax - xMin;
-        fix dx = L / (Real) N;
+        fix dx = L / (DevFloat) N;
 
         auto in = (double *) fftw_malloc(sizeof(double) * N);
 
@@ -84,8 +84,8 @@ namespace Slab::Math::RtoR {
 
             fix ω = Δk * n;
 
-            result.re->addPoint({ω, A_Re});
-            result.im->addPoint({ω, A_Im});
+            result.re->AddPoint({ω, A_Re});
+            result.im->AddPoint({ω, A_Im});
         }
 
         fftw_destroy_plan(p);
@@ -95,7 +95,7 @@ namespace Slab::Math::RtoR {
         return result;
     }
 
-    Pointer<RtoR::NumericFunction> DFT::Magnitudes(const DFTResult &dftResult) {
+    TPointer<RtoR::NumericFunction> DFT::Magnitudes(const DFTResult &dftResult) {
         auto mags = dftResult.getMagnitudes()->getPoints();
 
         auto Δk = mags.back().x;

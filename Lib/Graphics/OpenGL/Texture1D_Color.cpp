@@ -28,7 +28,7 @@ namespace Slab::Graphics::OpenGL {
 
             return;
         }
-        bind();
+        Bind();
 
         setAntiAliasOn();
 
@@ -36,11 +36,11 @@ namespace Slab::Graphics::OpenGL {
 
         fix sizeMB = size*4/(1024*1024.);
         glTexImage1D(Texture_1D, 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-        if(!checkGLErrors("after trying to reserve texture in gpu"))
+        if(!CheckGLErrors("after trying to reserve texture in gpu"))
             Log::Note() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << Log::Flush;
     }
 
-    bool Texture1D_Color::setColor(int i, Color color) {
+    bool Texture1D_Color::setColor(int i, FColor color) {
         if(data == nullptr) return false;
 
         fix index = i*4;
@@ -54,10 +54,10 @@ namespace Slab::Graphics::OpenGL {
         return true;
     }
 
-    bool Texture1D_Color::upload(UInt start, Count n) {
+    bool Texture1D_Color::upload(UInt start, CountType n) {
         if(data == nullptr) return false;
 
-        bind();
+        Bind();
 
         if(start==0 && n==0) {
             glTexImage1D(getTarget(), 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -82,7 +82,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void Texture1D_Color::setAntiAliasOn() {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -91,7 +91,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void Texture1D_Color::setAntiAliasOff() {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -104,7 +104,7 @@ namespace Slab::Graphics::OpenGL {
     void Texture1D_Color::set_sPeriodicOn() const { setWrap(Repeat); }
 
     void Texture1D_Color::setWrap(OpenGL::WrapMode mode) const {
-        bind();
+        Bind();
 
         glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, mode);
     }

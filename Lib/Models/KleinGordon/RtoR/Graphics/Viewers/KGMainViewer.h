@@ -11,21 +11,21 @@
 namespace Slab::Models::KGRtoR {
 
     class KGMainViewer : public Graphics::MainViewer {
-        Slab::Vector<Slab::Pointer<KGViewer>> kg_viewers;
+        Slab::Vector<Slab::TPointer<KGViewer>> kg_viewers;
 
-        Pointer<R2toR::NumericFunction> ddtbase_function;
+        TPointer<R2toR::FNumericFunction> ddtbase_function;
 
     protected:
         bool setCurrentViewer(Slab::Index i) override;
-        Slab::Pointer<KGViewer>
+        Slab::TPointer<KGViewer>
         getCurrentKGViewer();
 
     public:
-        void addKGViewer(const Slab::Pointer<Slab::Models::KGRtoR::KGViewer>&);
+        void addKGViewer(const Slab::TPointer<Slab::Models::KGRtoR::KGViewer>&);
 
         void
-        setFunctionTimeDerivative(Pointer<R2toR::NumericFunction>);
-        virtual Pointer<R2toR::NumericFunction>
+        setFunctionTimeDerivative(TPointer<R2toR::FNumericFunction>);
+        virtual TPointer<R2toR::FNumericFunction>
         getFunctionTimeDerivative();
     };
 

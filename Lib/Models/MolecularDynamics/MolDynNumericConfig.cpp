@@ -8,9 +8,9 @@ namespace Slab::Models::MolecularDynamics {
     MolDynNumericConfig::MolDynNumericConfig(bool do_register)
     : DynamicsNumericConfig(false)
     {
-        Interface->addParameters({n});
+        Interface->AddParameters({n});
 
-        if(do_register) registerToManager();
+        if(do_register) RegisterToManager();
     }
 
     UInt MolDynNumericConfig::getn() const {
@@ -22,7 +22,7 @@ namespace Slab::Models::MolecularDynamics {
         return Slab::Str();
     }
 
-    auto MolDynNumericConfig::getdt() const -> Real {
+    auto MolDynNumericConfig::getdt() const -> DevFloat {
         return **t / **n;
     }
 

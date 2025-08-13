@@ -16,11 +16,11 @@ namespace Slab::Graphics {
     using namespace Math;
 
     class R2toRFunctionActor : public Actor {
-        R2toR::NumericFunction_constptr func;
+        R2toR::FNumericFunction_constptr func;
 
         struct GridMetadata {
-            static auto FromNumericFunction(const R2toR::NumericFunction_constptr&) -> GridMetadata;
-            auto generateXYPlane(OpenGL::VertexBuffer &buffer) const -> void;
+            static auto FromNumericFunction(const R2toR::FNumericFunction_constptr&) -> GridMetadata;
+            auto generateXYPlane(OpenGL::FVertexBuffer &buffer) const -> void;
             int gridN = 64;
             int gridM = 64;
             float xMinSpace = -8.f;
@@ -29,14 +29,14 @@ namespace Slab::Graphics {
             float hSpace = 2.f*(float)fabsf(yMinSpace);
         } gridMetadata;
 
-        OpenGL::Shader program;
-        OpenGL::VertexBuffer vertexBuffer;
+        OpenGL::FShader program;
+        OpenGL::FVertexBuffer vertexBuffer;
         OpenGL::Texture2D_Real texture;
 
         void rebuildTextureData();
 
     public:
-        explicit R2toRFunctionActor(R2toR::NumericFunction_constptr function);
+        explicit R2toRFunctionActor(R2toR::FNumericFunction_constptr function);
 
         void draw(const Scene3DWindow &graph3D) override;
 
@@ -44,7 +44,7 @@ namespace Slab::Graphics {
 
         void drawGUI() override;
 
-        void setAmbientLight(Color color);
+        void setAmbientLight(FColor color);
         void setGridSubdivs(int n);
     };
 

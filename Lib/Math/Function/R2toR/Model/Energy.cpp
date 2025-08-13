@@ -8,9 +8,9 @@
 
 namespace Slab::Math::R2toR {
 
-    Real KleinGordon::Energy::operator[](const R2toR::EquationState &function) const {
-        const auto &phi      = static_cast<R2toR::NumericFunction&> (function.getPhi());
-        const auto &dphidt   = static_cast<R2toR::NumericFunction&> (function.getDPhiDt());
+    DevFloat KleinGordon::Energy::operator[](const R2toR::EquationState &function) const {
+        const auto &phi      = static_cast<R2toR::FNumericFunction&> (function.getPhi());
+        const auto &dphidt   = static_cast<R2toR::FNumericFunction&> (function.getDPhiDt());
         const auto &phiSpace = phi.getSpace();
 
         auto h = phiSpace.getMetaData().geth(0); // TODO use both hx and hy here
@@ -44,9 +44,9 @@ namespace Slab::Math::R2toR {
         return K + D + V;
     }
 
-    Real KleinGordon::Energy::computeRadial_method1(const R2toR::EquationState &function, Real upToRadius) {
-        const auto &phi = static_cast<R2toR::NumericFunction&> (function.getPhi());
-        const auto &dphidt = static_cast<R2toR::NumericFunction&> (function.getDPhiDt());
+    DevFloat KleinGordon::Energy::computeRadial_method1(const R2toR::EquationState &function, DevFloat upToRadius) {
+        const auto &phi = static_cast<R2toR::FNumericFunction&> (function.getPhi());
+        const auto &dphidt = static_cast<R2toR::FNumericFunction&> (function.getDPhiDt());
         const auto &phiSpace = phi.getSpace();
 
         auto h = phiSpace.getMetaData().geth(0); // TODO use both hx and hy here
@@ -90,9 +90,9 @@ namespace Slab::Math::R2toR {
         return K + D + V;
     }
 
-    Real KleinGordon::Energy::computeRadial_method2(const R2toR::EquationState &function, Real upToRadius) {
-        const auto &phi = static_cast<R2toR::NumericFunction&> (function.getPhi());
-        const auto &dphidt = static_cast<R2toR::NumericFunction&> (function.getDPhiDt());
+    DevFloat KleinGordon::Energy::computeRadial_method2(const R2toR::EquationState &function, DevFloat upToRadius) {
+        const auto &phi = static_cast<R2toR::FNumericFunction&> (function.getPhi());
+        const auto &dphidt = static_cast<R2toR::FNumericFunction&> (function.getDPhiDt());
 
         assert(phi.getN() == phi.getM());
 

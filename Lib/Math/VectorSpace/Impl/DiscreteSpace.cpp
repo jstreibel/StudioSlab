@@ -25,7 +25,7 @@ namespace Slab::Math {
 
         UInt maxDim = 0;
         for (auto N: dim.getN()) maxDim = std::max(maxDim, N);
-        Real r = Real(maxResolution) / Real(maxDim);
+        DevFloat r = DevFloat(maxResolution) / DevFloat(maxDim);
 
         UIntArray N(dim.getNDim());
         RealArray h(dim.getNDim());

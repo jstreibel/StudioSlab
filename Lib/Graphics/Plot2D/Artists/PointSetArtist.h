@@ -12,23 +12,23 @@
 
 namespace Slab::Graphics {
 
-    class PointSetArtist : public Artist {
+    class PointSetArtist : public FArtist {
         Math::PointSet_ptr pointSet;
         PlotStyle plotStyle;
 
     public:
         PointSetArtist(Math::PointSet_ptr, PlotStyle);
 
-        auto draw(const Plot2DWindow &) -> bool override;
+        auto Draw(const FPlot2DWindow &) -> bool override;
 
-        bool hasGUI() override;
+        bool HasGUI() override;
 
-        void drawGUI() override;
+        void DrawGUI() override;
 
         auto setPointSet(Math::PointSet_ptr) -> void;
         auto setStyle(PlotStyle style) -> void;
 
-        auto getRegion() -> const RectR & override;
+        auto GetRegion() -> const RectR & override;
     };
 
     DefinePointers(PointSetArtist)

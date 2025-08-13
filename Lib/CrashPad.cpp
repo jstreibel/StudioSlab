@@ -7,7 +7,7 @@
 
 #include "Utils/Exception.h"
 #include "Utils/STDLibInclude.h"
-#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
 
 #include "3rdParty/cxxopts.hpp"
 
@@ -68,7 +68,7 @@ namespace Slab::SafetyNet {
 #endif
     }
 
-    int Jump(Application& app) {
+    int Jump(FApplication& app) {
 #if defined(RELEASE_COMPILE) || defined(WITH_STACK_TRACE)
         try
 #endif

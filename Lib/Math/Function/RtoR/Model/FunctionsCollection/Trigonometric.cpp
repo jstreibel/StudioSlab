@@ -5,9 +5,9 @@
 #include "Trigonometric.h"
 
 namespace Slab::Math::RtoR {
-    Sine::Sine(Real a, Real k) : FunctionT(nullptr, false), A(a), k(k) {}
+    Sine::Sine(DevFloat a, DevFloat k) : FunctionT(nullptr, false), A(a), k(k) {}
 
-    Real Sine::operator()(Real x) const {
+    DevFloat Sine::operator()(DevFloat x) const {
         return A*sin(k*x);
     }
 
@@ -23,9 +23,9 @@ namespace Slab::Math::RtoR {
 
 
 
-    Cosine::Cosine(Real a, Real k) : FunctionT(nullptr, false), A(a), k(k) {}
+    Cosine::Cosine(DevFloat a, DevFloat k) : FunctionT(nullptr, false), A(a), k(k) {}
 
-    Real Cosine::operator()(Real x) const {
+    DevFloat Cosine::operator()(DevFloat x) const {
         return A*cos(k*x);
     }
 

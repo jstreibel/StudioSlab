@@ -29,7 +29,7 @@ namespace Slab::Models::KGRtoR {
 
     class SomeCurve : public RtoR2::ParametricCurve {
     public:
-        Real2D operator()(Real t) const override {
+        Real2D operator()(DevFloat t) const override {
             fix Δkₓ = 2*M_PI/L1 * N;
             fix Δkₜ = 2*M_PI/L2 * M;
 
@@ -54,19 +54,19 @@ namespace Slab::Models::KGRtoR {
         }
     };
 
-    R2toR::NumericFunction_ptr Make_FFTW_TestFunc(int n_modes=150){
+    R2toR::FNumericFunction_ptr Make_FFTW_TestFunc(int n_modes=150){
 
         SomeCurve someCurve;
 
         for(int i=0; i<N; ++i){
             for(int j=0; j<M; ++j) {
-                fix x = L1 * i / (Real) N - xCenter;
-                fix y = L2 * j / (Real) M - yCenter;
+                fix x = L1 * i / (DevFloat) N - xCenter;
+                fix y = L2 * j / (DevFloat) M - yCenter;
                 fix r = sqrt(x * x + y * y);
 
-                Real val=0.0;
+                DevFloat val=0.0;
                 for (int n = 1; n <= n_modes; ++n) {
-                    fix t = (n-1)/(Real)n_modes;
+                    fix t = (n-1)/(DevFloat)n_modes;
 
                     auto k = someCurve(t);
                     fix k1 = k.x;
@@ -79,36 +79,36 @@ namespace Slab::Models::KGRtoR {
             }
         }
 
-        return Slab::Pointer<R2toR::NumericFunction>{func};
+        return Slab::TPointer<R2toR::FNumericFunction>{func};
     }
 
-    CorrelationsPanel::CorrelationsPanel(const Pointer<KGNumericConfig> &params, GUIWindow &guiWindow, KGEnergy &hamiltonian)
-    : RtoRPanel(params, guiWindow, hamiltonian,
+    CorrelationsPanel::CorrelationsPanel(const TPointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian)
+    : FRtoRPanel(params, guiWindow, hamiltonian,
                 "Correlations",
                 "panel for computing and visualizing correlations over simulation history data")
-    , DFT2DGraph("Spacetime Fourier transform")
-    , correlationGraph("Two-point correlation")
+    , DFT2DGraph("Spacetime Fourier transform", guiWindow.GetGUIWindowContext())
+    , correlationGraph("Two-point correlation", guiWindow.GetGUIWindowContext())
     {
 
-        ftAmplitudesArtist->setLabel("|ℱₜₓ[ϕ](ω,k)|");
-        ftPhasesArtist->setLabel(   "arg{ℱₜₓ[ϕ](ω,k)}");
-        ftRealPartsArtist->setLabel("ℜ{ℱₜₓ[ϕ](ω,k)}");
-        ftImagPartsArtist->setLabel("ℑ{ℱₜₓ[ϕ](ω,k)}");
+        ftAmplitudesArtist->SetLabel("|ℱₜₓ[ϕ](ω,k)|");
+        ftPhasesArtist->SetLabel(   "arg{ℱₜₓ[ϕ](ω,k)}");
+        ftRealPartsArtist->SetLabel("ℜ{ℱₜₓ[ϕ](ω,k)}");
+        ftImagPartsArtist->SetLabel("ℑ{ℱₜₓ[ϕ](ω,k)}");
 
-        DFT2DGraph.addArtist(ftAmplitudesArtist);
-        DFT2DGraph.addArtist(ftPhasesArtist);
-        DFT2DGraph.addArtist(ftRealPartsArtist);
-        DFT2DGraph.addArtist(ftImagPartsArtist);
+        DFT2DGraph.AddArtist(ftAmplitudesArtist);
+        DFT2DGraph.AddArtist(ftPhasesArtist);
+        DFT2DGraph.AddArtist(ftRealPartsArtist);
+        DFT2DGraph.AddArtist(ftImagPartsArtist);
 
-        DFT2DGraph.getAxisArtist().setHorizontalAxisLabel("k");
-        DFT2DGraph.getAxisArtist().setVerticalAxisLabel("ω");
+        DFT2DGraph.GetAxisArtist().SetHorizontalAxisLabel("k");
+        DFT2DGraph.GetAxisArtist().setVerticalAxisLabel("ω");
 
-        correlationGraph.addArtist(twoPointCorrArtist);
-        correlationGraph.getAxisArtist().setHorizontalAxisLabel("x");
-        correlationGraph.getAxisArtist().setVerticalAxisLabel("t");
+        correlationGraph.AddArtist(twoPointCorrArtist);
+        correlationGraph.GetAxisArtist().SetHorizontalAxisLabel("x");
+        correlationGraph.GetAxisArtist().setVerticalAxisLabel("t");
     }
 
-    void CorrelationsPanel::draw() {
+    void CorrelationsPanel::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         guiWindow.AddExternalDraw([this]() {
             if (ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")) {
                 static auto discardRedundant = false;
@@ -121,18 +121,18 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::draw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void CorrelationsPanel::setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
+    void CorrelationsPanel::SetSimulationHistory(R2toR::FNumericFunction_constptr simulationHistory,
                                                  const R2toRFunctionArtist_ptr &simHistoryArtist) {
-        RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
+        FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryArtist);
 
-        auto simulationHistoryGraph = Slab::New<Plot2DWindow>("Simulation history");
-        simulationHistoryGraph->addArtist(simulationHistoryArtist);
-        addWindow(simulationHistoryGraph);
-        addWindow(Slab::Naked(correlationGraph));
-        addWindow(Slab::Naked(DFT2DGraph), true);
+        auto simulationHistoryGraph = Slab::New<FPlot2DWindow>("Simulation history", guiWindow.GetGUIWindowContext());
+        simulationHistoryGraph->AddArtist(simulationHistoryArtist);
+        AddWindow(simulationHistoryGraph);
+        AddWindow(Slab::Naked(correlationGraph));
+        AddWindow(Slab::Naked(DFT2DGraph), true);
     }
 
     void CorrelationsPanel::computeAll(bool discardRedundantModes) {
@@ -173,7 +173,7 @@ namespace Slab::Models::KGRtoR {
                                                   R2toR::R2toRDFT::Auto, R2toR::R2toRDFT::Mangle);
 
         twoPointCorrArtist->setFunction(Math::Convert(invPowDFT, Math::RealPart));
-        twoPointCorrArtist->setLabel("ℱ⁻¹[P], P≡|ℱ|²");
+        twoPointCorrArtist->SetLabel("ℱ⁻¹[P], P≡|ℱ|²");
     }
 
 

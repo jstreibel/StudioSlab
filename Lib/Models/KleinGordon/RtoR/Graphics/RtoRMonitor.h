@@ -24,7 +24,7 @@ namespace Slab::Graphics {
 }
 
 namespace Slab::Math::R2toR {
-    class NumericFunction;
+    class FNumericFunction;
 }
 
 namespace Slab::Models::KGRtoR {
@@ -32,18 +32,18 @@ namespace Slab::Models::KGRtoR {
 
     class Monitor : public Graphics::BaseMonitor {
     protected:
-        Vector<RtoRPanel_ptr> dataViews;
-        RtoRPanel_ptr currentDataView;
+        Vector<FRtoRPanel_ptr> dataViews;
+        TPointer<FRtoRPanel> currentDataView;
 
-        R2toR::NumericFunction_constptr simulationHistory;
-        Pointer<Graphics::Plot2DWindow> fullHistoryGraph = Slab::New<Graphics::Plot2DWindow>("Full field history");
-        Graphics::HistoryArtist_ptr fullHistoryArtist = Slab::New<Graphics::HistoryArtist>();
+        TPointer<const R2toR::FNumericFunction> simulationHistory;
+        TPointer<FPlot2DWindow> fullHistoryGraph;
+        HistoryArtist_ptr fullHistoryArtist = Slab::New<HistoryArtist>();
 
-        R2toR::NumericFunction_constptr spaceFTHistory;
-        Pointer<Graphics::Plot2DWindow> fullSFTHistoryGraph = Slab::New<Graphics::Plot2DWindow>("Full space FT history");
-        Graphics::HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<Graphics::HistoryArtist>();
+        TPointer<const R2toR::FNumericFunction> spaceFTHistory;
+        TPointer<FPlot2DWindow> fullSFTHistoryGraph;
+        HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<HistoryArtist>();
 
-        Slab::Pointer<RtoRHistoryPanel> historyPanel;
+        TPointer<RtoRHistoryPanel> historyPanel;
 
         KGEnergy &hamiltonian;
 
@@ -57,19 +57,20 @@ namespace Slab::Models::KGRtoR {
         void handleOutput(const OutputPacket &outInfo) override;
 
     public:
-        Monitor(const Pointer<KGNumericConfig> &params,
+        Monitor(const TPointer<KGNumericConfig> &params,
                 KGEnergy &hamiltonian,
                 const Str& name = "general graphic monitor");
 
-        void draw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
-        virtual void setSimulationHistory  (const Pointer<const R2toR::NumericFunction> &simulationHistory);
-        virtual void setSpaceFourierHistory(const Pointer<const R2toR::NumericFunction> &sftHistory,
-                                            const DFTDataHistory &dftData);
+        virtual void setSimulationHistory  (const TPointer<const R2toR::FNumericFunction> &simulationHistory);
+        virtual void SetSpaceFourierHistory(const TPointer<const R2toR::FNumericFunction> &sftHistory,
+                                            const FDFTDataHistory &dftData);
 
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
-        void addDataView(const RtoRPanel_ptr&);
+        void addDataView(const TPointer<FRtoRPanel>
+&);
     };
 
 }

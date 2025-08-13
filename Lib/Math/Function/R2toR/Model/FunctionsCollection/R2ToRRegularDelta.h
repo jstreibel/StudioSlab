@@ -10,11 +10,11 @@
 namespace Slab::Math::R2toR {
     struct R2toRRegularDelta : public R2toR::Function {
     private:
-        Real eps, a;
+        DevFloat eps, a;
     public:
-        explicit R2toRRegularDelta(Real epsilon = 0.1, Real a = 1.) : eps(epsilon), a(a) {}
+        explicit R2toRRegularDelta(DevFloat epsilon = 0.1, DevFloat a = 1.) : eps(epsilon), a(a) {}
 
-        Real operator()(Real2D x) const override;
+        DevFloat operator()(Real2D x) const override;
     };
 }
 

@@ -14,12 +14,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 
-
-# Enable modules if supported by the compiler
+# Enable modules and other flags if supported by the compiler
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmodules-ts")
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmodules -Wno-module-import-in-extern-c -Wno-mathematical-notation-identifier-extension")
+	# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmodules -Wmodule-import-in-extern-c -Wmathematical-notation-identifier-extension")
+	add_compile_options(-Wno-mathematical-notation-identifier-extension)
 endif()
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Build/lib)

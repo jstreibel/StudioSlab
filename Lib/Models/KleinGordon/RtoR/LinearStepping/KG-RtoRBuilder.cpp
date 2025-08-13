@@ -10,7 +10,7 @@
 
 #include "Core/Backend/BackendManager.h"
 #include "Core/SlabCore.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 
 #include "KG-RtoRSolver.h"
 #include "KG-RtoRBoundaryCondition.h"
@@ -36,7 +36,7 @@
 
 #include "Graphics/Window/SlabWindowManager.h"
 
-constexpr const Slab::Count MAX_SNAPSHOTS = 200;
+constexpr const Slab::CountType MAX_SNAPSHOTS = 200;
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
@@ -71,13 +71,13 @@ namespace Slab::Models::KGRtoR {
     KGRtoRBuilder::KGRtoRBuilder(const Str &name, const Str& generalDescription, bool doRegister)
             : Models::KGRecipe(New<KGNumericConfig>(false), "RtoR-" + name, generalDescription,
                                DONT_REGISTER_IMMEDIATELY) {
-        Interface->addParameters({&Potential, &massSqr, &N_num, &BoundaryConditions});
+        Interface->AddParameters({&Potential, &massSqr, &N_num, &BoundaryConditions});
 
         if (doRegister) RegisterCLInterface(Interface);
     }
 
-    auto KGRtoRBuilder::buildOutputSockets() -> Vector<Pointer<Socket>> {
-        Vector<Pointer<Socket>> sockets;
+    auto KGRtoRBuilder::buildOutputSockets() -> Vector<TPointer<Socket>> {
+        Vector<TPointer<Socket>> Sockets;
 
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
@@ -94,8 +94,8 @@ namespace Slab::Models::KGRtoR {
 
         fix t = p.gett();
         fix max_steps = p.getn();
-        fix N = static_cast<Real>(p.getN());
-        fix L = p.getL();
+        fix N = static_cast<DevFloat>(p.getN());
+        fix L = p.GetL();
         fix xMin = p.getxMin();
         fix Nₒᵤₜ = *outputResolution > N ? N : *outputResolution;
         fix r = p.getr();
@@ -108,20 +108,20 @@ namespace Slab::Models::KGRtoR {
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + SuggestFileName();
-            sockets.emplace_back(Slab::New<SnapshotOutput>(snapshotFilename));
+            Sockets.emplace_back(Slab::New<SnapshotOutput>(snapshotFilename));
         }
         if (*takeSpaceDFTSnapshot) {
             const auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + SuggestFileName();
-            sockets.emplace_back(Slab::New<DFTSnapshotOutput>(N, L, snapshotFilename));
+            Sockets.emplace_back(Slab::New<DFTSnapshotOutput>(N, L, snapshotFilename));
         }
         if(*takeTimeDFTSnapshot) {
             auto time_dftsnapshots = getTimeDFTSnapshots();
 
             for(auto &socket : time_dftsnapshots)
-                sockets.emplace_back(socket);
+                Sockets.emplace_back(socket);
         }
 
 
@@ -139,7 +139,7 @@ namespace Slab::Models::KGRtoR {
             fix stepsInterval = static_cast<UInt>(N / (Nₒᵤₜ * r));
 
             Socket_ptr out = Slab::New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
-            sockets.emplace_back(out);
+            Sockets.emplace_back(out);
         }
 
 
@@ -148,9 +148,9 @@ namespace Slab::Models::KGRtoR {
            *************************** VISUAL MONITOR *********************************************
            **************************************************************************************** */
         if (shouldOutputOpenGL) {
-            auto guiBackend = Slab::Graphics::GetGraphicsBackend();
+            auto GuiBackend = Slab::Graphics::GetGraphicsBackend();
 
-            auto outputOpenGL = Pointer<Monitor>(static_cast<Monitor *>(BuildOpenGLOutput()));
+            auto outputOpenGL = TPointer<Monitor>(static_cast<Monitor *>(buildOpenGLOutput()));
 
             if (t > 0) {
                 fix nₒᵤₜ = ((Nₒᵤₜ / L) * t);
@@ -163,27 +163,30 @@ namespace Slab::Models::KGRtoR {
 
                 auto ftHistory = Slab::New<SimHistory_DFT>(max_steps, t, N, L, nₒᵤₜ);
 
-                sockets.emplace_back(simHistory);
-                sockets.emplace_back(ftHistory);
+                Sockets.emplace_back(simHistory);
+                Sockets.emplace_back(ftHistory);
 
                 outputOpenGL->setSimulationHistory(Slab::Naked(simHistory->getData()));
-                outputOpenGL->setSpaceFourierHistory(Slab::Naked(ftHistory->getData()),
-                                                     ftHistory->getDFTDataHistory());
+                outputOpenGL->SetSpaceFourierHistory(Slab::Naked(ftHistory->getData()),
+                                                     ftHistory->GetDFTDataHistory());
             }
 
-            const auto wm = New<Graphics::SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
-            wm->addSlabWindow(Pointer<Graphics::SlabWindow>(outputOpenGL));
-            guiBackend->GetMainSystemWindow()->addAndOwnEventListener(wm);
-            sockets.emplace_back(outputOpenGL);
+            const auto WindowManager = New<SlabWindowManager>();
+            GuiBackend->GetMainSystemWindow()->AddAndOwnEventListener(WindowManager);
+
+            auto Window = TPointer<FSlabWindow>(outputOpenGL);
+            WindowManager->AddSlabWindow(Window, false);
+
+            Sockets.emplace_back(outputOpenGL);
         } else {
-            sockets.emplace_back(Slab::New<OutputConsoleMonitor>(max_steps, max_steps/2));
+            Sockets.emplace_back(Slab::New<OutputConsoleMonitor>(max_steps, max_steps/2));
         }
 
-        return sockets;
+        return Sockets;
 
     }
 
-    Vector<Pointer<Socket>> KGRtoRBuilder::getTimeDFTSnapshots() {
+    Vector<TPointer<Socket>> KGRtoRBuilder::getTimeDFTSnapshots() {
         auto &c = *kg_numeric_config;
 
         fix t = c.gett();
@@ -191,22 +194,22 @@ namespace Slab::Models::KGRtoR {
         fix Δt    = *timeDFTSnapshot_tDelta  <= 0 ? t : *timeDFTSnapshot_tDelta;
         fix t_len = *timeDFTSnapshot_tLength <= 0 ? t : *timeDFTSnapshot_tLength;
 
-        const Count snapshot_count = std::ceil(t / Δt);
+        const CountType snapshot_count = std::ceil(t / Δt);
 
         if(snapshot_count>MAX_SNAPSHOTS)
             throw Exception(
                     Str("Error generating time-domain dft snapshots. The value of '--") +
-                            timeDFTSnapshot_tDelta.getCommandLineArgumentName(true) + "' is " + timeDFTSnapshot_tDelta.valueToString() +
+                            timeDFTSnapshot_tDelta.getCommandLineArgumentName(true) + "' is " + timeDFTSnapshot_tDelta.ValueToString() +
                     ", yielding a snapshot count of " + ToStr(snapshot_count) + ", which is above the " +
                 ToStr(MAX_SNAPSHOTS) + " limit.");
 
-        RealVector x_locations;
+        FRealVector x_locations;
         {
-            fix L = c.getL();
+            fix L = c.GetL();
             fix xMin = c.getxMin();
 
-            if(fix k_param = CLInterfaceManager::getInstance().getParameter("k")){
-                fix k_n = k_param->getValueAs<Real>();
+            if(fix k_param = FCommandLineInterfaceManager::getInstance().getParameter("k")){
+                fix k_n = k_param->getValueAs<DevFloat>();
                 x_locations = {L/(4.*k_n)};
             } else
                 x_locations={xMin+L/2};
@@ -220,7 +223,7 @@ namespace Slab::Models::KGRtoR {
         }
 
         int i=0;
-        Vector<Pointer<Socket>> sockets;
+        Vector<TPointer<Socket>> sockets;
         do {
             fix t_end   = t - i*Δt;
             fix t_start = Common::max(t_end-t_len, 0.0);
@@ -235,8 +238,8 @@ namespace Slab::Models::KGRtoR {
         return sockets;
     }
 
-    Pointer<Socket>
-    KGRtoRBuilder::_newTimeDFTSnapshotOutput(const Str& folder, const Real t_start, const Real t_end, const RealVector &x_locations) const {
+    TPointer<Socket>
+    KGRtoRBuilder::_newTimeDFTSnapshotOutput(const Str& folder, const DevFloat t_start, const DevFloat t_end, const FRealVector &x_locations) const {
 
         Utils::TouchFolder(folder);
 
@@ -252,7 +255,7 @@ namespace Slab::Models::KGRtoR {
 
         const size_t N = conf.getN();
         const floatt xLeft = conf.getxMin();
-        const floatt xRight = xLeft + conf.getL();
+        const floatt xRight = xLeft + conf.GetL();
 
         auto laplacianType = force_periodicBC || *BoundaryConditions == 1
                              ? RtoR::NumericFunction::Standard1D_PeriodicBorder
@@ -274,7 +277,7 @@ namespace Slab::Models::KGRtoR {
                                        this->newFunctionArbitrary());
     }
 
-    Pointer<Base::LinearStepSolver> KGRtoRBuilder::buildSolver() {
+    TPointer<Base::LinearStepSolver> KGRtoRBuilder::buildSolver() {
         auto potential = getPotential();
         auto nonHomogenous = GetNonHomogenousTerm();
         auto dphi = GetBoundary();
@@ -332,7 +335,7 @@ namespace Slab::Models::KGRtoR {
         throw Exception("Unknown potential");
     }
 
-    Pointer<Base::FunctionT<Real, Real>> KGRtoRBuilder::GetNonHomogenousTerm() {
+    TPointer<Base::FunctionT<DevFloat, DevFloat>> KGRtoRBuilder::GetNonHomogenousTerm() {
         return {};
     }
 

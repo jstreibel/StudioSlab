@@ -5,40 +5,39 @@
 #ifndef STUDIOSLAB_INTERFACE_H
 #define STUDIOSLAB_INTERFACE_H
 
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Parameter.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 #include "Utils/Sets.h"
 #include "Utils/List.h"
 
 namespace Slab::Core {
 
-    class InterfaceManager;
+    class FInterfaceManager;
 
     using UniqueID = UInt;
 
-    class Interface {
-        friend InterfaceManager;
-
-        const UniqueID id;
-
-        Str name;
-        Set<Pointer<CLParameter>> parameters;
-
-    protected:
-        void addParameter(Pointer<CLParameter> parameter);
-        void addParameters(BasicList<Pointer<CLParameter>> parameters);
-
+    class FInterface {
     public:
-        Interface(Str name);
+        explicit FInterface(const Str& Name);
+        virtual ~FInterface();
 
-        virtual ~Interface();
-
-        UniqueID getUniqueID() const;
+        [[nodiscard]] UniqueID GetUniqueID() const;
 
         virtual
-        Message sendRequest(Request);
+        FMessage SendRequest(FRequest);
 
-        auto getParameters() const -> Vector<Pointer<const CLParameter>>;
-        auto getParameter(Str key) const -> Pointer<CLParameter>;
+        [[nodiscard]] auto GetParameters() const -> Vector<TPointer<const FParameter>>;
+        [[nodiscard]] auto GetParameter(const Str& Key) const -> TPointer<FParameter>;
+
+    protected:
+        void AddParameter(const TPointer<FParameter>& Parameter);
+        void AddParameters(BasicList<TPointer<FParameter>> parameters);
+
+    private:
+        friend FInterfaceManager;
+        const UniqueID Id;
+        Str Name;
+        Set<TPointer<FParameter>> Parameters;
 
     };
 

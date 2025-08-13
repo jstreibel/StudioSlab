@@ -2,7 +2,7 @@
 #include "OutputHistoryToFile.h"
 #include "Core/Tools/Log.h"
 
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 
 #include "Utils/Timer.h"
 
@@ -47,7 +47,7 @@ namespace Slab::Math {
         if (integrationIsFinished) {
             _printHeaderToFile({"phi"});
 
-            auto shouldNotDump = !lastPacket.hasValidData();
+            auto shouldNotDump = !LastPacket.hasValidData();
             if (shouldNotDump) {
                 file.close();
                 return;
@@ -59,9 +59,9 @@ namespace Slab::Math {
         using Core::Log;
 
         for (size_t Ti = 0; Ti < count; Ti++) {
-            if (timer.getElTime_sec() > 1) {
+            if (timer.GetElapsedTime_Seconds() > 1) {
                 timer.reset();
-                Log::Info() << std::setprecision(3) << "Flushing " << (Real) Ti / Real(count) * 100.0 << "%    "
+                Log::Info() << std::setprecision(3) << "Flushing " << (DevFloat) Ti / DevFloat(count) * 100.0 << "%    "
                             << Log::Flush;
             }
 
@@ -104,7 +104,7 @@ namespace Slab::Math {
             oss << ") ";
         }
 
-        oss << ", " << Core::CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
+        oss << ", " << Core::FCommandLineInterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
 
         const auto &s = oss.str();
 

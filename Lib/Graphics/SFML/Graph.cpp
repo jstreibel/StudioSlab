@@ -12,7 +12,7 @@ namespace Slab::Lost {
 
     Graph::Graph(sf::IntRect subWindow, sf::Vector2f rMin, sf::Vector2f rMax,
                  const Str xAxisLabel, const Str yAxisLabel, sf::PrimitiveType primitiveType)
-            : theData(primitiveType), scale(scale), rMin(rMin), rMax(rMax) {
+            : theData(primitiveType), scale(1.0, 1.0), rMin(rMin), rMax(rMax) {
         setPlacing(subWindow);
 
         if (!font.loadFromFile("/home/joao/Developer/StudioSlab/Resources/Fonts/static/EBGaramond-Regular.ttf")) {
@@ -156,12 +156,12 @@ namespace Slab::Lost {
         }
     }
 
-    void Graph::manipulationOfParametersHasHappened(Real previousParamValue, Real sigmaFactor) {
+    void Graph::manipulationOfParametersHasHappened(DevFloat previousParamValue, DevFloat sigmaFactor) {
         // esse metodo (essa funcao) eh um presente pras subclasses dessa classe
     }
 
-    Vector<Pair<Real, Real>> Graph::getData() const {
-        Vector<Pair<Real, Real>> data(theData.getVertexCount());
+    Vector<Pair<DevFloat, DevFloat>> Graph::getData() const {
+        Vector<Pair<DevFloat, DevFloat>> data(theData.getVertexCount());
         for (int i = 0; i < theData.getVertexCount(); i++) {
             auto iData = theData[i].position;
             data[i] = {iData.x, iData.y};

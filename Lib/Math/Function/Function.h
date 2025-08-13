@@ -57,7 +57,7 @@ namespace Slab::Math::Base {
 
         /*! Get derivative in dimension 'n'.
          * @param n: the number of the dimension to differentiate, e.g. n=0 => x, n=1 => y, etc.*/
-        virtual Pointer<Type> diff(int n) const {
+        virtual TPointer<Type> diff(int n) const {
             NOT_IMPLEMENTED_CLASS_METHOD
         };
 
@@ -75,7 +75,7 @@ namespace Slab::Math::Base {
          * @return The value of the integral.
          */
         virtual auto integrate()    const -> OutputCategory { NOT_IMPLEMENTED_CLASS_METHOD }
-        virtual auto Clone()        const -> Pointer<Type>  { NOT_IMPLEMENTED_CLASS_METHOD }
+        virtual auto Clone()        const -> TPointer<Type>  { NOT_IMPLEMENTED_CLASS_METHOD }
         virtual auto isDiscrete()   const -> bool           { return discrete; }
 
         /** Returns a managed reference to a GPUFriendly version of this function. */
@@ -83,7 +83,7 @@ namespace Slab::Math::Base {
 
         bool isGPUFriendly() const { return (&getGPUFriendlyVersion()) != nullptr; }
 
-        virtual Str symbol() const { return "f(x)"; }
+        virtual Str Symbol() const { return "f(x)"; }
         virtual Str generalName() const { return Common::getClassName(this); }
 
         // RENDERING
@@ -124,7 +124,7 @@ namespace Slab::Math::Base {
             InputCategory xMin, xMax;
         };
 
-        virtual Math::PointSet_ptr
+        virtual TPointer<PointSet>
         renderToPointSet(RenderingOptions options = RenderingOptions()) {
             throw Str("Function '") + generalName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
         };

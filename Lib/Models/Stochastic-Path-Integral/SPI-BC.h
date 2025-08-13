@@ -10,11 +10,11 @@ namespace Slab::Models::StochasticPathIntegrals {
 
     class SPIBC : public Math::Base::BoundaryConditions {
     public:
-        explicit SPIBC(const Pointer<const Math::Base::EquationState> &prototype)
+        explicit SPIBC(const TPointer<const Math::Base::EquationState> &prototype)
             : BoundaryConditions(prototype) {
         }
 
-        void Apply(Math::Base::EquationState &toFunction, Real t) const override;
+        void Apply(Math::Base::EquationState &toFunction, DevFloat t) const override;
     };
 
 }

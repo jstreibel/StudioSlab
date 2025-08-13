@@ -14,7 +14,7 @@ namespace Slab::Graphics {
 
     typedef Vector<WindowColumn> WindowColumns;
 
-    class WindowPanel : public SlabWindow {
+    class WindowPanel : public FSlabWindow {
         WindowColumns columns = WindowColumns(1);
         Vector<float> widths = {-1};
 
@@ -26,11 +26,11 @@ namespace Slab::Graphics {
         void assertConsistency() const;
 
     public:
-        explicit WindowPanel(Config={});
+        explicit WindowPanel(FSlabWindowConfig);
 
-        void addWindow(const Pointer<SlabWindow>& window, bool newColumn = false, float newColumnWidth = -1);
+        void AddWindow(const TPointer<FSlabWindow>& window, bool newColumn = false, float newColumnWidth = -1);
 
-        bool removeWindow(const Pointer<SlabWindow>& window);
+        bool removeWindow(const TPointer<FSlabWindow>& window);
 
         /**
          * Add window to column columnId.
@@ -38,34 +38,34 @@ namespace Slab::Graphics {
          * @param columnId zero-based index of column.
          * @return true if success, false otherwise.
          */
-        bool addWindowToColumn(const Pointer<SlabWindow> &window, int columnId);
+        bool addWindowToColumn(const TPointer<FSlabWindow> &window, int columnId);
 
         /**
          * Set the the relative width of a column.
          * @param column Column index, zero-based.
          * @param relWidth The relative width of the column. Negative value means a free width.
          */
-        void setColumnRelativeWidth(int column, float relWidth);
+        void SetColumnRelativeWidth(int column, float relWidth);
 
-        void arrangeWindows();
+        void ArrangeWindows();
 
 
-        void draw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
-        void notifyReshape(int newWinW, int newWinH) override;
+        void NotifyReshape(int newWinW, int newWinH) override;
 
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
 
-        bool notifyMouseButton(MouseButton button, KeyState state,
-                               ModKeys keys) override;
+        bool NotifyMouseButton(EMouseButton button, EKeyState state,
+                               EModKeys keys) override;
 
-        bool notifyMouseWheel(double dx, double dy) override;
+        bool NotifyMouseWheel(double dx, double dy) override;
 
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
-        auto setx(int x) -> void override;
+        auto Set_x(int x) -> void override;
 
-        auto sety(int y) -> void override;
+        auto Set_y(int y) -> void override;
     };
 
 }

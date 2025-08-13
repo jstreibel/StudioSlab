@@ -13,11 +13,11 @@
 
 namespace Tests {
 
-    using Writer = Slab::Graphics::OpenGL::WriterOpenGL;
+    using Writer = Slab::Graphics::OpenGL::FWriterOpenGL;
 
-    class LaTeXTests : public Slab::Graphics::WindowRow {
-        Slab::Graphics::GUIWindow stats;
-        Slab::Graphics::Plot2DWindow graph;
+    class LaTeXTests : public Slab::Graphics::FWindowRow {
+        Slab::Graphics::FGUIWindow stats;
+        Slab::Graphics::FPlot2DWindow graph;
 
         Writer writer;
 
@@ -26,9 +26,9 @@ namespace Tests {
     public:
         LaTeXTests();
 
-        void draw() override;
+        void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
 
-        void notifyReshape(int w, int h) override;
+        void NotifyReshape(int w, int h) override;
     };
 
 } // Tests

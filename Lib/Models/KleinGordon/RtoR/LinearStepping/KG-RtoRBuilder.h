@@ -32,8 +32,8 @@ namespace Slab::Models::KGRtoR {
 
         bool force_periodicBC = false;          // Gambiarris (ish)
 
-        Vector<Pointer<Socket>> getTimeDFTSnapshots();
-        auto _newTimeDFTSnapshotOutput(const Str& folder, Real t_start, Real t_end, const RealVector &x_locations) const -> Pointer<Socket>;
+        Vector<TPointer<Socket>> getTimeDFTSnapshots();
+        auto _newTimeDFTSnapshotOutput(const Str& folder, DevFloat t_start, DevFloat t_end, const FRealVector &x_locations) const -> TPointer<Socket>;
 
         virtual auto BuildOpenGLOutput() -> void*;
 
@@ -51,11 +51,11 @@ namespace Slab::Models::KGRtoR {
         ~KGRtoRBuilder() override = default;
 
         [[nodiscard]] RtoR::Function_ptr getPotential() const;
-        virtual Pointer<Base::FunctionT<Real, Real>> GetNonHomogenousTerm();
+        virtual TPointer<Base::FunctionT<DevFloat, DevFloat>> GetNonHomogenousTerm();
 
-        auto buildOutputSockets()   -> Vector<Pointer<Socket>> override;
+        auto buildOutputSockets()   -> Vector<TPointer<Socket>> override;
 
-        auto buildSolver()  -> Pointer<Base::LinearStepSolver> override;
+        auto buildSolver()  -> TPointer<Base::LinearStepSolver> override;
 
         void *getHamiltonian() override;
 

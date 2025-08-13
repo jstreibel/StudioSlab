@@ -15,7 +15,7 @@ namespace Slab::Graphics {
     public:
         explicit HistoryArtist() = default;
 
-        void set_t(Real);
+        void set_t(DevFloat);
     };
 
     DefinePointers(HistoryArtist)

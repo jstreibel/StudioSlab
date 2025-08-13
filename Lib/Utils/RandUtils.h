@@ -14,8 +14,8 @@ namespace Slab {
         void SeedUniformUInt  (int s);
         void SeedGaussianNoise(int s);
 
-        Real RandomUniformReal01();
-        Real RandomUniformReal(Real a, Real b);
+        DevFloat RandomUniformReal01();
+        DevFloat RandomUniformReal(DevFloat a, DevFloat b);
         unsigned RandomUniformUInt();
 
         double GaussianNoise(double mean, double standard_deviation);

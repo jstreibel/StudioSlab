@@ -44,7 +44,7 @@ namespace Modes::DatabaseViewer {
 
         // Find the end of the double-formatted value (assuming it ends with an underscore)
         const StrVector terminators = {"time.dft.simsnap", ".dft.simsnap", ".simsnap", " "};
-        Count endPos = 0;
+        CountType endPos = 0;
         for(auto &term : terminators) {
             endPos = valueStr.find(term);
             if(endPos != Str::npos) break;
@@ -107,7 +107,7 @@ namespace Modes::DatabaseViewer {
     }
 
     void DBParser::checkIntervalConsistency() const {
-        RealVector values;
+        FRealVector values;
 
         for(IN [value, filename] : fileSet) {
             values.emplace_back(value);
@@ -116,12 +116,12 @@ namespace Modes::DatabaseViewer {
         }
 
         fix N = values.size();
-        Real lastDelta = values[1]-values[0];
+        DevFloat lastDelta = values[1]-values[0];
 
         fix eps = 1.e-3*(values[N-1]-values[N-2]);
 
         for(int i=1; i<N-1; ++i){
-            Real delta = values[i+1]-values[i];
+            DevFloat delta = values[i+1]-values[i];
 
             if(!Common::AreEqual(lastDelta, delta, eps)) {
                 Log::Fail() << "DBParser deltas differ for "
@@ -169,7 +169,7 @@ namespace Modes::DatabaseViewer {
                         << filename << Log::Flush;
     }
 
-    auto DBParser::getFileSet()           const -> const std::map<Real, Str> & { return fileSet; }
+    auto DBParser::getFileSet()           const -> const std::map<DevFloat, Str> & { return fileSet; }
     auto DBParser::getCriticalParameter() const -> Str { return criticalParameter; }
 
     auto DBParser::buildSnapshotMashup() const -> std::shared_ptr<Math::R2toR::NumericFunction_CPU> {
@@ -181,8 +181,8 @@ namespace Modes::DatabaseViewer {
         fix ωMax = fieldMap.rbegin()->second.getScaledCriticalParameter();
         fix kMin = sampleField.xMin;
         fix kMax = sampleField.xMax;
-        fix hω = (ωMax-ωMin)/static_cast<Real>(N);
-        fix hk = (kMax-kMin)/static_cast<Real>(M);
+        fix hω = (ωMax-ωMin)/static_cast<DevFloat>(N);
+        fix hk = (kMax-kMin)/static_cast<DevFloat>(M);
 
 
         auto fullField = new Math::R2toR::NumericFunction_CPU(N, M, ωMin, kMin, hω, hk);

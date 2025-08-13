@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MOLDYN_BUILDER_H
 #define STUDIOSLAB_MOLDYN_BUILDER_H
 
-#include "Core/Controller/CommandLine/CommonCLParameters.h"
+#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
 
 #include "Math/Numerics/NumericalRecipe.h"
 #include "Math/Numerics/Socket.h"
@@ -22,14 +22,14 @@ namespace Slab::Models::MolecularDynamics {
                                                                     "\n\t\t0: Lennard-Jones"
                                                                     "\n\t\t1: Soft disk dynamics");
 
-        CLInterface_ptr molDynamicsInterface;
+        FCommandLineInterface_ptr molDynamicsInterface;
 
     public:
         Recipe();
 
-        auto buildOutputSockets() -> Vector<Pointer<Math::Socket>> override;
+        auto buildOutputSockets() -> Vector<TPointer<Math::Socket>> override;
 
-        auto buildStepper() -> Pointer<Math::Stepper> override;
+        auto buildStepper() -> TPointer<Math::Stepper> override;
 
         auto NotifyCLArgsSetupFinished() -> void override;
 
@@ -37,4 +37,4 @@ namespace Slab::Models::MolecularDynamics {
 
 } // MolecularDynamics
 
-#endif //STUDIOSLAB_BUILDER_H
+#endif //STUDIOSLAB_MOLDYN_BUILDER_H

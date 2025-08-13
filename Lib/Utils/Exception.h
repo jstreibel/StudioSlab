@@ -23,7 +23,7 @@ private:
 public:
     explicit Exception(std::string  msg);
 
-    const char* what() const noexcept override;
+    [[nodiscard]] const char* what() const noexcept override;
 };
 
 class NotImplementedException : public Exception {

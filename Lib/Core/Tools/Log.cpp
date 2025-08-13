@@ -11,7 +11,7 @@
 
 namespace Slab::Core {
 
-    Log *Log::myInstance = nullptr;
+    Log *Log::pMyInstance = nullptr;
 
     const Str Log::StartFormat = "\033[";
     const Str Log::SepFormat = ";";
@@ -54,27 +54,27 @@ namespace Slab::Core {
     const Str Log::ErrorFormat = Log::ResetFormatting + Log::FGRed;
     const Str Log::ErrorFatalFormat = Log::ResetFormatting + Log::FGRed + Log::BoldFace;
 
-    Log::Log() : Singleton<Log>("Log"), CLInterfaceOwner(true) {};
+    Log::Log() : Singleton<Log>("Log"), FCommandLineInterfaceOwner(true) {};
 
     auto Log::GetSingleton() -> Log & {
         if (Singleton::singleInstance == nullptr) {
             auto me = new Log;
-            Log::myInstance = me;
-            Singleton::singleInstance = Log::myInstance;
+            Log::pMyInstance = me;
+            Singleton::singleInstance = Log::pMyInstance;
 
             Log::Note() << "Logging system initiated." << Log::Flush;
 
             me->LateStart("Log Manager", -10);
-            me->Interface->addParameters({me->logDebug, me->logNotes, me->verbose});
+            me->Interface->AddParameters({me->LogDebug, me->LogNotes, me->Verbose});
         }
 
-        return *Log::myInstance;
+        return *Log::pMyInstance;
     }
 
-    inline Str Log::prefix() {
+    inline Str Log::Prefix() {
         StringStream ss;
 
-        auto time = timer.getElTime_msec();
+        auto time = Timer.getElTime_msec();
 
 
         ss << Str("\n") << ResetFormatting << std::fixed << std::setprecision(2) << std::setw(10) << time << "ms [ ";
@@ -82,92 +82,92 @@ namespace Slab::Core {
         return ss.str();
     };
 
-    inline Str Log::postfix() {
+    inline Str Log::Postfix() {
         return ResetFormatting + " ] ";
     };
 
 
     OStream &Log::Status() {
         auto &me = Log::GetSingleton();
-        auto &stream = *me.mainStream;
-        stream << me.prefix() << StatusFormat << "Status" << me.postfix();
+        auto &stream = *me.pMainStream;
+        stream << me.Prefix() << StatusFormat << "Status" << me.Postfix();
         return stream;
     }
 
     OStream &Log::Info() {
         auto &me = Log::GetSingleton();
-        auto &stream = *me.mainStream;
-        stream << me.prefix() << InfoFormat << "Info" << me.postfix();
+        auto &stream = *me.pMainStream;
+        stream << me.Prefix() << InfoFormat << "Info" << me.Postfix();
         return stream;
     }
 
     OStream &Log::Note() {
         auto &me = Log::GetSingleton();
-        auto &stream = *me.notesStream;
-        stream << me.prefix() << NoteFormat << "Note" << me.postfix();
+        auto &stream = *me.pNotesStream;
+        stream << me.Prefix() << NoteFormat << "Note" << me.Postfix();
         return stream;
     }
 
     OStream &Log::Attention() {
         auto &me = Log::GetSingleton();
-        auto &stream = *me.mainStream;
-        stream << me.prefix() << AttentionFormat << "Attention" << me.postfix();
+        auto &stream = *me.pMainStream;
+        stream << me.Prefix() << AttentionFormat << "Attention" << me.Postfix();
         return stream;
     }
 
     OStream &Log::Critical() {
         auto &me = Log::GetSingleton();
-        auto &stream = *me.mainStream;
-        stream << me.prefix() << CriticalFormat << "Critical" << me.postfix();
+        auto &stream = *me.pMainStream;
+        stream << me.Prefix() << CriticalFormat << "Critical" << me.Postfix();
         return stream;
     }
 
     OStream &Log::Debug() {
         auto &me = Log::GetSingleton();
-        auto &stream = *me.debugStream;
-        stream << me.prefix() << DebugFormat << "Debug" << me.postfix();
+        auto &stream = *me.pDebugStream;
+        stream << me.Prefix() << DebugFormat << "Debug" << me.Postfix();
         return stream;
     }
 
     OStream &Log::Success() {
         auto &me = Log::GetSingleton();
-        auto &stream = *me.mainStream;
-        stream << me.prefix() << SuccessFormat << "Success" << me.postfix();
+        auto &stream = *me.pMainStream;
+        stream << me.Prefix() << SuccessFormat << "Success" << me.Postfix();
         return stream;
     }
 
     OStream &Log::Fail() {
         auto &me = Log::GetSingleton();
-        auto &stream = *me.mainStream;
-        stream << me.prefix() << FailFormat << "Fail" << me.postfix();
+        auto &stream = *me.pMainStream;
+        stream << me.Prefix() << FailFormat << "Fail" << me.Postfix();
         return stream;
     }
 
     OStream &Log::Warning() {
         auto &me = Log::GetSingleton();
-        auto &stream = *me.mainStream;
-        stream << me.prefix() << WarningFormat << "Warning" << me.postfix();
+        auto &stream = *me.pMainStream;
+        stream << me.Prefix() << WarningFormat << "Warning" << me.Postfix();
         return stream;
     }
 
     OStream &Log::WarningImportant() {
         auto &me = Log::GetSingleton();
-        auto &stream = *me.mainStream;
-        stream << me.prefix() << WarningImportantFormat << "Warning!" << me.postfix();
+        auto &stream = *me.pMainStream;
+        stream << me.Prefix() << WarningImportantFormat << "Warning!" << me.Postfix();
         return stream;
     }
 
     OStream &Log::Error() {
         auto &me = Log::GetSingleton();
-        auto &stream = *me.mainStream;
-        stream << me.prefix() << ErrorFormat << "Error" << me.postfix();
+        auto &stream = *me.pMainStream;
+        stream << me.Prefix() << ErrorFormat << "Error" << me.Postfix();
         return stream;
     }
 
     OStream &Log::ErrorFatal() {
         auto &me = Log::GetSingleton();
-        auto &stream = *me.mainStream;
-        stream << me.prefix() << ErrorFatalFormat << "Crash" << me.postfix();
+        auto &stream = *me.pMainStream;
+        stream << me.Prefix() << ErrorFatalFormat << "Crash" << me.Postfix();
         return stream;
     }
 
@@ -187,7 +187,7 @@ namespace Slab::Core {
 
     auto Log::Fail(const Str &str) -> OStream & { return Fail() << str << Log::Flush; }
 
-    auto Log::Warning(const Str &str) -> OStream & { return Info() << str << Log::Flush; }
+    auto Log::Warning(const Str &str) -> OStream & { return Warning() << str << Log::Flush; }
 
     auto Log::WarningImportant(const Str &str) -> OStream & { return Warning() << str << Log::Flush; }
 
@@ -196,45 +196,45 @@ namespace Slab::Core {
     auto Log::ErrorFatal(const Str &str) -> OStream & { return ErrorFatal() << str << Log::Flush; }
 
     auto Log::FlushAll() -> void {
-        *Log::GetSingleton().mainStream << Log::Flush;
+        *Log::GetSingleton().pMainStream << Log::Flush;
     }
 
     void Log::NotifyCLArgsSetupFinished() {
-        CLInterfaceOwner::NotifyCLArgsSetupFinished();
+        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
 
 #if !FORCE_VERBOSE
-        if (**logDebug || **verbose) {
+        if (**LogDebug || **Verbose) {
             std::cout << FGBlue << BoldFace << "\n\n --- SOME LATE DEBUG MESSAGES --- \n";
 
-            if (debugStream->good()) {
+            if (pDebugStream->good()) {
                 StringStream ss;
-                ss << debugStream->rdbuf();
-                *mainStream << ss.str();
+                ss << pDebugStream->rdbuf();
+                *pMainStream << ss.str();
             }
 
-            if (manageDebugStream) delete debugStream;
+            if (bManageDebugStream) delete pDebugStream;
 
-            manageDebugStream = false;
-            debugStream = &std::cout;
+            bManageDebugStream = false;
+            pDebugStream = &std::cout;
 
             std::cout << FGBlue << BoldFace << "\n\n --- END LATE DEBUG MESSAGES --- \n";
         }
 
-        if (**logNotes || **verbose) {
-            std::cout << FGBlue << BoldFace << ((**logDebug || **verbose) ? "" : "\n")
+        if (**LogNotes || **Verbose) {
+            std::cout << FGBlue << BoldFace << ((**LogDebug || **Verbose) ? "" : "\n")
                       << "\n --- SOME LATE NOTES MESSAGES --- \n";
 
-            if (notesStream->good()) {
+            if (pNotesStream->good()) {
                 StringStream ss;
-                ss << notesStream->rdbuf();
-                *mainStream << ss.str();
+                ss << pNotesStream->rdbuf();
+                *pMainStream << ss.str();
             }
 
-            if (manageNotesStream) delete notesStream;
+            if (bManageNotesStream) delete pNotesStream;
 
-            manageNotesStream = false;
-            notesStream = &std::cout;
+            bManageNotesStream = false;
+            pNotesStream = &std::cout;
 
             std::cout << FGBlue << BoldFace << "\n\n --- END LATE NOTES MESSAGES --- \n";
         }
@@ -256,28 +256,28 @@ namespace Slab::Core {
 
     Log::FormattingClass Log::Format;
 
-    OStream &operator<<(OStream &os, const Log::FormattingClass &width) {
-        os << std::setw((int) width.len);
+    OStream &operator<<(OStream &OS, const Log::FormattingClass &width) {
+        OS << std::setw((int) width.Len);
 
-        switch (width.textPosition) {
+        switch (width.TextPosition) {
             case Log::Left:
-                os << std::left;
+                OS << std::left;
                 break;
             case Log::Right:
-                os << std::right;
+                OS << std::right;
                 break;
         }
 
-        return os;
+        return OS;
     }
 
-    auto Log::FormattingClass::operator()(Count _len) -> const FormattingClass & {
-        this->len = _len;
+    auto Log::FormattingClass::operator()(CountType _len) -> const FormattingClass & {
+        this->Len = _len;
         return *this;
     }
 
-    auto Log::FormattingClass::operator()(TextPosition pos) -> const FormattingClass & {
-        this->textPosition = pos;
+    auto Log::FormattingClass::operator()(ETextPosition pos) -> const FormattingClass & {
+        this->TextPosition = pos;
         return *this;
     }
 

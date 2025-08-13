@@ -14,30 +14,30 @@
 namespace Slab {
 
 
-    Pointer<Platform> Application::CreatePlatform() {
+    TPointer<Platform> FApplication::CreatePlatform() {
         return Slab::DynamicPointerCast<Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
     }
 
-    Application::Application(Str name, const int argc, const char *argv[])
-    : arg_count (argc)
-    , arg_values( argv)
+    FApplication::FApplication(Str name, const int argc, const char *argv[])
+    : ArgCount (argc)
+    , ArgValues( argv)
     , m_Name(std::move(name))
     {
-        Startup();
+        Slab::Startup();
 
         Core::Log::Info() << "Compiler: " << USED_CXX_COMPILER << Core::Log::Flush;
         // Log::Info() << "Compiler: " << COMPILER_NAME << Log::Flush;
         Core::Log::Info() << "PWD: " << Common::GetPWD() << Core::Log::Flush;
     }
 
-    Application::~Application() {
-        if (p_Platform != nullptr) p_Platform->terminate();
+    FApplication::~FApplication() {
+        if (p_Platform != nullptr) p_Platform->Terminate();
 
         Core::BackendManager::UnloadAllModules();
     }
 
-    bool Application::Create(Resolution width, Resolution height) {
-        Core::ParseCLArgs(arg_count, const_cast<const char **>(arg_values));
+    bool FApplication::Create(Resolution width, Resolution height) {
+        Core::ParseCLArgs(ArgCount, const_cast<const char **>(ArgValues));
 
         p_Platform = CreatePlatform();
 
@@ -46,20 +46,20 @@ namespace Slab {
         return true;
     }
 
-    Int Application::Run() {
+    Int FApplication::Run() {
         const auto self = Dummy(*this);
 
-        p_Platform->GetMainSystemWindow()->addEventListener(self);
-        p_Platform->run();
+        p_Platform->GetMainSystemWindow()->AddEventListener(self);
+        p_Platform->Run();
 
         return 0;
     }
 
-    void Application::SetTitle(Str title) const {
-        p_Platform->GetMainSystemWindow()->setSystemWindowTitle(std::move(title));
+    void FApplication::SetTitle(Str title) const {
+        p_Platform->GetMainSystemWindow()->SetSystemWindowTitle(std::move(title));
     }
 
-    auto Application::GetName() const -> Str {
+    auto FApplication::GetName() const -> Str {
         return m_Name;
     }
 

@@ -23,7 +23,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    VertexBuffer::VertexBuffer(Str formatStr) {
+    FVertexBuffer::FVertexBuffer(Str formatStr) {
         size_t i, index = 0, stride = 0;
         const char *start = nullptr, *end = nullptr;
         GLchar *pointer = nullptr;
@@ -96,7 +96,7 @@ namespace Slab::Graphics::OpenGL {
         Core::Log::Debug() << "Instantiated new VertexBuffer" << Core::Log::Flush;
     }
 
-    VertexBuffer::~VertexBuffer() {
+    FVertexBuffer::~FVertexBuffer() {
         size_t i;
 
         for( i=0; i<MAX_VERTEX_ATTRIBUTE; ++i )
@@ -137,11 +137,11 @@ namespace Slab::Graphics::OpenGL {
         state = 0;
     }
 
-    Count VertexBuffer::getSize() const {
-        return (Count)ftgl::vector_size( items );
+    CountType FVertexBuffer::getSize() const {
+        return (CountType)ftgl::vector_size( items );
     }
 
-    Str VertexBuffer::ToString() const {
+    Str FVertexBuffer::ToString() const {
         int i = 0;
         static Str gltypes[9] = {
                 "GL_BOOL",
@@ -182,7 +182,7 @@ namespace Slab::Graphics::OpenGL {
         return str;
     }
 
-    void VertexBuffer::upload() {
+    void FVertexBuffer::upload() {
         if( state == FROZEN ) return;
 
         if( !vertices_id ) glGenBuffers( 1, &vertices_id );
@@ -224,7 +224,7 @@ namespace Slab::Graphics::OpenGL {
         glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
     }
 
-    void VertexBuffer::clear() {
+    void FVertexBuffer::clear() {
         state = FROZEN;
         vector_clear( indices );
         vector_clear( vertices );
@@ -232,7 +232,7 @@ namespace Slab::Graphics::OpenGL {
         state = DIRTY;
     }
 
-    void VertexBuffer::renderSetup(GLenum primitive) {
+    void FVertexBuffer::renderSetup(GLenum primitive) {
         // Unbind so no existing VAO-state is overwritten,
         // (e.g. the GL_ELEMENT_ARRAY_BUFFER-binding).
         glBindVertexArray( 0 );
@@ -270,9 +270,9 @@ namespace Slab::Graphics::OpenGL {
         this->primitive = primitive;
     }
 
-    void VertexBuffer::renderFinish() { glBindVertexArray( 0 ); }
+    void FVertexBuffer::renderFinish() { glBindVertexArray( 0 ); }
 
-    void VertexBuffer::renderItem(size_t index) {
+    void FVertexBuffer::renderItem(size_t index) {
         auto * item = (ftgl::ivec4 *) vector_get( items, index );
         assert( index < vector_size( items ) );
 
@@ -290,7 +290,7 @@ namespace Slab::Graphics::OpenGL {
         }
     }
 
-    void VertexBuffer::render(GLenum primitive) {
+    void FVertexBuffer::Render(GLenum primitive) {
         size_t vcount = vertices->size;
         size_t icount = indices->size;
 
@@ -306,17 +306,17 @@ namespace Slab::Graphics::OpenGL {
         renderFinish();
     }
 
-    void VertexBuffer::pushBackIndices(const GLuint *_indices, const size_t icount) {
+    void FVertexBuffer::pushBackIndices(const GLuint *_indices, const size_t icount) {
         state |= DIRTY;
         ftgl::vector_push_back_data( indices, _indices, icount );
     }
 
-    void VertexBuffer::pushBackVertices(const void *_vertices, const size_t vcount) {
+    void FVertexBuffer::pushBackVertices(const void *_vertices, const size_t vcount) {
         state |= DIRTY;
         ftgl::vector_push_back_data( vertices, _vertices, vcount );
     }
 
-    void VertexBuffer::insertIndices(const size_t _index, const GLuint *_indices, const size_t count) {
+    void FVertexBuffer::insertIndices(const size_t _index, const GLuint *_indices, const size_t count) {
         assert( indices );
         assert( _index < indices->size+1 );
 
@@ -324,7 +324,7 @@ namespace Slab::Graphics::OpenGL {
         vector_insert_data( indices, _index, _indices, count );
     }
 
-    void VertexBuffer::insertVertices(const size_t index, const void *_vertices, const size_t vcount) {
+    void FVertexBuffer::insertVertices(const size_t index, const void *_vertices, const size_t vcount) {
         size_t i;
         assert( this->vertices );
         assert( index < this->vertices->size+1 );
@@ -342,7 +342,7 @@ namespace Slab::Graphics::OpenGL {
         vector_insert_data( this->vertices, index, _vertices, vcount );
     }
 
-    void VertexBuffer::eraseIndices(const size_t first, const size_t last) {
+    void FVertexBuffer::eraseIndices(const size_t first, const size_t last) {
         assert( this->indices );
         assert( first < this->indices->size );
         assert( (last) <= this->indices->size );
@@ -351,7 +351,7 @@ namespace Slab::Graphics::OpenGL {
         vector_erase_range( this->indices, first, last );
     }
 
-    void VertexBuffer::eraseVertices(const size_t first, const size_t last) {
+    void FVertexBuffer::eraseVertices(const size_t first, const size_t last) {
         size_t i;
         assert( this->vertices );
         assert( first < this->vertices->size );
@@ -369,7 +369,7 @@ namespace Slab::Graphics::OpenGL {
         vector_erase_range( this->vertices, first, last );
     }
 
-    size_t VertexBuffer::insert(const size_t index, const void *_vertices,
+    size_t FVertexBuffer::insert(const size_t index, const void *_vertices,
                                 const size_t vcount, const GLuint *_indices,
                                 const size_t icount) {
         size_t vstart, istart, i;
@@ -404,13 +404,13 @@ namespace Slab::Graphics::OpenGL {
         return index;
     }
 
-    size_t VertexBuffer::pushBack(const void *_vertices, const size_t vcount,
+    size_t FVertexBuffer::pushBack(const void *_vertices, const size_t vcount,
                                 const GLuint *_indices, const size_t icount) {
 
         return insert( vector_size( items ), _vertices, vcount, _indices, icount );
     }
 
-    void VertexBuffer::erase(const size_t index) {
+    void FVertexBuffer::erase(const size_t index) {
         ftgl::ivec4 * item;
         int vstart;
         size_t vcount, istart, icount, i;

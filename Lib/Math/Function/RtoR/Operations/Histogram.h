@@ -18,21 +18,21 @@ namespace Slab::Math::RtoR {
         void Compute(const RealArray &, int nbins=100);
         void Compute(RtoR::NumericFunction_constptr func, int nBins = 100);
 
-        Pointer<RtoR::Function> asPDFFunction() const;
+        TPointer<RtoR::Function> asPDFFunction() const;
 
         auto asPDFPointSet(bool beautiful = true) const -> PointSet_ptr;
 
         auto renderPDFToPointSet(PointSet_ptr out, bool beautiful = true) const -> PointSet_ptr;
 
-        auto integrate() const -> Real;
+        auto integrate() const -> DevFloat;
 
         int nBins;
-        Real vMax, vMin;
-        Real binWidth;
+        DevFloat vMax, vMin;
+        DevFloat binWidth;
 
     private:
         unsigned long count;
-        RealVector bins;
+        FRealVector bins;
 
     };
 

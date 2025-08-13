@@ -9,58 +9,61 @@
 
 namespace Slab::Models {
 
-    KGRtoR::EnergyViewer_KG::EnergyViewer_KG(const Pointer<Graphics::GUIWindow> &gui_window)
+    KGRtoR::EnergyViewer_KG::EnergyViewer_KG(const TPointer<Graphics::FGUIWindow> &gui_window)
     : KGViewer(gui_window)
+    , TotalEnergiesWindow(New<Graphics::FPlot2DWindow>("Energy",      gui_window->GetGUIWindowContext()))
+    , TemperaturesWindow (New<Graphics::FPlot2DWindow>("Temperature", gui_window->GetGUIWindowContext()))
+    , FullHistoriesWindow(New<Graphics::FPlot2DWindow>("Histories",   gui_window->GetGUIWindowContext()))
     {
-        addWindow(temperatures_window);
-        addWindow(total_energies_window);
-        addWindow(full_histories_window, true);
+        AddWindow(TemperaturesWindow);
+        AddWindow(TotalEnergiesWindow);
+        AddWindow(FullHistoriesWindow, true);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
-        energy_history_artist    = Graphics::Plotter::AddPointSet(total_energies_window, energy_history,
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        EnergyHistoryArtist    = Graphics::Plotter::AddPointSet(TotalEnergiesWindow, EnergyHistory,
                                                                   style, "e", true);
-        kinetic_history_artist   = Graphics::Plotter::AddPointSet(total_energies_window, kinetic_history,
+        KineticHistoryArtist   = Graphics::Plotter::AddPointSet(TotalEnergiesWindow, KineticHistory,
                                                                   style, "½(𝜕ₜf)²", true);
-        grad_history_artist      = Graphics::Plotter::AddPointSet(total_energies_window, grad_history,
+        GradHistoryArtist      = Graphics::Plotter::AddPointSet(TotalEnergiesWindow, GradHistory,
                                                                   style, "½(𝜕ₓf)²", true);
-        potential_history_artist = Graphics::Plotter::AddPointSet(total_energies_window, potential_history,
+        PotentialHistoryArtist = Graphics::Plotter::AddPointSet(TotalEnergiesWindow, PotentialHistory,
                                                                   style, "|f|", true);
 
-        f_artist         = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "ϕ(x,t)");
-        dfdt_artist      = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "T¹¹=𝜕ₜϕ");
+        Func_Artist         = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "ϕ(x,t)");
+        ddtFunc_Artist      = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "T¹¹=𝜕ₜϕ");
 
-        energy_map_artist    = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "T⁰⁰=e(x,t)");
-        kinetic_map_artist   = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "k(x,t)");
-        grad_map_artist      = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "g(x,t)");
-        potential_map_artist = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "v(x,t)");
+        EnergyMapArtist    = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "T⁰⁰=e(x,t)");
+        KineticMapArtist   = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "k(x,t)");
+        GradMapArtist      = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "g(x,t)");
+        PotentialMapArtist = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "v(x,t)");
 
-        momentum_flow_map_artist = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "T⁰¹=-𝜕ₓϕ𝜕ₜϕ");
+        MomentumFlowMapArtist = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "T⁰¹=-𝜕ₓϕ𝜕ₜϕ");
 
-        energy_map_artist   ->setAffectGraphRanges(true);
-        kinetic_map_artist  ->setAffectGraphRanges(true);
-        grad_map_artist     ->setAffectGraphRanges(true);
-        potential_map_artist->setAffectGraphRanges(true);
+        EnergyMapArtist   ->SetAffectGraphRanges(true);
+        KineticMapArtist  ->SetAffectGraphRanges(true);
+        GradMapArtist     ->SetAffectGraphRanges(true);
+        PotentialMapArtist->SetAffectGraphRanges(true);
 
 
     }
 
-    void KGRtoR::EnergyViewer_KG::setFunction(Pointer<Math::R2toR::NumericFunction> function) {
-        Viewer::setFunction(function);
+    void KGRtoR::EnergyViewer_KG::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
+        Viewer::SetFunction(function);
 
-        f_artist->setFunction(getFunction());
+        Func_Artist->setFunction(getFunction());
         // f_artist->setColorMap(Graphics::ColorMaps["BrBG"]->inverse().clone());
     }
 
-    void KGRtoR::EnergyViewer_KG::setFunctionDerivative(FuncPointer pointer) {
-        KGViewer::setFunctionDerivative(pointer);
+    void KGRtoR::EnergyViewer_KG::SetFunctionDerivative(FuncPointer pointer) {
+        KGViewer::SetFunctionDerivative(pointer);
 
-        dfdt_artist->setFunction(pointer);
+        ddtFunc_Artist->setFunction(pointer);
         // dfdt_artist->setColorMap(Graphics::ColorMaps["BrBG"]->brg().inverse().clone());
 
-        if(isVisible() && areFunctionsConsistent()) updateEnergy();
+        if(isVisible() && areFunctionsConsistent()) UpdateEnergy();
     }
 
-    void KGRtoR::EnergyViewer_KG::updateEnergy() {
+    void KGRtoR::EnergyViewer_KG::UpdateEnergy() {
         if(!areFunctionsConsistent()) return;
 
         auto f = getFunction();
@@ -68,17 +71,17 @@ namespace Slab::Models {
 
         auto H = getHamiltonian();
 
-        auto energy_func         = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
-        auto kinetic_func        = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
-        auto grad_func           = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
-        auto potential_func      = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
+        auto energy_func         = DynamicPointerCast<R2toR::FNumericFunction>(f->Clone());
+        auto kinetic_func        = DynamicPointerCast<R2toR::FNumericFunction>(f->Clone());
+        auto grad_func           = DynamicPointerCast<R2toR::FNumericFunction>(f->Clone());
+        auto potential_func      = DynamicPointerCast<R2toR::FNumericFunction>(f->Clone());
 
-        auto momentum_flow_func  = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
+        auto momentum_flow_func  = DynamicPointerCast<R2toR::FNumericFunction>(f->Clone());
 
-        energy_history->clear();
-        kinetic_history->clear();
-        grad_history->clear();
-        potential_history->clear();
+        EnergyHistory->clear();
+        KineticHistory->clear();
+        GradHistory->clear();
+        PotentialHistory->clear();
 
         auto Slice = Slab::Math::RtoR::FromR2toR;
 
@@ -95,10 +98,10 @@ namespace Slab::Models {
 
             {
                 fix t = j * dt + t0;
-                energy_history   ->addPoint(t, H.getTotalEnergy());
-                kinetic_history  ->addPoint(t, H.getTotalKineticEnergy());
-                grad_history     ->addPoint(t, H.getTotalGradientEnergy());
-                potential_history->addPoint(t, H.getTotalPotentialEnergy());
+                EnergyHistory   ->AddPoint(t, H.GetTotalEnergy());
+                KineticHistory  ->AddPoint(t, H.GetTotalKineticEnergy());
+                GradHistory     ->AddPoint(t, H.GetTotalGradientEnergy());
+                PotentialHistory->AddPoint(t, H.GetTotalPotentialEnergy());
             }
 
             {
@@ -106,7 +109,7 @@ namespace Slab::Models {
                 double *in = &H.getEnergyDensity()->getSpace().getHostData(true)[0];
                 double *out = &energy_func->At(0, j);
 
-                memcpy(out, in, sizeof(Real) * N);
+                memcpy(out, in, sizeof(DevFloat) * N);
             }
 
             {
@@ -114,7 +117,7 @@ namespace Slab::Models {
                 double *in = &H.getKineticDensity()->getSpace().getHostData(true)[0];
                 double *out = &kinetic_func->At(0, j);
 
-                memcpy(out, in, sizeof(Real) * N);
+                memcpy(out, in, sizeof(DevFloat) * N);
             }
 
             {
@@ -122,7 +125,7 @@ namespace Slab::Models {
                 double *in = &H.getGradientDensity()->getSpace().getHostData(true)[0];
                 double *out = &grad_func->At(0, j);
 
-                memcpy(out, in, sizeof(Real) * N);
+                memcpy(out, in, sizeof(DevFloat) * N);
             }
 
             {
@@ -130,24 +133,24 @@ namespace Slab::Models {
                 double *in = &H.getPotentialDensity()->getSpace().getHostData(true)[0];
                 double *out = &potential_func->At(0, j);
 
-                memcpy(out, in, sizeof(Real) * N);
+                memcpy(out, in, sizeof(DevFloat) * N);
             }
         }
 
-        energy_map_artist   ->setFunction(energy_func);
+        EnergyMapArtist   ->setFunction(energy_func);
         //energy_map_artist   ->setColorMap(Graphics::ColorMaps["afmhot"]->clone());
 
-        kinetic_map_artist  ->setFunction(kinetic_func);
+        KineticMapArtist  ->setFunction(kinetic_func);
         //kinetic_map_artist  ->setColorMap(Graphics::ColorMaps["afmhot"]->brg().clone());
 
-        grad_map_artist     ->setFunction(grad_func);
+        GradMapArtist     ->setFunction(grad_func);
         //grad_map_artist     ->setColorMap(Graphics::ColorMaps["afmhot"]->brg().brg().clone());
 
-        potential_map_artist->setFunction(potential_func);
+        PotentialMapArtist->setFunction(potential_func);
         //potential_map_artist->setColorMap(Graphics::ColorMaps["afmhot"]->bgr().clone());
 
         {
-            auto dfdx = DynamicPointerCast<R2toR::NumericFunction>(f->diff(0));
+            auto dfdx = DynamicPointerCast<R2toR::FNumericFunction>(f->diff(0));
             IN dfdx_data = dfdx->getSpace().getHostData(true);
             IN dfdt_data = dfdt->getSpace().getHostData(true);
 
@@ -157,21 +160,21 @@ namespace Slab::Models {
             for(auto i=0; i<data_size; ++i)
                 mf_data[i] = - dfdt_data[i] * dfdx_data[i];
 
-            momentum_flow_map_artist->setFunction(momentum_flow_func);
+            MomentumFlowMapArtist->setFunction(momentum_flow_func);
             // momentum_flow_map_artist->setColorMap(Graphics::ColorMaps["cmocean:curl"]->clone());
         }
 
-        total_energies_window->reviewGraphRanges();
-        full_histories_window->reviewGraphRanges();
+        TotalEnergiesWindow->ReviewGraphRanges();
+        FullHistoriesWindow->ReviewGraphRanges();
     }
 
-    void KGRtoR::EnergyViewer_KG::notifyBecameVisible() {
-        Viewer::notifyBecameVisible();
+    void KGRtoR::EnergyViewer_KG::NotifyBecameVisible() {
+        Viewer::NotifyBecameVisible();
 
-        if(areFunctionsConsistent()) updateEnergy();
+        if(areFunctionsConsistent()) UpdateEnergy();
     }
 
-    Str KGRtoR::EnergyViewer_KG::getName() const {
+    Str KGRtoR::EnergyViewer_KG::GetName() const {
         return "[KG] Stress-energy viewer";
     }
 } // Slab::Models

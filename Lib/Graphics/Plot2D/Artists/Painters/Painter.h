@@ -9,13 +9,13 @@
 
 namespace Slab::Graphics {
 
-    class Painter : protected OpenGL::Shader {
+    class Painter : protected OpenGL::FShader {
     public:
         Painter(const Str &vertFilename, const Str &fragFilename);
 
         virtual void drawGUI();
 
-        void use() const override;
+        void Use() const override;
     };
 
 } // Slab::Graphics

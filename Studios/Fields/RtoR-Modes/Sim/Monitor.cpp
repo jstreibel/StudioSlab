@@ -16,21 +16,21 @@
 #define CUSTOM_TICKS true
 
 namespace Modes {
-    Monitor::Monitor(const Pointer<KGNumericConfig> &params, Slab::Models::KGRtoR::KGEnergy &hamiltonian,
+    Monitor::Monitor(const TPointer<KGNumericConfig> &params, Slab::Models::KGRtoR::KGEnergy &hamiltonian,
                      const Str &name)
     : Slab::Models::KGRtoR::Monitor(params, hamiltonian, name)
     {
     }
 
-    void Monitor::setInputModes(RealVector A, const RealVector& k, RealVector Ω) {
+    void Monitor::setInputModes(FRealVector A, const FRealVector& k, FRealVector Ω) {
         assert(A.size() == Ω.size());
 
         fix N = A.size();
         auto modes = std::make_shared<Math::PointSet>();
         for (auto i=0; i<N; ++i ) {
             fix ω = Ω[i];
-            modes->addPoint({ω, 0.0});
-            modes->addPoint({ω, A[i]});
+            modes->AddPoint({ω, 0.0});
+            modes->AddPoint({ω, A[i]});
         }
 
         // fullSFTHistoryArtist.addPointSet(modes,
@@ -38,12 +38,12 @@ namespace Modes {
         //     "A(ω)", DONT_AFFECT_RANGES);
 
         if(CUSTOM_TICKS) {
-            Graphics::AxisArtist::Ticks ticks;
+            Graphics::FAxisArtist::Ticks ticks;
             auto unit = Constants::π;
             for (int n = 1; n < 20; ++n) {
-                ticks.push_back(Graphics::AxisArtist::Tick{(2 * n - 1) * k[0], unit((2 * n - 1) * k[0], 0)});
+                ticks.push_back(Graphics::FAxisArtist::Tick{(2 * n - 1) * k[0], unit((2 * n - 1) * k[0], 0)});
             }
-            this->historyPanel->get_kSectionWindow()->getAxisArtist().setHorizontalAxisTicks(ticks);
+            this->historyPanel->get_kSectionWindow()->GetAxisArtist().setHorizontalAxisTicks(ticks);
         }
     }
 } // Modes

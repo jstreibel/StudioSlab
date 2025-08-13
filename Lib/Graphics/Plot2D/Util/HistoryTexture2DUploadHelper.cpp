@@ -10,14 +10,14 @@
 namespace Slab::Graphics {
 
     HistoryTexture2DUploadHelper::HistoryTexture2DUploadHelper(NumericFunction_Ptr history,
-                                                               Pointer<FieldTextureKontraption> texture)
+                                                               TPointer<FieldTextureKontraption> texture)
     : function(history)
     , textureKontraption(texture)
     {
 
     }
 
-    void HistoryTexture2DUploadHelper::uploadUpTo(const Real time) {
+    void HistoryTexture2DUploadHelper::uploadUpTo(const DevFloat time) {
         if(time == lastUpdatedTime) return;
 
         fix n = function->getM();
@@ -25,7 +25,7 @@ namespace Slab::Graphics {
         fix tₘₐₓ = function->getDomain().yMax;
         fix t = min(time, tₘₐₓ);
 
-        auto upToRow = (Count)(Real(n-1) * (t-t₀)/(tₘₐₓ-t₀));
+        auto upToRow = (CountType)(DevFloat(n-1) * (t-t₀)/(tₘₐₓ-t₀));
 
         assert(upToRow < n);
 

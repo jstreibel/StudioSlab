@@ -2,7 +2,7 @@
 // Created by joao on 10/17/21.
 //
 
-#include "CLInterfaceManager.h"
+#include "CommandLineInterfaceManager.h"
 
 #include "Utils/Utils.h"
 #include "Core/Tools/Log.h"
@@ -10,30 +10,30 @@
 
 namespace Slab::Core {
 
-    CLInterfaceManager *CLInterfaceManager::instance = nullptr;
+    FCommandLineInterfaceManager *FCommandLineInterfaceManager::instance = nullptr;
 
-    auto CLInterfaceManager::getInstance() -> CLInterfaceManager & {
-        if (instance == nullptr) instance = new CLInterfaceManager;
+    auto FCommandLineInterfaceManager::getInstance() -> FCommandLineInterfaceManager & {
+        if (instance == nullptr) instance = new FCommandLineInterfaceManager;
 
         return *instance;
     }
 
-    void CLInterfaceManager::registerInterface(const Pointer<CLInterface> &anInterface) {
+    void FCommandLineInterfaceManager::registerInterface(const TPointer<FCommandLineInterface> &anInterface) {
         auto &log = Log::Note();
-        log << "InterfaceManager registering interface \"" << Log::FGBlue << anInterface->getName()
+        log << "InterfaceManager registering interface \"" << Log::FGBlue << anInterface->GetName()
             << Log::ResetFormatting << "\" [ "
-            << "priority " << anInterface->priority << " ]";
+            << "priority " << anInterface->Priority << " ]";
 
         interfaces.emplace_back(anInterface);
 
-        auto subInterfaces = anInterface->getSubInterfaces();
+        auto subInterfaces = anInterface->GetSubInterfaces();
         if (!subInterfaces.empty())
             for (const auto &subInterface: subInterfaces) {
-                fix name = subInterface->getName();
+                fix name = subInterface->GetName();
                 log << "\n\t\t\t\t\t\tSub-interface: " << name;
             }
 
-        for (const auto &p: anInterface->getParameters()) {
+        for (const auto &p: anInterface->GetParameters()) {
             auto desc = p->getDescription();
             if (!desc.empty()) desc = " (" + desc + ")";
 
@@ -46,28 +46,28 @@ namespace Slab::Core {
             registerInterface(subInterface);
     }
 
-    auto CLInterfaceManager::getInterfaces() -> Vector<Pointer<const CLInterface>> {
-        Vector<Pointer<const CLInterface>> V(interfaces.size());
+    auto FCommandLineInterfaceManager::getInterfaces() -> Vector<TPointer<const FCommandLineInterface>> {
+        Vector<TPointer<const FCommandLineInterface>> V(interfaces.size());
 
         std::copy(interfaces.begin(), interfaces.end(), V.begin());
 
         return V;
     }
 
-    void CLInterfaceManager::feedInterfaces(const CLVariablesMap &vm) {
+    void FCommandLineInterfaceManager::feedInterfaces(const CLVariablesMap &vm) {
         Log::Critical() << "InterfaceManager started feeding interfaces." << Log::Flush;
 
-        auto comp = [](const CLInterface_ptr &a, const CLInterface_ptr &b) { return *a < *b; };
+        auto comp = [](const TPointer<FCommandLineInterface> &a, const TPointer<FCommandLineInterface> &b) { return *a < *b; };
         std::sort(interfaces.begin(), interfaces.end(), comp);
 
         auto &log = Log::Info();
         log << "[priority] Interface";
         for (const auto &interface: interfaces) {
 
-            log << "\n\t\t\t\t\t  [" << interface->priority << "] " << interface->getName();
+            log << "\n\t\t\t\t\t  [" << interface->Priority << "] " << interface->GetName();
 
-            if (!interface->subInterfaces.empty())
-                log << "\t\t\t\t---> Contains " << interface->subInterfaces.size() << " sub-interfaces.";
+            if (!interface->SubInterfaces.empty())
+                log << "\t\t\t\t---> Contains " << interface->SubInterfaces.size() << " sub-interfaces.";
         }
         log << Log::Flush;
 
@@ -75,40 +75,40 @@ namespace Slab::Core {
             // TODO passar (somehow) para as interfaces somente as variaveis que importam, e não todas o tempo todo.
             // Ocorre que, passando todas sempre, certas interfaces terao acesso a informacao que nao lhes interessa.
 
-            interface->setupFromCommandLine(vm);
+            interface->SetupFromCommandLine(vm);
         }
 
         for (const auto &interface: interfaces) {
-            for (auto listener: interface->listeners)
+            for (auto listener: interface->Listeners)
                 listener->notifyAllCLArgsSetupFinished();
         }
 
         Log::Success() << "InterfaceManager finished feeding interfaces." << Log::Flush;
     }
 
-    auto CLInterfaceManager::renderAsPythonDictionaryEntries() -> Str {
+    auto FCommandLineInterfaceManager::renderAsPythonDictionaryEntries() -> Str {
 
         StringStream ss;
         for (const auto &interface: interfaces) {
-            auto parameters = interface->getParameters();
+            auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters)
-                ss << "\"" << parameter->getCommandLineArgumentName(true) << "\": " << parameter->valueToString() << ", ";
+                ss << "\"" << parameter->getCommandLineArgumentName(true) << "\": " << parameter->ValueToString() << ", ";
         }
 
         return ss.str();
     }
 
-    auto CLInterfaceManager::renderParametersToString(const StrVector &params, const Str &separator,
+    auto FCommandLineInterfaceManager::renderParametersToString(const StrVector &params, const Str &separator,
                                                       bool longName) const -> Str {
         StringStream ss;
 
         for (const auto &interface: interfaces) {
-            auto parameters = interface->getParameters();
+            auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters) {
                 auto name = parameter->getCommandLineArgumentName(longName);
 
                 if (Contains(params, name))
-                    ss << name << "=" << parameter->valueToString() << separator;
+                    ss << name << "=" << parameter->ValueToString() << separator;
             }
         }
 
@@ -117,8 +117,8 @@ namespace Slab::Core {
         return str.ends_with(separator) ? str.substr(0, str.length() - separator.length()) : str;
     }
 
-    auto CLInterfaceManager::getInterface(const char *target) -> CLInterface_constptr {
-        auto compFunc = [target](const CLInterface_constptr &anInterface) { return anInterface->operator==(target); };
+    auto FCommandLineInterfaceManager::getInterface(const char *target) -> TPointer<const FCommandLineInterface> {
+        auto compFunc = [target](const TPointer<const FCommandLineInterface> &anInterface) { return anInterface->operator==(target); };
 
         auto it = std::find_if(interfaces.begin(), interfaces.end(), compFunc);
 
@@ -129,25 +129,25 @@ namespace Slab::Core {
         return *it;
     }
 
-    auto CLInterfaceManager::getParametersValues(const StrVector &params) const -> Vector<Pair<Str, Str>> {
+    auto FCommandLineInterfaceManager::getParametersValues(const StrVector &params) const -> Vector<Pair<Str, Str>> {
         Vector<Pair<Str, Str>> values;
 
         for (const auto &interface: interfaces) {
-            auto parameters = interface->getParameters();
+            auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters) {
                 auto name = parameter->getCommandLineArgumentName();
 
                 if (Contains(params, name))
-                    values.emplace_back(name, parameter->valueToString());
+                    values.emplace_back(name, parameter->ValueToString());
             }
         }
 
         return values;
     }
 
-    auto CLInterfaceManager::getParameter(const Str &name) const -> Pointer<const CLParameter> {
+    auto FCommandLineInterfaceManager::getParameter(const Str &name) const -> TPointer<const FCommandLineParameter> {
         for (const auto &interface: interfaces) {
-            auto parameters = interface->getParameters();
+            auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters) {
                 if (name == parameter->getCommandLineArgumentName() || name == parameter->getCommandLineArgumentName(true))
                     return parameter;
@@ -157,9 +157,9 @@ namespace Slab::Core {
         Log::Warning() << "InterfaceManager could not find parameter '" << name << "'." << Log::Flush;
         Log::Info() << "Available parameters:" << Log::Flush;
         for (const auto &interface: interfaces) {
-            auto parameters = interface->getParameters();
+            auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters) {
-                Log::Info() << "\t[" << interface->getName() << "] " << parameter->getCommandLineArgumentName(true) << ": " << parameter->valueToString() << Log::Flush;
+                Log::Info() << "\t[" << interface->GetName() << "] " << parameter->getCommandLineArgumentName(true) << ": " << parameter->ValueToString() << Log::Flush;
             }
         }
 

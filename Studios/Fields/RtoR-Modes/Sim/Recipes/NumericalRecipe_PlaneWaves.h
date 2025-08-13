@@ -15,7 +15,7 @@ namespace Modes {
         RealParameter    Q               = RealParameter   (1.0,  "Q", "Scale-invariant Q=Ak²=Aω²-4/π");
         IntegerParameter harmonic        = IntegerParameter(10, "harmonic", "Harmonic number 'n'. "
                                                                            "Wavenumber is computed as k=2πn/L. ");
-        Pointer<SquareWave> SquareWave;
+        TPointer<SquareWave> SquareWave;
 
     public:
         FNumericalRecipe_PlaneWaves();

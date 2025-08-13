@@ -17,16 +17,16 @@
 namespace Slab::Graphics {
 
     class ModesHistoryViewer : public Viewer {
-        Pointer<Math::R2toC::NumericFunction> xFourierTransform = nullptr;
-        Pointer<Math::R2toR::NumericFunction> xft_amplitudes = nullptr;
+        TPointer<Math::R2toC::NumericFunction> xFourierTransform = nullptr;
+        TPointer<Math::R2toR::FNumericFunction> xft_amplitudes = nullptr;
 
-        Pointer<R2toRFunctionArtist> xft_amplitudes_artist = nullptr;
-        Pointer<R2SectionArtist> modes_artist = nullptr;
+        TPointer<R2toRFunctionArtist> xft_amplitudes_artist = nullptr;
+        TPointer<R2SectionArtist> modes_artist = nullptr;
 
-        Vector<Pointer<Artist>> curves_artists;
+        Vector<TPointer<FArtist>> curves_artists;
 
-        Pointer<Plot2DWindow> xft_history_window;
-        Pointer<Plot2DWindow> modes_window;
+        TPointer<FPlot2DWindow> xft_history_window;
+        TPointer<FPlot2DWindow> modes_window;
 
         int n_modes = 4;
         float base_mode = M_PI;
@@ -34,15 +34,15 @@ namespace Slab::Graphics {
         void computeTransform();
         void setupModes();
     public:
-        explicit ModesHistoryViewer(const Pointer<GUIWindow> &);
+        explicit ModesHistoryViewer(const TPointer<FGUIWindow> &);
 
-        Str getName() const override;
+        Str GetName() const override;
 
-        void draw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
-        void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;
+        void SetFunction(TPointer<Math::R2toR::FNumericFunction> function) override;
 
-        void notifyBecameVisible() override;
+        void NotifyBecameVisible() override;
     };
 
 } // Slab::Graphics

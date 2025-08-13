@@ -9,12 +9,12 @@
 #include "Graphics/Plot3D/Actors/R2toRFunctionActor.h"
 
 namespace Tests {
-    Graph3DTests::Graph3DTests() : Slab::Graphics::WindowRow("Plot3D test") {
+    Graph3DTests::Graph3DTests() : Slab::Graphics::FWindowRow("Plot3D test") {
         using namespace Slab;
 
         auto graph3d = New<Graphics::Scene3DWindow>();
 
-        addWindow(graph3d);
+        AddWindow(graph3d);
 
         fix N = 5;
         fix M = 5;
@@ -27,8 +27,8 @@ namespace Tests {
 
         for(auto i=0; i<funky->getN(); ++i)
             for(auto j=0; j<funky->getM(); ++j) {
-                fix s = (Real)i/(funky->getN()-1);
-                fix t = (Real)j/(funky->getM()-1);
+                fix s = (DevFloat)i/(funky->getN()-1);
+                fix t = (DevFloat)j/(funky->getM()-1);
 
                 fix x = s*funky->getDomain().getLx() + xMin;
                 fix y = t*funky->getDomain().getLy() + yMin;
@@ -41,7 +41,7 @@ namespace Tests {
         graph3d->addActor(actor);
     }
 
-    void Graph3DTests::draw() {
-        WindowRow::draw();
+    void Graph3DTests::ImmediateDraw(const Slab::Graphics::FPlatformWindow& PlatformWindow) {
+        FWindowRow::ImmediateDraw(PlatformWindow);
     }
 } // Tests

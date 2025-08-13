@@ -10,11 +10,11 @@
 
 namespace Tests {
 
-    class NuklearTests : public Slab::Graphics::SystemWindowEventListener{
+    class NuklearTests : public Slab::Graphics::FPlatformWindowEventListener{
     public:
         NuklearTests();
 
-        bool notifyRender() override;
+        bool NotifyRender(const Slab::Graphics::FPlatformWindow&) override;
     };
 
 } // Tests

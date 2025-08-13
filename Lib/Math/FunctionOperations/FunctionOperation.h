@@ -21,7 +21,7 @@ namespace Slab::Math::Base {
         */
 
     public:
-        virtual auto operator[] (Pointer<InputFunctionCategory>) -> Pointer<OutputFunctionCategory> = 0;
+        virtual auto operator[] (TPointer<InputFunctionCategory>) -> TPointer<OutputFunctionCategory> = 0;
     };
 
 } // Slab::Math::Base

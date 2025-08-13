@@ -16,13 +16,13 @@
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRRealtimePanel.h"
 #include "Models/Stochastic-Path-Integral/SPI-Recipe.h"
 
-class SPIApp final : public Slab::Application {
-    Slab::Pointer<Slab::Models::StochasticPathIntegrals::SPIRecipe> recipe;
-    Slab::Pointer<Slab::Math::NumericTask> numeric_task;
+class SPIApp final : public Slab::FApplication {
+    Slab::TPointer<Slab::Models::StochasticPathIntegrals::SPIRecipe> recipe;
+    Slab::TPointer<Slab::Math::NumericTask> numeric_task;
 
 public:
     SPIApp(const int argc, const char *argv[])
-    : Application("SPI-App", argc, argv)
+    : FApplication("SPI-App", argc, argv)
     , recipe(Slab::New<Slab::Models::StochasticPathIntegrals::SPIRecipe>())
     , numeric_task(Slab::New<Slab::Math::NumericTask>(recipe, false))
     {    }
@@ -30,13 +30,13 @@ public:
     ~SPIApp() override = default;
 
 protected:
-    Slab::Pointer<Slab::Graphics::MainViewer> main_viewer;
+    Slab::TPointer<Slab::Graphics::MainViewer> main_viewer;
     void OnStart() override {
-        GET task_manager = Slab::GetModule<Slab::Core::TaskManagerModule>("TaskManager");
+        GET task_manager = Slab::GetModule<Slab::Core::MTaskManager>("TaskManager");
 
         numeric_task->init();
 
-        auto job = task_manager.addTask(numeric_task);
+        auto job = task_manager.AddTask(numeric_task);
     };
 };
 

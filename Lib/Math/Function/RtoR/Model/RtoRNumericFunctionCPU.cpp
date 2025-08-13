@@ -36,12 +36,12 @@ namespace Slab::Math::RtoR {
             getSpace().getHostData()[n] = toCopyX[n];
     }
 
-    RtoR::NumericFunction_CPU::NumericFunction_CPU(UInt N, Real xLeft, Real xRight, LaplacianType laplacianType)
+    RtoR::NumericFunction_CPU::NumericFunction_CPU(UInt N, DevFloat xLeft, DevFloat xRight, LaplacianType laplacianType)
             : NumericFunction(N, xLeft, xRight, Device::CPU, laplacianType) {
 
     }
 
-    NumericFunction_CPU::NumericFunction_CPU(RealArray_I &data, Real xLeft, Real xRight,
+    NumericFunction_CPU::NumericFunction_CPU(RealArray_I &data, DevFloat xLeft, DevFloat xRight,
                                                NumericFunction::LaplacianType laplacianType)
             : NumericFunction_CPU(data.size(), xLeft, xRight, laplacianType) {
         getSpace().getHostData() = data;
@@ -74,11 +74,11 @@ namespace Slab::Math::RtoR {
         return DataAlloc<NumericFunction_CPU> (this->get_data_name() + " [clone]", *this);
     }
 
-    Pointer<Base::NumericFunction <Real, Real>> NumericFunction_CPU::CloneWithSize(UInt outN) const {
+    TPointer<Base::NumericFunction <DevFloat, DevFloat>> NumericFunction_CPU::CloneWithSize(UInt outN) const {
         auto newFunc = DataAlloc<NumericFunction_CPU>(this->get_data_name() + "[decimated " + ToStr(outN) + "/" + ToStr(this->N) + " clone]", outN, xMin, xMax, laplacianType);
 
         const RealArray &X = getSpace().getHostData();
-        const Real inc_d = N / Real(outN);
+        const DevFloat inc_d = N / DevFloat(outN);
 
         DiscreteSpace &newSpace = newFunc->getSpace();
         for (UInt i = 0; i < outN; i++)
@@ -87,8 +87,8 @@ namespace Slab::Math::RtoR {
         return newFunc;
     }
 
-    Base::NumericFunction <Real, Real> &NumericFunction_CPU::Apply(const FunctionT &func,
-                                                                    Base::NumericFunction <Real, Real> &out) const {
+    Base::NumericFunction <DevFloat, DevFloat> &NumericFunction_CPU::Apply(const FunctionT &func,
+                                                                    Base::NumericFunction <DevFloat, DevFloat> &out) const {
         auto &outSpace = out.getSpace();
 
         auto &outX = outSpace.getHostData();
@@ -105,9 +105,9 @@ namespace Slab::Math::RtoR {
             auto &outX = out.getSpace().getHostData();
             const auto &myX = getSpace().getHostData();
             const auto &f = this->getSpace().getHostData();
-            const Real invh = 1. / getSpace().getMetaData().geth(0);
-            const Real invh_2 = .5 * invh;
-            const Real invhsqr = invh * invh;
+            const DevFloat invh = 1. / getSpace().getMetaData().geth(0);
+            const DevFloat invh_2 = .5 * invh;
+            const DevFloat invhsqr = invh * invh;
 
             OMP_GET_BEGIN_END(begin, end, outX.size())
 
@@ -117,9 +117,9 @@ namespace Slab::Math::RtoR {
                     continue;
                 }
 
-                const Real r = mapIntToPos(i);
-                const Real ddr = invh_2 * (-f[i - 1] + f[i + 1]);
-                const Real d2dr2 = invhsqr * ((f[i - 1] + f[i + 1]) - 2.0 * f[i]);
+                const DevFloat r = mapIntToPos(i);
+                const DevFloat ddr = invh_2 * (-f[i - 1] + f[i + 1]);
+                const DevFloat d2dr2 = invhsqr * ((f[i - 1] + f[i + 1]) - 2.0 * f[i]);
 
                 outX[i] = d2dr2 + ddr / r;
                 //outX[i] = d2dr2;
@@ -132,7 +132,7 @@ namespace Slab::Math::RtoR {
         return out;
     }
 
-    Real NumericFunction_CPU::integrate() const {
+    DevFloat NumericFunction_CPU::integrate() const {
 
         auto sum = .0;
         for (const auto &v: this->getSpace().getHostData())
@@ -142,7 +142,7 @@ namespace Slab::Math::RtoR {
         return sum * dx;
     }
 
-    Base::NumericFunction <Real, Real> &NumericFunction_CPU::operator+=(const FunctionT<Real, Real> &func) {
+    Base::NumericFunction <DevFloat, DevFloat> &NumericFunction_CPU::operator+=(const FunctionT<DevFloat, DevFloat> &func) {
         auto &outSpace = getSpace();
 
         auto &outX = outSpace.getHostData();
@@ -156,11 +156,11 @@ namespace Slab::Math::RtoR {
         return *this;
     }
 
-    Real NumericFunction_CPU::max() const {
+    DevFloat NumericFunction_CPU::max() const {
         return getSpace().getHostData().max();
     }
 
-    Real NumericFunction_CPU::min() const {
+    DevFloat NumericFunction_CPU::min() const {
         return getSpace().getHostData().min();
     }
 

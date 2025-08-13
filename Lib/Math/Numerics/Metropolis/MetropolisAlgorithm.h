@@ -10,7 +10,7 @@
 
 namespace Slab::Math {
 
-    using Temperature = Real;
+    using Temperature = DevFloat;
 
     template<typename SiteType, typename NewValueType>
     class MetropolisAlgorithm {

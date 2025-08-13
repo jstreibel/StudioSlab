@@ -12,7 +12,7 @@ namespace Slab::Math {
     template < class FunctionType >
     class Functional {
     public:
-        virtual Real
+        virtual DevFloat
         operator[] (FunctionType &function) const = 0;
 
         // virtual Real

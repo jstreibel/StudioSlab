@@ -11,10 +11,10 @@ namespace Slab::Math {
 
     class Data;
 
-    using UniqueID = Count;
+    using UniqueID = CountType;
     using DataType = Str;
     using DataName = Str;
-    using DataChangeCallback = std::function<void(Pointer<Data>)>;
+    using DataChangeCallback = std::function<void(TPointer<Data>)>;
 
     enum DataBehavior {
         MutableData,
@@ -24,7 +24,7 @@ namespace Slab::Math {
     class Data {
         friend class DataManager;
 
-        static Count n;
+        static CountType n;
         const UniqueID id;
         DataName data_name;
 
@@ -50,18 +50,18 @@ namespace Slab::Math {
     };
 
     class DataWrap {
-        Volatile<Data> data;
+        TVolatile<Data> data;
 
     public:
         DataWrap() = default;
-        explicit DataWrap(Volatile<Data>);
+        explicit DataWrap(TVolatile<Data>);
 
         UniqueID get_id() const;
         DataName get_name() const;
         DataType get_type() const;
 
         virtual auto
-        get_data() const -> Pointer<Data>;
+        get_data() const -> TPointer<Data>;
 
         bool is_valid() const;
 

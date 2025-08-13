@@ -18,17 +18,17 @@ class FunctionAzimuthalSymmetry : public R2toR::Function {
     public:
         typedef std::shared_ptr<FunctionAzimuthalSymmetry> Ptr;
 
-        FunctionAzimuthalSymmetry(const RtoR::Function *baseFunction, Real coef=1, Real eccentricity=0,
-                                  Real angle=0, bool keepBaseFunction=true)
+        FunctionAzimuthalSymmetry(const RtoR::Function *baseFunction, DevFloat coef=1, DevFloat eccentricity=0,
+                                  DevFloat angle=0, bool keepBaseFunction=true)
             : radialFunction(*baseFunction), c(coef), theta(angle), a(1. / sqrt(1. - eccentricity * eccentricity)), keepBaseFunction(keepBaseFunction)
                {};
         ~FunctionAzimuthalSymmetry(){ if(keepBaseFunction) delete &radialFunction; }
 
-        Real operator()(Real2D x) const override {
+        DevFloat operator()(Real2D x) const override {
             Rotation T(theta);
             Real2D Tx = T*x;
             Tx.x /= a;
-            const Real r = sqrt(Tx.x*Tx.x + Tx.y*Tx.y);
+            const DevFloat r = sqrt(Tx.x*Tx.x + Tx.y*Tx.y);
 
             return c * radialFunction(r);
         };
@@ -41,9 +41,9 @@ class FunctionAzimuthalSymmetry : public R2toR::Function {
 
 
     private:
-        const Real c;
-        const Real a;
-        const Real theta;
+        const DevFloat c;
+        const DevFloat a;
+        const DevFloat theta;
         const bool keepBaseFunction;
         const RtoR::Function &radialFunction;
     };

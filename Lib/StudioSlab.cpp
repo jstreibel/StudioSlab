@@ -10,7 +10,7 @@
 
 namespace Slab {
 
-    bool started = false;
+    bool Started = false;
 
     void Startup() {
         if(IsStarted()) return;
@@ -19,7 +19,7 @@ namespace Slab {
         Math::Startup();
         Graphics::Startup();
 
-        started = true;
+        Started = true;
     }
 
     void Finish() {
@@ -29,17 +29,17 @@ namespace Slab {
     }
 
     bool IsStarted() {
-        return started;
+        return Started;
     }
 
-    Pointer<Core::Backend> CreatePlatform(Core::BackendName platform) {
+    TPointer<Core::FBackend> CreatePlatform(Core::FBackendIdentifier platform) {
         Core::BackendManager::Startup(platform);
 
         return Core::BackendManager::GetBackend();
     }
 
-    int Run(Application &application) {
-        return SafetyNet::Jump(application);
+    int Run(FApplication &Application) {
+        return SafetyNet::Jump(Application);
     }
 
 

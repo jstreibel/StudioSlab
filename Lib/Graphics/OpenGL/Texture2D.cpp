@@ -29,7 +29,7 @@ namespace Slab::Graphics::OpenGL {
             throw Exception("Texture too big");
         }
 
-        bind();
+        Bind();
 
         // Log::Critical() << "OpenGL::Texture is reserving GPU texture space to upload " << w << "x" << h << " pixels to." << Log::Flush;
 
@@ -38,7 +38,7 @@ namespace Slab::Graphics::OpenGL {
 
         setAntiAliasOn();
 
-        if(checkGLErrors("reserve " + ToStr(w) + "x" + ToStr(h) + " GPU texture pixels"))
+        if(CheckGLErrors("reserve " + ToStr(w) + "x" + ToStr(h) + " GPU texture pixels"))
             Log::Error() << "OpenGL::Texture failed reserving " << w << "x" << h << " GPU texture pixels." << Log::Flush;
     }
 
@@ -52,7 +52,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void Texture2D::setAntiAliasOn() {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -61,7 +61,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void Texture2D::setAntiAliasOff() {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -74,30 +74,30 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void Texture2D::set_sPeriodicOn() {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, WrapMode::Repeat);
     }
 
     void Texture2D::setSWrap(WrapMode wrapMode) {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
     }
 
     void Texture2D::set_tPeriodicOn() {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, WrapMode::Repeat);
     }
 
     void Texture2D::setTWrap(WrapMode wrapMode) {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
     }
 
-    bool Texture2D::uploadData(UInt row0, Count nRows, PixelDataFormat dataFormat,
+    bool Texture2D::uploadData(UInt row0, CountType nRows, PixelDataFormat dataFormat,
                                PixelDataType dataType, const void *dataBegin) {
         assert(row0<getHeight());
         assert(getTarget() == GL_TEXTURE_2D);
@@ -108,11 +108,11 @@ namespace Slab::Graphics::OpenGL {
         fix nCols = w;
         fix level = 0;
 
-        checkGLErrors(__PRETTY_FUNCTION__);
+        CheckGLErrors(__PRETTY_FUNCTION__);
 
         fix internalFormat = getInternalFormat();
 
-        bind();
+        Bind();
 
         if(row0==0 && nRows==w)
             glTexImage2D(getTarget(), level, internalFormat,
@@ -124,7 +124,7 @@ namespace Slab::Graphics::OpenGL {
                             (GLsizei) nCols,   (GLsizei) nRows,
                             dataFormat, dataType, dataBegin);
 
-        if(checkGLErrors(__PRETTY_FUNCTION__, false)) {
+        if(CheckGLErrors(__PRETTY_FUNCTION__, false)) {
             Log::Error() << "OpenGL::Texture failed to upload " << w << "x" << h
                          << " data to target " << TargetToString(getTarget())
                          << " with internal format " << InternalFormatToString(getInternalFormat())

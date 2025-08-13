@@ -17,7 +17,7 @@ namespace Slab::Math::RtoR2 {
         typedef std::shared_ptr<StraightLine> Ptr;
 
         StraightLine() = default;
-        StraightLine(Real2D x0, Real2D xf, Real sMin=0, Real sMax=1);
+        StraightLine(Real2D x0, Real2D xf, DevFloat sMin=0, DevFloat sMax=1);
         StraightLine(const StraightLine& line);
 
 
@@ -25,7 +25,7 @@ namespace Slab::Math::RtoR2 {
 
         static Ptr New(Real2D x0, Real2D xf);
 
-        Real2D operator()(Real s) const override;
+        Real2D operator()(DevFloat s) const override;
 
         friend StraightLine operator*(const R2toR::Transform &T, const StraightLine &line);
 
@@ -37,7 +37,7 @@ namespace Slab::Math::RtoR2 {
         Real2D& getx0() {return this->x0;}
         Real2D& getr() {return this->r;}
 
-        Real length() const {return this->getr().norm();}
+        DevFloat length() const {return this->getr().norm();}
 
     };
 

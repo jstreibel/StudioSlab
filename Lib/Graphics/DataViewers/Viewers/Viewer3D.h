@@ -12,14 +12,14 @@
 namespace Slab::Graphics {
 
     class Viewer3D : public Viewer {
-        Pointer<Scene3DWindow> scene3DWindow;
-        Pointer<R2toRFunctionActor> sceneActor;
+        TPointer<Scene3DWindow> scene3DWindow;
+        TPointer<R2toRFunctionActor> sceneActor;
     public:
-        Viewer3D(Pointer<GUIWindow>);
+        Viewer3D(TPointer<FGUIWindow>);
 
-        void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;
+        void SetFunction(TPointer<Math::R2toR::FNumericFunction> function) override;
 
-        Str getName() const override;
+        Str GetName() const override;
     };
 
 } // Graphics::Slab

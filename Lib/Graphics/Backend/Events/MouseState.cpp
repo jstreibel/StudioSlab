@@ -6,23 +6,21 @@
 
 namespace Slab::Graphics {
 
-    MouseState::MouseState(Slab::Graphics::ParentSystemWindow parent) : SystemWindowEventListener(parent) {}
+    bool FMouseState::NotifyMouseButton(EMouseButton Which, EKeyState State, EModKeys ModKeys) {
+        this->mod_keys = ModKeys;
 
-    bool MouseState::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
-        mod_keys = keys;
-
-        switch (button) {
+        switch (Which) {
             case MouseButton_LEFT:
-                leftPressed = state==Press;
-                since_left_pressed.reset();
+                Left = State;
+                SinceLeftPressed.reset();
                 break;
             case MouseButton_MIDDLE:
-                centerPressed = state==Press;
-                since_center_pressed.reset();
+                Center = State;
+                SinceCenterPressed.reset();
                 break;
             case MouseButton_RIGHT:
-                rightPressed = state==Press;
-                since_right_pressed.reset();
+                Right = State;
+                SinceRightPressed.reset();
                 break;
             case MouseButton_4:
                 break;
@@ -39,7 +37,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool MouseState::notifyMouseMotion(int _x, int _y, int _dx, int _dy) {
+    bool FMouseState::NotifyMouseMotion(int _x, int _y, int _dx, int _dy) {
         x = _x;
         y = _y;
         dx = _dx;
@@ -48,7 +46,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool MouseState::notifyMouseWheel(double _dx, double _dy) {
+    bool FMouseState::NotifyMouseWheel(double _dx, double _dy) {
         wheel_dx = (int)_dx;
         wheel_dy = (int)_dy;
 

@@ -12,13 +12,13 @@
 namespace Slab::Math::RtoR {
 
     class NativeFunction : public RtoR::Function {
-        Real (*native)(Real);
+        DevFloat (*native)(DevFloat);
     public:
-        NativeFunction(Real (*native)(Real));
+        NativeFunction(DevFloat (*native)(DevFloat));
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
-        auto Clone() const -> Pointer<Type> override;
+        auto Clone() const -> TPointer<Type> override;
     };
 
 } // Slab::Math::RtoR

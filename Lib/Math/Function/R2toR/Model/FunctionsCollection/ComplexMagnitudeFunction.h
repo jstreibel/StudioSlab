@@ -19,7 +19,7 @@ namespace Slab::Math::R2toR {
 
         void setFunc(std::shared_ptr<R2toC::NumericFunction>);
 
-        Real operator()(Real2D x) const override;
+        DevFloat operator()(Real2D x) const override;
     };
 
 } // R2toR

@@ -6,23 +6,25 @@
 
 namespace Slab::Graphics {
 
-    EventTranslator::EventTranslator() = default;
+    FEventTranslator::FEventTranslator() = default;
 
-    bool EventTranslator::addGUIEventListener(const Volatile<SystemWindowEventListener> &guiEventListener) {
-        const auto in = guiEventListener.lock();
+    bool FEventTranslator::AddGUIEventListener(const TVolatile<FPlatformWindowEventListener> &GuiEventListener) {
+        const auto In = GuiEventListener.lock();
 
-        for(IN ref : sysWin_listeners) {
-            if (auto ptr = ref.lock(); ptr == in)
-                return false;
-        }
+        if (ContainsReference(SysWinListeners, GuiEventListener)) return false;
 
-        sysWin_listeners.push_back(guiEventListener);
+        //for(IN ref : sysWin_listeners) {
+        //    if (auto ptr = ref.lock(); ptr == in)
+        //        return false;
+        //}
+
+        SysWinListeners.push_back(GuiEventListener);
 
         return true;
     }
 
-    void EventTranslator::clear() {
-        sysWin_listeners.clear();
+    void FEventTranslator::clear() {
+        SysWinListeners.clear();
     }
 
 }

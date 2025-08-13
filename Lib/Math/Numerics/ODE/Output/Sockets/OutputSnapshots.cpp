@@ -8,7 +8,7 @@
 #include "Math/Numerics/Socket.h"
 #include "Core/Tools/Log.h"
 
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 
 #include <fstream>
 #include <iomanip>
@@ -42,7 +42,7 @@ namespace Slab::Math {
         if (customFileDescription != "")
             filePhiNameStream << customFileDescription;
         else
-            filePhiNameStream << "./snapshot-step=" << outInfo.getSteps();
+            filePhiNameStream << "./snapshot-step=" << outInfo.GetSteps();
         filePhiNameStream << ".oscs";
 
         Str fileName = filePhiNameStream.str();
@@ -50,7 +50,7 @@ namespace Slab::Math {
         log.setf(std::ios::fixed, std::ios::floatfield);
         log.precision(4);
 
-        log << "Saving snapshot for step = " << outInfo.getSteps() << " in \'" << fileName << "\'... " << Log::Flush;
+        log << "Saving snapshot for step = " << outInfo.GetSteps() << " in \'" << fileName << "\'... " << Log::Flush;
         {
             std::ofstream file;
             file.exceptions(std::ofstream::failbit | std::ofstream::badbit);

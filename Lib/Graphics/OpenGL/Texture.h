@@ -34,7 +34,7 @@ namespace Slab::Graphics::OpenGL {
 
         void activate() const;
         static void deactivate() ;
-        void bind() const;
+        void Bind() const;
 
         auto getTarget() const -> Target;
         auto getInternalFormat() const -> InternalFormat;
@@ -42,7 +42,7 @@ namespace Slab::Graphics::OpenGL {
         void setData(const PixelData &data);
         auto getData() const -> const PixelData&;
 
-        void setBorderColor(Color color) const;
+        void setBorderColor(FColor color) const;
 
         int getTextureUnit() const;
         GLuint getGLtextureUnit() const;

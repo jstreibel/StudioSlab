@@ -16,7 +16,7 @@ namespace Slab::Math {
 
         auto operator()(const DiscreteSpace &fOut) const -> ByteData override;
 
-        auto operator()(const Real &out) const -> ByteData override;
+        auto operator()(const DevFloat &out) const -> ByteData override;
 
         auto isBinary() const -> bool override;
 

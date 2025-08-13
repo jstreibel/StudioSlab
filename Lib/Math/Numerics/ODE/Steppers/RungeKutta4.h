@@ -26,24 +26,24 @@ namespace Slab::Math {
     class RungeKutta4 : public Stepper {
         Mutex mutey;
 
-        Pointer<Base::LinearStepSolver> _H;
+        TPointer<Base::LinearStepSolver> _H;
 
         Base::EquationState_ptr _f, _k1, _k2, _k3, _k4;
         Base::EquationState_ptr _temp;
 
         Vector<Base::EquationState_ptr> swaps;
-        CyclicIterator<Base::EquationState_ptr> swapsIterator;
+        TCyclicIterator<Base::EquationState_ptr> swapsIterator;
 
-        Count steps = 0;
+        CountType steps = 0;
 
-        Real dt;
+        DevFloat dt;
     public:
 
-        explicit RungeKutta4(const Pointer<Base::LinearStepSolver> &solver, Real dt, Count totalSwapStates = 5);
+        explicit RungeKutta4(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt, CountType totalSwapStates = 5);
 
         ~RungeKutta4() override = default;
 
-        void step(const Count n_steps) override;
+        void step(const CountType n_steps) override;
 
         [[nodiscard]] auto getCurrentState() const -> Base::EquationState_constptr override;
 

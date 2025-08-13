@@ -9,15 +9,15 @@
 
 namespace Slab {
     template<typename Tp, typename Alloc=std::allocator<Tp>>
-    using List = std::list<Tp, Alloc>;
+    using TList = std::list<Tp, Alloc>;
 
     template<typename Tp>
     using BasicList = std::initializer_list<Tp>;
 
     template<typename Tp>
-    List<Tp> Extend(List<Tp> list, List<Tp> more_items) {
+    TList<Tp> Extend(TList<Tp> list, TList<Tp> more_items) {
 
-        List<Tp> extended_list(list);
+        TList<Tp> extended_list(list);
         for(auto &item : more_items)
             extended_list.push_back(item);
 
@@ -25,7 +25,7 @@ namespace Slab {
     }
 
     template <typename T, typename Predicate>
-    typename List<T>::iterator FindFirst_If(List<T>& lst, Predicate pred) {
+    typename TList<T>::iterator FindFirst_If(TList<T>& lst, Predicate pred) {
         for(auto it = lst.begin(); it != lst.end(); ++it) {
             if(pred(*it)) {
                 return it;
@@ -35,7 +35,7 @@ namespace Slab {
     }
 
     template <typename T>
-    bool MoveToFront(List<T>& lst, const T& value) {
+    bool MoveToFront(TList<T>& lst, const T& value) {
         auto it = std::ranges::find(lst.begin(), lst.end(), value);
         if (it != lst.end()) {
             lst.splice(lst.begin(), lst, it);
@@ -45,7 +45,7 @@ namespace Slab {
     }
 
     template <typename T>
-    bool MoveToFront(List<T>& list, const typename List<T>::iterator& it) {
+    bool MoveToFront(TList<T>& list, const typename TList<T>::iterator& it) {
         if (it != list.end()) {
             list.splice(list.begin(), list, it);
             return true;

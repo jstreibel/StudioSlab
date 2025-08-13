@@ -17,7 +17,7 @@ namespace Slab::Math {
 
     // inline Real sqr(const Real &v){ return v*v; }
 
-    auto RtoRActionMetropolisRecipe::getField() -> Pointer<RtoR::NumericFunction_CPU> {
+    auto RtoRActionMetropolisRecipe::getField() -> TPointer<RtoR::NumericFunction_CPU> {
         if(field_data == nullptr){
             fix t_min=0.;
             fix t=2.;
@@ -34,7 +34,7 @@ namespace Slab::Math {
         // Core::RegisterCLInterface(interface);
     }
 
-    Vector<Pointer<Socket>> RtoRActionMetropolisRecipe::buildOutputSockets() {
+    Vector<TPointer<Socket>> RtoRActionMetropolisRecipe::buildOutputSockets() {
         fix total_steps = getNumericConfig()->getn();
 
         auto console_monitor = New<OutputConsoleMonitor>(total_steps);
@@ -43,7 +43,7 @@ namespace Slab::Math {
         return {console_monitor};
     }
 
-    Pointer<Stepper> RtoRActionMetropolisRecipe::buildStepper() {
+    TPointer<Stepper> RtoRActionMetropolisRecipe::buildStepper() {
         RtoRMetropolisSetup setup;
 
         Temperature T=1E-2;
@@ -51,11 +51,11 @@ namespace Slab::Math {
 
         auto field = getField();
 
-        auto acceptance_thermal = [T](Real ΔE) {
+        auto acceptance_thermal = [T](DevFloat ΔE) {
             return RandUtils::RandomUniformReal01() < Min(1.0, exp(-ΔE / T));
         };
 
-        auto acceptance_action = [](Real Δ_δSδϕ) {
+        auto acceptance_action = [](DevFloat Δ_δSδϕ) {
             return Δ_δSδϕ<0;
         };
 
@@ -87,8 +87,8 @@ namespace Slab::Math {
             else if(n==N-2) affected_sites = {n, n-1};
             else affected_sites = {n+1, n, n-1};
 
-            auto compute_δSδq = [affected_sites, Δt2, q](Real &δSδϕ) {
-                constexpr auto sign = Slab::Math::SIGN<Real>;
+            auto compute_δSδq = [affected_sites, Δt2, q](DevFloat &δSδϕ) {
+                constexpr auto sign = Slab::Math::SIGN<DevFloat>;
                 for(auto nₗ : affected_sites) {
                     δSδϕ += sqr((q(nₗ + 1) - 2. * q(nₗ) + q(nₗ - 1)) / Δt2
                               + sign(q(nₗ)));

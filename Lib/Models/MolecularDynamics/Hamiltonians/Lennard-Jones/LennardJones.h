@@ -9,14 +9,14 @@ namespace Slab::Models::MolecularDynamics {
 
     class LennardJones : public Langevin {
     protected:
-        Real U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
+        DevFloat U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
 
         Graphics::Point2D dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
 
     public:
-        LennardJones(Pointer<Config> config, Real T);
+        LennardJones(TPointer<Config> config, DevFloat T);
 
-        static Real U(Real r);
+        static DevFloat U(DevFloat r);
     };
 
 }

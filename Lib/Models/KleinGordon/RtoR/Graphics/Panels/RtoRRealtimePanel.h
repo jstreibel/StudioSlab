@@ -16,53 +16,56 @@
 #include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.h"
 
 #include "Models/KleinGordon/RtoR/Graphics/RtoRPanel.h"
-#include "Graphics/ImGui/ImGuiWindow.h"
+#include "Graphics/ImGui/ImGui-SingleSlabWindow-Wrapper.h"
 #include "Models/KleinGordon/KG-NumericConfig.h"
 
 namespace Slab::Models::KGRtoR {
 
-    class RealtimePanel : public RtoRPanel {
-        void updateEnergyData();
-
-        // Graphics::ImGuiWindow imGuiWindow;
-    protected:
-        Graphics::Plot2DWindow mFieldsGraph;
-        Graphics::Artist_ptr vArtist;
-        Graphics::Artist_ptr kArtist;
-        Graphics::Artist_ptr wArtist;
-        Graphics::Artist_ptr uArtist;
-
-        Math::PointSet UHistoryData;
-        Math::PointSet KHistoryData;
-        Math::PointSet WHistoryData;
-        Math::PointSet VHistoryData;
-
-        const Graphics::PlotStyle U_style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
-        const Graphics::PlotStyle K_style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
-        const Graphics::PlotStyle W_style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[2];
-        const Graphics::PlotStyle V_style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[3];
-
-        bool showPot = true;
-        bool showKineticEnergy = false;
-        bool showGradientEnergy = false;
-        bool showEnergyDensity = false;
-
-        Graphics::Plot2DWindow mEnergyGraph;
-
-        void draw() override;
+    class FRealtimePanel : public FRtoRPanel {
 
     public:
-        RealtimePanel(const Pointer<KGNumericConfig> &params,
-                      KGEnergy &hamiltonian,
-                      Graphics::GUIWindow &guiWindow);
+        FRealtimePanel(const TPointer<KGNumericConfig> &Params,
+                      KGEnergy &Hamiltonian,
+                      Graphics::FGUIWindow &GUIWindow);
 
-        void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
-                                  const R2toRFunctionArtist_ptr &simHistoryGraph) override;
+        void SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
+ simulationHistory,
+                                  const R2toRFunctionArtist_ptr &SimHistoryGraph) override;
 
-        void setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
-                                    const DFTDataHistory &dftData,
+        void SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction>
+ SftHistory,
+                                    const FDFTDataHistory &DFTData,
                                     const R2toRFunctionArtist_ptr &sftHistoryGraph) override;
 
+    protected:
+        FPlot2DWindow FieldsGraph;
+        FArtist_ptr vArtist;
+        FArtist_ptr kArtist;
+        FArtist_ptr wArtist;
+        FArtist_ptr uArtist;
+
+        PointSet UHistoryData;
+        PointSet KHistoryData;
+        PointSet WHistoryData;
+        PointSet VHistoryData;
+
+        const PlotStyle U_style = PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        const PlotStyle K_style = PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        const PlotStyle W_style = PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
+        const PlotStyle V_style = PlotThemeManager::GetCurrent()->FuncPlotStyles[3];
+
+        bool bShowPot = true;
+        bool bShowKineticEnergy = false;
+        bool bShowGradientEnergy = false;
+        bool bShowEnergyDensity = false;
+
+        FPlot2DWindow EnergyGraph;
+
+        void ImmediateDraw(const FPlatformWindow&) override;
+
+    private:
+        void UpdateEnergyData();
+        // Graphics::ImGuiWindow imGuiWindow;
 
     };
 }

@@ -20,7 +20,7 @@
     {                    \
         GLenum err;                                                 \
         while((err = glGetError()) != GL_NO_ERROR)                  \
-            Log::Warning() << "OpenGL error " << err << " (" << (strMark) << "): " << gluErrorString(err) << Log::Flush; \
+            Log::Warning() << "OpenGL error " << err << " (" << (strMark) << "): \"" << gluErrorString(err) << "\"" << Log::Flush; \
                                                                     \
     }
 
@@ -28,7 +28,7 @@ namespace Slab {
 
     using Log = Core::Log;
 
-    bool Graphics::OpenGL::checkGLErrors(const Str &hint, bool raiseException) {
+    bool Graphics::OpenGL::CheckGLErrors(const Str &hint, bool raiseException) {
         bool bad = false;
 
         GLenum err;
@@ -43,7 +43,7 @@ namespace Slab {
         return bad;
     }
 
-    void Graphics::OpenGL::drawOrthoNormalized(RectR rect) {
+    void Graphics::OpenGL::DrawOrthoNormalized(RectR rect) {
         // TODO ultra-provisório
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
@@ -62,7 +62,7 @@ namespace Slab {
         glPopMatrix();
     }
 
-    bool Graphics::OpenGL::outputToPNG(FrameBuffer buffer,
+    bool Graphics::OpenGL::OutputToPNG(FrameBuffer buffer,
                                        std::string fileName) {
         const auto w = buffer.w, h = buffer.h;
         const auto bpp = buffer.GetBitsPerPixel();
@@ -91,7 +91,7 @@ namespace Slab {
         return success;
     }
 
-    bool Graphics::OpenGL::outputToPNG(SlabWindow *window, std::string fileName, int width, int height) {
+    bool Graphics::OpenGL::OutputToPNG(FSlabWindow *window, std::string fileName, int width, int height) {
         // Create texture:
         GLuint texColorBuffer;
         glGenTextures(1, &texColorBuffer);
@@ -110,7 +110,6 @@ namespace Slab {
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
 
-
         // Check..
         auto retVal = true;
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -118,52 +117,38 @@ namespace Slab {
 
             retVal = false;
         } else {
-            const auto xOld = window->getx();
-            const auto yOld = window->gety();
+            const auto xOld = window->Get_x();
+            const auto yOld = window->Get_y();
             const auto wOld = window->GetWidth();
             const auto hOld = window->GetHeight();
 
             // This offset is how frame is drawn around window.
-            window->setx(2);
-            window->sety(2);
-            window->notifyReshape(width-4, height-4);
+            window->Set_x(2);
+            window->Set_y(2);
+            window->NotifyReshape(width-4, height-4);
 
             glClearColor(0,0,0,0);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            // auto gui_state = window->isGUIEnabled();
-            // window->setGUIState(DISABLED);
-            window->overrideSystemWindowHeight(height);
-            window->draw();
-            window->overrideSystemWindowHeight(-1);
-            // window->setGUIState(gui_state);
+            window->OverrideSystemWindowHeight(height);
 
-            window->setx(xOld);
-            window->sety(yOld);
-            window->notifyReshape(wOld, hOld);
+            // *********************************************
+            // DANGER! Be careful with this little one.
+            FPlatformWindow *DummyDanger = nullptr;
+            // ReSharper disable once CppDFANullDereference
+            window->ImmediateDraw(*DummyDanger);
+            window->OverrideSystemWindowHeight(-1);
+            // END DANGER
 
-            // Frame:
-            // OpenGL::Shader::remove();
-            // glMatrixMode(GL_PROJECTION);
-            // glLoadIdentity();
-            // glMatrixMode(GL_MODELVIEW);
-            // glLoadIdentity();
-            // glEnable(GL_BLEND);
-            // glEnable(GL_LINE_SMOOTH);
-            // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            // glLineWidth(5);
-            // glColor3i(0, 0, 0);
-            // glBegin(GL_LINES);
-            {
-                // glVertex2f(..)
-            }
-            // glEnd();
+            window->Set_x(xOld);
+            window->Set_y(yOld);
+            window->NotifyReshape(wOld, hOld);
 
             glFlush();
 
             auto buffer = GLUT::getFrameBuffer(0, 0, width, height);
 
-            outputToPNG(buffer, std::move(fileName));
+            OutputToPNG(buffer, std::move(fileName));
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -5,6 +5,8 @@
 #ifndef V_SHAPE_WINDOW_H
 #define V_SHAPE_WINDOW_H
 
+// #include <crude_json.h>
+
 #include "Graphics/Styles/Colors.h"
 
 #include "Graphics/Backend/Events/MouseState.h"
@@ -12,7 +14,7 @@
 #include "Graphics/Types2D.h"
 #include "Graphics/Window/WindowStyles.h"
 #include "Core/Tools/UniqueObject.h"
-#include "Graphics/Backend/SystemWindow.h"
+#include "Graphics/Backend/PlatformWindow.h"
 
 #include <vector>
 #include <memory>
@@ -27,91 +29,93 @@ namespace Slab::Graphics {
         SlabWindowWantsFullscreen   = 0x8
     };
 
-    class SlabWindow : protected Core::UniqueObject, public SystemWindowEventListener {
+    struct FSlabWindowConfig {
+        explicit FSlabWindowConfig(
+            Str Title="",
+            RectI WinRect=WindowStyle::DefaultWindowRect,
+            Int Flags=0x0);
+
+        Str Title;
+        RectI WinRect = WindowStyle::DefaultWindowRect;
+        Int Flags = 0x0;
+    };
+
+    class FSlabWindow : protected Core::UniqueObject, public FPlatformWindowEventListener {
         friend class SlabWindowManager;
 
-    public:
+        [[nodiscard]] bool SetupViewport(const FPlatformWindow& PlatformWindow) const;
 
-        struct Config {
-            Config(const Str &title="",
-                RectI win_rect=WindowStyle::default_window_rect,
-                Int flags=0x0,
-                ParentSystemWindow parent_syswin=nullptr);
-
-            Str title;
-            RectI win_rect;
-            Int flags;
-            ParentSystemWindow parent_syswin;
-        };
-
-    private:
-        void setupWindow() const;
-
-        KeyState mouseLeftButton   = KeyState::Release;
-        KeyState mouseCenterButton = KeyState::Release;
-        KeyState mouseRightButton  = KeyState::Release;
+        TPointer<FMouseState> MouseState;
 
     protected:
-        Config config;
-        Resolution min_width=800, min_height=450;
-        Int h_override = -1;
-        bool active=false;
+        FSlabWindowConfig Config;
+        Resolution MinWidth=800, MinHeight=450;
+        Int HeightOverride = -1;
+        bool Active=false;
 
     public:
 
-        explicit SlabWindow(Config c=Config());
+        explicit FSlabWindow(FSlabWindowConfig ConfigArg);
 
-        ~SlabWindow() override;
+        ~FSlabWindow() override;
 
-        auto getConfig() -> Config&;
+        auto GetUniqueName() const -> Str;
 
-        auto notifySystemWindowReshape(int w, int h)           -> bool final;
-        auto notifyRender()                                    -> bool final;
+        auto GetConfig() -> FSlabWindowConfig&;
+
+        auto NotifySystemWindowReshape(int w, int h)           -> bool final;
+        auto NotifyRender(const FPlatformWindow&)              -> bool final;
 
         /**
          *  Override the value used to compute viewport positions in OpenGL environments.
          *
-         * @param override_h the value to override the system window height. Set to negative to stop override.
+         * @param Height the value to override the system window height. Set to negative to stop override.
          */
-        void overrideSystemWindowHeight(int override_h);
+        void OverrideSystemWindowHeight(int Height);
 
-        auto notifyMouseButton(MouseButton, KeyState, ModKeys) -> bool override;
-        auto notifyMouseMotion(int x, int y, int dx, int dy)   -> bool override;
-        auto notifyMouseWheel(double dx, double dy)            -> bool override;
-        auto notifyKeyboard(KeyMap, KeyState, ModKeys)         -> bool override;
+        /**
+         * This function is called when the window should render it's content immediately to its output.
+         */
+        virtual auto ImmediateDraw(const FPlatformWindow&)     -> void;
+        /**
+         * Here the window has the opportunity to register callbacks and other things (e.g. ImGui window list
+         * draw callback commands).
+         */
+        virtual auto RegisterDeferredDrawCalls(const FPlatformWindow&)               -> void;
 
-        virtual auto draw()                                    -> void;
-        virtual auto notifyReshape(int w, int h)               -> void;
-        virtual auto notifyBecameActive()                      -> void;
-        virtual auto notifyBecameInactive()                    -> void;
-        virtual auto setx(int x)                               -> void;
-        virtual auto sety(int y)                               -> void;
+        virtual auto NotifyReshape(int w, int h)               -> void;
+        virtual auto NotifyBecameActive()                      -> void;
+        virtual auto NotifyBecameInactive()                    -> void;
+        virtual auto Set_x(int x)                              -> void;
+        virtual auto Set_y(int y)                              -> void;
 
-        auto getFlags()                                  const -> Int;
-        auto isActive()                                  const -> bool;
-        auto wantsFullscreen()                           const -> bool;
-        auto isMouseIn()                                 const -> bool;
-        auto isMouseLeftClicked()                        const -> bool;
-        auto isMouseCenterClicked()                      const -> bool;
-        auto isMouseRightClicked()                       const -> bool;
-        auto getMouseViewportCoord()                     const -> Point2D;
+        [[nodiscard]] auto GetFlags()                    const -> Int;
+        [[nodiscard]] auto IsActive()                    const -> bool;
+        [[nodiscard]] auto WantsFullscreen()             const -> bool;
 
-        auto getTitle()                                  const -> Str;
+        [[nodiscard]] auto GetMouseState()               const -> TPointer<const FMouseState>;
+        [[nodiscard]] auto IsMouseInside()               const -> bool;
+        [[nodiscard]] auto GetMouseViewportCoord()       const -> Point2D;
+        [[nodiscard]] virtual
+        auto IsPointWithin(const Point2D&)               const -> bool;
+        [[nodiscard]] virtual
+        auto FromPlatformWindowToViewportCoords(const Point2D&) const -> Point2D;
 
-        auto setDecorate(bool)                                 -> void;
-        auto setClear(bool)                                    -> void;
+        [[nodiscard]] auto GetTitle()                    const -> Str;
 
-        RectI getViewport() const;
+        auto SetDecorate(bool)                                 -> void;
+        auto SetClear(bool)                                    -> void;
 
-        auto getx()                                      const -> int;
-        auto gety()                                      const -> int;
+        auto GetViewport()                               const -> RectI;
+        auto Get_x()                                     const -> int;
+        auto Get_y()                                     const -> int;
         auto GetWidth()                                  const -> int;
         auto GetHeight()                                 const -> int;
         auto SetMinimumWidth(Resolution)                       -> void;
         auto SetMinimumHeight(Resolution)                      -> void;
     };
 
-    DefinePointers(SlabWindow)
+    DefinePointers(FSlabWindow)
 
 }
 

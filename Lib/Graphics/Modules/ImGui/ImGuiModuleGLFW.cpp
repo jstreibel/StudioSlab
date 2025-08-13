@@ -13,27 +13,28 @@ fix PRIORITIZE_ME = true;
 
 namespace Slab::Graphics {
 
-    static CallSet::InitContextCall Init = [](RawPaltformWindow_Ptr raw_syswin_ptr) {
-        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)raw_syswin_ptr, DONT_INSTALL_CALLBACKS);
+    static FCallSet::InitContextCall Init = [](const FCallSet& Call) {
+        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)Call.r_SystemWindow, DONT_INSTALL_CALLBACKS);
         ImGui_ImplOpenGL3_Init();
 
         return;
     };
 
-    static CallSet::KillContextCall End = []() {
+    static FCallSet::KillContextCall End = []() {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
     };
 
-    static DrawCall Draw = [] {
+    static FDrawCall Draw = [] {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     };
 
-    static CallSet::NewFrameCall NewFrame = []() {
+    static FCallSet::NewFrameCall NewFrame = []() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
     };
 
-    ImGuiModuleGLFW::ImGuiModuleGLFW() : ImGuiModule(CallSet{Init, End, Draw, NewFrame}) {  }
+    ImGuiModuleGLFW::ImGuiModuleGLFW(GLFWwindow* Window)
+    : FImGuiModule(FCallSet{Window, Init, End, Draw, NewFrame}) {  }
 
 } // Core

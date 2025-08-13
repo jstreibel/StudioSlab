@@ -13,20 +13,20 @@
 namespace Slab::Math::RtoR {
 
     class AnalyticShockwave1D : public RtoR::Function {
-        Vector<Real> xk;
-        Vector<Real> ak;
-        Vector<Real> zk;
+        Vector<DevFloat> xk;
+        Vector<DevFloat> ak;
+        Vector<DevFloat> zk;
 
-        Real Wk(Real z, int k) const;
+        DevFloat Wk(DevFloat z, int k) const;
 
-        Real t = .0;
+        DevFloat t = .0;
     public:
-        void setT(Real t);
+        void setT(DevFloat t);
 
     public:
-        AnalyticShockwave1D(Real a0);
+        AnalyticShockwave1D(DevFloat a0);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
         bool isDiscrete() const override;
     };

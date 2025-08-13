@@ -7,16 +7,16 @@
 
 namespace Slab::Math::R2toR {
 
-    Real phi_n(Int n, Real t, Real x) {
-        auto factor = 1./(Real)(n*n*n);
+    DevFloat phi_n(Int n, DevFloat t, DevFloat x) {
+        auto factor = 1./(DevFloat)(n*n*n);
         auto npi = n*M_PI;
         auto cx = cos(npi*x);
         auto ct = cos(2*npi*t);
         return factor*ct*cx*cx;
     }
 
-    Real ddtphi_n(Int n, Real t, Real x) {
-        auto factor = -2.*M_PI/(Real)(n*n);
+    DevFloat ddtphi_n(Int n, DevFloat t, DevFloat x) {
+        auto factor = -2.*M_PI/(DevFloat)(n*n);
         auto npi = n*M_PI;
         auto cx = cos(npi*x);
         auto st = sin(2*npi*t);
@@ -36,7 +36,7 @@ namespace Slab::Math::R2toR {
 
     }
 
-    Real AnalyticOscillon1p1_FourierImpl::operator()(Real2D r) const {
+    DevFloat AnalyticOscillon1p1_FourierImpl::operator()(Real2D r) const {
         fix &p = parameters;
 
         fix ga = gamma*p.alpha;
@@ -85,7 +85,7 @@ namespace Slab::Math::R2toR {
         parameters = parameters1;
     }
 
-    auto AnalyticOscillon1p1_FourierImpl::Clone() const -> Pointer<Base::FunctionT<Real2D, Real>::Type> {
+    auto AnalyticOscillon1p1_FourierImpl::Clone() const -> TPointer<Base::FunctionT<Real2D, DevFloat>::Type> {
         auto clone = New<AnalyticOscillon1p1_FourierImpl>(parameters, n_max);
         clone->f = this->f;
 

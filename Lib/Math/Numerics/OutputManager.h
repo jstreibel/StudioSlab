@@ -11,7 +11,7 @@ namespace Slab::Math {
         Vector<Socket_ptr > outputs;
 
     public:
-        explicit OutputManager(Count max_steps);
+        explicit OutputManager(CountType max_steps);
 
         ~OutputManager();
 
@@ -29,7 +29,7 @@ namespace Slab::Math {
         auto computeNStepsToNextOutput(UInt currStep) -> UInt;
 
         /****** INPUT/OUTPUT ******/
-        void addOutputChannel(Pointer<Socket> out);
+        void addOutputChannel(TPointer<Socket> out);
 
 
     private:

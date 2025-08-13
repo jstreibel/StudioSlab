@@ -27,7 +27,7 @@ namespace Slab::Graphics::OpenGL {
         void setAntiAliasOn();
         void setAntiAliasOff();
 
-        bool uploadData(UInt row0, Count nRows, PixelDataFormat format, PixelDataType type, const void *dataBegin);
+        bool uploadData(UInt row0, CountType nRows, PixelDataFormat format, PixelDataType type, const void *dataBegin);
 
         void set_sPeriodicOn();
         void setSWrap(WrapMode wrapMode);

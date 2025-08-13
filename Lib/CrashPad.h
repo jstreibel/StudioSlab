@@ -10,7 +10,7 @@
 namespace Slab::SafetyNet {
     int jump(int (*callback)(int, const char**), int argc=0, const char *argv[]= nullptr);
 
-    int Jump(Application& app);
+    int Jump(FApplication& app);
 }
 
 #endif //V_SHAPE_SAFETYNET_H

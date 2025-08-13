@@ -11,7 +11,7 @@ namespace Slab::Math::R2toR {
 
     class FourierTransform {
     public:
-        static std::shared_ptr<R2toR::NumericFunction> Compute(const R2toR::NumericFunction &in);
+        static std::shared_ptr<R2toR::FNumericFunction> Compute(const R2toR::FNumericFunction &in);
     };
 
 } // R2toR

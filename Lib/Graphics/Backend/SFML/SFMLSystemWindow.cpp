@@ -25,17 +25,17 @@ namespace Slab::Graphics {
     }
 
     SFMLSystemWindow::SFMLSystemWindow()
-    : SystemWindow(new_sfml_native_window(), New<SFMLEventTranslator>())
-    , sfml_native_window((sf::RenderWindow*)window_ptr)
+    : FPlatformWindow(new_sfml_native_window(), New<SFMLEventTranslator>(this))
+    , sfml_native_window(static_cast<sf::RenderWindow*>(r_Window))
     {
-        addSFMLListener(DynamicPointerCast<SFMLEventTranslator>(event_translator));
+        addSFMLListener(DynamicPointerCast<SFMLEventTranslator>(EventTranslator));
     }
 
-    Int SFMLSystemWindow::getWidth() const {
+    Int SFMLSystemWindow::GetWidth() const {
         return (Int)sfml_native_window->getSize().x;
     }
 
-    Int SFMLSystemWindow::getHeight() const {
+    Int SFMLSystemWindow::GetHeight() const {
         return (Int)sfml_native_window->getSize().y;
     }
 
@@ -55,7 +55,7 @@ namespace Slab::Graphics {
         while (sfml_native_window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 sfml_native_window->close();
-                clearListeners();
+                ClearListeners();
                 break;
             }
             else if (event.type == sf::Event::KeyPressed) {
@@ -68,7 +68,7 @@ namespace Slab::Graphics {
         off_sync.unlock();
     }
 
-    bool SFMLSystemWindow::addSFMLListener(const Volatile<SFMLListener> &sfmlListener) {
+    bool SFMLSystemWindow::addSFMLListener(const TVolatile<SFMLListener> &sfmlListener) {
         if (ContainsReference(sfml_listeners, sfmlListener)) return false;
 
         sfml_listeners.emplace_back(sfmlListener);
@@ -80,7 +80,7 @@ namespace Slab::Graphics {
         off_sync.lock();
 
         sfml_native_window->close();
-        clearListeners();
+        ClearListeners();
 
         off_sync.unlock();
     }

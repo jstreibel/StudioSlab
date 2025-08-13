@@ -44,11 +44,11 @@ namespace Slab::Common {
     template<typename T>
     inline T min(const T &a, const T &b) { return a < b ? a : b; };
 
-    const Real infty = std::numeric_limits<Real>::infinity();
+    const DevFloat infty = std::numeric_limits<DevFloat>::infinity();
 
     double periodic_space(double x, double xMin, double xMax);
 
-    bool AreEqual(const Real &lhs, const Real &rhs, Real eps = 1.e-5);
+    bool AreEqual(const DevFloat &lhs, const DevFloat &rhs, DevFloat eps = 1.e-5);
 
     template<typename T>
     bool AreEqual(const T &lhs, const T &rhs) {

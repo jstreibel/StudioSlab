@@ -8,25 +8,25 @@ namespace Slab::Math::Odeint {
 
     OdeintStateWrapper::OdeintStateWrapper(const std::shared_ptr<OdeintState> &state) : odeintState(state) {}
 
-    void OdeintStateWrapper::applyOperation1(OdeintOperation<1, Real> operation) {
+    void OdeintStateWrapper::applyOperation1(OdeintOperation<1, DevFloat> operation) {
         odeintState->applyOperation1(operation);
     }
 
     void OdeintStateWrapper::applyOperation2(const OdeintState &state2,
-                                             OdeintOperation<2, Real> operation) {
+                                             OdeintOperation<2, DevFloat> operation) {
         odeintState->applyOperation2(state2, operation);
     }
 
     void OdeintStateWrapper::applyOperation3(const OdeintState &state2,
                                              const OdeintState &state3,
-                                             OdeintOperation<3, Real> operation) {
+                                             OdeintOperation<3, DevFloat> operation) {
         odeintState->applyOperation3(state2, state3, operation);
     }
 
     void OdeintStateWrapper::applyOperation4(const OdeintState &state2,
                                              const OdeintState &state3,
                                              const OdeintState &state4,
-                                             OdeintOperation<4, Real> operation) {
+                                             OdeintOperation<4, DevFloat> operation) {
         odeintState->applyOperation4(state2, state3, state4, operation);
     }
 
@@ -34,7 +34,7 @@ namespace Slab::Math::Odeint {
                                              const OdeintState &state3,
                                              const OdeintState &state4,
                                              const OdeintState &state5,
-                                             OdeintOperation<5, Real> operation) {
+                                             OdeintOperation<5, DevFloat> operation) {
         odeintState->applyOperation5(state2, state3, state4, state5, operation);
     }
 
@@ -43,7 +43,7 @@ namespace Slab::Math::Odeint {
                                              const OdeintState &state4,
                                              const OdeintState &state5,
                                              const OdeintState &state6,
-                                             OdeintOperation<6, Real> operation) {
+                                             OdeintOperation<6, DevFloat> operation) {
         odeintState->applyOperation6(state2, state3, state4, state5, state6, operation);
     }
 

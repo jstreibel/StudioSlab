@@ -13,8 +13,8 @@
 namespace Slab::Graphics {
 
     class TestActor : public Actor {
-        OpenGL::Shader program;
-        OpenGL::VertexBuffer vertexBuffer;
+        OpenGL::FShader program;
+        OpenGL::FVertexBuffer vertexBuffer;
         OpenGL::Texture2D_Real texture;
 
     public:
@@ -26,7 +26,7 @@ namespace Slab::Graphics {
 
         void drawGUI() override;
 
-        void setAmbientLight(Color color);
+        void setAmbientLight(FColor color);
     };
 
 } // Graphics

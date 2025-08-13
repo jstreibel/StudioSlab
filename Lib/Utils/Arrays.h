@@ -23,8 +23,8 @@ namespace Slab {
     //template<class T>
     //typename Vector<T> Vector;
 
-    typedef Array<Real> RealArray;
-    typedef Vector<Real> RealVector;
+    typedef Array<DevFloat> RealArray;
+    typedef Vector<DevFloat> FRealVector;
     typedef const RealArray RealArray_I;
     typedef RealArray RealArray_O;
     typedef RealArray VecFloat_IO;
@@ -67,7 +67,7 @@ namespace Slab {
 
     namespace Utils {
 
-        typedef Real MaxValue_type;
+        typedef DevFloat MaxValue_type;
         typedef size_t MaxValue_index;
 
         struct MaxInfo {

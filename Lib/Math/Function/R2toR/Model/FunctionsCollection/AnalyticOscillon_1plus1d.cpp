@@ -12,7 +12,7 @@ namespace Slab::Math::R2toR {
     : oscillon(0, parameters.x0, parameters.l, parameters.v, parameters.u, parameters.alpha, false, false)
     , oscParams(parameters) {   }
 
-    Real AnalyticOscillon_1plus1d::operator()(Real2D x_mu) const {
+    DevFloat AnalyticOscillon_1plus1d::operator()(Real2D x_mu) const {
         fix x = x_mu.x;
         fix t = x_mu.y;
 
@@ -34,7 +34,7 @@ namespace Slab::Math::R2toR {
         *this = AnalyticOscillon_1plus1d(parameters);
     }
 
-    Pointer<Base::FunctionT<Real2D, Real>::Type> AnalyticOscillon_1plus1d::Clone() const {
+    TPointer<Base::FunctionT<Real2D, DevFloat>::Type> AnalyticOscillon_1plus1d::Clone() const {
         return New<AnalyticOscillon_1plus1d>(oscParams);
     }
 

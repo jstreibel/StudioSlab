@@ -6,24 +6,24 @@ namespace Slab::Models::MolecularDynamics {
 
     using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
 
-    Langevin::Langevin(Pointer<Config> config, Real T)
+    Langevin::Langevin(TPointer<Config> config, DevFloat T)
     : NewtonMechanics(config), T(T) {    }
 
     Graphics::Point2D Langevin::xi() {
-        const Real z = FRANDOM, theta = 2.0 * M_PI * FRANDOM;
-        const Real r = sqrt(-2.0 * log(1.0 - z));
+        const DevFloat z = FRANDOM, theta = 2.0 * M_PI * FRANDOM;
+        const DevFloat r = sqrt(-2.0 * log(1.0 - z));
 
         return {r * cos(theta), r * sin(theta)};
     }
 
-    Graphics::Point2D Langevin::F_nh(Real) {
+    Graphics::Point2D Langevin::F_nh(DevFloat) {
         fix dt = numeric_config->getdt();
 
         fix alpha = sqrt(2 * T / dt);
         return alpha * xi();
     }
 
-    void Langevin::setTemperature(Real temperature) {
+    void Langevin::setTemperature(DevFloat temperature) {
         T = temperature;
     }
 

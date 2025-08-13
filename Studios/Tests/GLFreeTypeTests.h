@@ -10,17 +10,17 @@
 #include "Graphics/Window/SlabWindow.h"
 #include "Graphics/Utils/Writer.h"
 #include "Graphics/OpenGL/WriterOpenGL.h"
-using Writer = Slab::Graphics::OpenGL::WriterOpenGL;
+using Writer = Slab::Graphics::OpenGL::FWriterOpenGL;
 
-class GLFreeTypeTests : public Slab::Graphics::SlabWindow {
+class GLFreeTypeTests : public Slab::Graphics::FSlabWindow {
     Writer writer1, writer2;
 
 public:
     GLFreeTypeTests();
 
-    void draw() override;
+    void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
 
-    void notifyReshape(int newWinW, int newWinH) override;
+    void NotifyReshape(int newWinW, int newWinH) override;
 };
 
 

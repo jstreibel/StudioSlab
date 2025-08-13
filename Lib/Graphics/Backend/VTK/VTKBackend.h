@@ -11,7 +11,7 @@ namespace Slab::Graphics {
 
     class VTKBackend : public GraphicBackend {
     public:
-        void run() override;
+        void Run() override;
     };
 
 }

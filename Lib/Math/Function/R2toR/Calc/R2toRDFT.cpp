@@ -78,13 +78,13 @@ namespace Slab::Math::R2toR {
         return FFTData{out};
     }
 
-    auto R2toRDFT::DFTReal(const NumericFunction &in, Transform transform,
+    auto R2toRDFT::DFTReal(const FNumericFunction &in, Transform transform,
                            DataPolicy inputPolicy, DataPolicy outputPolicy) -> FFTData {
         fix M = (int)in.getM();
         fix N = (int)in.getN();
 
         // const_cast because fftw does not accept constant data sources.
-        auto* data_src_raw /*(N * M)*/ = const_cast<Real*>(&in.getSpace().getHostData(false)[0]);
+        auto* data_src_raw /*(N * M)*/ = const_cast<DevFloat*>(&in.getSpace().getHostData(false)[0]);
         auto* data_src = fftw_alloc_complex(sizeof(fftw_complex) * N * M);
         auto* data_dft = fftw_alloc_complex(sizeof(fftw_complex) * N * M);
 
@@ -125,7 +125,7 @@ namespace Slab::Math::R2toR {
         return out;
     }
 
-    auto moveData(const fftw_complex *in, ComplexArray &out, UInt n, UInt M, Real scaleFactor) {
+    auto moveData(const fftw_complex *in, ComplexArray &out, UInt n, UInt M, DevFloat scaleFactor) {
 
         int halfM = (int)M/2;
         for (int i = 0; i < n; ++i) {
@@ -139,7 +139,7 @@ namespace Slab::Math::R2toR {
         }
     }
 
-    auto R2toRDFT::DFTReal_symmetric(const NumericFunction &toTransform) -> FFTData {
+    auto R2toRDFT::DFTReal_symmetric(const FNumericFunction &toTransform) -> FFTData {
         if(toTransform.getN()%2) throw Exception("can't FT real data with odd number of sites in space dimension");
 
         NOT_IMPLEMENTED
@@ -150,7 +150,7 @@ namespace Slab::Math::R2toR {
         fix n = N/2+1;
 
         // const_cast because fftw does not accept constant data sources.
-        auto* data_src/*(N * M)*/ = const_cast<Real*>(&toTransform.getSpace().getHostData(false)[0]);
+        auto* data_src/*(N * M)*/ = const_cast<DevFloat*>(&toTransform.getSpace().getHostData(false)[0]);
         auto* data_dft = fftw_alloc_complex(sizeof(fftw_complex) * n * M);
 
         auto plan = fftw_plan_dft_r2c_2d((int)M, (int)N, data_src, data_dft, FFTW_ESTIMATE);
@@ -164,7 +164,7 @@ namespace Slab::Math::R2toR {
         // fix m = M/2+1;
         fix dk = M_PI / Lx;
         fix dω = M_PI / Ly;
-        fix Δk = (Real)N * dk;
+        fix Δk = (DevFloat)N * dk;
         fix Δω = M * dω;
 
         auto out = new R2toC::NumericFunction(n, M, 0, -Δω/2, Δk+dk, Δω);
@@ -180,7 +180,7 @@ namespace Slab::Math::R2toR {
     }
 
     auto
-    R2toRDFT::SpaceDFTReal(const NumericFunction &in) -> R2toRDFT::FFTData {
+    R2toRDFT::SpaceDFTReal(const FNumericFunction &in) -> R2toRDFT::FFTData {
         fix N = in.getN();
         fix M = in.getM();
 
@@ -205,7 +205,7 @@ namespace Slab::Math::R2toR {
         OUT data_in = temp_slice.getSpace().getHostData(true);
 
         for(int j=0; j<M; ++j) {
-            memcpy(&data_in[0], &data[0 + j*N], N*sizeof(Real));
+            memcpy(&data_in[0], &data[0 + j*N], N*sizeof(DevFloat));
             auto result = RtoR::DFT::Compute(temp_slice);
 
             IN re_pts = result.re->getPoints();

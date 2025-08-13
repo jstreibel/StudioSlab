@@ -5,7 +5,6 @@
 #ifndef V_SHAPE_BOUNDARY_CONDITIONS_H
 #define V_SHAPE_BOUNDARY_CONDITIONS_H
 
-#include <utility>
 #include "Utils/Types.h"
 #include "EquationState.h"
 
@@ -13,16 +12,16 @@ namespace Slab::Math::Base {
 
     class BoundaryConditions {
 
-        Pointer<const EquationState> prototype;
+        TPointer<const EquationState> prototype;
 
     public:
         virtual ~BoundaryConditions() = default;
 
-        explicit BoundaryConditions(Pointer<const EquationState> prototype);
+        explicit BoundaryConditions(TPointer<const EquationState> prototype);
 
         [[nodiscard]] EquationState_ptr newEqState() const;
 
-        virtual void Apply(EquationState &toFunction, Real t) const = 0;
+        virtual void Apply(EquationState &toFunction, DevFloat t) const = 0;
     };
 
     DefinePointers(BoundaryConditions)

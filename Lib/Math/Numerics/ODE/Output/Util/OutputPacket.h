@@ -12,7 +12,7 @@
 namespace Slab::Math {
 
     class OutputPacket {
-        Pointer<const Base::EquationState> stateData = nullptr;
+        TPointer<const Base::EquationState> stateData = nullptr;
         size_t currentStep = 0;
 
     public:
@@ -48,7 +48,7 @@ namespace Slab::Math {
             return stateData->category();
         };
 
-        [[nodiscard]] inline auto getSteps()   const -> size_t { return currentStep; }
+        [[nodiscard]] inline auto GetSteps()   const -> size_t { return currentStep; }
 
     };
 }

@@ -10,27 +10,29 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class RtoRHistoryPanel : public RtoRPanel {
-        Pointer<Math::RtoR2::StraightLine> xLine;
-        Pointer<Math::RtoR2::StraightLine> kLine;
+    class RtoRHistoryPanel : public FRtoRPanel {
+        TPointer<Math::RtoR2::StraightLine> xLine;
+        TPointer<Math::RtoR2::StraightLine> kLine;
 
-        Pointer<Graphics::Plot2DWindow> xSection;
-        Pointer<Graphics::Plot2DWindow> xSpaceHistory;
-        Pointer<Graphics::Plot2DWindow> kSection;
-        Pointer<Graphics::Plot2DWindow> kSpaceHistory;
+        TPointer<Graphics::FPlot2DWindow> xSection;
+        TPointer<Graphics::FPlot2DWindow> xSpaceHistory;
+        TPointer<Graphics::FPlot2DWindow> kSection;
+        TPointer<Graphics::FPlot2DWindow> kSpaceHistory;
 
     public:
-        RtoRHistoryPanel(const Pointer<KGNumericConfig> &params, GUIWindow &guiWindow, KGEnergy &hamiltonian);
+        RtoRHistoryPanel(const TPointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian);
 
-        void draw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
-        void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
+        void SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
+ simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryGraph) override;
 
-        void setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory, const DFTDataHistory &history,
+        void SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction>
+ sftHistory, const FDFTDataHistory &history,
                                     const R2toRFunctionArtist_ptr &sftHistoryGraph) override;
 
-        auto get_kSectionWindow() -> Pointer<Graphics::Plot2DWindow>;;
+        auto get_kSectionWindow() -> TPointer<Graphics::FPlot2DWindow>;;
 
     };
 

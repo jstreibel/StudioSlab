@@ -11,12 +11,13 @@
 
 
 namespace Slab::Graphics::OpenGL {
-    /**
+
+        /**
      * Checks and logs all stacked OpenGL errors.
      * @param hint Hint to recent operations.
      * @return True if error was found, false otherwise.
      */
-    bool checkGLErrors(const Str& hint, bool raiseException=false);
+    bool CheckGLErrors(const Str& hint, bool raiseException=false);
 
     struct FrameBuffer {
         typedef uint8_t DataType;
@@ -39,11 +40,13 @@ namespace Slab::Graphics::OpenGL {
         const void *getPixelData() const { return &pixels[0]; };
     };
 
-    void drawOrthoNormalized(RectR rect);
 
-    bool outputToPNG(FrameBuffer buffer, std::string fileName);
 
-    bool outputToPNG(SlabWindow *window, std::string fileName, int width, int height);
+    void DrawOrthoNormalized(RectR rect);
+
+    bool OutputToPNG(FrameBuffer buffer, std::string fileName);
+
+    bool OutputToPNG(FSlabWindow *window, std::string fileName, int width, int height);
 
     void piccolos();
 

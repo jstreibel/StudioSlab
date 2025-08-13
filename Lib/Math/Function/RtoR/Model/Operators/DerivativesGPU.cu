@@ -13,27 +13,27 @@ namespace Slab::Math::RtoR {
     typedef Indices::iterator IndexIterator;
     typedef thrust::permutation_iterator<ElementIterator, IndexIterator> ElementPermutationIterator;
 
-    typedef thrust::tuple<Real,
-            Real,
-            Real> Triple;
+    typedef thrust::tuple<DevFloat,
+            DevFloat,
+            DevFloat> Triple;
 
-    typedef thrust::tuple<Real,
-            Real,
-            Real,
-            Real> Quadruple;
+    typedef thrust::tuple<DevFloat,
+            DevFloat,
+            DevFloat,
+            DevFloat> Quadruple;
 
 
     struct Laplacian1D {
-        const Real invhsqr;
+        const DevFloat invhsqr;
 
-        explicit Laplacian1D(Real h) : invhsqr(1. / (h * h)) {}
+        explicit Laplacian1D(DevFloat h) : invhsqr(1. / (h * h)) {}
 
         __host__ __device__
-        inline Real operator()(const Triple &d) const {
+        inline DevFloat operator()(const Triple &d) const {
 
-            const Real W = thrust::get<0>(d);
-            const Real C = thrust::get<1>(d);
-            const Real E = thrust::get<2>(d);
+            const DevFloat W = thrust::get<0>(d);
+            const DevFloat C = thrust::get<1>(d);
+            const DevFloat E = thrust::get<2>(d);
 
             return invhsqr * ((W + E) - 2. * C);
         }
@@ -43,7 +43,7 @@ namespace Slab::Math::RtoR {
 
     __host__ DeviceVector &d2dx2(const DeviceVector &in_const,
                                  DeviceVector &out,
-                                 const Real h, const size_t N, bool periodic) {
+                                 const DevFloat h, const size_t N, bool periodic) {
         // TODO
         // 1. assert N is Po2
         // 2. assert N%P = 0

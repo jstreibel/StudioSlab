@@ -4,7 +4,7 @@
 
 #include "KG-Recipe.h"
 
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 #include "Math/Numerics/ODE/Steppers/RungeKutta4.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "KG-NumericConfig.h"
@@ -12,7 +12,7 @@
 
 namespace Slab::Models {
 
-    KGRecipe::KGRecipe(const Pointer<KGNumericConfig>& numeric_config,
+    KGRecipe::KGRecipe(const TPointer<KGNumericConfig>& numeric_config,
                        const Str &name, const Str& generalDescription, bool doRegister)
             : NumericalRecipe(numeric_config, name, generalDescription, DONT_REGISTER)
             , kg_numeric_config(numeric_config)
@@ -25,9 +25,9 @@ namespace Slab::Models {
             available_themes += Str("'") + theme + "', ";
 
         plotTheme.setDescription(available_themes);
-        plotTheme.setValue(default_theme);
+        plotTheme.SetValue(default_theme);
 
-        Interface->addParameters({&plotTheme,
+        Interface->AddParameters({&plotTheme,
                                   &noHistoryToFile,
                                   &outputResolution,
                                   &VisualMonitor,
@@ -41,17 +41,17 @@ namespace Slab::Models {
                                   // &snapshotTime,
                                   });
 
-        Interface->addSubInterface(device_config.getInterface());
+        Interface->AddSubInterface(device_config.GetInterface());
 
         if (doRegister) {
-            registerToManager();
+            RegisterToManager();
         }
     }
 
-    auto KGRecipe::buildStepper() -> Pointer<Stepper> {
+    auto KGRecipe::buildStepper() -> TPointer<Stepper> {
         auto solver = buildSolver();
 
-        return New <RungeKutta4> (solver, kg_numeric_config->getdt());
+        return New <RungeKutta4> (solver, kg_numeric_config->Getdt());
     }
 
 
@@ -69,7 +69,7 @@ namespace Slab::Models {
         else Core::BackendManager::Startup("Headless");
 
 
-        CLInterfaceListener::notifyAllCLArgsSetupFinished();
+        FCommandLineInterfaceListener::notifyAllCLArgsSetupFinished();
     }
 
     void KGRecipe::setupForCurrentThread() {

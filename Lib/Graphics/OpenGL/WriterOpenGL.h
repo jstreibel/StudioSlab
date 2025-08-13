@@ -2,8 +2,8 @@
 // Created by joao on 10/14/24.
 //
 
-#ifndef STUDIOSLAB_WRITEROPENGL_H
-#define STUDIOSLAB_WRITEROPENGL_H
+#ifndef STUDIOSLAB_WRITER_OPENGL_H
+#define STUDIOSLAB_WRITER_OPENGL_H
 
 #include "Graphics/OpenGL/OpenGL.h"
 
@@ -17,34 +17,35 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    class WriterOpenGL : public Writer {
-        ftgl::texture_font_t *font = nullptr;
-        ftgl::texture_atlas_t *atlas = nullptr;
+    class FWriterOpenGL final : public Writer {
+        ftgl::texture_font_t *Font = nullptr;
+        ftgl::texture_atlas_t *Atlas = nullptr;
 
-        OpenGL::VertexBuffer vertexBuffer;
-        OpenGL::Shader program;
+        OpenGL::FVertexBuffer VertexBuffer;
+        OpenGL::FShader Program;
 
-        ftgl::mat4 model{}, view{}, projection{};
+        ftgl::mat4 m_Model{}, m_View{}, m_Projection{};
 
-        void drawBuffer();
-        void setBufferText(const Str &text, Point2D penLocation, Color color=White, bool vertical=false);
+        void DrawBuffer();
+        void SetBufferText(const Str &Text, Point2D PenLocation, FColor Color=White, bool Rotate90Degrees=false);
 
-        void uploadAtlas();
+        void UploadAtlas() const;
 
     public:
-        WriterOpenGL() = delete;
-        WriterOpenGL(const Str &fontFile, float ptSize, const char *glyphsToPreload=nullptr);
-        virtual ~WriterOpenGL();
+        FWriterOpenGL() = delete;
+        FWriterOpenGL(const Str &fontFile, float ptSize, const char *glyphsToPreload=nullptr);
+        ~FWriterOpenGL() override;
 
-        void write(const Str &text, Point2D penLocation, Color color=White, bool vertical=false) override;
-        Real getFontHeightInPixels() const override;
-        void reshape(int w, int h) override;
+        void Write(const Str& text, Point2D penLocation, FColor color = White,
+                   bool vertical = false) override;
+        [[nodiscard]] DevFloat GetFontHeightInPixels() const override;
+        void Reshape(int w, int h) override;
 
-        void scale(float sx, float sy) override;
-        void translate(float dx, float dy) override;
-        void resetTransforms() override;
+        void Scale(float sx, float sy) override;
+        void Translate(float dx, float dy) override;
+        void ResetTransforms() override;
     };
 
 } // Slab::Graphics::OpenGL
 
-#endif //STUDIOSLAB_WRITEROPENGL_H
+#endif //STUDIOSLAB_WRITER_OPENGL_H

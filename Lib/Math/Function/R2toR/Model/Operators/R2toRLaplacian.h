@@ -10,12 +10,12 @@
 
 namespace Slab::Math::R2toR {
 
-    class R2toRLaplacian : public Operator<Base::NumericFunction<Real2D, Real>> {
-        using Operator<Base::NumericFunction<Real2D, Real>>::operator*;
+    class R2toRLaplacian : public Operator<Base::NumericFunction<Real2D, DevFloat>> {
+        using Operator<Base::NumericFunction<Real2D, DevFloat>>::operator*;
     protected:
 
-        Base::NumericFunction<Real2D, Real> &operateAndStoreResult(Base::NumericFunction<Real2D, Real> &output,
-                                                                   const Base::NumericFunction<Real2D, Real> &input) const override;
+        Base::NumericFunction<Real2D, DevFloat> &operateAndStoreResult(Base::NumericFunction<Real2D, DevFloat> &output,
+                                                                   const Base::NumericFunction<Real2D, DevFloat> &input) const override;
     };
 
 } // Slab

@@ -5,9 +5,9 @@
 #include "SPI-State.h"
 
 namespace Slab::Models::StochasticPathIntegrals {
-    SPIState::SPIState(Pointer<Math::R2toR::NumericFunction> data): data(std::move(data)) {}
+    SPIState::SPIState(TPointer<Math::R2toR::FNumericFunction> data): data(std::move(data)) {}
 
-#define MathCast(a) DynamicPointerCast<Math::R2toR::NumericFunction>((a))
+#define MathCast(a) DynamicPointerCast<Math::R2toR::FNumericFunction>((a))
 #define MyCast(a) dynamic_cast<const SPIState&>((a))
 #define GetData(a) (*(MyCast(a).getPhi()))
 
@@ -31,12 +31,12 @@ namespace Slab::Models::StochasticPathIntegrals {
         return *this;
     }
 
-    Math::Base::EquationState & SPIState::StoreScalarMultiplication(const EquationState &a, Real c) {
+    Math::Base::EquationState & SPIState::StoreScalarMultiplication(const EquationState &a, DevFloat c) {
         data->StoreScalarMultiplication(GetData(a), c);
         return *this;
     }
 
-    Math::Base::EquationState & SPIState::Multiply(Real a) {
+    Math::Base::EquationState & SPIState::Multiply(DevFloat a) {
         data->Multiply(a);
         return *this;
     }
@@ -45,27 +45,27 @@ namespace Slab::Models::StochasticPathIntegrals {
         return "1st-order|R2->R";
     }
 
-    auto SPIState::replicate() const -> Pointer<EquationState> {
+    auto SPIState::replicate() const -> TPointer<EquationState> {
         return New<SPIState>(MathCast(data->Clone()));
     }
 
-    auto SPIState::getPhi() const -> Pointer<Math::R2toR::NumericFunction> {
+    auto SPIState::getPhi() const -> TPointer<Math::R2toR::FNumericFunction> {
         return data;
     }
 
-    auto SPIState::getPhi() -> Pointer<Math::R2toR::NumericFunction> {
+    auto SPIState::getPhi() -> TPointer<Math::R2toR::FNumericFunction> {
         return data;
     }
 
     void SPIState::setData(const EquationState &a) {
         auto brother_state = MyCast(a);
         auto numeric_data =
-            DynamicPointerCast<Math::R2toR::NumericFunction::MyType>(brother_state.data);
+            DynamicPointerCast<Math::R2toR::FNumericFunction::MyType>(brother_state.data);
 
         data->SetArb(*numeric_data);
     }
 
-    auto SPIState::cloneData() const -> Pointer<Math::R2toR::NumericFunction> {
-        return DynamicPointerCast<Math::R2toR::NumericFunction>(data->Clone());
+    auto SPIState::cloneData() const -> TPointer<Math::R2toR::FNumericFunction> {
+        return DynamicPointerCast<Math::R2toR::FNumericFunction>(data->Clone());
     }
 } // Slab::Models::StochasticPathIntegral

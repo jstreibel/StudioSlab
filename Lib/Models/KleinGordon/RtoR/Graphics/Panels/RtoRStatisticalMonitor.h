@@ -2,8 +2,8 @@
 // Created by joao on 16/04/24.
 //
 
-#ifndef STUDIOSLAB_RTORSTATISTICALMONITOR_H
-#define STUDIOSLAB_RTORSTATISTICALMONITOR_H
+#ifndef STUDIOSLAB_RTOR_STATISTICAL_MONITOR_H
+#define STUDIOSLAB_RTOR_STATISTICAL_MONITOR_H
 
 
 #include "Graphics/BaseMonitor.h"
@@ -23,23 +23,24 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class RtoRStatisticsPanel : public RtoRPanel {
+    class RtoRStatisticsPanel final : public FRtoRPanel {
 
-        RtoR2::StraightLine_ptr correlationLine;
+        TPointer<RtoR2::StraightLine>
+ correlationLine;
         RtoR::Section1D_ptr mSpaceCorrelation;
-        R2toR::NumericFunction_ptr mCorrelationComputed;
-        Graphics::Plot2DWindow mCorrelationGraph;
+        R2toR::FNumericFunction_ptr mCorrelationComputed;
+        Graphics::FPlot2DWindow mCorrelationGraph;
 
-        Real transientHint = -1.0;
+        DevFloat transientHint = -1.0;
 
         KGEnergy &hamiltonian;
 
-        Real u=.0;
+        DevFloat u=.0;
 
-        Real barϕ=.0;
-        Real tau=.0;
-        Real tau_indirect=.0;
-        Real tau_avg=.0;
+        DevFloat barϕ=.0;
+        DevFloat tau=.0;
+        DevFloat tau_indirect=.0;
+        DevFloat tau_avg=.0;
 
         Math::PointSet temperature1HistoryData;
         Math::PointSet temperature2HistoryData;
@@ -56,16 +57,17 @@ namespace Slab::Models::KGRtoR {
         void updateEnergyData();
 
     public:
-        RtoRStatisticsPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow);
+        RtoRStatisticsPanel(const TPointer<KGNumericConfig> &params, KGEnergy &hamiltonian, Graphics::FGUIWindow &guiWindow);
 
-        void draw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
-        void setTransientHint(Real);
+        void SetTransientHint(DevFloat);
 
-        void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
+        void SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
+ simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;
     };
 }
 
 
-#endif //STUDIOSLAB_RTORSTATISTICALMONITOR_H
+#endif //STUDIOSLAB_RTOR_STATISTICAL_MONITOR_H

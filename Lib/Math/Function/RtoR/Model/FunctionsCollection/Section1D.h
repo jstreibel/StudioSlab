@@ -13,15 +13,15 @@
 
 namespace Slab::Math::RtoR {
     class Section1D : public RtoR::Function {
-        R2toR::Function_constptr function;
-        RtoR2::ParametricCurve_constptr curve;
+        TPointer<const R2toR::Function> function;
+        TPointer<const RtoR2::ParametricCurve> curve;
 
     public:
-        Section1D(R2toR::Function_constptr function=nullptr, RtoR2::ParametricCurve_constptr curve=nullptr);
+        Section1D(TPointer<const R2toR::Function> function=nullptr, TPointer<const RtoR2::ParametricCurve> curve=nullptr);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
-        Math::PointSet_ptr renderToPointSet(RenderingOptions options) override;
+        TPointer<Math::PointSet> renderToPointSet(RenderingOptions options) override;
     };
 
     DefinePointers(Section1D)

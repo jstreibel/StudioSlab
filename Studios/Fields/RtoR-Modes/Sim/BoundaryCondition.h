@@ -15,34 +15,34 @@ namespace Modes {
 
 
     class FPlaneWaveBC final : public KGRtoR::BoundaryCondition {
-        Real Q, k;
+        DevFloat Q, k;
     public:
-        explicit FPlaneWaveBC(const KGRtoR::EquationState_constptr& prototype, Real Q, Real k);
+        explicit FPlaneWaveBC(const KGRtoR::EquationState_constptr& prototype, DevFloat Q, Real k);
 
     protected:
-        void ApplyKG(KGRtoR::EquationState& KGState, Real t) const override;
+        void ApplyKG(KGRtoR::EquationState& KGState, DevFloat t) const override;
     };
 
 
     class SignalBC final : public KGRtoR::BoundaryCondition {
     protected:
-        void ApplyKG(KGRtoR::EquationState &, Real t) const override;
+        void ApplyKG(KGRtoR::EquationState &, DevFloat t) const override;
 
     public:
-        Real A, ω;
+        DevFloat A, ω;
 
-        SignalBC(const KGRtoR::EquationState_ptr &prototype, Real A, Real ω);
+        SignalBC(const KGRtoR::EquationState_ptr &prototype, DevFloat A, DevFloat ω);
     };
 
 
     class DrivenBC final : public KGRtoR::BoundaryCondition {
-        Pointer<SquareWave> sqrWave;
+        Slab::TPointer<Modes::SquareWave> sqrWave;
 
     protected:
-        void ApplyKG(KGRtoR::EquationState &, Real t) const override;
+        void ApplyKG(KGRtoR::EquationState &, DevFloat t) const override;
 
     public:
-        DrivenBC(const KGRtoR::EquationState_ptr &prototype, Pointer<SquareWave> sqrWave);
+        DrivenBC(const KGRtoR::EquationState_ptr &prototype, Slab::TPointer<Modes::SquareWave> sqrWave);
     };
 
 

@@ -14,39 +14,39 @@
 
 namespace Slab::Models::KGRtoR {
 
-    HistogramsViewer_KG::HistogramsViewer_KG(const Pointer<Graphics::GUIWindow> &gui_window)
+    HistogramsViewer_KG::HistogramsViewer_KG(const TPointer<Graphics::FGUIWindow> &gui_window)
     : KGViewer(gui_window) {
 
-        auto energy_window    = New<PlotWindow>("Energy histogram");
-        auto kinetic_window   = New<PlotWindow>("Kinetic energy histogram");
-        auto gradient_window  = New<PlotWindow>("Gradient energy histogram");
-        auto potential_window = New<PlotWindow>("Potential energy histogram");
+        auto energy_window    = New<PlotWindow>("Energy histogram", gui_window->GetGUIWindowContext());
+        auto kinetic_window   = New<PlotWindow>("Kinetic energy histogram", gui_window->GetGUIWindowContext());
+        auto gradient_window  = New<PlotWindow>("Gradient energy histogram", gui_window->GetGUIWindowContext());
+        auto potential_window = New<PlotWindow>("Potential energy histogram", gui_window->GetGUIWindowContext());
 
         histogram_windows = {energy_window, kinetic_window, gradient_window, potential_window};
 
-        addWindow(gradient_window);
-        addWindow(energy_window);
+        AddWindow(gradient_window);
+        AddWindow(energy_window);
 
-        addWindow(potential_window, true);
-        addWindow(kinetic_window);
+        AddWindow(potential_window, true);
+        AddWindow(kinetic_window);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
 
         Graphics::Plotter::AddPointSet(energy_window,
                                        Naked(histogram_data_energy),
-                                       *style++, "E")->setAffectGraphRanges(true);
+                                       *style++, "E")->SetAffectGraphRanges(true);
         Graphics::Plotter::AddPointSet(kinetic_window,
                                        Naked(histogram_data_kinetic),
-                                       *style++, "K")->setAffectGraphRanges(true);
+                                       *style++, "K")->SetAffectGraphRanges(true);
         Graphics::Plotter::AddPointSet(gradient_window,
                                        Naked(histogram_data_gradient),
-                                       *style++, "grad")->setAffectGraphRanges(true);
+                                       *style++, "grad")->SetAffectGraphRanges(true);
         Graphics::Plotter::AddPointSet(potential_window,
                                        Naked(histogram_data_potential),
-                                       *style++, "V")->setAffectGraphRanges(true);
+                                       *style++, "V")->SetAffectGraphRanges(true);
     }
 
-    void HistogramsViewer_KG::draw() {
+    void HistogramsViewer_KG::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         gui_window->AddExternalDraw([this](){
             fix func = getFunction();
             if(func == nullptr) return;
@@ -62,8 +62,8 @@ namespace Slab::Models::KGRtoR {
                | ImGui::Checkbox("Pretty bars", &pretty)
                | ImGui::SliderFloat("t##histogram", &t, min_t, max_t-t_delta)
                | ImGui::SliderFloat("Δt##histogram", &Δt, dt, max_t-t)) {
-                t_min = (Slab::Real)t;
-                t_delta = (Slab::Real)Δt;
+                t_min = (Slab::DevFloat)t;
+                t_delta = (Slab::DevFloat)Δt;
 
                 updateHistograms();
             }
@@ -71,7 +71,7 @@ namespace Slab::Models::KGRtoR {
             ImGui::Text("Sheer data size: %i", (int)sheer_size);
         });
 
-        WindowPanel::draw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void HistogramsViewer_KG::updateHistograms() {
@@ -97,21 +97,21 @@ namespace Slab::Models::KGRtoR {
         histogram.renderPDFToPointSet(Slab::Naked(histogram_data_potential), pretty);
 
         for(const auto& h_win : histogram_windows)
-            h_win->reviewGraphRanges();
+            h_win->ReviewGraphRanges();
 
     }
 
-    void HistogramsViewer_KG::setFunction(Slab::Pointer<Slab::Math::R2toR::NumericFunction> function) {
+    void HistogramsViewer_KG::SetFunction(Slab::TPointer<Slab::Math::R2toR::FNumericFunction> function) {
         auto domain = function->getDomain();
 
         t_min = domain.yMin;
         t_delta = domain.yMax-t_min;
 
-        Viewer::setFunction(function);
+        Viewer::SetFunction(function);
     }
 
-    void HistogramsViewer_KG::setFunctionDerivative(FuncPointer pointer) {
-        KGViewer::setFunctionDerivative(pointer);
+    void HistogramsViewer_KG::SetFunctionDerivative(FuncPointer pointer) {
+        KGViewer::SetFunctionDerivative(pointer);
 
         if(isVisible() && areFunctionsConsistent()) updateHistograms();
     }
@@ -159,10 +159,10 @@ namespace Slab::Models::KGRtoR {
             auto *grad_data      = &(*data.gradient) [k];
             auto *potential_data = &(*data.potential)[k];
 
-            memcpy(energy_data,    energy,    N*sizeof(Slab::Real));
-            memcpy(kinetic_data,   kinetic,   N*sizeof(Slab::Real));
-            memcpy(grad_data,      grad,      N*sizeof(Slab::Real));
-            memcpy(potential_data, potential, N*sizeof(Slab::Real));
+            memcpy(energy_data,    energy,    N*sizeof(Slab::DevFloat));
+            memcpy(kinetic_data,   kinetic,   N*sizeof(Slab::DevFloat));
+            memcpy(grad_data,      grad,      N*sizeof(Slab::DevFloat));
+            memcpy(potential_data, potential, N*sizeof(Slab::DevFloat));
 
             k+=N;
         }
@@ -170,7 +170,7 @@ namespace Slab::Models::KGRtoR {
         return data;
     }
 
-    Str HistogramsViewer_KG::getName() const {
+    Str HistogramsViewer_KG::GetName() const {
         return "[KG] Histograms viewer";
     }
 

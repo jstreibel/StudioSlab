@@ -10,16 +10,16 @@ namespace Slab::Models::MolecularDynamics {
     using namespace Slab;
 
     class Langevin : public NewtonMechanics {
-        Real T;
+        DevFloat T;
 
-        auto F_nh(Real t) -> Graphics::Point2D override;
+        auto F_nh(DevFloat t) -> Graphics::Point2D override;
         static Graphics::Point2D xi();
 
     public:
         using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
-        Langevin(Pointer<Config> config, Real T);
+        Langevin(TPointer<Config> config, DevFloat T);
 
-        void setTemperature(Real T);
+        void setTemperature(DevFloat T);
     };
 }
 

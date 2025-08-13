@@ -15,11 +15,11 @@
 namespace Slab::Math::R2toR {
 
     NumericFunction_CPU::NumericFunction_CPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy)
-        : NumericFunction(N, M, xMin, yMin, hx, hy, Device::CPU) {
+        : FNumericFunction(N, M, xMin, yMin, hx, hy, Device::CPU) {
 
     }
 
-    Pointer<Base::NumericFunction<Real2D, Real>> NumericFunction_CPU::CloneWithSize(UInt outN) const {
+    TPointer<Base::NumericFunction<Real2D, Real>> NumericFunction_CPU::CloneWithSize(UInt outN) const {
         assert(M==N); // (por enquanto so vai funcionar assim.
 
         auto myClone = DataAlloc<NumericFunction_CPU>(get_data_name() + " [clone]", outN, outN, xMin, yMin, hx, hy);;
@@ -53,7 +53,7 @@ namespace Slab::Math::R2toR {
         return getSpace().getHostData()[n + m * N];
     }
 
-    NumericFunction &NumericFunction_CPU::Laplacian(NumericFunction &outFunc) const {
+    FNumericFunction &NumericFunction_CPU::Laplacian(FNumericFunction &outFunc) const {
         if(!Common::AreEqual(hx, hy)) throw "No computation of discrete laplacian for dx!=dy";
 
         fix h = hx;
@@ -129,7 +129,7 @@ namespace Slab::Math::R2toR {
     Base::NumericFunction<Real2D, Real> &
     NumericFunction_CPU::Apply(const FunctionT<Real, Real> &func,
                                 Base::NumericFunction<Real2D, Real> &out) const {
-        SlabCast(fOut, NumericFunction &, out)
+        SlabCast(fOut, FNumericFunction &, out)
 
         OMP_GET_BEGIN_END(begin, end, N)
         for(UInt n=begin; n<end; n++)

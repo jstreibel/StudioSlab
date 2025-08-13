@@ -4,6 +4,8 @@
 
 #include "KG-RtoRBoundaryCondition.h"
 
+#include <utility>
+
 
 namespace Slab::Models::KGRtoR {
 
@@ -15,13 +17,17 @@ namespace Slab::Models::KGRtoR {
                                                RtoR::Function_ptr leftdPhiDtBoundaryCondition,
                                                RtoR::Function_ptr rightPhiBoundaryCondition,
                                                RtoR::Function_ptr rightdPhiDtBoundaryCondition)
-    : Base::BoundaryConditions(prototype), initialPhiCondition(initialPhiCondition)
-    , leftPhiBoundaryCondition(leftPhiBoundaryCondition), rightPhiBoundaryCondition(rightPhiBoundaryCondition)
-    , initialdPhiDtCondition(initialdPhiDtCondition), leftdPhiDtBoundaryCondition(leftdPhiDtBoundaryCondition)
-    , rightdPhiDtBoundaryCondition(rightdPhiDtBoundaryCondition) { }
+    : Base::BoundaryConditions(prototype)
+    , initialPhiCondition(          std::move(initialPhiCondition)          )
+    , leftPhiBoundaryCondition(     std::move(leftPhiBoundaryCondition)     )
+    , rightPhiBoundaryCondition(    std::move(rightPhiBoundaryCondition)    )
+    , initialdPhiDtCondition(       std::move(initialdPhiDtCondition)       )
+    , leftdPhiDtBoundaryCondition(  std::move(leftdPhiDtBoundaryCondition)  )
+    , rightdPhiDtBoundaryCondition( std::move(rightdPhiDtBoundaryCondition) )
+    { }
 
 
-    void BoundaryCondition::ApplyKG(EquationState &kgState, Real t) const {
+    void BoundaryCondition::ApplyKG(EquationState &kgState, DevFloat t) const {
         if (t == 0.0) {
             kgState.SetPhi(*initialPhiCondition);
             kgState.SetDPhiDt(*initialdPhiDtCondition);
@@ -36,7 +42,7 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void BoundaryCondition::Apply(Base::EquationState &state, const floatt t) const {
+    void BoundaryCondition::Apply(Base::EquationState &state, const DevFloat t) const {
         auto &KGState = dynamic_cast<EquationState&>(state);
 
         this->ApplyKG(KGState, t);

@@ -8,6 +8,7 @@
 #include "Core/Backend/BackendManager.h"
 #include "3rdParty/ImGui.h"
 #include "Core/SlabCore.h"
+#include "utils/enums.h"
 
 
 #define Unique(label) \
@@ -16,18 +17,20 @@
 
 namespace Slab::Graphics {
 
-    Count Scene3DWindow::WindowCount = 0;
+    CountType Scene3DWindow::WindowCount = 0;
 
-    Scene3DWindow::Scene3DWindow() : id(++WindowCount)
+    Scene3DWindow::Scene3DWindow()
+    : FSlabWindow(FSlabWindowConfig(Str("Scene3D (" + ToStr(WindowCount+1) +")")))
+    , id(++WindowCount)
     {
         Core::LoadModule("ImGui");
         Core::LoadModule("ModernOpenGL");
 
-        setClear(false);
+        SetClear(false);
     }
 
-    void Scene3DWindow::draw() {
-        SlabWindow::draw();
+    void Scene3DWindow::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+        FSlabWindow::ImmediateDraw(PlatformWindow);
 
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
@@ -59,13 +62,12 @@ namespace Slab::Graphics {
         camera.aspect = (float) GetWidth() / (float) GetHeight();
     }
 
-    bool Scene3DWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
-        fix left = SlabWindow::isMouseLeftClicked();
-        fix center = SlabWindow::isMouseCenterClicked();
-        fix right = SlabWindow::isMouseRightClicked();
+    bool Scene3DWindow::NotifyMouseMotion(int x, int y, int dx, int dy) {
+        FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
 
+        fix Mouse = GetMouseState();
 
-        if(left && right) {
+        if(Mouse->IsLeftPressed() && Mouse->IsRightPressed()) {
             fix scaled_dx = -dx * 1.e-2f;
             fix scaled_dy =  dy * 1.e-2f;
 
@@ -78,32 +80,35 @@ namespace Slab::Graphics {
 
             return true;
         }
-        else if(left) {
-            cameraAngleAzimuth -= dx*.0025f;
-            cameraAnglePolar   -= dy*.0025f;
 
-            cameraAnglePolar = std::min(std::max(cameraAnglePolar, 1.e-5f), (1.f-1.e-5f)*(float)M_PI);
+        if(Mouse->IsLeftPressed()) {
+            cameraAngleAzimuth -= .0025f * dx;
+            cameraAnglePolar   -= .0025f * dy;
+
+            cameraAnglePolar = std::min(std::max(cameraAnglePolar, 1.e-5f), (1.f-1.e-5f)*static_cast<float>(M_PI));
 
             return true;
         }
-        else if(right) {
+
+        if(Mouse->IsRightPressed()) {
             cameraDist += dy*.01f;
 
             return true;
         }
-        else if(center) {
+
+        if(Mouse->IsCenterPressed()) {
             camera.yFov += dy*.005f;
 
             return true;
         }
 
-        return SlabWindow::notifyMouseMotion(x, y, dx, dy);
+        return false;
     }
 
-    bool Scene3DWindow::notifyMouseWheel(double dx, double dy) {
+    bool Scene3DWindow::NotifyMouseWheel(double dx, double dy) {
         camera.yFov += .01f*camera.yFov*(float)dy;
 
-        return SlabWindow::notifyMouseWheel(dx, dy);
+        return FSlabWindow::NotifyMouseWheel(dx, dy);
     }
 
     auto Scene3DWindow::getCamera() const -> const Camera & {
@@ -122,11 +127,11 @@ namespace Slab::Graphics {
         // auto popupName = title + Str(" window popup");
 
         if (showInterface) {
-            auto vp = getViewport();
+            auto vp = GetViewport();
             // auto sh = Slab::Graphics::GetGraphicsBackend()->getScreenHeight();
             // ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
             ImGui::SetNextWindowPos({(float)vp.xMin, (float)vp.yMin}, ImGuiCond_Appearing);
-            ImGui::SetNextWindowSize({(float)vp.width()*.20f, (float)vp.height()}, ImGuiCond_Appearing);
+            ImGui::SetNextWindowSize({(float)vp.GetWidth()*.20f, (float)vp.GetHeight()}, ImGuiCond_Appearing);
 
             if (ImGui::Begin(title.c_str(), &showInterface)) {
 
@@ -149,13 +154,13 @@ namespace Slab::Graphics {
         }
     }
 
-    bool Scene3DWindow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
-        if(key == KeyMap::Key_TAB && state == KeyState::Release && modKeys.Mod_Shift == Press) {
+    bool Scene3DWindow::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+        if(key == EKeyMap::Key_TAB && state == EKeyState::Release && modKeys.Mod_Shift == Press) {
             showInterface = !showInterface;
             return true;
         }
 
-        return SlabWindow::notifyKeyboard(key, state, modKeys);
+        return FSlabWindow::NotifyKeyboard(key, state, modKeys);
     }
 
 

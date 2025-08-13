@@ -6,7 +6,7 @@
 
 namespace Slab::Graphics {
 
-    ImGuiKey SlabToImGuiTranslate(KeyMap slab_key) {
+    ImGuiKey SlabToImGuiTranslate(EKeyMap slab_key) {
         switch (slab_key) {
             case Key_UNKNOWN:           return ImGuiKey_None;
             case Key_SPACE:             return ImGuiKey_Space;

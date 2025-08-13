@@ -18,16 +18,22 @@ namespace Slab::Graphics {
 
     }
 
-    auto PointSetArtist::draw(const Plot2DWindow &graph2D) -> bool {
+    auto PointSetArtist::Draw(const FPlot2DWindow &graph2D) -> bool {
         if(pointSet == nullptr) return true;
 
-        graph2D.requireLabelOverlay(getLabel(), Naked(plotStyle));
+        graph2D.RequireLabelOverlay(GetLabel(), Naked(plotStyle));
 
-        OpenGL::Legacy::SetupOrtho(graph2D.getRegion().getRect());
-        return Graphics::OpenGL::Legacy::RenderPointSet(pointSet, plotStyle);
+        OpenGL::Legacy::PushLegacyMode();
+        OpenGL::Legacy::SetupOrtho(graph2D.GetRegion().getRect());
+
+        bool bResult = OpenGL::Legacy::RenderPointSett(pointSet, plotStyle);
+
+        OpenGL::Legacy::RestoreFromLegacyMode();
+
+        return bResult;
     }
 
-    auto PointSetArtist::getRegion() -> const RectR & {
+    auto PointSetArtist::GetRegion() -> const RectR & {
         if(pointSet== nullptr || pointSet->getPoints().empty()) region = {-1,1,-1,1};
         else {
             auto ptMax = pointSet->getMax();
@@ -36,7 +42,7 @@ namespace Slab::Graphics {
             region = {ptMin.x, ptMax.x, ptMin.y, ptMax.y};
         }
 
-        return Artist::getRegion();
+        return FArtist::GetRegion();
     }
 
     auto PointSetArtist::setPointSet(Math::PointSet_ptr newPointSet) -> void {
@@ -47,11 +53,11 @@ namespace Slab::Graphics {
         plotStyle = style;
     }
 
-    void PointSetArtist::drawGUI() {
-        DrawPlotStyleGUI(plotStyle, getLabel());
+    void PointSetArtist::DrawGUI() {
+        DrawPlotStyleGUI(plotStyle, GetLabel());
     }
 
-    bool PointSetArtist::hasGUI() { return true; }
+    bool PointSetArtist::HasGUI() { return true; }
 
 
 } // Graphics

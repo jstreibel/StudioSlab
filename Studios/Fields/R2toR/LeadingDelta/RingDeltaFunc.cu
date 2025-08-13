@@ -17,8 +17,8 @@ struct IsRingDeltaDomain
 
 struct RingThetaGPU
 {
-    typedef Slab::Real argument_type;
-    typedef Slab::Real result_type;
+    typedef Slab::DevFloat argument_type;
+    typedef Slab::DevFloat result_type;
 
     const double a, t;
     const double rMin, dx;
@@ -34,7 +34,7 @@ struct RingThetaGPU
             , data(data)
     {           }
 
-    __device__ Slab::Real operator()(int idx) {
+    __device__ Slab::DevFloat operator()(int idx) {
         double x = rMin + (idx % N) * dx;
         double y = rMin + (idx / N) * dx;
 
@@ -48,8 +48,8 @@ struct RingThetaGPU
 
 struct RingDeltaGPU
 {
-    typedef Slab::Real argument_type;
-    typedef Slab::Real result_type;
+    typedef Slab::DevFloat argument_type;
+    typedef Slab::DevFloat result_type;
 
     const double eps, a, a_eps, eps_1, t;
     const double rMin, step;
@@ -68,7 +68,7 @@ struct RingDeltaGPU
     , data(data)
     {           }
 
-    __device__ Slab::Real operator()(int idx) {
+    __device__ Slab::DevFloat operator()(int idx) {
         double x = rMin + (idx % N) * step;
         double y = rMin + (idx / N) * step;
 
@@ -85,7 +85,7 @@ struct RingDeltaGPU
 
 bool Studios::Fields::R2toRLeadingDelta::RingDeltaFunc::renderToNumericFunction(
         Slab::Math::Base::NumericFunction<Real2D, Real> *toFunc) const {
-    auto &func = *dynamic_cast<Slab::Math::R2toR::NumericFunction*>(toFunc);
+    auto &func = *dynamic_cast<Slab::Math::R2toR::FNumericFunction*>(toFunc);
 
     auto &outputSpace = toFunc->getSpace();
     fix &meta_data = outputSpace.getMetaData();

@@ -22,15 +22,15 @@ namespace Slab::Graphics {
     struct Animation {
         T initialValue;
         T targetValue;
-        double timeInSeconds;
+        double TimeInSeconds;
         AnimStepCallback<T> step_callback;
         AnimFinishCallback finish_callback;
 
-        Timer timer; // inicializa sozinho
+        Timer Timer; // inicializa sozinho
     };
 
     template<typename T>
-    using AnimationMap = std::unordered_map<Pointer<T>, Animation<T>>;
+    using AnimationMap = std::unordered_map<TPointer<T>, Animation<T>>;
 
     class Animator {
         static Animator& Instance();

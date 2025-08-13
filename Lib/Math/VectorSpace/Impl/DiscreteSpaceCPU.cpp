@@ -75,7 +75,7 @@ namespace Slab::Math {
         OMP_PARALLEL_FOR(n, N)X[n] = fVec[n];
     }
 
-    DiscreteSpace &DiscreteSpaceCPU::StoreScalarMultiplication(const DiscreteSpace &space1, const Real a) {
+    DiscreteSpace &DiscreteSpaceCPU::StoreScalarMultiplication(const DiscreteSpace &space1, const DevFloat a) {
         assert(getTotalDiscreteSites() ==
                space1.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.
 

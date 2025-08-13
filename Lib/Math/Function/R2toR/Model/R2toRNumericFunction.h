@@ -11,9 +11,9 @@
 namespace Slab::Math::R2toR {
     class Domain {
     public:
-        Real getLx() const { return xMax-xMin; }
-        Real getLy() const { return yMax-yMin; }
-        const Real xMin, xMax, yMin, yMax;
+        DevFloat getLx() const { return xMax-xMin; }
+        DevFloat getLy() const { return yMax-yMin; }
+        const DevFloat xMin, xMax, yMin, yMax;
 
         bool operator ==(const Domain &other) const {
             return Common::AreEqual(xMin, other.xMin)
@@ -23,37 +23,37 @@ namespace Slab::Math::R2toR {
         }
     };
 
-    typedef Base::FunctionT<Real, Real> FuncBase;
-    typedef Base::NumericFunction<Real2D, Real> DiscrBase;
+    typedef Base::FunctionT<DevFloat, DevFloat> FuncBase;
+    typedef Base::NumericFunction<Real2D, DevFloat> DiscrBase;
 
-    class NumericFunction : public Base::NumericFunction<Real2D,Real> {
+    class FNumericFunction : public Base::NumericFunction<Real2D,DevFloat> {
     protected:
         const UInt N, M;
-        const Real xMin, xMax,
+        const DevFloat xMin, xMax,
                    yMin, yMax,
                    hx, hy;
 
     public:
-        typedef Base::NumericFunction <Real2D, Real> NumericFunctionBase;
+        typedef Base::NumericFunction <Real2D, DevFloat> NumericFunctionBase;
         using NumericAlgebra<NumericFunctionBase>::operator=;
 
-        NumericFunction(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy, Device dev);
+        FNumericFunction(UInt N, UInt M, DevFloat xMin, DevFloat yMin, DevFloat hx, DevFloat hy, Device dev);
         // NumericFunction(const NumericConfig &, Device);
 
-        auto operator()(Real2D x) const -> Real override;
-        auto operator()(Real2D x)       -> Real &;
+        auto operator()(Real2D x) const -> DevFloat override;
+        auto operator()(Real2D x)       -> DevFloat &;
 
-        auto diff(int n, int i, int j) const -> Real;
-        auto diff(int n, Real2D x) const -> Real        override;
+        auto diff(int n, int i, int j) const -> DevFloat;
+        auto diff(int n, Real2D x) const -> DevFloat        override;
         auto diff(int n)           const -> Function_ptr override;
 
         auto domainContainsPoint(Real2D x) const -> bool override;
 
-        virtual NumericFunction &Laplacian(NumericFunction &outFunc) const = 0;
+        virtual FNumericFunction &Laplacian(FNumericFunction &outFunc) const = 0;
 
-        virtual const Real&
+        virtual const DevFloat&
         At(UInt n, UInt m) const = 0;
-        virtual Real&
+        virtual DevFloat&
         At(UInt n, UInt m) = 0;
 
         auto getN()      const -> UInt;
@@ -61,12 +61,12 @@ namespace Slab::Math::R2toR {
         auto getDomain() const -> Domain;
         auto generalName()    const -> Str override;
 
-        Real max() const override;
+        DevFloat max() const override;
 
-        Real min() const override;
+        DevFloat min() const override;
     };
 
-    DefinePointers(NumericFunction)
+    DefinePointers(FNumericFunction)
 }
 
 

@@ -10,25 +10,25 @@
 
 namespace Slab::Math::RtoR {
     class QuasiShockwave : public RtoR::Function {
-        auto ϕ_1L(Real x) const -> Real;
-        auto ϕ_2L(Real x) const -> Real;
-        auto ϕ_3L(Real x) const -> Real;
+        auto ϕ_1L(DevFloat x) const -> DevFloat;
+        auto ϕ_2L(DevFloat x) const -> DevFloat;
+        auto ϕ_3L(DevFloat x) const -> DevFloat;
 
-        auto ϕ_1C(Real x) const -> Real;
-        auto ϕ_2C(Real x) const -> Real;
+        auto ϕ_1C(DevFloat x) const -> DevFloat;
+        auto ϕ_2C(DevFloat x) const -> DevFloat;
 
-        auto ϕ_1R(Real x) const -> Real;
-        auto ϕ_2R(Real x) const -> Real;
-        auto ϕ_3R(Real x) const -> Real;
+        auto ϕ_1R(DevFloat x) const -> DevFloat;
+        auto ϕ_2R(DevFloat x) const -> DevFloat;
+        auto ϕ_3R(DevFloat x) const -> DevFloat;
 
-        Real a0, E, a, ε;
+        DevFloat a0, E, a, ε;
 
-        Real t=0;
+        DevFloat t=0;
     public:
-        QuasiShockwave(Real a0, Real E, Real t=0);
+        QuasiShockwave(DevFloat a0, DevFloat E, DevFloat t=0);
 
-        void sett(Real t){ this->t = t; }
-        Real operator()(Real x) const override;
+        void sett(DevFloat t){ this->t = t; }
+        DevFloat operator()(DevFloat x) const override;
     };
 }
 

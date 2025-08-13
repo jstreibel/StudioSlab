@@ -11,7 +11,7 @@ namespace Slab::Graphics {
 
     typedef unsigned int Codepoint;
 
-    class GLFWListener {
+    class FGLFWListener {
 
     public:
         virtual bool KeyboardEvent(GLFWwindow* window, int key, int scancode, int action, int mods);

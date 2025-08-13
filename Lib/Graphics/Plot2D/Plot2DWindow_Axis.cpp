@@ -2,6 +2,8 @@
 // Created by joao on 29/08/23.
 //
 
+#include <ranges>
+
 #include "Plot2DWindow.h"
 
 #include "Core/Tools/Log.h"
@@ -12,21 +14,21 @@
 
 namespace Slab {
 
-    Str Graphics::Plot2DWindow::getXHairLabel(const Point2D &coords) const {
+    Str Graphics::FPlot2DWindow::GetXHairLabel(const Point2D &coords) const {
         fix digits = 5;
-        auto &hUnit = axisArtist.getHorizontalUnit();
-        auto &vUnit = axisArtist.getVerticalUnit();
+        auto &hUnit = AxisArtist.getHorizontalUnit();
+        auto &vUnit = AxisArtist.getVerticalUnit();
 
-        Str hAxisName = axisArtist.getHorizontalAxisLabel();
-        Str vAxisName = axisArtist.getVerticalAxisLabel();
+        Str hAxisName = AxisArtist.getHorizontalAxisLabel();
+        Str vAxisName = AxisArtist.getVerticalAxisLabel();
         auto baseLabel = Str("(") + hAxisName + ", " + vAxisName + ") = (" + hUnit(coords.x, digits) + ", " +
                          vUnit(coords.y, digits) + ")";
 
-        for (IN contie: content) {
+        for (IN contie: Content) {
             IN artie = contie.second;
 
-            if (artie->isVisible() && artie->getRegion().doesHit(coords.x, coords.y)) {
-                auto artLabel = artie->getXHairInfo(coords);
+            if (artie->IsVisible() && artie->GetRegion().doesHit(coords.x, coords.y)) {
+                auto artLabel = artie->GetXHairInfo(coords);
 
                 if (artLabel.empty()) continue;
 
@@ -37,25 +39,23 @@ namespace Slab {
         return baseLabel;
     }
 
-    void Graphics::Plot2DWindow::reviewGraphRanges() {
-        RectR newRegion = region.getRect();
+    void Graphics::FPlot2DWindow::ReviewGraphRanges() {
+        RectR newRegion = Region.getRect();
 
-        for (auto &a: content) {
+        for (auto &a: Content) {
             auto &artist = a.second;
 
-            if(artist->affectsGraphRanges()) {
-                newRegion = artist->getRegion();
+            if(artist->AffectsGraphRanges()) {
+                newRegion = artist->GetRegion();
                 break;
             }
         }
 
         bool unaffected = true;
-        for (auto &a: content) {
-            auto &artist = a.second;
+        for (auto& Artist : Content | std::views::values) {
+            if (!Artist->AffectsGraphRanges()) continue;
 
-            if (!artist->affectsGraphRanges()) continue;
-
-            auto aRegion = artist->getRegion();
+            auto aRegion = Artist->GetRegion();
 
             if (aRegion.xMax > newRegion.xMax){ newRegion.xMax = aRegion.xMax; unaffected = false; }
             if (aRegion.xMin < newRegion.xMin){ newRegion.xMin = aRegion.xMin; unaffected = false; }
@@ -69,9 +69,9 @@ namespace Slab {
         if(!unaffected)
         {
             auto currStyle = PlotThemeManager::GetCurrent();
-            auto pix = Slab::Graphics::PixelSizeInSpace(newRegion, getViewport());
-            auto Δx = (Real) currStyle->hAxisPaddingInPixels * pix.x;
-            auto Δy = (Real) currStyle->hAxisPaddingInPixels * pix.y;
+            auto pix = Slab::Graphics::PixelSizeInSpace(newRegion, GetViewport());
+            auto Δx = static_cast<DevFloat>(currStyle->hAxisPaddingInPixels) * pix.x;
+            auto Δy = static_cast<DevFloat>(currStyle->hAxisPaddingInPixels) * pix.y;
 
             newRegion.xMin -= 2*Δx;
             newRegion.xMax += 2*Δx;
@@ -79,10 +79,10 @@ namespace Slab {
             newRegion.yMax += 2*Δy;
         }
 
-        region.animate_xMin(newRegion.xMin);
-        region.animate_xMax(newRegion.xMax);
-        region.animate_yMin(newRegion.yMin);
-        region.animate_yMax(newRegion.yMax);
+        Region.animate_xMin(newRegion.xMin);
+        Region.animate_xMax(newRegion.xMax);
+        Region.animate_yMin(newRegion.yMin);
+        Region.animate_yMax(newRegion.yMax);
     }
 
 

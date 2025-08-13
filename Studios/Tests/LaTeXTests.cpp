@@ -13,16 +13,16 @@ namespace Tests {
     using namespace Slab;
 
     LaTeXTests::LaTeXTests()
-    : Slab::Graphics::WindowRow("LaTeX tests")
-    , latexWriter()
-    , writer(Core::Resources::fontFileName(10), 19)
+    : FWindowRow("LaTeX tests")
+    , writer(Core::Resources::GetIndexedFontFileName(10), 19)
     , graph("Graph")
+    , stats(Graphics::FSlabWindowConfig{"Stats"})
     {
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         style.filled = false;
     }
 
-    void LaTeXTests::draw() {
+    void LaTeXTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         constexpr int buffer_size = 64 * 1024;
         static char buffer[buffer_size];
 
@@ -38,12 +38,12 @@ namespace Tests {
             ImGui::End();
         });
 
-        writer.write(Str(buffer), {200, 1100});
+        writer.Write(Str(buffer), {200, 1100});
         latexWriter.draw();
     }
 
-    void LaTeXTests::notifyReshape(int w, int h) {
-        writer.reshape(w, h);
-        WindowRow::notifyReshape(w, h);
+    void LaTeXTests::NotifyReshape(int w, int h) {
+        writer.Reshape(w, h);
+        FWindowRow::NotifyReshape(w, h);
     }
 } // Tests

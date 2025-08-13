@@ -16,12 +16,12 @@ namespace Slab::Graphics {
 
     using namespace Math;
 
-    class R2SectionArtist : public Artist {
+    class R2SectionArtist : public FArtist {
         R2toR::Function_constptr function2D;
 
         struct SectionData {
             RtoR2::ParametricCurve_ptr section;
-            Pointer<PlotStyle> style;
+            TPointer<PlotStyle> style;
             Str name;
             bool visible = true;
         };
@@ -31,21 +31,21 @@ namespace Slab::Graphics {
 
     public:
 
-        bool draw(const Plot2DWindow &window) override;
+        bool Draw(const FPlot2DWindow &window) override;
 
         void setSamples(Resolution);
         void setFunction(R2toR::Function_constptr);
         auto getFunction() const -> R2toR::Function_constptr;
 
-        void addSection(const RtoR2::ParametricCurve_ptr&, const Pointer<PlotStyle>&, const Str& name);
+        void addSection(const RtoR2::ParametricCurve_ptr&, const TPointer<PlotStyle>&, const Str& name);
         Vector<SectionData>& getSections();
         void clearSections();
 
-        const RectR &getRegion() override;
+        const RectR &GetRegion() override;
 
-        bool hasGUI() override;
+        bool HasGUI() override;
 
-        void drawGUI() override;
+        void DrawGUI() override;
 
     };
 

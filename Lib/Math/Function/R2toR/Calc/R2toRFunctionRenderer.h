@@ -14,12 +14,12 @@ namespace Slab::Math::R2toR {
     public:
         static auto renderToDiscrete(const R2toR::Function& function,
                                      Resolution x, Resolution y, R2toR::Domain,
-                                     Real scale=1.0)
-                                     -> R2toR::NumericFunction_ptr;
+                                     DevFloat scale=1.0)
+                                     -> R2toR::FNumericFunction_ptr;
 
         static auto renderToDiscrete(const R2toR::Function& in,
-                                     R2toR::NumericFunction_ptr out, Real scale=1.0)
-                                     -> R2toR::NumericFunction_ptr ;
+                                     R2toR::FNumericFunction_ptr out, DevFloat scale=1.0)
+                                     -> R2toR::FNumericFunction_ptr ;
     };
 
 } // Graphics

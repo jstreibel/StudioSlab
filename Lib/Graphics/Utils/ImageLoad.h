@@ -8,7 +8,7 @@
 #include "Graphics/OpenGL/Texture2D_Color.h"
 
 namespace Slab::Graphics::Image {
-    Pointer<OpenGL::Texture2D_Color> LoadTexture(const Str &image_file);
+    TPointer<OpenGL::Texture2D_Color> LoadTexture(const Str &image_file);
 }
 
 #endif //STUDIOSLAB_IMAGELOAD_H

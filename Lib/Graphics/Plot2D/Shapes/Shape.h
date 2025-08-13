@@ -9,10 +9,10 @@
 
 namespace Slab::Graphics {
 
-    class Plot2DWindow;
+    class FPlot2DWindow;
 
     class Shape {
-        virtual void draw(const Plot2DWindow &) = 0;
+        virtual void draw(const FPlot2DWindow &) = 0;
     };
 
     class RectangleShape : public Shape {
@@ -21,7 +21,7 @@ namespace Slab::Graphics {
 
         RectangleShape(Point2D top_left, Point2D bottom_right);
 
-        void draw(const Plot2DWindow &window) override;
+        void draw(const FPlot2DWindow &window) override;
     };
 
 } // Slab::Graphics

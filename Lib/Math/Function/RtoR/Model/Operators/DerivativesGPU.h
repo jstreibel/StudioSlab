@@ -13,11 +13,11 @@ namespace Slab::Math::RtoR {
 
     __host__ DeviceVector &d2dx2_DANIEL(const DeviceVector &in,
                                         DeviceVector &out,
-                                        Real h, size_t N);
+                                        DevFloat h, size_t N);
 
     __host__ DeviceVector &d2dx2(const DeviceVector &in,
                                  DeviceVector &out,
-                                 Real h, size_t N, bool periodic);
+                                 DevFloat h, size_t N, bool periodic);
 
 }
 

@@ -11,22 +11,22 @@ namespace Slab::Models {
     DynamicsNumericConfig::DynamicsNumericConfig(bool do_register)
     : Math::NumericConfig(false)
     {
-        Interface->addParameters({N, L, t});
+        Interface->AddParameters({N, L, t});
 
-        if(do_register) registerToManager();
+        if(do_register) RegisterToManager();
     }
 
     auto DynamicsNumericConfig::getN() const -> UInt { return **N; }
 
-    auto DynamicsNumericConfig::getL() const -> floatt { return **L; }
+    auto DynamicsNumericConfig::GetL() const -> floatt { return **L; }
 
     auto DynamicsNumericConfig::gett() const -> floatt { return **t; }
 
-    auto DynamicsNumericConfig::sett(Real t_max) -> void {
+    auto DynamicsNumericConfig::sett(DevFloat t_max) -> void {
         Log::Attention() << "Command line argument '" << t->getCommandLineArgumentName(true) << "' "
                          << "being overridden and set to " << t_max << ";" << Log::Flush;
 
-        t->setValue(t_max);
+        t->SetValue(t_max);
     }
 
     void DynamicsNumericConfig::NotifyCLArgsSetupFinished() {

@@ -10,53 +10,56 @@
 //#include <Studios/Graphics/Graph.h>
 
 WindowPanelTest::WindowPanelTest()
-: Slab::Graphics::SlabWindow({"Panels test"}), panel(new Slab::Graphics::WindowPanel) {
-    SlabWindow *window = nullptr;
+: FSlabWindow(Slab::Graphics::FSlabWindowConfig{"Panels test"})
+, panel(new Slab::Graphics::WindowPanel(Slab::Graphics::FSlabWindowConfig("Big Panellio"))) {
+    FSlabWindow *window = nullptr;
 
-    window = new SlabWindow();
-    typedef Slab::Pointer<SlabWindow> Ptr;
-    panel->addWindow(Ptr(window));
+    window = new FSlabWindow(Slab::Graphics::FSlabWindowConfig{"Main Window"});
+    typedef Slab::TPointer<FSlabWindow> Ptr;
+    panel->AddWindow(Ptr(window));
 
     if(true) {
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window));
+        using Cfg = Slab::Graphics::FSlabWindowConfig;
 
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window));
+        window = new FSlabWindow(Cfg{"Win01"});
+        panel->AddWindow(Ptr(window));
 
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window), true);
+        window = new FSlabWindow(Cfg{"Win02"});
+        panel->AddWindow(Ptr(window));
 
-        window = new SlabWindow();
+        window = new FSlabWindow(Cfg{"Win03"});
+        panel->AddWindow(Ptr(window), true);
+
+        window = new FSlabWindow(Cfg{"Win04"});
         window = new GLFreeTypeTests;
-        panel->addWindow(Ptr(window));
+        panel->AddWindow(Ptr(window));
 
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window), true, 0.2);
+        window = new FSlabWindow(Cfg{"Win05"});
+        panel->AddWindow(Ptr(window), true, 0.2);
 
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window));
+        window = new FSlabWindow(Cfg{"Win06"});
+        panel->AddWindow(Ptr(window));
 
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window));
+        window = new FSlabWindow(Cfg{"Win07"});
+        panel->AddWindow(Ptr(window));
 
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window));
+        window = new FSlabWindow(Cfg{"Win08"});
+        panel->AddWindow(Ptr(window));
 
-        panel->setColumnRelativeWidth(0, 0.2);
+        panel->SetColumnRelativeWidth(0, 0.2);
     }
 
-    panel->arrangeWindows();
+    panel->ArrangeWindows();
 }
 
 
-void WindowPanelTest::draw() {
-    panel->draw();
+void WindowPanelTest::ImmediateDraw(const Slab::Graphics::FPlatformWindow& PlatformWindow) {
+    panel->ImmediateDraw(PlatformWindow);
 }
 
-void WindowPanelTest::notifyReshape(int width, int height) {
-    panel->notifyReshape(width, height);
+void WindowPanelTest::NotifyReshape(int width, int height) {
+    panel->NotifyReshape(width, height);
 
-    panel->arrangeWindows();
+    panel->ArrangeWindows();
 }
 

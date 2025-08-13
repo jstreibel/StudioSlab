@@ -6,22 +6,22 @@
 
 namespace Slab::Core {
 
-    Count UniqueObject::count = 0;
+    CountType UniqueObject::Count = 0;
 
-    UniqueObject::UniqueObject() : id(++count) {
+    UniqueObject::UniqueObject() : Id(++Count) {
 
     }
 
-    Str UniqueObject::unique(const Str& str) const {
-        return str + "##" + ToStr(id);
+    Str UniqueObject::AddUniqueIdToString(const Str& str) const {
+        return str + "##" + ToStr(Id);
     }
 
-    Id UniqueObject::get_id() const {
-        return id;
+    IdType UniqueObject::GetId() const {
+        return Id;
     }
 
-    Str UniqueObject::get_id_str() const {
-        return Slab::ToStr(get_id());
+    Str UniqueObject::GetIdString() const {
+        return ToStr(GetId());
     }
 
 } // Slab::Core

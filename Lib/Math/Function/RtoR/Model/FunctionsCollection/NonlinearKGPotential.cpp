@@ -15,11 +15,11 @@ namespace Slab::Math::RtoR {
 #endif
 
     Real128 lambda(int n, int N) {
-        fix arg4 = Real(N-n)/2.+1.;
-        fix arg5 = Real(N+n)/2.+1.;
+        fix arg4 = DevFloat(N-n)/2.+1.;
+        fix arg5 = DevFloat(N+n)/2.+1.;
 
         fix t1 = n*log(2.);
-        fix t2 = log(2./(M_PI*(Real)n));
+        fix t2 = log(2./(M_PI*(DevFloat)n));
         fix t3 = -log_gamma(n+1);
         fix t4 = -log_gamma(arg4);
         fix t5 =  log_gamma(arg5);
@@ -32,20 +32,20 @@ namespace Slab::Math::RtoR {
     }
 
     VPrime::VPrime
-    (Real A, int N, Real s)
+    (DevFloat A, int N, DevFloat s)
     : FunctionT(nullptr, false)
     , coeffs(CalcCoefficients(N, s))
     , N(N), A(A), s(s)
     { }
 
-    Real VPrime::getA() const {
+    DevFloat VPrime::getA() const {
         return A;
     }
 
-    void VPrime::setA(Real new_A) { this->A = new_A; }
+    void VPrime::setA(DevFloat new_A) { this->A = new_A; }
 
-    Real VPrime::operator()(Real phi) const {
-        Real value=0;
+    DevFloat VPrime::operator()(DevFloat phi) const {
+        DevFloat value=0;
 
         for(auto n=1; n<=N; n+=2) {
             fix x = phi/A;
@@ -55,8 +55,8 @@ namespace Slab::Math::RtoR {
         return value;
     }
 
-    RealVector VPrime::CalcCoefficients(int N, Real s) {
-        Vector<Real> coeffs;
+    FRealVector VPrime::CalcCoefficients(int N, DevFloat s) {
+        Vector<DevFloat> coeffs;
 
         if(!(N%2)) throw Exception(Str(__PRETTY_FUNCTION__) + " works with odd-valued N.");
         if  (N<0)  throw Exception(Str(__PRETTY_FUNCTION__) + " works with positive-valued N.");
@@ -74,23 +74,23 @@ namespace Slab::Math::RtoR {
         return coeffs;
     }
 
-    Count VPrime::getN() const { return N; }
+    CountType VPrime::getN() const { return N; }
 
-    auto VPrime::setN(Count new_N) -> void {
+    auto VPrime::setN(CountType new_N) -> void {
         this->N = new_N;
         coeffs = CalcCoefficients((int)N, s);
     }
 
-    Real VPrime::get_s() const {
+    DevFloat VPrime::get_s() const {
         return s;
     }
 
-    void VPrime::set_s(Real new_s) {
+    void VPrime::set_s(DevFloat new_s) {
         this->s = new_s;
         coeffs = CalcCoefficients((int)N, s);
     }
 
-    Real VPrime::even_power(const Real &x, const int &unchecked_even_n) {
+    DevFloat VPrime::even_power(const DevFloat &x, const int &unchecked_even_n) {
         auto n = unchecked_even_n;
 
         auto result = 1.0;
@@ -101,7 +101,7 @@ namespace Slab::Math::RtoR {
         return result;
     }
 
-    Real VPrime::odd_power(const Real &x, const int &unchecked_odd_n) {
+    DevFloat VPrime::odd_power(const DevFloat &x, const int &unchecked_odd_n) {
         auto n = unchecked_odd_n-1;
 
         auto result = x;
@@ -111,12 +111,12 @@ namespace Slab::Math::RtoR {
     }
 
 
-    Real NonlinearKGPotential::operator()(Real phi) const { return VPrime::operator()(phi) * phi; }
+    DevFloat NonlinearKGPotential::operator()(DevFloat phi) const { return VPrime::operator()(phi) * phi; }
 
-    NonlinearKGPotential::NonlinearKGPotential(Real A, Count N, Real s)
+    NonlinearKGPotential::NonlinearKGPotential(DevFloat A, CountType N, DevFloat s)
     : VPrime(A, (int)N, s) {    }
 
-    Pointer<Base::FunctionT<Real, Real>::Type> NonlinearKGPotential::diff(int n) const {
+    TPointer<Base::FunctionT<DevFloat, DevFloat>::Type> NonlinearKGPotential::diff(int n) const {
         if(n!=0) return New<RtoR::NullFunction>();
 
         // The _actual_ derivative (not as \phi^{-1}V(\phi))

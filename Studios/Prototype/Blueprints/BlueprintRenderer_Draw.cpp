@@ -5,6 +5,8 @@
 #include "BlueprintRenderer.h"
 
 #include "3rdParty/ImGui.h"
+#include "Core/Tools/Resources.h"
+#include "Graphics/OpenGL/Images.h"
 
 namespace Slab::Blueprints {
     static inline ImRect ImGui_GetItemRect()
@@ -22,9 +24,9 @@ namespace Slab::Blueprints {
         return result;
     }
 
-    bool BlueprintRenderer::notifyRender() {
+    bool BlueprintRenderer::NotifyRender(const Graphics::FPlatformWindow&) {
         m_Context->NewFrame();
-        // // ImGui::NewFrame();
+        // // // ImGui::NewFrame();
 
         DoDrawing();
 
@@ -33,7 +35,8 @@ namespace Slab::Blueprints {
         return true;
     }
 
-    void BlueprintRenderer::DoDrawing() {
+    void BlueprintRenderer::DoDrawing()
+    {
         // auto& io = ImGui::GetIO();
         auto window_flags = 0;// ImGuiWindowFlags_NoTitleBar |
         // ImGuiWindowFlags_NoResize |
@@ -67,7 +70,7 @@ namespace Slab::Blueprints {
 
             //auto& style = ImGui::GetStyle();
 
-# if 0
+            if constexpr  (false)
             {
                 for (auto x = -io.DisplaySize.y; x < io.DisplaySize.x; x += 10.0f)
                 {
@@ -75,7 +78,6 @@ namespace Slab::Blueprints {
                         IM_COL32(255, 255, 0, 255));
                 }
             }
-# endif
 
             static ed::NodeId contextNodeId = 0;
             static ed::LinkId contextLinkId = 0;
@@ -126,8 +128,8 @@ namespace Slab::Blueprints {
                 auto cursorTopLeft = ImGui::GetCursorScreenPos();
 
                 util::BlueprintNodeBuilder builder(m_HeaderBackground,
-                                                   Slab::Graphics::GetTextureWidth(m_HeaderBackground),
-                                                   Slab::Graphics::GetTextureHeight(m_HeaderBackground));
+                                                   Graphics::GetTextureWidth(m_HeaderBackground),
+                                                   Graphics::GetTextureHeight(m_HeaderBackground));
 
                 for (auto &node: m_Nodes) {
                     if (node.Type != NodeType::Blueprint && node.Type != NodeType::Simple)
@@ -972,4 +974,5 @@ namespace Slab::Blueprints {
         ImGui::End();
         ImGui::PopStyleVar(2);
     }
+
 }

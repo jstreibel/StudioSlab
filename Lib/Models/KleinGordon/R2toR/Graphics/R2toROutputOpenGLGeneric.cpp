@@ -21,7 +21,7 @@ namespace Slab::Models::KGR2toR {
             IN state = *packet.GetNakedStateData<R2toR::EquationState>();
 
             // TODO: this is insanely dangerous: this naked pointer could be gone at any moment afaik
-            return Naked( dynamic_cast<R2toR::NumericFunction&>(state.getPhi()));
+            return Naked( dynamic_cast<R2toR::FNumericFunction&>(state.getPhi()));
         }
 
         if (category == "1st-order|R2->R") {
@@ -33,35 +33,37 @@ namespace Slab::Models::KGR2toR {
         NOT_IMPLEMENTED
     }
 
-    OutputOpenGL::OutputOpenGL(Count max_steps)
+    #define GUIContext DynamicPointerCast<Graphics::FImGuiContext>(Graphics::GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext())
+
+    OutputOpenGL::OutputOpenGL(CountType max_steps)
     : BaseMonitor(max_steps, "ℝ²↦ℝ OpenGL monitor", 1)
     , mSectionGraph("Sections")
     , mFieldDisplay("Field")
     {
-        addWindow(Naked(mSectionGraph), ADD_TO_NEW_COLUMN, .50);
-        mSectionGraph.addArtist(Slab::Naked(sectionArtist));
+        AddWindow(Naked(mSectionGraph), ADD_TO_NEW_COLUMN, .50);
+        mSectionGraph.AddArtist(Slab::Naked(sectionArtist));
 
-        addWindow(Naked(mFieldDisplay), ADD_TO_NEW_COLUMN, .25);
+        AddWindow(Naked(mFieldDisplay), ADD_TO_NEW_COLUMN, .25);
     }
 
-    void OutputOpenGL::draw() {
-        if (!lastPacket.hasValidData()) return;
+    void OutputOpenGL::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+        if (!LastPacket.hasValidData()) return;
 
-        BaseMonitor::draw();
+        BaseMonitor::ImmediateDraw(PlatformWindow);
 
         if (sectionArtist.getFunction() == nullptr) {
-            auto phi = getPhi(lastPacket);
+            auto phi = getPhi(LastPacket);
             sectionArtist.setFunction(phi);
 
         } else if (sectionArtist.getSections().empty()) {
-            fix phi = getPhi(lastPacket);
+            fix phi = getPhi(LastPacket);
 
             auto yMin = phi->getDomain().yMin,
                  yMax = phi->getDomain().yMax;
 
             fix line = Slab::New<RtoR2::StraightLine>(Real2D{0, yMin}, Real2D{0, yMax}, yMin, yMax);
 
-            sectionArtist.addSection(line, Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0].clone(), "section 1");
+            sectionArtist.addSection(line, Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone(), "section 1");
         }
     }
 

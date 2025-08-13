@@ -9,7 +9,7 @@
 #include "R2toCNumericFunction.h"
 
 namespace Slab::Math {
-    enum R2toC_to_R2toR_Mode {
+    enum ER2toC_to_R2toR_Mode {
         RealPart,
         ImaginaryPart,
         Phase,
@@ -17,18 +17,18 @@ namespace Slab::Math {
         PowerSpectrum
     };
 
-    R2toR::NumericFunction_ptr Convert                 (const R2toC::NumericFunction_constptr&, R2toC_to_R2toR_Mode);
+    R2toR::FNumericFunction_ptr Convert                 (const R2toC::NumericFunction_constptr&, ER2toC_to_R2toR_Mode);
 
-    R2toR::NumericFunction_ptr ConvertToAbs            (const R2toC::NumericFunction_constptr& in,
-                                                                 R2toR::NumericFunction_ptr out);
-    R2toR::NumericFunction_ptr ConvertToPowerSpectrum  (const R2toC::NumericFunction_constptr& in,
-                                                                 R2toR::NumericFunction_ptr out);
-    R2toR::NumericFunction_ptr ConvertToPhase          (const R2toC::NumericFunction_constptr& in,
-                                                                 R2toR::NumericFunction_ptr out);
-    R2toR::NumericFunction_ptr ConvertToReal           (const R2toC::NumericFunction_constptr &in,
-                                                                 R2toR::NumericFunction_ptr out);
-    R2toR::NumericFunction_ptr ConvertToImaginary      (const R2toC::NumericFunction_constptr &in,
-                                                                 R2toR::NumericFunction_ptr out);
+    R2toR::FNumericFunction_ptr ConvertToAbs            (const R2toC::NumericFunction_constptr& in,
+                                                                 R2toR::FNumericFunction_ptr out);
+    R2toR::FNumericFunction_ptr ConvertToPowerSpectrum  (const R2toC::NumericFunction_constptr& in,
+                                                                 R2toR::FNumericFunction_ptr out);
+    R2toR::FNumericFunction_ptr ConvertToPhase          (const R2toC::NumericFunction_constptr& in,
+                                                                 R2toR::FNumericFunction_ptr out);
+    R2toR::FNumericFunction_ptr ConvertToReal           (const R2toC::NumericFunction_constptr &in,
+                                                                 R2toR::FNumericFunction_ptr out);
+    R2toR::FNumericFunction_ptr ConvertToImaginary      (const R2toC::NumericFunction_constptr &in,
+                                                                 R2toR::FNumericFunction_ptr out);
 }
 
 #endif //STUDIOSLAB_R2TOC_TO_R2TOR_H

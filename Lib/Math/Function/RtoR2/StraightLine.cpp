@@ -8,13 +8,13 @@
 
 namespace Slab::Math::RtoR2 {
 
-    RtoR2::StraightLine::StraightLine(Real2D x0, Real2D xf, Real sMin, Real sMax)
+    RtoR2::StraightLine::StraightLine(Real2D x0, Real2D xf, DevFloat sMin, DevFloat sMax)
             : ParametricCurve(sMin, sMax), x0(x0), r(xf - x0) {}
 
     RtoR2::StraightLine::StraightLine(const RtoR2::StraightLine &line)
             : StraightLine(line.x0, line.x0 + line.r, line.get_sMin(), line.get_sMax()) {}
 
-    Real2D RtoR2::StraightLine::operator()(Real s) const {
+    Real2D RtoR2::StraightLine::operator()(DevFloat s) const {
         return x0 + r * normalize(s);
     }
 

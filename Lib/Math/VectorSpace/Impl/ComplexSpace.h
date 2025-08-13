@@ -33,7 +33,7 @@ namespace Slab::Math {
         auto StoreSubtraction    (const DiscreteComplexSpace &space1, const DiscreteComplexSpace &space2) -> DiscreteComplexSpace & override;
 
         auto Multiply            (floatt a)                                         -> DiscreteComplexSpace & override;
-        auto StoreScalarMultiplication (const DiscreteComplexSpace &aoi1,   const Real a) -> DiscreteComplexSpace & override;
+        auto StoreScalarMultiplication (const DiscreteComplexSpace &aoi1,   const DevFloat a) -> DiscreteComplexSpace & override;
 
         auto setToValue          (const DiscreteComplexSpace &param)                -> void;
 

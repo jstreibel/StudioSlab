@@ -25,7 +25,7 @@ namespace Slab::Math {
 
         thrust::transform(in.begin(), in.end(),
                           out.begin(), out.begin(),
-                          thrust::plus<Real>());
+                          thrust::plus<DevFloat>());
 
         hostIsUpdated = false;
 
@@ -40,7 +40,7 @@ namespace Slab::Math {
 
         thrust::transform(in.begin(), in.end(),
                           out.begin(), out.begin(),
-                          thrust::minus<Real>());
+                          thrust::minus<DevFloat>());
 
         hostIsUpdated = false;
 
@@ -58,7 +58,7 @@ namespace Slab::Math {
         thrust::transform(in1.begin(), in1.end(),
                           in2.begin(),
                           out.begin(),
-                          thrust::plus<Real>());
+                          thrust::plus<DevFloat>());
 
         hostIsUpdated = false;
 
@@ -75,14 +75,14 @@ namespace Slab::Math {
         thrust::transform(in1.begin(), in1.end(),
                           in2.begin(),
                           out.begin(),
-                          thrust::minus<Real>());
+                          thrust::minus<DevFloat>());
 
         hostIsUpdated = false;
 
         return *this;
     }
 
-    DiscreteSpace &DiscreteSpaceGPU::StoreScalarMultiplication(const DiscreteSpace &aoi1, Real a) {
+    DiscreteSpace &DiscreteSpaceGPU::StoreScalarMultiplication(const DiscreteSpace &aoi1, DevFloat a) {
         SlabCast(space1, const DiscreteSpaceGPU&, aoi1);
         auto &in1 = space1.getDeviceData();
         auto &out = this->getDeviceData();
@@ -90,7 +90,7 @@ namespace Slab::Math {
         thrust::transform(in1.begin(), in1.end(),
                           thrust::make_constant_iterator(a),
                           out.begin(),
-                          thrust::multiplies<Real>());
+                          thrust::multiplies<DevFloat>());
 
         hostIsUpdated = false;
 
@@ -104,7 +104,7 @@ namespace Slab::Math {
         thrust::transform(in.begin(), in.end(),
                           thrust::make_constant_iterator(a),
                           out.begin(),
-                          thrust::multiplies<Real>());
+                          thrust::multiplies<DevFloat>());
 
         hostIsUpdated = false;
 

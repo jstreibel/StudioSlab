@@ -9,6 +9,8 @@
 
 #include <utility>
 
+#include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
+
 namespace Slab::Graphics {
 
     using namespace Math;
@@ -18,16 +20,22 @@ namespace Slab::Graphics {
 
     }
 
-    bool ParametricCurve2DArtist::draw(const Plot2DWindow &d) {
+    bool ParametricCurve2DArtist::Draw(const FPlot2DWindow &PlotWindow) {
         if(curve == nullptr) return false;
+
+        OpenGL::Legacy::PushLegacyMode();
+        OpenGL::Legacy::SetupOrtho(PlotWindow.GetRegion().getRect());
 
         auto pointSet = curve.get()->renderToPointSet();
 
-        return OpenGL::Legacy::RenderPointSet(pointSet, plotStyle);
+        bool bReturnValue = OpenGL::Legacy::RenderPointSett(pointSet, plotStyle);
 
+        OpenGL::Legacy::RestoreFromLegacyMode();
+
+        return bReturnValue;
     }
 
-    void ParametricCurve2DArtist::setCurve(Slab::Pointer<RtoR2::ParametricCurve> curve) {
+    void ParametricCurve2DArtist::setCurve(Slab::TPointer<RtoR2::ParametricCurve> curve) {
         this->curve = std::move(curve);
     }
 

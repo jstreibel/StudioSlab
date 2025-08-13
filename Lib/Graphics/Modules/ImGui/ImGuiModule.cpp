@@ -19,6 +19,7 @@
 #include "Core/Tools/Log.h"
 
 #include "ImGuiModuleGLFW.h"
+#include "Graphics/SlabGraphics.h"
 
 #include "Graphics/Window/WindowStyles.h"
 
@@ -28,7 +29,7 @@ namespace Slab::Graphics {
     // https://github.com/ocornut/imgui/issues/707
 
     Str currentTheme = "Dark";
-    std::map<Str, void(*)()> colorThemes = {
+    std::map<Str, void(*)()> ColorThemes = {
             {"Native light", SetColorThemeNativeLight},
             {"Native dark",  SetColorThemeNativeDark},
             {"Dark red",     SetColorThemeDarkRed},
@@ -37,44 +38,54 @@ namespace Slab::Graphics {
             {"StudioSlab",   SetStyleStudioSlab}
     };
 
-    ImGuiModule::ImGuiModule(CallSet calls)
-    : GUIModule("ImGui", nullptr)
-    , call_set(std::move(calls)) {
+    FImGuiModule::FImGuiModule(FCallSet calls)
+    : FGUIModule("ImGui")
+    , CallSet(std::move(calls)) {
         IMGUI_CHECKVERSION();
 
         // m_MainContext = GetMainContext();
     }
 
 
-    ImGuiModule* ImGuiModule::BuildModule() {
-        Str backendImpl = Core::BackendManager::GetBackendName();
+    FImGuiModule* FImGuiModule::BuildModule() {
+        const Str BackendImplName = Core::BackendManager::GetBackendName();
 
-        if(backendImpl == "Uninitialized")
-                throw NotImplementedException("ImGui must be built with a GUI backend already initialized.");
-        else if(backendImpl == "Headless")
-                throw NotImplementedException("Headless ImGui module");
-        else if(backendImpl == "GLFW")
-                return new ImGuiModuleGLFW();
-        else if(backendImpl == "SFML")
-                throw NotImplementedException("SFML ImGui module");
-        else if(backendImpl == "VTK")
-                throw NotImplementedException("VTK ImGui module");
-        // else if(backendImpl == "GLUT")
-        //         return new ImGuiModuleGLUT();
+        if(BackendImplName == "Uninitialized")
+        {
+            throw NotImplementedException("ImGui must be built with a GUI backend already initialized.");
+        }
+
+        auto RawPlatformWindowPtr = GetGraphicsBackend()->GetMainSystemWindow()->GetRawPlatformWindowPointer();
+
+        if(BackendImplName == "Headless")
+            throw NotImplementedException("Headless ImGui module");
+        if(BackendImplName == "GLFW")
+        {
+            return new ImGuiModuleGLFW(static_cast<GLFWwindow*>(RawPlatformWindowPtr));
+        }
+        if(BackendImplName == "SFML")
+            throw NotImplementedException("SFML ImGui module");
+        if(BackendImplName == "VTK")
+            throw NotImplementedException("VTK ImGui module");
+        if(BackendImplName == "GLUT")
+        {
+            // return new ImGuiModuleGLUT();
+            NOT_IMPLEMENTED;
+        }
 
         NOT_IMPLEMENTED;
     }
 
-    Pointer<GUIContext> ImGuiModule::createContext(ParentSystemWindow parentSystemWindow) {
-        auto new_context = New<SlabImGuiContext>(parentSystemWindow, call_set);
+    TPointer<GUIContext> FImGuiModule::CreateContext(FOwnerPlatformWindow ParentSystemWindow) {
+        auto NewContext = New<FImGuiContext>(CallSet);
 
         // Setup Dear ImGui style
         SetStyleStudioSlab();   // For sizes
-        colorThemes[currentTheme]();
+        ColorThemes[currentTheme]();
 
-        contexts.emplace_back(new_context);
+        Contexts.emplace_back(NewContext);
 
-        return new_context;
+        return NewContext;
     }
 
     // Context ImGuiModule::GetMainContext() {

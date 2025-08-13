@@ -10,7 +10,7 @@ namespace Slab::Math {
 
     DataManager::DataManager() : Singleton("Data Manager") {}
 
-    DataName DataManager::RegisterData(DataName name, Pointer<Data> data) {
+    DataName DataManager::RegisterData(DataName name, TPointer<Data> data) {
         if(name.empty()) name = ToStr(data->get_id());
 
         data->data_name = name;
@@ -31,9 +31,9 @@ namespace Slab::Math {
         return name;
     }
 
-    Pointer<R2toR::NumericFunction> DataManager::AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation loc) {
-        fix hx = r.x/(Real)N;
-        fix hy = r.y/(Real)M;
+    TPointer<R2toR::FNumericFunction> DataManager::AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation loc) {
+        fix hx = r.x/(DevFloat)N;
+        fix hy = r.y/(DevFloat)M;
 
 /*
         Pointer<R2toR::NumericFunction> data;

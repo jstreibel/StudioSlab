@@ -22,7 +22,7 @@ namespace Slab::Graphics::OpenGL {
 
     }
 
-    bool Texture2D_Color::setColor(int i, int j, Color color) {
+    bool Texture2D_Color::setColor(int i, int j, FColor color) {
         if(data == nullptr) return false;
 
         assert(i>=0 && i<getWidth());
@@ -39,7 +39,7 @@ namespace Slab::Graphics::OpenGL {
         return true;
     }
 
-    bool Texture2D_Color::upload(UInt row0, Count nRows) {
+    bool Texture2D_Color::upload(UInt row0, CountType nRows) {
         if(data == nullptr) return false;
 
         assert(getInternalFormat() == GL_RGBA);

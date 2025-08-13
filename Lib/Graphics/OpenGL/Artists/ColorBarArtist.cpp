@@ -8,6 +8,8 @@
 
 #include <utility>
 #include "Core/Tools/Resources.h"
+#include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
+#include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
@@ -27,17 +29,17 @@ namespace Slab::Graphics::OpenGL {
     : vertexBuffer("inPosition:2f,inTexCoord:1f")
     , shader(Core::Resources::ShadersFolder + "ColorBar.vert",
              Core::Resources::ShadersFolder + "ColorBar.frag")
-    , inverseScalingFunction([](Real x){ return x; })
+    , inverseScalingFunction([](DevFloat x){ return x; })
     {
         setLocation(loc);
     }
 
-    bool OpenGL::ColorBarArtist::draw(const Plot2DWindow &graph) {
+    bool OpenGL::ColorBarArtist::Draw(const FPlot2DWindow &graph) {
         updateTexture();
         if( texture == nullptr ) return true;
 
-        const int vpWidth  = graph.getViewport().width();
-        const int vpHeight = graph.getViewport().height();
+        const int vpWidth  = graph.GetViewport().GetWidth();
+        const int vpHeight = graph.GetViewport().GetHeight();
         const int cbarHeight_pixels = int(cbarHeight_clamp * vpHeight);
         if(autoColorBarTop)
             cbarTop_pixels = (vpHeight - cbarHeight_pixels) / 2;
@@ -50,23 +52,23 @@ namespace Slab::Graphics::OpenGL {
                      vpHeight - cbarTop_pixels - cbarHeight_pixels});
 
         auto style =  PlotThemeManager::GetCurrent();
-        auto &writer = style->labelsWriter;
+        auto &writer = style->LabelsWriter;
 
-        OpenGL::Shader::remove();
-
+        Legacy::PushLegacyMode();
+        Legacy::SetupOrthoI(graph.GetViewport());
         // TODO this below also sucks.
         if(1) {
             // GAMBIARRAS
 
             auto xMin = (float)rect.xMin - (float)general_slack;
-            auto xMax = (float)rect.xMax + writer->getFontHeightInPixels()*(decimal_places) + (float)right_slack;
+            auto xMax = (float)rect.xMax + writer->GetFontHeightInPixels()*(decimal_places) + (float)right_slack;
             auto yMin = (float)rect.yMin + (float)general_slack;
             auto yMax = (float)rect.yMax - (float)general_slack;
 
-            xMin = 2.f*(xMin/(float) graph.getViewport().width() - .5f);
-            xMax = 2.f*(xMax/(float) graph.getViewport().width() - .5f);
-            yMin = 2.f*(yMin/(float) graph.getViewport().height() - .5f);
-            yMax = 2.f*(yMax/(float) graph.getViewport().height() - .5f);
+            xMin = 2.f*(xMin/(float) graph.GetViewport().GetWidth() - .5f);
+            xMax = 2.f*(xMax/(float) graph.GetViewport().GetWidth() - .5f);
+            yMin = 2.f*(yMin/(float) graph.GetViewport().GetHeight() - .5f);
+            yMax = 2.f*(yMax/(float) graph.GetViewport().GetHeight() - .5f);
 
             glMatrixMode(GL_PROJECTION);
             glPushMatrix();
@@ -101,17 +103,18 @@ namespace Slab::Graphics::OpenGL {
             glMatrixMode(GL_PROJECTION);
             glPopMatrix();
         }
+        Legacy::RestoreFromLegacyMode();
 
-        auto dx = rect.width();
-        auto dy = rect.height();
+        auto dx = rect.GetWidth();
+        auto dy = rect.GetHeight();
         auto Δu = uf-ui;
         // writer->getFontHeightInPixels();
 
         for(int i=0; i<n_annotations; ++i){
-            auto t = (Real(i)/Real(n_annotations-1));
+            auto t = (DevFloat(i)/DevFloat(n_annotations-1));
             auto yMeasure = t/Δu-ui; //(float(i)/float(n)) - ui;
 
-            Real phi;
+            DevFloat phi;
             if(params.mode == ColorBarMode::AllFieldValues)
                 phi = t*(params.phi_max-params.phi_min)+params.phi_min;
             else if(params.mode == ColorBarMode::ValuesInSatRangeOnly) {
@@ -121,19 +124,19 @@ namespace Slab::Graphics::OpenGL {
                     phi = params.phi_sat * t;
             }
 
-            writer->write(ToStr(phi, decimal_places, scientific_notation),
+            writer->Write(ToStr(phi, decimal_places, scientific_notation),
                           {(float)rect.xMax+dx*0.1, (float)rect.yMax-yMeasure*dy}, style->graphTitleColor);
         }
 
-        auto vp = graph.getViewport();
+        auto vp = graph.GetViewport();
 
-        texture->bind();
+        texture->Bind();
 
-        shader.setUniform("colormap", texture->getTextureUnit());
-        shader.setUniform("vpWidth", vp.width());
-        shader.setUniform("vpHeight", vp.height());
+        shader.SetUniform("colormap", texture->getTextureUnit());
+        shader.SetUniform("vpWidth", vp.GetWidth());
+        shader.SetUniform("vpHeight", vp.GetHeight());
 
-        vertexBuffer.render(GL_TRIANGLES);
+        vertexBuffer.Render(GL_TRIANGLES);
 
         return true;
     }
@@ -156,7 +159,7 @@ namespace Slab::Graphics::OpenGL {
          */
 
         for(auto i=0; i < samples; ++i){
-            fix s = (Real)(i-1)/(Real)(samples - 2);
+            fix s = (DevFloat)(i-1)/(DevFloat)(samples - 2);
             fix color = colorMap->mapValueToColor(s);
             texture->setColor(i, color);
         }
@@ -185,8 +188,8 @@ namespace Slab::Graphics::OpenGL {
         vertexBuffer.pushBack(vertices, 4, indices, 6);
     }
 
-    void ColorBarArtist::drawGUI() {
-        Artist::drawGUI();
+    void ColorBarArtist::DrawGUI() {
+        FArtist::DrawGUI();
 
         ImGui::Checkbox("Auto top", &autoColorBarTop);
         ImGui::NewLine();
@@ -206,7 +209,7 @@ namespace Slab::Graphics::OpenGL {
 
     }
 
-    void ColorBarArtist::setColorMap(const Pointer<const ColorMap>& map) {
+    void ColorBarArtist::setColorMap(const TPointer<const ColorMap>& map) {
         this->colorMap = map;
 
         textureDirty = true;
@@ -218,28 +221,28 @@ namespace Slab::Graphics::OpenGL {
         return texture;
     }
 
-    void ColorBarArtist::setScalingFunction(std::function<Real(Real)> func) {
+    void ColorBarArtist::setScalingFunction(std::function<DevFloat(DevFloat)> func) {
         scalingFunction = std::move(func);
 
         textureDirty = true;
     }
 
-    void ColorBarArtist::setInverseScalingFunction(std::function<Real(Real)> func) {
+    void ColorBarArtist::setInverseScalingFunction(std::function<DevFloat(DevFloat)> func) {
         inverseScalingFunction = std::move(func);
 
         textureDirty = true;
     }
 
-    void ColorBarArtist::setKappa(Real kappa) {
-        shader.setUniform("kappa", (float)kappa);
+    void ColorBarArtist::setKappa(DevFloat kappa) {
+        shader.SetUniform("kappa", (float)kappa);
 
         params.kappa = kappa;
 
         textureDirty = true;
     }
 
-    void ColorBarArtist::setPhiSaturation(Real phiSat) {
-        shader.setUniform("phi_sat", (float)phiSat);
+    void ColorBarArtist::setPhiSaturation(DevFloat phiSat) {
+        shader.SetUniform("phi_sat", (float)phiSat);
 
         params.phi_sat = phiSat;
 
@@ -247,23 +250,23 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void ColorBarArtist::setSymmetric(bool symmetric) {
-        shader.setUniform("symmetric", symmetric);
+        shader.SetUniform("symmetric", symmetric);
 
         params.symmetric = symmetric;
 
         textureDirty = true;
     }
 
-    void ColorBarArtist::setPhiMax(Real phiMax) {
-        shader.setUniform("phi_max", (float)phiMax);
+    void ColorBarArtist::setPhiMax(DevFloat phiMax) {
+        shader.SetUniform("phi_max", (float)phiMax);
 
         params.phi_max = phiMax;
 
         textureDirty = true;
     }
 
-    void ColorBarArtist::setPhiMin(Real phiMin) {
-        shader.setUniform("phi_min", (float)phiMin);
+    void ColorBarArtist::setPhiMin(DevFloat phiMin) {
+        shader.SetUniform("phi_min", (float)phiMin);
 
         params.phi_min = phiMin;
 
@@ -271,18 +274,18 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void ColorBarArtist::setMode(const ColorBarMode mode) {
-        shader.setUniform("mode", (int)mode);
+        shader.SetUniform("mode", (int)mode);
 
         params.mode = mode;
 
         textureDirty = true;
     }
 
-    Count ColorBarArtist::getSamples() const {
+    CountType ColorBarArtist::getSamples() const {
         return colorMap->getColorCount();
     }
 
-    bool ColorBarArtist::hasGUI() { return true; }
+    bool ColorBarArtist::HasGUI() { return true; }
 
 
 } // OpenGL

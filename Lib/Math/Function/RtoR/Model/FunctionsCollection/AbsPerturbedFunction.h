@@ -14,11 +14,11 @@ namespace Slab::Math::RtoR {
     public:
         explicit AbsPerturbedDiffFunction(UInt Ns = BASE_NS);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
         RtoR::Function_ptr diff(int n) const override;
 
-        Pointer<FunctionT<Real, Real>> Clone() const override;
+        TPointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
 
     private:
         const UInt Ns;
@@ -28,14 +28,14 @@ namespace Slab::Math::RtoR {
     public:
         explicit AbsPerturbedFunction(UInt Ns = BASE_NS);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
         RtoR::Function_ptr diff(int n) const override;
 
-        Pointer<FunctionT<Real, Real>> Clone() const override;
+        TPointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
 
     public:
-        Real Fold(floatt eta, const int Ns);
+        DevFloat Fold(floatt eta, const int Ns);
 
     private:
         const UInt Ns;

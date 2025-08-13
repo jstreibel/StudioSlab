@@ -10,11 +10,11 @@
 namespace Slab::Math::RtoR {
 
     class Sine : public RtoR::Function {
-        Real A, k;
+        DevFloat A, k;
     public:
-        Sine(Real a, Real k);
+        Sine(DevFloat a, DevFloat k);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
         Function_ptr diff(int n) const override;
 
@@ -22,11 +22,11 @@ namespace Slab::Math::RtoR {
     };
 
     class Cosine : public RtoR::Function {
-        Real A, k;
+        DevFloat A, k;
     public:
-        Cosine(Real a, Real k);
+        Cosine(DevFloat a, DevFloat k);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
         Function_ptr diff(int n) const override;
 

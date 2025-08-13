@@ -3,7 +3,7 @@
 #include "Math/Numerics/Socket.h"
 #include "Core/Tools/Log.h"
 
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 
 
 namespace Slab::Math {
@@ -30,7 +30,7 @@ namespace Slab::Math {
         IN reference = spaceDataHistory.front().first;
         fix N = reference->getTotalDiscreteSites();
 
-        return count * N * sizeof(Real);
+        return count * N * sizeof(DevFloat);
     }
 
     auto HistoryKeeper::shouldOutput(long unsigned timestep) -> bool {
@@ -52,7 +52,7 @@ namespace Slab::Math {
         }
 
         spaceDataHistory.emplace_back(spaceFilter(packet));
-        stepHistory.push_back(packet.getSteps());
+        stepHistory.push_back(packet.GetSteps());
 
         ++count;
     }
@@ -73,7 +73,7 @@ namespace Slab::Math {
         oss << R"(, "data_channels": 2)";
         oss << R"str(, "data_channel_names": ("phi", "ddtphi"), )str";
 
-        oss << ", " << Core::CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries();
+        oss << ", " << Core::FCommandLineInterfaceManager::getInstance().renderAsPythonDictionaryEntries();
         oss << "}" << std::endl;
 
         return oss.str();

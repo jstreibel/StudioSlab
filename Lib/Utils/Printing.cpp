@@ -11,15 +11,15 @@ auto Slab::Printing::getDPI() -> int {
     return dpi;
 }
 
-auto Slab::Printing::getTextWidthInches() -> Real {
+auto Slab::Printing::getTextWidthInches() -> DevFloat {
     return LaTEXTextWidthInches;
 }
 
-auto Slab::Printing::getTotalHorizontalDots(Real proportionOfTextWidth) -> int {
+auto Slab::Printing::getTotalHorizontalDots(DevFloat proportionOfTextWidth) -> int {
     return dpi*(LaTEXTextWidthInches*proportionOfTextWidth);
 }
 
-auto Slab::Printing::getTotalVerticalDots(Real proportionOfTextWidth) -> int {
+auto Slab::Printing::getTotalVerticalDots(DevFloat proportionOfTextWidth) -> int {
     return dpi*(LaTEXTextWidthInches*proportionOfTextWidth);
 }
 

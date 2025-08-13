@@ -6,7 +6,7 @@
 
 namespace Slab {
     namespace Core {
-        Message::Message(Content cont) : message(cont) {
+        FMessage::FMessage(FContent cont) : Message(cont) {
 
         }
     } // Slab

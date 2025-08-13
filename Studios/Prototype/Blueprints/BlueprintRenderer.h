@@ -7,19 +7,16 @@
 
 #include <map>
 
-#include "3rdParty/ImGui.h"
-
 #include "BlueprintTypes.h"
-#include "Graphics/OpenGL/Images.h"
 #include "Blueprint.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 
 namespace Slab::Blueprints {
 
-    class BlueprintRenderer : public Graphics::SystemWindowEventListener {
+    class BlueprintRenderer : public Graphics::FPlatformWindowEventListener {
         ed::EditorContext* m_Editor = nullptr;
 
-        Pointer<Graphics::SlabImGuiContext> m_Context;
+        TPointer<Graphics::FImGuiContext> m_Context;
         const int            m_PinIconSize = 24;
         ImTextureID          m_HeaderBackground = nullptr;
         ImTextureID          m_SaveIcon = nullptr;
@@ -28,7 +25,7 @@ namespace Slab::Blueprints {
         std::map<ed::NodeId, float, NodeIdLess> m_NodeTouchTime;
         bool                 m_ShowOrdinals = false;
 
-        Pointer<Blueprint> blueprint;
+        TPointer<Blueprint> blueprint;
 
         void TouchNode(ed::NodeId id);
 
@@ -39,17 +36,17 @@ namespace Slab::Blueprints {
         void DoDrawing();
 
     public:
-        explicit BlueprintRenderer(Pointer<Blueprint> blueprint, Graphics::ParentSystemWindow);
+        explicit BlueprintRenderer(TPointer<Blueprint> blueprint);
 
         ImColor GetIconColor(PinType type);;
 
         void DrawPinIcon(const Pin& pin, bool connected, int alpha);;
 
-        void ShowStyleEditor(bool* show = nullptr);
+        static void ShowStyleEditor(bool* show = nullptr);
 
         void ShowLeftPane(float paneWidth);
 
-        bool notifyRender() override;
+        bool NotifyRender(const Graphics::FPlatformWindow&) override;
 
     };
 

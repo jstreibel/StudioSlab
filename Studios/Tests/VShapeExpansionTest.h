@@ -13,17 +13,17 @@
 
 namespace Tests {
 
-    class VShapeExpansionTest : public Slab::Graphics::WindowRow {
-        Slab::Graphics::GUIWindow stats;
-        Slab::Graphics::Plot2DWindow graph;
+    class VShapeExpansionTest : public Slab::Graphics::FWindowRow {
+        Slab::Graphics::FGUIWindow stats;
+        Slab::Graphics::FPlot2DWindow graph;
 
-        Slab::Pointer<Slab::Math::RtoR::NonlinearKGPotential> potential;
-        Slab::Pointer<Slab::Math::Base::FunctionT<Slab::Real, Slab::Real>> derivs;
+        Slab::TPointer<Slab::Math::RtoR::NonlinearKGPotential> potential;
+        Slab::TPointer<Slab::Math::Base::FunctionT<Slab::DevFloat, Slab::DevFloat>> derivs;
 
     public:
         VShapeExpansionTest();
 
-        void draw() override;
+        void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
     };
 
 } // Tests

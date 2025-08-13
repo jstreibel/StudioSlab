@@ -14,11 +14,11 @@ namespace Slab::Models::KGRtoR {
 
     class DFTSnapshotOutput final : public SnapshotOutput {
     protected:
-        const Count N_DFT_modes;
-        const Real k_max;
+        const CountType N_DFT_modes;
+        const DevFloat k_max;
         auto filterData(const OutputPacket &packet) -> RtoR::NumericFunction_CPU override;
     public:
-        DFTSnapshotOutput(Resolution N, Real L, const Str &fileName);
+        DFTSnapshotOutput(Resolution N, DevFloat L, const Str &fileName);
     };
 } // KleinGordon::RtoR
 

@@ -9,12 +9,12 @@
 
 namespace Slab::Math::RtoR {
 
-    KGDispersionRelation::KGDispersionRelation(Real mass,
+    KGDispersionRelation::KGDispersionRelation(DevFloat mass,
                                                KGDispersionRelationMode mode,
                                                KGDispersionRelation::Branch branch)
     : m²(mass*mass), mode (mode), branch(branch) {}
 
-    Real KGDispersionRelation::operator()(Real x) const {
+    DevFloat KGDispersionRelation::operator()(DevFloat x) const {
         fix sign = branch == Positive ? 1. : -1.;
 
         switch (mode) {
@@ -27,7 +27,7 @@ namespace Slab::Math::RtoR {
         NOT_IMPLEMENTED
     }
 
-    bool KGDispersionRelation::domainContainsPoint(Real x) const {
+    bool KGDispersionRelation::domainContainsPoint(DevFloat x) const {
         switch (mode) {
             case ω_AsFunctionOf_k:
                 return true;
@@ -38,10 +38,10 @@ namespace Slab::Math::RtoR {
         NOT_IMPLEMENTED
     }
 
-    KGDispersionRelation_high_k::KGDispersionRelation_high_k(Real mass, KGDispersionRelationMode mode)
+    KGDispersionRelation_high_k::KGDispersionRelation_high_k(DevFloat mass, KGDispersionRelationMode mode)
     : m²(mass*mass), mode(mode) {   }
 
-    Real KGDispersionRelation_high_k::operator()(Real x) const {
+    DevFloat KGDispersionRelation_high_k::operator()(DevFloat x) const {
         const auto k = x;
         const auto ω = x;
         switch (mode) {
@@ -54,7 +54,7 @@ namespace Slab::Math::RtoR {
         NOT_IMPLEMENTED
     }
 
-    auto KGDispersionRelation_high_k::domainContainsPoint(Real x) const -> bool {
+    auto KGDispersionRelation_high_k::domainContainsPoint(DevFloat x) const -> bool {
         return x != 0.0;
     }
 

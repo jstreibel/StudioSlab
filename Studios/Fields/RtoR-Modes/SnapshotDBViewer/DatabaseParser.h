@@ -24,11 +24,11 @@ namespace Modes::DatabaseViewer {
     struct SnapshotEntry {
         SnapshotData snapshotData;
 
-        Real critical_parameter_value;
+        DevFloat critical_parameter_value;
         Str critical_parameter_name;
-        Real scaling;
+        DevFloat scaling;
 
-        Real getScaledCriticalParameter() const { return critical_parameter_value*scaling; }
+        DevFloat getScaledCriticalParameter() const { return critical_parameter_value*scaling; }
     };
 
     enum DatabaseType {
@@ -39,12 +39,12 @@ namespace Modes::DatabaseViewer {
         unknownDBType
     };
 
-    using FieldMap = std::map<Real, SnapshotEntry>;
+    using FieldMap = std::map<DevFloat, SnapshotEntry>;
 
     class DBParser {
         Str rootDatabaseFolder;
         Str snapshotFolder;
-        std::map<Real, Str> fileSet;
+        std::map<DevFloat, Str> fileSet;
         FieldMap fieldMap;
         Str criticalParameter;
 
@@ -52,21 +52,21 @@ namespace Modes::DatabaseViewer {
         void checkIntervalConsistency() const;
 
     public:
-        using Ptr = Pointer<Modes::DatabaseViewer::DBParser>;
+        using Ptr = TPointer<Modes::DatabaseViewer::DBParser>;
 
         explicit DBParser(Str rootDBFolder,
                           Str  criticalParameter,
                           Str snapshotsFolder=DefaultDFTSnapshotsFolder);
 
         auto getCriticalParameter() const -> Str;
-        auto getFileSet() const -> const std::map<Real, Str>&;
+        auto getFileSet() const -> const std::map<DevFloat, Str>&;
         auto getSnapshotMap() const -> const FieldMap &;
 
         DatabaseType evaluateDatabaseType() const;
 
         auto getRootDatabaseFolder() const -> const Str&;
 
-        auto buildSnapshotMashup() const -> Pointer<Math::R2toR::NumericFunction_CPU>;
+        auto buildSnapshotMashup() const -> TPointer<Math::R2toR::NumericFunction_CPU>;
 
     };
 } // Modes::DatabaseViewer

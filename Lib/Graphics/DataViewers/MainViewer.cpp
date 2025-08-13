@@ -11,16 +11,16 @@
 
 namespace Slab::Graphics {
 
-    MainViewer::MainViewer(Pointer<Math::R2toR::NumericFunction> baseFunction)
-    : Graphics::WindowRow()
+    MainViewer::MainViewer(TPointer<Math::R2toR::FNumericFunction> baseFunction)
+    : gui_window(New<FGUIWindow>(FSlabWindowConfig("Main Viewer")))
     , base_function(std::move(baseFunction)) {
 
-        auto font_size = gui_window->GetGUIContext()->getFontSize();
+        auto font_size = gui_window->GetGUIWindowContext().Context->GetFontSize();
 
         auto gui_size = 22*font_size;
 
-        addWindow(gui_window, Right, (float)gui_size);
-        addResponder(gui_window);
+        AddWindow(gui_window, Right, (float)gui_size);
+        AddResponder(gui_window);
 
         SetMinimumHeight((Resolution)(2.2*gui_size));
         SetMinimumWidth((Resolution)(4*gui_size));
@@ -28,27 +28,28 @@ namespace Slab::Graphics {
         arrangeWindows();
     }
 
-    void MainViewer::addViewer(const Pointer<Viewer>& viewer) {
+    void MainViewer::addViewer(const TPointer<Viewer>& viewer) {
         viewers.emplace_back(viewer);
-        if(base_function!= nullptr) viewer->setFunction(base_function);
+        if(base_function!= nullptr) viewer->SetFunction(base_function);
 
         if(viewers.size()==1)
             setCurrentViewer(0);
 
     }
 
-    void MainViewer::draw() {
-        auto gui_context = parent_system_window->getGUIContext().lock();
+    void MainViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+        // TODO: No const_cast here
+        IN GuiContext = const_cast<FPlatformWindow&>(PlatformWindow).GetGUIContext();
 
-        if(gui_context == nullptr) return;
+        if(GuiContext == nullptr) return;
 
-        gui_context->AddDrawCall(
+        GuiContext->AddDrawCall(
                 [this]() {
                     if (ImGui::BeginMainMenuBar()) {
                         if (ImGui::BeginMenu("Viewers")) {
                             Index i = 0;
                             for (auto &viewer: viewers) {
-                                auto name = viewer->getName();
+                                auto name = viewer->GetName();
 
                                 fix is_current = getCurrentViewer() == viewer;
                                 if (ImGui::MenuItem(name.c_str(), nullptr, is_current))
@@ -80,14 +81,14 @@ namespace Slab::Graphics {
                 }
         );
 
-        WindowRow::draw();
+        FWindowRow::ImmediateDraw(PlatformWindow);
     }
 
-    bool MainViewer::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
-        if(state==Press && key >= KeyMap::Key_1 && key <= KeyMap::Key_9)
-            if(setCurrentViewer(key - KeyMap::Key_1)) return true;
+    bool MainViewer::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+        if(state==Press && key >= EKeyMap::Key_1 && key <= EKeyMap::Key_9)
+            if(setCurrentViewer(key - EKeyMap::Key_1)) return true;
 
-        return WindowRow::notifyKeyboard(key, state, modKeys);
+        return FWindowRow::NotifyKeyboard(key, state, modKeys);
     }
 
     bool MainViewer::setCurrentViewer(Index i) {
@@ -102,30 +103,30 @@ namespace Slab::Graphics {
 
         current_viewer = new_viewer;
 
-        addWindow(current_viewer, Right, -1);
+        AddWindow(current_viewer, Right, -1);
 
         arrangeWindows();
-        current_viewer->notifyBecameVisible();
+        current_viewer->NotifyBecameVisible();
         if (old_viewer != nullptr) old_viewer->notifyBecameInvisible();
 
         return true;
     }
 
-    void MainViewer::setFunction(Pointer<Math::R2toR::NumericFunction> function) {
+    void MainViewer::setFunction(TPointer<Math::R2toR::FNumericFunction> function) {
         base_function = std::move(function);
 
-        for(auto &viewer : viewers) viewer->setFunction(base_function);
+        for(auto &viewer : viewers) viewer->SetFunction(base_function);
     }
 
-    auto MainViewer::getGUIWindow() -> Pointer<GUIWindow> {
+    auto MainViewer::getGUIWindow() -> TPointer<FGUIWindow> {
         return gui_window;
     }
 
-    auto MainViewer::getCurrentViewer() const -> Pointer<const Viewer> {
+    auto MainViewer::getCurrentViewer() const -> TPointer<const Viewer> {
         return current_viewer;
     }
 
-    auto MainViewer::getCurrentViewer() -> Pointer<Viewer> {
+    auto MainViewer::getCurrentViewer() -> TPointer<Viewer> {
         return current_viewer;
     }
 

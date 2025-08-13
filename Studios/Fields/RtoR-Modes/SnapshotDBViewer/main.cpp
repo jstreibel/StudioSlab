@@ -5,8 +5,8 @@
 #include "AppBase.h"
 #include "CrashPad.h"
 
-#include "Core/Controller/CommandLine/CommonCLParameters.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 
 #include "Graphics/Window/WindowStyles.h"
 
@@ -18,7 +18,7 @@
 #include "DBViewerMulti.h"
 #include "DBViewerSequence.h"
 #include "Graphics/Window/SlabWindowManager.h"
-#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Core/SlabCore.h"
 
 using namespace Slab;
@@ -36,7 +36,7 @@ public:
     App(int argc, const char **argv)
     : AppBase(argc, argv, false)
     {
-        Interface->addParameters({&snapshotDBFolders, &criticalParameter});
+        Interface->AddParameters({&snapshotDBFolders, &criticalParameter});
         Core::RegisterCLInterface(Interface);
 
         Core::BackendManager::Startup("GLFW");
@@ -49,16 +49,17 @@ public:
     auto run() -> int override {
         auto dbLocations = *snapshotDBFolders;
 
-        const auto guiBackend = Slab::Graphics::GetGraphicsBackend();
+        const auto GuiBackend = Slab::Graphics::GetGraphicsBackend();
 
         // auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerMulti>(dbLocations, *criticalParameter);
-        const auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerSequence>(dbLocations, *criticalParameter);
+        const auto Viewer = Slab::New<Modes::DatabaseViewer::DBViewerSequence>(dbLocations, *criticalParameter);
 
-        const auto wm = Slab::New<Slab::Graphics::SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
-        wm->addSlabWindow(viewer);
-        guiBackend->GetMainSystemWindow()->addEventListener(wm);
 
-        guiBackend->run();
+        const auto WindowManager = Slab::New<Graphics::SlabWindowManager>();
+        GuiBackend->GetMainSystemWindow()->AddEventListener(WindowManager);
+
+        WindowManager->AddSlabWindow(Viewer, false);
+        GuiBackend->Run();
 
         return 0;
     }

@@ -17,7 +17,7 @@ public:
     }
 };
 
-class StateyState : public Slab::Math::Odeint::OdeintState<Slab::Real> {
+class StateyState : public Slab::Math::Odeint::OdeintState<Slab::DevFloat> {
 
 };
 

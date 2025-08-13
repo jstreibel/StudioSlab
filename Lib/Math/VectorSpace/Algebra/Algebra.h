@@ -17,9 +17,9 @@ namespace Slab::Math {
 
         virtual Algebra& operator+(const Algebra&) = 0;
         virtual Algebra& operator*(const Algebra&) = 0;
-        virtual Algebra& operator*(const Real&a) { return (*this)*=a; };
-        virtual Algebra& operator*(const Real&a) const = 0;
-        virtual Algebra& operator*=(const Real&) = 0;
+        virtual Algebra& operator*(const DevFloat&a) { return (*this)*=a; };
+        virtual Algebra& operator*(const DevFloat&a) const = 0;
+        virtual Algebra& operator*=(const DevFloat&) = 0;
     };
 
     class AlgebraProxy : public Algebra {
@@ -39,9 +39,9 @@ namespace Slab::Math {
 
         Algebra &operator+(const Algebra &)    override { NOT_IMPLEMENTED_CLASS_METHOD }
         Algebra &operator*(const Algebra &)    override { NOT_IMPLEMENTED_CLASS_METHOD }
-        Algebra &operator*(const Real &) const override { NOT_IMPLEMENTED_CLASS_METHOD }
-        Algebra &operator*(const Real &)       override { NOT_IMPLEMENTED_CLASS_METHOD }
-        Algebra &operator*=(const Real &)      override { NOT_IMPLEMENTED_CLASS_METHOD }
+        Algebra &operator*(const DevFloat &) const override { NOT_IMPLEMENTED_CLASS_METHOD }
+        Algebra &operator*(const DevFloat &)       override { NOT_IMPLEMENTED_CLASS_METHOD }
+        Algebra &operator*=(const DevFloat &)      override { NOT_IMPLEMENTED_CLASS_METHOD }
 
     };
 

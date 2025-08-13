@@ -14,7 +14,7 @@
 
 namespace Slab::Graphics {
 
-    class PlotThemeManager : public Singleton<PlotThemeManager>, public SystemWindowEventListener {
+    class PlotThemeManager : public Singleton<PlotThemeManager>, public FPlatformWindowEventListener {
     protected:
         friend Singleton<PlotThemeManager>;
         friend GraphTheme_ptr LoadStyle(const Str& style);
@@ -25,7 +25,7 @@ namespace Slab::Graphics {
     public:
         static GraphTheme_ptr GetCurrent();
 
-        bool notifyRender() override;
+        bool NotifyRender(const FPlatformWindow&) override;
 
         static Str GetDefault();
         static bool SetTheme(const Str& theme);

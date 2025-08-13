@@ -12,7 +12,7 @@
 namespace Slab::Graphics {
 
     class R2toRPainter : public Painter {
-        Pointer<OpenGL::Texture2D_Real> field_data;
+        TPointer<OpenGL::Texture2D_Real> field_data;
 
         // Vertex
         glm::mat3x3 transform = {1,0,0,
@@ -25,14 +25,14 @@ namespace Slab::Graphics {
     public:
         R2toRPainter() = delete;
 
-        void use() const override;
+        void Use() const override;
 
         virtual void
-        setFieldDataTexture(Pointer<OpenGL::Texture2D_Real>);
+        setFieldDataTexture(TPointer<OpenGL::Texture2D_Real>);
 
         virtual void setRegion(RectR);
         virtual bool dirtyMinMax() const;
-        virtual void setMinMax(Real, Real);
+        virtual void setMinMax(DevFloat, DevFloat);
         virtual void labelUpdateEvent(const Str&);
     };
 

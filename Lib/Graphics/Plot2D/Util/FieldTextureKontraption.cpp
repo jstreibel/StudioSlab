@@ -19,8 +19,8 @@ namespace Slab::Graphics {
         auto hPixelSizeInTexCoord = 1. / x_res;
         auto vPixelSizeInTexCoord = 1. / y_res;
 
-        auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * sub_region.width();
-        auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * sub_region.height();
+        auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * sub_region.GetWidth();
+        auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * sub_region.GetHeight();
 
         auto si = 0.0f; // - hPixelSizeInTexCoord;
         auto sf = 1.0f; // + hPixelSizeInTexCoord;
@@ -34,7 +34,7 @@ namespace Slab::Graphics {
 
         fix Lx = xMax_f-xMin_f;
 
-        vertexBuffer = New<OpenGL::VertexBuffer>("vertex:2f,tex_coord:2f");
+        vertexBuffer = New<OpenGL::FVertexBuffer>("vertex:2f,tex_coord:2f");
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
 
         fix n=0;
@@ -62,14 +62,14 @@ namespace Slab::Graphics {
         fix x_leftover = (int) full_xres % max_res;
         fix y_leftover = (int) full_yres % max_res;
 
-        fix dx = region.width()  / (Real)full_xres;
-        fix dy = region.height() / (Real)full_yres;
+        fix dx = region.GetWidth()  / (DevFloat)full_xres;
+        fix dy = region.GetHeight() / (DevFloat)full_yres;
 
-        fix Δx = dx * (Real)max_res;
-        fix Δy = dy * (Real)max_res;
+        fix Δx = dx * (DevFloat)max_res;
+        fix Δy = dy * (DevFloat)max_res;
 
-        fix Δx_leftover = dx * Real(full_xres % max_res);
-        fix Δy_leftover = dy * Real(full_yres % max_res);
+        fix Δx_leftover = dx * DevFloat(full_xres % max_res);
+        fix Δy_leftover = dy * DevFloat(full_yres % max_res);
 
         fix x_min = region.xMin;
         fix y_min = region.yMin;
@@ -96,7 +96,7 @@ namespace Slab::Graphics {
         }
     }
 
-    Pointer<FieldTextureThingy> FieldTextureKontraption::getBlock(int i, int j) {
+    TPointer<FieldTextureThingy> FieldTextureKontraption::getBlock(int i, int j) {
         assert(i < n && j < m);
 
         return blocks[i + j * n];
@@ -122,7 +122,7 @@ namespace Slab::Graphics {
         return yres;
     }
 
-    void FieldTextureKontraption::setValue(int i, int j, Real value) {
+    void FieldTextureKontraption::setValue(int i, int j, DevFloat value) {
         fix max_res = OpenGL::Texture2D::GetMaxTextureSize();
 
         fix i_block = i/max_res;
@@ -134,7 +134,7 @@ namespace Slab::Graphics {
         getBlock(i_block, j_block)->texture->setValue(i_within, j_within, (Real32)value);
     }
 
-    bool FieldTextureKontraption::upload(Index j_begin, Count row_count) {
+    bool FieldTextureKontraption::upload(Index j_begin, CountType row_count) {
         fix max_res = OpenGL::Texture2D::GetMaxTextureSize();
 
         auto j_end = j_begin+row_count;

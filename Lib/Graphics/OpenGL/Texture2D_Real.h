@@ -19,7 +19,7 @@ namespace Slab::Graphics::OpenGL {
 
         bool setValue(int i, int j, Real32 value);
 
-        bool upload(UInt row=0, Count nRows=0);
+        bool upload(UInt row=0, CountType nRows=0);
     };
 
 } // OpenGL

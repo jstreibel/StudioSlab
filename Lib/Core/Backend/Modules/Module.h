@@ -5,19 +5,18 @@
 #ifndef STUDIOSLAB_MODULE_H
 #define STUDIOSLAB_MODULE_H
 
-#include <memory> // Includes Shared Pointer
 #include "Utils/String.h"
 
 namespace Slab::Core {
 
-    class Module {
+    class SlabModule {
     public:
-        const Str name;
-        const bool requiresGraphicsBackend;
+        const Str Name;
+        const bool bRequiresGraphicsBackend;
 
-        Module() = delete;
-        explicit Module(Str name, bool requiresGraphicsBackend=false);
-        virtual ~Module();
+        SlabModule() = delete;
+        explicit SlabModule(Str name, bool bRequiresGraphicsBackend=false);
+        virtual ~SlabModule();
     };
 
 } // Core

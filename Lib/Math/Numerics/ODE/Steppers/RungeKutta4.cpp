@@ -6,7 +6,7 @@
 
 
 namespace Slab::Math {
-    RungeKutta4::RungeKutta4(const Pointer<Base::LinearStepSolver> &solver, Real dt, Slab::Count totalSwapStates)
+    RungeKutta4::RungeKutta4(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt, Slab::CountType totalSwapStates)
     : Stepper()
     , _H(solver)
     , _f(solver->NewEqState())
@@ -23,7 +23,7 @@ namespace Slab::Math {
         _H->applyBC(*_f, .0, .0);
     }
 
-    void RungeKutta4::step(const Count n_steps) {
+    void RungeKutta4::step(const CountType n_steps) {
         auto swap = swapsIterator.next();
         swap->setData(*_f);
 
@@ -35,8 +35,8 @@ namespace Slab::Math {
         auto &k4 = *_k4;
         auto &temp = *_temp;
 
-        for (Count i = 0; i < n_steps; ++i) {
-            const Real t = (steps + i) * dt;
+        for (CountType i = 0; i < n_steps; ++i) {
+            const DevFloat t = (steps + i) * dt;
 
             {
                 H.startStep(f, t, dt);

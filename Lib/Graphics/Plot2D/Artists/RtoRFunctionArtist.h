@@ -13,27 +13,27 @@ namespace Slab::Graphics {
 
     using namespace Math;
 
-    class RtoRFunctionArtist : public Artist {
+    class RtoRFunctionArtist : public FArtist {
         RtoR::Function_ptr function;
         PlotStyle plotStyle;
-        Count samples;
+        CountType samples;
 
     public:
-        RtoRFunctionArtist(RtoR::Function_ptr, PlotStyle, Count samples);
+        RtoRFunctionArtist(RtoR::Function_ptr, PlotStyle, CountType samples);
 
         void setFunction(RtoR::Function_ptr);
 
         void setStyle(PlotStyle);
 
-        void setSampling(Count);
+        void setSampling(CountType);
 
-        const RectR &getRegion() override;
+        const RectR &GetRegion() override;
 
-        bool draw(const Plot2DWindow &d) override;
+        bool Draw(const FPlot2DWindow &d) override;
 
-        bool hasGUI() override;
+        bool HasGUI() override;
 
-        void drawGUI() override;
+        void DrawGUI() override;
     };
 
     DefinePointers(RtoRFunctionArtist)

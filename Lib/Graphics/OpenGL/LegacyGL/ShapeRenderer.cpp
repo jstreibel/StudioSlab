@@ -3,15 +3,15 @@
 //
 
 #include "ShapeRenderer.h"
+
+#include "SceneSetup.h"
 #include "Graphics/OpenGL/Shader.h"
 
 
 namespace Slab::Graphics::OpenGL::Legacy {
-    void RenderRectangle(const Slab::Graphics::RectangleShape &rectangleShape) {
+    void RenderRectanglee(const RectangleShape &rectangleShape) {
         fix tl = rectangleShape.top_left;
         fix br = rectangleShape.bottom_right;
-
-        Shader::remove();
 
         glBegin(GL_LINE_LOOP);
         {

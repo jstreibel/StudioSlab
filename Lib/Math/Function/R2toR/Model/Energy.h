@@ -17,10 +17,10 @@ namespace Slab::Math::R2toR {
         class Energy : public Functional {
 
         public:
-            Real computeRadial_method1(const R2toR::EquationState &function, Real upToRadius);
-            Real computeRadial_method2(const R2toR::EquationState &function, Real upToRadius);
+            DevFloat computeRadial_method1(const R2toR::EquationState &function, DevFloat upToRadius);
+            DevFloat computeRadial_method2(const R2toR::EquationState &function, DevFloat upToRadius);
 
-            Real operator[](const R2toR::EquationState &function) const override;
+            DevFloat operator[](const R2toR::EquationState &function) const override;
         };
 
     }

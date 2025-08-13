@@ -135,8 +135,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		${GRAPHIC_BACKENDS_SOURCES}
 		${GRAPHIC_MODULES_SOURCES}
 
-		Backend/SystemWindow.cpp
-		Backend/SystemWindow.h
+		Backend/PlatformWindow.cpp
+		Backend/PlatformWindow.h
 
         Types2D.h Types2D.cpp
 		Utils.cpp
@@ -159,8 +159,6 @@ add_library(${LIB_GRAPHICS} STATIC
 		Window/GUIWindow.cpp
 		Window/SlabWindow.cpp
 		Window/WindowContainer/WindowPanel.cpp
-		Window/WindowTree/NodeWindow.cpp
-		Window/WindowTree/WindowTreeBuilder.cpp
 
 		Window/WindowContainer/WindowRow.cpp
 		Window/WindowContainer/WindowRow.h
@@ -264,10 +262,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/LegacyGL/SceneSetup.cpp
         Plot2D/Util/PlottingRegion2D.cpp
         Plot2D/Util/PlottingRegion2D.h
-        ImGui/ImGuiWindow.cpp
-        ImGui/ImGuiWindow.h
-        Plot2D/Util/PrintWindow.cpp
-        Plot2D/Util/PrintWindow.h
+		ImGui/ImGui-SingleSlabWindow-Wrapper.cpp
+		ImGui/ImGui-SingleSlabWindow-Wrapper.h
         Plot2D/Util/FieldTextureKontraption.cpp
         Plot2D/Util/PlotStyleGUI.cpp
         Plot2D/Util/PlotStyleGUI.h
@@ -298,8 +294,8 @@ add_library(${LIB_GRAPHICS} STATIC
         Window/Decorator.h
         Plot2D/Artists/BackgroundArtist.cpp
         Plot2D/Artists/BackgroundArtist.h
-        Backend/GLFW/GLFWSystemWindow.cpp
-        Backend/GLFW/GLFWSystemWindow.h
+		Backend/GLFW/GLFWPlatformWindow.cpp
+		Backend/GLFW/GLFWPlatformWindow.h
 		OpenGL/Images.cpp
 		OpenGL/Images.h
         Utils/ImageLoad.cpp
@@ -315,6 +311,14 @@ add_library(${LIB_GRAPHICS} STATIC
         Modules/Nuklear/NuklearContext.h
 		DataViewers/Viewers/Viewer3D.cpp
 		DataViewers/Viewers/Viewer3D.h
+		ImGui/ImGuiWindowManager.cpp
+		ImGui/ImGuiWindowManager.h
+		Window/WindowManager.cpp
+		Window/WindowManager.h
+		OpenGL/GLStateGuard.cpp
+		OpenGL/GLStateGuard.h
+		ImGui/ImGui-Multi-SlabWindow-Wrapper.cpp
+		ImGui/ImGui-Multi-SlabWindow-Wrapper.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

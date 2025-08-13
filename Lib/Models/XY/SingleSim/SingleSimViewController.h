@@ -80,7 +80,7 @@ namespace Slab::Lost::ThermoOutput {
 
         sf::Clock timer;
         virtual void runIOProgram(SystemParams &params, OutputData &data);
-        void manipulationOfParametersHasHappened(Real newValue, Real lastValue, Real N);
+        void manipulationOfParametersHasHappened(DevFloat newValue, DevFloat lastValue, DevFloat N);
 
 
         void drawEverything(SystemParams &params, OutputData &data);

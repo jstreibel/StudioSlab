@@ -12,7 +12,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    using PlotWindow = Slab::Graphics::Plot2DWindow;
+    using PlotWindow = Slab::Graphics::FPlot2DWindow;
 
     class HistogramsViewer_KG : public KGViewer {
         Slab::Math::PointSet histogram_data_energy;
@@ -20,20 +20,20 @@ namespace Slab::Models::KGRtoR {
         Slab::Math::PointSet histogram_data_gradient;
         Slab::Math::PointSet histogram_data_potential;
 
-        using Func = Slab::Math::R2toR::NumericFunction;
-        using FuncPointer = Slab::Pointer<Func>;
+        using Func = Slab::Math::R2toR::FNumericFunction;
+        using FuncPointer = Slab::TPointer<Func>;
 
         int nbins = 200;
         bool pretty = true;
-        Slab::Count sheer_size;
+        Slab::CountType sheer_size;
 
-        Slab::Real t_min;
-        Slab::Real t_delta;
+        Slab::DevFloat t_min;
+        Slab::DevFloat t_delta;
 
-        Slab::Vector<Slab::Pointer<PlotWindow>> histogram_windows;
+        Slab::Vector<Slab::TPointer<PlotWindow>> histogram_windows;
 
         struct HarnessData {
-            using Array = Slab::Pointer<Slab::RealArray>;
+            using Array = Slab::TPointer<Slab::RealArray>;
             Array energy, kinetic, gradient, potential;
 
             explicit HarnessData(size_t sheer_size)
@@ -46,19 +46,19 @@ namespace Slab::Models::KGRtoR {
         HarnessData harness();
 
     public:
-        explicit HistogramsViewer_KG(const Slab::Pointer<Slab::Graphics::GUIWindow> &);
+        explicit HistogramsViewer_KG(const Slab::TPointer<Slab::Graphics::FGUIWindow> &);
 
-        Str getName() const override;
+        Str GetName() const override;
 
         void updateHistograms();
 
         void
-        setFunction(Slab::Pointer<Slab::Math::R2toR::NumericFunction> function)
+        SetFunction(Slab::TPointer<Slab::Math::R2toR::FNumericFunction> function)
         override;
 
-        void setFunctionDerivative(FuncPointer pointer) override;
+        void SetFunctionDerivative(FuncPointer pointer) override;
 
-        void draw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
     };
 
 } // Studios::Fields::Viewers

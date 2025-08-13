@@ -10,16 +10,16 @@
 
 namespace Slab::Core {
 
-    class InterfaceManager : public Singleton<InterfaceManager> {
-        UniqueID currentInterface=0;
-        UniqueID currentProtocol=0;
+    class FInterfaceManager : public Singleton<FInterfaceManager> {
+        UniqueID CurrentInterface=0;
+        UniqueID CurrentProtocol=0;
 
-        List<Pointer<Interface>> interfaces;
+        TList<TPointer<FInterface>> Interfaces;
 
     public:
-        InterfaceManager();
+        FInterfaceManager();
 
-        void addInterface(Pointer<Interface>);
+        void AddInterface(TPointer<FInterface>);
 
         static UniqueID GenerateUniqueID();
     };

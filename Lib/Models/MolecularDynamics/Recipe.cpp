@@ -13,7 +13,7 @@
 #include "Recipe.h"
 
 #include "Core/SlabCore.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
 
@@ -25,15 +25,15 @@
 namespace Slab::Models::MolecularDynamics {
     Recipe::Recipe()
     : NumericalRecipe(New<Slab::Models::MolecularDynamics::MolDynNumericConfig>(), "2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
-    , molDynamicsInterface(New <CLInterface> ("Molecular dynamics 2-d", this, 100))
+    , molDynamicsInterface(New <FCommandLineInterface> ("Molecular dynamics 2-d", this, 100))
     {
-        molDynamicsInterface->addParameters({&temperature, &dissipation, &model});
-        Interface->addSubInterface(molDynamicsInterface);
+        molDynamicsInterface->AddParameters({&temperature, &dissipation, &model});
+        Interface->AddSubInterface(molDynamicsInterface);
         Core::RegisterCLInterface(Interface);
     }
 
-    Vector<Pointer<Math::Socket>> Recipe::buildOutputSockets() {
-        Vector<Pointer<Math::Socket>> sockets;
+    Vector<TPointer<Math::Socket>> Recipe::buildOutputSockets() {
+        Vector<TPointer<Math::Socket>> sockets;
 
         auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(numeric_config);
 
@@ -44,17 +44,18 @@ namespace Slab::Models::MolecularDynamics {
                 : MolecularDynamics::Monitor::Model::SoftDisk;
         auto monitor = New <MolecularDynamics::Monitor>(numericConfig, simModel);
 
-        auto main_syswin = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
+        const auto MainPlatformWindow = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
 
-        auto wm = New<Graphics::SlabWindowManager>(main_syswin.get());
-        wm->addSlabWindow(Pointer<Graphics::SlabWindow>(monitor));
-        main_syswin->addAndOwnEventListener(wm);
+        const auto WindowManager = New<Graphics::SlabWindowManager>();
+        MainPlatformWindow->AddAndOwnEventListener(WindowManager);
+
+        WindowManager->AddSlabWindow(TPointer<Graphics::FSlabWindow>(monitor), false);
         sockets.emplace_back(monitor);
 
         return sockets;
     }
 
-    Pointer<Math::Stepper> Recipe::buildStepper() {
+    TPointer<Math::Stepper> Recipe::buildStepper() {
         auto c = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(numeric_config);
 
         fix T = *temperature;
@@ -77,7 +78,7 @@ namespace Slab::Models::MolecularDynamics {
     }
 
     void Recipe::NotifyCLArgsSetupFinished() {
-        CLInterfaceOwner::NotifyCLArgsSetupFinished();
+        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
 

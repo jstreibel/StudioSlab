@@ -13,18 +13,18 @@ namespace Slab::Math::RtoC {
     class FourierModes : public Function {
         RtoR::Function_ptr baseFunc;
 
-        Real xMin=0, L=1;
-        Count samples=500;
+        DevFloat xMin=0, L=1;
+        CountType samples=500;
 
     public:
-        explicit FourierModes(RtoR::Function_ptr baseFunc, Real xMin, Real L, Count samples);
+        explicit FourierModes(RtoR::Function_ptr baseFunc, DevFloat xMin, DevFloat L, CountType samples);
 
         void setBaseFunction(RtoR::Function_ptr func);
-        void set_xMin(Real val);
-        void setL(Real L);
-        void setNSamples(Count N);
+        void set_xMin(DevFloat val);
+        void setL(DevFloat L);
+        void setNSamples(CountType N);
 
-        Complex operator()(Real k) const override;
+        Complex operator()(DevFloat k) const override;
 
     };
 

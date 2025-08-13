@@ -21,9 +21,9 @@ namespace Slab::Graphics::OpenGL {
 
         Texture2D_Color(GLsizei width, GLsizei height);
 
-        bool setColor(int i, int j, Color color);
+        bool setColor(int i, int j, FColor color);
 
-        bool upload(UInt row=0, Count nRows=0);
+        bool upload(UInt row=0, CountType nRows=0);
     };
 
 } // OpenGL

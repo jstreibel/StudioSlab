@@ -17,11 +17,11 @@ namespace Tests {
 
     using namespace Slab;
 
-    using Writer = Slab::Graphics::OpenGL::WriterOpenGL;
+    using Writer = Slab::Graphics::OpenGL::FWriterOpenGL;
 
-    class ModernGLTests : public Graphics::WindowRow {
-        Graphics::OpenGL::Shader program;
-        Graphics::OpenGL::VertexBuffer buffer;
+    class ModernGLTests : public Graphics::FWindowRow {
+        Graphics::OpenGL::FShader program;
+        Graphics::OpenGL::FVertexBuffer buffer;
         Graphics::OpenGL::Texture2D_Color texture;
         Graphics::OpenGL::Texture2D_Real realTexture;
         Writer writer;
@@ -30,7 +30,7 @@ namespace Tests {
     public:
         ModernGLTests();
 
-        void draw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
     };
 

@@ -8,75 +8,73 @@
 #include "Core/Backend/BackendManager.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "StudioSlab.h"
+#include "Core/Tools/Log.h"
 #include "Graphics/Modules/GUIModule/GUIModule.h"
 
 namespace Slab::Graphics {
 
     GraphicBackend::GraphicBackend(const Str &name)
-    : Backend(name) {}
+    : FBackend(name) {}
 
     GraphicBackend::~GraphicBackend() = default;
 
 
-    void GraphicBackend::addGraphicsModule(const Volatile<GraphicsModule> &module) {
-        graphicModules.emplace_back(module);
-    }
+    void GraphicBackend::AddGraphicsModule(const TVolatile<GraphicsModule> &module) { GraphicModules.emplace_back(module); }
 
-    const Vector<Volatile<GraphicsModule>> &GraphicBackend::getGraphicsModules() {
-        return graphicModules;
-    }
+    const Vector<TVolatile<GraphicsModule>> &GraphicBackend::GetGraphicsModules() { return GraphicModules; }
 
-    bool GraphicBackend::isHeadless() const { return false; }
+    bool GraphicBackend::IsHeadless() const { return false; }
 
-    Pointer<SystemWindow> GraphicBackend::NewSystemWindow(const Str&title) {
-        auto win = this->CreateSystemWindow(title);
+    TPointer<FPlatformWindow> GraphicBackend::NewSystemWindow(const Str&title) {
+        auto win = this->CreatePlatformWindow(title);
 
-        system_windows.emplace_back(win);
+        SystemWindows.emplace_back(win);
 
         return win;
     }
 
-    void GraphicBackend::unloadAllModules() {
-        graphicModules.clear();
-    }
+    void GraphicBackend::UnloadAllModules() { GraphicModules.clear(); }
 
+    void GraphicBackend::ClearModules() { GraphicModules.clear(); }
 
-    void GraphicBackend::clearModules() {
-        graphicModules.clear();
-    }
+    void GraphicBackend::Terminate() { UnloadAllModules(); }
 
-    void GraphicBackend::terminate() {
-        unloadAllModules();
-    }
+    void GraphicBackend::NotifyModuleLoaded(const TPointer<Core::SlabModule> &module) {
+        if(module->bRequiresGraphicsBackend) {
+            auto GraphicModule = DynamicPointerCast<GraphicsModule>(module);
 
-    void GraphicBackend::notifyModuleLoaded(const Pointer<Core::Module> &module) {
-        if(module->requiresGraphicsBackend) {
-            auto graphic_module = DynamicPointerCast<GraphicsModule>(module);
-
-            addGraphicsModule(graphic_module);
+            AddGraphicsModule(GraphicModule);
         }
     }
 
-    Pointer<SystemWindow> GraphicBackend::GetMainSystemWindow() {
-        if(system_windows.empty()) return NewSystemWindow("Main window");
+    TPointer<FPlatformWindow> GraphicBackend::GetMainSystemWindow() {
+        if(SystemWindows.empty()) return NewSystemWindow("Main window");
 
-        return system_windows.front();
+        return SystemWindows.front();
     }
 
-    void GraphicBackend::SetupGUI(const SystemWindow *sys_win) const {
-        if(sys_win->guiContext != nullptr) return;
+    void GraphicBackend::SetupGUI(const FPlatformWindow *PlatformWindow_RawPtr) const {
+        if(PlatformWindow_RawPtr == nullptr)
+        {
+            Core::Log::Error("While trying to setup a GUI context for nullptr SystemWindow.");
+            return;
+        }
 
-        for(const auto& win : system_windows) {
-            if(win.get() == sys_win) {
-                auto &guiModule = Slab::GetModule<GUIModule>("GUI");
+        // If GUI is already setup for this window, then nothing to be done.
+        if(PlatformWindow_RawPtr->GuiContext != nullptr) return;
 
-                win->guiContext = guiModule.createContext(win.get());
-                win->addEventListener(win->guiContext);
+        for(const auto& PlatformWindow_It : SystemWindows) {
+            // PlatformWindow must be registered in the Backend:
+            if(PlatformWindow_It.get() == PlatformWindow_RawPtr) {
+                auto &GuiModule = Slab::GetModule<FGUIModule>("GUI");
+
+                PlatformWindow_It->GuiContext = GuiModule.CreateContext(PlatformWindow_It);
+                PlatformWindow_It->AddEventListener(PlatformWindow_It->GuiContext);
 
                 return;
             }
         }
 
-        throw Exception("Failed to setup GUI for platform window: window not found in backend data.");
+        Core::Log::Error("Failed to setup GUI for platform window; window not found in backend data.");
     }
 }

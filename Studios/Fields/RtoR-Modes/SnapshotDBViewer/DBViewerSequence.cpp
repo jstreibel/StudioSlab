@@ -26,29 +26,29 @@ namespace Modes::DatabaseViewer {
 #define z_order(z) (z)
 
     DBViewerSequence::DBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam)
-    : WindowRow()
-    , guiWindow()
-    , mashupDisplay("All data")
-    , massesGraph("masses")
+    : FWindowRow()
+    , guiWindow(Graphics::FSlabWindowConfig{"GUI"})
+    , mashupDisplay("All data", guiWindow.GetGUIWindowContext())
+    , massesGraph("masses", guiWindow.GetGUIWindowContext())
     {
         for(const auto &dbFilename : dbFilenames) {
             auto parser = New<DBParser>(dbFilename, criticalParam, ".");
             dbParsers.emplace_back(parser);
         }
 
-        this->addWindow(Naked(guiWindow));
+        this->AddWindow(Naked(guiWindow));
 
         {
-            auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
+            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.filled = false;
             style.setPrimitive(Slab::Graphics::Solid);
-            auto funky = Math::RtoR::NativeFunction([](Real x) { return x; }).Clone();
+            auto funky = Math::RtoR::NativeFunction([](DevFloat x) { return x; }).Clone();
             Graphics::Plotter::AddRtoRFunction(Naked(mashupDisplay), funky, style, "m=0", 1000, 3);
         }
 
         // Setup masses Re and Im pointsets.
         {
-            auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[2];
+            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
             style.setPrimitive(Graphics::VerticalLines);
             style.filled = false;
             style.thickness = 1.5;
@@ -61,48 +61,48 @@ namespace Modes::DatabaseViewer {
             //style.thickness = 3.0;
             //Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(underXHair), style, "under X-hair");
 
-            massesGraph.getAxisArtist().setVerticalAxisLabel("m");
-            massesGraph.getAxisArtist().setHorizontalAxisLabel("k");
-            massesGraph.getAxisArtist().setHorizontalUnit(Math::Constants::π);
+            massesGraph.GetAxisArtist().setVerticalAxisLabel("m");
+            massesGraph.GetAxisArtist().SetHorizontalAxisLabel("k");
+            massesGraph.GetAxisArtist().setHorizontalUnit(Math::Constants::π);
         }
 
         // Setup mashup display
         {
-            mashupDisplay.getAxisArtist().setVerticalUnit(Math::Constants::π);
-            mashupDisplay.getAxisArtist().setHorizontalUnit(Math::Constants::π);
-            auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+            mashupDisplay.GetAxisArtist().setVerticalUnit(Math::Constants::π);
+            mashupDisplay.GetAxisArtist().setHorizontalUnit(Math::Constants::π);
+            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             style.thickness = 3;
             style.filled = false;
             KGRelation_artist = Graphics::Plotter::AddPointSet(Naked(mashupDisplay), KGRelation, style,
                                                                "ω²-kₚₑₐₖ²-m²=0", false, z_order(1));
 
-            style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
+            style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.setPrimitive(Graphics::Point);
             style.thickness = 8;
             Graphics::Plotter::AddPointSet(Naked(mashupDisplay), Naked(maxValuesPointSet), style,
                                            "main modes", false, z_order(2));
             // allDataDisplay.setColorMap(Graphics::ColorMaps["blues"]);
 
-            topRow.addWindow(Naked(mashupDisplay));
+            topRow.AddWindow(Naked(mashupDisplay));
         }
 
         // Link mashup and masses display x limits
-        mashupDisplay.getRegion().setReference_xMin(massesGraph.getRegion().getReference_xMin());
-        mashupDisplay.getRegion().setReference_xMax(massesGraph.getRegion().getReference_xMax());
+        mashupDisplay.GetRegion().setReference_xMin(massesGraph.GetRegion().getReference_xMin());
+        mashupDisplay.GetRegion().setReference_xMax(massesGraph.GetRegion().getReference_xMax());
 
-        const Pointer<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
+        const TPointer<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
         winCol->addWindow(Naked(massesGraph));
         winCol->addWindow(Naked(topRow), 0.75);
 
-        addWindow(winCol, WindowRow::Left, .8);
+        AddWindow(winCol, FWindowRow::Left, .8);
 
         reloadData();
     }
 
-    void DBViewerSequence::draw() {
+    void DBViewerSequence::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if(currentMeshupArtist == nullptr) return;
 
-        fix ω_XHair = mashupDisplay.getLastXHairPosition().x;
+        fix ω_XHair = mashupDisplay.GetLastXHairPosition().x;
         fix dx = currentMashup->getSpace().getMetaData().geth(0);
         fix L = currentMashup->getDomain().getLx();
         fix N = currentMashup->getN();
@@ -114,13 +114,13 @@ namespace Modes::DatabaseViewer {
             if(ImGui::SliderInt("Current database", &current_database, 0,
                 static_cast<int>(mashupArtists.size())-1)) {
                 if(currentMeshupArtist != nullptr) {
-                    mashupDisplay.removeArtist(currentMeshupArtist);
+                    mashupDisplay.RemoveArtist(currentMeshupArtist);
                     // mashupDisplay.removeArtist(currentMeshupArtist->getColorBarArtist());
                 }
 
                 currentMashup = allMashups[current_database];
                 currentMeshupArtist = mashupArtists[current_database];
-                mashupDisplay.addArtist(currentMeshupArtist);
+                mashupDisplay.AddArtist(currentMeshupArtist);
                 // mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
 
                 computeMasses();
@@ -151,11 +151,11 @@ namespace Modes::DatabaseViewer {
             }
         });
 
-        WindowRow::draw();
+        FWindowRow::ImmediateDraw(PlatformWindow);
     }
 
     void DBViewerSequence::updateKGDispersion(bool visible) {
-        const Real mass = KG_mass;
+        const DevFloat mass = KG_mass;
 
         if(!visible) return;
 
@@ -174,12 +174,12 @@ namespace Modes::DatabaseViewer {
                 Math::RtoR::KGDispersionRelation(mass, dispersionMode),
                 0.0, xMax, 10000);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         style.thickness = 3;
         style.filled = false;
         KGRelation_artist->setStyle(style);
         KGRelation_artist->setPointSet(KGRelation);
-        KGRelation_artist->setLabel(Str("ω²-k²-1=0"));
+        KGRelation_artist->SetLabel(Str("ω²-k²-1=0"));
     }
 
     void DBViewerSequence::computeMasses() {
@@ -203,7 +203,7 @@ namespace Modes::DatabaseViewer {
 
             auto maxInfo = Utils::GetMax(data);
 
-            fix dy = (snapshot_function1d->xMax - snapshot_function1d->xMin)/static_cast<Real>(N - 1);
+            fix dy = (snapshot_function1d->xMax - snapshot_function1d->xMin)/static_cast<DevFloat>(N - 1);
 
             fix idx = static_cast<int>(maxInfo.idx);
             fix order = masses_avg_samples;
@@ -216,10 +216,10 @@ namespace Modes::DatabaseViewer {
 
             maxValues.emplace_back(maxInfo);
 
-            Real ω;
-            Real k;
+            DevFloat ω;
+            DevFloat k;
 
-            maxValuesPointSet.addPoint({x, y_peak});
+            maxValuesPointSet.AddPoint({x, y_peak});
 
             if (db_type==SpaceDFTDBType) {
                 ω = x;
@@ -231,9 +231,9 @@ namespace Modes::DatabaseViewer {
 
             // massesReal_pointSet.addPoint({ω, m2});
             if (fix m2 = ω * ω - k * k; m2>=0)
-                massesReal_pointSet.addPoint({x, sqrt(m2)});
+                massesReal_pointSet.AddPoint({x, sqrt(m2)});
             else
-                massesImag_pointSet.addPoint({x, sqrt(-m2)});
+                massesImag_pointSet.AddPoint({x, sqrt(-m2)});
         }
     }
 
@@ -277,7 +277,7 @@ namespace Modes::DatabaseViewer {
             fix kMax = field.xMax;
             fix kMin = field.xMin;
             fix Δk = kMax-kMin;
-            fix k = Δk*static_cast<Real>(idx)/static_cast<Real>(field.N) - kMin;
+            fix k = Δk*static_cast<DevFloat>(idx)/static_cast<DevFloat>(field.N) - kMin;
             ImGui::TextUnformatted(unit(k, 4).c_str());
 
             ImGui::TableSetColumnIndex(3);
@@ -303,31 +303,31 @@ namespace Modes::DatabaseViewer {
         ImGui::EndTable();
     }
 
-    auto DBViewerSequence::notifyKeyboard(const Graphics::KeyMap key, const Graphics::KeyState state, const Graphics::ModKeys modKeys) -> bool {
+    auto DBViewerSequence::NotifyKeyboard(const Graphics::EKeyMap key, const Graphics::EKeyState state, const Graphics::EModKeys modKeys) -> bool {
         if( key==Graphics::Key_F5 && state==Graphics::Press ){
             reloadData();
             return true;
         }
 
-        return WindowRow::notifyKeyboard(key, state, modKeys);
+        return FWindowRow::NotifyKeyboard(key, state, modKeys);
     }
 
     void DBViewerSequence::reloadData() {
         if(!allMashups.empty()) NOT_IMPLEMENTED
 
         for(auto &artie : mashupArtists)
-            mashupDisplay.removeArtist(artie);
+            mashupDisplay.RemoveArtist(artie);
         mashupArtists.clear();
 
         const auto cmap = Graphics::ColorMaps["blues"]->inverse().clone();
-        Pointer<Graphics::R2toRPainter> rPainter;
+        TPointer<Graphics::R2toRPainter> rPainter;
         for (IN dbParser: dbParsers) {
             auto mashup = dbParser->buildSnapshotMashup();
             // auto dbRootFolder = ReplaceAll(dbParser->getRootDatabaseFolder(), "./", "");
             fix dbRootFolder = dbParser->getRootDatabaseFolder();
 
             auto artie = New<Graphics::R2toRFunctionArtist>();
-            artie->setLabel(dbRootFolder);
+            artie->SetLabel(dbRootFolder);
             artie->setFunction(mashup);
             if(rPainter == nullptr) {
                 const auto colorPainter = DynamicPointerCast<Slab::Graphics::Colormap1DPainter>(artie->getPainter("Colormap"));
@@ -335,7 +335,7 @@ namespace Modes::DatabaseViewer {
                 rPainter = colorPainter;
 
                 auto colorBarArtist = colorPainter->getColorBarArtist();
-                mashupDisplay.addArtist(colorBarArtist, 10);
+                mashupDisplay.AddArtist(colorBarArtist, 10);
             }
             else {
                 artie->setPainter(rPainter);
@@ -347,26 +347,26 @@ namespace Modes::DatabaseViewer {
 
         if(current_database < 0 && !mashupArtists.empty()) current_database = 0;
         if(currentMeshupArtist != nullptr)
-            mashupDisplay.removeArtist(currentMeshupArtist);
+            mashupDisplay.RemoveArtist(currentMeshupArtist);
 
         currentMashup = allMashups[current_database];
         currentMeshupArtist = mashupArtists[current_database];
-        mashupDisplay.addArtist(currentMeshupArtist);
+        mashupDisplay.AddArtist(currentMeshupArtist);
 
         // mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
 
         if (fix db_type = dbParsers[0]->evaluateDatabaseType();
             db_type == SpaceDFTDBType) {
-            mashupDisplay.getAxisArtist().setVerticalAxisLabel("k");
-            mashupDisplay.getAxisArtist().setHorizontalAxisLabel("ω");
+            mashupDisplay.GetAxisArtist().setVerticalAxisLabel("k");
+            mashupDisplay.GetAxisArtist().SetHorizontalAxisLabel("ω");
 
-            massesGraph.getAxisArtist().setHorizontalAxisLabel("ω");
+            massesGraph.GetAxisArtist().SetHorizontalAxisLabel("ω");
         }
         else if (db_type == TimeDFTDBType) {
-            mashupDisplay.getAxisArtist().setVerticalAxisLabel("ω");
-            mashupDisplay.getAxisArtist().setHorizontalAxisLabel("k");
+            mashupDisplay.GetAxisArtist().setVerticalAxisLabel("ω");
+            mashupDisplay.GetAxisArtist().SetHorizontalAxisLabel("k");
 
-            massesGraph.getAxisArtist().setHorizontalAxisLabel("k");
+            massesGraph.GetAxisArtist().SetHorizontalAxisLabel("k");
         }
         else throw Exception("Unknown db type");
 

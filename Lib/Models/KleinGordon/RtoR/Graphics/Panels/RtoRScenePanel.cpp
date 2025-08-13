@@ -7,20 +7,21 @@
 #include "Graphics/Plot3D/Actors/R2toRFunctionActor.h"
 
 namespace Slab::Models::KGRtoR {
-    RtoRScenePanel::RtoRScenePanel(const Pointer<KGNumericConfig> &params,
-                                   GUIWindow &guiWindow,
+    RtoRScenePanel::RtoRScenePanel(const TPointer<KGNumericConfig> &params,
+                                   FGUIWindow &guiWindow,
                                    KGEnergy &hamiltonian)
-    : RtoRPanel(params, guiWindow, hamiltonian, "Scene", "3D view of some data")
+    : FRtoRPanel(params, guiWindow, hamiltonian, "Scene", "3D view of some data")
     , scene(Slab::New<Scene3DWindow>())
     {
-        addWindow(scene);
+        AddWindow(scene);
 
         // auto testy = Slab::New<Slab::Graphics::TestActor>();
         // testy->setLabel("Test Artie");
         // scene->addActor(testy);
     }
 
-    void RtoRScenePanel::setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
+    void RtoRScenePanel::SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
+ simulationHistory,
                                               const R2toRFunctionArtist_ptr &simHistoryArtist) {
         /*
         auto functionActor = Slab::New<Slab::Graphics::R2toRFunctionActor>(simulationHistory);
@@ -29,18 +30,19 @@ namespace Slab::Models::KGRtoR {
         scene->addActor(functionActor);
          */
 
-        RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
+        FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryArtist);
     }
 
     void
-    RtoRScenePanel::setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory, const DFTDataHistory &history,
+    RtoRScenePanel::SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction>
+ sftHistory, const FDFTDataHistory &history,
                                            const R2toRFunctionArtist_ptr &sftHistoryGraph) {
         auto functionActor = Slab::New<Slab::Graphics::R2toRFunctionActor>(sftHistory);
 
         functionActor->setLabel("ℱₓ(t,k)");
         scene->addActor(functionActor);
 
-        RtoRPanel::setSpaceFourierHistory(sftHistory, history, sftHistoryGraph);
+        FRtoRPanel::SetSpaceFourierHistory(sftHistory, history, sftHistoryGraph);
     }
 
 } // Slab::Models::KGRtoR

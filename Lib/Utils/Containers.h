@@ -20,7 +20,7 @@ namespace Slab {
     }
 
     template<Iterable Container, typename T>
-    bool ContainsReference(const Container& container, const Volatile<T>& target) {
+    bool ContainsReference(const Container& container, const TVolatile<T>& target) {
         if (auto targetSharedPtr = target.lock()) {
             return std::any_of(container.begin(), container.end(), [&targetSharedPtr](const std::weak_ptr<T>& weakPtr) {
                 if (auto sharedPtr = weakPtr.lock()) {

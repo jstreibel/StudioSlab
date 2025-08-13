@@ -9,14 +9,13 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/Shockwave/SGPlaneWave.h"
 
 namespace Modes {
-
-    FPlaneWaveBC::FPlaneWaveBC(const KGRtoR::EquationState_constptr& prototype, Real Q, Real k)
+    FPlaneWaveBC::FPlaneWaveBC(const KGRtoR::EquationState_constptr& prototype, DevFloat Q, DevFloat k)
     : BoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ())
     , Q(Q), k(k)
     {
     }
 
-    void FPlaneWaveBC::ApplyKG(KGRtoR::EquationState& KGState, Real t) const
+    void FPlaneWaveBC::ApplyKG(KGRtoR::EquationState& KGState, DevFloat t) const
     {
         if(t==0.0)
         {
@@ -28,12 +27,14 @@ namespace Modes {
         }
     }
 
-    SignalBC::SignalBC(const KGRtoR::EquationState_ptr &prototype, const Real A, const Real ω)
+
+
+    SignalBC::SignalBC(const KGRtoR::EquationState_ptr &prototype, const DevFloat A, const DevFloat ω)
     : BoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ())
     , A(A)
     , ω(ω) {}
 
-    void SignalBC::ApplyKG(KGRtoR::EquationState &kgState, const Real t) const {
+    void SignalBC::ApplyKG(KGRtoR::EquationState &kgState, const DevFloat t) const {
         if(t==0.0) BoundaryCondition::ApplyKG(kgState, t);
 
         OUT ϕ   = kgState.getPhi();
@@ -43,11 +44,11 @@ namespace Modes {
         𝜕ₜϕ.getSpace().getHostData()[0] = A*ω*cos(ω*t);
     }
 
-    DrivenBC::DrivenBC(const KGRtoR::EquationState_ptr &prototype, Pointer<SquareWave> sqrWave)
+    DrivenBC::DrivenBC(const KGRtoR::EquationState_ptr &prototype, TPointer<SquareWave> sqrWave)
     : BoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ()),
       sqrWave(std::move(sqrWave)) { }
 
-    void DrivenBC::ApplyKG(KGRtoR::EquationState &toFunction, Real t) const {
+    void DrivenBC::ApplyKG(KGRtoR::EquationState &toFunction, DevFloat t) const {
         if(sqrWave != nullptr) sqrWave->set_t(t);
 
         BoundaryCondition::Apply(toFunction, t);

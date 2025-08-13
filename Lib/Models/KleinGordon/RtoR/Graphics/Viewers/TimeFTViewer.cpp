@@ -13,24 +13,24 @@
 
 namespace Slab::Models::KGRtoR {
 
-    Str TimeFTViewer::getName() const { return "Time-DFT space-average viewer"; }
+    Str TimeFTViewer::GetName() const { return "Time-DFT space-average viewer"; }
 
-    TimeFTViewer::TimeFTViewer(const Pointer<Graphics::GUIWindow> &pointer,
-                               const Pointer<R2toR::NumericFunction> &func,
-                               const Pointer<R2toR::NumericFunction> &ddtFunc)
-    : KGViewer(pointer, func, ddtFunc) {
+    TimeFTViewer::TimeFTViewer(const TPointer<Graphics::FGUIWindow> &GuiWindow,
+                               const TPointer<R2toR::FNumericFunction> &func,
+                               const TPointer<R2toR::FNumericFunction> &ddtFunc)
+    : KGViewer(GuiWindow, func, ddtFunc) {
         using Plotter = Graphics::Plotter;
         using Themes = Graphics::PlotThemeManager;
 
-        auto window = New<Graphics::Plot2DWindow>("Time-DFT space-average");
+        auto window = New<Graphics::FPlot2DWindow>("Time-DFT space-average", GuiWindow->GetGUIWindowContext());
         timeDFTAverageArtist =
-                Plotter::AddRtoRFunction(window, nullptr, Themes::GetCurrent()->funcPlotStyles[4], "⟨ℱₜ[ϕ]⟩ₓ(ω)", 15000);
-        timeDFTAverageArtist->setAffectGraphRanges(true);
+                Plotter::AddRtoRFunction(window, nullptr, Themes::GetCurrent()->FuncPlotStyles[4], "⟨ℱₜ[ϕ]⟩ₓ(ω)", 15000);
+        timeDFTAverageArtist->SetAffectGraphRanges(true);
         auto pdcArtist =
-                Plotter::AddRtoRFunction(window, Dummy(powerDecayCorrelation), Themes::GetCurrent()->funcPlotStyles[3], "Analytic", 4000);
-        pdcArtist->setAffectGraphRanges(false);
+                Plotter::AddRtoRFunction(window, Dummy(powerDecayCorrelation), Themes::GetCurrent()->FuncPlotStyles[3], "Analytic", 4000);
+        pdcArtist->SetAffectGraphRanges(false);
 
-        addWindow(window);
+        AddWindow(window);
 
         if(func != nullptr){
             t0 = (float)func->getDomain().yMin;
@@ -47,8 +47,8 @@ namespace Slab::Models::KGRtoR {
 
         if(function == nullptr) return;
 
-        Real t_0 = (Real)t0;
-        Real t_f = t_0 + (Real)Δt;
+        DevFloat t_0 = (DevFloat)t0;
+        DevFloat t_f = t_0 + (DevFloat)Δt;
 
         fix t_min = function->getDomain().yMin;
 
@@ -62,14 +62,14 @@ namespace Slab::Models::KGRtoR {
         fix Mₜ = function->getM();
         fix dt = function->getDomain().getLy()/Mₜ;
         fix δt = t_f - t_0;
-        fix M_ = (Count)floor(δt / dt);
+        fix M_ = (CountType)floor(δt / dt);
         fix M = M_%2==0 ? M_ : M_-1;
         fix m = M/2 + 1;
 
         fix dk = 2 * M_PI / δt;
 
         auto ωSpace_temp = New<Math::R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
-        Math::RtoR::NumericFunction_CPU tempSpace(M, .0, dk*(Real)M);
+        Math::RtoR::NumericFunction_CPU tempSpace(M, .0, dk*(DevFloat)M);
 
         fix j_0 = (Int)floor((t_0-t_min)/dt);
         for(auto i=0; i<N; ++i){
@@ -95,12 +95,12 @@ namespace Slab::Models::KGRtoR {
         auto avg_time_dft = Integral({Integral::Config::dx, true})[ωSpace_temp];
 
         timeDFTAverageArtist->setFunction(avg_time_dft);
-        timeDFTAverageArtist->setLabel(Str("∫dx ϕ(ω,x), ") + timeInterval);
+        timeDFTAverageArtist->SetLabel(Str("∫dx ϕ(ω,x), ") + timeInterval);
     }
 
-    void TimeFTViewer::draw() {
+    void TimeFTViewer::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         auto function = getFunction();
-        if(function== nullptr){ WindowPanel::draw(); return;}
+        if(function== nullptr){ WindowPanel::ImmediateDraw(PlatformWindow); return;}
 
         gui_window->AddExternalDraw([this](){
             auto function = getFunction();
@@ -170,11 +170,11 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::draw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void TimeFTViewer::setFunction(Pointer<Math::R2toR::NumericFunction> function) {
-        Viewer::setFunction(function);
+    void TimeFTViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
+        Viewer::SetFunction(function);
 
         t0 = (float)getFunction()->getDomain().yMin;
         Δt = (float)getFunction()->getDomain().getLy();
@@ -182,12 +182,12 @@ namespace Slab::Models::KGRtoR {
         if(isVisible()) compute();
     }
 
-    void TimeFTViewer::setFunctionDerivative(FuncPointer pointer) {
-        KGViewer::setFunctionDerivative(pointer);
+    void TimeFTViewer::SetFunctionDerivative(FuncPointer pointer) {
+        KGViewer::SetFunctionDerivative(pointer);
     }
 
-    void TimeFTViewer::notifyBecameVisible() {
-        Viewer::notifyBecameVisible();
+    void TimeFTViewer::NotifyBecameVisible() {
+        Viewer::NotifyBecameVisible();
 
         if(getFunction() != nullptr) compute();
     }

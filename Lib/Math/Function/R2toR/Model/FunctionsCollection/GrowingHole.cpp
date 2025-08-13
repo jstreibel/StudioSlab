@@ -6,11 +6,11 @@
 
 namespace Slab::Math::R2toR {
 
-    GrowingHoleFunc::GrowingHoleFunc(Real height, Real t) : t(t), height(height) {
+    GrowingHoleFunc::GrowingHoleFunc(DevFloat height, DevFloat t) : t(t), height(height) {
 
     }
 
-    Real GrowingHoleFunc::operator()(Real2D x) const {
+    DevFloat GrowingHoleFunc::operator()(Real2D x) const {
         auto r = x.norm();
 
         assert(r >= t);
@@ -19,7 +19,7 @@ namespace Slab::Math::R2toR {
     }
 
 
-    void GrowingHoleFunc::setTime(Real t) {
+    void GrowingHoleFunc::setTime(DevFloat t) {
         this->t = t;
     }
 
