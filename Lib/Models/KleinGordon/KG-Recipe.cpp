@@ -12,11 +12,11 @@
 
 namespace Slab::Models {
 
-    KGRecipe::KGRecipe(const TPointer<KGNumericConfig>& numeric_config,
+    KGRecipe::KGRecipe(const TPointer<FKGNumericConfig>& numeric_config,
                        const Str &name, const Str& generalDescription, bool doRegister)
             : NumericalRecipe(numeric_config, name, generalDescription, DONT_REGISTER)
-            , kg_numeric_config(numeric_config)
-            , device_config(DONT_REGISTER){
+            , KGNumericConfig(numeric_config)
+            , DeviceConfig(DONT_REGISTER){
 
         const auto default_theme = Slab::Graphics::PlotThemeManager::GetDefault();
         auto themes = Slab::Graphics::PlotThemeManager::GetThemes();
@@ -36,12 +36,12 @@ namespace Slab::Models {
                                   &TakeSpaceDFTSnapshot,
                                   &TakeTimeDFTSnapshot,
                                   // &timeDFTSnapshot_tStart,
-                                  &timeDFTSnapshot_tLength,
-                                  &timeDFTSnapshot_tDelta,
+                                  &TimeDFTSnapshot_tLength,
+                                  &TimeDFTSnapshot_tDelta,
                                   // &snapshotTime,
                                   });
 
-        Interface->AddSubInterface(device_config.GetInterface());
+        Interface->AddSubInterface(DeviceConfig.GetInterface());
 
         if (doRegister) {
             RegisterToManager();
@@ -51,13 +51,13 @@ namespace Slab::Models {
     auto KGRecipe::buildStepper() -> TPointer<Stepper> {
         auto solver = buildSolver();
 
-        return New <RungeKutta4> (solver, kg_numeric_config->Getdt());
+        return New <RungeKutta4> (solver, KGNumericConfig->Getdt());
     }
 
 
     void KGRecipe::notifyAllCLArgsSetupFinished() {
-        auto nThreads = device_config.get_nThreads();
-        auto N = kg_numeric_config->getN(); // This is good for 2D too because it is computed in stripes.
+        auto nThreads = DeviceConfig.get_nThreads();
+        auto N = KGNumericConfig->getN(); // This is good for 2D too because it is computed in stripes.
         if (N % nThreads != 0)
             throw Exception("Bad assertion N%nThreads. Expected 0 got "
                             + ToStr(N % nThreads) + ".");
@@ -75,7 +75,7 @@ namespace Slab::Models {
     void KGRecipe::setupForCurrentThread() {
         NumericalRecipe::setupForCurrentThread();
 
-        device_config.setupForThread();
+        DeviceConfig.setupForThread();
     }
 
 

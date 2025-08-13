@@ -45,10 +45,10 @@ namespace Slab::Models {
         /*RealParameter    timeDFTSnapshot_tStart         = RealParameter(0.0 , "time_dft_start",
                                                                         "Time domain dft starting time.");
                                                                         */
-        RealParameter    timeDFTSnapshot_tLength        = RealParameter(-1., "time_dft_length",
+        RealParameter    TimeDFTSnapshot_tLength        = RealParameter(-1., "time_dft_length",
                                                                         "Length of time-domain dft snapshots. If left "
                                                                         "negative, it is all from t=0.");
-        RealParameter    timeDFTSnapshot_tDelta         = RealParameter(-1., "time_dft_delta",
+        RealParameter    TimeDFTSnapshot_tDelta         = RealParameter(-1., "time_dft_delta",
                                                                          "Interval between each '--time_dft_snapshot'. "
                                                                          "Leave negative for one single dft snapshot at "
                                                                          "the end of the simulation.");
@@ -68,10 +68,10 @@ namespace Slab::Models {
         BoolParameter    VisualMonitor_startPaused      = BoolParameter(false, "p,visual_monitor_paused",
                                                                         "Start visual monitored simulation paused.");
 
-        TPointer<KGNumericConfig> kg_numeric_config;
-        Math::DeviceConfig device_config;
+        TPointer<FKGNumericConfig> KGNumericConfig;
+        Math::FDeviceConfig DeviceConfig;
     public:
-        explicit KGRecipe(const TPointer<KGNumericConfig>& numeric_config, const Str& name="Klein-Gordon",
+        explicit KGRecipe(const TPointer<FKGNumericConfig>& numeric_config, const Str& name="Klein-Gordon",
                           const Str& generalDescription="The Klein-Gordon scalar field equation builder",
                           bool doRegister=false);
 

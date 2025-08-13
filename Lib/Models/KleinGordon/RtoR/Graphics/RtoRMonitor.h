@@ -57,7 +57,7 @@ namespace Slab::Models::KGRtoR {
         void handleOutput(const OutputPacket &outInfo) override;
 
     public:
-        Monitor(const TPointer<KGNumericConfig> &params,
+        Monitor(const TPointer<FKGNumericConfig> &params,
                 KGEnergy &hamiltonian,
                 const Str& name = "general graphic monitor");
 

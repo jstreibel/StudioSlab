@@ -15,7 +15,7 @@
 namespace Slab::Models::KGRtoR {
 
     RtoRHistoryPanel::RtoRHistoryPanel
-    (const TPointer<KGNumericConfig> &params,
+    (const TPointer<FKGNumericConfig> &params,
      FGUIWindow &guiWindow,
      KGEnergy &hamiltonian)
     : FRtoRPanel(params, guiWindow, hamiltonian, "Histories", "Panel to view 1-d sections of histories.")

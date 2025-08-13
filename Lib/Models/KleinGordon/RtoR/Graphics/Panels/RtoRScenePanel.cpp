@@ -7,7 +7,7 @@
 #include "Graphics/Plot3D/Actors/R2toRFunctionActor.h"
 
 namespace Slab::Models::KGRtoR {
-    RtoRScenePanel::RtoRScenePanel(const TPointer<KGNumericConfig> &params,
+    RtoRScenePanel::RtoRScenePanel(const TPointer<FKGNumericConfig> &params,
                                    FGUIWindow &guiWindow,
                                    KGEnergy &hamiltonian)
     : FRtoRPanel(params, guiWindow, hamiltonian, "Scene", "3D view of some data")

@@ -21,7 +21,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    Monitor::Monitor(const TPointer<KGNumericConfig> &params, KGEnergy &hamiltonian, const Str &name)
+    Monitor::Monitor(const TPointer<FKGNumericConfig> &params, KGEnergy &hamiltonian, const Str &name)
     : BaseMonitor(params->getn(), Str("ℝ↦ℝ ") + name, 10)
     , hamiltonian(hamiltonian)
     , fullHistoryGraph(   Slab::New<FPlot2DWindow>("Full field history"))

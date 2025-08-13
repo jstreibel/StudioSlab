@@ -8,7 +8,7 @@
 namespace Slab::Models {
     using Core::Log;
 
-    KGNumericConfig::KGNumericConfig(bool do_register)
+    FKGNumericConfig::FKGNumericConfig(bool do_register)
             : DynamicsNumericConfig(false)
     {
         Interface->AddParameters({xCenter, rdt, dimMode, h});
@@ -16,19 +16,19 @@ namespace Slab::Models {
         if(do_register) RegisterToManager();
     }
 
-    auto KGNumericConfig::getxMin() const -> floatt { return **xCenter - **L * .5; }
+    auto FKGNumericConfig::getxMin() const -> floatt { return **xCenter - **L * .5; }
 
-    auto KGNumericConfig::getxMax() const -> floatt { return **xCenter + **L * .5; }
+    auto FKGNumericConfig::getxMax() const -> floatt { return **xCenter + **L * .5; }
 
-    auto KGNumericConfig::geth() const -> floatt {
+    auto FKGNumericConfig::geth() const -> floatt {
         return **h;
     }
 
-    auto KGNumericConfig::Getdt() const -> floatt {
+    auto FKGNumericConfig::Getdt() const -> floatt {
         return **rdt * **h;
     }
 
-    void KGNumericConfig::NotifyCLArgsSetupFinished() {
+    void FKGNumericConfig::NotifyCLArgsSetupFinished() {
         DynamicsNumericConfig::NotifyCLArgsSetupFinished();
 
         switch (**dimMode) {
@@ -50,15 +50,15 @@ namespace Slab::Models {
         n = UInt(round(**t / dt));
     }
 
-    Str KGNumericConfig::to_string() const {
+    Str FKGNumericConfig::to_string() const {
         const auto SEPARATOR = " ";
 
         return GetInterface()->ToString({"L", "N"}, SEPARATOR);
     }
 
-    auto KGNumericConfig::getr() const -> floatt { return **rdt; }
+    auto FKGNumericConfig::getr() const -> floatt { return **rdt; }
 
-    UInt KGNumericConfig::getn() const {
+    UInt FKGNumericConfig::getn() const {
         return n;
     }
 

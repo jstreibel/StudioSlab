@@ -7,7 +7,7 @@
 namespace Slab::Models::KGRtoR {
 
     FRtoRPanel::FRtoRPanel(
-        TPointer<KGNumericConfig>params,
+        TPointer<FKGNumericConfig>params,
         FGUIWindow &guiWindow,
         KGEnergy &hamiltonian,
         const Str &name,

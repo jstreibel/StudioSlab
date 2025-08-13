@@ -89,7 +89,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     auto Builder::NotifyCLArgsSetupFinished()    ->       void {
         FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
-        auto &p = *kg_numeric_config;
+        auto &p = *KGNumericConfig;
         const DevFloat L = p.GetL();
         const DevFloat dt = p.Getdt();
         const auto W₀ = *W_0;
@@ -110,7 +110,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     }
 
     auto Builder::buildOpenGLOutput() -> Models::KGR2toR::OutputOpenGL * {
-        return new OutGL(kg_numeric_config->getn(), ringDelta1);
+        return new OutGL(KGNumericConfig->getn(), ringDelta1);
     }
 
     Str Builder::SuggestFileName() const {

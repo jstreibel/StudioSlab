@@ -25,7 +25,7 @@ namespace Slab::Models::KGRtoR {
     class FRtoRPanel : public WindowPanel, public Socket {
     protected:
         FGUIWindow &guiWindow;
-        TPointer<KGNumericConfig> Params;
+        TPointer<FKGNumericConfig> Params;
         KGEnergy &Hamiltonian;
 
         R2toR::FNumericFunction_constptr simulationHistory;
@@ -38,7 +38,7 @@ namespace Slab::Models::KGRtoR {
         auto handleOutput(const OutputPacket &packet) -> void override;
 
     public:
-        FRtoRPanel(TPointer<KGNumericConfig>params,
+        FRtoRPanel(TPointer<FKGNumericConfig>params,
                   FGUIWindow &guiWindow,
                   KGEnergy &hamiltonian,
                   const Str &name,

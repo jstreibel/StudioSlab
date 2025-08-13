@@ -14,7 +14,7 @@ namespace Modes {
     using namespace Slab;
     using namespace Slab::Math;
 
-    using KGNumericConfig = Models::KGNumericConfig;
+    using KGNumericConfig = Models::FKGNumericConfig;
 
     class Monitor : public Slab::Models::KGRtoR::Monitor {
     public:

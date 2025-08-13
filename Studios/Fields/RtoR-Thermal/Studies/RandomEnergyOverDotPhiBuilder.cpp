@@ -20,8 +20,8 @@ namespace Studios::Fields::RtoRThermal {
     }
 
     auto RandomEnergyOverDotPhiBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
-        auto N = kg_numeric_config->getN();
-        auto h = kg_numeric_config->geth();
+        auto N = KGNumericConfig->getN();
+        auto h = KGNumericConfig->geth();
         auto dotPhi = newFunctionArbitrary();
 
         auto &p = dotPhi->getSpace().getHostData(false);

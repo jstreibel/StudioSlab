@@ -20,7 +20,7 @@ namespace Slab::Models::KGRtoR {
         TPointer<Graphics::FPlot2DWindow> kSpaceHistory;
 
     public:
-        RtoRHistoryPanel(const TPointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian);
+        RtoRHistoryPanel(const TPointer<FKGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian);
 
         void ImmediateDraw(const FPlatformWindow&) override;
 

@@ -70,7 +70,7 @@ namespace Slab::Models::KGRtoR {
     };
 
     FKGRtoR_Recipe::FKGRtoR_Recipe(const Str &name, const Str& generalDescription, bool doRegister)
-            : Models::KGRecipe(New<KGNumericConfig>(false), "RtoR-" + name, generalDescription,
+            : Models::KGRecipe(New<FKGNumericConfig>(false), "RtoR-" + name, generalDescription,
                                DONT_REGISTER_IMMEDIATELY) {
         Interface->AddParameters({&Potential, &massSqr, &N_num, &BoundaryConditions});
 
@@ -91,7 +91,7 @@ namespace Slab::Models::KGRtoR {
         // if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
         // else                Core::BackendManager::Startup("Headless");
 
-        const KGNumericConfig &p = dynamic_cast<KGNumericConfig&>(*NumericConfig);
+        const FKGNumericConfig &p = dynamic_cast<FKGNumericConfig&>(*NumericConfig);
 
         fix t = p.gett();
         fix max_steps = p.getn();
@@ -189,19 +189,19 @@ namespace Slab::Models::KGRtoR {
     }
 
     Vector<TPointer<Socket>> FKGRtoR_Recipe::getTimeDFTSnapshots() {
-        auto &c = *kg_numeric_config;
+        auto &c = *KGNumericConfig;
 
         fix t = c.gett();
 
-        fix Δt    = *timeDFTSnapshot_tDelta  <= 0 ? t : *timeDFTSnapshot_tDelta;
-        fix t_len = *timeDFTSnapshot_tLength <= 0 ? t : *timeDFTSnapshot_tLength;
+        fix Δt    = *TimeDFTSnapshot_tDelta  <= 0 ? t : *TimeDFTSnapshot_tDelta;
+        fix t_len = *TimeDFTSnapshot_tLength <= 0 ? t : *TimeDFTSnapshot_tLength;
 
         const CountType snapshot_count = std::ceil(t / Δt);
 
         if(snapshot_count>MAX_SNAPSHOTS)
             throw Exception(
                     Str("Error generating time-domain dft snapshots. The value of '--") +
-                            timeDFTSnapshot_tDelta.getCommandLineArgumentName(true) + "' is " + timeDFTSnapshot_tDelta.ValueToString() +
+                            TimeDFTSnapshot_tDelta.getCommandLineArgumentName(true) + "' is " + TimeDFTSnapshot_tDelta.ValueToString() +
                     ", yielding a snapshot count of " + ToStr(snapshot_count) + ", which is above the " +
                 ToStr(MAX_SNAPSHOTS) + " limit.");
 
@@ -248,12 +248,12 @@ namespace Slab::Models::KGRtoR {
         const auto snapshotFilename = folder + SuggestFileName();
         TimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, t_start, t_end};
 
-        fix &conf = *kg_numeric_config;
+        fix &conf = *KGNumericConfig;
         return Slab::New<CenterTimeDFTOutput>(conf.gett(), conf.getn(), dftConfig);
     }
 
     RtoR::NumericFunction_ptr FKGRtoR_Recipe::newFunctionArbitrary() const {
-        fix &conf = *kg_numeric_config;
+        fix &conf = *KGNumericConfig;
 
         const size_t N = conf.getN();
         const floatt xLeft = conf.getxMin();
@@ -263,11 +263,11 @@ namespace Slab::Models::KGRtoR {
                              ? RtoR::NumericFunction::Standard1D_PeriodicBorder
                              : RtoR::NumericFunction::Standard1D_FixedBorder;
 
-        if (device_config == CPU)
+        if (DeviceConfig == CPU)
             return Math::DataAlloc<RtoR::NumericFunction_CPU>("IntegrationData", N, xLeft, xRight, laplacianType);
 
 #if USE_CUDA == true
-        if(device_config == Device::GPU)
+        if(DeviceConfig == Device::GPU)
             return New<RtoR::NumericFunctionGPU>(N, xLeft, xRight, laplacianType);
 #endif
 
@@ -299,7 +299,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     auto FKGRtoR_Recipe::BuildOpenGLOutput() -> void * {
-        return new Monitor(kg_numeric_config, *static_cast<KGEnergy *>(getHamiltonian()));
+        return new Monitor(KGNumericConfig, *static_cast<KGEnergy *>(getHamiltonian()));
     }
 
     auto FKGRtoR_Recipe::getInitialState() const -> KGRtoR::EquationState_ptr {

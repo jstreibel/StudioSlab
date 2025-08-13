@@ -24,7 +24,7 @@ namespace Slab::Models::KGRtoR {
     class FRealtimePanel : public FRtoRPanel {
 
     public:
-        FRealtimePanel(const TPointer<KGNumericConfig> &Params,
+        FRealtimePanel(const TPointer<FKGNumericConfig> &Params,
                       KGEnergy &Hamiltonian,
                       Graphics::FGUIWindow &GUIWindow);
 
