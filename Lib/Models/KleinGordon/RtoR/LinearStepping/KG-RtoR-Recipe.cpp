@@ -171,7 +171,7 @@ namespace Slab::Models::KGRtoR {
                                                      ftHistory->GetDFTDataHistory());
             }
 
-            const auto WindowManager = New<SlabWindowManager>();
+            const auto WindowManager = New<FSlabWindowManager>();
             GuiBackend->GetMainSystemWindow()->AddAndOwnEventListener(WindowManager);
 
             auto Window = TPointer<FSlabWindow>(outputOpenGL);

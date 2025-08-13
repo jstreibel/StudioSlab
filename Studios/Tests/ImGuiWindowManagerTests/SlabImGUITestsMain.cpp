@@ -37,7 +37,7 @@ protected:
 
         Slab::TPointer<Slab::Graphics::FWindowManager> WindowManager;
         if constexpr (false)
-            WindowManager = Slab::New<Slab::Graphics::SlabWindowManager>();
+            WindowManager = Slab::New<Slab::Graphics::FSlabWindowManager>();
         else
             WindowManager = Slab::New<Slab::Graphics::FImGuiWindowManager>(ImGuiContext);
 

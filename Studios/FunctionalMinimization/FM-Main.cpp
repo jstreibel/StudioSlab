@@ -55,7 +55,7 @@ void setup_viewer(Slab::TPointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
     ground_style.filled = false;
     Slab::Graphics::Plotter::AddRtoRFunction(plot_window, trajectory, ground_style, "ground truth");
 
-    auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
+    auto wm = Slab::New<Slab::Graphics::FSlabWindowManager>();
     wm->AddSlabWindow(plot_window, false);
 
     Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->AddAndOwnEventListener(wm);

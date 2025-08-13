@@ -101,7 +101,7 @@ namespace Slab::Models::KGR2toR {
 
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
 
-            const auto WindowManager = New<Graphics::SlabWindowManager>();
+            const auto WindowManager = New<Graphics::FSlabWindowManager>();
             Backend->GetMainSystemWindow()->AddAndOwnEventListener(WindowManager);
 
             WindowManager->AddSlabWindow(glOut, false);

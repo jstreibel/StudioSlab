@@ -41,7 +41,7 @@ namespace Slab::Graphics {
     };
 
     class FSlabWindow : protected Core::UniqueObject, public FPlatformWindowEventListener {
-        friend class SlabWindowManager;
+        friend class FSlabWindowManager;
 
         [[nodiscard]] bool SetupViewport(const FPlatformWindow& PlatformWindow) const;
 

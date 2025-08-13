@@ -26,7 +26,7 @@ void setup_viewer(Slab::TPointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
     plot_window->NotifyReshape(1200, 800);
     Slab::Graphics::Plotter::AddRtoRFunction(plot_window, field,      Themes::GetCurrent()->FuncPlotStyles[0], "functional");
 
-    auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
+    auto wm = Slab::New<Slab::Graphics::FSlabWindowManager>();
     wm->AddSlabWindow(plot_window, false);
 
     Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->AddAndOwnEventListener(wm);

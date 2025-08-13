@@ -12,37 +12,37 @@
 
 namespace Slab::Graphics {
 
-    class SlabWindowManager final : public FWindowManager {
-        struct WindowMetaInformation {
+    class FSlabWindowManager final : public FWindowManager {
+        struct FWindowMetaInformation {
             TPointer<FSlabWindow> Window= nullptr;
             bool is_full_screen = false;
             bool is_hidden = false;
 
-            bool operator<(const WindowMetaInformation &rhs) const;
-            bool operator>(const WindowMetaInformation &rhs) const;
-            bool operator<=(const WindowMetaInformation &rhs) const;
-            bool operator>=(const WindowMetaInformation &rhs) const;
-            bool operator==(const WindowMetaInformation &rhs) const;
+            bool operator<(const FWindowMetaInformation &rhs) const;
+            bool operator>(const FWindowMetaInformation &rhs) const;
+            bool operator<=(const FWindowMetaInformation &rhs) const;
+            bool operator>=(const FWindowMetaInformation &rhs) const;
+            bool operator==(const FWindowMetaInformation &rhs) const;
             bool operator==(const std::nullptr_t &rhs) const;
         };
 
-        TList<TPointer<WindowMetaInformation>> SlabWindows;
+        TList<TPointer<FWindowMetaInformation>> SlabWindows;
 
         FDecorator Decorator;
 
         Int WidthSysWin=10, HeightSysWin=10;
 
-        TPointer<WindowMetaInformation> CurrentlyFocused;
+        TPointer<FWindowMetaInformation> CurrentlyFocused;
         using Anchor = Point2D;
         struct Grabbed {Anchor anchor; enum What {None, Titlebar, Corner} what; TPointer<FSlabWindow> window;} Grabbed;
 
         TPointer<FMouseState> MouseState;
 
     public:
-        explicit SlabWindowManager();
-        ~SlabWindowManager() override = default;
+        explicit FSlabWindowManager();
+        ~FSlabWindowManager() override = default;
 
-        void SetFocus(const TPointer<WindowMetaInformation>&);
+        void SetFocus(const TPointer<FWindowMetaInformation>&);
 
         void AddSlabWindow(const TPointer<FSlabWindow>&, bool hidden) override;
 

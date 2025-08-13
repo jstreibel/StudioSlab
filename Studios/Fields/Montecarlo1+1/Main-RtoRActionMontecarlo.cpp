@@ -50,7 +50,7 @@ void setup_viewer(const Slab::TPointer<Slab::Math::R2toR::NumericFunction_CPU>& 
     viewer->addViewer(Slab::New<Slab::Graphics::FourierViewer>(viewer->getGUIWindow()));
     viewer->setFunction(field);
 
-    auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
+    auto wm = Slab::New<Slab::Graphics::FSlabWindowManager>();
     wm->AddSlabWindow(plot_window, false);
     wm->AddSlabWindow(viewer, false);
 

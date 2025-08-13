@@ -46,7 +46,7 @@ namespace Slab::Models::MolecularDynamics {
 
         const auto MainPlatformWindow = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
 
-        const auto WindowManager = New<Graphics::SlabWindowManager>();
+        const auto WindowManager = New<Graphics::FSlabWindowManager>();
         MainPlatformWindow->AddAndOwnEventListener(WindowManager);
 
         WindowManager->AddSlabWindow(TPointer<Graphics::FSlabWindow>(monitor), false);

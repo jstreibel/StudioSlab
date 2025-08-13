@@ -17,7 +17,7 @@
 namespace Slab::Graphics {
     Fix AnimationTimeInSeconds = 0.25;
 
-    SlabWindowManager::SlabWindowManager()
+    FSlabWindowManager::FSlabWindowManager()
     : FWindowManager()
     , Grabbed()
     , MouseState(New<FMouseState>())
@@ -25,15 +25,15 @@ namespace Slab::Graphics {
         AddResponder(MouseState);
     }
 
-    void SlabWindowManager::AddSlabWindow(const TPointer<FSlabWindow>& slab_window, bool hidden) {
-        const auto MetaWinData = New<WindowMetaInformation>(slab_window, false, hidden);
+    void FSlabWindowManager::AddSlabWindow(const TPointer<FSlabWindow>& slab_window, bool hidden) {
+        const auto MetaWinData = New<FWindowMetaInformation>(slab_window, false, hidden);
 
         SlabWindows.push_back(MetaWinData);
 
         if(CurrentlyFocused == nullptr) SetFocus(MetaWinData);
     }
 
-    bool SlabWindowManager::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+    bool FSlabWindowManager::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         if(CurrentlyFocused == nullptr) return false;
 
         if(key==Key_F11 && state==Release)
@@ -107,11 +107,11 @@ namespace Slab::Graphics {
         return CurrentlyFocused->Window->NotifyKeyboard(key, state, modKeys);
     }
 
-    bool SlabWindowManager::NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) {
+    bool FSlabWindowManager::NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) {
         FWindowManager::NotifyMouseButton(button, state, keys); // Update delegates
 
         if(state==Press) {
-            const auto First = FindFirst_If(SlabWindows, [this](const TPointer<WindowMetaInformation> &meta) {
+            const auto First = FindFirst_If(SlabWindows, [this](const TPointer<FWindowMetaInformation> &meta) {
                 fix is_mouse_in = meta->Window->IsMouseInside();
                 fix is_decorated = !(meta->Window->GetFlags() & SlabWindowNoDecoration);
                 fix is_mouse_over_grab_region = Decorator.IsMouseOverGrabRegion(*meta->Window,
@@ -144,7 +144,7 @@ namespace Slab::Graphics {
         return CurrentlyFocused->Window->NotifyMouseButton(button, state, keys);
     }
 
-    bool SlabWindowManager::NotifyMouseMotion(int x, int y, int dx, int dy) {
+    bool FSlabWindowManager::NotifyMouseMotion(int x, int y, int dx, int dy) {
         FWindowManager::NotifyMouseMotion(x, y, dx, dy); // Update delegates
 
         if(Grabbed.window != nullptr) {
@@ -181,7 +181,7 @@ namespace Slab::Graphics {
         return CurrentlyFocused->Window->NotifyMouseMotion(x, y, dx, dy);
     }
 
-    bool SlabWindowManager::NotifyMouseWheel(double dx, double dy) {
+    bool FSlabWindowManager::NotifyMouseWheel(double dx, double dy) {
         FWindowManager::NotifyMouseWheel(dx, dy); // Update delegates
 
         if(CurrentlyFocused == nullptr) return false;
@@ -189,11 +189,11 @@ namespace Slab::Graphics {
         return CurrentlyFocused->Window->NotifyMouseWheel(dx, dy);
     }
 
-    bool SlabWindowManager::NotifyFilesDropped(StrVector paths) {
+    bool FSlabWindowManager::NotifyFilesDropped(StrVector paths) {
         return false;
     }
 
-    bool SlabWindowManager::NotifySystemWindowReshape(int w, int h) {
+    bool FSlabWindowManager::NotifySystemWindowReshape(int w, int h) {
         WidthSysWin = w;
         HeightSysWin = h;
 
@@ -213,7 +213,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool SlabWindowManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
+    bool FSlabWindowManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
         Decorator.SetSystemWindowShape(WidthSysWin, HeightSysWin);
 
         for (IN MetaSlabWindow : std::ranges::reverse_view(SlabWindows)) {
@@ -225,7 +225,7 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void SlabWindowManager::SetFocus(const TPointer<WindowMetaInformation>& meta)
+    void FSlabWindowManager::SetFocus(const TPointer<FWindowMetaInformation>& meta)
     {
         if(CurrentlyFocused != nullptr) CurrentlyFocused->Window->NotifyBecameInactive();
 
@@ -238,31 +238,31 @@ namespace Slab::Graphics {
     }
 
     bool
-    SlabWindowManager::WindowMetaInformation::operator<(const WindowMetaInformation &rhs) const {
+    FSlabWindowManager::FWindowMetaInformation::operator<(const FWindowMetaInformation &rhs) const {
         return Window < rhs.Window;
     }
 
     bool
-    SlabWindowManager::WindowMetaInformation::operator>(const WindowMetaInformation &rhs) const {
+    FSlabWindowManager::FWindowMetaInformation::operator>(const FWindowMetaInformation &rhs) const {
         return rhs < *this;
     }
 
     bool
-    SlabWindowManager::WindowMetaInformation::operator<=(const WindowMetaInformation &rhs) const {
+    FSlabWindowManager::FWindowMetaInformation::operator<=(const FWindowMetaInformation &rhs) const {
         return !(rhs < *this);
     }
 
     bool
-    SlabWindowManager::WindowMetaInformation::operator>=(const WindowMetaInformation &rhs) const {
+    FSlabWindowManager::FWindowMetaInformation::operator>=(const FWindowMetaInformation &rhs) const {
         return !(*this < rhs);
     }
 
     bool
-    SlabWindowManager::WindowMetaInformation::operator==(const WindowMetaInformation &rhs) const {
+    FSlabWindowManager::FWindowMetaInformation::operator==(const FWindowMetaInformation &rhs) const {
         return Window==rhs.Window;
     }
 
-    bool SlabWindowManager::WindowMetaInformation::operator==(std::nullptr_t const &rhs) const {
+    bool FSlabWindowManager::FWindowMetaInformation::operator==(std::nullptr_t const &rhs) const {
         return Window==rhs;
     }
 } // Slab::Graphics
