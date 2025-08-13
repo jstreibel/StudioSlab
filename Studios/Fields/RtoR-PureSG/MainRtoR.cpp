@@ -31,7 +31,7 @@ int run(int argc, const char **argv) {
     /* sim 4 */selector.registerOption(option4->GetInterface());
 
     auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
-    auto input    = dynamic_cast<KGRtoRBuilder*>(selectedInterface->GetOwner());
+    auto input    = dynamic_cast<FKGRtoR_Recipe*>(selectedInterface->GetOwner());
     auto inputPtr = KGRtoRBuilder_ptr(input);
 
     auto prog = MathApp(argc, argv, inputPtr);

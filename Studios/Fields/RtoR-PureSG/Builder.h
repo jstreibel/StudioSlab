@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_PURESG_BUILDER_H
 #define STUDIOSLAB_PURESG_BUILDER_H
 
-#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoR-Recipe.h"
 
 namespace Studios::PureSG {
 
@@ -13,7 +13,7 @@ namespace Studios::PureSG {
     using namespace Slab::Math;
     using namespace Slab::Models::KGRtoR;
 
-    class Builder : public KGRtoRBuilder {
+    class Builder : public FKGRtoR_Recipe {
 
     public:
         Builder(const Str &name, const Str &generalDescription, bool doRegister=false);

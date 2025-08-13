@@ -22,7 +22,7 @@ namespace Modes {
     // using namespace Slab::Models;
 
     NumericalRecipe_Ak2::NumericalRecipe_Ak2(bool doRegister)
-    : KGRtoR::KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
+    : KGRtoR::FKGRtoR_Recipe("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
         Interface->AddParameters({&BCSelection, &Ak2, &wavelengths, &driving_force});
 
@@ -30,7 +30,7 @@ namespace Modes {
     }
 
     Math::Base::BoundaryConditions_ptr NumericalRecipe_Ak2::GetBoundary() {
-        auto prototype = KGRtoR::KGRtoRBuilder::NewFieldState();
+        auto prototype = KGRtoR::FKGRtoR_Recipe::NewFieldState();
 
         fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->GetL();
         fix λ = L / (DevFloat)*wavelengths;;
@@ -130,7 +130,7 @@ namespace Modes {
         // if(*BCSelection == 1) params.emplace_back("harmonic");
 
         auto strParams = Interface->ToString(params, SEPARATOR);
-        return KGRtoR::KGRtoRBuilder::SuggestFileName() + SEPARATOR + strParams;
+        return KGRtoR::FKGRtoR_Recipe::SuggestFileName() + SEPARATOR + strParams;
     }
 
     TPointer<Base::FunctionT<DevFloat, DevFloat>> NumericalRecipe_Ak2::GetNonHomogenousTerm() {

@@ -8,7 +8,7 @@ set ( KG_SOURCES
         KleinGordon/__archive__/KG-Langevin.h
         KleinGordon/RtoR-Montecarlo/Montecarlo-Lorentz-2ndOrder.h
 
-        KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.cpp
+        KleinGordon/RtoR/LinearStepping/KG-RtoR-Recipe.cpp
         KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.cpp
         KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.cpp
         KleinGordon/RtoR/LinearStepping/KG-RtoRBoundaryCondition.cpp

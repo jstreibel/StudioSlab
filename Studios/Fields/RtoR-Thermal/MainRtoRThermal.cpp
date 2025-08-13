@@ -18,7 +18,7 @@ int run(int argc, const char **argv){
     using namespace Studios::Fields::RtoRThermal;
 
     CLInterfaceSelector selector("Dynamic thermal");
-    Vector<Slab::Models::KGRtoR::KGRtoRBuilder*>
+    Vector<Slab::Models::KGRtoR::FKGRtoR_Recipe*>
             options = { new StatisticalBuilder,
                         new MachineGunBuilder,
                         new ManyOscillonsBuilder,
@@ -27,7 +27,7 @@ int run(int argc, const char **argv){
     for(auto &opt : options)
         selector.registerOption(opt->GetInterface());
 
-    auto selection = dynamic_cast<Slab::Models::KGRtoR::KGRtoRBuilder*>(
+    auto selection = dynamic_cast<Slab::Models::KGRtoR::FKGRtoR_Recipe*>(
             selector.preParse(argc, argv).getCurrentCandidate()->GetOwner());
 
     auto prog = MathApp(argc, argv, Slab::Models::KGRtoR::KGRtoRBuilder_ptr(selection));

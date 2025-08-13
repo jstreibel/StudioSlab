@@ -16,7 +16,7 @@ namespace Modes {
     // using namespace Slab::Models;
 
     FNumericalRecipe_PlaneWaves::FNumericalRecipe_PlaneWaves()
-    : KGRtoRBuilder("Plane Waves", "Analytic plane waves initial condition", DONT_REGISTER)
+    : FKGRtoR_Recipe("Plane Waves", "Analytic plane waves initial condition", DONT_REGISTER)
     {
         Interface->AddParameters({&Q, &harmonic});
 
@@ -42,7 +42,7 @@ namespace Modes {
 
         const auto StrParams = Interface->ToString(Params, SEPARATOR);
 
-        return KGRtoRBuilder::SuggestFileName() + SEPARATOR + StrParams;
+        return FKGRtoR_Recipe::SuggestFileName() + SEPARATOR + StrParams;
     }
 
 } // Modes

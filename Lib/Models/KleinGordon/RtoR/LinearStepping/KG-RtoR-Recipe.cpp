@@ -2,7 +2,7 @@
 // Created by joao on 10/18/21.
 //
 
-#include "KG-RtoRBuilder.h"
+#include "KG-RtoR-Recipe.h"
 
 #include <utility>
 
@@ -68,7 +68,7 @@ namespace Slab::Models::KGRtoR {
         }
     };
 
-    KGRtoRBuilder::KGRtoRBuilder(const Str &name, const Str& generalDescription, bool doRegister)
+    FKGRtoR_Recipe::FKGRtoR_Recipe(const Str &name, const Str& generalDescription, bool doRegister)
             : Models::KGRecipe(New<KGNumericConfig>(false), "RtoR-" + name, generalDescription,
                                DONT_REGISTER_IMMEDIATELY) {
         Interface->AddParameters({&Potential, &massSqr, &N_num, &BoundaryConditions});
@@ -76,7 +76,7 @@ namespace Slab::Models::KGRtoR {
         if (doRegister) RegisterCLInterface(Interface);
     }
 
-    auto KGRtoRBuilder::BuildOutputSockets() -> Vector<TPointer<Socket>> {
+    auto FKGRtoR_Recipe::BuildOutputSockets() -> Vector<TPointer<Socket>> {
         Vector<TPointer<Socket>> Sockets;
 
         UseScientificNotation = false;
@@ -186,7 +186,7 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    Vector<TPointer<Socket>> KGRtoRBuilder::getTimeDFTSnapshots() {
+    Vector<TPointer<Socket>> FKGRtoR_Recipe::getTimeDFTSnapshots() {
         auto &c = *kg_numeric_config;
 
         fix t = c.gett();
@@ -239,7 +239,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     TPointer<Socket>
-    KGRtoRBuilder::_newTimeDFTSnapshotOutput(const Str& folder, const DevFloat t_start, const DevFloat t_end, const FRealVector &x_locations) const {
+    FKGRtoR_Recipe::_newTimeDFTSnapshotOutput(const Str& folder, const DevFloat t_start, const DevFloat t_end, const FRealVector &x_locations) const {
 
         Utils::TouchFolder(folder);
 
@@ -250,7 +250,7 @@ namespace Slab::Models::KGRtoR {
         return Slab::New<CenterTimeDFTOutput>(conf.gett(), conf.getn(), dftConfig);
     }
 
-    RtoR::NumericFunction_ptr KGRtoRBuilder::newFunctionArbitrary() const {
+    RtoR::NumericFunction_ptr FKGRtoR_Recipe::newFunctionArbitrary() const {
         fix &conf = *kg_numeric_config;
 
         const size_t N = conf.getN();
@@ -272,12 +272,12 @@ namespace Slab::Models::KGRtoR {
         throw Exception("Error while instantiating Field: device not recognized.");
     }
 
-    EquationState_ptr KGRtoRBuilder::NewFieldState() const {
+    EquationState_ptr FKGRtoR_Recipe::NewFieldState() const {
         return New<EquationState>(this->newFunctionArbitrary(),
                                        this->newFunctionArbitrary());
     }
 
-    TPointer<Base::LinearStepSolver> KGRtoRBuilder::buildSolver() {
+    TPointer<Base::LinearStepSolver> FKGRtoR_Recipe::buildSolver() {
         auto potential = getPotential();
         auto nonHomogenous = GetNonHomogenousTerm();
         auto dphi = GetBoundary();
@@ -296,11 +296,11 @@ namespace Slab::Models::KGRtoR {
         return solver;
     }
 
-    auto KGRtoRBuilder::BuildOpenGLOutput() -> void * {
+    auto FKGRtoR_Recipe::BuildOpenGLOutput() -> void * {
         return new Monitor(kg_numeric_config, *static_cast<KGEnergy *>(getHamiltonian()));
     }
 
-    auto KGRtoRBuilder::getInitialState() const -> KGRtoR::EquationState_ptr {
+    auto FKGRtoR_Recipe::getInitialState() const -> KGRtoR::EquationState_ptr {
         auto u_0 = NewFieldState();
 
         u_0->SetPhi(RtoR::NullFunction());
@@ -309,14 +309,14 @@ namespace Slab::Models::KGRtoR {
         return u_0;
     }
 
-    void *KGRtoRBuilder::getHamiltonian() {
+    void *FKGRtoR_Recipe::getHamiltonian() {
         static auto potential = RtoR::Function_ptr(getPotential());
         static auto hamiltonian = new KGEnergy(potential);
 
         return hamiltonian;
     }
 
-    RtoR::Function_ptr KGRtoRBuilder::getPotential() const {
+    RtoR::Function_ptr FKGRtoR_Recipe::getPotential() const {
         if (*Potential == MASSLESS_WAVE_EQ) {
             return Slab::New<RtoR::NullFunction>();
         }
@@ -335,23 +335,23 @@ namespace Slab::Models::KGRtoR {
         throw Exception("Unknown potential");
     }
 
-    TPointer<Base::FunctionT<DevFloat, DevFloat>> KGRtoRBuilder::GetNonHomogenousTerm() {
+    TPointer<Base::FunctionT<DevFloat, DevFloat>> FKGRtoR_Recipe::GetNonHomogenousTerm() {
         return {};
     }
 
-    void KGRtoRBuilder::SetLaplacianPeriodicBC() {
+    void FKGRtoR_Recipe::SetLaplacianPeriodicBC() {
         Log::Attention() << "KGBuilder Laplacian forced to PERIODIC borders." << Log::Flush;
         force_periodicBC = true;
     }
 
-    void KGRtoRBuilder::SetLaplacianFixedBC() {
+    void FKGRtoR_Recipe::SetLaplacianFixedBC() {
         // Log::Info() << "KGBuilder Laplacian set to FIXED borders." << Log::Flush;
         force_periodicBC = false;
     }
 
-    bool KGRtoRBuilder::usesPeriodicBC() const { return force_periodicBC; }
+    bool FKGRtoR_Recipe::usesPeriodicBC() const { return force_periodicBC; }
 
-    Str KGRtoRBuilder::SuggestFileName() const {
+    Str FKGRtoR_Recipe::SuggestFileName() const {
         const auto strParams = Interface->ToString({"massSqr"}, " ");
         Log::Debug() << strParams << Log::Flush;
         const auto voidSuggestion = NumericalRecipe::SuggestFileName();

@@ -20,7 +20,7 @@
 namespace Modes {
 
     Signal_Ak2_Recipe::Signal_Ak2_Recipe(bool doRegister)
-    : KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
+    : FKGRtoR_Recipe("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
         Interface->AddParameters(TList<FCommandLineParameter*>{&A, &omega});
 
@@ -71,7 +71,7 @@ namespace Modes {
         const StrVector params = {A.getCommandLineArgumentName(false), omega.getCommandLineArgumentName(false)};
 
         const auto strParams = Interface->ToString(params, SEPARATOR);
-        return KGRtoRBuilder::SuggestFileName() + SEPARATOR + strParams;
+        return FKGRtoR_Recipe::SuggestFileName() + SEPARATOR + strParams;
     }
 
 } // Modes
