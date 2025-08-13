@@ -178,7 +178,7 @@ namespace Slab::Graphics {
 
         auto writer = std::make_shared<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 17);
 
-        WindowStyle::windowBGColor = {};
+        WindowStyle::WindowBGColor = {};
 
         return New<PlottingTheme>(PlottingTheme
                 {background, graphNumbersColor, graphTitleColor, axisColor, tickColor, XHairStyle, gridLinesScheme, gridLinesScheme,
@@ -357,7 +357,7 @@ Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 90
     }
 
     GraphTheme_ptr GetSchemeElegant() {
-        WindowStyle::windowBGColor = {.9, .9, .93, 1};
+        WindowStyle::WindowBGColor = {.9, .9, .93, 1};
         WindowStyle::windowBorderColor_inactive = {0.2,0.2,0.2,1};
         WindowStyle::windowBorderColor_active   = {0. ,0. ,0. ,1};
 

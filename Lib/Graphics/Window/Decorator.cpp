@@ -43,29 +43,29 @@ namespace Slab::Graphics {
     }
 
     void FDecorator::BeginDecoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
-        auto flags = slab_window.GetFlags();
-        fix should_clear    = !(flags & SlabWindowDontClear);
-        fix should_decorate = !(flags & SlabWindowNoDecoration);
+        fix Flags = slab_window.GetFlags();
+        fix ShouldClear    = !(Flags & SlabWindowDontClear);
+        fix ShouldDecorate = !(Flags & SlabWindowNoDecoration);
 
-        if(!should_clear) return;
+        if(!ShouldClear) return;
 
-        fix title_height = should_decorate ? Title_Height : 0; // // 34 = 24x => x=34/24
-        fix borders_size = should_decorate ? WindowStyle::border_size : 0;
+        fix TitleHeight = ShouldDecorate ? Title_Height : 0; // // 34 = 24x => x=34/24
+        fix BordersSize = ShouldDecorate ? WindowStyle::BorderSize : 0;
 
         Setup();
 
         auto rect = slab_window.GetViewport();
-        auto x = rect.xMin - borders_size,
-             y = rect.yMin - borders_size - title_height,
-             w = rect.GetWidth()  + 2*borders_size,
-             h = rect.GetHeight() + 2*borders_size + title_height;
+        auto x = rect.xMin - BordersSize,
+             y = rect.yMin - BordersSize - TitleHeight,
+             w = rect.GetWidth()  + 2*BordersSize,
+             h = rect.GetHeight() + 2*BordersSize + TitleHeight;
 
         // *** CLEAR ***********************************
-        auto &bg = WindowStyle::windowBGColor;
+        auto &BackgroundColor = WindowStyle::WindowBGColor;
 
         glBegin(GL_QUADS);
         {
-            glColor4d(bg.r, bg.g, bg.b, bg.a);
+            glColor4d(BackgroundColor.r, BackgroundColor.g, BackgroundColor.b, BackgroundColor.a);
             glVertex2d(x, y);
             glVertex2d(x+w, y);
             glVertex2d(x+w, y+h);
@@ -81,7 +81,7 @@ namespace Slab::Graphics {
         if(!should_decorate) return;
 
         fix title_height = Title_Height; // // 34 = 24x => x=34/24
-        fix borders_size = WindowStyle::border_size;
+        fix borders_size = WindowStyle::BorderSize;
 
         auto rect = slab_window.GetViewport();
         auto x = rect.xMin - borders_size,
@@ -147,19 +147,19 @@ namespace Slab::Graphics {
     bool FDecorator::IsMouseOverTitlebar(const FSlabWindow &window, int x_mouse, int y_mouse) {
         fix rect = window.GetViewport();
 
-        auto x_full = rect.xMin - WindowStyle::border_size,
-             y_full = rect.yMin - WindowStyle::border_size - Title_Height,
-             w_full = rect.GetWidth()  + 2*WindowStyle::border_size;
+        auto x_full = rect.xMin - WindowStyle::BorderSize,
+             y_full = rect.yMin - WindowStyle::BorderSize - Title_Height,
+             w_full = rect.GetWidth()  + 2*WindowStyle::BorderSize;
 
         return x_mouse>x_full && x_mouse<x_full+w_full && y_mouse>y_full && y_mouse<y_full+Title_Height;    }
 
     bool FDecorator::IsMouseOverCorner(const FSlabWindow &window, int x_mouse, int y_mouse) {
         fix rect = window.GetViewport();
 
-        auto x_full = rect.xMin - WindowStyle::border_size,
-             y_full = rect.yMin - WindowStyle::border_size - Title_Height,
-             h_full = rect.GetHeight() + 2*WindowStyle::border_size + Title_Height,
-             w_full = rect.GetWidth()  + 2*WindowStyle::border_size;
+        auto x_full = rect.xMin - WindowStyle::BorderSize,
+             y_full = rect.yMin - WindowStyle::BorderSize - Title_Height,
+             h_full = rect.GetHeight() + 2*WindowStyle::BorderSize + Title_Height,
+             w_full = rect.GetWidth()  + 2*WindowStyle::BorderSize;
 
         return x_mouse>x_full+w_full-corner_size
             && x_mouse<x_full+w_full
