@@ -8,6 +8,8 @@
 #include "Graphics/Plot2D/Plot2DWindow.h"
 
 #include <utility>
+
+#include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
 #include "Graphics/Plot2D/Util/PlotStyleGUI.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 
@@ -23,12 +25,11 @@ namespace Slab::Graphics {
 
         graph2D.RequireLabelOverlay(GetLabel(), Naked(plotStyle));
 
-        OpenGL::Legacy::PushLegacyMode();
+        OpenGL::Legacy::FShaderGuard Guard{};
+
         OpenGL::Legacy::SetupOrtho(graph2D.GetRegion().getRect());
 
         bool bResult = OpenGL::Legacy::RenderPointSett(pointSet, plotStyle);
-
-        OpenGL::Legacy::RestoreFromLegacyMode();
 
         return bResult;
     }

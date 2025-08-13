@@ -9,6 +9,7 @@
 
 #include <utility>
 #include "3rdParty/ImGui.h"
+#include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/Plot2D/Util/PlotStyleGUI.h"
 
@@ -33,10 +34,11 @@ namespace Slab::Graphics {
             auto style = section_data.style;
             auto name = section_data.name;
 
-            OpenGL::Legacy::PushLegacyMode();
-            OpenGL::Legacy::SetupOrtho(PlotWindow.GetRegion().getRect());
-            OpenGL::Legacy::FunctionRenderere::RenderSection(*function2D, *section, *style, samples);
-            OpenGL::Legacy::RestoreFromLegacyMode();
+            {
+                OpenGL::Legacy::FShaderGuard Guard{};
+                OpenGL::Legacy::SetupOrtho(PlotWindow.GetRegion().getRect());
+                OpenGL::Legacy::FunctionRenderere::RenderSection(*function2D, *section, *style, samples);
+            }
 
             PlotWindow.RequireLabelOverlay(name, style);
         }

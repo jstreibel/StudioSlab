@@ -9,6 +9,7 @@
 
 #include <utility>
 
+#include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 
 namespace Slab::Graphics {
@@ -23,14 +24,13 @@ namespace Slab::Graphics {
     bool ParametricCurve2DArtist::Draw(const FPlot2DWindow &PlotWindow) {
         if(curve == nullptr) return false;
 
-        OpenGL::Legacy::PushLegacyMode();
+        OpenGL::Legacy::FShaderGuard Guard{};
+
         OpenGL::Legacy::SetupOrtho(PlotWindow.GetRegion().getRect());
 
-        auto pointSet = curve.get()->renderToPointSet();
+        auto PointSet = curve.get()->renderToPointSet();
 
-        bool bReturnValue = OpenGL::Legacy::RenderPointSett(pointSet, plotStyle);
-
-        OpenGL::Legacy::RestoreFromLegacyMode();
+        bool bReturnValue = OpenGL::Legacy::RenderPointSett(PointSet, plotStyle);
 
         return bReturnValue;
     }

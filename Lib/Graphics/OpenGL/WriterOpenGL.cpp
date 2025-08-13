@@ -81,6 +81,8 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void FWriterOpenGL::SetBufferText(const Str &textStr, Point2D pen, FColor Color, bool Rotate90Degrees) {
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
+
         VertexBuffer.clear();
 
         size_t i;
@@ -119,7 +121,7 @@ namespace Slab::Graphics::OpenGL {
                                             {(float) x1, (float) y1, 0, s0, t1, r, g, b, a},
                                             {(float) x1, (float) y0, 0, s1, t1, r, g, b, a}};
 
-                    VertexBuffer.pushBack(vertices, 4, indices, 6);
+                    VertexBuffer.PushBack(vertices, 4, indices, 6);
 
                     pen.y += glyph->advance_x;
                 }
@@ -141,16 +143,20 @@ namespace Slab::Graphics::OpenGL {
                                             {(float) x1, (float) y1, 0, s1, t1, r, g, b, a},
                                             {(float) x1, (float) y0, 0, s1, t0, r, g, b, a}};
 
-                    VertexBuffer.pushBack(vertices, 4, indices, 6);
+                    VertexBuffer.PushBack(vertices, 4, indices, 6);
 
                     pen.x += glyph->advance_x;
                 }
             }
         }
 
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
+
         if(Font->atlas_dirty) {
             UploadAtlas();
         }
+
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
     }
 
     void FWriterOpenGL::DrawBuffer() {
@@ -171,14 +177,14 @@ namespace Slab::Graphics::OpenGL {
 
     }
 
-    void FWriterOpenGL::Write(const Str &text, Point2D pen, FColor color, bool vertical) {
-        if(text.empty()) return;
+    void FWriterOpenGL::Write(const Str &Text, const Point2D PenLocation, const FColor Color, const bool Vertical) {
+        if(Text.empty()) return;
 
-        SetBufferText(text, pen, color, vertical);
-        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
+        SetBufferText(Text, PenLocation, Color, Vertical);
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
 
         DrawBuffer();
-        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
     }
 
     DevFloat FWriterOpenGL::GetFontHeightInPixels() const { return Font->height; }

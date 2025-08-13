@@ -8,6 +8,7 @@
 
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/Utils.h"
+#include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/Plot2D/PlotStyle.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
@@ -59,7 +60,7 @@ namespace Slab::Graphics {
     void FLabelsArtist::draw_label(PlotStyle &style, const Str& label, const RectI &viewport) {
         OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
-        OpenGL::Legacy::PushLegacyMode();
+        OpenGL::Legacy::FShaderGuard Guard{};
 
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
@@ -139,8 +140,6 @@ namespace Slab::Graphics {
 
         glMatrixMode(GL_PROJECTION);
         glPopMatrix();
-
-        OpenGL::Legacy::RestoreFromLegacyMode();
     }
 
     void

@@ -404,7 +404,7 @@ namespace Slab::Graphics::OpenGL {
         return index;
     }
 
-    size_t FVertexBuffer::pushBack(const void *_vertices, const size_t vcount,
+    size_t FVertexBuffer::PushBack(const void *_vertices, const size_t vcount,
                                 const GLuint *_indices, const size_t icount) {
 
         return insert( vector_size( items ), _vertices, vcount, _indices, icount );

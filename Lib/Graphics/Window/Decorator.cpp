@@ -8,6 +8,7 @@
 #include "WindowStyles.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Core/Tools/Resources.h"
+#include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
 
 namespace Slab::Graphics {
@@ -37,113 +38,126 @@ namespace Slab::Graphics {
         glLoadIdentity();
 
         OpenGL::Legacy::SetupOrtho({0, static_cast<DevFloat>(SysWin_Width), static_cast<DevFloat>(SysWin_Height), 0});
+
+        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
     }
 
-    void FDecorator::BeginDecoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
-        fix Flags = slab_window.GetFlags();
+    void FDecorator::BeginDecoration(const FSlabWindow &SlabWindow, int x_mouse, int y_mouse) {
+        fix Flags = SlabWindow.GetFlags();
         fix ShouldClear    = !(Flags & SlabWindowDontClear);
         fix ShouldDecorate = !(Flags & SlabWindowNoDecoration);
 
         if(!ShouldClear) return;
 
-        fix TitleHeight = ShouldDecorate ? Title_Height : 0; // // 34 = 24x => x=34/24
-        fix BordersSize = ShouldDecorate ? WindowStyle::BorderSize : 0;
-
-        OpenGL::Legacy::PushLegacyMode();
-        Setup();
-
-        auto rect = slab_window.GetViewport();
-        auto x = rect.xMin - BordersSize,
-             y = rect.yMin - BordersSize - TitleHeight,
-             w = rect.GetWidth()  + 2*BordersSize,
-             h = rect.GetHeight() + 2*BordersSize + TitleHeight;
-
-        // *** CLEAR ***********************************
-        auto &BackgroundColor = WindowStyle::WindowBGColor;
-
-        glBegin(GL_QUADS);
         {
-            glColor4d(BackgroundColor.r, BackgroundColor.g, BackgroundColor.b, BackgroundColor.a);
-            glVertex2d(x, y);
-            glVertex2d(x+w, y);
-            glVertex2d(x+w, y+h);
-            glVertex2d(x, y+h);
+            OpenGL::Legacy::FShaderGuard Guard{};
+
+            fix TitleHeight = ShouldDecorate ? Title_Height : 0;
+            fix BordersSize = ShouldDecorate ? WindowStyle::BorderSize : 0;
+
+            Setup();
+
+            auto rect = SlabWindow.GetViewport();
+            auto x = rect.xMin - BordersSize,
+                 y = rect.yMin - BordersSize - TitleHeight,
+                 w = rect.GetWidth()  + 2*BordersSize,
+                 h = rect.GetHeight() + 2*BordersSize + TitleHeight;
+
+            // *** CLEAR ***********************************
+            auto &BackgroundColor = WindowStyle::WindowBGColor;
+
+            glBegin(GL_QUADS);
+            {
+                glColor4d(BackgroundColor.r, BackgroundColor.g, BackgroundColor.b, BackgroundColor.a);
+                glVertex2d(x, y);
+                glVertex2d(x+w, y);
+                glVertex2d(x+w, y+h);
+                glVertex2d(x, y+h);
+            }
+            glEnd();
         }
-        glEnd();
-        OpenGL::Legacy::RestoreFromLegacyMode();
     }
 
-    void FDecorator::FinishDecoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
-        fix Flags = slab_window.GetFlags();
-        fix ShouldDecorate = !(Flags & SlabWindowNoDecoration);
+    void FDecorator::FinishDecoration(const FSlabWindow &SlabWindow, int x_mouse, int y_mouse) {
+        fix Flags = SlabWindow.GetFlags();
 
-        if(!ShouldDecorate) return;
+        if(fix ShouldDecorate = !(Flags & SlabWindowNoDecoration); !ShouldDecorate) return;
 
         fix TitleHeight = Title_Height; // // 34 = 24x => x=34/24
         fix BordersSize = WindowStyle::BorderSize;
 
-        auto rect = slab_window.GetViewport();
-        auto x = rect.xMin - BordersSize,
-             y = rect.yMin - BordersSize - TitleHeight,
-             w = rect.GetWidth()  + 2*BordersSize,
-             h = rect.GetHeight() + 2*BordersSize + TitleHeight;
+        fix Viewport = SlabWindow.GetViewport();
+        fix x = Viewport.xMin - BordersSize,
+            y = Viewport.yMin - BordersSize - TitleHeight,
+            w = Viewport.GetWidth()  + 2*BordersSize,
+            h = Viewport.GetHeight() + 2*BordersSize + TitleHeight;
 
-        OpenGL::Legacy::PushLegacyMode();
-        Setup();
-
-        // *** DECORATE ********************************
-
-        glLineWidth(2.0f);
-
-        // *** Borders ***
-        glBegin(GL_LINE_LOOP);
+        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
+        if constexpr (true)
         {
-            auto bc = slab_window.IsActive() ? WindowStyle::windowBorderColor_active
-                                             : WindowStyle::windowBorderColor_inactive;
+            OpenGL::Legacy::FShaderGuard Guard{};
 
-            glColor4fv(bc.asFloat4fv());
+            Setup();
 
-            glVertex2d(x, y);
-            glVertex2d(x+w, y);
-            glVertex2d(x+w, y+h);
-            glVertex2d(x, y+h);
-        }
-        glEnd();
+            // *** DECORATE ********************************
 
-        // *** Title bar ***
-        glColor4fv(WindowStyle::titlebar_color.asFloat4fv());
-        glBegin(GL_QUADS);
-        {
-            glVertex2d(x, y);
-            glVertex2d(x+w, y);
-            glVertex2d(x+w, y + Title_Height);
-            glVertex2d(x, y + Title_Height);
-        }
-        glEnd();
+            glLineWidth(2.0f);
 
-        // *** Resize ***
-        if(IsMouseOverCorner(slab_window, x_mouse, y_mouse)) {
-            glBegin(GL_TRIANGLES);
+            // *** Borders ***
+            glBegin(GL_LINE_LOOP);
             {
-                glVertex2d(x + w - corner_size, y + h);
-                glVertex2d(x + w, y + h);
-                glVertex2d(x + w, y + h - corner_size);
+                auto bc = SlabWindow.IsActive() ? WindowStyle::windowBorderColor_active
+                                                 : WindowStyle::windowBorderColor_inactive;
+
+                glColor4fv(bc.asFloat4fv());
+
+                glVertex2d(x, y);
+                glVertex2d(x+w, y);
+                glVertex2d(x+w, y+h);
+                glVertex2d(x, y+h);
             }
             glEnd();
-        }
-        OpenGL::Legacy::RestoreFromLegacyMode();
 
-        fix FontHeightInPixels = Writer.GetFontHeightInPixels();
-        fix FontColor = FColor(32./255,32./255,32./255, 1);
-        Writer.Write(slab_window.GetTitle(),
+            // *** Title bar ***
+            glColor4fv(WindowStyle::titlebar_color.asFloat4fv());
+            glBegin(GL_QUADS);
             {
-                static_cast<DevFloat>(x)+WindowStyle::font_size/2,
-                SysWin_Height-static_cast<DevFloat>(y) - FontHeightInPixels
-            },
-            FontColor);
+                glVertex2d(x, y);
+                glVertex2d(x+w, y);
+                glVertex2d(x+w, y + Title_Height);
+                glVertex2d(x, y + Title_Height);
+            }
+            glEnd();
+
+            // *** Resize ***
+            if(IsMouseOverCorner(SlabWindow, x_mouse, y_mouse)) {
+                glBegin(GL_TRIANGLES);
+                {
+                    glVertex2d(x + w - corner_size, y + h);
+                    glVertex2d(x + w, y + h);
+                    glVertex2d(x + w, y + h - corner_size);
+                }
+                glEnd();
+            }
+            OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
+        }
+        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
+
+        if constexpr (true)
+        {
+            fix FontHeightInPixels = Writer.GetFontHeightInPixels();
+            fix FontColor = FColor(32./255,32./255,32./255, 1);
+
+            Writer.Write(SlabWindow.GetTitle(),
+                {
+                    static_cast<DevFloat>(x)+WindowStyle::font_size/2,
+                    SysWin_Height-static_cast<DevFloat>(y) - FontHeightInPixels
+                },
+                FontColor);
+        }
     }
 
-    void FDecorator::SetSystemWindowShape(int w, int h) {
+    void FDecorator::SetSystemWindowShape(const int w, const int h) {
         SysWin_Width = w;
         SysWin_Height = h;
 

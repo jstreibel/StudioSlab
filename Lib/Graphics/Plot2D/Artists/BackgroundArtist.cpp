@@ -4,6 +4,7 @@
 
 #include "BackgroundArtist.h"
 
+#include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
@@ -15,7 +16,7 @@ namespace Slab::Graphics {
 
     bool BackgroundArtist::Draw(const FPlot2DWindow &window) {
 
-        OpenGL::Legacy::PushLegacyMode();
+        OpenGL::Legacy::FShaderGuard Guard{};
 
         OpenGL::Legacy::PushScene();
         OpenGL::Legacy::SetupOrtho({0,1,0,1});
@@ -31,8 +32,6 @@ namespace Slab::Graphics {
         glEnd();
 
         OpenGL::Legacy::PopScene();
-
-        OpenGL::Legacy::RestoreFromLegacyMode();
 
         return true;
     }

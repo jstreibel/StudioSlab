@@ -182,7 +182,7 @@ namespace Slab::Graphics {
             }
         }
 
-        buffer.pushBack(&vertices[0], vertices.size(), &indices[0], indices.size());
+        buffer.PushBack(&vertices[0], vertices.size(), &indices[0], indices.size());
     }
 
     R2toRFunctionActor::GridMetadata

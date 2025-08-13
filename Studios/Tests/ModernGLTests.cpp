@@ -39,7 +39,7 @@ namespace Tests {
             {-0.65f, +0.65f,   tMin, tMax},
         };
 
-        buffer.pushBack(square, 4, indices, 6);
+        buffer.PushBack(square, 4, indices, 6);
 
         for(auto i=0; i<texDim; ++i){
             fix x = i/(float)texDim;

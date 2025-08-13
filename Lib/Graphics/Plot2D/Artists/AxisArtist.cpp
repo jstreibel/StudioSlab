@@ -15,6 +15,8 @@
 
 #include <utility>
 
+#include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
+
 
 #define hPixelsToSpaceScale (region.width() / vp.GetWidth())
 #define vPixelsToSpaceScale (region.height() / vp.GetHeight())
@@ -139,7 +141,8 @@ namespace Slab::Graphics {
 
         {
             // Draw axes
-            OpenGL::Legacy::PushLegacyMode();
+            OpenGL::Legacy::FShaderGuard Guard{};
+
             OpenGL::Legacy::SetupOrtho(graph.GetRegion().getRect());
             {
                 const auto &ac = currStyle->axisColor;
@@ -167,7 +170,6 @@ namespace Slab::Graphics {
                 }
                 glEnd();
             }
-            OpenGL::Legacy::RestoreFromLegacyMode();
         }
 
         // Draw axis name
@@ -233,9 +235,10 @@ namespace Slab::Graphics {
         }
 
 
-        OpenGL::Legacy::PushLegacyMode();
-        OpenGL::Legacy::SetupOrtho(graph.GetRegion().getRect());
         {
+            OpenGL::Legacy::FShaderGuard Guard{};
+            OpenGL::Legacy::SetupOrtho(graph.GetRegion().getRect());
+
             glPushAttrib(GL_ENABLE_BIT);
             glDisable(GL_LINE_SMOOTH);
 
@@ -283,7 +286,6 @@ namespace Slab::Graphics {
             glEnd();
             glPopAttrib();
         }
-        OpenGL::Legacy::RestoreFromLegacyMode();
 
         // Draw axis name
         {

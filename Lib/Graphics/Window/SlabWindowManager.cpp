@@ -69,8 +69,8 @@ namespace Slab::Graphics {
                 CurrentlyFocused->Window->SetDecorate(true);
                 CurrentlyFocused->is_full_screen = false;
             } else  {
-                fix w = w_system_window;
-                fix h = h_system_window - WindowStyle::menu_height;
+                fix w = WidthSysWin;
+                fix h = HeightSysWin - WindowStyle::menu_height;
                 fix x = 0;
                 fix y = WindowStyle::menu_height;
 
@@ -152,8 +152,8 @@ namespace Slab::Graphics {
                 fix x_min = -Grabbed.window->GetWidth() + 200;
                 fix y_min = Decorator.TitlebarHeight() + WindowStyle::menu_height;
 
-                fix x_max = w_system_window-200;
-                fix y_max = h_system_window-200;
+                fix x_max = WidthSysWin-200;
+                fix y_max = HeightSysWin-200;
 
                 fix x_new = Min(Max(x - (int) p.x, x_min), (int)x_max);
                 fix y_new = Min(Max(y - (int) p.y, y_min), (int)y_max);
@@ -190,8 +190,8 @@ namespace Slab::Graphics {
     }
 
     bool SlabWindowManager::NotifySystemWindowReshape(int w, int h) {
-        w_system_window = w;
-        h_system_window = h;
+        WidthSysWin = w;
+        HeightSysWin = h;
 
         Decorator.SetSystemWindowShape(w, h);
 
@@ -210,6 +210,8 @@ namespace Slab::Graphics {
     }
 
     bool SlabWindowManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
+        Decorator.SetSystemWindowShape(WidthSysWin, HeightSysWin);
+
         for (IN MetaSlabWindow : std::ranges::reverse_view(SlabWindows)) {
             Decorator.BeginDecoration(*MetaSlabWindow->Window, MouseState->x, MouseState->y);
             MetaSlabWindow->Window->ImmediateDraw(PlatformWindow);

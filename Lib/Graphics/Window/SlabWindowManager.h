@@ -30,7 +30,7 @@ namespace Slab::Graphics {
 
         FDecorator Decorator;
 
-        Int w_system_window=10, h_system_window=10;
+        Int WidthSysWin=10, HeightSysWin=10;
 
         TPointer<WindowMetaInformation> CurrentlyFocused;
         using Anchor = Point2D;
