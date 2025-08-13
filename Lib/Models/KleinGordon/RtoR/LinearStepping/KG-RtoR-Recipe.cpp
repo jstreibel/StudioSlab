@@ -14,6 +14,7 @@
 
 #include "KG-RtoRSolver.h"
 #include "KG-RtoRBoundaryCondition.h"
+#include "Graphics/Window/SingleWindowManager.h"
 
 #include "Math/Data/DataAllocator.h"
 #include "Math/Numerics/ODE/Output/Format/BinarySOF.h"
@@ -171,7 +172,8 @@ namespace Slab::Models::KGRtoR {
                                                      ftHistory->GetDFTDataHistory());
             }
 
-            const auto WindowManager = New<FSlabWindowManager>();
+            // const auto WindowManager = New<FSlabWindowManager>();
+            const auto WindowManager = New<FSingleWindowManager>();
             GuiBackend->GetMainSystemWindow()->AddAndOwnEventListener(WindowManager);
 
             auto Window = TPointer<FSlabWindow>(outputOpenGL);
