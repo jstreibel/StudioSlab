@@ -16,10 +16,10 @@ namespace Studios::PureSG {
         Interface->AddParameters({&v, &V, &alpha, &lambda, &mirror});
     }
 
-    auto InputSingleOscillon::getBoundary() -> Math::Base::BoundaryConditions_ptr {
+    auto InputSingleOscillon::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
         // RtoR::AnalyticOscillon oscillon =
 
-        auto proto = newFieldState();
+        auto proto = NewFieldState();
 
         return New<BoundaryCondition>(proto,
             RtoR::AnalyticOscillon(0.0, *v, *V, *alpha, false, false, RtoR::AnalyticOscillon::Bit::phi).Clone(),

@@ -256,8 +256,7 @@ namespace Slab::Graphics {
         return Window==rhs.Window;
     }
 
-    bool SlabWindowManager::WindowMetaInformation::operator==(std::
-        nullptr_t const &rhs) const {
+    bool SlabWindowManager::WindowMetaInformation::operator==(std::nullptr_t const &rhs) const {
         return Window==rhs;
     }
 } // Slab::Graphics

@@ -32,17 +32,17 @@ namespace Modes {
 
         TPointer<Modes::SquareWave> squareWave;
     protected:
-        auto buildOpenGLOutput() -> void * override;
+        auto BuildOpenGLOutput() -> void * override;
 
     public:
-        auto suggestFileName() const -> Str override;
+        auto SuggestFileName() const -> Str override;
 
     public:
         explicit NumericalRecipe_Ak2(bool doRegister=true);
 
-        auto getBoundary() -> Slab::Math::Base::BoundaryConditions_ptr override;
+        auto GetBoundary() -> Slab::Math::Base::BoundaryConditions_ptr override;
 
-        TPointer<Base::FunctionT<DevFloat, DevFloat>> getNonHomogenous() override;
+        TPointer<Base::FunctionT<DevFloat, DevFloat>> GetNonHomogenousTerm() override;
 
         auto NotifyCLArgsSetupFinished() -> void override;
     };

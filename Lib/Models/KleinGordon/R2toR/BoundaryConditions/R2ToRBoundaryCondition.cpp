@@ -24,8 +24,8 @@ namespace Slab::Math {
 
     void R2toR::BoundaryCondition::apply_KGR2toR(EquationState &fieldState, DevFloat t) const {
         if (t == 0.0) {
-            fieldState.setPhi(*initialPhiCondition);
-            fieldState.setDPhiDt(*initialdPhiDtCondition);
+            fieldState.SetPhi(*initialPhiCondition);
+            fieldState.SetDPhiDt(*initialdPhiDtCondition);
         } else {
 
         }

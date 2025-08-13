@@ -10,6 +10,8 @@ add_executable ( Fields-RtoR-Modes
         Sim/BoundaryCondition.h
         Sim/SquareWave.cpp
         Sim/SquareWave.h
+        Sim/Recipes/NumericalRecipe_PlaneWaves.cpp
+        Sim/Recipes/NumericalRecipe_PlaneWaves.h
 )
 target_link_libraries ( Fields-RtoR-Modes Slab )
 message(NOTICE "Added executable Fields-RtoR-Modes")
@@ -43,6 +45,21 @@ add_executable ( Fields-RtoR-Modes-wkA
 target_compile_definitions(Fields-RtoR-Modes-wkA PRIVATE FIELDS_MODES_wkA)
 target_link_libraries ( Fields-RtoR-Modes-wkA Slab )
 message(NOTICE "Added executable Fields-RtoR-Modes-wkA")
+
+add_executable ( Fields-RtoR-PlaneWaves
+        Sim/Main-RtoR-Modes.cpp
+        Sim/Recipes/NumericalRecipe_PlaneWaves.cpp
+        Sim/Recipes/NumericalRecipe_PlaneWaves.h
+        Sim/Monitor.cpp
+        Sim/Monitor.h
+        Sim/BoundaryCondition.cpp
+        Sim/BoundaryCondition.h
+        Sim/SquareWave.cpp
+        Sim/SquareWave.h
+)
+target_compile_definitions(Fields-RtoR-PlaneWaves PRIVATE FIELDS_MODES_PlaneWaves)
+target_link_libraries ( Fields-RtoR-PlaneWaves Slab )
+message(NOTICE "Added executable Fields-RtoR-PlaneWaves")
 
 
 add_executable ( RtoR-SnapshotDBViewer

@@ -8,7 +8,7 @@
 namespace Slab::Math::Base {
 
     EquationState &LinearStepSolver::applyBC(EquationState &state, DevFloat t, DevFloat dt) {
-        du->apply(state, t);
+        du->Apply(state, t);
         return state;
     }
 

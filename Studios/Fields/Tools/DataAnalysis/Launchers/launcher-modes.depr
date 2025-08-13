@@ -9,15 +9,13 @@ Created on Thu May 10 19:19:17 2018
 import subprocess
 import os
 
-from numpy import pi, sqrt
+from numpy import unique, linspace
 import time
 from datetime import timedelta
 import argparse
+import ast
 
 import sys
-
-from sympy.physics.quantum.sho1d import omega
-
 script_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(script_dir)
 print(parent_dir)
@@ -33,34 +31,38 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--t', '-t',
                     help="Total simulation time per simulation.",
                     type=float,
-                    default=10)
+                    default=3.5)
 parser.add_argument('--L', '-L',
                     help="Simulation width.",
                     type=float,
-                    default=10.0)
+                    default=7.0)
 parser.add_argument('--N', '-N',
                     help="Simulation resolution.",
                     type=int,
                     default=2 ** 12)
 parser.add_argument('--V', '-V',
-                    help="Potential (default: SG). 2:SG; 1:KG; 0:massless",
+                    help="Potential (default: SG).",
                     type=int,
                     default=SignumGordonPotential)
 parser.add_argument('--A', '-A',
                     help="Amplitude of oscillation.",
                     type=float,
                     default=1.0)
-parser.add_argument('--n_modes', '-n',
-                    help="Sweep omega=2πn/L (n_min, n_max). Example \'--n_modes 5 100\' will sweep "
-                         "\'omega\' from 10π/L to 200π/L steps.",
-                    nargs=2,
-                    type=int,
-                    default=(1, 10))
+parser.add_argument('--omega', '-w',
+                    help="Sweep ω in n steps (omega_min, omega_max, steps). Example \'--omega 0.2 0.4 10\' will sweep "
+                         "\'ω\' from 0.2 to 0.4 in 10 steps.",
+                    nargs=3,
+                    type=float,
+                    default=(0, 0, 1))
+parser.add_argument('--k', '-k',
+                    help="Sweep k in n steps. Same as for \'ω\'.",
+                    nargs=3,
+                    type=float,
+                    default=(0.5, 0.5, 1.0))
 parser.add_argument('--max_procs',
                     help="Maximum number of parallel running programs.",
                     type=int,
                     default=7)
-parser.add_argument('--show_outputs', '-s', help="Show stdout and stderr from process.", action='store_true')
 
 
 args = parser.parse_args()
@@ -73,28 +75,25 @@ N = args.N
 V = args.V
 
 A = args.A
-n_min, n_max = args.n_modes
+omega_min, omega_max, omega_steps = args.omega
+omega_steps = int(omega_steps)
+k_min, k_max, k_steps = args.k
+k_steps = int(k_steps)
 sim_list = []
 
-show_outputs = args.show_outputs
-
 f = '{:.6f}'.format
+for omega in unique(linspace(omega_min, omega_max, omega_steps)):
+    for k in unique(linspace(k_min, k_max, k_steps)):
 
-for n in range(n_min, n_max+1):
-    arg_list = ["Fields-RtoR-Modes-wkA",
-                '--dev=0',
-                '-t' + f(t), '-L' + f(L), '-N'+str(N),
-                '-A' + f(A),
-                '-w' + str(n),
-                '--th=1',
-                '--dft_snapshot',
-                '--outN='+str(N),
-                '--BC=0',                # Fixed BC
-                '--boundary_condition=0', # Signal
-                '-V'+str(V)]
+        arg_list = ["Fields-RtoR-Modes",
+                    '--dev=0',
+                    '-t' + f(t), '-L' + f(L), '-N'+str(N),
+                    '-A' + f(A),
+                    '--omega='+f(omega),
+                    '--th=1', '--dft_snapshot', '--outN=2000', '--BC=0', '-V'+str(V), '--mass=1']
 
-    sim_info = (n,)
-    sim_list.append((arg_list, sim_info))
+        sim_info = (omega, k)
+        sim_list.append((arg_list, sim_info))
 
 
 proc_tuples = []
@@ -105,15 +104,12 @@ n = 0
 while len(sim_list) or not (len(dead_procs) == total):
     while not len(proc_tuples) == MAX_PROCS and len(sim_list):
         sim = sim_list.pop()
-        sim_info_str = utils.yellow('n=%i' % (sim[1]))
+        sim_info_str = utils.yellow('ω=%.5f k=%.5f' % (sim[1]))
         program_call = sim[0]
 
-        print(total - len(sim_list), '/', total, ' STARTING with', sim_info_str, ' '.join(program_call), end='. ')
+        print(total - len(sim_list), '/', total, ' STARTING with', sim_info_str, program_call, end='. ')
 
-        #output = subprocess.DEVNULL
-        output = subprocess.PIPE
-
-        proc = subprocess.Popen(program_call, stdout=output, stderr=output, text=True)
+        proc = subprocess.Popen(program_call, stdout=subprocess.PIPE)
         proc_tuples.append((proc, time.time()))
 
         print('PID', proc.pid, end=". ")
@@ -146,21 +142,9 @@ while len(sim_list) or not (len(dead_procs) == total):
             if not success:
                 out, err = proc.communicate()
                 print("\n\n\n")
-                #print(out.decode('utf-8'))
-                print(out)
-                print("\nErr:\n")
-                #print(err.decode('utf-8'))
-                print(err)
+                print(out.decode('utf-8'))
                 print("\n\n\n")
 
-        elif show_outputs:
-            output = proc.stdout.readline().strip()
-            if output == '' and proc.poll() is not None:
-                pass
-            else:
-                print("({}) ".format(proc.pid) + output)
-
-    if not show_outputs:
-        time.sleep(.1)
+    time.sleep(.1)
 
 print('\n\nAll done.\n\n')

@@ -19,14 +19,14 @@ namespace Studios::Fields::RtoRThermal {
         Interface->AddParameters({&E});
     }
 
-    auto RandomEnergyOverDotPhiBuilder::getBoundary() -> Base::BoundaryConditions_ptr {
+    auto RandomEnergyOverDotPhiBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
         auto N = kg_numeric_config->getN();
         auto h = kg_numeric_config->geth();
         auto dotPhi = newFunctionArbitrary();
 
         auto &p = dotPhi->getSpace().getHostData(false);
 
-        auto proto = newFieldState();
+        auto proto = NewFieldState();
 
         if (1) {
             DevFloat E_rand = .0;

@@ -19,7 +19,7 @@ namespace Studios::PureSG {
         Builder(const Str &name, const Str &generalDescription, bool doRegister=false);
 
     protected:
-        auto buildOpenGLOutput() -> void * override;
+        auto BuildOpenGLOutput() -> void * override;
     };
 
 } // PureSG

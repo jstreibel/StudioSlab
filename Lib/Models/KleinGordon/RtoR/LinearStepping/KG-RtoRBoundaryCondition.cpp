@@ -4,6 +4,8 @@
 
 #include "KG-RtoRBoundaryCondition.h"
 
+#include <utility>
+
 
 namespace Slab::Models::KGRtoR {
 
@@ -15,16 +17,20 @@ namespace Slab::Models::KGRtoR {
                                                RtoR::Function_ptr leftdPhiDtBoundaryCondition,
                                                RtoR::Function_ptr rightPhiBoundaryCondition,
                                                RtoR::Function_ptr rightdPhiDtBoundaryCondition)
-    : Base::BoundaryConditions(prototype), initialPhiCondition(initialPhiCondition)
-    , leftPhiBoundaryCondition(leftPhiBoundaryCondition), rightPhiBoundaryCondition(rightPhiBoundaryCondition)
-    , initialdPhiDtCondition(initialdPhiDtCondition), leftdPhiDtBoundaryCondition(leftdPhiDtBoundaryCondition)
-    , rightdPhiDtBoundaryCondition(rightdPhiDtBoundaryCondition) { }
+    : Base::BoundaryConditions(prototype)
+    , initialPhiCondition(          std::move(initialPhiCondition)          )
+    , leftPhiBoundaryCondition(     std::move(leftPhiBoundaryCondition)     )
+    , rightPhiBoundaryCondition(    std::move(rightPhiBoundaryCondition)    )
+    , initialdPhiDtCondition(       std::move(initialdPhiDtCondition)       )
+    , leftdPhiDtBoundaryCondition(  std::move(leftdPhiDtBoundaryCondition)  )
+    , rightdPhiDtBoundaryCondition( std::move(rightdPhiDtBoundaryCondition) )
+    { }
 
 
-    void BoundaryCondition::applyKG(EquationState &kgState, DevFloat t) const {
+    void BoundaryCondition::ApplyKG(EquationState &kgState, DevFloat t) const {
         if (t == 0.0) {
-            kgState.setPhi(*initialPhiCondition);
-            kgState.setDPhiDt(*initialdPhiDtCondition);
+            kgState.SetPhi(*initialPhiCondition);
+            kgState.SetDPhiDt(*initialdPhiDtCondition);
         } else {
             kgState.getPhi();
 
@@ -36,10 +42,10 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void BoundaryCondition::apply(Base::EquationState &state, const floatt t) const {
-        auto &kgState = dynamic_cast<KGRtoR::EquationState&>(state);
+    void BoundaryCondition::Apply(Base::EquationState &state, const DevFloat t) const {
+        auto &KGState = dynamic_cast<EquationState&>(state);
 
-        this->applyKG(kgState, t);
+        this->ApplyKG(KGState, t);
 
     }
 

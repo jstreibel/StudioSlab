@@ -13,9 +13,6 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# clang-toolchain.cmake
-#set(CMAKE_C_COMPILER /usr/bin/clang)
-#set(CMAKE_CXX_COMPILER /usr/bin/clang++)
 
 # Enable modules and other flags if supported by the compiler
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -163,9 +160,9 @@ else()
 	message(STATUS "Not using -O3 flag (CMake build type is ${CMAKE_BUILD_TYPE})")
 endif()
 
-message(STATUS "StudioSlab building for ${CMAKE_SYSTEM_NAME} target system")
-message(STATUS "StudioSlab building with C compiler ${CMAKE_C_COMPILER_ID} @ ${CMAKE_C_COMPILER}")
-message(STATUS "StudioSlab building with C++ compiler ${CMAKE_CXX_COMPILER_ID} @ ${CMAKE_CXX_COMPILER}")
+message(STATUS "Building for ${CMAKE_SYSTEM_NAME} target system")
+message(STATUS "C compiler: ${CMAKE_C_COMPILER_ID} @ ${CMAKE_C_COMPILER}")
+message(STATUS "C++ compiler: ${CMAKE_CXX_COMPILER_ID} @ ${CMAKE_CXX_COMPILER}")
 add_compile_definitions(USED_C_COMPILER="${CMAKE_C_COMPILER}") 	   # define preprocessor macro
 add_compile_definitions(USED_CXX_COMPILER="${CMAKE_CXX_COMPILER}") # define preprocessor macro (very useful)
 

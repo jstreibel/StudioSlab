@@ -35,7 +35,7 @@ namespace Slab::Math::Base {
         return numeric_config;
     }
 
-    Str NumericalRecipe::suggestFileName() const {
+    Str NumericalRecipe::SuggestFileName() const {
         return name + " " + numeric_config->to_string();
     }
 

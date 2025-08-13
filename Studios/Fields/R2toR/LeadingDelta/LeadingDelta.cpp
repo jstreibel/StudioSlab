@@ -20,7 +20,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
             , tf(tf)
             , deltaSpeedOp(deltaOperatesOnSpeed) { }
 
-    void BoundaryCondition::apply(Slab::Math::Base::EquationState &state, Real t) const {
+    void BoundaryCondition::Apply(Slab::Math::Base::EquationState &state, Real t) const {
         const bool applyDelta = t<tf || tf<0;
 
         auto stateKG = dynamic_cast<Slab::Math::R2toR::EquationState&>(state);
@@ -29,8 +29,8 @@ namespace Studios::Fields::R2toRLeadingDelta {
             RtoR::NullFunction nullFunction;
             R2toR::FunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
 
-            stateKG.setPhi(fullNull);
-            stateKG.setDPhiDt(fullNull);
+            stateKG.SetPhi(fullNull);
+            stateKG.SetDPhiDt(fullNull);
         } else {
             if(!applyDelta) {
                 auto a = ringDelta->getA();
@@ -113,8 +113,8 @@ namespace Studios::Fields::R2toRLeadingDelta {
         return new OutGL(kg_numeric_config->getn(), ringDelta1);
     }
 
-    Str Builder::suggestFileName() const {
-        auto fname = NumericalRecipe::suggestFileName();
+    Str Builder::SuggestFileName() const {
+        auto fname = NumericalRecipe::SuggestFileName();
 
         return fname + " " + Interface->ToString({"W", "eps", "delta_duration"});
     }

@@ -5,7 +5,6 @@
 #ifndef V_SHAPE_BOUNDARY_CONDITIONS_H
 #define V_SHAPE_BOUNDARY_CONDITIONS_H
 
-#include <utility>
 #include "Utils/Types.h"
 #include "EquationState.h"
 
@@ -22,7 +21,7 @@ namespace Slab::Math::Base {
 
         [[nodiscard]] EquationState_ptr newEqState() const;
 
-        virtual void apply(EquationState &toFunction, DevFloat t) const = 0;
+        virtual void Apply(EquationState &toFunction, DevFloat t) const = 0;
     };
 
     DefinePointers(BoundaryConditions)

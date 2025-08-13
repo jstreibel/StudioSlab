@@ -14,8 +14,8 @@ namespace Studios::PureSG {
         Interface->AddParameters({Naked(l), Naked(eps)});
     };
 
-    auto InputPerturbations::getBoundary() -> Math::Base::BoundaryConditions_ptr {
-        auto proto = newFieldState();
+    auto InputPerturbations::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
+        auto proto = NewFieldState();
 
         auto pertOscillon = New <RtoR::PerturbedOscillonTimeDerivative> (l.GetValue(), eps.GetValue());
 

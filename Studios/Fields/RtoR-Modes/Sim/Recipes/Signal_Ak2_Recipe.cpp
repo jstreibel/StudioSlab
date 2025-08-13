@@ -27,8 +27,8 @@ namespace Modes {
         if(doRegister) RegisterCLInterface(Interface);
     }
 
-    Base::BoundaryConditions_ptr Signal_Ak2_Recipe::getBoundary() {
-        auto prototype = newFieldState();
+    Base::BoundaryConditions_ptr Signal_Ak2_Recipe::GetBoundary() {
+        auto prototype = NewFieldState();
 
         return New <SignalBC> (prototype, *A,  *omega);
     }
@@ -42,7 +42,7 @@ namespace Modes {
         fix n = config->getn();
         fix a = config->getr();
 
-        this->setLaplacianFixedBC();
+        this->SetLaplacianFixedBC();
 
         fix ω = *omega;
 
@@ -53,7 +53,7 @@ namespace Modes {
         Log::Info() << Log::BGWhite+Log::FGBlack << "  Technical sine resolution is " << res << " steps/cycle (" << int(res*a) << " sites/linear period)  " << Log::ResetFormatting << Log::Flush;
     }
 
-    void *Signal_Ak2_Recipe::buildOpenGLOutput() {
+    void *Signal_Ak2_Recipe::BuildOpenGLOutput() {
         auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
 
 
@@ -65,13 +65,13 @@ namespace Modes {
         return monitor;
     }
 
-    Str Signal_Ak2_Recipe::suggestFileName() const {
+    Str Signal_Ak2_Recipe::SuggestFileName() const {
         const auto SEPARATOR = " ";
 
         const StrVector params = {A.getCommandLineArgumentName(false), omega.getCommandLineArgumentName(false)};
 
         const auto strParams = Interface->ToString(params, SEPARATOR);
-        return KGRtoRBuilder::suggestFileName() + SEPARATOR + strParams;
+        return KGRtoRBuilder::SuggestFileName() + SEPARATOR + strParams;
     }
 
 } // Modes

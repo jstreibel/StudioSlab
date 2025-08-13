@@ -14,10 +14,19 @@ namespace Modes {
     using namespace Slab::Models;
 
 
+    class FPlaneWaveBC final : public KGRtoR::BoundaryCondition {
+        DevFloat Q, k;
+    public:
+        explicit FPlaneWaveBC(const KGRtoR::EquationState_constptr& prototype, DevFloat Q, Real k);
+
+    protected:
+        void ApplyKG(KGRtoR::EquationState& KGState, DevFloat t) const override;
+    };
+
 
     class SignalBC final : public KGRtoR::BoundaryCondition {
     protected:
-        void applyKG(KGRtoR::EquationState &, DevFloat t) const override;
+        void ApplyKG(KGRtoR::EquationState &, DevFloat t) const override;
 
     public:
         DevFloat A, ω;
@@ -26,16 +35,16 @@ namespace Modes {
     };
 
 
-
     class DrivenBC final : public KGRtoR::BoundaryCondition {
         Slab::TPointer<Modes::SquareWave> sqrWave;
 
     protected:
-        void applyKG(KGRtoR::EquationState &, DevFloat t) const override;
+        void ApplyKG(KGRtoR::EquationState &, DevFloat t) const override;
 
     public:
         DrivenBC(const KGRtoR::EquationState_ptr &prototype, Slab::TPointer<Modes::SquareWave> sqrWave);
     };
+
 
 } // Modes
 

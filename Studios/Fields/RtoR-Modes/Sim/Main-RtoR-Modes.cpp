@@ -6,12 +6,15 @@
 #include "MathApp.h"
 
 #include "Recipes/NumericalRecipe_Ak2.h"
+#include "Recipes/NumericalRecipe_PlaneWaves.h"
 #include "Recipes/NumericalRecipe_wkA.h"
 #include "Recipes/Signal_Ak2_Recipe.h"
 
 int run(int argc, const char *argv[]) {
 
-#ifdef FIELDS_MODES_wkA
+#ifdef FIELDS_MODES_PlaneWaves
+    auto builder = new Modes::FNumericalRecipe_PlaneWaves();
+#elif FIELDS_MODES_wkA
     auto builder = new Modes::NumericalRecipe_wkA();
 #elif defined FIELDS_SIGNAL_Ak2
     auto builder = new Modes::Signal_Ak2_Recipe();

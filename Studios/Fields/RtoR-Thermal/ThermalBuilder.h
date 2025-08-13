@@ -24,7 +24,7 @@ namespace Studios::Fields::RtoRThermal {
 
         auto buildSolver() -> TPointer<Base::LinearStepSolver> override;
 
-        auto suggestFileName() const -> Str override;
+        auto SuggestFileName() const -> Str override;
 
     };
 }

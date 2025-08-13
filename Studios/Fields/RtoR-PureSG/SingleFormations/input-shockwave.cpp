@@ -16,7 +16,7 @@ namespace Studios::PureSG {
         Interface->AddParameters({Naked(a0), Naked(E)});
     }
 
-    auto InputShockwave::getBoundary() -> Math::Base::BoundaryConditions_ptr {
+    auto InputShockwave::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
         //deltaType = vm["delta"].as<unsigned int>();
 
         auto a = 2 * a0.GetValue();
@@ -24,7 +24,7 @@ namespace Studios::PureSG {
         const DevFloat eps = a * a / (3 * E.GetValue());
 
         Slab::Math::RtoR::AnalyticShockwave1D shockwave1D(*a0);
-        auto proto = newFieldState();
+        auto proto = NewFieldState();
         auto reggy = RtoR::RegularDiracDelta::Regularization(deltaType);
         auto DiracMateyMate = New <RtoR::RegularDiracDelta> (eps, a, reggy);
 

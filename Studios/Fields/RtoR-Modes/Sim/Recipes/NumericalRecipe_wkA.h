@@ -20,9 +20,9 @@ namespace Modes {
                                                                                 "\n\t1: IC sine wave with 'omega' angular frequency and 'wave_number' wave number."
                                                                                 "\n\t2: Dead.");
         RealParameter A              = RealParameter   (1.0,  "A",               "Amplitude of input sine wave");
-        // RealParameter omega          = RealParameter   (1.0,  "w,omega",         "Angular frequency of input sine wave");
+        // RealParameter omega       = RealParameter   (1.0,  "w,omega",         "Angular frequency of input sine wave");
         RealParameter omega          = RealParameter(1.0, "w,omega_n", "Angular frequency 'ω' harmonic number. Computed as ω=2πj/L.");
-        // RealParameter k              = RealParameter   (1.0,  "k,wave_number",   "Wave number of input sine wave, if Wave BC is selected.");
+        // RealParameter k           = RealParameter   (1.0,  "k,wave_number",   "Wave number of input sine wave, if Wave BC is selected.");
         RealParameter k              = RealParameter(1.0, "k,harmonic", "Harmonic number 'n' of input sine wave. Wavenumber is computed as k=2πn/L ");
 
         RealParameter mass             = RealParameter   (-1.0,  "mass", "Mass of for computing angular frequency. If negative, mass is set to m²=4/(πA)");
@@ -30,17 +30,16 @@ namespace Modes {
 
         TPointer<Modes::SquareWave> squareWave;
     protected:
-        auto buildOpenGLOutput() -> void * override;
+        auto BuildOpenGLOutput() -> void * override;
 
     public:
-        auto suggestFileName() const -> Str override;
+        [[nodiscard]] auto SuggestFileName() const -> Str override;
 
-    public:
         explicit NumericalRecipe_wkA(bool doRegister=true);
 
-        auto getBoundary() -> Slab::Math::Base::BoundaryConditions_ptr override;
+        auto GetBoundary() -> Slab::Math::Base::BoundaryConditions_ptr override;
 
-        TPointer<Base::FunctionT<DevFloat, DevFloat>> getNonHomogenous() override;
+        TPointer<Base::FunctionT<DevFloat, DevFloat>> GetNonHomogenousTerm() override;
 
         auto NotifyCLArgsSetupFinished() -> void override;
     };

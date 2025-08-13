@@ -30,7 +30,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
         explicit BoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
                                    TPointer<RingDeltaFunc> ringDelta,
                                    Real tf, bool deltaOperatesOnSpeed);
-        void apply(Slab::Math::Base::EquationState &function, Real t) const override;
+        void Apply(Slab::Math::Base::EquationState &function, Real t) const override;
     };
 
 
@@ -60,7 +60,7 @@ class Builder : public Models::KGR2toR::Builder {
 
         auto getBoundary()               -> Slab::Math::Base::BoundaryConditions_ptr override;
 
-        auto suggestFileName() const -> Str override;
+        auto SuggestFileName() const -> Str override;
 
 
     };

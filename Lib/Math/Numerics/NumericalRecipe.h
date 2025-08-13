@@ -32,7 +32,7 @@ namespace Slab::Math::Base {
         virtual auto buildOutputSockets()         -> OutputSockets = 0;
         virtual auto buildStepper()               -> TPointer<Stepper> = 0;
 
-        [[nodiscard]] virtual auto suggestFileName()      const -> Str;
+        [[nodiscard]] virtual auto SuggestFileName()      const -> Str;
 
         auto getNumericConfig()             const -> const TPointer<NumericConfig> &;
     };

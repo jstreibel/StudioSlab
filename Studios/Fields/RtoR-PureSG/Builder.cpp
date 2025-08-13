@@ -9,7 +9,7 @@ namespace Studios:: PureSG {
     Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister)
     : KGRtoRBuilder(name, generalDescription, doRegister) {}
 
-    void *Builder::buildOpenGLOutput() {
+    void *Builder::BuildOpenGLOutput() {
         return new Monitor(kg_numeric_config, *static_cast<KGEnergy *>(getHamiltonian()));
     }
 

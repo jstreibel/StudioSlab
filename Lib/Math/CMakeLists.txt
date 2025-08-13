@@ -9,6 +9,8 @@ set ( TOOLSET_SOURCES
 		Toolset/FindPeak.cpp
         Function/R2toR/Model/Operators/Integral.cpp
         Function/R2toR/Model/Operators/Integral.h
+		Function/RtoR/Model/FunctionsCollection/Shockwave/SGPlaneWave.cpp
+		Function/RtoR/Model/FunctionsCollection/Shockwave/SGPlaneWave.h
 )
 
 set ( SPACE_SOURCES
