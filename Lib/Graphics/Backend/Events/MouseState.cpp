@@ -23,15 +23,11 @@ namespace Slab::Graphics {
                 SinceRightPressed.reset();
                 break;
             case MouseButton_4:
-                break;
             case MouseButton_5:
-                break;
             case MouseButton_6:
-                break;
             case MouseButton_7:
-                break;
             case MouseButton_8:
-                break;
+            default:
         }
 
         return false;

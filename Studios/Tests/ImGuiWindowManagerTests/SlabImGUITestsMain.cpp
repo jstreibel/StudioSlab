@@ -28,7 +28,7 @@ protected:
 
         // auto& ImGuiModule = Slab::GetModule<Slab::Graphics::ImGuiModule>("GUI:ImGui");
         // auto GUIContext = ImGuiModule.CreateContext(&*MainSystemWindow);
-        const auto GUIContext = MainSystemWindow->GetGUIContext();
+        const auto GUIContext = MainSystemWindow->SetupGUIContext();
         auto ImGuiContext =
             Slab::DynamicPointerCast
             <Slab::Graphics::FImGuiContext>

@@ -174,7 +174,7 @@ namespace Slab::Models::KGRtoR {
         UpdateHistoryGraph();
         UpdateSFTHistoryGraph();
 
-        Slab::Graphics::BaseMonitor::ImmediateDraw(PlatformWindow);
+        BaseMonitor::ImmediateDraw(PlatformWindow);
     }
 
 

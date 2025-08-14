@@ -36,8 +36,7 @@ namespace Slab::Graphics {
     }
 
     void MainViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
-        // TODO: No const_cast here
-        IN GuiContext = const_cast<FPlatformWindow&>(PlatformWindow).GetGUIContext();
+        IN GuiContext = PlatformWindow.GetGUIContext();
 
         if(GuiContext == nullptr) return;
 

@@ -33,7 +33,7 @@ namespace Slab::Graphics {
     class FImGuiContext final : public FGUIContext {
         ImGuiContext *r_Context = nullptr;
 
-        FCallSet CallSet;
+        FCallSet ImplementationCalls;
 
     public:
         explicit FImGuiContext(FCallSet);

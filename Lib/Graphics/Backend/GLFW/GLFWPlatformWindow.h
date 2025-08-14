@@ -33,6 +33,7 @@ namespace Slab::Graphics {
         ~FGLFWPlatformWindow() override;
 
         void Cycle() override;
+        void Flush() override;
 
         Int GetWidth() const override;
 

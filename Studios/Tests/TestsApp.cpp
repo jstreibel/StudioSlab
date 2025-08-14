@@ -44,7 +44,7 @@ int TestsApp::run() {
         Backend = Slab::Graphics::GetGraphicsBackend();
         auto MainSystemWindow = Backend->GetMainSystemWindow();
         // auto wm = New<Graphics::SlabWindowManager>();
-        auto ImGuiContext = DynamicPointerCast<Graphics::FImGuiContext>(MainSystemWindow->GetGUIContext());
+        auto ImGuiContext = DynamicPointerCast<Graphics::FImGuiContext>(MainSystemWindow->SetupGUIContext());
         auto WindowManager = New<Graphics::FImGuiWindowManager>(ImGuiContext);
         MainSystemWindow->AddAndOwnEventListener(WindowManager);
 

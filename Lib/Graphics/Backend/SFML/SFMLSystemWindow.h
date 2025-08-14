@@ -27,6 +27,7 @@ namespace Slab::Graphics {
 
     protected:
         void Cycle() override;
+        void Flush() override;
 
     public:
         SFMLSystemWindow();

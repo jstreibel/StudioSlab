@@ -18,8 +18,7 @@ namespace Slab::Graphics {
     FPlatformWindow::FPlatformWindow(void *window_ptr, TPointer<FEventTranslator> EventTranslator)
     : EventTranslator(std::move(EventTranslator))
     , r_Window(window_ptr)
-    , MouseState(New<FMouseState>()){
-
+    , MouseState(New<FMouseState>()) {
         // Add event listener manually because FPlatformWindow::AddEventListener calls the pure abstract
         // methods FPlatformWindow::GetWidth and FPlatformWindow::GetHeight, yielding an exception upon being
         // called (even implicitly) by the constructor.
@@ -107,7 +106,7 @@ namespace Slab::Graphics {
         return GuiContext;
     }
 
-    TPointer<FGUIContext> FPlatformWindow::GetGUIContext() {
+    TPointer<FGUIContext> FPlatformWindow::SetupGUIContext() {
         if(GuiContext == nullptr) {
             GetGraphicsBackend()->SetupGUIForPlatformWindow(this);
 
@@ -124,6 +123,8 @@ namespace Slab::Graphics {
     }
 
     void FPlatformWindow::Render() {
+        if(GuiContext == nullptr) SetupGUIContext();
+
         if(GuiContext != nullptr) {
             static auto ShowMetrics = false;
 
@@ -145,9 +146,15 @@ namespace Slab::Graphics {
             GuiContext->NewFrame();
         }
 
+        ImGui::Begin("Slab");
+        ImGui::Text("Hello, world!");
+        ImGui::End();
+
         Cycle();
 
         if (GuiContext != nullptr) GuiContext->Render();
+
+        Flush();
     }
 
 

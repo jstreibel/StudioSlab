@@ -37,6 +37,7 @@ namespace Slab::Graphics {
         TPointer<FMouseState> MouseState = nullptr;
 
         virtual void Cycle() = 0;
+        virtual void Flush() = 0;
     public:
         FPlatformWindow() = delete;
         explicit FPlatformWindow(void *window_ptr, TPointer<FEventTranslator>);
@@ -52,7 +53,7 @@ namespace Slab::Graphics {
         [[nodiscard]] virtual bool ShouldClose() const = 0;
 
         [[nodiscard]] TPointer<FGUIContext> GetGUIContext() const;
-        TPointer<FGUIContext> GetGUIContext();
+        TPointer<FGUIContext> SetupGUIContext();
 
         [[nodiscard]] FPlatformWindow_RawPointer GetRawPlatformWindowPointer() const;
 

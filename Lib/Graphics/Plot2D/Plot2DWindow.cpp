@@ -13,7 +13,6 @@
 #include "PlotStyle.h"
 
 #include <utility>
-#include <sys/stat.h>
 
 #include "3rdParty/ImGui.h"
 
