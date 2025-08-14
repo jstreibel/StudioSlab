@@ -38,9 +38,9 @@ namespace Slab::Graphics {
             {"StudioSlab",   SetStyleStudioSlab}
     };
 
-    FImGuiModule::FImGuiModule(FCallSet calls)
+    FImGuiModule::FImGuiModule(FImplementationCallSet calls)
     : FGUIModule("ImGui")
-    , CallSet(std::move(calls)) {
+    , ImplCallSet(std::move(calls)) {
         IMGUI_CHECKVERSION();
 
         // m_MainContext = GetMainContext();
@@ -77,7 +77,7 @@ namespace Slab::Graphics {
     }
 
     TPointer<FGUIContext> FImGuiModule::CreateContext(FOwnerPlatformWindow ParentSystemWindow) {
-        auto NewContext = New<FImGuiContext>(CallSet);
+        auto NewContext = New<FImGuiContext>(ImplCallSet);
 
         // Setup Dear ImGui style
         SetStyleStudioSlab();   // For sizes
@@ -87,15 +87,5 @@ namespace Slab::Graphics {
 
         return NewContext;
     }
-
-    // Context ImGuiModule::GetMainContext() {
-    //     if(m_MainContext== nullptr){
-    //         m_MainContext = DynamicPointerCast<SlabImGuiContext>(createContext());
-    //         GetGraphicsBackend()->GetMainSystemWindow()->addEventListener(m_MainContext);
-    //     }
-//
-    //     return m_MainContext;
-    // }
-
 
 } // Core

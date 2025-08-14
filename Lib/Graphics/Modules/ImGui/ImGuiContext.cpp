@@ -84,7 +84,7 @@ namespace Slab::Graphics {
         //ImGui::PushFont(font);
     }
 
-    FImGuiContext::FImGuiContext(FCallSet calls)
+    FImGuiContext::FImGuiContext(FImplementationCallSet calls)
     : ImplementationCalls(std::move(calls)) {
         r_Context = ImGui::CreateContext();
 
@@ -127,7 +127,6 @@ namespace Slab::Graphics {
 
         ImplementationCalls.Draw();
     }
-
 
     void FImGuiContext::Bind() {
         ImGui::SetCurrentContext(r_Context);
@@ -224,7 +223,8 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void AddItem(const int CurrentDepth, const MainMenuItem& Item) {
+    void AddItem(const int CurrentDepth, const MainMenuItem& Item)
+    {
         fix& Location = Item.Location;
         fix MaxDepth = Location.size();
 

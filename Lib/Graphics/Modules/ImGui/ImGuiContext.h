@@ -15,10 +15,10 @@
 
 namespace Slab::Graphics {
 
-    struct FCallSet {
+    struct FImplementationCallSet {
         using RawSystemWindowPointer = void*;
 
-        using InitContextCall = std::function<void(const FCallSet& Call)>;
+        using InitContextCall = std::function<void(const FImplementationCallSet& Call)>;
         using KillContextCall = std::function<void(void)>;
         using NewFrameCall    = std::function<void(void)>;
 
@@ -33,10 +33,10 @@ namespace Slab::Graphics {
     class FImGuiContext final : public FGUIContext {
         ImGuiContext *r_Context = nullptr;
 
-        FCallSet ImplementationCalls;
+        FImplementationCallSet ImplementationCalls;
 
     public:
-        explicit FImGuiContext(FCallSet);
+        explicit FImGuiContext(FImplementationCallSet);
         ~FImGuiContext() override = default;
 
         [[nodiscard]] DevFloat GetFontSize() const;
