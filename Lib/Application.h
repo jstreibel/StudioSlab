@@ -13,6 +13,9 @@ namespace Slab {
 
     using Platform = Graphics::GraphicBackend;
 
+    /**
+     * Application class
+     */
     class FApplication : public Graphics::FPlatformWindowEventListener {
         const int ArgCount;
         const char **ArgValues;
@@ -26,6 +29,10 @@ namespace Slab {
 
         TPointer<Platform> GetPlatform() { return p_Platform; }
 
+        /**
+         * OnStart is called after command line arguments are parsed and CreatePlatform() \
+         * is called, respectively.
+         */
         virtual void OnStart() { };
         virtual bool CanClose() { return true; };
 
@@ -36,7 +43,7 @@ namespace Slab {
         bool Create(Resolution width=UndefinedResolution, Resolution height=UndefinedResolution);
         Int Run();
 
-        void SetTitle(Str title) const;
+        void SetTitle(const Str& title) const;
 
         auto GetName() const -> Str;
 

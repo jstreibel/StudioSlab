@@ -56,7 +56,7 @@ namespace Slab::Graphics {
         static ImVector<ImWchar> vRanges;
         GlyphRangesBuilder.BuildRanges(&vRanges);
 
-        auto &Log = Core::Log::Info() << "ImGui loading glyph ranges: ";
+        auto &Log = Core::Log::Debug() << "ImGui loading glyph ranges: ";
         int i = 0;
         for (auto &v: vRanges) {
             if (v == 0) break;

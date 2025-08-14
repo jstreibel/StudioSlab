@@ -9,8 +9,6 @@
 #include "Application.h"
 
 namespace Slab {
-    class FApplication;
-
     void Startup();
     void Finish();
     bool IsStarted();

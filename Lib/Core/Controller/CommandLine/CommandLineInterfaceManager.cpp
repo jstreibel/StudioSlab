@@ -55,7 +55,7 @@ namespace Slab::Core {
     }
 
     void FCommandLineInterfaceManager::feedInterfaces(const CLVariablesMap &vm) {
-        Log::Critical() << "InterfaceManager started feeding interfaces." << Log::Flush;
+        Log::Debug() << "InterfaceManager started feeding interfaces." << Log::Flush;
 
         auto comp = [](const TPointer<FCommandLineInterface> &a, const TPointer<FCommandLineInterface> &b) { return *a < *b; };
         std::sort(interfaces.begin(), interfaces.end(), comp);
@@ -83,7 +83,7 @@ namespace Slab::Core {
                 listener->notifyAllCLArgsSetupFinished();
         }
 
-        Log::Success() << "InterfaceManager finished feeding interfaces." << Log::Flush;
+        Log::Debug() << "InterfaceManager finished feeding interfaces." << Log::Flush;
     }
 
     auto FCommandLineInterfaceManager::renderAsPythonDictionaryEntries() -> Str {

@@ -32,7 +32,7 @@ namespace Slab::Graphics {
         glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_FALSE);
 
         if (!glfwInit()) throw Exception("Error initializing GLFW");
-        Log::Success() << "GLFW runtime version " << major << "." << minor << "." << rev
+        Log::Info() << "GLFW runtime version " << major << "." << minor << "." << rev
                        << " initialized to compile version " << GLFW_VERSION_MAJOR << "." << GLFW_VERSION_MINOR << "."
                        << GLFW_VERSION_REVISION << "." << Log::Flush;
 

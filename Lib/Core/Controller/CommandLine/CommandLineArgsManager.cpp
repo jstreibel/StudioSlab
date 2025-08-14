@@ -15,7 +15,7 @@ namespace Slab::Core {
     }
 
     void CLArgsManager::Parse(int argc, const char **argv) {
-        Log::Critical() << "CLArgsManager started parsing command line options." << Log::Flush;
+        Log::Info() << "CLArgsManager parsing command line options." << Log::Flush;
 
         CLOptionsDescription allOptions("Pendulum");
 
@@ -36,7 +36,7 @@ namespace Slab::Core {
             exit(0);
         }
 
-        Log::Success() << "CLArgsManager finished parsing command line options." << Log::Flush;
+        Log::Info() << "CLArgsManager finished parsing command line options." << Log::Flush;
     }
 
     auto CLArgsManager::BuildOptionsDescription(const FCommandLineInterface &anInterface, CLOptionsDescription &opts) -> void {

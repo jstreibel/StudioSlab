@@ -25,7 +25,7 @@ namespace Slab {
     {
         Slab::Startup();
 
-        Core::Log::Info() << "Compiler: " << USED_CXX_COMPILER << Core::Log::Flush;
+        Core::Log::Info() << "Compiled with " << USED_CXX_COMPILER << Core::Log::Flush;
         // Log::Info() << "Compiler: " << COMPILER_NAME << Log::Flush;
         Core::Log::Info() << "PWD: " << Common::GetPWD() << Core::Log::Flush;
     }
@@ -37,7 +37,7 @@ namespace Slab {
     }
 
     bool FApplication::Create(Resolution width, Resolution height) {
-        Core::ParseCLArgs(ArgCount, const_cast<const char **>(ArgValues));
+        Core::ParseCLArgs(ArgCount, ArgValues);
 
         p_Platform = CreatePlatform();
 
@@ -49,14 +49,18 @@ namespace Slab {
     Int FApplication::Run() {
         const auto self = Dummy(*this);
 
-        p_Platform->GetMainSystemWindow()->AddEventListener(self);
+        if (!p_Platform->GetMainSystemWindow()->AddEventListener(self))
+        {
+            throw Exception("Failed to add FApplication as event listener to FPlatformWindow.");
+        }
+
         p_Platform->Run();
 
         return 0;
     }
 
-    void FApplication::SetTitle(Str title) const {
-        p_Platform->GetMainSystemWindow()->SetSystemWindowTitle(std::move(title));
+    void FApplication::SetTitle(const Str& title) const {
+        p_Platform->GetMainSystemWindow()->SetSystemWindowTitle(title);
     }
 
     auto FApplication::GetName() const -> Str {
