@@ -41,7 +41,7 @@ namespace Slab::Math {
     }
 
     void Socket::output(const OutputPacket &outData) {
-        handleOutput(outData);
+        HandleOutput(outData);
         LastPacket = outData;
     }
 

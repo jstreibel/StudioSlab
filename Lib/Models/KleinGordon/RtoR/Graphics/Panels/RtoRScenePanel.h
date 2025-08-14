@@ -14,9 +14,9 @@ namespace Slab::Models::KGRtoR {
         Graphics::Scene3DWindow_ptr scene;
 
     public:
-        RtoRScenePanel(const TPointer<KGNumericConfig> &params,
+        RtoRScenePanel(const TPointer<FKGNumericConfig> &params,
                        FGUIWindow &guiWindow,
-                       KGEnergy &hamiltonian);
+                       FKGEnergy &hamiltonian);
 
         void SetSimulationHistory(TPointer<const R2toR::FNumericFunction>
  simulationHistory,

@@ -17,7 +17,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    class FWriterOpenGL final : public Writer {
+    class FWriterOpenGL final : public FWriter {
         ftgl::texture_font_t *Font = nullptr;
         ftgl::texture_atlas_t *Atlas = nullptr;
 
@@ -36,8 +36,8 @@ namespace Slab::Graphics::OpenGL {
         FWriterOpenGL(const Str &fontFile, float ptSize, const char *glyphsToPreload=nullptr);
         ~FWriterOpenGL() override;
 
-        void Write(const Str& text, Point2D penLocation, FColor color = White,
-                   bool vertical = false) override;
+        void Write(const Str& Text, Point2D penLocation, FColor Color = White,
+                   bool Vertical = false) override;
         [[nodiscard]] DevFloat GetFontHeightInPixels() const override;
         void Reshape(int w, int h) override;
 

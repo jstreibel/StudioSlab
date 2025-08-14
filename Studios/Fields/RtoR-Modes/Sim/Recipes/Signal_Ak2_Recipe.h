@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_SIGNAL_Ak2_BUILDER_H
 #define STUDIOSLAB_SIGNAL_Ak2_BUILDER_H
 
-#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoR-Recipe.h"
 #include "../SquareWave.h"
 
 namespace Modes {
@@ -14,7 +14,7 @@ namespace Modes {
     using namespace Slab::Math;
 
 
-    class Signal_Ak2_Recipe final : public Models::KGRtoR::KGRtoRBuilder {
+    class Signal_Ak2_Recipe final : public Models::KGRtoR::FKGRtoR_Recipe {
         RealParameter A              = RealParameter   (1.0,  "A",               "Amplitude of input sine wave");
         RealParameter omega          = RealParameter(1.0, "w,omega", "Angular frequency 'ω=2πT' of input signal.");
 

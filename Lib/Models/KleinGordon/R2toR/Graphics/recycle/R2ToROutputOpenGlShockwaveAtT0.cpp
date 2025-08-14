@@ -20,8 +20,8 @@ R2toR::OutputOpenGLShockwaveAt_t0::OutputOpenGLShockwaveAt_t0(const NumericConfi
 void R2toR::OutputOpenGLShockwaveAt_t0::draw() {
     if(!lastData.hasValidData()) return;
 
-    //const Real t0 = ((ParameterTemplate<Real>*)userParamMap["sw_t0"])->val;
-    //const Real t = lastInfo.getT();
+    //const DevFloat t0 = ((ParameterTemplate<Real>*)userParamMap["sw_t0"])->val;
+    //const DevFloat t = lastInfo.getT();
 //
     //const R2toR::FieldState& fState = *lastInfo.getFieldData<R2toR::FieldState>();
     //auto &phi = fState.getPhi();
@@ -65,8 +65,8 @@ void R2toR::OutputOpenGLShockwaveAt_t0::draw() {
 //
     //// *************************************************************************************************
     //// ********** CAMPO INTEIRO (3D) ************************************************************************
-    //const Real GLOBAL_Z_SCALE_PHI = 0.1;
-    //const Real GLOBAL_Z_SCALE_DDTPHI = 0.1*GLOBAL_Z_SCALE_PHI;
+    //const DevFloat GLOBAL_Z_SCALE_PHI = 0.1;
+    //const DevFloat GLOBAL_Z_SCALE_DDTPHI = 0.1*GLOBAL_Z_SCALE_PHI;
     ////glEnable(GL_DEPTH_TEST);
     //phiGraph.BindWindow();
     //glMatrixMode(GL_MODELVIEW);
@@ -89,10 +89,10 @@ void R2toR::OutputOpenGLShockwaveAt_t0::draw() {
     //    glBegin(GL_LINE_STRIP);
     //    {
     //        const int resolution = 2000;
-    //        const Real step = 1. / resolution;
-    //        for(Real s=0; s<=1; s+=step) {
+    //        const DevFloat step = 1. / resolution;
+    //        for(DevFloat s=0; s<=1; s+=step) {
     //            const Real2D x = line(s);
-    //            Real val = phi(x);
+    //            DevFloat val = phi(x);
     //            glVertex3d(x.x, x.y, GLOBAL_Z_SCALE_PHI*val);
     //        }
     //    }
@@ -109,12 +109,12 @@ void R2toR::OutputOpenGLShockwaveAt_t0::draw() {
     //    glLineStipple(1, 0xAAAA);
     //    glColor4d(0.5, 0, 0, 0.8);
     //    glBegin(GL_LINE_LOOP);
-    //    for (Real theta = 0.0; theta < 2 * M_PI; theta += M_PI / 3000) {
-    //        const Real x = innerConeRadius * cos(theta), y = innerConeRadius * sin(theta);
+    //    for (DevFloat theta = 0.0; theta < 2 * M_PI; theta += M_PI / 3000) {
+    //        const DevFloat x = innerConeRadius * cos(theta), y = innerConeRadius * sin(theta);
     //        glVertex3d(x, y, GLOBAL_Z_SCALE_PHI * phi({x, y}));
     //    }
-    //    for (Real theta = 0.0; theta < 2 * M_PI; theta += M_PI / 3000) {
-    //        const Real x = outerConeRadius * cos(theta), y = outerConeRadius * sin(theta);
+    //    for (DevFloat theta = 0.0; theta < 2 * M_PI; theta += M_PI / 3000) {
+    //        const DevFloat x = outerConeRadius * cos(theta), y = outerConeRadius * sin(theta);
     //        glVertex3d(x, y, GLOBAL_Z_SCALE_PHI * phi({x, y}));
     //    }
     //    glEnd();

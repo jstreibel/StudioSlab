@@ -18,13 +18,13 @@ namespace Slab::Graphics {
     : Viewer(guiWindow, nullptr)
     , curves_artists(0)
     {
-        xft_history_window = New<FPlot2DWindow>("Space DFT", guiWindow->GetGUIWindowContext());
+        xft_history_window = New<FPlot2DWindow>("Space DFT");
         xft_history_window->GetAxisArtist().SetHorizontalAxisLabel("k");
         xft_history_window->GetAxisArtist().setVerticalAxisLabel("t");
         xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
         AddWindow(xft_history_window);
 
-        modes_window = New<FPlot2DWindow>("Modes", guiWindow->GetGUIWindowContext());
+        modes_window = New<FPlot2DWindow>("Modes");
         modes_window->GetAxisArtist().SetHorizontalAxisLabel("t");
         modes_window->GetAxisArtist().setVerticalAxisLabel("|ℱₓ[ϕ]|");
         modes_artist = Plotter::AddR2Section(modes_window, nullptr, "Modes artist");

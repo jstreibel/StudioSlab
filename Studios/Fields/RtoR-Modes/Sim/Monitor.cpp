@@ -16,7 +16,7 @@
 #define CUSTOM_TICKS true
 
 namespace Modes {
-    Monitor::Monitor(const TPointer<KGNumericConfig> &params, Slab::Models::KGRtoR::KGEnergy &hamiltonian,
+    Monitor::Monitor(const TPointer<KGNumericConfig> &params, Slab::Models::KGRtoR::FKGEnergy &hamiltonian,
                      const Str &name)
     : Slab::Models::KGRtoR::Monitor(params, hamiltonian, name)
     {
@@ -43,7 +43,7 @@ namespace Modes {
             for (int n = 1; n < 20; ++n) {
                 ticks.push_back(Graphics::FAxisArtist::Tick{(2 * n - 1) * k[0], unit((2 * n - 1) * k[0], 0)});
             }
-            this->historyPanel->get_kSectionWindow()->GetAxisArtist().setHorizontalAxisTicks(ticks);
+            this->HistoryPanel->get_kSectionWindow()->GetAxisArtist().setHorizontalAxisTicks(ticks);
         }
     }
 } // Modes

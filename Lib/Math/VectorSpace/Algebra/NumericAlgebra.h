@@ -63,7 +63,7 @@ namespace Slab::Math {
 
     public:
         /*
-        // class Operation1 { virtual void operator()(Ty &state, Real a) = 0; };
+        // class Operation1 { virtual void operator()(Ty &state, DevFloat a) = 0; };
          */
         struct MetaAlgebra {
             template<class Operation>

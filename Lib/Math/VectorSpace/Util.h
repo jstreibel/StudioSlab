@@ -8,7 +8,7 @@
 
 #include "Math/VectorSpace/Impl/DiscreteSpace.h"
 
-void PrintSpace(const DiscreteSpace& space, UInt resolution = 80, Real scale = 10.);
+void PrintSpace(const DiscreteSpace& space, UInt resolution = 80, DevFloat scale = 10.);
 
 
 

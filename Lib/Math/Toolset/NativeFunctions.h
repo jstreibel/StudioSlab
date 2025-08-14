@@ -24,10 +24,10 @@ namespace Slab::Math {
     inline T SIGN(const T &a) { return a > 0 ? 1 : (a < 0 ? -1 : 0); }
 
 /*
-const auto RealSize = sizeof(Real);
-inline Real SIGN(const Real &val){
+const auto RealSize = sizeof(DevFloat);
+inline DevFloat SIGN(const DevFloat &val){
     union RealBits {
-        Real val;
+        DevFloat val;
         char bytes[RealSize];
 
         inline bool isPositive() const {

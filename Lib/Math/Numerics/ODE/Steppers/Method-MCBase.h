@@ -39,13 +39,13 @@ namespace Slab::Math {
             delete &H;
         }
 
-        void step(const Real &dt, const size_t n_steps) override {
+        void step(const DevFloat &dt, const size_t n_steps) override {
 
             auto &phi = *_phi;
             FIELD_STATE_TYPE *null = nullptr;
 
             for (size_t i = 0; i < n_steps; ++i) {
-                const Real t = (steps + i) * dt;
+                const DevFloat t = (steps + i) * dt;
 
                 H.startStep(t, dt);
                 {

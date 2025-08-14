@@ -10,6 +10,7 @@
 #include "Graphics/Plot2D/Util/PlotStyleGUI.h"
 
 #include "3rdParty/ImGui.h"
+#include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 
 namespace Slab::Graphics {
@@ -26,11 +27,12 @@ namespace Slab::Graphics {
 
         auto graphRect = d.GetRegion().getRect();
 
-        OpenGL::Legacy::PushLegacyMode();
-        OpenGL::Legacy::SetupOrtho(graphRect);
-        OpenGL::Legacy::FunctionRenderere::RenderFunction(*function, plotStyle.lineColor, plotStyle.filled, graphRect.xMin,
-                                                   graphRect.xMax, samples, 1);
-        OpenGL::Legacy::RestoreFromLegacyMode();
+        {
+            OpenGL::Legacy::FShaderGuard Guard{};
+            OpenGL::Legacy::SetupOrtho(graphRect);
+            OpenGL::Legacy::FunctionRenderere::RenderFunction(*function, plotStyle.lineColor, plotStyle.filled, graphRect.xMin,
+                                                       graphRect.xMax, samples, 1);
+        }
 
         return true;
     }

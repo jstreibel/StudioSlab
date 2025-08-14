@@ -17,7 +17,7 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Core;
 
-    class KGRtoRBuilder : public Slab::Models::KGRecipe {
+    class FKGRtoR_Recipe : public Slab::Models::KGRecipe {
     protected:
         IntegerParameter Potential = IntegerParameter(2, "V,potential", "Potential of wave equation:"
                                                                         "\n\t 0: massless"
@@ -44,16 +44,16 @@ namespace Slab::Models::KGRtoR {
     public:
         [[nodiscard]] auto SuggestFileName() const -> Str override;
 
-        explicit KGRtoRBuilder(const Str& name,
+        explicit FKGRtoR_Recipe(const Str& name,
                            const Str& generalDescription,
                            bool doRegister=false);
 
-        ~KGRtoRBuilder() override = default;
+        ~FKGRtoR_Recipe() override = default;
 
         [[nodiscard]] RtoR::Function_ptr getPotential() const;
         virtual TPointer<Base::FunctionT<DevFloat, DevFloat>> GetNonHomogenousTerm();
 
-        auto buildOutputSockets()   -> Vector<TPointer<Socket>> override;
+        auto BuildOutputSockets()   -> Vector<TPointer<Socket>> override;
 
         auto buildSolver()  -> TPointer<Base::LinearStepSolver> override;
 
@@ -66,7 +66,7 @@ namespace Slab::Models::KGRtoR {
 
     };
 
-    DefinePointers(KGRtoRBuilder)
+    DefinePointers(FKGRtoR_Recipe)
 }
 
 #endif //STUDIOSLAB_KG_RTORBUILDER_H

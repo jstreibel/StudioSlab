@@ -53,7 +53,7 @@ namespace Slab::Models::KGRtoR {
         void computeTimeDFT(DevFloat tMin, DevFloat tMax);
 
     public:
-        RtoRFourierPanel(const TPointer<KGNumericConfig> &params, KGEnergy &hamiltonian, FGUIWindow &guiWindow);
+        RtoRFourierPanel(const TPointer<FKGNumericConfig> &params, FKGEnergy &hamiltonian, FGUIWindow &guiWindow);
 
         void ImmediateDraw(const FPlatformWindow&) override;
 

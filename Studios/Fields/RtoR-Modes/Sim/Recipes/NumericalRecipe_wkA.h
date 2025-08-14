@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MODES_WKA_BUILDER_H
 #define STUDIOSLAB_MODES_WKA_BUILDER_H
 
-#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoR-Recipe.h"
 #include "../SquareWave.h"
 
 namespace Modes {
@@ -14,7 +14,7 @@ namespace Modes {
     using namespace Slab::Math;
 
 
-    class NumericalRecipe_wkA final : public Slab::Models::KGRtoR::KGRtoRBuilder {
+    class NumericalRecipe_wkA final : public Slab::Models::KGRtoR::FKGRtoR_Recipe {
         IntegerParameter BCSelection = IntegerParameter(0,    "BC",              "Boundary conditions selection:"
                                                                                 "\n\t0: sine signal with 'omega' angular frequency in vacuum IC."
                                                                                 "\n\t1: IC sine wave with 'omega' angular frequency and 'wave_number' wave number."

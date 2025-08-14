@@ -180,7 +180,7 @@ jack_port_t *JackServer::getOutputPort() {
     return output_processed_port;
 }
 
-void JackServer::operator<<(Real value) {
+void JackServer::operator<<(DevFloat value) {
     dataMutex.lock();
     dataToOutput.emplace_back(value);
     dataMutex.unlock();

@@ -9,12 +9,12 @@
 namespace Slab::Math::RtoR {
 
     class FSignumGordonPlaneWave final : public  RtoR::Function {
-        Real Q;
-        Real k;
+        DevFloat Q;
+        DevFloat k;
 
     public:
 
-        FSignumGordonPlaneWave(const Real Q, const Real k);
+        FSignumGordonPlaneWave(const DevFloat Q, const DevFloat k);
 
         FSignumGordonPlaneWave(const FSignumGordonPlaneWave& other);
 
@@ -24,15 +24,15 @@ namespace Slab::Math::RtoR {
 
         FSignumGordonPlaneWave& operator=(FSignumGordonPlaneWave&& other) noexcept;
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
     };
 
     class FSignumGordonPlaneWave_TimeDerivative final : public RtoR::Function {
-        Real Q;
-        Real k;
+        DevFloat Q;
+        DevFloat k;
 
     public:
-        FSignumGordonPlaneWave_TimeDerivative(const Real Q, const Real k);
+        FSignumGordonPlaneWave_TimeDerivative(const DevFloat Q, const DevFloat k);
 
         FSignumGordonPlaneWave_TimeDerivative(const FSignumGordonPlaneWave_TimeDerivative& other);
 
@@ -42,7 +42,7 @@ namespace Slab::Math::RtoR {
 
         FSignumGordonPlaneWave_TimeDerivative& operator=( FSignumGordonPlaneWave_TimeDerivative&& other) noexcept;
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
     };
 
 } // Slab::Math::RtoR

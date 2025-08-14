@@ -10,6 +10,7 @@ add_subdirectory(Fields)
 add_subdirectory(Tests)
 add_subdirectory(FunctionalMinimization)
 add_subdirectory(Prototype)
+add_subdirectory(Lab)
 
 
 

@@ -44,7 +44,7 @@ int TestsApp::run() {
         Backend = Slab::Graphics::GetGraphicsBackend();
         auto MainSystemWindow = Backend->GetMainSystemWindow();
         // auto wm = New<Graphics::SlabWindowManager>();
-        auto ImGuiContext = DynamicPointerCast<Graphics::FImGuiContext>(MainSystemWindow->GetGUIContext());
+        auto ImGuiContext = DynamicPointerCast<Graphics::FImGuiContext>(MainSystemWindow->SetupGUIContext());
         auto WindowManager = New<Graphics::FImGuiWindowManager>(ImGuiContext);
         MainSystemWindow->AddAndOwnEventListener(WindowManager);
 
@@ -52,7 +52,7 @@ int TestsApp::run() {
         WindowManager->AddSlabWindow(New<Tests::VShapeExpansionTest>(), false);
         WindowManager->AddSlabWindow(New<Tests::ModernGLTests>(), false);
         WindowManager->AddSlabWindow(New<Tests::Graph3DTests>(), false);
-        WindowManager->AddSlabWindow(New<Tests::FBezierTests>(ImGuiContext), false);
+        WindowManager->AddSlabWindow(New<Tests::FBezierTests>(), false);
         WindowManager->AddSlabWindow(New<Tests::FourierTestWindow>(), false);
         WindowManager->AddSlabWindow(Tests::GetImGuiTestWindow(), false);
 

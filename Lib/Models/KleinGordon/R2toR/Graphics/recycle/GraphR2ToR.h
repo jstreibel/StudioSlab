@@ -12,7 +12,7 @@
 
 class GraphR2toR : public FunctionGraph<R2toR::Function> {
 public:
-    GraphR2toR(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
+    GraphR2toR(DevFloat xMin=-1, DevFloat xMax=1, DevFloat yMin=-1, DevFloat yMax=1,
                Str title = "", bool filled = false, int samples = 512);
 
     void notifyReshape(int newWinW, int newWinH) override;

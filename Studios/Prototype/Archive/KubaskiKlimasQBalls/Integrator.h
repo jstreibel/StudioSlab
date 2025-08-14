@@ -9,7 +9,7 @@
 #include <vector>
 
 
-typedef long double Real;
+typedef long double DevFloat;
 typedef Vector<Real> Funcs;
 
 
@@ -18,7 +18,7 @@ struct Output {
 };
 
 
-int run(Output *output, Funcs F0, Real start_r, Real end_r, Real dr);
+int run(Output *output, Funcs F0, DevFloat start_r, DevFloat end_r, DevFloat dr);
 
 
 #endif //MARYLOUSTRINGS_INTEGRATOR_H

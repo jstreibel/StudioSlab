@@ -356,7 +356,7 @@ namespace Slab::Lost::ThermoOutput {
             file << "# 1   2    3   4    5    6    7     8    9   10\n";
             file << "# T   e   e2   m   m2   m4   C_v   Xi   σ_e  σ_m\n";
 
-            Real e, e2, m, m2, m4, T;
+            DevFloat e, e2, m, m2, m4, T;
             for (auto data : boost::combine(av_e, av_e2, av_m, av_m2, av_m4, T_values)) {
                 boost::tie(e, e2, m, m2, m4, T) = data;
                 auto N=L*L;

@@ -12,7 +12,7 @@
 namespace Slab::Math {
     using namespace Slab::Core;
 
-    DeviceConfig::DeviceConfig(bool doRegister) : FCommandLineInterfaceOwner("Device options", 10, doRegister)
+    FDeviceConfig::FDeviceConfig(bool doRegister) : FCommandLineInterfaceOwner("Device options", 10, doRegister)
     {
         Log::Info() << "Device integration type is " << sizeof(DevFloat)*8 << " bits." << Log::Flush;
 
@@ -26,11 +26,11 @@ namespace Slab::Math {
     };
 
 
-    auto DeviceConfig::getDevice() const -> Device {
+    auto FDeviceConfig::getDevice() const -> Device {
         return dev;
     }
 
-    void DeviceConfig::NotifyCLArgsSetupFinished() {
+    void FDeviceConfig::NotifyCLArgsSetupFinished() {
         FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
     #if USE_CUDA
@@ -61,7 +61,7 @@ namespace Slab::Math {
         }
     }
 
-    void DeviceConfig::setupForThread() {
+    void FDeviceConfig::setupForThread() {
         #if USE_CUDA
         unsigned int dev_n = **deviceChoice;
         if(dev_n==0) return;
@@ -84,7 +84,7 @@ namespace Slab::Math {
         #endif
     }
 
-    void DeviceConfig::notifyAllCLArgsSetupFinished() {
+    void FDeviceConfig::notifyAllCLArgsSetupFinished() {
 
         FCommandLineInterfaceListener::notifyAllCLArgsSetupFinished();
     }

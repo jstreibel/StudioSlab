@@ -7,7 +7,7 @@
 #include <sigc++/adaptors/retype.h>
 
 namespace Slab::Models::StochasticPathIntegrals {
-    SPINumericConfig::SPINumericConfig() : NumericConfig(false) {
+    SPINumericConfig::SPINumericConfig() : FNumericConfig(false) {
         GetInterface()->AddParameters({&L, &t, &N, &dT, &nT});
     }
 

@@ -18,8 +18,7 @@ namespace Slab::Graphics {
     FPlatformWindow::FPlatformWindow(void *window_ptr, TPointer<FEventTranslator> EventTranslator)
     : EventTranslator(std::move(EventTranslator))
     , r_Window(window_ptr)
-    , MouseState(New<FMouseState>()){
-
+    , MouseState(New<FMouseState>()) {
         // Add event listener manually because FPlatformWindow::AddEventListener calls the pure abstract
         // methods FPlatformWindow::GetWidth and FPlatformWindow::GetHeight, yielding an exception upon being
         // called (even implicitly) by the constructor.
@@ -28,6 +27,11 @@ namespace Slab::Graphics {
     }
 
      auto FPlatformWindow::AddEventListener(const TVolatile<FPlatformWindowEventListener> &Listener) const -> bool {
+        auto Listener_Ptr = Listener.lock();
+        if(Listener_Ptr == nullptr) return false;
+
+        Listener_Ptr->NotifySystemWindowReshape(GetWidth(), GetHeight());
+
         return EventTranslator->AddGUIEventListener(Listener);
     }
 
@@ -88,7 +92,7 @@ namespace Slab::Graphics {
         EventTranslator->clear();
     }
 
-    RawPlatformWindow_Ptr FPlatformWindow::GetRawPlatformWindowPointer() const
+    FPlatformWindow_RawPointer FPlatformWindow::GetRawPlatformWindowPointer() const
     {
         return r_Window;
     }
@@ -97,33 +101,56 @@ namespace Slab::Graphics {
         return MouseState;
     }
 
-    TPointer<GUIContext> FPlatformWindow::GetGUIContext() {
-        if(GuiContext == nullptr)
-            GetGraphicsBackend()->SetupGUI(this);
+    TPointer<FGUIContext> FPlatformWindow::GetGUIContext() const
+    {
+        return GuiContext;
+    }
+
+    TPointer<FGUIContext> FPlatformWindow::SetupGUIContext() {
+        if(GuiContext == nullptr) {
+            GetGraphicsBackend()->SetupGUIForPlatformWindow(this);
+
+            GuiContext->SetManualRender(true);
+
+            if (GuiContext == nullptr || !AddEventListener(GuiContext))
+            {
+                Core::Log::Error("Failed to setup GUI context for platform window.");
+                return nullptr;
+            }
+        }
 
         return GuiContext;
     }
 
     void FPlatformWindow::Render() {
+        if(GuiContext == nullptr) SetupGUIContext();
+
         if(GuiContext != nullptr) {
             static auto ShowMetrics = false;
 
-            auto action = [this](const Str& item){
-                if(item == "Close")        SignalClose();
+            auto Action = [this](const Str& Item){
+                if(Item == "Close")        SignalClose();
                 else
-                if(item == "Show metrics") ShowMetrics = true;
+                if(Item == "Show metrics") ShowMetrics = true;
             };
 
             GuiContext->AddMainMenuItem(MainMenuItem{MainMenuLocation{"Window"},
                                                      {MainMenuLeafEntry{"Show metrics", "Alt+m", ShowMetrics},
                                                       MainMenuLeafEntry{"Close", "Alt+F4"}
                                                       },
-                                                     action});
+                                                     Action});
 
             if(ShowMetrics) GuiContext->AddDrawCall([](){ ImGui::ShowMetricsWindow(&ShowMetrics); });
+
+            GuiContext->Bind();
+            GuiContext->NewFrame();
         }
 
         Cycle();
+
+        if (GuiContext != nullptr) GuiContext->Render();
+
+        Flush();
     }
 
 

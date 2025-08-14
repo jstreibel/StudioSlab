@@ -103,7 +103,7 @@ namespace Slab::Models::MolecularDynamics {
         molShape.setOrigin(CUTOFF_RADIUS, CUTOFF_RADIUS);
     }
 
-    void Monitor::handleOutput(const Math::OutputPacket &packet) {    }
+    void Monitor::HandleOutput(const Math::OutputPacket &packet) {    }
 
     void Monitor::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         // Window::draw();

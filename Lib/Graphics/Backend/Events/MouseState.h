@@ -33,9 +33,9 @@ namespace Slab::Graphics {
         EKeyState Center = Release;
         EKeyState Right  = Release;
 
-        bool IsLeftPressed() const { return Left != Release; }
-        bool IsCenterPressed() const { return Center != Release; }
-        bool IsRightPressed() const { return Right != Release; }
+        [[nodiscard]] bool IsLeftPressed()   const { return Left   != Release; }
+        [[nodiscard]] bool IsCenterPressed() const { return Center != Release; }
+        [[nodiscard]] bool IsRightPressed()  const { return Right  != Release; }
 
         EModKeys mod_keys;
 

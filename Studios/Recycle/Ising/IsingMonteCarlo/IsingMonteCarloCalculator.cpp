@@ -18,13 +18,13 @@
 
 
 Real avg(const RealVector &v) {
-    const Real zero = 0.0;
-    const Real N = v.size();
+    const DevFloat zero = 0.0;
+    const DevFloat N = v.size();
     return std::accumulate(v.begin(),  v.end(),  zero)/N;
 }
 
 
-IsingMonteCarloCalculator::IsingMonteCarloCalculator(int L, Real T, Real h,
+IsingMonteCarloCalculator::IsingMonteCarloCalculator(int L, DevFloat T, DevFloat h,
                                                      ThermoOutput::ViewControlBase *viewer, InitialConditions ic,
                                                      Dynamic dynamic, Sweeping sweeping)
 : S(L), T(T), h(h), ic(ic), aDynamic(dynamic), vcOutput(viewer), sweeping(sweeping) {
@@ -53,7 +53,7 @@ void IsingMonteCarloCalculator::_shake(double h) {
 }
 
 
-inline bool IsingMonteCarloCalculator::__shouldAccept(const Real deltaE) {
+inline bool IsingMonteCarloCalculator::__shouldAccept(const DevFloat deltaE) {
     if(deltaE<0) return true;
 
     const double r = RandUtils::random01();
@@ -61,7 +61,7 @@ inline bool IsingMonteCarloCalculator::__shouldAccept(const Real deltaE) {
     #if USE_LOOKUP_TABLE_FOR_DELTA_E == true
     const double z = ThermoUtils::BoltzmannWeightDeltaE_h0(deltaE);
     #else
-    const double z = ThermoUtils::BoltzmannWeight((Real)T, (Real)deltaE);
+    const double z = ThermoUtils::BoltzmannWeight((DevFloat)T, (DevFloat)deltaE);
     #endif
 
     return (r<z);
@@ -133,7 +133,7 @@ void IsingMonteCarloCalculator::Simulate(int MCSteps, int transientSize) {
 
         MCStep(T, h, N);
 
-        Real E = S.E((double)h),
+        DevFloat E = S.E((double)h),
                           M = S.M();
 
         const auto _e = E/Nd, _m=M/Nd;
@@ -181,12 +181,12 @@ IsingMonteCarloCalculator::_outputDataToConsole(const RealVector &e, const RealV
     std::cout << e_av << " " << e2_av << " " << m_av << " " << m2_av << " " << m4_av << " " << Cv << " " << Xi << " " << B << "\n";
 }
 
-void IsingMonteCarloCalculator::set_T(Real T) {
+void IsingMonteCarloCalculator::set_T(DevFloat T) {
     this->T = T;
     ThermoUtils::GenerateBoltzmannWeightLookUpTable(T);
 }
 
-void IsingMonteCarloCalculator::set_h(Real h) {
+void IsingMonteCarloCalculator::set_h(DevFloat h) {
     this->h = h;
 }
 

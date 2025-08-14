@@ -4,6 +4,7 @@
 
 #include "XHairArtist.h"
 #include "Graphics/SlabGraphics.h"
+#include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
@@ -38,10 +39,13 @@ namespace Slab::Graphics {
         XHair.AddPoint({XHairLocation.x, region_rect.yMin});
         XHair.AddPoint({XHairLocation.x, region_rect.yMax});
 
-        OpenGL::Legacy::PushLegacyMode();
-        OpenGL::Legacy::SetupOrtho(region_rect);
-        bool bResult = OpenGL::Legacy::RenderPointSett(Naked(XHair), currStyle->XHairStyle);
-        OpenGL::Legacy::RestoreFromLegacyMode();
+        bool bResult;
+        {
+            OpenGL::Legacy::FShaderGuard Guard{};
+
+            OpenGL::Legacy::SetupOrtho(region_rect);
+            bResult = OpenGL::Legacy::RenderPointSett(Naked(XHair), currStyle->XHairStyle);
+        }
 
         return bResult;
     }

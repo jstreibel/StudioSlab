@@ -44,7 +44,10 @@ namespace Slab::Graphics {
 
         auto win = sfml_native_window;
         IterateReferences(sfml_listeners, FuncRun(render, win));
+    }
 
+    void SFMLSystemWindow::Flush()
+    {
         sfml_native_window->display();
     }
 

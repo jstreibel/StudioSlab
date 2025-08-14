@@ -16,21 +16,20 @@ namespace Slab::Graphics {
     using Context = TPointer<FImGuiContext>;
 
     class FImGuiModule : public FGUIModule {
-        // Context m_MainContext = nullptr;
-        FCallSet CallSet;
+        FImplementationCallSet ImplCallSet;
 
     protected:
         Vector<Context> Contexts;
 
         bool bShowDemos = false;
 
-        explicit FImGuiModule(FCallSet);
+        explicit FImGuiModule(FImplementationCallSet);
 
         ~FImGuiModule() override = default;
 
     public:
 
-        TPointer<GUIContext> CreateContext(FOwnerPlatformWindow) override;
+        TPointer<FGUIContext> CreateContext(FOwnerPlatformWindow) override;
 
         static FImGuiModule* BuildModule();
     };

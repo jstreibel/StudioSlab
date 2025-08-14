@@ -27,7 +27,7 @@ namespace Slab::Math::R2toR {
                                     << drivingForce->myName() << "'." << Log::Flush;
         }
 
-        auto DrivenEquation::dtF(const EquationState &in, EquationState &out, Real t, Real δt) -> EquationState & {
+        auto DrivenEquation::dtF(const EquationState &in, EquationState &out, DevFloat t, DevFloat δt) -> EquationState & {
             // φ = dϕ/dt
 
             const

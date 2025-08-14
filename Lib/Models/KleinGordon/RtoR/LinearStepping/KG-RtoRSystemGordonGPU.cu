@@ -26,7 +26,7 @@ struct GPUHamiltonianStepper
     GPUHamiltonianStepper(floatt dt) : dt(dt) {}
 
     __host__ __device__
-    static inline Real dVdphi(const Real &phi){
+    static inline DevFloat dVdphi(const DevFloat &phi){
         // TODO: usar implementacao de sign(x) da GPU.
         return phi < 0 ? -1 : (phi > 0 ? 1 : 0);
     }
@@ -37,7 +37,7 @@ struct GPUHamiltonianStepper
     }
 };
 
-EquationState &SystemGordonGPU::dtF(const EquationState &in, EquationState &out, Real t, Real dt) {
+EquationState &SystemGordonGPU::dtF(const EquationState &in, EquationState &out, DevFloat t, DevFloat dt) {
     cast(inPhi, const NumericFunctionGPU&, in.getPhi());
     cast(inDPhiDt, const NumericFunctionGPU&, in.getDPhiDt());
     cast(outPhi, NumericFunctionGPU&, out.getPhi());
@@ -60,7 +60,7 @@ EquationState &SystemGordonGPU::dtF(const EquationState &in, EquationState &out,
     }
 
     {
-        const Real h = sInPhi.geth();
+        const DevFloat h = sInPhi.geth();
         const UInt N = sInPhi.getTotalDiscreteSites();
         DeviceVector & d2dx2_v = temp;
         d2dx2(vInPhi, d2dx2_v, h, N);

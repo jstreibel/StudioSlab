@@ -30,7 +30,7 @@ namespace Slab::Models::KGRtoR {
 
 
     public:
-        CorrelationsPanel(const TPointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian);
+        CorrelationsPanel(const TPointer<FKGNumericConfig> &params, FGUIWindow &guiWindow, FKGEnergy &hamiltonian);
 
         void SetSimulationHistory(R2toR::FNumericFunction_constptr simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;

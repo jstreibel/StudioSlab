@@ -28,7 +28,7 @@ protected:
 
         // auto& ImGuiModule = Slab::GetModule<Slab::Graphics::ImGuiModule>("GUI:ImGui");
         // auto GUIContext = ImGuiModule.CreateContext(&*MainSystemWindow);
-        const auto GUIContext = MainSystemWindow->GetGUIContext();
+        const auto GUIContext = MainSystemWindow->SetupGUIContext();
         auto ImGuiContext =
             Slab::DynamicPointerCast
             <Slab::Graphics::FImGuiContext>
@@ -37,13 +37,13 @@ protected:
 
         Slab::TPointer<Slab::Graphics::FWindowManager> WindowManager;
         if constexpr (false)
-            WindowManager = Slab::New<Slab::Graphics::SlabWindowManager>();
+            WindowManager = Slab::New<Slab::Graphics::FSlabWindowManager>();
         else
             WindowManager = Slab::New<Slab::Graphics::FImGuiWindowManager>(ImGuiContext);
 
         MainSystemWindow->AddAndOwnEventListener(WindowManager);
 
-        const auto Window = Slab::New<Tests::FBezierTests>(ImGuiContext);
+        const auto Window = Slab::New<Tests::FBezierTests>();
         // Slab::Graphics::FSlabWindow::Config config;
         // config.parent_syswin = &*MainSystemWindow;
         // config.title = "Slab ImGui Test Window";

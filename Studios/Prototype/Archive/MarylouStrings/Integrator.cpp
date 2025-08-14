@@ -59,7 +59,7 @@ void StringsOfMarylou::RHS(const Funcs &V, Funcs &dVdx, const double x) const {
     dhdx = e;
 }
 
-void StringsOfMarylou::operator()(const Funcs &V, Funcs &dVdx, const Real x) {
+void StringsOfMarylou::operator()(const Funcs &V, Funcs &dVdx, const DevFloat x) {
     return RHS(V, dVdx, x);
 }
 
@@ -101,8 +101,8 @@ MaryApp::MaryApp(sf::RenderWindow &window) : AppBase(0, nullptr) {
 }
 
 int MaryApp::run() {
-    const Real beta=0.5, alpha_phi=2;
-    const Real dfdx0=0, g0=0, h0=0;  // don't touch this;
+    const DevFloat beta=0.5, alpha_phi=2;
+    const DevFloat dfdx0=0, g0=0, h0=0;  // don't touch this;
     Funcs V0 = {dfdx0, dgdx0, dhdx0,
                 f0, g0, h0};
     StringsOfMarylou rs = {beta, alpha_phi};

@@ -140,7 +140,7 @@ namespace Slab::Math::R2toR {
     }
 
     auto R2toRDFT::DFTReal_symmetric(const FNumericFunction &toTransform) -> FFTData {
-        if(toTransform.getN()%2) throw Exception("can't FT real data with odd number of sites in space dimension");
+        if(toTransform.getN()%2) throw Exception("can't FT DevFloat data with odd number of sites in space dimension");
 
         NOT_IMPLEMENTED
 

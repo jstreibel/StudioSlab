@@ -19,8 +19,8 @@ namespace Slab::Graphics {
                       PlotStyle XHairStyle,
                       PlotStyle majorGridStyle,
                       PlotStyle minorGridStyle,
-                      std::shared_ptr <Graphics::Writer> labelsWriter,
-                      std::shared_ptr <Graphics::Writer> ticksWriter,
+                      std::shared_ptr <Graphics::FWriter> labelsWriter,
+                      std::shared_ptr <Graphics::FWriter> ticksWriter,
                       Vector <PlotStyle> plotStyles);
 
         FColor graphBackground;
@@ -32,8 +32,8 @@ namespace Slab::Graphics {
         PlotStyle majorGridLines;
         PlotStyle minorGridLines;
 
-        std::shared_ptr <Graphics::Writer> LabelsWriter;
-        std::shared_ptr <Graphics::Writer> TicksWriter;
+        std::shared_ptr <Graphics::FWriter> LabelsWriter;
+        std::shared_ptr <Graphics::FWriter> TicksWriter;
 
         Vector <PlotStyle> FuncPlotStyles;
 

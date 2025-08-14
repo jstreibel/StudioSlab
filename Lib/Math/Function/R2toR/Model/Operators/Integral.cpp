@@ -14,7 +14,7 @@ namespace Slab::Math::R2toR {
         IN data = func->getSpace().getHostData(true);
         fix N = func->getN();
         fix M = func->getM();
-        fix invM = 1./(Real)M;
+        fix invM = 1./static_cast<DevFloat>(M);
 
         fix t_min = func->getDomain().yMin;
         fix t_max = func->getDomain().yMax;

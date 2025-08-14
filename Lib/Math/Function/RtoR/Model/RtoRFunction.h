@@ -22,7 +22,7 @@ namespace Slab::Math::RtoR {
 class Function : public FunctionsCollection<Real>::Function1D {
 public:
     virtual ~Function() = default;
-    virtual Real operator()(Real x) const = 0;
+    virtual DevFloat operator()(DevFloat x) const = 0;
 };
 */
 

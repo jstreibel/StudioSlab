@@ -7,7 +7,7 @@
 namespace Slab::Math {
 
     MetropolisRtoRConfig::MetropolisRtoRConfig(UInt max_steps)
-            : NumericConfig(DONT_REGISTER), max_steps(max_steps) {
+            : FNumericConfig(DONT_REGISTER), max_steps(max_steps) {
         // registerToManager();
     }
 

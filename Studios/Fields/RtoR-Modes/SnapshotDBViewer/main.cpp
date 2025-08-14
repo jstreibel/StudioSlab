@@ -55,7 +55,7 @@ public:
         const auto Viewer = Slab::New<Modes::DatabaseViewer::DBViewerSequence>(dbLocations, *criticalParameter);
 
 
-        const auto WindowManager = Slab::New<Graphics::SlabWindowManager>();
+        const auto WindowManager = Slab::New<Graphics::FSlabWindowManager>();
         GuiBackend->GetMainSystemWindow()->AddEventListener(WindowManager);
 
         WindowManager->AddSlabWindow(Viewer, false);

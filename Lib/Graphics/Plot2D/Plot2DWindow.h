@@ -46,7 +46,7 @@ namespace Slab::Graphics {
 
         float AnimationTimeSeconds = 0.2f;
 
-        FImGuiWindowContext WindowContext;
+        // FImGuiWindowContext WindowContext;
 
         void SetupOrtho() const;
 
@@ -69,12 +69,11 @@ namespace Slab::Graphics {
             DevFloat xMax,
             DevFloat yMin,
             DevFloat yMax,
-            Str title,
-            const FImGuiWindowContext& ImGuiWindowContext);
+            Str title);
 
     public:
 
-        explicit FPlot2DWindow(Str Title, const FImGuiWindowContext& ImGuiWindowContext = FImGuiWindowContext{nullptr});
+        explicit FPlot2DWindow(Str Title);
 
         void ImmediateDraw(const FPlatformWindow&) override;
         auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;

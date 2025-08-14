@@ -72,7 +72,7 @@ let OutputShockwaveZeros::notifyIntegrationHasFinished(const OutputPacket &theVe
 void OutputShockwaveZeros::_out(const OutputPacket &OutputInfoOStream) {
     NOT_IMPLEMENTED_CLASS_METHOD
 
-/*
+*//*
     let &phi = OutputInfo.getFieldData<R2toR::FieldState>()->getPhi();
     let &dphidt = OutputInfo.getFieldData<R2toR::FieldState>()->getDPhiDt();
 

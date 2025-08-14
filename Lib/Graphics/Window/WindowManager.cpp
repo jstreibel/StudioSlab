@@ -4,12 +4,10 @@
 
 #include "WindowManager.h"
 
-namespace Slab {
-namespace Graphics {
+namespace Slab::Graphics {
 
     void FWindowManager::AddSlabWindow(const TPointer<FSlabWindow>& slab_window)
     {
         this->AddSlabWindow(slab_window, false);
     }
-} // Graphics
-} // Slab
+} // Slab::Graphics

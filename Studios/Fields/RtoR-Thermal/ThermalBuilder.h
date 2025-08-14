@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_THERMALBUILDER_H
 #define STUDIOSLAB_THERMALBUILDER_H
 
-#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoR-Recipe.h"
 
 namespace Studios::Fields::RtoRThermal {
 
@@ -14,7 +14,7 @@ namespace Studios::Fields::RtoRThermal {
     using namespace Slab::Math;
     using namespace Slab::Models;
 
-    class Builder : public KGRtoR::KGRtoRBuilder {
+    class Builder : public KGRtoR::FKGRtoR_Recipe {
         RealParameter temperature    = RealParameter(.0, "T,temperature", "The Langevin temperature reservoir's temperature");
         RealParameter dissipation    = RealParameter(.0, "k,dissipation_coefficient", "The dynamics dissipation coefficient");
         RealParameter transientGuess = RealParameter(.0, "i,transient_guess", "User guess for transient value");

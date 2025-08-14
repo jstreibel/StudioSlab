@@ -13,7 +13,6 @@
 #include "PlotStyle.h"
 
 #include <utility>
-#include <sys/stat.h>
 
 #include "3rdParty/ImGui.h"
 
@@ -57,17 +56,12 @@ namespace Slab::Graphics {
         DevFloat xMax,
         DevFloat yMin,
         DevFloat yMax,
-        Str _title,
-        const FImGuiWindowContext& ImGuiWindowContext)
+        Str _title)
     : FSlabWindow(FSlabWindowConfig(_title))
     , Id(++WindowCount)
     , Region{{xMin, xMax, yMin, yMax}}
     , Title(std::move(_title))
-    , WindowContext(ImGuiWindowContext)
     {
-        if(this->WindowContext.Context == nullptr) this->WindowContext.Context = GLOBAL_IMGUI_CONTEXT;
-        if(this->WindowContext.WindowId == "")     this->WindowContext.WindowId = GetUniqueName();
-
         // Instantiate our dedicated Plot themes manager
         PlotThemeManager::GetInstance();
 
@@ -97,8 +91,8 @@ namespace Slab::Graphics {
 
     }
 
-    FPlot2DWindow::FPlot2DWindow(Str Title, const FImGuiWindowContext& ImGuiWindowContext)
-    : FPlot2DWindow(-1, 1, -1, 1, std::move(Title), ImGuiWindowContext) {    }
+    FPlot2DWindow::FPlot2DWindow(Str Title)
+    : FPlot2DWindow(-1, 1, -1, 1, std::move(Title)) {    }
 
     void FPlot2DWindow::AddArtist(const FArtist_ptr &pArtist, zOrder_t zOrder) {
         if (pArtist == nullptr) {
@@ -246,7 +240,7 @@ namespace Slab::Graphics {
             ImGui::End();
         };
 
-        WindowContext.Context->AddDrawCall(DrawCall);
+        DrawCall();
     }
 
     void FPlot2DWindow::SetupOrtho() const {

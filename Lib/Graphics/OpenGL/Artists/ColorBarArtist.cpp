@@ -54,56 +54,59 @@ namespace Slab::Graphics::OpenGL {
         auto style =  PlotThemeManager::GetCurrent();
         auto &writer = style->LabelsWriter;
 
-        Legacy::PushLegacyMode();
-        Legacy::SetupOrthoI(graph.GetViewport());
-        // TODO this below also sucks.
-        if(1) {
-            // GAMBIARRAS
+        {
+            OpenGL::Legacy::SetupOrtho(graph.GetRegion().getRect());
 
-            auto xMin = (float)rect.xMin - (float)general_slack;
-            auto xMax = (float)rect.xMax + writer->GetFontHeightInPixels()*(decimal_places) + (float)right_slack;
-            auto yMin = (float)rect.yMin + (float)general_slack;
-            auto yMax = (float)rect.yMax - (float)general_slack;
+            Legacy::SetupOrthoI(graph.GetViewport());
+            // TODO this below also sucks.
+            if constexpr (true) {
 
-            xMin = 2.f*(xMin/(float) graph.GetViewport().GetWidth() - .5f);
-            xMax = 2.f*(xMax/(float) graph.GetViewport().GetWidth() - .5f);
-            yMin = 2.f*(yMin/(float) graph.GetViewport().GetHeight() - .5f);
-            yMax = 2.f*(yMax/(float) graph.GetViewport().GetHeight() - .5f);
+                // GAMBIARRAS
 
-            glMatrixMode(GL_PROJECTION);
-            glPushMatrix();
-            glLoadIdentity();
+                auto xMin = (float)rect.xMin - (float)general_slack;
+                auto xMax = (float)rect.xMax + writer->GetFontHeightInPixels()*(decimal_places) + (float)right_slack;
+                auto yMin = (float)rect.yMin + (float)general_slack;
+                auto yMax = (float)rect.yMax - (float)general_slack;
 
-            glMatrixMode(GL_MODELVIEW);
-            glPushMatrix();
-            glLoadIdentity();
+                xMin = 2.f*(xMin/(float) graph.GetViewport().GetWidth() - .5f);
+                xMax = 2.f*(xMax/(float) graph.GetViewport().GetWidth() - .5f);
+                yMin = 2.f*(yMin/(float) graph.GetViewport().GetHeight() - .5f);
+                yMax = 2.f*(yMax/(float) graph.GetViewport().GetHeight() - .5f);
 
-            fix bgColor = PlotThemeManager::GetCurrent()->graphBackground;
-            fix fgColor = PlotThemeManager::GetCurrent()->graphNumbersColor;
+                glMatrixMode(GL_PROJECTION);
+                glPushMatrix();
+                glLoadIdentity();
 
-            glColor4fv(bgColor.asFloat4fv());
-            glBegin(GL_QUADS);
-            glVertex2d(xMin, yMin);
-            glVertex2d(xMin, yMax);
-            glVertex2d(xMax, yMax);
-            glVertex2d(xMax, yMin);
-            glEnd();
+                glMatrixMode(GL_MODELVIEW);
+                glPushMatrix();
+                glLoadIdentity();
 
-            glDisable(GL_LINE_STIPPLE);
-            glLineWidth(1);
-            glColor4fv(fgColor.asFloat4fv());
-            glBegin(GL_LINE_LOOP);
-            glVertex2d(xMin, yMin);
-            glVertex2d(xMin, yMax);
-            glVertex2d(xMax, yMax);
-            glVertex2d(xMax, yMin);
-            glEnd();
+                fix bgColor = PlotThemeManager::GetCurrent()->graphBackground;
+                fix fgColor = PlotThemeManager::GetCurrent()->graphNumbersColor;
 
-            glPopMatrix();
-            glMatrixMode(GL_PROJECTION);
-            glPopMatrix();
+                glColor4fv(bgColor.asFloat4fv());
+                glBegin(GL_QUADS);
+                glVertex2d(xMin, yMin);
+                glVertex2d(xMin, yMax);
+                glVertex2d(xMax, yMax);
+                glVertex2d(xMax, yMin);
+                glEnd();
+
+                glDisable(GL_LINE_STIPPLE);
+                glLineWidth(1);
+                glColor4fv(fgColor.asFloat4fv());
+                glBegin(GL_LINE_LOOP);
+                glVertex2d(xMin, yMin);
+                glVertex2d(xMin, yMax);
+                glVertex2d(xMax, yMax);
+                glVertex2d(xMax, yMin);
+                glEnd();
+
+                glPopMatrix();
+                glMatrixMode(GL_PROJECTION);
+                glPopMatrix();
+            }
         }
-        Legacy::RestoreFromLegacyMode();
 
         auto dx = rect.GetWidth();
         auto dy = rect.GetHeight();
@@ -185,7 +188,7 @@ namespace Slab::Graphics::OpenGL {
                 {xMax, yMin,   uf},
                 {xMin, yMin,   uf}};
 
-        vertexBuffer.pushBack(vertices, 4, indices, 6);
+        vertexBuffer.PushBack(vertices, 4, indices, 6);
     }
 
     void ColorBarArtist::DrawGUI() {

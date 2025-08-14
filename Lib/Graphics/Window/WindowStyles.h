@@ -16,13 +16,13 @@ namespace Slab::Graphics::WindowStyle {
     extern int font_size;
     extern FColor titlebar_color;
 
-    extern int border_size;
+    extern int BorderSize;
     extern FColor windowBorderColor_inactive;
     extern FColor windowBorderColor_active;
 
     extern int menu_height;
 
-    extern FColor windowBGColor;
+    extern FColor WindowBGColor;
     extern FColor PlatformWindow_BackgroundColor;
 
 

@@ -15,7 +15,7 @@
 
 namespace Slab::Math {
 
-    // inline Real sqr(const Real &v){ return v*v; }
+    // inline DevFloat sqr(const DevFloat &v){ return v*v; }
 
     auto RtoRActionMetropolisRecipe::getField() -> TPointer<RtoR::NumericFunction_CPU> {
         if(field_data == nullptr){
@@ -34,8 +34,8 @@ namespace Slab::Math {
         // Core::RegisterCLInterface(interface);
     }
 
-    Vector<TPointer<Socket>> RtoRActionMetropolisRecipe::buildOutputSockets() {
-        fix total_steps = getNumericConfig()->getn();
+    Vector<TPointer<Socket>> RtoRActionMetropolisRecipe::BuildOutputSockets() {
+        fix total_steps = GetNumericConfig()->getn();
 
         auto console_monitor = New<OutputConsoleMonitor>(total_steps);
         console_monitor->setnSteps((int)1000);

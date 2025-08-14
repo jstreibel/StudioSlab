@@ -224,7 +224,10 @@ namespace Slab::Graphics {
         static auto Render = FuncRun(Render, PlatformWindow);
 
         IterateReferences(GLFWListeners, Render, IterateAll);
+    }
 
+    void FGLFWPlatformWindow::Flush()
+    {
         glfwSwapBuffers(static_cast<GLFWwindow *>(r_Window));
     }
 

@@ -35,7 +35,7 @@ namespace Slab::Math::RtoR {
             void handleOutput(const OutputPacket &outInfo) override;
 
         public:
-            OutGL(const NumericConfig &params, Real phiMin, Real phiMax);
+            OutGL(const NumericConfig &params, DevFloat phiMin, DevFloat phiMax);
 
             void draw() override;
 

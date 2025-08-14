@@ -15,7 +15,7 @@ namespace Slab::Graphics::WindowStyle {
 
     int menu_height = font_size*5./3;
 
-    int border_size = 3;
+    int BorderSize = 3;
     //Color windowBorderColor_inactive = {0.2,0.2,0.30,1};
     FColor windowBorderColor_inactive = titlebar_color*0.5;
     FColor windowBorderColor_active = titlebar_color;
@@ -23,7 +23,7 @@ namespace Slab::Graphics::WindowStyle {
     // Color clearColor = {0.1, 0.1, 0.15, 1};
     // Color clearColor = {0.9, 0.9, 0.85, 1};
     // Color windowBGColor = {246/255., 245/255., 244/255., 1};
-    FColor windowBGColor = {192/255., 181/255., 181/255., 1};
+    FColor WindowBGColor = {192/255., 181/255., 181/255., 1};
 
     FColor PlatformWindow_BackgroundColor = {21./255,34./255,51./255};
 }

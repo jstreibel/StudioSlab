@@ -33,7 +33,7 @@ namespace Slab::Models::KGRtoR {
 
         DevFloat transientHint = -1.0;
 
-        KGEnergy &hamiltonian;
+        FKGEnergy &hamiltonian;
 
         DevFloat u=.0;
 
@@ -57,7 +57,7 @@ namespace Slab::Models::KGRtoR {
         void updateEnergyData();
 
     public:
-        RtoRStatisticsPanel(const TPointer<KGNumericConfig> &params, KGEnergy &hamiltonian, Graphics::FGUIWindow &guiWindow);
+        RtoRStatisticsPanel(const TPointer<FKGNumericConfig> &params, FKGEnergy &hamiltonian, Graphics::FGUIWindow &guiWindow);
 
         void ImmediateDraw(const FPlatformWindow&) override;
 

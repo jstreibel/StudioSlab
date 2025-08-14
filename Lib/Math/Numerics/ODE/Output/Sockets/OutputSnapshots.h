@@ -32,7 +32,7 @@ namespace Slab::Math {
     protected:
         bool shouldOutput(long unsigned timeStep) override;
 
-        void handleOutput(const OutputPacket &outInfo) override {
+        void HandleOutput(const OutputPacket &outInfo) override {
             OutputSnapshot::doOutput(outInfo, customFileDescription, 4);
         }
     };

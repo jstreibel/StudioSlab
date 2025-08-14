@@ -12,7 +12,7 @@ namespace Slab::Models {
 
     using namespace Core;
 
-    class KGNumericConfig : public DynamicsNumericConfig {
+    class FKGNumericConfig : public DynamicsNumericConfig {
 
         RealParameter::Ptr xCenter = RealParameter::New(.0, "c,xCenter", "Center of simulation space");
 
@@ -31,9 +31,9 @@ namespace Slab::Models {
         UInt n{};
 
     public:
-        explicit KGNumericConfig(bool doRegister = true);
+        explicit FKGNumericConfig(bool doRegister = true);
 
-        KGNumericConfig(const KGNumericConfig &) = delete;
+        FKGNumericConfig(const FKGNumericConfig &) = delete;
 
         auto to_string() const -> Str override;
 

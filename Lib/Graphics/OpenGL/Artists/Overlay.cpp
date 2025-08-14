@@ -40,7 +40,7 @@ namespace Slab::Graphics::OpenGL {
                 {xMax, yMax,    1,1,1,1,    sf, tf},
                 {xMin, yMax,    1,1,1,1,    si, tf}};
 
-        vertexBuffer.pushBack(vertices, 4, indices, 6);
+        vertexBuffer.PushBack(vertices, 4, indices, 6);
     }
 
     bool OpenGL::Overlay::Draw(const FPlot2DWindow &graph2D) {

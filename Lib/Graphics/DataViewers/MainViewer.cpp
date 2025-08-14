@@ -15,9 +15,7 @@ namespace Slab::Graphics {
     : gui_window(New<FGUIWindow>(FSlabWindowConfig("Main Viewer")))
     , base_function(std::move(baseFunction)) {
 
-        auto font_size = gui_window->GetGUIWindowContext().Context->GetFontSize();
-
-        auto gui_size = 22*font_size;
+        auto gui_size = 500;
 
         AddWindow(gui_window, Right, (float)gui_size);
         AddResponder(gui_window);
@@ -38,8 +36,7 @@ namespace Slab::Graphics {
     }
 
     void MainViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
-        // TODO: No const_cast here
-        IN GuiContext = const_cast<FPlatformWindow&>(PlatformWindow).GetGUIContext();
+        IN GuiContext = PlatformWindow.GetGUIContext();
 
         if(GuiContext == nullptr) return;
 

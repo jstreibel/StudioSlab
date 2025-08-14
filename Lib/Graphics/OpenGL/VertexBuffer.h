@@ -118,7 +118,7 @@ namespace Slab::Graphics::OpenGL {
                       const void * vertices, size_t vcount,
                       const GLuint * indices, size_t icount);
 
-        size_t pushBack(const void * vertices, size_t vcount, const GLuint * indices, size_t icount);
+        size_t PushBack(const void * vertices, size_t vcount, const GLuint * indices, size_t icount);
 
         void erase(size_t index);
     };

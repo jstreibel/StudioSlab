@@ -9,7 +9,7 @@
 namespace Slab::Models {
 
     DynamicsNumericConfig::DynamicsNumericConfig(bool do_register)
-    : Math::NumericConfig(false)
+    : Math::FNumericConfig(false)
     {
         Interface->AddParameters({N, L, t});
 
@@ -30,7 +30,7 @@ namespace Slab::Models {
     }
 
     void DynamicsNumericConfig::NotifyCLArgsSetupFinished() {
-        Math::NumericConfig::NotifyCLArgsSetupFinished();
+        Math::FNumericConfig::NotifyCLArgsSetupFinished();
 
         if (**t < 0) {
             *t = **L * .5;

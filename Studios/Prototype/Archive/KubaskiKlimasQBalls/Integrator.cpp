@@ -18,15 +18,15 @@ struct KubaskiKlimasQBalls {
     static const int EqCount = 4;
 
     struct Params {
-        Real α, β, ω_1, ω_2, μ_1, μ_2, λ_1, λ_2, l_1, l_2;
+        DevFloat α, β, ω_1, ω_2, μ_1, μ_2, λ_1, λ_2, l_1, l_2;
     };
     const Params p;
 
-    static inline Real sign(const Real x) {
+    static inline DevFloat sign(const DevFloat x) {
         return x<0?-1:(x>0?1:0);
     }
 
-    inline void RHS(const Funcs &F, Funcs &dFdr, const Real r) const {
+    inline void RHS(const Funcs &F, Funcs &dFdr, const DevFloat r) const {
         assert(F.size() == dFdr.size() && F.size() == EqCount);
 
         const auto &fp=F[0],// f'
@@ -53,7 +53,7 @@ struct KubaskiKlimasQBalls {
         dgdr = gp;
     }
 
-    void operator()(const Funcs &F, Funcs &dFdr, const Real r) const {
+    void operator()(const Funcs &F, Funcs &dFdr, const DevFloat r) const {
         return RHS(F, dFdr, r);
     }
 };
@@ -64,9 +64,9 @@ struct OutputHelper {
     virtual void operator()( const Funcs &F , double r ) { output->operator()(F, r); };
 };
 
-int run(Output *output, Funcs F0, Real start_x, Real end_x, Real dx)
+int run(Output *output, Funcs F0, DevFloat start_x, DevFloat end_x, DevFloat dx)
 {
-    const Real α=1, β=1,
+    const DevFloat α=1, β=1,
                ω_1=0, ω_2=0,
                μ_1=0, μ_2=0,
                λ_1=0, λ_2=0,

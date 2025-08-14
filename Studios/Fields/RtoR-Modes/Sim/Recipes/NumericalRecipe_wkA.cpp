@@ -22,7 +22,7 @@ namespace Modes {
     // using namespace Slab::Models;
 
     NumericalRecipe_wkA::NumericalRecipe_wkA(bool doRegister)
-    : KGRtoR::KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
+    : KGRtoR::FKGRtoR_Recipe("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
         Interface->AddParameters({&BCSelection, &omega, &k, &A, &driving_force});
 
@@ -30,9 +30,9 @@ namespace Modes {
     }
 
     Math::Base::BoundaryConditions_ptr NumericalRecipe_wkA::GetBoundary() {
-        auto prototype = KGRtoR::KGRtoRBuilder::NewFieldState();
+        auto prototype = KGRtoR::FKGRtoR_Recipe::NewFieldState();
 
-        fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->GetL();
+        fix L = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig())->GetL();
         fix A_0 = this->A.GetValue();
         fix dk = 2*M_PI/L;
         fix k_0 = dk*this->k.GetValue();
@@ -67,7 +67,7 @@ namespace Modes {
     void NumericalRecipe_wkA::NotifyCLArgsSetupFinished() {
         FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
-        auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
+        auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 
         fix L = config->GetL();
         fix n = config->getn();
@@ -108,11 +108,11 @@ namespace Modes {
     }
 
     void *NumericalRecipe_wkA::BuildOpenGLOutput() {
-        auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
+        auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 
 
         // fix amp = (*A) * 1.1;
-        auto monitor = new Modes::Monitor(config, *static_cast<KGRtoR::KGEnergy *>(getHamiltonian()), "Modes monitor");
+        auto monitor = new Modes::Monitor(config, *static_cast<KGRtoR::FKGEnergy *>(getHamiltonian()), "Modes monitor");
 
         fix k_0 = *k;
         fix A_0 = *A;
@@ -131,7 +131,7 @@ namespace Modes {
         // if(*BCSelection == 1) params.emplace_back("harmonic");
 
         fix StringRenderedParams = Interface->ToString(Params, SEPARATOR);
-        return KGRtoR::KGRtoRBuilder::SuggestFileName() + SEPARATOR + StringRenderedParams;
+        return KGRtoR::FKGRtoR_Recipe::SuggestFileName() + SEPARATOR + StringRenderedParams;
     }
 
     TPointer<Base::FunctionT<DevFloat, DevFloat>> NumericalRecipe_wkA::GetNonHomogenousTerm() {

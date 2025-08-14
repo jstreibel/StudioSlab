@@ -84,8 +84,8 @@ namespace Slab::Graphics {
         //ImGui::PushFont(font);
     }
 
-    FImGuiContext::FImGuiContext(FCallSet calls)
-    : CallSet(std::move(calls)) {
+    FImGuiContext::FImGuiContext(FImplementationCallSet calls)
+    : ImplementationCalls(std::move(calls)) {
         r_Context = ImGui::CreateContext();
 
         ImGui::SetCurrentContext(r_Context);
@@ -96,7 +96,7 @@ namespace Slab::Graphics {
         // ImGui::GetStyle().ScaleAllSizes(1.25);
         ImGui::GetIO().FontGlobalScale = 1;
 
-        CallSet.Init(CallSet);
+        ImplementationCalls.Init(ImplementationCalls);
 
         BuildFonts();
 
@@ -116,18 +116,17 @@ namespace Slab::Graphics {
     void FImGuiContext::NewFrame() {
         ImGui::SetCurrentContext(r_Context);
 
-        CallSet.NewFrame();
+        ImplementationCalls.NewFrame();
         ImGui::NewFrame();
-
-        FlushDrawCalls();
     }
 
-    void FImGuiContext::Render() const {
+    void FImGuiContext::Render() {
+        FlushDrawCalls();
+
         ImGui::Render();
 
-        CallSet.Draw();
+        ImplementationCalls.Draw();
     }
-
 
     void FImGuiContext::Bind() {
         ImGui::SetCurrentContext(r_Context);
@@ -216,12 +215,16 @@ namespace Slab::Graphics {
     }
 
     bool FImGuiContext::NotifyRender(const FPlatformWindow&) {
-        NewFrame();
-        Render();
+        if (!bManualRender)
+        {
+            NewFrame();
+            Render();
+        }
         return true;
     }
 
-    void AddItem(const int CurrentDepth, const MainMenuItem& Item) {
+    void AddItem(const int CurrentDepth, const MainMenuItem& Item)
+    {
         fix& Location = Item.Location;
         fix MaxDepth = Location.size();
 

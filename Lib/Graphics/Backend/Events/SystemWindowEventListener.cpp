@@ -34,19 +34,19 @@ namespace Slab::Graphics {
     void FPlatformWindowEventListener::AddResponder(const TVolatile<FPlatformWindowEventListener>& responder) {
         assert(responder.lock().get() != this);
 
-        delegateResponders.emplace_back(responder);
+        DelegateResponders.emplace_back(responder);
     }
 
     bool FPlatformWindowEventListener::HasResponders() const {
-        return !delegateResponders.empty();
+        return !DelegateResponders.empty();
     }
 
     void FPlatformWindowEventListener::RemoveResponder(const TPointer<FPlatformWindowEventListener>& to_remove) {
-        auto responder = delegateResponders.begin();
+        auto responder = DelegateResponders.begin();
 
-        while(responder != delegateResponders.end()) {
+        while(responder != DelegateResponders.end()) {
             if(responder->lock() == to_remove)
-                responder = delegateResponders.erase(responder);
+                responder = DelegateResponders.erase(responder);
             else
                 ++responder;
         }
@@ -54,15 +54,15 @@ namespace Slab::Graphics {
     }
 
     void FPlatformWindowEventListener::CursorEntered(bool entered) {
-        IterateReferences(delegateResponders, FuncRun(CursorEntered, entered));
+        IterateReferences(DelegateResponders, FuncRun(CursorEntered, entered));
     }
 
     bool FPlatformWindowEventListener::NotifyMouseMotion(int x, int y, int dx, int dy) {
-        return IterateReferences(delegateResponders, Func(NotifyMouseMotion, x, y, dx, dy));
+        return IterateReferences(DelegateResponders, Func(NotifyMouseMotion, x, y, dx, dy));
     }
 
     bool FPlatformWindowEventListener::NotifySystemWindowReshape(int w, int h) {
-        return IterateReferences(delegateResponders, Func(NotifySystemWindowReshape, w, h));
+        return IterateReferences(DelegateResponders, Func(NotifySystemWindowReshape, w, h));
     }
 
     bool FPlatformWindowEventListener::NotifyRender(const FPlatformWindow& PlatformWindow){
@@ -70,34 +70,34 @@ namespace Slab::Graphics {
             return obj->NotifyRender(PlatformWindow);
         };
 
-        return IterateReferences(delegateResponders, Funky);
+        return IterateReferences(DelegateResponders, Funky);
     }
 
     bool FPlatformWindowEventListener::NotifyKeyboard(EKeyMap key,
                                                    EKeyState state,
                                                    EModKeys modKeys){
-        return IterateReferences(delegateResponders, Func(NotifyKeyboard, key, state, modKeys));
+        return IterateReferences(DelegateResponders, Func(NotifyKeyboard, key, state, modKeys));
     }
 
     bool FPlatformWindowEventListener::NotifyCharacter(UInt codepoint) {
-        return IterateReferences(delegateResponders, Func(NotifyCharacter, codepoint));
+        return IterateReferences(DelegateResponders, Func(NotifyCharacter, codepoint));
     }
 
     bool FPlatformWindowEventListener::
     NotifyMouseButton(EMouseButton button,
                       EKeyState state,
                       EModKeys mods) {
-        return IterateReferences(delegateResponders, Func(NotifyMouseButton, button, state, mods));
+        return IterateReferences(DelegateResponders, Func(NotifyMouseButton, button, state, mods));
     }
 
 
     bool FPlatformWindowEventListener::
     NotifyMouseWheel(double dx, double dy) {
-        return IterateReferences(delegateResponders, Func(NotifyMouseWheel, dx, dy));
+        return IterateReferences(DelegateResponders, Func(NotifyMouseWheel, dx, dy));
     }
 
     bool FPlatformWindowEventListener::
     NotifyFilesDropped(StrVector paths) {
-        return IterateReferences(delegateResponders, Func(NotifyFilesDropped, paths));
+        return IterateReferences(DelegateResponders, Func(NotifyFilesDropped, paths));
     }
 }

@@ -10,14 +10,14 @@
 
 namespace Slab::Graphics {
 
-    class NuklearContext : public GUIContext {
+    class NuklearContext : public FGUIContext {
         nk_context *context;
     public:
         void Bind() override;
 
         void NewFrame() override;
 
-        void Render() const override;
+        void Render() override;
 
         void *GetContextPointer() override;
 

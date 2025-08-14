@@ -19,7 +19,7 @@ namespace Slab::Models::KGRtoR {
                         MyBase::EqBoundaryCondition &du,
                         PotentialFunc &potential);
 
-        EquationState &dtF(const EquationState &in, EquationState &out, Real t, Real dt) override;
+        EquationState &dtF(const EquationState &in, EquationState &out, DevFloat t, DevFloat dt) override;
 
     private:
         DeviceVector temp;

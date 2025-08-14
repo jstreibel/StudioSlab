@@ -4,7 +4,7 @@
 
 #include "KG-RtoREnergyCalculator.h"
 #include "Math/Function/RtoR/Model/Operators/DerivativesCPU.h"
-#include "KG-RtoRBuilder.h"
+#include "KG-RtoR-Recipe.h"
 
 
 // #define USE_PERIODIC_BC
@@ -32,9 +32,9 @@ namespace Slab::Models::KGRtoR {
         return true;
     }
 
-    KGEnergy::KGEnergy(RtoR::Function_ptr potentialFunc) : V_ptr(potentialFunc) {    }
+    FKGEnergy::FKGEnergy(RtoR::Function_ptr potentialFunc) : V_ptr(potentialFunc) {    }
 
-    auto KGEnergy::computeEnergies(const RtoR::NumericFunction& phi, const RtoR::NumericFunction& ddtPhi) -> const RtoR::NumericFunction & {
+    auto FKGEnergy::computeEnergies(const RtoR::NumericFunction& phi, const RtoR::NumericFunction& ddtPhi) -> const RtoR::NumericFunction & {
         if(!check_consistency(phi, ddtPhi)) {
             Log::Error() << Str("Inconsistency at ") + __PRETTY_FUNCTION__ + ":" + ToStr(__LINE__) << Log::Flush;
             return *_oEnergyDensity;
@@ -98,10 +98,10 @@ namespace Slab::Models::KGRtoR {
         return *_oEnergyDensity;
     }
 
-    auto KGEnergy::GetTotalEnergy() const -> DevFloat { return U; }
+    auto FKGEnergy::GetTotalEnergy() const -> DevFloat { return U; }
 
 
-    auto KGEnergy::integrateEnergy(DevFloat xmin, DevFloat xmax) -> DevFloat {
+    auto FKGEnergy::integrateEnergy(DevFloat xmin, DevFloat xmax) -> DevFloat {
         auto &func = *_oEnergyDensity;
 
         RealArray &E_v = _oEnergyDensity->getSpace().getHostData();
@@ -118,11 +118,11 @@ namespace Slab::Models::KGRtoR {
         return 0;
     }
 
-    DevFloat KGEnergy::GetTotalKineticEnergy() const { return K; }
+    DevFloat FKGEnergy::GetTotalKineticEnergy() const { return K; }
 
-    DevFloat KGEnergy::GetTotalGradientEnergy() const { return W; }
+    DevFloat FKGEnergy::GetTotalGradientEnergy() const { return W; }
 
-    DevFloat KGEnergy::GetTotalPotentialEnergy() const { return V; }
+    DevFloat FKGEnergy::GetTotalPotentialEnergy() const { return V; }
 
 
 }

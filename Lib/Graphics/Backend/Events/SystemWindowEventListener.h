@@ -14,12 +14,10 @@
 
 namespace Slab::Graphics {
 
-    class FPlatformWindow;
-
-    using FOwnerPlatformWindow = TVolatile<FPlatformWindow>;
+    using FOwnerPlatformWindow = TVolatile<class FPlatformWindow>;
 
     class FPlatformWindowEventListener {
-        Vector<TVolatile<FPlatformWindowEventListener>> delegateResponders;
+        Vector<TVolatile<FPlatformWindowEventListener>> DelegateResponders;
         friend class FPlatformWindow;
 
         int Priority;

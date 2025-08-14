@@ -8,11 +8,20 @@
 #include "SceneSetup.h"
 
 #include "Core/Backend/BackendManager.h"
+#include "Graphics/OpenGL/Utils.h"
 
 
 namespace Slab::Graphics::OpenGL::Legacy {
 
     static GLint LastProgramUsed = 0;
+
+    bool IsInLegacyMode()
+    {
+        GLint CurrentProgram;;
+        glGetIntegerv(GL_CURRENT_PROGRAM, &CurrentProgram);
+
+        return CurrentProgram == 0;
+    }
 
     void PushLegacyMode()
     {
@@ -27,21 +36,18 @@ namespace Slab::Graphics::OpenGL::Legacy {
 
         LastProgramUsed = CurrentProgram;
         glUseProgram(0);
+
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
     }
     void RestoreFromLegacyMode()
     {
         if(!Core::BackendManager::IsModuleLoaded("ModernOpenGL")) return;
 
         glUseProgram(LastProgramUsed);
+
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
     }
 
-    bool IsInLegacyMode()
-    {
-        GLint CurrentProgram;;
-        glGetIntegerv(GL_CURRENT_PROGRAM, &CurrentProgram);
-
-        return CurrentProgram == 0;
-    }
 
     void PushScene() {
         glEnable(GL_BLEND);

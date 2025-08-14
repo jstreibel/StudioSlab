@@ -8,7 +8,7 @@
 
 namespace Slab::Models::StochasticPathIntegrals {
 
-    class SPINumericConfig : public Slab::Math::NumericConfig {
+    class SPINumericConfig : public Slab::Math::FNumericConfig {
         Core::RealParameter L = Core::RealParameter(1.0, "L,length", "Space length");
         Core::RealParameter t = Core::RealParameter(1.0, "t,time", "Time interval");
         Core::IntegerParameter N = Core::IntegerParameter(1000, "N,site_count", "Total sites in space "

@@ -21,7 +21,7 @@ namespace Slab::Models::KGRtoR {
     {    }
 
 
-    void SnapshotOutput::handleOutput(const OutputPacket &) { /* do nothing */ }
+    void SnapshotOutput::HandleOutput(const OutputPacket &) { /* do nothing */ }
 
 
     auto SnapshotOutput::filterData(const OutputPacket &packet) -> RtoR::NumericFunction_CPU {

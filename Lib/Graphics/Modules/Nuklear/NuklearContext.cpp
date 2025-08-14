@@ -70,7 +70,7 @@ namespace Slab::Graphics {
         
     }
 
-    void NuklearContext::Render() const {
+    void NuklearContext::Render() {
 
     }
 

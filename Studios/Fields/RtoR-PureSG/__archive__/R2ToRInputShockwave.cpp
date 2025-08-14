@@ -21,7 +21,7 @@ R2toRInputShockwave::R2toRInputShockwave()
 }
 
 auto R2toRInputShockwave::getBoundary() -> void * {
-    const Real a = sqrt((4./3)*pi*(*eps)*(*eps)*(*E));
+    const DevFloat a = sqrt((4./3)*pi*(*eps)*(*eps)*(*E));
 
     let *phi0 = new FunctionAzimuthalSymmetry(new RtoR::NullFunction, 1.0, **e, **theta);
     //auto *dPhiDt0 = new FunctionAzimuthalSymmetry(new RtoRMap::RegularDiracDelta(a, a), sqrt(3./M_PI),e, theta);
@@ -33,13 +33,13 @@ auto R2toRInputShockwave::getBoundary() -> void * {
     if(0) // Output da energia nominal.
     {
         //{
-        //    Real E = 0.0;
-        //    Real N = 4096;
-        //    const Real h = 2. * (*eps) / N;
-        //    for (Real x = -(*eps); x <= (*eps); x += h) {
-        //        for (Real y = -(*eps); y <= (*eps); y += h) {
+        //    DevFloat E = 0.0;
+        //    DevFloat N = 4096;
+        //    const DevFloat h = 2. * (*eps) / N;
+        //    for (DevFloat x = -(*eps); x <= (*eps); x += h) {
+        //        for (DevFloat y = -(*eps); y <= (*eps); y += h) {
         //            Real2D r = {x, y};
-        //            const Real val = (*dPhiDt0)(r);
+        //            const DevFloat val = (*dPhiDt0)(r);
         //            E += val * val;
         //        }
         //    }
@@ -53,12 +53,12 @@ auto R2toRInputShockwave::getBoundary() -> void * {
 
     //RtoR2::StraightLine section1, section2;
     //{
-    //    //const Real rMin = ModelBuilder::getInstance().getParams().getxLeft();
-    //    //const Real rMax = rMin + ModelBuilder::getInstance().getParams().getL();
-    //    const Real rMin = -5;
-    //    const Real rMax =  5;
+    //    //const DevFloat rMin = ModelBuilder::getInstance().getParams().getxLeft();
+    //    //const DevFloat rMax = rMin + ModelBuilder::getInstance().getParams().getL();
+    //    const DevFloat rMin = -5;
+    //    const DevFloat rMax =  5;
     //    const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
-    //    Real theta = 0.0;
+    //    DevFloat theta = 0.0;
 
     //    Rotation R;
     //    R = Rotation(theta + .5 * M_PI);

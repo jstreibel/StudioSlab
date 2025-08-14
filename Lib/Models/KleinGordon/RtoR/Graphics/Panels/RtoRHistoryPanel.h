@@ -10,7 +10,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class RtoRHistoryPanel : public FRtoRPanel {
+    class FRtoRHistoryPanel : public FRtoRPanel {
         TPointer<Math::RtoR2::StraightLine> xLine;
         TPointer<Math::RtoR2::StraightLine> kLine;
 
@@ -20,7 +20,7 @@ namespace Slab::Models::KGRtoR {
         TPointer<Graphics::FPlot2DWindow> kSpaceHistory;
 
     public:
-        RtoRHistoryPanel(const TPointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian);
+        FRtoRHistoryPanel(const TPointer<FKGNumericConfig> &params, FGUIWindow &guiWindow, FKGEnergy &hamiltonian);
 
         void ImmediateDraw(const FPlatformWindow&) override;
 

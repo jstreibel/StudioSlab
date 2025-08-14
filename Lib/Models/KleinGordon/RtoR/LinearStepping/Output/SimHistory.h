@@ -27,7 +27,7 @@ namespace Slab::Models::KGRtoR {
         const DevFloat max_t;
         const int N_t, N_x;
 
-        auto handleOutput(const OutputPacket &packet) -> void override;
+        auto HandleOutput(const OutputPacket &packet) -> void override;
 
     public:
         SimHistory(CountType max_steps, DevFloat t_max,

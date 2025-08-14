@@ -32,10 +32,10 @@ namespace Slab::Models::MolecularDynamics {
         Core::RegisterCLInterface(Interface);
     }
 
-    Vector<TPointer<Math::Socket>> Recipe::buildOutputSockets() {
+    Vector<TPointer<Math::Socket>> Recipe::BuildOutputSockets() {
         Vector<TPointer<Math::Socket>> sockets;
 
-        auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(numeric_config);
+        auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(NumericConfig);
 
         sockets.emplace_back(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig->getn()));
 
@@ -46,7 +46,7 @@ namespace Slab::Models::MolecularDynamics {
 
         const auto MainPlatformWindow = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
 
-        const auto WindowManager = New<Graphics::SlabWindowManager>();
+        const auto WindowManager = New<Graphics::FSlabWindowManager>();
         MainPlatformWindow->AddAndOwnEventListener(WindowManager);
 
         WindowManager->AddSlabWindow(TPointer<Graphics::FSlabWindow>(monitor), false);
@@ -56,7 +56,7 @@ namespace Slab::Models::MolecularDynamics {
     }
 
     TPointer<Math::Stepper> Recipe::buildStepper() {
-        auto c = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(numeric_config);
+        auto c = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(NumericConfig);
 
         fix T = *temperature;
         fix k = *dissipation;
@@ -82,7 +82,7 @@ namespace Slab::Models::MolecularDynamics {
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
 
-        DynamicPointerCast<Models::MolecularDynamics::MolDynNumericConfig>(getNumericConfig())->sett(-1);
+        DynamicPointerCast<Models::MolecularDynamics::MolDynNumericConfig>(GetNumericConfig())->sett(-1);
     }
 
 } // MolecularDynamics

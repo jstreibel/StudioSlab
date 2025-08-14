@@ -53,7 +53,7 @@ public:
     jack_port_t *getInputPort();
     jack_port_t *getOutputPort();
 
-    void operator << (Real value);
+    void operator << (DevFloat value);
 
     int getLastOutputProcessedSamples() const {return totalLastOutputProcessedSamples; }
     jack_nframes_t getnframes() const {return nframes_jack; }

@@ -20,7 +20,7 @@
 
 namespace Studios::Fields::R2toRLeadingDelta {
 
-    using Real = Slab::DevFloat;
+    using DevFloat = Slab::DevFloat;
     using Real2D = Slab::Math::Real2D;
     using Str = Slab::Str;
 
@@ -33,12 +33,12 @@ namespace Studios::Fields::R2toRLeadingDelta {
         bool asTheta;
 
     public:
-        auto getEps   ()                   const -> Real;
-        auto setEps   (Real eps)                 -> void;
-        auto getA     ()                   const -> Real;
-        auto setA     (Real a)                   -> void;
-        auto getRadius()                   const -> Real;
-        auto setRadius(Real _radius)             -> void;
+        auto getEps   ()                   const -> DevFloat;
+        auto setEps   (DevFloat eps)                 -> void;
+        auto getA     ()                   const -> DevFloat;
+        auto setA     (DevFloat a)                   -> void;
+        auto getRadius()                   const -> DevFloat;
+        auto setRadius(DevFloat _radius)             -> void;
         auto domainContainsPoint(Real2D x) const -> bool override;
 
         Str generalName() const override;
@@ -50,8 +50,8 @@ namespace Studios::Fields::R2toRLeadingDelta {
          * @param dt the minimum 't' to consider (because 't' appears in a denominator). Recommended value
          * is the actual simulation timestep.
          */
-        RingDeltaFunc(Real eps, Real a, Real dt, bool asTheta);
-        auto operator()(Real2D x) const -> Real override;
+        RingDeltaFunc(DevFloat eps, DevFloat a, DevFloat dt, bool asTheta);
+        auto operator()(Real2D x) const -> DevFloat override;
 
         bool renderToNumericFunction(ArbFunc *toFunc) const override;
     };

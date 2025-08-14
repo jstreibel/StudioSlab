@@ -21,9 +21,9 @@ namespace Slab::Models::KGRtoR {
         return ddt_base_function;
     }
 
-    KGEnergy KGViewer::getHamiltonian() {
+    FKGEnergy KGViewer::getHamiltonian() {
         static Math::RtoR::AbsFunction abs;
-        static KGEnergy hamiltonian(Naked(abs));
+        static FKGEnergy hamiltonian(Naked(abs));
 
         return hamiltonian;
     }

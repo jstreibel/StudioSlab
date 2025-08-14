@@ -8,14 +8,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-__constant__ Real R = R_;
-__constant__ Real invR = 1.0 / R_;
+__constant__ DevFloat R = R_;
+__constant__ DevFloat invR = 1.0 / R_;
 __constant__ unsigned int N = Nparticles;
-__constant__ Real dt = DT;
-__constant__ Real dt_2 = 0.5*DT;
-__constant__ Real dt2_2 = 0.5*DT*DT;
-__constant__ Real boxSide = 2.0 * BOX_HALF_SIDE;
-__constant__ Real boxHalfSide = BOX_HALF_SIDE;
+__constant__ DevFloat dt = DT;
+__constant__ DevFloat dt_2 = 0.5*DT;
+__constant__ DevFloat dt2_2 = 0.5*DT*DT;
+__constant__ DevFloat boxSide = 2.0 * BOX_HALF_SIDE;
+__constant__ DevFloat boxHalfSide = BOX_HALF_SIDE;
 
 #if 1
 #define CHECK(cudaStatus, msg) if(cudaStatus != 0) {printf("cudaError %i: %s - %s\n", cudaStatus, cudaGetErrorString(cudaStatus), msg);}
@@ -66,8 +66,8 @@ __device__ Real2 bodyBodyInteraction(Real2 pi, Real2 pj, Real2 ai)
 	// 
 	if (dist < R)
 	{
-		const Real arg = 1.0 - dist*invR;
-		const Real argsqr = arg*arg;
+		const DevFloat arg = 1.0 - dist*invR;
+		const DevFloat argsqr = arg*arg;
 		Real invr_f = invDist * argsqr*argsqr;
 		ai.x -= r.x*invr_f;
 		ai.y -= r.y*invr_f;
@@ -85,7 +85,7 @@ __device__ Real2 bodyBodyInteraction(Real2 pi, Real2 pj, Real2 ai)
 __global__ void calculateForces(Real2 *dev_r, Real2 *dev_accel);
 __global__ void applyForces(Real2 *dev_r, Real2 *dev_p, Real2 *dev_a);
 
-__global__ void memSet(Real2 *devPtr, Real val)
+__global__ void memSet(Real2 *devPtr, DevFloat val)
 {
 	int idx = blockIdx.x*blockDim.x + threadIdx.x;
 	Real2 *globalPtr = (Real2*)devPtr;
@@ -198,7 +198,7 @@ __host__ Real2 *fetch_pFromDevice(Real2 *pHost)
 	return pHost;
 }
 
-__global__ void dampSpeed_k(Real2 *dev_p, Real factor)
+__global__ void dampSpeed_k(Real2 *dev_p, DevFloat factor)
 {
 	int idx = blockIdx.x*blockDim.x + threadIdx.x;
 	Real2 *pGlobal = (Real2*)dev_p;
@@ -210,7 +210,7 @@ __global__ void dampSpeed_k(Real2 *dev_p, Real factor)
 
 	pGlobal[idx] = pLocal;
 }
-__host__ void dampSpeed(Real factor)
+__host__ void dampSpeed(DevFloat factor)
 {
 	const int nBlocks = Nparticles / P;
 	const int nThreadsPerBlock = P;
@@ -246,7 +246,7 @@ void step()
 
 __device__ Real2 bodyBoxInteraction(Real2 r, Real2 a) {
 	// Collide with box:
-	const Real k = 1000.0;
+	const DevFloat k = 1000.0;
 	if      (r.x >  boxHalfSide) a.x += -k*(1.0f - boxHalfSide / r.x);
 	else if (r.x < -boxHalfSide) a.x +=  k*(1.0f + boxHalfSide / r.x);
 	

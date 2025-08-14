@@ -53,7 +53,7 @@ namespace Slab::Graphics::LaTeX {
                                 {x1, y0, 0, s1, t1, color.r, color.g, color.b, color.a},
                                 {x1, y1, 0, s1, t0, color.r, color.g, color.b, color.a}};
 
-        vertexBuffer.pushBack(vertices, 4, indices, 6);
+        vertexBuffer.PushBack(vertices, 4, indices, 6);
 
         ftgl::mat4_set_identity(&projection);
         ftgl::mat4_set_identity(&model);

@@ -17,12 +17,12 @@ R2toR::OutputOpenGLShockwave::OutputOpenGLShockwave(const NumericConfig &params)
 void R2toR::OutputOpenGLShockwave::draw() {
     if(!lastData.hasValidData()) return;
 
-    //const Real E_input = ((ParameterTemplate<Real>*)userParamMap["sw_E"])->val;
-    //const Real eps = ((ParameterTemplate<Real>*)userParamMap["sw_eps"])->val;
-    //const Real a = sqrt((4./3)*pi*eps*eps*E_input);
-    //const Real t = lastInfo.getT();
-    //const Real L = Allocator::getInstance().getNumericParams().getL();
-    //const Real coneRadius = t;
+    //const DevFloat E_input = ((ParameterTemplate<Real>*)userParamMap["sw_E"])->val;
+    //const DevFloat eps = ((ParameterTemplate<Real>*)userParamMap["sw_eps"])->val;
+    //const DevFloat a = sqrt((4./3)*pi*eps*eps*E_input);
+    //const DevFloat t = lastInfo.getT();
+    //const DevFloat L = Allocator::getInstance().getNumericParams().getL();
+    //const DevFloat coneRadius = t;
 //
 //
     //const R2toR::FieldState& fState = *lastInfo.getFieldData<R2toR::FieldState>();
@@ -43,8 +43,8 @@ void R2toR::OutputOpenGLShockwave::draw() {
 //
         //RtoR::FunctionRenderer::renderSection(phi, line, color, true, phi.getN());
 //
-    //    const Real s = coneRadius/L + .5;
-    //    const Real H = 20;
+    //    const DevFloat s = coneRadius/L + .5;
+    //    const DevFloat H = 20;
 //
     //    if(showAnalytic)
     //    {
@@ -92,8 +92,8 @@ void R2toR::OutputOpenGLShockwave::draw() {
 
     // *************************************************************************************************
     // ********** CAMPO INTEIRO (3D) ************************************************************************
-    //const Real GLOBAL_Z_SCALE_PHI = 0.1;
-    //const Real GLOBAL_Z_SCALE_DDTPHI = 0.1;
+    //const DevFloat GLOBAL_Z_SCALE_PHI = 0.1;
+    //const DevFloat GLOBAL_Z_SCALE_DDTPHI = 0.1;
     ////glEnable(GL_DEPTH_TEST);
     //phiGraph.BindWindow();
     //glMatrixMode(GL_MODELVIEW);
@@ -118,10 +118,10 @@ void R2toR::OutputOpenGLShockwave::draw() {
     //    glBegin(GL_LINE_STRIP);
     //    {
     //        const int resolution = 2000;
-    //        const Real step = 1. / resolution;
-    //        for(Real s=0; s<=1; s+=step) {
+    //        const DevFloat step = 1. / resolution;
+    //        for(DevFloat s=0; s<=1; s+=step) {
     //            const Real2D x = line(s);
-    //            Real val = phi(x);
+    //            DevFloat val = phi(x);
     //            glVertex3d(x.x, x.y, GLOBAL_Z_SCALE_PHI*val);
     //        }
     //    }
@@ -135,8 +135,8 @@ void R2toR::OutputOpenGLShockwave::draw() {
     //    glLineStipple(1, 0xAAAA);
     //    glColor4d(0.5, 0, 0, 0.8);
     //    glBegin(GL_LINE_LOOP);
-    //    for (Real theta = 0.0; theta < 2 * M_PI; theta += M_PI / 3000) {
-    //        const Real x = coneRadius * cos(theta), y = coneRadius * sin(theta);
+    //    for (DevFloat theta = 0.0; theta < 2 * M_PI; theta += M_PI / 3000) {
+    //        const DevFloat x = coneRadius * cos(theta), y = coneRadius * sin(theta);
     //        glVertex3d(x, y, GLOBAL_Z_SCALE_PHI * phi({x, y}));
     //    }
     //    glEnd();
@@ -187,15 +187,15 @@ void R2toR::OutputOpenGLShockwave::draw() {
     //        const auto dx=h, dy=h;
     //        const auto invdx_2=.5/dx, invdy_2=.5/dy;
 //
-    //        Real E = .0;
+    //        DevFloat E = .0;
     //        // Desconsideramos as bordas do espaco de simulacao porque elas devem ser sempre zero e, quando isso nao
     //        // acontece, a simulacao passa a ser invalida (se por nenhum outro motivo, por definicao).
     //        for(auto x=-.5*L; x<.5*L; x+=dx){
     //            for(auto y=-.5*L; y<.5*L; y+=dy){
-    //                const Real DtPhi = dPhi({x, y});
-    //                const Real DxPhi = invdx_2 * (-phi({x-dx, y}) + phi({x+dx, y}));
-    //                const Real DyPhi = invdy_2 * (-phi({x,y-dy}) + phi({x,y+dy}));
-    //                const Real V = abs(phi({x,y}));
+    //                const DevFloat DtPhi = dPhi({x, y});
+    //                const DevFloat DxPhi = invdx_2 * (-phi({x-dx, y}) + phi({x+dx, y}));
+    //                const DevFloat DyPhi = invdy_2 * (-phi({x,y-dy}) + phi({x,y+dy}));
+    //                const DevFloat V = abs(phi({x,y}));
 //
     //                E += .5*(sq(DtPhi) + sq(DxPhi) + sq(DyPhi)) + V;
     //            }
@@ -238,13 +238,13 @@ void R2toR::OutputOpenGLShockwave::draw() {
     //        auto ddtShockwave = RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivativeB();
     //        shockwave.sett(t); ddtShockwave.sett(t);
 //
-    //        Real E = 0.0;
-    //        const Real dr = 1.e-5;
-    //        for(Real r=0; r<=6; r+=dr){
-    //            const Real DtPhi = ddtShockwave(r);
-    //            const Real DrPhi = (.5/dr) * (-shockwave(r-dr) + shockwave(r));
+    //        DevFloat E = 0.0;
+    //        const DevFloat dr = 1.e-5;
+    //        for(DevFloat r=0; r<=6; r+=dr){
+    //            const DevFloat DtPhi = ddtShockwave(r);
+    //            const DevFloat DrPhi = (.5/dr) * (-shockwave(r-dr) + shockwave(r));
 //
-    //            const Real V = abs(shockwave(r));
+    //            const DevFloat V = abs(shockwave(r));
 //
     //            E += r*(.5 * (sq(DtPhi) + sq(DrPhi)) + V);
     //        }
@@ -271,7 +271,7 @@ void R2toR::OutputOpenGLShockwave::draw() {
 }
 
 bool R2toR::OutputOpenGLShockwave::notifyKeyboardSpecial(int key, int x, int y) {
-    const Real angle = 2.5e-3 * M_PI;
+    const DevFloat angle = 2.5e-3 * M_PI;
     if(key == GLUT_KEY_RIGHT) {
         Rotation T(-angle);
         //for (auto &section : sections) {
@@ -344,8 +344,8 @@ IntPair R2toR::OutputOpenGLShockwave::getWindowSizeHint() {
 }
 
 void R2toR::OutputOpenGLShockwave::addSection(const RtoR2::StraightLine &section, Str name) {
-    // const Real rangeField = 0.15;
-    // const Real rangeDdtField = 1.5;
+    // const DevFloat rangeField = 0.15;
+    // const DevFloat rangeDdtField = 1.5;
 
     //const Color color = Base::colors[sections.size()];
 
@@ -414,7 +414,7 @@ void R2toR::OutputOpenGLShockwave::_outputSnapshot() {
         const auto textWidthInches = 6.46;
         const auto figWidthInches = textWidthInches/3;
         const auto N = 200*textWidthInches;
-        const auto dh = (Real)L/N;
+        const auto dh = (DevFloat)L/N;
 
         std::string ssFileName = sFileName + (count > 1 ? "-" + std::to_string(count) : "") + "-fullSnapshot.dat";
 

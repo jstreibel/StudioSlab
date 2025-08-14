@@ -24,12 +24,10 @@ namespace Slab::Graphics {
 
     FourierViewer::FourierViewer(const TPointer<FGUIWindow>& gui_window) : Viewer(gui_window)
     {
-        auto ImGuiContextPtr = gui_window->GetGUIWindowContext();
-
-        kSpaceGraph  = New<FPlot2DWindow>("ℱₓ", ImGuiContextPtr);
-        ωSpaceGraph  = New<FPlot2DWindow>("ℱₜ", ImGuiContextPtr);
-        xSpaceGraph  = New<FPlot2DWindow>("ϕ(t,x)", ImGuiContextPtr);
-        ωkSpaceGraph = New<FPlot2DWindow>("ℱₜₓ", ImGuiContextPtr);
+        kSpaceGraph  = New<FPlot2DWindow>("ℱₓ");
+        ωSpaceGraph  = New<FPlot2DWindow>("ℱₜ");
+        xSpaceGraph  = New<FPlot2DWindow>("ϕ(t,x)");
+        ωkSpaceGraph = New<FPlot2DWindow>("ℱₜₓ");
 
         inv_kSpaceArtist->SetLabel("ℱₖ⁻¹(t, x)");
         // inverseDFTDisplay->addArtist(inverseDFTArtist);
@@ -297,7 +295,7 @@ namespace Slab::Graphics {
             auto *out = &rebuiltHistory->At(0, _n);
             auto *in = &func->getSpace().getHostData(true)[0];
 
-            memcpy(out, in, N*sizeof(Real));
+            memcpy(out, in, N*sizeof(DevFloat));
 
             ++_n;
         }

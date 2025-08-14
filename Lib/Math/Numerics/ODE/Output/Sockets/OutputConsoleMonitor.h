@@ -13,7 +13,7 @@ namespace Slab::Math {
         const CountType total_steps;
 
     protected:
-        void handleOutput(const OutputPacket &outputInfo) override;
+        void HandleOutput(const OutputPacket &outputInfo) override;
 
     public:
         explicit OutputConsoleMonitor(CountType total_steps, CountType steps_interval=100);

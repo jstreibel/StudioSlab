@@ -10,7 +10,7 @@
 
 namespace Slab::Models::StochasticPathIntegrals {
 
-    void SPIBC::apply(Math::Base::EquationState &toFunction, DevFloat t) const {
+    void SPIBC::Apply(Math::Base::EquationState &toFunction, DevFloat t) const {
         auto &f = *dynamic_cast<SPIState&>(toFunction).getPhi();
 
         if ( t == 0 ) f.Apply(Math::RtoR::NullFunction(), f);

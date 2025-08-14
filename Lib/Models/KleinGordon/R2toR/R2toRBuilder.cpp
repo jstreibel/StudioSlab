@@ -34,13 +34,13 @@
 namespace Slab::Models::KGR2toR {
 
     Builder::Builder(const Str& name, const Str& description, bool do_register)
-            : Models::KGRecipe(New<Models::KGNumericConfig>(false), name, description, do_register) {    }
+            : Models::KGRecipe(New<Models::FKGNumericConfig>(false), name, description, do_register) {    }
 
-    Vector<TPointer<Socket>> Builder::buildOutputSockets() {
+    Vector<TPointer<Socket>> Builder::BuildOutputSockets() {
         Vector<TPointer<Socket>> sockets;
 
         ///********************************************************************************************/
-        if(*takeSnapshot) {
+        if(*TakeSnapshot) {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
@@ -57,14 +57,14 @@ namespace Slab::Models::KGR2toR {
 
 
         ///********************************************************************************************/
-        if (!*noHistoryToFile) {
-            // const Real t = kg_numeric_config->gett();
+        if (!*NoHistoryToFile) {
+            // const DevFloat t = kg_numeric_config->gett();
 
             RtoR2::StraightLine section;
             auto angleDegrees = 22.5;
             {
-                const DevFloat rMin = kg_numeric_config->getxMin();
-                const DevFloat rMax = kg_numeric_config->getxMax();
+                const DevFloat rMin = KGNumericConfig->getxMin();
+                const DevFloat rMax = KGNumericConfig->getxMax();
                 const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
 
                 using Rotation = Math::R2toR::Rotation;
@@ -74,16 +74,16 @@ namespace Slab::Models::KGR2toR {
                 section = RtoR2::StraightLine(R * x0, R * xf);
             }
 
-            const UInt outputResolutionX = *outputResolution;
+            const UInt outputResolutionX = *OutputResolution;
 
             OutputFormatterBase *outputFilter = new BinarySOF;
 
             SpaceFilterBase *spaceFilter = new Slab::Math::R2toR::DimensionReductionFilter(
-                    outputResolutionX, section, kg_numeric_config->GetL());
+                    outputResolutionX, section, KGNumericConfig->GetL());
 
-            const auto N = (DevFloat) kg_numeric_config->getN();
+            const auto N = (DevFloat) KGNumericConfig->getN();
             const DevFloat Np = outputResolutionX;
-            const DevFloat r = kg_numeric_config->getr();
+            const DevFloat r = KGNumericConfig->getr();
             const auto stepsInterval = UInt(N / (Np * r));
 
             auto outputFileName = this->SuggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
@@ -101,29 +101,29 @@ namespace Slab::Models::KGR2toR {
 
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
 
-            const auto WindowManager = New<Graphics::SlabWindowManager>();
+            const auto WindowManager = New<Graphics::FSlabWindowManager>();
             Backend->GetMainSystemWindow()->AddAndOwnEventListener(WindowManager);
 
             WindowManager->AddSlabWindow(glOut, false);
 
             sockets.emplace_back(glOut);
         }
-        else sockets.emplace_back(New<OutputConsoleMonitor>(kg_numeric_config->getn()));
+        else sockets.emplace_back(New<OutputConsoleMonitor>(KGNumericConfig->getn()));
 
         return sockets;
 
     }
 
     R2toR::FNumericFunction_ptr Builder::newFunctionArbitrary() {
-        const size_t N = kg_numeric_config->getN();
-        const floatt xLeft = kg_numeric_config->getxMin();
-        fix h = kg_numeric_config->geth();
+        const size_t N = KGNumericConfig->getN();
+        const floatt xLeft = KGNumericConfig->getxMin();
+        fix h = KGNumericConfig->geth();
 
-        if (device_config == CPU)
+        if (DeviceConfig == CPU)
             return DataAlloc<R2toR::NumericFunction_CPU>("IntegrationData [CPU]", N, N, xLeft, xLeft, h, h);
 
 #if USE_CUDA
-        else if (device_config == Device::GPU)
+        else if (DeviceConfig == Device::GPU)
             return New<R2toR::NumericFunction_GPU>(N, xLeft, h);
 #endif
 
@@ -142,7 +142,7 @@ namespace Slab::Models::KGR2toR {
 
     auto Builder::buildOpenGLOutput() -> OutputOpenGL * {
         // t_max, max_steps, x_min, x_max, y_min, y_max
-        IN conf = *kg_numeric_config;
+        IN conf = *KGNumericConfig;
         return new OutputOpenGL(conf.getn());
     }
 

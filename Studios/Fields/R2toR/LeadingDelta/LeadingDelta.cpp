@@ -13,14 +13,14 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
     BoundaryCondition::BoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
                                          TPointer<RingDeltaFunc> ringDelta,
-                                         Real tf,
+                                         DevFloat tf,
                                          bool deltaOperatesOnSpeed)
             : Slab::Math::Base::BoundaryConditions(prototype)
             , ringDelta(std::move(ringDelta))
             , tf(tf)
             , deltaSpeedOp(deltaOperatesOnSpeed) { }
 
-    void BoundaryCondition::Apply(Slab::Math::Base::EquationState &state, Real t) const {
+    void BoundaryCondition::Apply(Slab::Math::Base::EquationState &state, DevFloat t) const {
         const bool applyDelta = t<tf || tf<0;
 
         auto stateKG = dynamic_cast<Slab::Math::R2toR::EquationState&>(state);
@@ -89,9 +89,9 @@ namespace Studios::Fields::R2toRLeadingDelta {
     auto Builder::NotifyCLArgsSetupFinished()    ->       void {
         FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
-        auto &p = *kg_numeric_config;
-        const Real L = p.GetL();
-        const Real dt = p.Getdt();
+        auto &p = *KGNumericConfig;
+        const DevFloat L = p.GetL();
+        const DevFloat dt = p.Getdt();
         const auto W₀ = *W_0;
         auto coef = W₀;
 
@@ -110,7 +110,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     }
 
     auto Builder::buildOpenGLOutput() -> Models::KGR2toR::OutputOpenGL * {
-        return new OutGL(kg_numeric_config->getn(), ringDelta1);
+        return new OutGL(KGNumericConfig->getn(), ringDelta1);
     }
 
     Str Builder::SuggestFileName() const {

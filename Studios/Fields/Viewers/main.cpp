@@ -79,7 +79,7 @@ public:
         viewer->setFunction(function);
         viewer->setFunctionTimeDerivative(ddt_function);
 
-        auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
+        auto wm = Slab::New<Slab::Graphics::FSlabWindowManager>();
         wm->AddSlabWindow(viewer, false);
         guiBackend->GetMainSystemWindow()->AddEventListener(wm);
 

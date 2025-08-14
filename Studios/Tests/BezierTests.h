@@ -22,7 +22,7 @@ namespace Tests {
         Math::PointSet CurrentPoint;
 
     public:
-        explicit FBezierTests(const TPointer<Graphics::FImGuiContext>& GuiContext);
+        explicit FBezierTests();
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 

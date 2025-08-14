@@ -17,7 +17,7 @@ namespace Modes {
     class FPlaneWaveBC final : public KGRtoR::BoundaryCondition {
         DevFloat Q, k;
     public:
-        explicit FPlaneWaveBC(const KGRtoR::EquationState_constptr& prototype, DevFloat Q, Real k);
+        explicit FPlaneWaveBC(const KGRtoR::EquationState_constptr& prototype, DevFloat Q, DevFloat k);
 
     protected:
         void ApplyKG(KGRtoR::EquationState& KGState, DevFloat t) const override;

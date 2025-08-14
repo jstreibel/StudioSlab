@@ -13,7 +13,7 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    class KGEnergy {
+    class FKGEnergy {
 
         RtoR::NumericFunction_ptr _oEnergyDensity;
         RtoR::NumericFunction_ptr _oKineticDensity;
@@ -25,7 +25,7 @@ namespace Slab::Models::KGRtoR {
         RtoR::Function_ptr V_ptr;
 
     public:
-        explicit KGEnergy(RtoR::Function_ptr potentialFunc);
+        explicit FKGEnergy(RtoR::Function_ptr potentialFunc);
 
         const RtoR::NumericFunction &computeEnergies(const RtoR::NumericFunction& phi, const RtoR::NumericFunction& ddtPhi);
 

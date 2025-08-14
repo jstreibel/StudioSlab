@@ -14,18 +14,18 @@
 
 namespace Slab::Math::R2toR {
 
-    NumericFunction_CPU::NumericFunction_CPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy)
+    NumericFunction_CPU::NumericFunction_CPU(UInt N, UInt M, DevFloat xMin, DevFloat yMin, DevFloat hx, DevFloat hy)
         : FNumericFunction(N, M, xMin, yMin, hx, hy, Device::CPU) {
 
     }
 
-    TPointer<Base::NumericFunction<Real2D, Real>> NumericFunction_CPU::CloneWithSize(UInt outN) const {
+    TPointer<Base::NumericFunction<Real2D, DevFloat>> NumericFunction_CPU::CloneWithSize(UInt outN) const {
         assert(M==N); // (por enquanto so vai funcionar assim.
 
         auto myClone = DataAlloc<NumericFunction_CPU>(get_data_name() + " [clone]", outN, outN, xMin, yMin, hx, hy);;
 
-        const Real incX_d = N / Real(outN);
-        const Real incY_d = M / Real(outN);
+        const DevFloat incX_d = N / DevFloat(outN);
+        const DevFloat incY_d = M / DevFloat(outN);
         for(UInt n=0; n<outN; n++){
             for(UInt m=0; m<outN; m++){
                 fix myn = UInt(n*incX_d);
@@ -37,7 +37,7 @@ namespace Slab::Math::R2toR {
         return myClone;
     }
 
-    const Real&
+    const DevFloat&
     NumericFunction_CPU::At(UInt n, UInt m) const {
         // assert(n<N && m<M);
         n %= N;
@@ -46,7 +46,7 @@ namespace Slab::Math::R2toR {
         return getSpace().getHostData()[n + m * N];
     }
 
-    Real &NumericFunction_CPU::At(UInt n, UInt m) {
+    DevFloat &NumericFunction_CPU::At(UInt n, UInt m) {
         // assert(n<N && m<M);
         n %= N;
         m %= M;
@@ -57,7 +57,7 @@ namespace Slab::Math::R2toR {
         if(!Common::AreEqual(hx, hy)) throw "No computation of discrete laplacian for dx!=dy";
 
         fix h = hx;
-        const Real invhsqr = 1./(h*h);
+        const DevFloat invhsqr = 1./(h*h);
 
         /*for(UInt n=0; n<N; n++){
             outFunc.At(n,0) = 0.0;
@@ -76,14 +76,14 @@ namespace Slab::Math::R2toR {
         {
             for (UInt m = 1; m < M - 1; m++) {
     #if USE_DISCRETE_LAPLACE_KERNEL_BIG
-                const Real dx = At(n - 1, m) + At(n + 1, m);
-                const Real dy = At(n, m - 1) + At(n, m + 1);
-                const Real dxy = At(n-1, m-1) + At(n+1, m+1);
-                const Real dyx = At(n-1, m+1) + At(n+1, m-1);
+                const DevFloat dx = At(n - 1, m) + At(n + 1, m);
+                const DevFloat dy = At(n, m - 1) + At(n, m + 1);
+                const DevFloat dxy = At(n-1, m-1) + At(n+1, m+1);
+                const DevFloat dyx = At(n-1, m+1) + At(n+1, m-1);
                 outFunc.At(n, m) = invhsqr * (.5*(dx+dy) + .25*(dxy+dyx) - 3. * At(n, m));
     #else
-                const Real dx = At(n - 1, m) + At(n + 1, m);
-                const Real dy = At(n, m - 1) + At(n, m + 1);
+                const DevFloat dx = At(n - 1, m) + At(n + 1, m);
+                const DevFloat dy = At(n, m - 1) + At(n, m + 1);
 
                 OUT out = outFunc.At(n, m);
                 fix dϕ = invhsqr * ((dx + dy) - 4. * At(n, m));
@@ -96,8 +96,8 @@ namespace Slab::Math::R2toR {
     }
 
     NumericFunction_CPU &NumericFunction_CPU::Set(const R2toR::Function &func) {
-        const Real L1 = xMax-xMin;
-        const Real L2 = yMax-yMin;
+        const DevFloat L1 = xMax-xMin;
+        const DevFloat L2 = yMax-yMin;
 
         OMP_GET_BEGIN_END(begin, end, N)
         for(UInt n=begin; n<end; n++)
@@ -113,8 +113,8 @@ namespace Slab::Math::R2toR {
     }
 
 
-    //Base::ArbitraryFunction<Real2D, Real> &FunctionArbitraryCPU::SetArb(
-    //        const Base::ArbitraryFunction<Real2D, Real> &function) {
+    //Base::ArbitraryFunction<Real2D, DevFloat> &FunctionArbitraryCPU::SetArb(
+    //        const Base::ArbitraryFunction<Real2D, DevFloat> &function) {
     //    cast(func, const ArbitraryFunction&, function)
     //
     //    OMP_GET_BEGIN_END(begin, end, N)
@@ -126,9 +126,9 @@ namespace Slab::Math::R2toR {
     //}
 
 
-    Base::NumericFunction<Real2D, Real> &
-    NumericFunction_CPU::Apply(const FunctionT<Real, Real> &func,
-                                Base::NumericFunction<Real2D, Real> &out) const {
+    Base::NumericFunction<Real2D, DevFloat> &
+    NumericFunction_CPU::Apply(const FunctionT<DevFloat, DevFloat> &func,
+                                Base::NumericFunction<Real2D, DevFloat> &out) const {
         SlabCast(fOut, FNumericFunction &, out)
 
         OMP_GET_BEGIN_END(begin, end, N)

@@ -19,7 +19,7 @@ namespace Slab::Models::KGR2toR {
 
     }
 
-    void KG2DSnapshotOutput::handleOutput(const Math::OutputPacket &) {
+    void KG2DSnapshotOutput::HandleOutput(const Math::OutputPacket &) {
 
     }
 

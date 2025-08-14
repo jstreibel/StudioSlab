@@ -20,7 +20,7 @@
 namespace Modes {
 
     Signal_Ak2_Recipe::Signal_Ak2_Recipe(bool doRegister)
-    : KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
+    : FKGRtoR_Recipe("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
         Interface->AddParameters(TList<FCommandLineParameter*>{&A, &omega});
 
@@ -36,7 +36,7 @@ namespace Modes {
     void Signal_Ak2_Recipe::NotifyCLArgsSetupFinished() {
         FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
-        const auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
+        const auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 
         fix L = config->GetL();
         fix n = config->getn();
@@ -54,11 +54,11 @@ namespace Modes {
     }
 
     void *Signal_Ak2_Recipe::BuildOpenGLOutput() {
-        auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
+        auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 
 
         // fix amp = (*A) * 1.1;
-        auto monitor = new Modes::Monitor(config, *static_cast<KGRtoR::KGEnergy *>(getHamiltonian()), "Modes monitor");
+        auto monitor = new Modes::Monitor(config, *static_cast<KGRtoR::FKGEnergy *>(getHamiltonian()), "Modes monitor");
 
         monitor->setInputModes({*A}, {*omega}, {*omega});
 
@@ -71,7 +71,7 @@ namespace Modes {
         const StrVector params = {A.getCommandLineArgumentName(false), omega.getCommandLineArgumentName(false)};
 
         const auto strParams = Interface->ToString(params, SEPARATOR);
-        return KGRtoRBuilder::SuggestFileName() + SEPARATOR + strParams;
+        return FKGRtoR_Recipe::SuggestFileName() + SEPARATOR + strParams;
     }
 
 } // Modes

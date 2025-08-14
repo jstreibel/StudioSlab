@@ -18,9 +18,9 @@ break;
 namespace Slab::Math::Base {
 
 
-    NumericalRecipe::NumericalRecipe(const TPointer<NumericConfig>& numeric_config, const Str &name,
+    NumericalRecipe::NumericalRecipe(const TPointer<FNumericConfig>& numeric_config, const Str &name,
                                      const Str& generalDescription, bool doRegister)
-            : FCommandLineInterfaceOwner(name, 100, DONT_REGISTER), numeric_config(numeric_config), name(name) {
+            : FCommandLineInterfaceOwner(name, 100, DONT_REGISTER), NumericConfig(numeric_config), name(name) {
         Interface->AddSubInterface(numeric_config->GetInterface());
 
         if (doRegister) {
@@ -31,12 +31,12 @@ namespace Slab::Math::Base {
                       << Interface->GetGeneralDescription() << "\" instantiated." << Core::Log::Flush;
     }
 
-    auto NumericalRecipe::getNumericConfig() const -> const TPointer<NumericConfig> & {
-        return numeric_config;
+    auto NumericalRecipe::GetNumericConfig() const -> const TPointer<FNumericConfig> & {
+        return NumericConfig;
     }
 
     Str NumericalRecipe::SuggestFileName() const {
-        return name + " " + numeric_config->to_string();
+        return name + " " + NumericConfig->to_string();
     }
 
 }

@@ -46,7 +46,7 @@ namespace Slab::Graphics {
                     {xMax_f+Δx, yMax_f, sf, tf},
                     {xMin_f+Δx, yMax_f, si, tf}};
 
-            vertexBuffer->pushBack(vertices, 4, indices, 6);
+            vertexBuffer->PushBack(vertices, 4, indices, 6);
         }
     }
 

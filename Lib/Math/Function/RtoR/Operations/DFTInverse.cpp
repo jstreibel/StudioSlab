@@ -64,7 +64,7 @@ namespace Slab::Math::RtoR {
             fix κ=re[k].x;
             auto z = (*filter)({re[k].y, im[k].y}, κ);
 
-            in[k][0] = z.real(); // Real part
+            in[k][0] = z.real(); // DevFloat part
             in[k][1] = z.imag(); // Conjugate imaginary part
         }
 
@@ -73,7 +73,7 @@ namespace Slab::Math::RtoR {
             fix κ=re[k].x;
             auto z = (*filter)({re[k].y, im[k].y}, κ);
 
-            in[N-k][0] = +z.real(); // Real part
+            in[N-k][0] = +z.real(); // DevFloat part
             in[N-k][1] = -z.imag(); // Imaginary part
         }
 

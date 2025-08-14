@@ -7,9 +7,9 @@
 namespace Slab::Models::KGRtoR {
 
     FRtoRPanel::FRtoRPanel(
-        TPointer<KGNumericConfig>params,
+        TPointer<FKGNumericConfig>params,
         FGUIWindow &guiWindow,
-        KGEnergy &hamiltonian,
+        FKGEnergy &hamiltonian,
         const Str &name,
         const Str &description)
     : Socket(name, 1, description)
@@ -36,7 +36,7 @@ namespace Slab::Models::KGRtoR {
         spaceFTHistoryArtist = sftHistoryArtist;
     }
 
-    void FRtoRPanel::handleOutput(const Math::OutputPacket &packet) {
+    void FRtoRPanel::HandleOutput(const Math::OutputPacket &packet) {
 
     }
 

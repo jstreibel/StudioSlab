@@ -58,7 +58,7 @@ namespace Slab::Lost::ThermoOutput {
         int currStep = 0;
         Vector<ThermoOutput::OutputData> history;
 
-        std::shared_ptr<Graphics::GUIContext> nkContext = nullptr;
+        std::shared_ptr<Graphics::FGUIContext> nkContext = nullptr;
         sf::RenderWindow *window = nullptr;
         XYMetropolisAlgorithm *algorithm = nullptr;
 

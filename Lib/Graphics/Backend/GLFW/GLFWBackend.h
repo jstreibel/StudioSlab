@@ -35,7 +35,7 @@ namespace Slab::Graphics {
 
         void Terminate() override;
 
-        // auto getScreenHeight() const -> Real override;
+        // auto getScreenHeight() const -> DevFloat override;
     };
 
 

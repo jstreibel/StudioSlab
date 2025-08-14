@@ -82,12 +82,12 @@ namespace Slab::Models::KGRtoR {
         return Slab::TPointer<R2toR::FNumericFunction>{func};
     }
 
-    CorrelationsPanel::CorrelationsPanel(const TPointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian)
+    CorrelationsPanel::CorrelationsPanel(const TPointer<FKGNumericConfig> &params, FGUIWindow &guiWindow, FKGEnergy &hamiltonian)
     : FRtoRPanel(params, guiWindow, hamiltonian,
                 "Correlations",
                 "panel for computing and visualizing correlations over simulation history data")
-    , DFT2DGraph("Spacetime Fourier transform", guiWindow.GetGUIWindowContext())
-    , correlationGraph("Two-point correlation", guiWindow.GetGUIWindowContext())
+    , DFT2DGraph("Spacetime Fourier transform")
+    , correlationGraph("Two-point correlation")
     {
 
         ftAmplitudesArtist->SetLabel("|ℱₜₓ[ϕ](ω,k)|");
@@ -128,7 +128,7 @@ namespace Slab::Models::KGRtoR {
                                                  const R2toRFunctionArtist_ptr &simHistoryArtist) {
         FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryArtist);
 
-        auto simulationHistoryGraph = Slab::New<FPlot2DWindow>("Simulation history", guiWindow.GetGUIWindowContext());
+        auto simulationHistoryGraph = Slab::New<FPlot2DWindow>("Simulation history");
         simulationHistoryGraph->AddArtist(simulationHistoryArtist);
         AddWindow(simulationHistoryGraph);
         AddWindow(Slab::Naked(correlationGraph));

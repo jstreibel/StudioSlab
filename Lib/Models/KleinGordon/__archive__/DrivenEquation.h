@@ -24,7 +24,7 @@ namespace Slab::Math::R2toR {
         public:
             explicit DrivenEquation(Base::Simulation::NumericalRecipe &builder, R2toR::Function::Ptr drivingForce);
 
-            auto dtF(const EquationState &in, EquationState &out, Real t, Real dt) -> EquationState & override;
+            auto dtF(const EquationState &in, EquationState &out, DevFloat t, DevFloat dt) -> EquationState & override;
         };
 
     }

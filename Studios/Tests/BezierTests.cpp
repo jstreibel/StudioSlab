@@ -36,10 +36,10 @@ namespace Tests {
     }
 
 
-    FBezierTests::FBezierTests(const TPointer<Graphics::FImGuiContext>& GuiContext)
+    FBezierTests::FBezierTests()
     : FWindowRow("Bezier Tests")
-    , Stats(Graphics::FSlabWindowConfig("Stats"), Graphics::FImGuiWindowContext{GuiContext, GetUniqueName()})
-    , Graph("Graph", Graphics::FImGuiWindowContext{GuiContext, GetUniqueName()}) {
+    , Stats(Graphics::FSlabWindowConfig("Stats"))
+    , Graph("Graph") {
         Param1 = static_cast<float>(Graphics::Animator::GetBezierParams().first);
         Param2 = static_cast<float>(Graphics::Animator::GetBezierParams().second);
         AnimTimeSeconds = Graph.GetAnimationTime();

@@ -5,6 +5,7 @@
 #include "PlotThemeManager.h"
 
 #include <memory>
+#include <ranges>
 
 #include "Core/Tools/Resources.h"
 
@@ -79,11 +80,13 @@ namespace Slab::Graphics {
     TPointer<PlotThemeManager> mePointer=nullptr;
     PlotThemeManager::PlotThemeManager()
     : Singleton("Styles manager") {
-        Core::LoadModule("GUI");
+        // Core::LoadModule("GUI");
 
         // TODO isso eh gambiarra:
-        mePointer = Naked(*this);
-        GetGraphicsBackend()->GetMainSystemWindow()->AddEventListener(mePointer);
+        // mePointer = Naked(*this);
+        // if (!GetGraphicsBackend()->GetMainSystemWindow()->AddEventListener(mePointer)) {
+        //     Core::Log::Error() << "Failed to add event listener for PlotThemeManager." << Core::Log::Flush;
+        // }
     }
 
     GraphTheme_ptr PlotThemeManager::GetCurrent() {
@@ -103,16 +106,15 @@ namespace Slab::Graphics {
     }
 
     bool PlotThemeManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
-        auto gui_context = GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext();
+        auto GuiContext = PlatformWindow.GetGUIContext();
 
-        if(gui_context != nullptr) {
+        if(GuiContext != nullptr) {
             Vector<MainMenuLeafEntry> entries;
-            for (auto &stylePair: stylesInitializers) {
-                auto name = stylePair.first;
-                entries.emplace_back(name, "", current == name);
+            for (const auto& Name : stylesInitializers | std::views::keys) {
+                entries.emplace_back(Name, "", current == Name);
             }
 
-            gui_context->AddMainMenuItem(MainMenuItem{
+            GuiContext->AddMainMenuItem(MainMenuItem{
                     MainMenuLocation{"Style", "Graphs"},
                     entries,
                     [](const Str &name) {
@@ -140,11 +142,11 @@ namespace Slab::Graphics {
     }
 
     StrVector PlotThemeManager::GetThemes() {
-        StrVector vecky;
+        StrVector Vecky;
         for(auto &a : stylesInitializers)
-            vecky.push_back(a.first);
+            Vecky.push_back(a.first);
 
-        return vecky;
+        return Vecky;
     }
 
     GraphTheme_ptr GetSchemeDark () {
@@ -178,7 +180,7 @@ namespace Slab::Graphics {
 
         auto writer = std::make_shared<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 17);
 
-        WindowStyle::windowBGColor = {};
+        WindowStyle::WindowBGColor = {};
 
         return New<PlottingTheme>(PlottingTheme
                 {background, graphNumbersColor, graphTitleColor, axisColor, tickColor, XHairStyle, gridLinesScheme, gridLinesScheme,
@@ -357,7 +359,7 @@ Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 90
     }
 
     GraphTheme_ptr GetSchemeElegant() {
-        WindowStyle::windowBGColor = {.9, .9, .93, 1};
+        WindowStyle::WindowBGColor = {.9, .9, .93, 1};
         WindowStyle::windowBorderColor_inactive = {0.2,0.2,0.2,1};
         WindowStyle::windowBorderColor_active   = {0. ,0. ,0. ,1};
 

@@ -67,12 +67,12 @@ namespace Slab::Models::KGR2toR {
         return true;
     }
 
-    Real logAbs(Real val, Real eps){
+    DevFloat logAbs(DevFloat val, DevFloat eps){
         const auto sign = (val>.0?1.0:-1.0);
         return log(abs(val)/eps + 1)*sign;
     }
 
-    Real logAbs_inv(Real val, Real eps){
+    DevFloat logAbs_inv(DevFloat val, DevFloat eps){
         const auto sign = (val>.0?1.0:-1.0);
         return eps * (exp(abs(val)) - 1.0) * sign;
     }

@@ -24,7 +24,7 @@ namespace Slab::Blueprints {
     BlueprintRenderer::BlueprintRenderer(TPointer<Slab::Blueprints::Blueprint> blueprint)
     : blueprint(std::move(blueprint))
     {
-        auto GuiContext = Graphics::GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext();
+        auto GuiContext = Graphics::GetGraphicsBackend()->GetMainSystemWindow()->SetupGUIContext();
         m_Context = DynamicPointerCast<Graphics::FImGuiContext>(GuiContext);
 
         ed::Config config;

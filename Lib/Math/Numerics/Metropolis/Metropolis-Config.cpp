@@ -11,7 +11,7 @@ namespace Slab::Math {
 
 
     MetropolisConfig::MetropolisConfig(UInt max_steps)
-            : NumericConfig(DONT_REGISTER), max_steps(max_steps) {
+            : FNumericConfig(DONT_REGISTER), max_steps(max_steps) {
     }
 
     UInt MetropolisConfig::getn() const {

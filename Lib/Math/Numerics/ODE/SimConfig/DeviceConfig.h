@@ -10,7 +10,7 @@
 namespace Slab::Math {
     using namespace Slab::Core;
 
-    class DeviceConfig : public FCommandLineInterfaceOwner {
+    class FDeviceConfig : public FCommandLineInterfaceOwner {
         auto NotifyCLArgsSetupFinished() -> void override;
 
     public:
@@ -26,7 +26,7 @@ namespace Slab::Math {
                                                                "Number of threads, in case of CPU usage.");
 
     public:
-        explicit DeviceConfig(bool doRegister = true);
+        explicit FDeviceConfig(bool doRegister = true);
 
         void setupForThread();
 
