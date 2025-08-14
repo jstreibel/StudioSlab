@@ -59,22 +59,21 @@ namespace Slab::Graphics {
             }
         }
 
-        auto allDataEntries = Math::EnumerateAllData();
-        if (!allDataEntries.empty() && ImGui::CollapsingHeader("Data")) {
+        if (auto AllDataEntries = Math::EnumerateAllData(); !AllDataEntries.empty() && ImGui::CollapsingHeader("Data")) {
             if (ImGui::BeginTable("DataTable", 2, ImGuiTableFlags_Resizable)) {
                 ImGui::TableSetupColumn("Type");
                 ImGui::TableSetupColumn("Name");
                 // ImGui::TableSetupColumn("Id");
                 ImGui::TableHeadersRow();
 
-                for (const auto &entry: allDataEntries) {
+                for (IN [Name, Type]: AllDataEntries) {
                     ImGui::TableNextRow();
 
                     ImGui::TableSetColumnIndex(0);
-                    ImGui::Text("%s", entry.type.c_str());
+                    ImGui::Text("%s", Type.c_str());
 
                     ImGui::TableSetColumnIndex(1);
-                    ImGui::Text("%s", entry.name.c_str());
+                    ImGui::Text("%s", Name.c_str());
                 }
 
                 ImGui::EndTable();
