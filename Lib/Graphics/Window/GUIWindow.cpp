@@ -129,13 +129,17 @@ namespace Slab::Graphics {
 
         fix WinSize = ImVec2(static_cast<float>(this->GetWidth()), static_cast<float>(this->GetHeight()));
         fix WinPos  = ImVec2(static_cast<float>(this->Get_x()), static_cast<float>(this->Get_y()));
+        constexpr auto WinFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration;
 
         ImGui::SetNextWindowSize(WinSize, ImGuiCond_Always);
         ImGui::SetNextWindowPos(WinPos, ImGuiCond_Always);
-        ImGui::Begin(WindowId.c_str());
+        ImGui::Begin(WindowId.c_str(), nullptr, WinFlags);
 
-        auto Flags = ImGuiChildFlags_Border; //ImGuiChildFlags_FrameStyle;
-        ImGui::BeginChild("##LeftPane", ImVec2(this->GetWidth(), this->GetHeight()), Flags);
+        auto Flags = ImGuiChildFlags_Border
+                   // | ImGuiChildFlags_FrameStyle
+                   | ImGuiChildFlags_AutoResizeX
+                   | ImGuiChildFlags_AutoResizeY;
+        ImGui::BeginChild("##LeftPane", ImVec2{this->GetWidth() - 40.0f,0}, Flags);
     }
 
     void FGUIWindow::End() const

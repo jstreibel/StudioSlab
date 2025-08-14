@@ -146,10 +146,6 @@ namespace Slab::Graphics {
             GuiContext->NewFrame();
         }
 
-        ImGui::Begin("Slab");
-        ImGui::Text("Hello, world!");
-        ImGui::End();
-
         Cycle();
 
         if (GuiContext != nullptr) GuiContext->Render();
