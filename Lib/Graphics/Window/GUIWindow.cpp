@@ -19,12 +19,10 @@
 
 namespace Slab::Graphics {
 
-    FGUIWindow::FGUIWindow(FSlabWindowConfig config)
-    : FSlabWindow(std::move(config))
+    FGUIWindow::FGUIWindow(const FSlabWindowConfig& Config)
+    : FSlabWindow(Config)
+    , WindowId(Config.Title.empty() ? GetUniqueName() : Config.Title)
     {
-        if (Config.Title != "") WindowId = Config.Title;
-        else WindowId = GetUniqueName();
-
         SetClear(false);
         SetDecorate(false);
     }
