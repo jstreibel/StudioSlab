@@ -10,6 +10,8 @@
 class StudioWindowManager final : public Slab::Graphics::FWindowManager {
 
 public:
+    explicit StudioWindowManager();
+
     void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>&, bool hidden) override;
 
     bool NotifyRender(const Slab::Graphics::FPlatformWindow&) override;
@@ -19,6 +21,7 @@ public:
 private:
     Slab::TPointer<Slab::Graphics::FSlabWindow> SlabWindow;
     Slab::Resolution WidthSysWin = 200, HeightSysWin = 200;
+    Slab::Resolution SidePaneWidth;
 };
 
 
