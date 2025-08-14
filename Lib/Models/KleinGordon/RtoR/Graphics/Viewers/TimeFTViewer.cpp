@@ -22,7 +22,7 @@ namespace Slab::Models::KGRtoR {
         using Plotter = Graphics::Plotter;
         using Themes = Graphics::PlotThemeManager;
 
-        auto window = New<Graphics::FPlot2DWindow>("Time-DFT space-average", GuiWindow->GetGUIWindowContext());
+        auto window = New<Graphics::FPlot2DWindow>("Time-DFT space-average");
         timeDFTAverageArtist =
                 Plotter::AddRtoRFunction(window, nullptr, Themes::GetCurrent()->FuncPlotStyles[4], "⟨ℱₜ[ϕ]⟩ₓ(ω)", 15000);
         timeDFTAverageArtist->SetAffectGraphRanges(true);

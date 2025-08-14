@@ -25,19 +25,22 @@ namespace Slab::Graphics {
         MainMenuAction Action=[](const Str&){};
     };
 
-    class GUIContext : public FPlatformWindowEventListener {
+    class FGUIContext : public FPlatformWindowEventListener {
     protected:
         Vector<FDrawCall> DrawCalls;
 
         void FlushDrawCalls();
 
+        bool bManualRender = false;
 
     public:
-        explicit GUIContext();
+        explicit FGUIContext();
+
+        void SetManualRender(bool b) { bManualRender = b; }
 
         virtual void Bind() = 0;
         virtual void NewFrame() = 0;
-        virtual void Render() const = 0;
+        virtual void Render() = 0;
 
         void AddDrawCall(const FDrawCall&);
 

@@ -21,10 +21,10 @@ namespace Slab::Models::KGRtoR {
     : FRtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params->gett()+10.0})
     {
-        kSpaceGraph  = Slab::New<FPlot2DWindow>("ℱₓ", guiWindow.GetGUIWindowContext());
-        ωSpaceGraph  = Slab::New<FPlot2DWindow>("ℱₜ", guiWindow.GetGUIWindowContext());
-        xSpaceGraph  = Slab::New<FPlot2DWindow>("ϕ(t,x)", guiWindow.GetGUIWindowContext());
-        ωkSpaceGraph = Slab::New<FPlot2DWindow>("ℱₜₓ", guiWindow.GetGUIWindowContext());
+        kSpaceGraph  = Slab::New<FPlot2DWindow>("ℱₓ");
+        ωSpaceGraph  = Slab::New<FPlot2DWindow>("ℱₜ");
+        xSpaceGraph  = Slab::New<FPlot2DWindow>("ϕ(t,x)");
+        ωkSpaceGraph = Slab::New<FPlot2DWindow>("ℱₜₓ");
 
         inv_kSpaceArtist->SetLabel("ℱₖ⁻¹(t, x)");
         // inverseDFTDisplay->addArtist(inverseDFTArtist);
@@ -169,8 +169,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void
-    RtoRFourierPanel::SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction>
- sftHistory,
+    RtoRFourierPanel::SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction> sftHistory,
                                              const FDFTDataHistory &dftDataHistory,
                                              const R2toRFunctionArtist_ptr &dftFunctionArtist) {
 

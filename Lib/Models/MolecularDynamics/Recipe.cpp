@@ -82,7 +82,7 @@ namespace Slab::Models::MolecularDynamics {
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
 
-        DynamicPointerCast<Models::MolecularDynamics::MolDynNumericConfig>(getNumericConfig())->sett(-1);
+        DynamicPointerCast<Models::MolecularDynamics::MolDynNumericConfig>(GetNumericConfig())->sett(-1);
     }
 
 } // MolecularDynamics

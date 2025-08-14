@@ -93,7 +93,7 @@ namespace Slab::Graphics {
         EventTranslator->clear();
     }
 
-    RawPlatformWindow_Ptr FPlatformWindow::GetRawPlatformWindowPointer() const
+    FPlatformWindow_RawPointer FPlatformWindow::GetRawPlatformWindowPointer() const
     {
         return r_Window;
     }
@@ -102,9 +102,23 @@ namespace Slab::Graphics {
         return MouseState;
     }
 
-    TPointer<GUIContext> FPlatformWindow::GetGUIContext() {
-        if(GuiContext == nullptr)
-            GetGraphicsBackend()->SetupGUI(this);
+    TPointer<FGUIContext> FPlatformWindow::GetGUIContext() const
+    {
+        return GuiContext;
+    }
+
+    TPointer<FGUIContext> FPlatformWindow::GetGUIContext() {
+        if(GuiContext == nullptr) {
+            GetGraphicsBackend()->SetupGUIForPlatformWindow(this);
+
+            GuiContext->SetManualRender(true);
+
+            if (GuiContext == nullptr || !AddEventListener(GuiContext))
+            {
+                Core::Log::Error("Failed to setup GUI context for platform window.");
+                return nullptr;
+            }
+        }
 
         return GuiContext;
     }
@@ -113,22 +127,27 @@ namespace Slab::Graphics {
         if(GuiContext != nullptr) {
             static auto ShowMetrics = false;
 
-            auto action = [this](const Str& item){
-                if(item == "Close")        SignalClose();
+            auto Action = [this](const Str& Item){
+                if(Item == "Close")        SignalClose();
                 else
-                if(item == "Show metrics") ShowMetrics = true;
+                if(Item == "Show metrics") ShowMetrics = true;
             };
 
             GuiContext->AddMainMenuItem(MainMenuItem{MainMenuLocation{"Window"},
                                                      {MainMenuLeafEntry{"Show metrics", "Alt+m", ShowMetrics},
                                                       MainMenuLeafEntry{"Close", "Alt+F4"}
                                                       },
-                                                     action});
+                                                     Action});
 
             if(ShowMetrics) GuiContext->AddDrawCall([](){ ImGui::ShowMetricsWindow(&ShowMetrics); });
+
+            GuiContext->Bind();
+            GuiContext->NewFrame();
         }
 
         Cycle();
+
+        if (GuiContext != nullptr) GuiContext->Render();
     }
 
 

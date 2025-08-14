@@ -43,7 +43,7 @@ protected:
 
         MainSystemWindow->AddAndOwnEventListener(WindowManager);
 
-        const auto Window = Slab::New<Tests::FBezierTests>(ImGuiContext);
+        const auto Window = Slab::New<Tests::FBezierTests>();
         // Slab::Graphics::FSlabWindow::Config config;
         // config.parent_syswin = &*MainSystemWindow;
         // config.title = "Slab ImGui Test Window";

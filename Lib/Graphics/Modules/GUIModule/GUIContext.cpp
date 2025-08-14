@@ -6,13 +6,13 @@
 
 namespace Slab::Graphics {
 
-    GUIContext::GUIContext(){ }
+    FGUIContext::FGUIContext(){ }
 
-    void GUIContext::AddDrawCall(const FDrawCall& DrawCall) {
+    void FGUIContext::AddDrawCall(const FDrawCall& DrawCall) {
         DrawCalls.emplace_back(DrawCall);
     }
 
-    void GUIContext::FlushDrawCalls() {
+    void FGUIContext::FlushDrawCalls() {
         for(auto &ExternalDraw : DrawCalls) ExternalDraw();
 
         DrawCalls.clear();

@@ -26,7 +26,7 @@ namespace Slab::Math {
     void NumericTask::init() {
         if (isInitialized()) { throw Exception("Numeric task already initialized"); }
 
-        totalSteps = recipe->getNumericConfig()->getn();
+        totalSteps = recipe->GetNumericConfig()->getn();
         stepsConcluded = 0;
         stepper = recipe->buildStepper();
         outputManager = New<OutputManager>(totalSteps);

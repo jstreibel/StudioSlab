@@ -32,7 +32,7 @@ namespace Modes {
     Math::Base::BoundaryConditions_ptr NumericalRecipe_wkA::GetBoundary() {
         auto prototype = KGRtoR::FKGRtoR_Recipe::NewFieldState();
 
-        fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->GetL();
+        fix L = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig())->GetL();
         fix A_0 = this->A.GetValue();
         fix dk = 2*M_PI/L;
         fix k_0 = dk*this->k.GetValue();
@@ -67,7 +67,7 @@ namespace Modes {
     void NumericalRecipe_wkA::NotifyCLArgsSetupFinished() {
         FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
-        auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
+        auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 
         fix L = config->GetL();
         fix n = config->getn();
@@ -108,7 +108,7 @@ namespace Modes {
     }
 
     void *NumericalRecipe_wkA::BuildOpenGLOutput() {
-        auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
+        auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 
 
         // fix amp = (*A) * 1.1;

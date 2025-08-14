@@ -47,9 +47,9 @@ namespace Slab::Graphics {
         throw Exception("Unknown module " + backendImpl + " @ " + __PRETTY_FUNCTION__);
     }
 
-    TPointer<GUIContext> NuklearModule::CreateContext(FOwnerPlatformWindow window) {
+    TPointer<FGUIContext> NuklearModule::CreateContext(FOwnerPlatformWindow window) {
         NOT_IMPLEMENTED_CLASS_METHOD
-        return Slab::TPointer<GUIContext>();
+        return Slab::TPointer<FGUIContext>();
     }
 
 } // Core

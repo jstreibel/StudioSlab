@@ -17,13 +17,13 @@ namespace Slab::Models::KGRtoR {
     HistoryViewer::HistoryViewer(const TPointer<Graphics::FGUIWindow> &gui_window)
     : KGViewer(gui_window)
     {
-        history_window = New<Graphics::FPlot2DWindow>("Function", gui_window->GetGUIWindowContext());
+        history_window = New<Graphics::FPlot2DWindow>("Function");
         function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
         ddt_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕₜ(t,x)");
         d2dt2_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕₜₜ(t,x)");
         AddWindow(history_window);
 
-        slice_window = New<Graphics::FPlot2DWindow>("Slices", gui_window->GetGUIWindowContext());
+        slice_window = New<Graphics::FPlot2DWindow>("Slices");
         function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕ");
         ddt_function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕₜ");
         d2dt2_function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕₜₜ");

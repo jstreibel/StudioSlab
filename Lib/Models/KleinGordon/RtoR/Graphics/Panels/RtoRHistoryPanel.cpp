@@ -33,14 +33,14 @@ namespace Slab::Models::KGRtoR {
         auto xArtie = New<Graphics::ParametricCurve2DArtist>(xLine, style);
         auto kArtie = New<Graphics::ParametricCurve2DArtist>(kLine, style);
 
-        xSection = New<FPlot2DWindow>("Spacial time slice", guiWindow.GetGUIWindowContext());
-        xSpaceHistory = New<FPlot2DWindow>("Position space history", guiWindow.GetGUIWindowContext());
+        xSection = New<FPlot2DWindow>("Spacial time slice");
+        xSpaceHistory = New<FPlot2DWindow>("Position space history");
         xSpaceHistory->AddArtist(xArtie, 100);
         xSection->GetRegion().setReference_xMax(xSpaceHistory->GetRegion().getReference_xMax());
         xSection->GetRegion().setReference_xMin(xSpaceHistory->GetRegion().getReference_xMin());
 
-        kSection = New<FPlot2DWindow>("k-space time slice", guiWindow.GetGUIWindowContext());
-        kSpaceHistory = New<FPlot2DWindow>("Momentum space history", guiWindow.GetGUIWindowContext());
+        kSection = New<FPlot2DWindow>("k-space time slice");
+        kSpaceHistory = New<FPlot2DWindow>("Momentum space history");
         kSpaceHistory->AddArtist(kArtie, 100);
         kSection->GetRegion().setReference_xMax(kSpaceHistory->GetRegion().getReference_xMax());
         kSection->GetRegion().setReference_xMin(kSpaceHistory->GetRegion().getReference_xMin());

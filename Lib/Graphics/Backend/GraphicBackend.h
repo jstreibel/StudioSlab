@@ -36,7 +36,7 @@ namespace Slab::Graphics {
         TPointer<FPlatformWindow>
         GetMainSystemWindow();
 
-        void SetupGUI(const FPlatformWindow *) const;
+        void SetupGUIForPlatformWindow(const FPlatformWindow *) const;
 
         void AddGraphicsModule(const TVolatile<GraphicsModule> &module);
 

@@ -30,7 +30,7 @@ namespace Slab::Graphics {
         NewFrameCall    NewFrame;
     };
 
-    class FImGuiContext final : public GUIContext {
+    class FImGuiContext final : public FGUIContext {
         ImGuiContext *r_Context = nullptr;
 
         FCallSet CallSet;
@@ -63,7 +63,7 @@ namespace Slab::Graphics {
 
         void Bind() override;
         void NewFrame() override;
-        void Render() const override;
+        void Render() override;
     };
 
 } // Slab::Graphics

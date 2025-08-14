@@ -31,7 +31,7 @@ namespace Slab::Math::Base {
                       << Interface->GetGeneralDescription() << "\" instantiated." << Core::Log::Flush;
     }
 
-    auto NumericalRecipe::getNumericConfig() const -> const TPointer<FNumericConfig> & {
+    auto NumericalRecipe::GetNumericConfig() const -> const TPointer<FNumericConfig> & {
         return NumericConfig;
     }
 

@@ -34,7 +34,7 @@ namespace Slab::Math::Base {
 
         [[nodiscard]] virtual auto SuggestFileName()      const -> Str;
 
-        auto getNumericConfig()             const -> const TPointer<FNumericConfig> &;
+        auto GetNumericConfig()             const -> const TPointer<FNumericConfig> &;
     };
 
     DefinePointers(NumericalRecipe)

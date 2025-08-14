@@ -118,11 +118,11 @@ namespace Slab::Graphics {
 
         CallSet.NewFrame();
         ImGui::NewFrame();
-
-        FlushDrawCalls();
     }
 
-    void FImGuiContext::Render() const {
+    void FImGuiContext::Render() {
+        FlushDrawCalls();
+
         ImGui::Render();
 
         CallSet.Draw();
@@ -216,8 +216,11 @@ namespace Slab::Graphics {
     }
 
     bool FImGuiContext::NotifyRender(const FPlatformWindow&) {
-        NewFrame();
-        Render();
+        if (!bManualRender)
+        {
+            NewFrame();
+            Render();
+        }
         return true;
     }
 

@@ -17,25 +17,21 @@
 
 namespace Slab::Graphics {
 
-    class FGUIWindow : public FSlabWindow {
+    class FGUIWindow final : public FSlabWindow {
         Vector<Pair<Str, FColor>> Stats;
-
-        FImGuiWindowContext WindowContext;
+        Str WindowId;
 
         void Begin() const;
         void End() const;
     public:
-        explicit FGUIWindow(FSlabWindowConfig, const FImGuiWindowContext& WindowContext = FImGuiWindowContext{nullptr});
+        explicit FGUIWindow(FSlabWindowConfig);
 
         void AddVolatileStat(const Str &stat, FColor color = {-1, -1, -1});
 
         void AddExternalDraw(const FDrawCall&) const;
 
-        FImGuiWindowContext GetGUIWindowContext();
-
         auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
     };
-
 
 }
 

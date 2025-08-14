@@ -26,7 +26,7 @@ namespace Modes {
     }
 
     Base::BoundaryConditions_ptr FNumericalRecipe_PlaneWaves::GetBoundary() {
-        fix L = DynamicPointerCast<KGNumericConfig>(this->getNumericConfig())->GetL();
+        fix L = DynamicPointerCast<FKGNumericConfig>(this->GetNumericConfig())->GetL();
         // k=2πn/L
         fix n = static_cast<DevFloat>(*harmonic);
         fix dk = 2*M_PI/L;

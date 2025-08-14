@@ -8,7 +8,7 @@
 
 namespace Slab::Graphics {
 
-    class FSingleWindowManager : public FWindowManager {
+    class FSingleWindowManager final : public FWindowManager {
     public:
         void AddSlabWindow(const TPointer<FSlabWindow>&, bool hidden) override;
 

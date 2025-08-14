@@ -30,7 +30,7 @@ namespace Slab::Graphics {
 
     public:
 
-        TPointer<GUIContext> CreateContext(FOwnerPlatformWindow) override;
+        TPointer<FGUIContext> CreateContext(FOwnerPlatformWindow) override;
 
         static FImGuiModule* BuildModule();
     };

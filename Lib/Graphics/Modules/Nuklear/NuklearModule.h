@@ -23,7 +23,7 @@ namespace Slab::Graphics {
 
         static NuklearModule *BuildModule();
 
-        auto CreateContext(FOwnerPlatformWindow window) -> TPointer<GUIContext> override;
+        auto CreateContext(FOwnerPlatformWindow window) -> TPointer<FGUIContext> override;
 
     };
 

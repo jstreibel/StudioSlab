@@ -53,7 +53,7 @@ namespace Slab::Graphics {
         return SystemWindows.front();
     }
 
-    void GraphicBackend::SetupGUI(const FPlatformWindow *PlatformWindow_RawPtr) const {
+    void GraphicBackend::SetupGUIForPlatformWindow(const FPlatformWindow *PlatformWindow_RawPtr) const {
         if(PlatformWindow_RawPtr == nullptr)
         {
             Core::Log::Error("While trying to setup a GUI context for nullptr SystemWindow.");
@@ -69,7 +69,6 @@ namespace Slab::Graphics {
                 auto &GuiModule = Slab::GetModule<FGUIModule>("GUI");
 
                 PlatformWindow_It->GuiContext = GuiModule.CreateContext(PlatformWindow_It);
-                PlatformWindow_It->AddEventListener(PlatformWindow_It->GuiContext);
 
                 return;
             }

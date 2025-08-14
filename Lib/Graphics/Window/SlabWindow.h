@@ -59,7 +59,7 @@ namespace Slab::Graphics {
 
         ~FSlabWindow() override;
 
-        auto GetUniqueName() const -> Str;
+        [[nodiscard]] auto GetUniqueName() const -> Str;
 
         auto GetConfig() -> FSlabWindowConfig&;
 
@@ -78,7 +78,7 @@ namespace Slab::Graphics {
          */
         virtual auto ImmediateDraw(const FPlatformWindow&)     -> void;
         /**
-         * Here the window has the opportunity to register callbacks and other things (e.g. ImGui window list
+         * Here the window has the opportunity to register callbacks and other things (e.g., ImGui window list
          * draw callback commands).
          */
         virtual auto RegisterDeferredDrawCalls(const FPlatformWindow&)               -> void;
@@ -106,11 +106,11 @@ namespace Slab::Graphics {
         auto SetDecorate(bool)                                 -> void;
         auto SetClear(bool)                                    -> void;
 
-        auto GetViewport()                               const -> RectI;
-        auto Get_x()                                     const -> int;
-        auto Get_y()                                     const -> int;
-        auto GetWidth()                                  const -> int;
-        auto GetHeight()                                 const -> int;
+        [[nodiscard]] auto GetViewport()                               const -> RectI;
+        [[nodiscard]] auto Get_x()                                     const -> int;
+        [[nodiscard]] auto Get_y()                                     const -> int;
+        [[nodiscard]] auto GetWidth()                                  const -> int;
+        [[nodiscard]] auto GetHeight()                                 const -> int;
         auto SetMinimumWidth(Resolution)                       -> void;
         auto SetMinimumHeight(Resolution)                      -> void;
     };

@@ -36,7 +36,7 @@ namespace Modes {
     void Signal_Ak2_Recipe::NotifyCLArgsSetupFinished() {
         FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
-        const auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
+        const auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 
         fix L = config->GetL();
         fix n = config->getn();
@@ -54,7 +54,7 @@ namespace Modes {
     }
 
     void *Signal_Ak2_Recipe::BuildOpenGLOutput() {
-        auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
+        auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 
 
         // fix amp = (*A) * 1.1;
