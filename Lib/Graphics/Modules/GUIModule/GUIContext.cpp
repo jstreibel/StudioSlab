@@ -6,7 +6,7 @@
 
 namespace Slab::Graphics {
 
-    FGUIContext::FGUIContext(){ }
+    FGUIContext::FGUIContext()= default;
 
     void FGUIContext::AddDrawCall(const FDrawCall& DrawCall) {
         DrawCalls.emplace_back(DrawCall);
