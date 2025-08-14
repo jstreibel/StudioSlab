@@ -31,47 +31,11 @@ namespace Slab::Graphics {
         CountType Id;
         static std::map<Str, FPlot2DWindow*> GraphMap;
 
-    protected: typedef Int zOrder_t;
-    public:    typedef std::multimap<zOrder_t, FArtist_ptr> ContentMap;
-
-    private:
-        ContentMap Content;
-
-        bool ShowInterface = false;
-
-        bool PopupOn = false;
-        bool AutoReviewGraphRanges=false;
-
-        PlottingRegion2D Region;
-
-        float AnimationTimeSeconds = 0.2f;
-
-        // FImGuiWindowContext WindowContext;
-
-        void SetupOrtho() const;
-
     protected:
-        Str Title;
-
-        void ArtistsDraw();
-        void toggleShowInterface();
-        void RegisterGUIDraws();
-
-        friend class FArtist;
-
-        FAxisArtist AxisArtist;
-        XHairArtist ArtistXHair;
-        FLabelsArtist LabelsArtist;
-        BackgroundArtist bgArtist;
-
-        FPlot2DWindow(
-            DevFloat xMin,
-            DevFloat xMax,
-            DevFloat yMin,
-            DevFloat yMax,
-            Str title);
+        typedef Int zOrder_t;
 
     public:
+        typedef std::multimap<zOrder_t, FArtist_ptr> ContentMap;
 
         explicit FPlot2DWindow(Str Title);
 
@@ -105,6 +69,44 @@ namespace Slab::Graphics {
         bool NotifyMouseWheel(double dx, double dy) override;
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
         bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
+
+    protected:
+        Str Title;
+
+        void ArtistsDraw();
+        void toggleShowInterface();
+        void RegisterGUIDraws();
+
+        friend class FArtist;
+
+        FAxisArtist AxisArtist;
+        XHairArtist ArtistXHair;
+        FLabelsArtist LabelsArtist;
+        BackgroundArtist bgArtist;
+
+        FPlot2DWindow(
+            DevFloat xMin,
+            DevFloat xMax,
+            DevFloat yMin,
+            DevFloat yMax,
+            Str title);
+
+    private:
+        ContentMap Content;
+
+        bool ShowInterface = false;
+
+        bool PopupOn = false;
+        bool AutoReviewGraphRanges=false;
+
+        PlottingRegion2D Region;
+
+        float AnimationTimeSeconds = 0.2f;
+
+        // FImGuiWindowContext WindowContext;
+
+        void SetupOrtho() const;
+
 
     };
 

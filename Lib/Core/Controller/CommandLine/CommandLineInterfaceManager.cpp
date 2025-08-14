@@ -60,7 +60,7 @@ namespace Slab::Core {
         auto comp = [](const TPointer<FCommandLineInterface> &a, const TPointer<FCommandLineInterface> &b) { return *a < *b; };
         std::sort(interfaces.begin(), interfaces.end(), comp);
 
-        auto &log = Log::Info();
+        auto &log = Log::Debug();
         log << "[priority] Interface";
         for (const auto &interface: interfaces) {
 
