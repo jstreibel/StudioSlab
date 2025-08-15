@@ -36,7 +36,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
 {
     ImGuiContext->NewFrame();
 
-    fix MenuHeight = Slab::Graphics::WindowStyle::menu_height;
+    fix MenuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
     ImGui::SetNextWindowPos(ImVec2(0, static_cast<float>(MenuHeight)));
     ImGui::SetNextWindowSize(ImVec2(StudioConfig::SidePaneWidth, static_cast<float>(HeightSysWin - MenuHeight)), ImGuiCond_Appearing);
     ImGui::Begin(StudioConfig::SidePaneId, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
@@ -61,15 +61,17 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
 
 bool StudioWindowManager::NotifySystemWindowReshape(int w, int h)
 {
-    WidthSysWin = h;
-    HeightSysWin = w;
+    WidthSysWin = w;
+    HeightSysWin = h;
 
     if (SlabWindow != nullptr)
     {
-        fix MenuHeight = Slab::Graphics::WindowStyle::menu_height;
-        SlabWindow->NotifyReshape(WidthSysWin-SidePaneWidth, HeightSysWin-MenuHeight);
-        SlabWindow->Set_x(SidePaneWidth);
-        SlabWindow->Set_y(MenuHeight);
+        fix MenuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
+        fix Gaps = Slab::Graphics::WindowStyle::TilingGapSize;
+
+        SlabWindow->NotifyReshape(WidthSysWin-SidePaneWidth-2*Gaps, HeightSysWin-MenuHeight-2*Gaps);
+        SlabWindow->Set_x(SidePaneWidth + Gaps);
+        SlabWindow->Set_y(MenuHeight + Gaps);
     }
 
     return FWindowManager::NotifySystemWindowReshape(w, h);

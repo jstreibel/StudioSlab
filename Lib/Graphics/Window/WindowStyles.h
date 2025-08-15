@@ -11,7 +11,7 @@
 namespace Slab::Graphics::WindowStyle {
     extern RectI DefaultWindowRect;
 
-    extern int tiling_gap;
+    extern int TilingGapSize;
 
     extern int font_size;
     extern FColor titlebar_color;
@@ -20,7 +20,7 @@ namespace Slab::Graphics::WindowStyle {
     extern FColor windowBorderColor_inactive;
     extern FColor windowBorderColor_active;
 
-    extern int menu_height;
+    extern int GlobalMenuHeight;
 
     extern FColor WindowBGColor;
     extern FColor PlatformWindow_BackgroundColor;

@@ -9,7 +9,7 @@ namespace Slab::Graphics {
     {
         if (SlabWindow != nullptr) RemoveResponder(SlabWindow);
 
-        fix MenuHeight = WindowStyle::menu_height;
+        fix MenuHeight = WindowStyle::GlobalMenuHeight;
         SlabWindow = Window;
         SlabWindow->NotifyReshape(WidthSysWin, HeightSysWin-MenuHeight);
         SlabWindow->Set_x(0);

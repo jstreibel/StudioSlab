@@ -70,9 +70,9 @@ namespace Slab::Graphics {
                 CurrentlyFocused->is_full_screen = false;
             } else  {
                 fix w = WidthSysWin;
-                fix h = HeightSysWin - WindowStyle::menu_height;
+                fix h = HeightSysWin - WindowStyle::GlobalMenuHeight;
                 fix x = 0;
-                fix y = WindowStyle::menu_height;
+                fix y = WindowStyle::GlobalMenuHeight;
 
                 RectI rect_f = {x, x+w, y, y+h};
                 RectI rect_0 = CurrentlyFocused->Window->Config.WinRect;
@@ -152,7 +152,7 @@ namespace Slab::Graphics {
 
             if(Grabbed.what == Grabbed::Titlebar) {
                 fix x_min = -Grabbed.window->GetWidth() + 200;
-                fix y_min = Decorator.TitlebarHeight() + WindowStyle::menu_height;
+                fix y_min = Decorator.TitlebarHeight() + WindowStyle::GlobalMenuHeight;
 
                 fix x_max = WidthSysWin-200;
                 fix y_max = HeightSysWin-200;
@@ -205,8 +205,8 @@ namespace Slab::Graphics {
                 meta->is_full_screen = true;
                 slab_window->SetDecorate(false);
                 slab_window->Set_x(0);
-                slab_window->Set_y(WindowStyle::menu_height);
-                slab_window->NotifyReshape(w, h - WindowStyle::menu_height);
+                slab_window->Set_y(WindowStyle::GlobalMenuHeight);
+                slab_window->NotifyReshape(w, h - WindowStyle::GlobalMenuHeight);
             }
         }
 

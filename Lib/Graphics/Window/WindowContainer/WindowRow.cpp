@@ -130,14 +130,14 @@ namespace Slab::Graphics {
             }
 
             for (int i = 0; i < m; ++i) {
-                computed_xPositions[i] += WindowStyle::tiling_gap;
-                computedWidths[i]      -= WindowStyle::tiling_gap;
+                computed_xPositions[i] += WindowStyle::TilingGapSize;
+                computedWidths[i]      -= WindowStyle::TilingGapSize;
             }
         }
 
         auto i = 0;
-        fix y = Get_y() + WindowStyle::tiling_gap;
-        fix h = GetHeight() - WindowStyle::tiling_gap;
+        fix y = Get_y() + WindowStyle::TilingGapSize;
+        fix h = GetHeight() - WindowStyle::TilingGapSize;
         for (auto &winMData: WindowsList) {
             OUT win = *winMData.window;
 

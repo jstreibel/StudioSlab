@@ -90,7 +90,7 @@ namespace Slab::Graphics {
             y += computedHeights[i];
         }
 
-        fix gap = WindowStyle::tiling_gap;
+        fix gap = WindowStyle::TilingGapSize;
         for (int i = 0; i < m; ++i) {
             computed_yPositions[i] += gap;
             computedHeights[i] -= gap;

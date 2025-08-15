@@ -32,7 +32,8 @@ namespace Slab::Graphics::OpenGL {
 
         if(Font == nullptr) throw Exception(Str("Bad font file: ") + fontFile);
 
-        Core::Log::Critical() << "WriterOpenGL being instantiated. Will start generating atlas now." << Core::Log::Flush;
+        Core::Log::Info() << "WriterOpenGL instantiation with font '" << fontFile << "' with size " << ptSize << "pts instantiated."
+                             << Core::Log::Flush;
 
         FColor white = {1, 1, 1, 1};
         glGenTextures(1, &Atlas->id);
@@ -43,9 +44,6 @@ namespace Slab::Graphics::OpenGL {
         mat4_set_identity(&m_Projection);
         mat4_set_identity(&m_Model);
         mat4_set_identity(&m_View);
-
-        Core::Log::Success() << "WriterOpenGL with font '" << fontFile << "' with size " << ptSize << "pts instantiated."
-                             << Core::Log::Flush;
     }
 
     FWriterOpenGL::~FWriterOpenGL() {
