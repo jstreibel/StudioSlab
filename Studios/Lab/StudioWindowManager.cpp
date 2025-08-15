@@ -59,10 +59,6 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
             auto Item = Slab::Graphics::MainMenuItem{ItemLocation, {Entry}, Action};
             ImGuiContext->AddMainMenuItem(Item);
         }
-
-        {
-
-        }
     }
 
     if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth());
