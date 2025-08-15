@@ -25,6 +25,8 @@ private:
 
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
     int SidePaneWidth;
+
+    Slab::TPointer<class FSimulationManager> SimulationManager;
 };
 
 

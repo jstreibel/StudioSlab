@@ -7,9 +7,10 @@
 #include "imgui.h"
 #include "StudioConfig.h"
 #include "StudioSlab.h"
-#include "Core/SlabCore.h"
 #include "Graphics/SlabGraphics.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
+
+#include "Simulation/SimulationManager.h"
 
 StudioWindowManager::StudioWindowManager(): SidePaneWidth(StudioConfig::SidePaneWidth)
 {
@@ -19,7 +20,10 @@ StudioWindowManager::StudioWindowManager(): SidePaneWidth(StudioConfig::SidePane
     ImGuiContext = Slab::DynamicPointerCast<Slab::Graphics::FImGuiContext>(ImGuiModule.CreateContext(PlatformWindow));
     ImGuiContext->SetManualRender(true);
 
+    SimulationManager = Slab::New<FSimulationManager>(ImGuiContext);
+
     this->AddResponder(ImGuiContext);
+    this->AddResponder(SimulationManager);
 }
 
 void StudioWindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>& Window, bool hidden)
@@ -44,15 +48,22 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
     ImGui::Text("Side pane");
 
     // Main menu
-    auto ItemLocation = Slab::Graphics::MainMenuLocation{"System"};
-    auto Entry = Slab::Graphics::MainMenuLeafEntry{"Exit", "Alt+F4"};
-    auto Action = [&PlatformWindow](const Slab::Str &Item){
-        if (Item == "Exit")
-            const_cast<Slab::Graphics::FPlatformWindow*>(&PlatformWindow)->SignalClose();
-    };
-    auto Item = Slab::Graphics::MainMenuItem{ItemLocation, {Entry}, Action};
-    ImGuiContext->AddMainMenuItem(Item);
+    {
+        {
+            auto ItemLocation = Slab::Graphics::MainMenuLocation{"System"};
+            auto Entry = Slab::Graphics::MainMenuLeafEntry{"Exit", "Alt+F4"};
+            auto Action = [&PlatformWindow](const Slab::Str &Item){
+                if (Item == "Exit")
+                    const_cast<Slab::Graphics::FPlatformWindow*>(&PlatformWindow)->SignalClose();
+            };
+            auto Item = Slab::Graphics::MainMenuItem{ItemLocation, {Entry}, Action};
+            ImGuiContext->AddMainMenuItem(Item);
+        }
 
+        {
+
+        }
+    }
 
     if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth());
         SidePaneWidth != WindowWidth)
