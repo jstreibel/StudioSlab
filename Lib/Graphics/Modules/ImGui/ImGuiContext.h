@@ -32,8 +32,17 @@ namespace Slab::Graphics {
 
     class FImGuiContext final : public FGUIContext {
         ImGuiContext *r_Context = nullptr;
-
         FImplementationCallSet ImplementationCalls;
+
+        // bool bShowDemo = false;
+        // bool bShowStyleEditor = false;
+        // bool bShowStyleSelector = false;
+        // bool bShowFontSelector = false;
+        // bool bShowFontOptions = false;
+        // bool bShowAbout = false;
+        bool bShowMetricsWindow = false;
+        // bool bShowDemoWindow = false;
+        // bool bShowStyleEditorWindow = false;
 
     public:
         explicit FImGuiContext(FImplementationCallSet);

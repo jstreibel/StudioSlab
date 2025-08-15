@@ -126,7 +126,7 @@ namespace Slab::Graphics {
             };
 
             GuiContext->AddMainMenuItem(MainMenuItem{MainMenuLocation{"Window"},
-                                                     {MainMenuLeafEntry{"Show metrics", "Alt+m", ShowMetrics},
+                                                     {MainMenuLeafEntry{"Show metrics", "", ShowMetrics},
                                                       MainMenuLeafEntry{"Close", "Alt+F4"}
                                                       },
                                                      Action});

@@ -7,6 +7,7 @@
 #include "imgui.h"
 #include "StudioConfig.h"
 #include "StudioSlab.h"
+#include "Core/SlabCore.h"
 #include "Graphics/SlabGraphics.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 
@@ -41,6 +42,17 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
     ImGui::SetNextWindowSize(ImVec2(StudioConfig::SidePaneWidth, static_cast<float>(HeightSysWin - MenuHeight)), ImGuiCond_Appearing);
     ImGui::Begin(StudioConfig::SidePaneId, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
     ImGui::Text("Side pane");
+
+    // Main menu
+    auto ItemLocation = Slab::Graphics::MainMenuLocation{"System"};
+    auto Entry = Slab::Graphics::MainMenuLeafEntry{"Exit", "Alt+F4"};
+    auto Action = [&PlatformWindow](const Slab::Str &Item){
+        if (Item == "Exit")
+            const_cast<Slab::Graphics::FPlatformWindow*>(&PlatformWindow)->SignalClose();
+    };
+    auto Item = Slab::Graphics::MainMenuItem{ItemLocation, {Entry}, Action};
+    ImGuiContext->AddMainMenuItem(Item);
+
 
     if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth());
         SidePaneWidth != WindowWidth)

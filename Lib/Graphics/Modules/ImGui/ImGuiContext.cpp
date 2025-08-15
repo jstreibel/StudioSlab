@@ -214,7 +214,24 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool FImGuiContext::NotifyRender(const FPlatformWindow&) {
+    bool FImGuiContext::NotifyRender(const FPlatformWindow &Window) {
+        AddMainMenuItem(MainMenuItem{
+            MainMenuLocation{"Window"},
+            {
+                MainMenuLeafEntry{"Show metrics", "Alt+m", false},
+            },
+            [&Window, this](const Str& Item)
+            {
+                if (Item == "Close") const_cast<FPlatformWindow*>(&Window)->SignalClose();
+                else if (Item == "Show metrics") bShowMetricsWindow = !bShowMetricsWindow;
+            }
+        });
+
+        if (bShowMetricsWindow) AddDrawCall([this]
+        {
+            ImGui::ShowMetricsWindow(&bShowMetricsWindow);
+        });
+
         if (!bManualRender)
         {
             NewFrame();
