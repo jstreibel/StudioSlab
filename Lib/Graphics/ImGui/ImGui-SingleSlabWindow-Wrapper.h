@@ -7,6 +7,8 @@
 
 #include <Graphics/Modules/ImGui/ImGuiContext.h>
 
+#include <utility>
+
 #include "Utils/Threads.h"
 #include "Graphics/Window/SlabWindow.h"
 
@@ -15,8 +17,8 @@ namespace Slab::Graphics {
 
     struct FImGuiWindowContext
     {
-        explicit FImGuiWindowContext(const TPointer<FImGuiContext>& Context, const Str& WindowId="")
-        : Context(Context), WindowId(WindowId) { }
+        explicit FImGuiWindowContext(const TPointer<FImGuiContext>& Context, Str  WindowId="")
+        : Context(Context), WindowId(std::move(WindowId)) { }
 
         TPointer<FImGuiContext> Context;
         Str WindowId;

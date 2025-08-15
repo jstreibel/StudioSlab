@@ -9,10 +9,10 @@
 
 namespace Slab::Blueprints {
 
-    class Blueprint {
+    class FBlueprint {
         int                  m_NextId = 1;
         const int            m_PinIconSize = 24;
-        Vector<Node>    m_Nodes;
+        Vector<FBlueprintNode>    m_Nodes;
         Vector<Link>    m_Links;
 
     public:
@@ -26,10 +26,10 @@ namespace Slab::Blueprints {
             return {static_cast<unsigned long>(GetNextId())};
         }
 
-        auto GetNodes() -> Vector<Node>&;
+        auto GetNodes() -> Vector<FBlueprintNode>&;
         auto GetLinks() -> Vector<Link>&;
 
-        Node* FindNode(ed::NodeId id);
+        FBlueprintNode* FindNode(ed::NodeId id);
 
         Link* FindLink(ed::LinkId id);
 
@@ -41,39 +41,39 @@ namespace Slab::Blueprints {
 
         bool CreateLink(Pin&a, Pin&b);
 
-        void BuildNode(Node* node);
+        void BuildNode(FBlueprintNode* node);
 
-        Node* SpawnInputActionNode();
+        FBlueprintNode* SpawnInputActionNode();
 
-        Node* SpawnBranchNode();
+        FBlueprintNode* SpawnBranchNode();
 
-        Node* SpawnDoNNode();
+        FBlueprintNode* SpawnDoNNode();
 
-        Node* SpawnOutputActionNode();
+        FBlueprintNode* SpawnOutputActionNode();
 
-        Node* SpawnPrintStringNode();
+        FBlueprintNode* SpawnPrintStringNode();
 
-        Node* SpawnMessageNode();
+        FBlueprintNode* SpawnMessageNode();
 
-        Node* SpawnSetTimerNode();
+        FBlueprintNode* SpawnSetTimerNode();
 
-        Node* SpawnLessNode();
+        FBlueprintNode* SpawnLessNode();
 
-        Node* SpawnWeirdNode();
+        FBlueprintNode* SpawnWeirdNode();
 
-        Node* SpawnTraceByChannelNode();
+        FBlueprintNode* SpawnTraceByChannelNode();
 
-        Node* SpawnTreeSequenceNode();
+        FBlueprintNode* SpawnTreeSequenceNode();
 
-        Node* SpawnTreeTaskNode();
+        FBlueprintNode* SpawnTreeTaskNode();
 
-        Node* SpawnTreeTask2Node();
+        FBlueprintNode* SpawnTreeTask2Node();
 
-        Node* SpawnComment();
+        FBlueprintNode* SpawnComment();
 
-        Node* SpawnHoudiniTransformNode();
+        FBlueprintNode* SpawnHoudiniTransformNode();
 
-        Node* SpawnHoudiniGroupNode();
+        FBlueprintNode* SpawnHoudiniGroupNode();
 
         void BuildNodes();
     };

@@ -8,8 +8,8 @@
 #include "Graphics/SlabGraphics.h"
 
 class App : public Slab::FApplication {
-    Slab::TPointer<Slab::Blueprints::BlueprintRenderer> blueprint_renderer;
-    Slab::TPointer<Slab::Blueprints::Blueprint> blueprint;
+    Slab::TPointer<Slab::Blueprints::FBlueprintRenderer> BlueprintRenderer;
+    Slab::TPointer<Slab::Blueprints::FBlueprint> Blueprint;
 
 public:
     App(const int argc, const char *argv[])
@@ -28,45 +28,49 @@ protected:
 
         using namespace Slab::Blueprints;
 
-        blueprint = Slab::New<Blueprint>();
+        Blueprint = Slab::New<FBlueprint>();
         auto main_platform_window = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
-        blueprint_renderer = Slab::New<BlueprintRenderer>(blueprint);
+
+        auto GUIContext = Slab::DynamicPointerCast<Slab::Graphics::FImGuiContext>(
+            Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->SetupGUIContext());
+
+        BlueprintRenderer = Slab::New<FBlueprintRenderer>(Blueprint, GUIContext);
         // main_platform_window->AddEventListener(blueprint_renderer);
-        AddResponder(blueprint_renderer);
+        AddResponder(BlueprintRenderer);
 
-        Node* node;
-        node = blueprint->SpawnInputActionNode();      ed::SetNodePosition(node->ID, ImVec2(-252, 220));
-        node = blueprint->SpawnBranchNode();           ed::SetNodePosition(node->ID, ImVec2(-300, 351));
-        node = blueprint->SpawnDoNNode();              ed::SetNodePosition(node->ID, ImVec2(-238, 504));
-        node = blueprint->SpawnOutputActionNode();     ed::SetNodePosition(node->ID, ImVec2(71, 80));
-        node = blueprint->SpawnSetTimerNode();         ed::SetNodePosition(node->ID, ImVec2(168, 316));
+        FBlueprintNode* Node;
+        Node = Blueprint->SpawnInputActionNode();      ed::SetNodePosition(Node->ID, ImVec2(-252, 220));
+        Node = Blueprint->SpawnBranchNode();           ed::SetNodePosition(Node->ID, ImVec2(-300, 351));
+        Node = Blueprint->SpawnDoNNode();              ed::SetNodePosition(Node->ID, ImVec2(-238, 504));
+        Node = Blueprint->SpawnOutputActionNode();     ed::SetNodePosition(Node->ID, ImVec2(71, 80));
+        Node = Blueprint->SpawnSetTimerNode();         ed::SetNodePosition(Node->ID, ImVec2(168, 316));
 
-        node = blueprint->SpawnTreeSequenceNode();     ed::SetNodePosition(node->ID, ImVec2(1028, 329));
-        node = blueprint->SpawnTreeTaskNode();         ed::SetNodePosition(node->ID, ImVec2(1204, 458));
-        node = blueprint->SpawnTreeTask2Node();        ed::SetNodePosition(node->ID, ImVec2(868, 538));
+        Node = Blueprint->SpawnTreeSequenceNode();     ed::SetNodePosition(Node->ID, ImVec2(1028, 329));
+        Node = Blueprint->SpawnTreeTaskNode();         ed::SetNodePosition(Node->ID, ImVec2(1204, 458));
+        Node = Blueprint->SpawnTreeTask2Node();        ed::SetNodePosition(Node->ID, ImVec2(868, 538));
 
-        node = blueprint->SpawnComment();              ed::SetNodePosition(node->ID, ImVec2(112, 576)); ed::SetGroupSize(node->ID, ImVec2(384, 154));
-        node = blueprint->SpawnComment();              ed::SetNodePosition(node->ID, ImVec2(800, 224)); ed::SetGroupSize(node->ID, ImVec2(640, 400));
+        Node = Blueprint->SpawnComment();              ed::SetNodePosition(Node->ID, ImVec2(112, 576)); ed::SetGroupSize(Node->ID, ImVec2(384, 154));
+        Node = Blueprint->SpawnComment();              ed::SetNodePosition(Node->ID, ImVec2(800, 224)); ed::SetGroupSize(Node->ID, ImVec2(640, 400));
 
-        node = blueprint->SpawnLessNode();             ed::SetNodePosition(node->ID, ImVec2(366, 652));
-        node = blueprint->SpawnWeirdNode();            ed::SetNodePosition(node->ID, ImVec2(144, 652));
-        node = blueprint->SpawnMessageNode();          ed::SetNodePosition(node->ID, ImVec2(-348, 698));
-        node = blueprint->SpawnPrintStringNode();      ed::SetNodePosition(node->ID, ImVec2(-69, 652));
+        Node = Blueprint->SpawnLessNode();             ed::SetNodePosition(Node->ID, ImVec2(366, 652));
+        Node = Blueprint->SpawnWeirdNode();            ed::SetNodePosition(Node->ID, ImVec2(144, 652));
+        Node = Blueprint->SpawnMessageNode();          ed::SetNodePosition(Node->ID, ImVec2(-348, 698));
+        Node = Blueprint->SpawnPrintStringNode();      ed::SetNodePosition(Node->ID, ImVec2(-69, 652));
 
-        node = blueprint->SpawnHoudiniTransformNode(); ed::SetNodePosition(node->ID, ImVec2(500, -70));
-        node = blueprint->SpawnHoudiniGroupNode();     ed::SetNodePosition(node->ID, ImVec2(500, 42));
+        Node = Blueprint->SpawnHoudiniTransformNode(); ed::SetNodePosition(Node->ID, ImVec2(500, -70));
+        Node = Blueprint->SpawnHoudiniGroupNode();     ed::SetNodePosition(Node->ID, ImVec2(500, 42));
 
         ed::NavigateToContent();
 
-        blueprint->BuildNodes();
+        Blueprint->BuildNodes();
 
-        auto nodes = blueprint->GetNodes();
+        auto nodes = Blueprint->GetNodes();
 
-        blueprint->CreateLink(nodes[5].Outputs[0], nodes[6].Outputs[0]);
-        blueprint->CreateLink(nodes[5].Outputs[0], nodes[6].Inputs[0]);
-        blueprint->CreateLink(nodes[5].Outputs[0], nodes[7].Inputs[0]);
+        Blueprint->CreateLink(nodes[5].Outputs[0], nodes[6].Outputs[0]);
+        Blueprint->CreateLink(nodes[5].Outputs[0], nodes[6].Inputs[0]);
+        Blueprint->CreateLink(nodes[5].Outputs[0], nodes[7].Inputs[0]);
 
-        blueprint->CreateLink(nodes[14].Outputs[0], nodes[15].Inputs[0]);
+        Blueprint->CreateLink(nodes[14].Outputs[0], nodes[15].Inputs[0]);
     }
 };
 

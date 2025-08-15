@@ -27,10 +27,9 @@ namespace Slab::Graphics {
     , SlabWindow(std::move(SlabWindow))
     , Context(std::move(Context))
     {
-        if (this->Context == nullptr)
+        if(this->Context == nullptr)
         {
-            auto GUIContext = GetGraphicsBackend()->GetMainSystemWindow()->SetupGUIContext();
-            this->Context = DynamicPointerCast<FImGuiContext>(GUIContext);
+            throw Exception("ImGuiContext is null");
         }
 
         this->SlabWindow->SetClear(false);

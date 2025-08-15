@@ -15,8 +15,6 @@
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "StudioSlab.h"
 
-#define GLOBAL_IMGUI_CONTEXT Slab::DynamicPointerCast<Slab::Graphics::FImGuiContext>(Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext())
-
 namespace Slab::Graphics {
 
     FGUIWindow::FGUIWindow(const FSlabWindowConfig& Config)

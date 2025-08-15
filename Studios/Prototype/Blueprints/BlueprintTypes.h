@@ -44,12 +44,12 @@ namespace Slab::Blueprints {
         Houdini
     };
 
-    struct Node;
+    struct FBlueprintNode;
 
     struct Pin
     {
         ed::PinId   ID;
-        Blueprints::Node*     Node;
+        Blueprints::FBlueprintNode*     Node;
         Slab::Str Name;
         PinType     Type;
         PinKind     Kind;
@@ -60,7 +60,7 @@ namespace Slab::Blueprints {
         }
     };
 
-    struct Node
+    struct FBlueprintNode
     {
         ed::NodeId ID;
         Slab::Str Name;
@@ -73,7 +73,7 @@ namespace Slab::Blueprints {
         Str State;
         Str SavedState;
 
-        Node(int id, const char* name, ImColor color = ImColor(255, 255, 255)):
+        FBlueprintNode(int id, const char* name, ImColor color = ImColor(255, 255, 255)):
                 ID(id), Name(name), Color(color), Type(NodeType::Blueprint), Size(0, 0)
         {
         }

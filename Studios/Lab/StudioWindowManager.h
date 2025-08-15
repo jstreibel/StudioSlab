@@ -5,6 +5,7 @@
 #ifndef STUDIOSLAB_WINDOWMANAGER_H
 #define STUDIOSLAB_WINDOWMANAGER_H
 
+#include "Graphics/Modules/ImGui/ImGuiContext.h"
 #include "Graphics/Window/WindowManager.h"
 
 class StudioWindowManager final : public Slab::Graphics::FWindowManager {
@@ -20,8 +21,10 @@ public:
 
 private:
     Slab::TPointer<Slab::Graphics::FSlabWindow> SlabWindow;
-    Slab::Resolution WidthSysWin = 200, HeightSysWin = 200;
-    Slab::Resolution SidePaneWidth;
+    int WidthSysWin = 200, HeightSysWin = 200;
+
+    Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
+    int SidePaneWidth;
 };
 
 

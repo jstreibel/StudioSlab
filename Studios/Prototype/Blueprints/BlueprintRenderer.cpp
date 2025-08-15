@@ -21,11 +21,10 @@ namespace Slab::Blueprints {
 
     using ax::Widgets::IconType;
 
-    BlueprintRenderer::BlueprintRenderer(TPointer<Slab::Blueprints::Blueprint> blueprint)
+    FBlueprintRenderer::FBlueprintRenderer(TPointer<FBlueprint> blueprint, TPointer<Graphics::FImGuiContext> GUIContext )
     : blueprint(std::move(blueprint))
     {
-        auto GuiContext = Graphics::GetGraphicsBackend()->GetMainSystemWindow()->SetupGUIContext();
-        m_Context = DynamicPointerCast<Graphics::FImGuiContext>(GuiContext);
+        m_Context = DynamicPointerCast<Graphics::FImGuiContext>(std::move(GUIContext));
 
         ed::Config config;
 
@@ -35,7 +34,7 @@ namespace Slab::Blueprints {
 
         config.LoadNodeSettings = [](ed::NodeId nodeId, char* data, void* userPointer) -> size_t
         {
-            auto self = static_cast<BlueprintRenderer*>(userPointer);
+            auto self = static_cast<FBlueprintRenderer*>(userPointer);
 
             auto node = self->blueprint->FindNode(nodeId);
             if (!node)
@@ -49,7 +48,7 @@ namespace Slab::Blueprints {
         config.SaveNodeSettings = [](ed::NodeId nodeId, const char* data,
                 size_t size, ed::SaveReasonFlags reason, void* userPointer) -> bool
         {
-            auto self = static_cast<BlueprintRenderer*>(userPointer);
+            auto self = static_cast<FBlueprintRenderer*>(userPointer);
 
             auto node = self->blueprint->FindNode(nodeId);
             if (!node)
@@ -71,11 +70,11 @@ namespace Slab::Blueprints {
         m_RestoreIcon      = Graphics::LoadTexture(location + "ic_restore_white_24dp.png");
     }
 
-    void BlueprintRenderer::TouchNode(ed::NodeId id) {
+    void FBlueprintRenderer::TouchNode(ed::NodeId id) {
         m_NodeTouchTime[id] = m_TouchTime;
     }
 
-    float BlueprintRenderer::GetTouchProgress(ed::NodeId id) {
+    float FBlueprintRenderer::GetTouchProgress(ed::NodeId id) {
         auto it = m_NodeTouchTime.find(id);
         if (it != m_NodeTouchTime.end() && it->second > 0.0f)
             return (m_TouchTime - it->second) / m_TouchTime;
@@ -83,7 +82,7 @@ namespace Slab::Blueprints {
             return 0.0f;
     }
 
-    void BlueprintRenderer::UpdateTouch() {
+    void FBlueprintRenderer::UpdateTouch() {
         const auto deltaTime = ImGui::GetIO().DeltaTime;
         for (auto& entry : m_NodeTouchTime)
         {
@@ -92,7 +91,7 @@ namespace Slab::Blueprints {
         }
     }
 
-    ImColor BlueprintRenderer::GetIconColor(PinType type) {
+    ImColor FBlueprintRenderer::GetIconColor(PinType type) {
         switch (type)
         {
             default:
@@ -107,7 +106,7 @@ namespace Slab::Blueprints {
         }
     }
 
-    void BlueprintRenderer::DrawPinIcon(const Pin &pin, bool connected, int alpha) {
+    void FBlueprintRenderer::DrawPinIcon(const Pin &pin, bool connected, int alpha) {
         IconType iconType;
         ImColor  color = GetIconColor(pin.Type);
         color.Value.w = alpha / 255.0f;
@@ -128,7 +127,7 @@ namespace Slab::Blueprints {
         ax::Widgets::Icon(ImVec2(static_cast<float>(m_PinIconSize), static_cast<float>(m_PinIconSize)), iconType, connected, color, ImColor(32, 32, 32, alpha));
     }
 
-    void BlueprintRenderer::ShowStyleEditor(bool *show) {
+    void FBlueprintRenderer::ShowStyleEditor(bool *show) {
         if (!ImGui::Begin("Style", show))
         {
             ImGui::End();
@@ -203,7 +202,7 @@ namespace Slab::Blueprints {
         ImGui::End();
     }
 
-    void BlueprintRenderer::ShowLeftPane(float paneWidth) {
+    void FBlueprintRenderer::ShowLeftPane(float paneWidth) {
         auto& io = ImGui::GetIO();
 
         ImGui::BeginChild("Selection", ImVec2(paneWidth, 0));

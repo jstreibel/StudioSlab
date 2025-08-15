@@ -13,7 +13,7 @@
 
 namespace Slab::Blueprints {
 
-    class BlueprintRenderer : public Graphics::FPlatformWindowEventListener {
+    class FBlueprintRenderer : public Graphics::FPlatformWindowEventListener {
         ed::EditorContext* m_Editor = nullptr;
 
         TPointer<Graphics::FImGuiContext> m_Context;
@@ -25,7 +25,7 @@ namespace Slab::Blueprints {
         std::map<ed::NodeId, float, NodeIdLess> m_NodeTouchTime;
         bool                 m_ShowOrdinals = false;
 
-        TPointer<Blueprint> blueprint;
+        TPointer<FBlueprint> blueprint;
 
         void TouchNode(ed::NodeId id);
 
@@ -36,7 +36,7 @@ namespace Slab::Blueprints {
         void DoDrawing();
 
     public:
-        explicit BlueprintRenderer(TPointer<Blueprint> blueprint);
+        explicit FBlueprintRenderer(TPointer<FBlueprint> blueprint, TPointer<Graphics::FImGuiContext>);
 
         ImColor GetIconColor(PinType type);;
 

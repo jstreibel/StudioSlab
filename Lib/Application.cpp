@@ -49,10 +49,7 @@ namespace Slab {
     Int FApplication::Run() {
         const auto self = Dummy(*this);
 
-        if (!p_Platform->GetMainSystemWindow()->AddEventListener(self))
-        {
-            throw Exception("Failed to add FApplication as event listener to FPlatformWindow.");
-        }
+        p_Platform->GetMainSystemWindow()->AddEventListener(self);
 
         p_Platform->Run();
 

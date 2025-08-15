@@ -106,6 +106,7 @@ namespace Slab::Graphics {
     }
 
     bool PlotThemeManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
+        /*
         auto GuiContext = PlatformWindow.GetGUIContext();
 
         if(GuiContext != nullptr) {
@@ -122,6 +123,7 @@ namespace Slab::Graphics {
                     }
             });
         }
+        */
 
         return FPlatformWindowEventListener::NotifyRender(PlatformWindow);
     }

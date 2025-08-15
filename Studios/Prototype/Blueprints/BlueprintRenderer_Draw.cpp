@@ -24,7 +24,7 @@ namespace Slab::Blueprints {
         return result;
     }
 
-    bool BlueprintRenderer::NotifyRender(const Graphics::FPlatformWindow&) {
+    bool FBlueprintRenderer::NotifyRender(const Graphics::FPlatformWindow&) {
         m_Context->NewFrame();
         // // // ImGui::NewFrame();
 
@@ -35,7 +35,7 @@ namespace Slab::Blueprints {
         return true;
     }
 
-    void BlueprintRenderer::DoDrawing()
+    void FBlueprintRenderer::DoDrawing()
     {
         // auto& io = ImGui::GetIO();
         auto window_flags = 0;// ImGuiWindowFlags_NoTitleBar |
@@ -829,7 +829,7 @@ namespace Slab::Blueprints {
                 //auto drawList = ImGui::GetWindowDrawList();
                 //drawList->AddCircleFilled(ImGui::GetMousePosOnOpeningCurrentPopup(), 10.0f, 0xFFFF00FF);
 
-                Node *node = nullptr;
+                FBlueprintNode *node = nullptr;
                 if (ImGui::MenuItem("Input Action"))
                     node = blueprint->SpawnInputActionNode();
                 if (ImGui::MenuItem("Output Action"))

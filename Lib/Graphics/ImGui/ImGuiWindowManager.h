@@ -14,7 +14,7 @@ namespace Slab::Graphics {
     class FImGuiWindowManager final : public FWindowManager {
 
     public:
-        explicit FImGuiWindowManager(const TPointer<FImGuiContext>& Context=nullptr);
+        explicit FImGuiWindowManager(const TPointer<FImGuiContext>& Context);
 
         void AddSlabWindow(const TPointer<FSlabWindow>&, bool Hidden) override;
         bool NotifyRender(const FPlatformWindow&) override;

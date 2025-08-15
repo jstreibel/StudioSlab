@@ -26,21 +26,18 @@ namespace Slab::Graphics {
         // AddEventListener(MouseState);
     }
 
-     auto FPlatformWindow::AddEventListener(const TVolatile<FPlatformWindowEventListener> &Listener) const -> bool {
-        auto Listener_Ptr = Listener.lock();
-        if(Listener_Ptr == nullptr) return false;
+     auto FPlatformWindow::AddEventListener(const TVolatile<FPlatformWindowEventListener> &Listener) const -> void {
+        const auto Listener_Ptr = Listener.lock();
+        if(Listener_Ptr == nullptr) throw Exception("Listener pointer is null.");
 
         Listener_Ptr->NotifySystemWindowReshape(GetWidth(), GetHeight());
 
-        return EventTranslator->AddGUIEventListener(Listener);
+        EventTranslator->AddGUIEventListener(Listener);
     }
 
-    auto FPlatformWindow::AddAndOwnEventListener(const TPointer<FPlatformWindowEventListener> &Listener) -> bool {
-        if(!AddEventListener(Listener)) return false;
-
+    auto FPlatformWindow::AddAndOwnEventListener(const TPointer<FPlatformWindowEventListener> &Listener) -> void {
+        AddEventListener(Listener);
         Stash.push_back(Listener);
-
-        return true;
     }
 
     void FPlatformWindow::SetMouseCursor(FMouseCursor Cursor) {
@@ -110,21 +107,15 @@ namespace Slab::Graphics {
         if(GuiContext == nullptr) {
             GetGraphicsBackend()->SetupGUIForPlatformWindow(this);
 
-            GuiContext->SetManualRender(true);
+            AddEventListener(GuiContext);
 
-            if (GuiContext == nullptr || !AddEventListener(GuiContext))
-            {
-                Core::Log::Error("Failed to setup GUI context for platform window.");
-                return nullptr;
-            }
+            GuiContext->SetManualRender(true);
         }
 
         return GuiContext;
     }
 
     void FPlatformWindow::Render() {
-        if(GuiContext == nullptr) SetupGUIContext();
-
         if(GuiContext != nullptr) {
             static auto ShowMetrics = false;
 

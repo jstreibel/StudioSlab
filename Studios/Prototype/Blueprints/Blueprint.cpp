@@ -6,15 +6,15 @@
 
 namespace Slab::Blueprints {
 
-    auto Blueprint::GetNodes() -> Vector<Node>&{
+    auto FBlueprint::GetNodes() -> Vector<FBlueprintNode>&{
         return m_Nodes;
     }
 
-    auto Blueprint::GetLinks() -> Vector<Link>&{
+    auto FBlueprint::GetLinks() -> Vector<Link>&{
         return m_Links;
     }
 
-    Node *Blueprint::FindNode(ed::NodeId id) {
+    FBlueprintNode *FBlueprint::FindNode(ed::NodeId id) {
         for (auto& node : m_Nodes)
             if (node.ID == id)
                 return &node;
@@ -22,7 +22,7 @@ namespace Slab::Blueprints {
         return nullptr;
     }
 
-    Link *Blueprint::FindLink(ed::LinkId id) {
+    Link *FBlueprint::FindLink(ed::LinkId id) {
         for (auto& link : m_Links)
             if (link.ID == id)
                 return &link;
@@ -30,7 +30,7 @@ namespace Slab::Blueprints {
         return nullptr;
     }
 
-    Pin *Blueprint::FindPin(ed::PinId id) {
+    Pin *FBlueprint::FindPin(ed::PinId id) {
         if (!id)
             return nullptr;
 
@@ -48,7 +48,7 @@ namespace Slab::Blueprints {
         return nullptr;
     }
 
-    bool Blueprint::IsPinLinked(ed::PinId id) {
+    bool FBlueprint::IsPinLinked(ed::PinId id) {
         if (!id)
             return false;
 
@@ -59,14 +59,14 @@ namespace Slab::Blueprints {
         return false;
     }
 
-    bool Blueprint::CanCreateLink(Pin *a, Pin *b) {
+    bool FBlueprint::CanCreateLink(Pin *a, Pin *b) {
         if (!a || !b || a == b || a->Kind == b->Kind || a->Type != b->Type || a->Node == b->Node)
             return false;
 
         return true;
     }
 
-    bool Blueprint::CreateLink(Pin &a, Pin &b) {
+    bool FBlueprint::CreateLink(Pin &a, Pin &b) {
         if(!CanCreateLink(&a, &b)) return false;
 
         m_Links.emplace_back(GetNextLinkId(), a.ID, b.ID);
@@ -74,7 +74,7 @@ namespace Slab::Blueprints {
         return true;
     }
 
-    void Blueprint::BuildNode(Node *node) {
+    void FBlueprint::BuildNode(FBlueprintNode *node) {
         for (auto& input : node->Inputs)
         {
             input.Node = node;
@@ -88,7 +88,7 @@ namespace Slab::Blueprints {
         }
     }
 
-    Node *Blueprint::SpawnInputActionNode() {
+    FBlueprintNode *FBlueprint::SpawnInputActionNode() {
         m_Nodes.emplace_back(GetNextId(), "InputAction Fire", ImColor(255, 128, 128));
         m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Delegate);
         m_Nodes.back().Outputs.emplace_back(GetNextId(), "Pressed", PinType::Flow);
@@ -99,7 +99,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnBranchNode() {
+    FBlueprintNode *FBlueprint::SpawnBranchNode() {
         m_Nodes.emplace_back(GetNextId(), "Branch");
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "Condition", PinType::Bool);
@@ -111,7 +111,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnDoNNode() {
+    FBlueprintNode *FBlueprint::SpawnDoNNode() {
         m_Nodes.emplace_back(GetNextId(), "Do N");
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "Enter", PinType::Flow);
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "N", PinType::Int);
@@ -124,7 +124,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnOutputActionNode() {
+    FBlueprintNode *FBlueprint::SpawnOutputActionNode() {
         m_Nodes.emplace_back(GetNextId(), "OutputAction");
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "Sample", PinType::Float);
         m_Nodes.back().Outputs.emplace_back(GetNextId(), "Condition", PinType::Bool);
@@ -135,7 +135,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnPrintStringNode() {
+    FBlueprintNode *FBlueprint::SpawnPrintStringNode() {
         m_Nodes.emplace_back(GetNextId(), "Print String");
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "In String", PinType::String);
@@ -146,7 +146,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnMessageNode() {
+    FBlueprintNode *FBlueprint::SpawnMessageNode() {
         m_Nodes.emplace_back(GetNextId(), "", ImColor(128, 195, 248));
         m_Nodes.back().Type = NodeType::Simple;
         m_Nodes.back().Outputs.emplace_back(GetNextId(), "Message", PinType::String);
@@ -156,7 +156,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnSetTimerNode() {
+    FBlueprintNode *FBlueprint::SpawnSetTimerNode() {
         m_Nodes.emplace_back(GetNextId(), "Set Timer", ImColor(128, 195, 248));
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "Object", PinType::Object);
@@ -170,7 +170,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnLessNode() {
+    FBlueprintNode *FBlueprint::SpawnLessNode() {
         m_Nodes.emplace_back(GetNextId(), "<", ImColor(128, 195, 248));
         m_Nodes.back().Type = NodeType::Simple;
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Float);
@@ -182,7 +182,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnWeirdNode() {
+    FBlueprintNode *FBlueprint::SpawnWeirdNode() {
         m_Nodes.emplace_back(GetNextId(), "o.O", ImColor(128, 195, 248));
         m_Nodes.back().Type = NodeType::Simple;
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Float);
@@ -194,7 +194,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnTraceByChannelNode() {
+    FBlueprintNode *FBlueprint::SpawnTraceByChannelNode() {
         m_Nodes.emplace_back(GetNextId(), "Single Line Trace by Channel", ImColor(255, 128, 64));
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "Start", PinType::Flow);
@@ -213,7 +213,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnTreeSequenceNode() {
+    FBlueprintNode *FBlueprint::SpawnTreeSequenceNode() {
         m_Nodes.emplace_back(GetNextId(), "Sequence");
         m_Nodes.back().Type = NodeType::Tree;
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
@@ -224,7 +224,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnTreeTaskNode() {
+    FBlueprintNode *FBlueprint::SpawnTreeTaskNode() {
         m_Nodes.emplace_back(GetNextId(), "Move To");
         m_Nodes.back().Type = NodeType::Tree;
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
@@ -234,7 +234,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnTreeTask2Node() {
+    FBlueprintNode *FBlueprint::SpawnTreeTask2Node() {
         m_Nodes.emplace_back(GetNextId(), "Random Wait");
         m_Nodes.back().Type = NodeType::Tree;
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
@@ -244,7 +244,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnComment() {
+    FBlueprintNode *FBlueprint::SpawnComment() {
         m_Nodes.emplace_back(GetNextId(), "Test Comment");
         m_Nodes.back().Type = NodeType::Comment;
         m_Nodes.back().Size = ImVec2(300, 200);
@@ -252,7 +252,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnHoudiniTransformNode() {
+    FBlueprintNode *FBlueprint::SpawnHoudiniTransformNode() {
         m_Nodes.emplace_back(GetNextId(), "Transform");
         m_Nodes.back().Type = NodeType::Houdini;
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
@@ -263,7 +263,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    Node *Blueprint::SpawnHoudiniGroupNode() {
+    FBlueprintNode *FBlueprint::SpawnHoudiniGroupNode() {
         m_Nodes.emplace_back(GetNextId(), "Group");
         m_Nodes.back().Type = NodeType::Houdini;
         m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
@@ -275,7 +275,7 @@ namespace Slab::Blueprints {
         return &m_Nodes.back();
     }
 
-    void Blueprint::BuildNodes() {
+    void FBlueprint::BuildNodes() {
         for (auto& node : m_Nodes)
             BuildNode(&node);
     }

@@ -13,8 +13,7 @@ namespace Slab::Graphics {
     {
         if (this->Context == nullptr)
         {
-            auto GUIContext = GetGraphicsBackend()->GetMainSystemWindow()->SetupGUIContext();
-            this->Context = DynamicPointerCast<FImGuiContext>(GUIContext);
+            throw Exception("ImGuiContext is null");
         }
     }
 

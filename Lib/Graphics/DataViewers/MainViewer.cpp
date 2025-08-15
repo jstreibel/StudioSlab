@@ -9,6 +9,8 @@
 
 #include <utility>
 
+#include "imgui_internal.h"
+
 namespace Slab::Graphics {
 
     MainViewer::MainViewer(TPointer<Math::R2toR::FNumericFunction> baseFunction)
@@ -36,47 +38,44 @@ namespace Slab::Graphics {
     }
 
     void MainViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
-        IN GuiContext = PlatformWindow.GetGUIContext();
+        auto GUICall =
+            [this]() {
+                if (ImGui::BeginMainMenuBar()) {
+                    if (ImGui::BeginMenu("Viewers")) {
+                        Index i = 0;
+                        for (auto &viewer: viewers) {
+                            auto name = viewer->GetName();
 
-        if(GuiContext == nullptr) return;
+                            fix is_current = getCurrentViewer() == viewer;
+                            if (ImGui::MenuItem(name.c_str(), nullptr, is_current))
+                                setCurrentViewer(i);
 
-        GuiContext->AddDrawCall(
-                [this]() {
-                    if (ImGui::BeginMainMenuBar()) {
-                        if (ImGui::BeginMenu("Viewers")) {
-                            Index i = 0;
-                            for (auto &viewer: viewers) {
-                                auto name = viewer->GetName();
-
-                                fix is_current = getCurrentViewer() == viewer;
-                                if (ImGui::MenuItem(name.c_str(), nullptr, is_current))
-                                    setCurrentViewer(i);
-
-                                ++i;
-                            }
-
-                            ImGui::EndMenu();
+                            ++i;
                         }
 
-                        if (ImGui::BeginMenu("Datasets")) {
-                            auto &mathModule = dynamic_cast<Math::MathModule &>(Slab::GetModule("Math"));
-                            auto entries = mathModule.GetDataEntries();
+                        ImGui::EndMenu();
+                    }
 
-                            if (entries.empty()) {
-                                ImGui::MenuItem("No data available", nullptr, false, false);
-                            } else {
-                                for (auto &name: entries) {
-                                    if (ImGui::MenuItem(name.name.c_str(), nullptr, false, false)) {
-                                    }
+                    if (ImGui::BeginMenu("Datasets")) {
+                        auto &mathModule = dynamic_cast<Math::MathModule &>(Slab::GetModule("Math"));
+                        auto entries = mathModule.GetDataEntries();
+
+                        if (entries.empty()) {
+                            ImGui::MenuItem("No data available", nullptr, false, false);
+                        } else {
+                            for (auto &name: entries) {
+                                if (ImGui::MenuItem(name.name.c_str(), nullptr, false, false)) {
                                 }
                             }
-                            ImGui::EndMenu();
                         }
-
-                        ImGui::EndMainMenuBar();
+                        ImGui::EndMenu();
                     }
+
+                    ImGui::EndMainMenuBar();
                 }
-        );
+            };
+
+        if (GImGui != nullptr) GUICall();
 
         FWindowRow::ImmediateDraw(PlatformWindow);
     }

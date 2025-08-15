@@ -19,7 +19,7 @@ void StudioSlabApp::OnStart()
     const auto WindowManager = Slab::New<StudioWindowManager>();
     this->GetPlatform()->GetMainSystemWindow()->AddAndOwnEventListener(WindowManager);
 
-    auto Window = Slab::New<Slab::Graphics::FPlot2DWindow>("Studio Slab");
+    const auto Window = Slab::New<Slab::Graphics::FPlot2DWindow>("Studio Slab");
 
     WindowManager->AddSlabWindow(Window, false);
 }

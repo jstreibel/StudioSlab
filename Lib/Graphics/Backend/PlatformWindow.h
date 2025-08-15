@@ -52,19 +52,19 @@ namespace Slab::Graphics {
         virtual void SignalClose() = 0;
         [[nodiscard]] virtual bool ShouldClose() const = 0;
 
-        [[nodiscard]] TPointer<FGUIContext> GetGUIContext() const;
-        TPointer<FGUIContext> SetupGUIContext();
-
         [[nodiscard]] FPlatformWindow_RawPointer GetRawPlatformWindowPointer() const;
 
-        [[nodiscard]] auto AddEventListener(const TVolatile<FPlatformWindowEventListener> &Listener) const -> bool;
-        auto AddAndOwnEventListener(const TPointer<FPlatformWindowEventListener> &Listener) -> bool;
+        auto AddEventListener(const TVolatile<FPlatformWindowEventListener> &Listener) const -> void;
+        auto AddAndOwnEventListener(const TPointer<FPlatformWindowEventListener> &Listener) -> void;
 
         [[nodiscard]] auto GetMouseState() const -> TPointer<const FMouseState>;
         virtual void SetMouseCursor(FMouseCursor);
 
         virtual
         void SetSystemWindowTitle(const Str& title);
+
+        [[nodiscard]] TPointer<FGUIContext> GetGUIContext() const;
+        TPointer<FGUIContext> SetupGUIContext();
     };
 
 } // Slab::Core

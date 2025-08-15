@@ -29,8 +29,6 @@
 #include "StudioSlab.h"
 #include "Graphics/OpenGL/Shader.h"
 
-#define GLOBAL_IMGUI_CONTEXT Slab::DynamicPointerCast<Slab::Graphics::FImGuiContext>(Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext())
-
 namespace Slab::Graphics {
 
     using Log = Core::Log;
