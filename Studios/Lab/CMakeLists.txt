@@ -3,7 +3,17 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 else()
 endif()
 
-add_executable( StudioSlab MainStudioSlab.cpp
+set (STUDIO_EXTERNAL_SOURCES
+        ../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_PlaneWaves.cpp
+        ../Fields/RtoR-Modes/Sim/SquareWave.cpp
+        ../Fields/RtoR-Modes/Sim/BoundaryCondition.cpp
+        ../Fields/RtoR-Modes/Sim/Monitor.cpp
+        )
+
+add_executable( StudioSlab
+        ${STUDIO_EXTERNAL_SOURCES}
+
+        MainStudioSlab.cpp
         StudioSlabApp.cpp
         StudioSlabApp.h
         StudioWindowManager.cpp

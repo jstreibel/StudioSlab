@@ -12,6 +12,11 @@
 
 #include <set>
 
+namespace Slab::Math::Base
+{
+    class NumericalRecipe;
+}
+
 namespace Slab::Core {
 
     class FCommandLineInterfaceManager;
@@ -93,8 +98,11 @@ namespace Slab::Core {
 
         bool operator<(const FCommandLineInterface &RHS) const;
 
-
     private:
+        friend class Math::Base::NumericalRecipe;
+
+        void SetGeneralDescription(const Str& str);
+
         const int Priority;
 
         friend FCommandLineInterfaceManager;

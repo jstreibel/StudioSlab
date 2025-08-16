@@ -20,8 +20,12 @@ namespace Slab::Math::Base {
 
     NumericalRecipe::NumericalRecipe(const TPointer<FNumericConfig>& numeric_config, const Str &name,
                                      const Str& generalDescription, bool doRegister)
-            : FCommandLineInterfaceOwner(name, 100, DONT_REGISTER), NumericConfig(numeric_config), name(name) {
+    : FCommandLineInterfaceOwner(name, 100, DONT_REGISTER)
+    , NumericConfig(numeric_config)
+    , name(name)
+    {
         Interface->AddSubInterface(numeric_config->GetInterface());
+        Interface->SetGeneralDescription(generalDescription);
 
         if (doRegister) {
             Core::RegisterCLInterface(Interface);

@@ -43,6 +43,7 @@ namespace Slab::Graphics {
         virtual void Render() = 0;
 
         void AddDrawCall(const FDrawCall&);
+        void AddDrawCall(const FDrawCall&, bool mImmediate);
 
         virtual void AddMainMenuItem(MainMenuItem) = 0;
 

@@ -12,6 +12,12 @@ namespace Slab::Graphics {
         DrawCalls.emplace_back(DrawCall);
     }
 
+    void FGUIContext::AddDrawCall(const FDrawCall& DrawCall, bool mImmediate)
+    {
+        if (mImmediate) DrawCall();
+        else AddDrawCall(DrawCall);
+    }
+
     void FGUIContext::FlushDrawCalls() {
         for(auto &ExternalDraw : DrawCalls) ExternalDraw();
 

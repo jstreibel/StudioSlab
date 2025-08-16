@@ -174,6 +174,11 @@ namespace Slab::Core {
         return Priority < RHS.Priority;
     }
 
+    void FCommandLineInterface::SetGeneralDescription(const Str& str)
+    {
+        Description = str;
+    }
+
     FMessage FCommandLineInterface::SendRequest(FRequest Request) const
     {
         if(!Contains(Protocols, Request)) {
