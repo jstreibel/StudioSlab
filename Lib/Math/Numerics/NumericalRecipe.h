@@ -13,13 +13,13 @@ namespace Slab::Math::Base {
 
     using OutputSockets = Vector<TPointer<Socket>>;
 
-    class NumericalRecipe : public Core::FCommandLineInterfaceOwner {
+    class FNumericalRecipe : public Core::FCommandLineInterfaceOwner {
     protected:
         TPointer<FNumericConfig> NumericConfig;
 
-        Str name;
+        Str Name;
 
-        explicit NumericalRecipe(const TPointer<FNumericConfig>& numeric_config,
+        explicit FNumericalRecipe(const TPointer<FNumericConfig>& numeric_config,
                                  const Str& name,
                                  const Str& generalDescription, bool doRegister = false);
 
@@ -37,7 +37,7 @@ namespace Slab::Math::Base {
         auto GetNumericConfig()             const -> const TPointer<FNumericConfig> &;
     };
 
-    DefinePointers(NumericalRecipe)
+    DefinePointers(FNumericalRecipe)
 
 }
 

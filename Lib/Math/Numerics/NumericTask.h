@@ -18,7 +18,7 @@ const auto FORCE_INITIAL_OUTPUT = true;
 namespace Slab::Math {
 
     class NumericTask final : public Core::FTask {
-        TPointer<Base::NumericalRecipe> recipe;
+        TPointer<Base::FNumericalRecipe> recipe;
 
         UInt totalSteps;
         UInt stepsConcluded;
@@ -41,7 +41,7 @@ namespace Slab::Math {
     protected:
         Core::ETaskStatus Run() override;
     public:
-        explicit NumericTask(const TPointer<Base::NumericalRecipe> &recipe, bool pre_init=true);
+        explicit NumericTask(const TPointer<Base::FNumericalRecipe> &recipe, bool pre_init=true);
 
         ~NumericTask() override;
 

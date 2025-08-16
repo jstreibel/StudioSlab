@@ -356,7 +356,7 @@ namespace Slab::Models::KGRtoR {
     Str FKGRtoR_Recipe::SuggestFileName() const {
         const auto strParams = Interface->ToString({"massSqr"}, " ");
         Log::Debug() << strParams << Log::Flush;
-        const auto voidSuggestion = NumericalRecipe::SuggestFileName();
+        const auto voidSuggestion = FNumericalRecipe::SuggestFileName();
         return voidSuggestion + " " + strParams;
     }
 

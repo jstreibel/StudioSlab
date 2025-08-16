@@ -26,7 +26,7 @@ namespace Slab::Models::StochasticPathIntegrals {
         "fields quantum path integral formalism.";
 
     SPIRecipe::SPIRecipe(const TPointer<SPINumericConfig> &numeric_config)
-    : NumericalRecipe(numeric_config, my_name, my_description, true)
+    : FNumericalRecipe(numeric_config, my_name, my_description, true)
     , SPI_NumericConfig(numeric_config) {
     }
 

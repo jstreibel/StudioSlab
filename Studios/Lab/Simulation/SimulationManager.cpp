@@ -67,7 +67,7 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
     return FPlatformWindowEventListener::NotifyRender(platform_window);
 }
 
-void FSimulationManager::AddRecipe(Slab::TPointer<Slab::Math::Base::NumericalRecipe> Recipe)
+void FSimulationManager::AddRecipe(Slab::TPointer<Slab::Math::Base::FNumericalRecipe> Recipe)
 {
     Recipes.push_back(std::move(Recipe));
 }

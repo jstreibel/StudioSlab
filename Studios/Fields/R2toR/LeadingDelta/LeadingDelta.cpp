@@ -114,7 +114,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     }
 
     Str Builder::SuggestFileName() const {
-        auto fname = NumericalRecipe::SuggestFileName();
+        auto fname = FNumericalRecipe::SuggestFileName();
 
         return fname + " " + Interface->ToString({"W", "eps", "delta_duration"});
     }

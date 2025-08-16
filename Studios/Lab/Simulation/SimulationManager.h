@@ -18,9 +18,9 @@ public:
     bool NotifyRender(const Slab::Graphics::FPlatformWindow&) override;
 
 private:
-    void AddRecipe(Slab::TPointer<Slab::Math::Base::NumericalRecipe>);
+    void AddRecipe(Slab::TPointer<Slab::Math::Base::FNumericalRecipe>);
 
-    Slab::Vector<Slab::TPointer<Slab::Math::Base::NumericalRecipe>> Recipes;
+    Slab::Vector<Slab::TPointer<Slab::Math::Base::FNumericalRecipe>> Recipes;
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
 
 };

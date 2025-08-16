@@ -30,7 +30,7 @@ namespace Slab::Math {
     }
 
     RtoRActionMetropolisRecipe::RtoRActionMetropolisRecipe(UInt max_steps)
-    : Base::NumericalRecipe(New<MetropolisRtoRConfig>(max_steps), "Metropolis R2->R", "", DONT_REGISTER) {
+    : Base::FNumericalRecipe(New<MetropolisRtoRConfig>(max_steps), "Metropolis R2->R", "", DONT_REGISTER) {
         // Core::RegisterCLInterface(interface);
     }
 

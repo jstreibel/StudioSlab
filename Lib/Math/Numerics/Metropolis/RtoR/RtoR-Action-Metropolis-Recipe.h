@@ -14,7 +14,7 @@ namespace Slab::Math {
 
     using RtoRMetropolis = MetropolisAlgorithm<UInt, DevFloat>;
 
-    class RtoRActionMetropolisRecipe : public Base::NumericalRecipe {
+    class RtoRActionMetropolisRecipe : public Base::FNumericalRecipe {
         TPointer<RtoR::NumericFunction_CPU> field_data;
         using RtoRMetropolisSetup = MetropolisSetup<UInt, DevFloat>;
 

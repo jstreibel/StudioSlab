@@ -17,7 +17,7 @@ namespace Slab::Math {
     using NewValue = DevFloat;
     using R2toRMetropolis = MetropolisAlgorithm<RandomSite, NewValue>;
 
-    class R2toRMetropolisRecipe : public Base::NumericalRecipe {
+    class R2toRMetropolisRecipe : public Base::FNumericalRecipe {
         TPointer<R2toR::NumericFunction_CPU> field_data;
 
         using Site = struct{UInt i; UInt j;};

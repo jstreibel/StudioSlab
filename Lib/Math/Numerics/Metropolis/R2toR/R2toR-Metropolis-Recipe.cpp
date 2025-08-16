@@ -21,7 +21,7 @@ namespace Slab::Math {
     #define DO_REGISTER true
 
     R2toRMetropolisRecipe::R2toRMetropolisRecipe(UInt max_steps)
-    : Base::NumericalRecipe(New<MetropolisConfig>(max_steps), "Metropolis R2->R", "", DONT_REGISTER) {
+    : Base::FNumericalRecipe(New<MetropolisConfig>(max_steps), "Metropolis R2->R", "", DONT_REGISTER) {
         // Core::RegisterCLInterface(interface);
     }
 

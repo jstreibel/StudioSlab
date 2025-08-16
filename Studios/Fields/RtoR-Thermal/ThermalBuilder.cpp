@@ -45,7 +45,7 @@ namespace Studios::Fields::RtoRThermal {
     }
 
     Str Builder::SuggestFileName() const {
-        auto str = NumericalRecipe::SuggestFileName();
+        auto str = FNumericalRecipe::SuggestFileName();
 
         auto extra1 = Interface->ToString({"T", "k"}, " ", SHORT_NAME);
         auto extra2 = Interface->ToString({"E", "n"}, " ", LONG_NAME);

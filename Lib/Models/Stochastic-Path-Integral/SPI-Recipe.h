@@ -15,7 +15,7 @@ namespace Slab::Models::StochasticPathIntegrals {
     /*!
      * Stochastic path-integral recipe
      */
-    class SPIRecipe : public Math::Base::NumericalRecipe {
+    class SPIRecipe : public Math::Base::FNumericalRecipe {
         TPointer<SPINumericConfig> SPI_NumericConfig;
         public:
         explicit SPIRecipe(const TPointer<SPINumericConfig> &numeric_config = New<SPINumericConfig>());

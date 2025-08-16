@@ -18,7 +18,7 @@ namespace Slab::Models {
     using namespace Slab::Core;
     using namespace Slab::Math;
 
-    class KGRecipe : public Base::NumericalRecipe {
+    class KGRecipe : public Base::FNumericalRecipe {
     protected:
         StringParameter    plotTheme                    = StringParameter("Dark", "plot_theme", "Choose plotting theme.");
 

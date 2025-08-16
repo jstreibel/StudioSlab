@@ -18,7 +18,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
     using RtoRMetropolis = MetropolisAlgorithm<Int, RealPair>;
     struct FieldPair { TPointer<RtoR::NumericFunction_CPU> ϕ, π; };
 
-    class RtoRHamiltonianMetropolisHastingsRecipe : public Base::NumericalRecipe {
+    class RtoRHamiltonianMetropolisHastingsRecipe : public Base::FNumericalRecipe {
         FieldPair field_data;
         using RtoRMetropolisSetup = MetropolisSetup<Int, RealPair>;
 

@@ -24,7 +24,7 @@
 
 namespace Slab::Models::MolecularDynamics {
     Recipe::Recipe()
-    : NumericalRecipe(New<Slab::Models::MolecularDynamics::MolDynNumericConfig>(), "2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
+    : FNumericalRecipe(New<Slab::Models::MolecularDynamics::MolDynNumericConfig>(), "2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
     , molDynamicsInterface(New <FCommandLineInterface> ("Molecular dynamics 2-d", this, 100))
     {
         molDynamicsInterface->AddParameters({&temperature, &dissipation, &model});

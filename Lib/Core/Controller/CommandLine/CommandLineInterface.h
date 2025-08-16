@@ -14,7 +14,7 @@
 
 namespace Slab::Math::Base
 {
-    class NumericalRecipe;
+    class FNumericalRecipe;
 }
 
 namespace Slab::Core {
@@ -99,7 +99,7 @@ namespace Slab::Core {
         bool operator<(const FCommandLineInterface &RHS) const;
 
     private:
-        friend class Math::Base::NumericalRecipe;
+        friend class Math::Base::FNumericalRecipe;
 
         void SetGeneralDescription(const Str& str);
 

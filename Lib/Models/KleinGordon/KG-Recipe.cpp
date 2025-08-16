@@ -14,7 +14,7 @@ namespace Slab::Models {
 
     KGRecipe::KGRecipe(const TPointer<FKGNumericConfig>& numeric_config,
                        const Str &name, const Str& generalDescription, bool doRegister)
-            : NumericalRecipe(numeric_config, name, generalDescription, DONT_REGISTER)
+            : FNumericalRecipe(numeric_config, name, generalDescription, DONT_REGISTER)
             , KGNumericConfig(numeric_config)
             , DeviceConfig(DONT_REGISTER){
 
@@ -73,7 +73,7 @@ namespace Slab::Models {
     }
 
     void KGRecipe::setupForCurrentThread() {
-        NumericalRecipe::setupForCurrentThread();
+        FNumericalRecipe::setupForCurrentThread();
 
         DeviceConfig.setupForThread();
     }

@@ -15,7 +15,7 @@ namespace Slab::Models::MolecularDynamics {
     using namespace Slab;
     using namespace Slab::Core;
 
-    class Recipe : public Math::Base::NumericalRecipe {
+    class Recipe : public Math::Base::FNumericalRecipe {
         RealParameter temperature = RealParameter    (0.0, "T,temperature", "The system temperature in Langevin simulations.");
         RealParameter dissipation = RealParameter    (0.0, "k,dissipation_factor", "The system energy dissipation factor.");
         IntegerParameter model    = IntegerParameter (  0, "model", "The physical model to use:"
