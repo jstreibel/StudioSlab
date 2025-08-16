@@ -5,7 +5,7 @@
 #include "App.h"
 
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
-#include "../../Lib/Core/Controller/CommandLineArgsManager.h"
+#include "../../Lib/Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Core/SlabCore.h"
 
 #include "Graphics/SlabGraphics.h"

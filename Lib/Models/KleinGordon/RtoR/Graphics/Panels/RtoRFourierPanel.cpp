@@ -4,7 +4,7 @@
 
 #include "RtoRFourierPanel.h"
 
-#include "../../../../../Core/Controller/CommandLineInterfaceManager.h"
+#include "../../../../../Core/Controller/InterfaceManager.h"
 
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
@@ -34,7 +34,7 @@ namespace Slab::Models::KGRtoR {
         // Custom ticks
         auto unit = Constants::π;
         kSpaceGraph->GetAxisArtist().setHorizontalUnit(unit);
-        fix WaveNumber = FCommandLineInterfaceManager::GetInstance().GetParameter("harmonic");
+        fix WaveNumber = FInterfaceManager::GetInstance().GetParameter("harmonic");
         if(WaveNumber != nullptr) {
             Graphics::FAxisArtist::Ticks ticks;
             fix L = params->GetL();

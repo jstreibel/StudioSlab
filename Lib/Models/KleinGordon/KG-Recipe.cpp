@@ -4,7 +4,7 @@
 
 #include "KG-Recipe.h"
 
-#include "../../Core/Controller/CommandLineInterfaceManager.h"
+#include "../../Core/Controller/InterfaceManager.h"
 #include "Math/Numerics/ODE/Steppers/RungeKutta4.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "KG-NumericConfig.h"

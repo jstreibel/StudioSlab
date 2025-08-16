@@ -10,7 +10,7 @@
 
 #include "Core/Backend/BackendManager.h"
 #include "Core/SlabCore.h"
-#include "../../../../Core/Controller/CommandLineInterfaceManager.h"
+#include "../../../../Core/Controller/InterfaceManager.h"
 
 #include "KG-RtoRSolver.h"
 #include "KG-RtoRBoundaryCondition.h"
@@ -210,7 +210,7 @@ namespace Slab::Models::KGRtoR {
             fix L = c.GetL();
             fix xMin = c.getxMin();
 
-            if(fix k_param = FCommandLineInterfaceManager::GetInstance().GetParameter("k")){
+            if(fix k_param = FInterfaceManager::GetInstance().GetParameter("k")){
                 fix k_n = k_param->getValueAs<DevFloat>();
                 x_locations = {L/(4.*k_n)};
             } else

@@ -18,7 +18,7 @@
 
 #include "Utils/Printing.h"
 
-#include "../../Core/Controller/CommandLineInterfaceManager.h"
+#include "../../Core/Controller/InterfaceManager.h"
 
 #include "PlotThemeManager.h"
 #include "Artists/AxisArtist.h"
@@ -159,7 +159,7 @@ namespace Slab::Graphics {
                     auto w = Printing::getTotalHorizontalDots(.5);
                     auto h = w * .5;
                     auto fileName = Title + " " +
-                                    Core::FCommandLineInterfaceManager::GetInstance().RenderParametersToString({"N", "L"}) +
+                                    Core::FInterfaceManager::GetInstance().RenderParametersToString({"N", "L"}) +
                                     ".png";
 
                     OpenGL::OutputToPNG(this, fileName, w, (int) h);

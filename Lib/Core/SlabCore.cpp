@@ -6,9 +6,9 @@
 
 #include "Core/Backend/Console/ConsoleBackend.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
-#include "Controller/CommandLineInterfaceManager.h"
+#include "Controller/InterfaceManager.h"
 #include "StudioSlab.h"
-#include "Controller/CommandLineArgsManager.h"
+#include "Controller/CommandLine/CommandLineArgsManager.h"
 
 namespace Slab::Core {
 
@@ -40,8 +40,8 @@ namespace Slab::Core {
         return BackendManager::GetModule(module);
     }
 
-    void RegisterCLInterface(const TPointer<FCommandLineInterface>& interface) {
-        FCommandLineInterfaceManager::GetInstance().RegisterInterface(interface);
+    void RegisterCLInterface(const TPointer<FInterface>& interface) {
+        FInterfaceManager::GetInstance().RegisterInterface(interface);
     }
 
     void ParseCLArgs(int argc, const char **argv) {

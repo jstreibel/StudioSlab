@@ -5,8 +5,8 @@
 #include "AppBase.h"
 #include "CrashPad.h"
 
-#include "../../../../Lib/Core/Controller/CommandLineCommonParameters.h"
-#include "../../../../Lib/Core/Controller/CommandLineInterfaceManager.h"
+#include "../../../../Lib/Core/Controller/CommonParameters.h"
+#include "../../../../Lib/Core/Controller/InterfaceManager.h"
 
 #include "Graphics/Window/WindowStyles.h"
 
@@ -18,7 +18,7 @@
 #include "DBViewerMulti.h"
 #include "DBViewerSequence.h"
 #include "Graphics/Window/SlabWindowManager.h"
-#include "Core/Controller/CommandLineArgsManager.h"
+#include "../../../../Lib/Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Core/SlabCore.h"
 
 using namespace Slab;

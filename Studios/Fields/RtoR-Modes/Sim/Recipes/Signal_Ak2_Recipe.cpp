@@ -22,7 +22,7 @@ namespace Modes {
     Signal_Ak2_Recipe::Signal_Ak2_Recipe(bool doRegister)
     : FKGRtoR_Recipe("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
-        Interface->AddParameters(TList<FCommandLineParameter*>{&A, &omega});
+        Interface->AddParameters(TList<FParameter*>{&A, &omega});
 
         if(doRegister) RegisterCLInterface(Interface);
     }
@@ -34,7 +34,7 @@ namespace Modes {
     }
 
     void Signal_Ak2_Recipe::NotifyCLArgsSetupFinished() {
-        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
+        FInterfaceOwner::NotifyCLArgsSetupFinished();
 
         const auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 

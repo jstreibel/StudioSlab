@@ -5,7 +5,7 @@
 #ifndef FIELDS_INTERFACE_H
 #define FIELDS_INTERFACE_H
 
-#include "CommandLineParameter.h"
+#include "Parameter.h"
 #include "Core/Controller/Payload.h"
 #include "Message.h"
 #include "Utils/List.h"
@@ -19,9 +19,9 @@ namespace Slab::Math::Base
 
 namespace Slab::Core {
 
-    class FCommandLineInterfaceManager;
+    class FInterfaceManager;
 
-    class FCommandLineInterfaceOwner;
+    class FInterfaceOwner;
 
     class FCommandLineInterfaceListener {
     public:
@@ -40,7 +40,7 @@ namespace Slab::Core {
         virtual auto SendMessage(FPayload) -> void { };
     };
 
-    class FCommandLineInterface final {
+    class FInterface final {
     public:
         /**
          * Instantiate a new interface. It won't be registered in the InterfaceManager, but that can
@@ -50,31 +50,31 @@ namespace Slab::Core {
          * @param pOwner The owner of this interface. It can be nullptr, but its up to the user to deal with that.
          * @return an std::shared_ptr to an Interface.
          */
-        FCommandLineInterface(const Str& Name, FCommandLineInterfaceOwner *pOwner, int Priority);
+        FInterface(const Str& Name, FInterfaceOwner *pOwner, int Priority);
 
-        ~FCommandLineInterface();
+        ~FInterface();
 
         void SendRequest(const FPayload&) const;
 
         [[nodiscard]] auto GetGeneralDescription() const -> Str;
 
-        void AddSubInterface(const TPointer<FCommandLineInterface>& subInterface);
+        void AddSubInterface(const TPointer<FInterface>& subInterface);
 
         auto AddListener(FCommandLineInterfaceListener *) -> void;
 
-        void AddParameter(const TPointer<FCommandLineParameter>& parameter);
+        void AddParameter(const TPointer<FParameter>& parameter);
 
-        void AddParameters(const TList<TPointer<FCommandLineParameter>>& parameters);
+        void AddParameters(const TList<TPointer<FParameter>>& parameters);
 
-        void AddParameters(const TList<FCommandLineParameter *>& parameters);
+        void AddParameters(const TList<FParameter *>& parameters);
 
-        [[nodiscard]] auto GetSubInterfaces() const -> Vector<TPointer<FCommandLineInterface>>;
+        [[nodiscard]] auto GetSubInterfaces() const -> Vector<TPointer<FInterface>>;
 
-        [[nodiscard]] auto GetParameters() const -> Vector<TPointer<const FCommandLineParameter>>;
+        [[nodiscard]] auto GetParameters() const -> Vector<TPointer<const FParameter>>;
 
-        [[nodiscard]] auto GetParameter(const Str& key) const -> TPointer<FCommandLineParameter>;
+        [[nodiscard]] auto GetParameter(const Str& key) const -> TPointer<FParameter>;
 
-        [[nodiscard]] auto GetOwner() const -> FCommandLineInterfaceOwner *;
+        [[nodiscard]] auto GetOwner() const -> FInterfaceOwner *;
 
         [[nodiscard]] auto GetName() const -> const Str &;
 
@@ -89,13 +89,13 @@ namespace Slab::Core {
 
         void SetupFromCommandLine(CLVariablesMap vm);
 
-        bool operator==(const FCommandLineInterface &rhs) const;
+        bool operator==(const FInterface &rhs) const;
 
         bool operator==(Str Value) const;
 
-        bool operator!=(const FCommandLineInterface &RHS) const;
+        bool operator!=(const FInterface &RHS) const;
 
-        bool operator<(const FCommandLineInterface &RHS) const;
+        bool operator<(const FInterface &RHS) const;
 
     private:
         friend class Math::Base::FNumericalRecipe;
@@ -104,11 +104,11 @@ namespace Slab::Core {
 
         const int Priority;
 
-        friend FCommandLineInterfaceManager;
-        friend FCommandLineInterfaceOwner;
+        friend FInterfaceManager;
+        friend FInterfaceOwner;
 
         // TODO: make pOwner a weak pointer
-        FCommandLineInterfaceOwner *pOwner = nullptr;
+        FInterfaceOwner *pOwner = nullptr;
 
         Str Name;
         Str Description = "<empty>";
@@ -118,11 +118,11 @@ namespace Slab::Core {
 
         Vector<FPayload> Protocols;
 
-        std::set<TPointer<FCommandLineParameter>> Parameters;
-        std::set<TPointer<FCommandLineInterface>> SubInterfaces;
+        std::set<TPointer<FParameter>> Parameters;
+        std::set<TPointer<FInterface>> SubInterfaces;
     };
 
-    DefinePointers(FCommandLineInterface)
+    DefinePointers(FInterface)
 
 }
 

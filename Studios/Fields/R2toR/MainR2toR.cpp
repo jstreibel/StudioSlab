@@ -3,8 +3,8 @@
 //
 
 #include "CrashPad.h"
-#include "Core/Controller/CommandLineInterfaceSelector.h"
-#include "../../../Lib/Core/Controller/CommandLineInterfaceManager.h"
+#include "../../../Lib/Core/Controller/CommandLine/CommandLineInterfaceSelector.h"
+#include "../../../Lib/Core/Controller/InterfaceManager.h"
 #include "LeadingDelta/LeadingDelta.h"
 
 #include "MathApp.h"
@@ -17,17 +17,17 @@ int run(int argc, const char **argv) {
     CLInterfaceSelector selector("Simulation builder selector");
     auto option0 = Slab::New<Studios::Fields::R2toRLeadingDelta::Builder>( );
 
-    /* sim 0 */selector.registerOption(option0->GetInterface());
+    /* sim 0 */selector.RegisterOption(option0->GetInterface());
     /* sim 1 *///selector.registerOption(option1->getInterface());
     /* sim 2 *///selector.registerOption(option2->getInterface());
     /* sim 3 *///selector.registerOption(option3->getInterface());
     /* sim 4 *///selector.registerOption(option4->getInterface());
 
-    auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
+    auto selectedInterface = selector.PreParse(argc, argv).GetCurrentCandidate();
     auto input    = dynamic_cast<Models::KGR2toR::Builder*>(selectedInterface->GetOwner());
     auto input_ptr = TPointer<Models::KGR2toR::Builder>(input);
 
-    Slab::Core::FCommandLineInterfaceManager::GetInstance().RegisterInterface(input->GetInterface());
+    Slab::Core::FInterfaceManager::GetInstance().RegisterInterface(input->GetInterface());
 
     auto prog = Math::MathApp(argc, argv, input_ptr);
 

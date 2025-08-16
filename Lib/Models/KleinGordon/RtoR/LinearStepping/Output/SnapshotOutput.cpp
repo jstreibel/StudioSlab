@@ -4,7 +4,7 @@
 
 #include "SnapshotOutput.h"
 
-#include "../../../../../Core/Controller/CommandLineInterfaceManager.h"
+#include "../../../../../Core/Controller/InterfaceManager.h"
 
 namespace Slab::Models::KGRtoR {
 
@@ -56,7 +56,7 @@ namespace Slab::Models::KGRtoR {
 
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
-        outputFile << "{" << Core::FCommandLineInterfaceManager::GetInstance().RenderAsPythonDictionaryEntries();
+        outputFile << "{" << Core::FInterfaceManager::GetInstance().RenderAsPythonDictionaryEntries();
         for(const auto&[key, value] : xtraPyDictEntries) // {key: value, key:value, }
             outputFile << "\"" << key << "\": " << value << ", ";
         outputFile.seekp(-2, std::ios_base::cur);

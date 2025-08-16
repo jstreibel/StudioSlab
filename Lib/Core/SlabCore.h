@@ -25,7 +25,7 @@ namespace Slab::Core {
         return DynamicPointerCast<ModuleType>(module_raw);
     }
 
-    void RegisterCLInterface(const TPointer<FCommandLineInterface>&);
+    void RegisterCLInterface(const TPointer<FInterface>&);
     void ParseCLArgs(int, const char**);
 }
 

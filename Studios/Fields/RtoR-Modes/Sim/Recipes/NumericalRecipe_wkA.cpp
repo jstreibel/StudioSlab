@@ -65,7 +65,7 @@ namespace Modes {
     }
 
     void NumericalRecipe_wkA::NotifyCLArgsSetupFinished() {
-        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
+        FInterfaceOwner::NotifyCLArgsSetupFinished();
 
         auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 

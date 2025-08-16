@@ -4,13 +4,13 @@
 #include "Modules/Modules.h"
 #include "Modules/Module.h"
 
-#include "../Controller/CommandLineInterfaceOwner.h"
+#include "../Controller/InterfaceOwner.h"
 
 
 
 namespace Slab::Core {
 
-    class FBackend : public FCommandLineInterfaceOwner {
+    class FBackend : public FInterfaceOwner {
         friend class BackendManager;
 
         Str Name;

@@ -1,7 +1,7 @@
 
 
 #include "CrashPad.h"
-#include "../../../Lib/Core/Controller/CommandLineInterfaceSelector.h"
+#include "../../../Lib/Core/Controller/CommandLine/CommandLineInterfaceSelector.h"
 
 #include "MathApp.h"
 
@@ -24,13 +24,13 @@ int run(int argc, const char **argv) {
     auto option3 = new Studios::PureSG::InputShockwave();
     auto option4 = new Studios::PureSG::InputSingleOscillon();
 
-    /* sim 0 */selector.registerOption(option0->GetInterface());
-    /* sim 1 */selector.registerOption(option1->GetInterface());
-    /* sim 2 */selector.registerOption(option2->GetInterface());
-    /* sim 3 */selector.registerOption(option3->GetInterface());
-    /* sim 4 */selector.registerOption(option4->GetInterface());
+    /* sim 0 */selector.RegisterOption(option0->GetInterface());
+    /* sim 1 */selector.RegisterOption(option1->GetInterface());
+    /* sim 2 */selector.RegisterOption(option2->GetInterface());
+    /* sim 3 */selector.RegisterOption(option3->GetInterface());
+    /* sim 4 */selector.RegisterOption(option4->GetInterface());
 
-    auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
+    auto selectedInterface = selector.PreParse(argc, argv).GetCurrentCandidate();
     auto input    = dynamic_cast<FKGRtoR_Recipe*>(selectedInterface->GetOwner());
     auto inputPtr = FKGRtoR_Recipe_ptr(input);
 

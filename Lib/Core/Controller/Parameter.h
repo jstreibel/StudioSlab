@@ -5,18 +5,19 @@
 #ifndef FIELDS_PARAMETERBASE_H
 #define FIELDS_PARAMETERBASE_H
 
-#include "CommandLineParserDefs.h"
+#include "CommandLine/CommandLineParserDefs.h"
 
 #include "Utils/Types.h"
 
 namespace Slab::Core {
 
-    class FCommandLineParameter {
+    class FParameter {
     protected:
         Str shortCLName, longCLName, fullCLName, description;
 
     public:
-        FCommandLineParameter(const Str &commandLineArgName, const Str &description);
+        virtual ~FParameter() = default;
+        FParameter(const Str &commandLineArgName, const Str &description);
 
         virtual auto AddToCommandLineOptionsGroup(CLODEasyInit &group) const -> void = 0;
         auto getFullCommandLineName() const -> Str;
@@ -37,17 +38,17 @@ namespace Slab::Core {
 
         void setDescription(Str newDescription);
 
-        bool operator<(const FCommandLineParameter *rhs);
+        bool operator<(const FParameter *rhs);
 
         bool operator==(Str str) const;
 
     };
 
-    DefinePointers(FCommandLineParameter)
+    DefinePointers(FParameter)
 
-    OStream &operator<<(OStream &out, const FCommandLineParameter &b);
+    OStream &operator<<(OStream &out, const FParameter &b);
 
-    OStream &operator<<(OStream &out, const FCommandLineParameter *b);
+    OStream &operator<<(OStream &out, const FParameter *b);
 
 
 }

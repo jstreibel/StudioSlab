@@ -2,8 +2,8 @@
 // Created by joao on 10/13/21.
 //
 
-#include "CommandLineInterface.h"
-#include "CommandLineInterfaceOwner.h"
+#include "Interface.h"
+#include "InterfaceOwner.h"
 #include "Utils/Utils.h"
 #include "Core/Tools/Log.h"
 
@@ -12,7 +12,7 @@
 
 namespace Slab::Core {
 
-    FCommandLineInterface::FCommandLineInterface(const Str& Name, FCommandLineInterfaceOwner *pOwner, int Priority)
+    FInterface::FInterface(const Str& Name, FInterfaceOwner *pOwner, int Priority)
             : pOwner(pOwner), Priority(Priority), Protocols(pOwner->GetProtocols()) {
 
 
@@ -25,23 +25,23 @@ namespace Slab::Core {
         Log::Note() << "Interface '" << Log::FGGreen << Name << Log::ResetFormatting << "' created. " << Log::Flush;
     }
 
-    auto FCommandLineInterface::GetParameters() const -> Vector<TPointer<const FCommandLineParameter>> {
-        Vector<TPointer<const FCommandLineParameter>> constParameters;
+    auto FInterface::GetParameters() const -> Vector<TPointer<const FParameter>> {
+        Vector<TPointer<const FParameter>> constParameters;
 
         std::copy(Parameters.begin(), Parameters.end(), std::back_inserter(constParameters));
 
         return constParameters;
     }
 
-    auto FCommandLineInterface::GetSubInterfaces() const -> Vector<TPointer<FCommandLineInterface>> {
-        Vector<TPointer<FCommandLineInterface>> interfaces;
+    auto FInterface::GetSubInterfaces() const -> Vector<TPointer<FInterface>> {
+        Vector<TPointer<FInterface>> interfaces;
 
         std::copy(SubInterfaces.begin(), SubInterfaces.end(), std::back_inserter(interfaces));
 
         return interfaces;
     }
 
-    void FCommandLineInterface::AddParameter(const TPointer<FCommandLineParameter>& parameter) {
+    void FInterface::AddParameter(const TPointer<FParameter>& parameter) {
         auto insertionSuccessful = Parameters.insert(parameter).second;
 
         if (!insertionSuccessful) {
@@ -53,18 +53,18 @@ namespace Slab::Core {
                     << "\".";
     }
 
-    void FCommandLineInterface::AddParameters(const TList<TPointer<FCommandLineParameter>>& parametersList) {
+    void FInterface::AddParameters(const TList<TPointer<FParameter>>& parametersList) {
         for (const auto& param: parametersList)
             AddParameter(param);
     }
 
-    void FCommandLineInterface::AddParameters(const TList<FCommandLineParameter *>& parametersList) {
+    void FInterface::AddParameters(const TList<FParameter *>& parametersList) {
         for (const auto param: parametersList)
             AddParameter(Naked(*param));
     }
 
 
-    void FCommandLineInterface::AddSubInterface(const TPointer<FCommandLineInterface>& subInterface) {
+    void FInterface::AddSubInterface(const TPointer<FInterface>& subInterface) {
         if (Contains(SubInterfaces, subInterface))
             throw Exception(Str("Error while inserting sub-interface '") + subInterface->GetName()
                   + Str("' in interface '") + this->GetName() + Str("': interface contains sub interface already"));
@@ -75,13 +75,13 @@ namespace Slab::Core {
         }
     }
 
-    auto FCommandLineInterface::GetGeneralDescription() const -> Str {
+    auto FInterface::GetGeneralDescription() const -> Str {
 
         return Description != "<empty>" ? Description : "";
     }
 
-    auto FCommandLineInterface::GetParameter(const Str& key) const -> TPointer<FCommandLineParameter> {
-        auto compareFunc = [key](const TPointer<FCommandLineParameter>& parameter) {
+    auto FInterface::GetParameter(const Str& key) const -> TPointer<FParameter> {
+        auto compareFunc = [key](const TPointer<FParameter>& parameter) {
             return *parameter == key;
         };
 
@@ -90,7 +90,7 @@ namespace Slab::Core {
         return *result;
     }
 
-    auto FCommandLineInterface::ToString(const StrVector &ParamNames, const Str& Separator, bool LongName) const -> Str {
+    auto FInterface::ToString(const StrVector &ParamNames, const Str& Separator, bool LongName) const -> Str {
         std::stringstream ss("");
 
         std::map<Str, int> paramCount;
@@ -123,7 +123,7 @@ namespace Slab::Core {
         return str;
     }
 
-    void FCommandLineInterface::SetupFromCommandLine(CLVariablesMap vm) {
+    void FInterface::SetupFromCommandLine(CLVariablesMap vm) {
         try {
             for (auto param: Parameters) {
                 auto key = param->getCommandLineArgumentName(true);
@@ -141,45 +141,45 @@ namespace Slab::Core {
         }
     }
 
-    bool FCommandLineInterface::operator==(const FCommandLineInterface &rhs) const {
+    bool FInterface::operator==(const FInterface &rhs) const {
         return std::tie(Name, Parameters, SubInterfaces) ==
                std::tie(rhs.Name, rhs.Parameters, rhs.SubInterfaces);
     }
 
-    bool FCommandLineInterface::operator==(Str str) const {
+    bool FInterface::operator==(Str str) const {
         return Name == str;
     }
 
-    bool FCommandLineInterface::operator!=(const FCommandLineInterface &RHS) const {
+    bool FInterface::operator!=(const FInterface &RHS) const {
         return !(RHS == *this);
     }
 
-    FCommandLineInterface::~FCommandLineInterface() {
+    FInterface::~FInterface() {
 
     }
 
-    auto FCommandLineInterface::AddListener(FCommandLineInterfaceListener *newListener) -> void {
+    auto FInterface::AddListener(FCommandLineInterfaceListener *newListener) -> void {
         Listeners.emplace_back(newListener);
     }
 
-    auto FCommandLineInterface::GetOwner() const -> FCommandLineInterfaceOwner * {
+    auto FInterface::GetOwner() const -> FInterfaceOwner * {
         return pOwner;
     }
 
-    auto FCommandLineInterface::GetName() const -> const Str & {
+    auto FInterface::GetName() const -> const Str & {
         return Name;
     }
 
-    bool FCommandLineInterface::operator<(const FCommandLineInterface &RHS) const {
+    bool FInterface::operator<(const FInterface &RHS) const {
         return Priority < RHS.Priority;
     }
 
-    void FCommandLineInterface::SetGeneralDescription(const Str& str)
+    void FInterface::SetGeneralDescription(const Str& str)
     {
         Description = str;
     }
 
-    void FCommandLineInterface::SendRequest(const FPayload& Payload) const
+    void FInterface::SendRequest(const FPayload& Payload) const
     {
         if(!Contains(Protocols, Payload)) {
 

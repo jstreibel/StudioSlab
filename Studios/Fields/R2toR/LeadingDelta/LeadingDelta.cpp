@@ -87,7 +87,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
         if(do_register) RegisterToManager();
     }
     auto Builder::NotifyCLArgsSetupFinished()    ->       void {
-        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
+        FInterfaceOwner::NotifyCLArgsSetupFinished();
 
         auto &p = *KGNumericConfig;
         const DevFloat L = p.GetL();

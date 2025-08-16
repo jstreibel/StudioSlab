@@ -8,7 +8,7 @@
 #include "LeadingDelta.h"
 
 #include "3rdParty/ImGui.h"
-#include "../../../../Lib/Core/Controller/CommandLineInterfaceManager.h"
+#include "../../../../Lib/Core/Controller/InterfaceManager.h"
 
 #include "Math/Function/FunctionScale.h"
 #include "Math/Function/R2toR/Model/Energy.h"
@@ -81,7 +81,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
         // const auto N = p.getN();
         // const auto h = p.geth();
 
-        const auto ldInterface = FCommandLineInterfaceManager::GetInstance().GetInterface("Leading Delta");
+        const auto ldInterface = FInterfaceManager::GetInstance().GetInterface("Leading Delta");
         const auto epsilon = *(DevFloat *) ldInterface->GetParameter("eps")->GetValueVoid();
 
         static auto lastStep = 0;

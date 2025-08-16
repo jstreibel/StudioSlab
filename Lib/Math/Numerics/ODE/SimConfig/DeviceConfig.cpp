@@ -1,6 +1,6 @@
 
 
-#include "../../../../Core/Controller/CommandLineInterfaceManager.h"
+#include "../../../../Core/Controller/InterfaceManager.h"
 #include <omp.h>
 #include "DeviceConfig.h"
 
@@ -12,7 +12,7 @@
 namespace Slab::Math {
     using namespace Slab::Core;
 
-    FDeviceConfig::FDeviceConfig(bool doRegister) : FCommandLineInterfaceOwner("Device options", 10, doRegister)
+    FDeviceConfig::FDeviceConfig(bool doRegister) : FInterfaceOwner("Device options", 10, doRegister)
     {
         Log::Info() << "Device integration type is " << sizeof(DevFloat)*8 << " bits." << Log::Flush;
 
@@ -31,7 +31,7 @@ namespace Slab::Math {
     }
 
     void FDeviceConfig::NotifyCLArgsSetupFinished() {
-        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
+        FInterfaceOwner::NotifyCLArgsSetupFinished();
 
     #if USE_CUDA
         unsigned int dev_n = **deviceChoice;

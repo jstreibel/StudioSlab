@@ -2,9 +2,9 @@
 // Created by joao on 09/06/23.
 //
 
-#include "CommandLineInterfaceOwner.h"
+#include "InterfaceOwner.h"
 
-#include "CommandLineInterfaceManager.h"
+#include "InterfaceManager.h"
 #include "Core/Tools/Log.h"
 #include "Core/SlabCore.h"
 
@@ -13,16 +13,16 @@
 
 namespace Slab::Core {
 
-    FCommandLineInterfaceOwner::FCommandLineInterfaceOwner(bool IKnowIMustCallLateStart) {
+    FInterfaceOwner::FInterfaceOwner(bool IKnowIMustCallLateStart) {
         if (!IKnowIMustCallLateStart) Log::WarningImportant("Remember to call LateStart!") << Log::Flush;
     }
 
-    FCommandLineInterfaceOwner::FCommandLineInterfaceOwner(Str InterfaceName, int priority, bool DoRegister) {
+    FInterfaceOwner::FInterfaceOwner(Str InterfaceName, int priority, bool DoRegister) {
         LateStart(InterfaceName, priority, DoRegister);
     }
 
-    void FCommandLineInterfaceOwner::LateStart(Str InterfaceName, int priority, bool DoRegister) {
-        Interface = Slab::New<FCommandLineInterface>(InterfaceName, this, priority);
+    void FInterfaceOwner::LateStart(Str InterfaceName, int priority, bool DoRegister) {
+        Interface = Slab::New<FInterface>(InterfaceName, this, priority);
 
         if (DoRegister) RegisterToManager();
         else
@@ -30,7 +30,7 @@ namespace Slab::Core {
                          << "\" did NOT immediately register to InterfaceManager." << Log::Flush;
     }
 
-    void FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished() {
+    void FInterfaceOwner::NotifyCLArgsSetupFinished() {
         // Log::Info() << "Interface " << Log::FGCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting
         //               << " (priority " << interface->priority << ") "
         //               << "has been setup from command-line." << Log::Flush;
@@ -47,24 +47,24 @@ namespace Slab::Core {
         note << Log::Flush;
     }
 
-    auto FCommandLineInterfaceOwner::NotifyAllCLArgsSetupFinished() -> void
+    auto FInterfaceOwner::NotifyAllCLArgsSetupFinished() -> void
     {}
 
-    auto FCommandLineInterfaceOwner::RegisterToManager() const -> void {
+    auto FInterfaceOwner::RegisterToManager() const -> void {
         assert(Interface != nullptr);
 
         Core::RegisterCLInterface(Interface);
     }
 
-    auto FCommandLineInterfaceOwner::GetInterface() -> TPointer<FCommandLineInterface> {
+    auto FInterfaceOwner::GetInterface() -> TPointer<FInterface> {
         return Interface;
     }
 
-    auto FCommandLineInterfaceOwner::GetInterface() const -> TPointer<FCommandLineInterface> {
+    auto FInterfaceOwner::GetInterface() const -> TPointer<FInterface> {
         return Interface;
     }
 
-    void FCommandLineInterfaceOwner::SendMessage(FPayload Payload)
+    void FInterfaceOwner::SendMessage(FPayload Payload)
     {
         FCommandLineInterfaceListener::SendMessage(Payload);
 
@@ -79,7 +79,7 @@ namespace Slab::Core {
         //                                 << "received a message that it does not know how to handle."
     }
 
-    Vector<FPayload> FCommandLineInterfaceOwner::GetProtocols() {
+    Vector<FPayload> FInterfaceOwner::GetProtocols() {
         return Slab::Vector<FPayload>();
     }
 

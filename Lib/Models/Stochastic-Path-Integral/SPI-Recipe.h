@@ -5,7 +5,7 @@
 #ifndef SPI_RECIPE_H
 #define SPI_RECIPE_H
 
-#include <../../Core/Controller/CommandLineInterface.h>
+#include <../../Core/Controller/Interface.h>
 #include <Math/Numerics/NumericalRecipe.h>
 
 #include "SPINumericConfig.h"

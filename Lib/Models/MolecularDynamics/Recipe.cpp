@@ -13,7 +13,7 @@
 #include "Recipe.h"
 
 #include "Core/SlabCore.h"
-#include "../../Core/Controller/CommandLineInterfaceManager.h"
+#include "../../Core/Controller/InterfaceManager.h"
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
 
@@ -25,7 +25,7 @@
 namespace Slab::Models::MolecularDynamics {
     Recipe::Recipe()
     : FNumericalRecipe(New<Slab::Models::MolecularDynamics::MolDynNumericConfig>(), "2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
-    , molDynamicsInterface(New <FCommandLineInterface> ("Molecular dynamics 2-d", this, 100))
+    , molDynamicsInterface(New <FInterface> ("Molecular dynamics 2-d", this, 100))
     {
         molDynamicsInterface->AddParameters({&temperature, &dissipation, &model});
         Interface->AddSubInterface(molDynamicsInterface);
@@ -78,7 +78,7 @@ namespace Slab::Models::MolecularDynamics {
     }
 
     void Recipe::NotifyCLArgsSetupFinished() {
-        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
+        FInterfaceOwner::NotifyCLArgsSetupFinished();
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
 

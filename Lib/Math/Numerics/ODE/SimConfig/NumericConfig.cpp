@@ -1,11 +1,11 @@
 
-#include "../../../../Core/Controller/CommandLineInterfaceManager.h"
+#include "../../../../Core/Controller/InterfaceManager.h"
 #include "NumericConfig.h"
 
 
 namespace Slab::Math {
     FNumericConfig::FNumericConfig(bool do_register)
-    : Core::FCommandLineInterfaceOwner("Numeric Parameters,The core parameters that define the simulation per-se",
+    : Core::FInterfaceOwner("Numeric Parameters,The core parameters that define the simulation per-se",
                              0,
                              do_register)
     {

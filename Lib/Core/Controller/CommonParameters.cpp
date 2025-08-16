@@ -2,7 +2,7 @@
 // Created by joao on 7/19/19.
 //
 
-#include "CommandLineCommonParameters.h"
+#include "CommonParameters.h"
 
 // template<>
 // auto ParameterTemplate<bool>::addToOptionsGroup(CLODEasyInit &add) const -> void {
@@ -16,32 +16,32 @@
 namespace Slab::Core {
 
     template<class Type>
-    TCommandLineParameter<Type>::~TCommandLineParameter() = default;
+    TParameter<Type>::~TParameter() = default;
 
     template<class Type>
-    auto TCommandLineParameter<Type>::ValueToString() const -> std::string {
+    auto TParameter<Type>::ValueToString() const -> std::string {
         return ToStr(val);
     }
 
     template<class Type>
-    auto TCommandLineParameter<Type>::AddToCommandLineOptionsGroup(CLODEasyInit &add) const -> void {
+    auto TParameter<Type>::AddToCommandLineOptionsGroup(CLODEasyInit &add) const -> void {
         auto value = CLOptions::value<Type>()->default_value(ToStr(val));
         add(fullCLName, description, value);
     }
 
     template<class Type>
-    void TCommandLineParameter<Type>::SetValue(const void *pVoid) {
+    void TParameter<Type>::SetValue(const void *pVoid) {
         val = *static_cast<const Type *>(pVoid);
     }
 
     template<class Type>
-    void TCommandLineParameter<Type>::SetValue(Type value) { this->val = value; }
+    void TParameter<Type>::SetValue(Type value) { this->val = value; }
 
     template<class Type>
-    const void *TCommandLineParameter<Type>::GetValueVoid() const { return &val; }
+    const void *TParameter<Type>::GetValueVoid() const { return &val; }
 
     template<class Type>
-    void TCommandLineParameter<Type>::SetValueFromCommandLine(VariableValue var) {
+    void TParameter<Type>::SetValueFromCommandLine(VariableValue var) {
         try {
             this->val = var.as<Type>();
             // std::cout << "Parameter " << commandLineArgName << " being attributed value " << val << " from command line." << std::endl;
@@ -55,56 +55,56 @@ namespace Slab::Core {
     }
 
     template<class Type>
-    auto TCommandLineParameter<Type>::GetValue() const -> Type {
+    auto TParameter<Type>::GetValue() const -> Type {
         return val;
     }
 
     template<class Type>
-    auto TCommandLineParameter<Type>::operator*() -> Type & {
+    auto TParameter<Type>::operator*() -> Type & {
         return val;
     }
 
     template<class Type>
-    auto TCommandLineParameter<Type>::operator*() const -> const Type & {
+    auto TParameter<Type>::operator*() const -> const Type & {
         return val;
     }
 
     template<class Type>
-    TCommandLineParameter<Type>::operator Type() const {
+    TParameter<Type>::operator Type() const {
         return val;
     }
 
     template<class Type>
-    auto TCommandLineParameter<Type>::operator=(const Type &rhs) -> TCommandLineParameter & {
+    auto TParameter<Type>::operator=(const Type &rhs) -> TParameter & {
         val = rhs;
         return *this;
     }
 
     template<class Type>
-    auto TCommandLineParameter<Type>::operator=(Type &rhs) -> TCommandLineParameter & {
+    auto TParameter<Type>::operator=(Type &rhs) -> TParameter & {
         val = rhs;
         return *this;
     }
 
     template<class Type>
-    auto TCommandLineParameter<Type>::operator<(const Type &rhs) -> bool {
+    auto TParameter<Type>::operator<(const Type &rhs) -> bool {
         return val < rhs;
     }
 
     template
-    class TCommandLineParameter<int>;
+    class TParameter<int>;
 
     template
-    class TCommandLineParameter<DevFloat>;
+    class TParameter<DevFloat>;
 
     template
-    class TCommandLineParameter<Str>;
+    class TParameter<Str>;
 
     template
-    class TCommandLineParameter<StrVector>;
+    class TParameter<StrVector>;
 
     template
-    class TCommandLineParameter<bool>;
+    class TParameter<bool>;
 
 }
 

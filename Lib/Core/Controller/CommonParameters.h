@@ -1,7 +1,7 @@
 #ifndef DEFS_H
 #define DEFS_H
 
-#include "CommandLineParameter.h"
+#include "Parameter.h"
 
 // #define PARAMETER_TEMPLATE_SOURCE_ON_HEADER
 
@@ -9,22 +9,22 @@
 namespace Slab::Core {
 
     template<class Type>
-    class TCommandLineParameter : public FCommandLineParameter {
+    class TParameter : public FParameter {
     protected:
         Type val;
 
     public:
         typedef Type MyType;
 
-        typedef std::shared_ptr<TCommandLineParameter> Ptr;
+        typedef std::shared_ptr<TParameter> Ptr;
 
         static Ptr New(Type Val, const Str &ArgName, const Str &Descr) {
-            return std::make_unique<TCommandLineParameter>(Val, ArgName, Descr);
+            return std::make_unique<TParameter>(Val, ArgName, Descr);
         }
 
-        TCommandLineParameter(Type Value, const Str &ArgName, const Str &ShortDescription);
+        TParameter(Type Value, const Str &ArgName, const Str &ShortDescription);
 
-        ~TCommandLineParameter();
+        ~TParameter() override;
 
         [[nodiscard]] auto ValueToString() const -> Str override;
 
@@ -46,35 +46,35 @@ namespace Slab::Core {
 
         explicit operator Type() const;
 
-        auto operator=(const Type &rhs) -> TCommandLineParameter &;
+        auto operator=(const Type &rhs) -> TParameter &;
 
-        auto operator=(Type &rhs) -> TCommandLineParameter &;
+        auto operator=(Type &rhs) -> TParameter &;
 
-        auto operator=(const TCommandLineParameter &rhs) -> Type;
+        auto operator=(const TParameter &rhs) -> Type;
 
         auto operator<(const Type &rhs) -> bool;
 
     };
 
     template<class Type>
-    auto TCommandLineParameter<Type>::operator=(const TCommandLineParameter &rhs) -> Type {
+    auto TParameter<Type>::operator=(const TParameter &rhs) -> Type {
         return *this = rhs;
     }
 
     template<class Type>
-    TCommandLineParameter<Type>::TCommandLineParameter(Type Value, const Str &ArgName, const Str &ShortDescription)
-            : FCommandLineParameter(ArgName, ShortDescription), val(Value) {}
+    TParameter<Type>::TParameter(Type Value, const Str &ArgName, const Str &ShortDescription)
+            : FParameter(ArgName, ShortDescription), val(Value) {}
 
     template<class TypeA, class TypeB>
-    auto operator*(const TCommandLineParameter<TypeA> &p1, const TCommandLineParameter<TypeB> &p2) -> TypeA {
+    auto operator*(const TParameter<TypeA> &p1, const TParameter<TypeB> &p2) -> TypeA {
         return p1.GetValue() * p2.GetValue();
     }
 
     template<class TypeA, class TypeB>
-    auto operator*(const TCommandLineParameter<TypeA> &p, const TypeB &val) -> TypeB { return p.GetValue() * val; }
+    auto operator*(const TParameter<TypeA> &p, const TypeB &val) -> TypeB { return p.GetValue() * val; }
 
     template<class TypeA, class TypeB>
-    auto operator*(const TypeB &val, const TCommandLineParameter<TypeA> &p) -> TypeB { return p * val; }
+    auto operator*(const TypeB &val, const TParameter<TypeA> &p) -> TypeB { return p * val; }
 
 
 #ifdef PARAMETER_TEMPLATE_SOURCE_ON_HEADER
@@ -150,11 +150,11 @@ namespace Slab::Core {
 
 #endif // PARAMETER_TEMPLATE_SOURCE_ON_HEADER
 
-    typedef TCommandLineParameter<int> IntegerParameter;
-    typedef TCommandLineParameter<DevFloat> RealParameter;
-    typedef TCommandLineParameter<StrVector> MultiStringParameter;
-    typedef TCommandLineParameter<Str> StringParameter;
-    typedef TCommandLineParameter<bool> BoolParameter;
+    typedef TParameter<int> IntegerParameter;
+    typedef TParameter<DevFloat> RealParameter;
+    typedef TParameter<StrVector> MultiStringParameter;
+    typedef TParameter<Str> StringParameter;
+    typedef TParameter<bool> BoolParameter;
 
 
 }

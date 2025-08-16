@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_KG_NUMERICCONFIG_H
 #define STUDIOSLAB_KG_NUMERICCONFIG_H
 
-#include "../../Core/Controller/CommandLineCommonParameters.h"
+#include "../../Core/Controller/CommonParameters.h"
 #include "Models/DynamicsNumericConfig.h"
 
 namespace Slab::Models {

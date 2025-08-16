@@ -3,14 +3,14 @@
 
 #include "Utils/DeviceConfig.h"
 #include "Utils/TypesGPU.h"
-#include "../../../../Core/Controller/CommandLineInterfaceOwner.h"
-#include "../../../../Core/Controller/CommandLineCommonParameters.h"
+#include "../../../../Core/Controller/InterfaceOwner.h"
+#include "../../../../Core/Controller/CommonParameters.h"
 
 
 namespace Slab::Math {
     using namespace Slab::Core;
 
-    class FDeviceConfig : public FCommandLineInterfaceOwner {
+    class FDeviceConfig : public FInterfaceOwner {
         auto NotifyCLArgsSetupFinished() -> void override;
 
     private:

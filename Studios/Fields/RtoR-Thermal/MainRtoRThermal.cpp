@@ -3,7 +3,7 @@
 //
 
 #include "CrashPad.h"
-#include "../../../Lib/Core/Controller/CommandLineInterfaceSelector.h"
+#include "../../../Lib/Core/Controller/CommandLine/CommandLineInterfaceSelector.h"
 
 #include "MathApp.h"
 
@@ -25,10 +25,10 @@ int run(int argc, const char **argv){
                         new RandomEnergyOverDotPhiBuilder };
 
     for(auto &opt : options)
-        selector.registerOption(opt->GetInterface());
+        selector.RegisterOption(opt->GetInterface());
 
     auto selection = dynamic_cast<Slab::Models::KGRtoR::FKGRtoR_Recipe*>(
-            selector.preParse(argc, argv).getCurrentCandidate()->GetOwner());
+            selector.PreParse(argc, argv).GetCurrentCandidate()->GetOwner());
 
     auto prog = MathApp(argc, argv, Slab::Models::KGRtoR::FKGRtoR_Recipe_ptr(selection));
 

@@ -5,7 +5,7 @@
 #ifndef FIELDS_COMMANDLINEINTERFACEMANAGER_H
 #define FIELDS_COMMANDLINEINTERFACEMANAGER_H
 
-#include "CommandLineInterface.h"
+#include "../Interface.h"
 #include "CommandLineParserDefs.h"
 
 
@@ -19,7 +19,7 @@ namespace Slab::Core {
 
         static void Parse(int argc, const char **argv);
 
-        static auto BuildOptionsDescription(const FCommandLineInterface &anInterface, CLOptionsDescription &opts) -> void;
+        static auto BuildOptionsDescription(const FInterface &anInterface, CLOptionsDescription &opts) -> void;
 
     };
 

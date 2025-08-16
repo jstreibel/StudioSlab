@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MOLDYN_BUILDER_H
 #define STUDIOSLAB_MOLDYN_BUILDER_H
 
-#include "../../Core/Controller/CommandLineCommonParameters.h"
+#include "../../Core/Controller/CommonParameters.h"
 
 #include "Math/Numerics/NumericalRecipe.h"
 #include "Math/Numerics/Socket.h"
@@ -22,7 +22,7 @@ namespace Slab::Models::MolecularDynamics {
                                                                     "\n\t\t0: Lennard-Jones"
                                                                     "\n\t\t1: Soft disk dynamics");
 
-        FCommandLineInterface_ptr molDynamicsInterface;
+        FInterface_ptr molDynamicsInterface;
 
     public:
         Recipe();

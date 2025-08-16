@@ -7,7 +7,7 @@
 
 namespace Slab::Core {
 
-    FBackend::FBackend(const Str &Name) : FCommandLineInterfaceOwner(Str(Name)) {
+    FBackend::FBackend(const Str &Name) : FInterfaceOwner(Str(Name)) {
     }
 
     FBackend::~FBackend() = default;

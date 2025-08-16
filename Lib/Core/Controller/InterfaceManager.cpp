@@ -2,7 +2,7 @@
 // Created by joao on 10/17/21.
 //
 
-#include "CommandLineInterfaceManager.h"
+#include "InterfaceManager.h"
 
 #include "Utils/Utils.h"
 #include "Core/Tools/Log.h"
@@ -10,15 +10,15 @@
 
 namespace Slab::Core {
 
-    FCommandLineInterfaceManager *FCommandLineInterfaceManager::Instance = nullptr;
+    FInterfaceManager *FInterfaceManager::Instance = nullptr;
 
-    auto FCommandLineInterfaceManager::GetInstance() -> FCommandLineInterfaceManager & {
-        if (Instance == nullptr) Instance = new FCommandLineInterfaceManager;
+    auto FInterfaceManager::GetInstance() -> FInterfaceManager & {
+        if (Instance == nullptr) Instance = new FInterfaceManager;
 
         return *Instance;
     }
 
-    void FCommandLineInterfaceManager::RegisterInterface(const TPointer<FCommandLineInterface> &anInterface) {
+    void FInterfaceManager::RegisterInterface(const TPointer<FInterface> &anInterface) {
         auto &log = Log::Note();
         log << "InterfaceManager registering interface \"" << Log::FGBlue << anInterface->GetName()
             << Log::ResetFormatting << "\" [ "
@@ -46,18 +46,18 @@ namespace Slab::Core {
             RegisterInterface(subInterface);
     }
 
-    auto FCommandLineInterfaceManager::GetInterfaces() -> Vector<TPointer<const FCommandLineInterface>> {
-        Vector<TPointer<const FCommandLineInterface>> V(Interfaces.size());
+    auto FInterfaceManager::GetInterfaces() -> Vector<TPointer<const FInterface>> {
+        Vector<TPointer<const FInterface>> V(Interfaces.size());
 
         std::copy(Interfaces.begin(), Interfaces.end(), V.begin());
 
         return V;
     }
 
-    void FCommandLineInterfaceManager::FeedInterfaces(const CLVariablesMap &vm) {
+    void FInterfaceManager::FeedInterfaces(const CLVariablesMap &vm) {
         Log::Debug() << "InterfaceManager started feeding interfaces." << Log::Flush;
 
-        auto comp = [](const TPointer<FCommandLineInterface> &a, const TPointer<FCommandLineInterface> &b) { return *a < *b; };
+        auto comp = [](const TPointer<FInterface> &a, const TPointer<FInterface> &b) { return *a < *b; };
         std::sort(Interfaces.begin(), Interfaces.end(), comp);
 
         auto &log = Log::Debug();
@@ -87,7 +87,7 @@ namespace Slab::Core {
         Log::Debug() << "InterfaceManager finished feeding interfaces." << Log::Flush;
     }
 
-    auto FCommandLineInterfaceManager::RenderAsPythonDictionaryEntries() -> Str {
+    auto FInterfaceManager::RenderAsPythonDictionaryEntries() -> Str {
 
         StringStream ss;
         for (const auto &interface: Interfaces) {
@@ -99,7 +99,7 @@ namespace Slab::Core {
         return ss.str();
     }
 
-    auto FCommandLineInterfaceManager::RenderParametersToString(const StrVector &params, const Str &separator,
+    auto FInterfaceManager::RenderParametersToString(const StrVector &params, const Str &separator,
                                                       bool longName) const -> Str {
         StringStream ss;
 
@@ -118,8 +118,8 @@ namespace Slab::Core {
         return str.ends_with(separator) ? str.substr(0, str.length() - separator.length()) : str;
     }
 
-    auto FCommandLineInterfaceManager::GetInterface(const char *target) -> TPointer<const FCommandLineInterface> {
-        auto compFunc = [target](const TPointer<const FCommandLineInterface> &anInterface) { return anInterface->operator==(target); };
+    auto FInterfaceManager::GetInterface(const char *target) -> TPointer<const FInterface> {
+        auto compFunc = [target](const TPointer<const FInterface> &anInterface) { return anInterface->operator==(target); };
 
         auto it = std::find_if(Interfaces.begin(), Interfaces.end(), compFunc);
 
@@ -130,7 +130,7 @@ namespace Slab::Core {
         return *it;
     }
 
-    auto FCommandLineInterfaceManager::GetParametersValues(const StrVector &params) const -> Vector<Pair<Str, Str>> {
+    auto FInterfaceManager::GetParametersValues(const StrVector &params) const -> Vector<Pair<Str, Str>> {
         Vector<Pair<Str, Str>> values;
 
         for (const auto &interface: Interfaces) {
@@ -146,7 +146,7 @@ namespace Slab::Core {
         return values;
     }
 
-    auto FCommandLineInterfaceManager::GetParameter(const Str &name) const -> TPointer<const FCommandLineParameter> {
+    auto FInterfaceManager::GetParameter(const Str &name) const -> TPointer<const FParameter> {
         for (const auto &interface: Interfaces) {
             auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters) {
