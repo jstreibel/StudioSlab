@@ -17,8 +17,8 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		${CORE_CONTROLLER_SOURCES}
 		SlabCore.h
 		Backend/Modules/Modules.cpp
-		Controller/Interface/Request.cpp
-		Controller/Interface/Request.h
+		Controller/Interface/Payload.cpp
+		Controller/Interface/Payload.h
 		Controller/Interface/Message.cpp
 		Controller/Interface/Message.h
 		Controller/Interface/Interface.cpp

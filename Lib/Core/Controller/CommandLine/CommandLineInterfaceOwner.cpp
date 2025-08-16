@@ -47,6 +47,9 @@ namespace Slab::Core {
         note << Log::Flush;
     }
 
+    auto FCommandLineInterfaceOwner::NotifyAllCLArgsSetupFinished() -> void
+    {}
+
     auto FCommandLineInterfaceOwner::RegisterToManager() const -> void {
         assert(Interface != nullptr);
 
@@ -59,6 +62,21 @@ namespace Slab::Core {
 
     auto FCommandLineInterfaceOwner::GetInterface() const -> TPointer<FCommandLineInterface> {
         return Interface;
+    }
+
+    void FCommandLineInterfaceOwner::SendMessage(FPayload Payload)
+    {
+        FCommandLineInterfaceListener::SendMessage(Payload);
+
+        if (Payload == FPayload::CommandLineParsingFinished)
+            NotifyCLArgsSetupFinished();
+        else if (Payload == FPayload::AllCommandLineParsingFinished)
+            NotifyAllCLArgsSetupFinished();
+
+        // else
+        //     Log::WarningImportant( "Interface " << Log::FGCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting
+        //                                 << " (priority " << interface->priority << ") "
+        //                                 << "received a message that it does not know how to handle."
     }
 
     Vector<FPayload> FCommandLineInterfaceOwner::GetProtocols() {

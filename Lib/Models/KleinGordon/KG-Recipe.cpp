@@ -69,7 +69,7 @@ namespace Slab::Models {
         else Core::BackendManager::Startup("Headless");
 
 
-        FCommandLineInterfaceListener::NotifyAllCLArgsSetupFinished();
+        FNumericalRecipe::NotifyAllCLArgsSetupFinished();
     }
 
     void KGRecipe::setupForCurrentThread() {

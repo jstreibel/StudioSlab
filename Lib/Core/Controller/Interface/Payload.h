@@ -20,6 +20,7 @@ namespace Slab::Core {
         bool operator==(const FPayloadData&) const;
 
         static FPayload CommandLineParsingFinished;
+        static FPayload AllCommandLineParsingFinished;
 
     private:
         FPayloadData Data;

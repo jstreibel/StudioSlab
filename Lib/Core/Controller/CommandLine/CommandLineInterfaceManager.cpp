@@ -78,9 +78,10 @@ namespace Slab::Core {
             interface->SetupFromCommandLine(vm);
         }
 
-        for (const auto &interface: interfaces) {
-            for (auto listener: interface->Listeners)
-                listener->NotifyAllCLArgsSetupFinished();
+        for (const auto &Interface: interfaces) {
+            for (auto Listener: Interface->Listeners)
+                Listener->SendMessage(FPayload::AllCommandLineParsingFinished);
+                // listener->NotifyAllCLArgsSetupFinished();
         }
 
         Log::Debug() << "InterfaceManager finished feeding interfaces." << Log::Flush;

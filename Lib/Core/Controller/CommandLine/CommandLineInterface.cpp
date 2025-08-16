@@ -132,12 +132,12 @@ namespace Slab::Core {
                 param->SetValueFromCommandLine(val);
             }
 
-            for (auto listener: Listeners)
-                listener->NotifyCLArgsSetupFinished();
+            for (auto Listener: Listeners)
+                Listener->SendMessage(FPayload::CommandLineParsingFinished);
 
         } catch (cxxopts::exceptions::exception &exception) {
             Log::Error() << "Exception happened in Interface \"" << GetGeneralDescription() << "\"" << Log::Flush;
-            throw exception;
+            throw;
         }
     }
 

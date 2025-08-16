@@ -13,9 +13,6 @@ namespace Slab::Math {
     class FDeviceConfig : public FCommandLineInterfaceOwner {
         auto NotifyCLArgsSetupFinished() -> void override;
 
-    public:
-        auto NotifyAllCLArgsSetupFinished() -> void override;
-
     private:
         Device dev = Device::CPU;
         IntegerParameter::Ptr deviceChoice = IntegerParameter::New(1, "dev", "Device on which to run simulation.\n"

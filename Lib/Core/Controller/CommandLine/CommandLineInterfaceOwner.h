@@ -14,6 +14,9 @@ namespace Slab::Core {
     protected:
         TPointer<FCommandLineInterface> Interface;
 
+        virtual auto NotifyCLArgsSetupFinished() -> void;
+        virtual auto NotifyAllCLArgsSetupFinished() -> void ;;
+
     public:
         explicit FCommandLineInterfaceOwner(bool IKnowIMustCallLateStart = false);
 
@@ -30,7 +33,7 @@ namespace Slab::Core {
 
         auto GetInterface() const -> TPointer<FCommandLineInterface>;
 
-        auto NotifyCLArgsSetupFinished() -> void override;
+        auto SendMessage(FPayload) -> void override;
     };
 
 

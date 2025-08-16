@@ -2,11 +2,12 @@
 // Created by joao on 10/14/24.
 //
 
-#include "Request.h"
+#include "Payload.h"
 
 namespace Slab::Core {
 
     FPayload FPayload::CommandLineParsingFinished = FPayload{"CommandLineParsingFinished"};;
+    FPayload FPayload::AllCommandLineParsingFinished = FPayload{"All CommandLineParsingFinished"};;
 
     FPayload::FPayload(FPayloadData Data) : Data(Data)
     {

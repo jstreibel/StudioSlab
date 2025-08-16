@@ -6,7 +6,7 @@
 #define FIELDS_INTERFACE_H
 
 #include "CommandLineParameter.h"
-#include "Core/Controller/Interface/Request.h"
+#include "Core/Controller/Interface/Payload.h"
 #include "Core/Controller/Interface/Message.h"
 #include "Utils/List.h"
 
@@ -30,28 +30,27 @@ namespace Slab::Core {
         /**
          * Notify listeners that this interface has finished being set up from command line.
          */
-        virtual auto NotifyCLArgsSetupFinished() -> void {};
+        // virtual auto NotifyCLArgsSetupFinished() -> void {};
 
         /**
          * Notify listeners that all interfaces have finished being set up from command line.
          */
-        virtual auto NotifyAllCLArgsSetupFinished() -> void {};
+        // virtual auto NotifyAllCLArgsSetupFinished() -> void {};
 
         virtual auto SendMessage(FPayload) -> void { };
     };
 
     class FCommandLineInterface final {
     public:
-        FCommandLineInterface(const Str& Name, FCommandLineInterfaceOwner *pOwner, int Priority);
-
         /**
          * Instantiate a new interface. It won't be registered in the InterfaceManager, but that can
          * be done manually through InterfaceManager::registerInterface(...) method.
-         * @param name The name of the interface being created. Use ',' as a separator to add a description to
+         * @param Name The name of the interface being created. Use ',' as a separator to add a description to
          * the interface. For example name="Render options,Some rendering options for the user."
-         * @param owner The owner of this interface. It can be nullptr, but its up to the user to deal with that.
+         * @param pOwner The owner of this interface. It can be nullptr, but its up to the user to deal with that.
          * @return an std::shared_ptr to an Interface.
          */
+        FCommandLineInterface(const Str& Name, FCommandLineInterfaceOwner *pOwner, int Priority);
 
         ~FCommandLineInterface();
 
@@ -108,6 +107,7 @@ namespace Slab::Core {
         friend FCommandLineInterfaceManager;
         friend FCommandLineInterfaceOwner;
 
+        // TODO: make pOwner a weak pointer
         FCommandLineInterfaceOwner *pOwner = nullptr;
 
         Str Name;
