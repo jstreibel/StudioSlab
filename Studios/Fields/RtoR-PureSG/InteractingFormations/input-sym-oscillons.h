@@ -9,10 +9,10 @@ namespace Studios::PureSG {
     using namespace Slab::Core;
 
     class InputSymmetricOscillon : public Builder {
-        RealParameter v               = RealParameter(.0, "v", "Each oscillon's border speed");
-        RealParameter V               = RealParameter(.0, "u", "Each oscillon's speed");
-        RealParameter alpha           = RealParameter(.0, "alpha", "Each oscillon's phase");
-        BoolParameter isAntiSymmetric = BoolParameter(false, "asym,a", "Choose with anti-symmetrical oscillons");
+        RealParameter v               = RealParameter(.0,    FParameterDescription{'v',         "Each oscillon's border speed"});
+        RealParameter V               = RealParameter(.0,    FParameterDescription{'u',         "Each oscillon's speed"});
+        RealParameter alpha           = RealParameter(.0,    FParameterDescription{"alpha",     "Each oscillon's phase"});
+        BoolParameter isAntiSymmetric = BoolParameter(false, FParameterDescription{'a', "asym", "Choose with anti-symmetrical oscillons"});
 
     public:
         InputSymmetricOscillon();

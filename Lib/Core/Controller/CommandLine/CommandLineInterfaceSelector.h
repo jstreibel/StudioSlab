@@ -16,7 +16,7 @@ namespace Slab::Core {
         int CurrentSelection = 0;
         Vector<TPointer<FInterface>> Candidates;
 
-        IntegerParameter selection = IntegerParameter(0, "sim", "Sim type selection");
+        IntegerParameter selection = IntegerParameter(0, {"sim", "Sim type selection"});
 
         auto GenerateHelpDescription() -> void;
 

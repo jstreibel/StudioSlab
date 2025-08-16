@@ -34,10 +34,10 @@ namespace Slab::Core {
             }
 
         for (const auto &p: anInterface->GetParameters()) {
-            auto desc = p->getDescription();
+            auto desc = p->GetDescription();
             if (!desc.empty()) desc = " (" + desc + ")";
 
-            log << "\n\t\t\t\t\t\tParameter: " << Log::FGBlue << p->getFullCommandLineName() << Log::ResetFormatting << desc;
+            log << "\n\t\t\t\t\t\tParameter: " << Log::FGBlue << p->GetFullCommandLineName() << Log::ResetFormatting << desc;
         }
 
         log << Log::Flush;
@@ -93,7 +93,7 @@ namespace Slab::Core {
         for (const auto &interface: Interfaces) {
             auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters)
-                ss << "\"" << parameter->getCommandLineArgumentName(true) << "\": " << parameter->ValueToString() << ", ";
+                ss << "\"" << parameter->GetCommandLineArgumentName(true) << "\": " << parameter->ValueToString() << ", ";
         }
 
         return ss.str();
@@ -106,7 +106,7 @@ namespace Slab::Core {
         for (const auto &interface: Interfaces) {
             auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters) {
-                auto name = parameter->getCommandLineArgumentName(longName);
+                auto name = parameter->GetCommandLineArgumentName(longName);
 
                 if (Contains(params, name))
                     ss << name << "=" << parameter->ValueToString() << separator;
@@ -136,7 +136,7 @@ namespace Slab::Core {
         for (const auto &interface: Interfaces) {
             auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters) {
-                auto name = parameter->getCommandLineArgumentName();
+                auto name = parameter->GetCommandLineArgumentName();
 
                 if (Contains(params, name))
                     values.emplace_back(name, parameter->ValueToString());
@@ -150,7 +150,7 @@ namespace Slab::Core {
         for (const auto &interface: Interfaces) {
             auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters) {
-                if (name == parameter->getCommandLineArgumentName() || name == parameter->getCommandLineArgumentName(true))
+                if (name == parameter->GetCommandLineArgumentName() || name == parameter->GetCommandLineArgumentName(true))
                     return parameter;
             }
         }
@@ -160,7 +160,7 @@ namespace Slab::Core {
         for (const auto &interface: Interfaces) {
             auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters) {
-                Log::Info() << "\t[" << interface->GetName() << "] " << parameter->getCommandLineArgumentName(true) << ": " << parameter->ValueToString() << Log::Flush;
+                Log::Info() << "\t[" << interface->GetName() << "] " << parameter->GetCommandLineArgumentName(true) << ": " << parameter->ValueToString() << Log::Flush;
             }
         }
 

@@ -16,11 +16,11 @@ namespace Slab::Models::MolecularDynamics {
     using namespace Slab::Core;
 
     class Recipe : public Math::Base::FNumericalRecipe {
-        RealParameter temperature = RealParameter    (0.0, "T,temperature", "The system temperature in Langevin simulations.");
-        RealParameter dissipation = RealParameter    (0.0, "k,dissipation_factor", "The system energy dissipation factor.");
-        IntegerParameter model    = IntegerParameter (  0, "model", "The physical model to use:"
-                                                                    "\n\t\t0: Lennard-Jones"
-                                                                    "\n\t\t1: Soft disk dynamics");
+        RealParameter temperature = RealParameter    (0.0, FParameterDescription{'T', "temperature", "The system temperature in Langevin simulations."});
+        RealParameter dissipation = RealParameter    (0.0, FParameterDescription{'k', "dissipation_factor", "The system energy dissipation factor."});
+        IntegerParameter model    = IntegerParameter (  0, FParameterDescription{"model", "The physical model to use:"
+                                                                                          "\n\t\t0: Lennard-Jones"
+                                                                                          "\n\t\t1: Soft disk dynamics"});
 
         FInterface_ptr molDynamicsInterface;
 

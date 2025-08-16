@@ -14,20 +14,19 @@ namespace Slab::Models {
 
     class FKGNumericConfig : public DynamicsNumericConfig {
 
-        RealParameter::Ptr xCenter = RealParameter::New(.0, "c,xCenter", "Center of simulation space");
+        TPointer<RealParameter> xCenter =    New<RealParameter>(.0,   FParameterDescription{'c', "xCenter", "Center of simulation space"});
+        TPointer<IntegerParameter> dimMode = New<IntegerParameter>(0, FParameterDescription{'m', "dimensions_mode",
+            "Method to compute space measures:"
+            "\n\t0: h=L/N (option --h is ignored)"
+            "\n\t1: L=h*N (option --L is ignored)"
+            "\n\t2: N=L/h (option --N is ignored)"
+            "\nNote that mode 2 is not too safe if N is "
+            "not Natural number."});
 
-        IntegerParameter::Ptr dimMode = IntegerParameter::New(0, "m,dimensions_mode",
-                                                              "Method to compute space measures:"
-                                                              "\n\t0: h=L/N (option --h is ignored)"
-                                                              "\n\t1: L=h*N (option --L is ignored)"
-                                                              "\n\t2: N=L/h (option --N is ignored)"
-                                                              "\nNote that mode 2 is not too safe if N is "
-                                                              "not Natural number.");
+        TPointer<RealParameter> h = New<RealParameter>(0.009765625, FParameterDescription{'h', "Cell 1-measure. Defaults to L/N. This value is "
+                                                                    "ignored unless '--mode' is properly set."});
 
-        RealParameter::Ptr h = RealParameter::New(0.009765625, "h", "Cell 1-measure. Defaults to L/N. This value is "
-                                                                    "ignored unless '--mode' is properly set.");
-
-        RealParameter::Ptr rdt = RealParameter::New(.1, "r_dt", "Timestep 'r' parameter such that dt=r*h.");
+        TPointer<RealParameter> rdt = New<RealParameter>(.1, FParameterDescription{"r_dt", "Timestep 'r' parameter such that dt=r*h."});
         UInt n{};
 
     public:

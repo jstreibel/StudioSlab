@@ -68,7 +68,7 @@ namespace Modes {
     Str Signal_Ak2_Recipe::SuggestFileName() const {
         const auto SEPARATOR = " ";
 
-        const StrVector params = {A.getCommandLineArgumentName(false), omega.getCommandLineArgumentName(false)};
+        const StrVector params = {A.GetCommandLineArgumentName(false), omega.GetCommandLineArgumentName(false)};
 
         const auto strParams = Interface->ToString(params, SEPARATOR);
         return FKGRtoR_Recipe::SuggestFileName() + SEPARATOR + strParams;

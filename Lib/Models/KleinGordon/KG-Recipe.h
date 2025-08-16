@@ -20,53 +20,18 @@ namespace Slab::Models {
 
     class KGRecipe : public Base::FNumericalRecipe {
     protected:
-        StringParameter    plotTheme                    = StringParameter("Dark", "plot_theme", "Choose plotting theme.");
-
-
-
-        BoolParameter    TakeSnapshot                   = BoolParameter(false, "s,snapshot",
-                                                                        "Take a snapshot of simulation at the end.");
-        RealParameter    snapshotTime                   = RealParameter(-1.0, "ss,snapshotTime",
-                                                                        "Force snapshot to be taken at some time prior "
-                                                                        "to end (after will result in no output.");
-
-
-
-        BoolParameter    TakeSpaceDFTSnapshot           = BoolParameter(false, "dft_snapshot",
-                                                                        "Take a snapshot of discrete Fourier transform "
-                                                                        "(DFT) of field at the end.");
-
-
-        BoolParameter    TakeTimeDFTSnapshot            = BoolParameter(false, "time_dft_snapshot",
-                                                                        "Take time domain dft's of field from "
-                                                                        "'--time_dft_tstart' until that plus "
-                                                                        "'time_dft_length', and repeat every "
-                                                                        "'time_dft_delta'.");
-        /*RealParameter    timeDFTSnapshot_tStart         = RealParameter(0.0 , "time_dft_start",
-                                                                        "Time domain dft starting time.");
-                                                                        */
-        RealParameter    TimeDFTSnapshot_tLength        = RealParameter(-1., "time_dft_length",
-                                                                        "Length of time-domain dft snapshots. If left "
-                                                                        "negative, it is all from t=0.");
-        RealParameter    TimeDFTSnapshot_tDelta         = RealParameter(-1., "time_dft_delta",
-                                                                         "Interval between each '--time_dft_snapshot'. "
-                                                                         "Leave negative for one single dft snapshot at "
-                                                                         "the end of the simulation.");
-
-
-
-
-        BoolParameter    NoHistoryToFile                = BoolParameter(false, "o,no_history_to_file",
-                                                                        "Don't output history to file.");
-
-        IntegerParameter OutputResolution               = IntegerParameter(512, "outN",
-                                                                           "Output resolution of space dimension in "
-                                                                           "history output.");
-        BoolParameter    VisualMonitor                  = BoolParameter(false, "g,visual_monitor",
-                                                                        "Monitor simulation visually.");
-
-        BoolParameter    VisualMonitor_startPaused      = BoolParameter(false, "p,visual_monitor_paused",
-                                                                        "Start visual monitored simulation paused.");
+        StringParameter  plotTheme                    = StringParameter("Dark", FParameterDescription{"plot_theme", "Choose plotting theme."});
+        BoolParameter    TakeSnapshot                   = BoolParameter(false,  FParameterDescription{'s', "snapshot", "Take a snapshot of simulation at the end."});
+        RealParameter    snapshotTime                   = RealParameter(-1.0,   FParameterDescription{"snapshotTime", "Force snapshot to be taken at some time prior to end (after will result in no output."});
+        BoolParameter    TakeSpaceDFTSnapshot           = BoolParameter(false,  FParameterDescription{"dft_snapshot", "Take a snapshot of discrete Fourier transform (DFT) of field at the end."});
+        BoolParameter    TakeTimeDFTSnapshot            = BoolParameter(false,  FParameterDescription{"time_dft_snapshot", "Take time domain dft's of field from '--time_dft_tstart' until that plus 'time_dft_length', and repeat every 'time_dft_delta'."});
+        /* RealParameter    timeDFTSnapshot_tStart         = RealParameter(0.0 ,FParameterDescription{ "time_dft_start", "Time domain dft starting time."}); */
+        RealParameter    TimeDFTSnapshot_tLength        = RealParameter(-1.,    FParameterDescription{"time_dft_length", "Length of time-domain dft snapshots. If left negative, it is all from t=0."});
+        RealParameter    TimeDFTSnapshot_tDelta         = RealParameter(-1.,    FParameterDescription{"time_dft_delta", "Interval between each '--time_dft_snapshot'. Leave negative for one single dft snapshot at the end of the simulation."});
+        BoolParameter    NoHistoryToFile                = BoolParameter(false,  FParameterDescription{'o', "no_history_to_file", "Don't output history to file."});
+        IntegerParameter OutputResolution               = IntegerParameter(512, FParameterDescription{"outN", "Output resolution of space dimension in history output."});
+        BoolParameter    VisualMonitor                  = BoolParameter(false,  FParameterDescription{'g', "visual_monitor", "Monitor simulation visually."});
+        BoolParameter    VisualMonitor_startPaused      = BoolParameter(false,  FParameterDescription{'p', "visual_monitor_paused", "Start visual monitored simulation paused."});
 
         TPointer<FKGNumericConfig> KGNumericConfig;
         Math::FDeviceConfig DeviceConfig;

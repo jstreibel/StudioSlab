@@ -4,38 +4,42 @@
 
 #include "Parameter.h"
 
+#include "Utils/StringFormatting.h"
 #include "Utils/Utils.h"
 
 
 namespace Slab::Core {
 
-    FParameter::FParameter(const Str &commandLineArgName, const Str &description)
-            : fullCLName(commandLineArgName), description(description) {
-        auto split = Common::SplitString(fullCLName, ",", 2);
-        shortCLName = split[0];
-        longCLName = split.size() > 1 ? split[1] : "";
+    FParameter::FParameter(FParameterDescription Description)
+            : Description(Description.Description)
+    {
+        Rubric = Description.Rubric;
+        Name = Description.Name;
     }
 
-    auto FParameter::getFullCommandLineName() const -> Str {
-        return fullCLName;
+    auto FParameter::GetFullCommandLineName() const -> Str {
+        if (Rubric == '\0') return ToSnakeCase(Name);
+
+        return ToStr(Rubric) + "," + ToSnakeCase(Name);
     }
 
-    auto FParameter::getCommandLineArgumentName(bool longNameIfPresent) const -> Str {
-        return (longNameIfPresent && longCLName != "") ? longCLName : shortCLName;
+    auto FParameter::GetCommandLineArgumentName(bool longNameIfPresent) const -> Str {
+        return ToSnakeCase(longNameIfPresent ? Name : ToStr(Rubric));
     }
 
-    auto FParameter::getDescription() const -> Str { return description; }
+    auto FParameter::GetDescription() const -> Str { return Description; }
 
-    bool FParameter::operator<(const FParameter *rhs) {
-        return fullCLName < rhs->fullCLName;
+    bool FParameter::operator<(const FParameter *rhs) const
+    {
+        return Name < rhs->Name;
     }
 
-    void FParameter::setDescription(Str newDescription) {
-        this->description = newDescription;
+    void FParameter::SetDescription(const Str& NewDescription) {
+        Description = NewDescription;
     }
 
     bool FParameter::operator==(Str str) const {
-        return Common::SplitString(fullCLName, ",")[0] == str;
+        return Name == str;
     }
 
 

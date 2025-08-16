@@ -85,7 +85,7 @@ namespace Slab::Core {
             simsHelp << "\n";
         }
 
-        selection.setDescription(simsHelp.str());
+        selection.SetDescription(simsHelp.str());
     }
 
 }

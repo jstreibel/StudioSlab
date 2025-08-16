@@ -52,10 +52,10 @@ namespace Slab::Core {
                 p->AddToCommandLineOptionsGroup(group);
             }
             catch (cxxopts::exceptions::option_already_exists &e) {
-                fix same = FInterfaceManager::GetInstance().GetParameter(p->getCommandLineArgumentName());
-                Log::Error() << "Couldn't add CLI option '" << p->getFullCommandLineName() << "' (" << p->getDescription()
+                fix same = FInterfaceManager::GetInstance().GetParameter(p->GetCommandLineArgumentName());
+                Log::Error() << "Couldn't add CLI option '" << p->GetFullCommandLineName() << "' (" << p->GetDescription()
                              << "): option already exists as '"
-                             << same->getFullCommandLineName() << "' (" << same->getDescription() << ")." << Log::Flush;
+                             << same->GetFullCommandLineName() << "' (" << same->GetDescription() << ")." << Log::Flush;
                 throw e;
             }
     }

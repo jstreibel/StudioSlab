@@ -6,8 +6,47 @@
 #include <catch2/catch_all.hpp>
 #include <Math/Formalism/Categories.h>
 
+#include "Utils/StringFormatting.h"
+
 using RealT = double;    // if DevFloat is an alias (e.g., double)
 using Real2D = Slab::Math::Real2D;
+
+TEST_CASE("Convert string to snake case", "[Str]")
+{
+    struct Case { std::string in, expect; };
+
+    std::vector<Case> cases = {
+        {"HelloWorld",                    "hello_world"},
+        {"ThisIsAnExample",               "this_is_an_example"},
+        {"already_snake_case",            "already_snake_case"},
+        {"Spaces   and   dashes---ok",    "spaces_and_dashes_ok"},
+        {"  leading__and__trailing  ",    "leading_and_trailing"},
+        {"mixed-Separators.and spaces",   "mixed_separators_and_spaces"},
+        {"XMLHttpRequest",                "xml_http_request"},
+        {"HTTPRequest",                   "http_request"},
+        {"userID",                        "user_id"},
+        {"version2Update",                "version2_update"},
+        {"V2Ray",                         "v2_ray"},
+        {"fooBAR",                        "foo_bar"},
+        {"FOOBar",                        "foo_bar"},
+        {"FOO",                           "foo"},
+        {"foo__bar",                      "foo_bar"},
+        {"foo--bar..baz",                 "foo_bar_baz"},
+        {"--__..",                        ""},                  // only separators -> empty
+        {"naïve café",                    "na_ve_caf"},        // non-ASCII bytes treated as non-alnum
+        {"money$maker",                   "money_maker"},
+        {"end_with_sep__",                "end_with_sep"},
+        {"9Lives",                        "9_lives"},
+        {"life9Life",                     "life9_life"},
+    };
+
+    for (const auto& tc : cases) {
+        std::string got = Slab::ToSnakeCase(tc.in);
+
+        REQUIRE(got == tc.expect);
+    }
+
+}
 
 TEST_CASE("Real2D explicit constructor initializes x and y correctly", "[Real2D]") {
     Real2D p(3.5, -2.5);
@@ -63,4 +102,5 @@ TEST_CASE("Chained operations: (p+q)*s - t", "[Real2D]") {
     REQUIRE(result.x == Catch::Approx(5.0));
     REQUIRE(result.y == Catch::Approx(7.0));
 }
+
 

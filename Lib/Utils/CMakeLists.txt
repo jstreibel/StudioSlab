@@ -15,6 +15,7 @@ set ( UTIL_SOURCES
 		EncodingUtils.h 	EncodingUtils.cpp
         PythonUtils.h       PythonUtils.cpp
 		String.h			String.cpp
+		StringFormatting.h  StringFormatting.cpp
 		Numbers.h
 		Arrays.h			Arrays.cpp
 		Files.h				Files.cpp
@@ -37,6 +38,8 @@ if( STUDIOSLAB_CUDA_SUPPORT )
             Map.h
             Compiler.h
             Map.cpp
+            StringFormatting.cpp
+            StringFormatting.h
     )
 endif ()
 

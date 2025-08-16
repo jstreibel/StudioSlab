@@ -201,7 +201,7 @@ namespace Slab::Models::KGRtoR {
         if(snapshot_count>MAX_SNAPSHOTS)
             throw Exception(
                     Str("Error generating time-domain dft snapshots. The value of '--") +
-                            TimeDFTSnapshot_tDelta.getCommandLineArgumentName(true) + "' is " + TimeDFTSnapshot_tDelta.ValueToString() +
+                            TimeDFTSnapshot_tDelta.GetCommandLineArgumentName(true) + "' is " + TimeDFTSnapshot_tDelta.ValueToString() +
                     ", yielding a snapshot count of " + ToStr(snapshot_count) + ", which is above the " +
                 ToStr(MAX_SNAPSHOTS) + " limit.");
 
@@ -211,7 +211,7 @@ namespace Slab::Models::KGRtoR {
             fix xMin = c.getxMin();
 
             if(fix k_param = FInterfaceManager::GetInstance().GetParameter("k")){
-                fix k_n = k_param->getValueAs<DevFloat>();
+                fix k_n = k_param->GetValueAs<DevFloat>();
                 x_locations = {L/(4.*k_n)};
             } else
                 x_locations={xMin+L/2};

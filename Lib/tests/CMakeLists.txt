@@ -4,6 +4,7 @@ enable_testing()
 
 add_executable(testsuite
         test.cpp
+        ../Utils/StringFormatting.cpp
 )
 target_link_libraries(testsuite PRIVATE Catch2::Catch2WithMain)
 

@@ -39,7 +39,7 @@ namespace Slab::Models::KGRtoR {
             Graphics::FAxisArtist::Ticks ticks;
             fix L = params->GetL();
             fix dk = 2*M_PI/L;
-            fix k = dk * WaveNumber->getValueAs<DevFloat>();
+            fix k = dk * WaveNumber->GetValueAs<DevFloat>();
             for (int n = 1; n < 20; ++n) {
                 ticks.push_back(Graphics::FAxisArtist::Tick{(2 * n - 1) * k, unit((2 * n - 1) * k, 0)});
             }

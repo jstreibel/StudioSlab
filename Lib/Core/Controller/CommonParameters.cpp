@@ -20,33 +20,33 @@ namespace Slab::Core {
 
     template<class Type>
     auto TParameter<Type>::ValueToString() const -> std::string {
-        return ToStr(val);
+        return ToStr(Value);
     }
 
     template<class Type>
     auto TParameter<Type>::AddToCommandLineOptionsGroup(CLODEasyInit &add) const -> void {
-        auto value = CLOptions::value<Type>()->default_value(ToStr(val));
-        add(fullCLName, description, value);
+        auto value = CLOptions::value<Type>()->default_value(ToStr(Value));
+        add(GetFullCommandLineName(), GetDescription(), value);
     }
 
     template<class Type>
     void TParameter<Type>::SetValue(const void *pVoid) {
-        val = *static_cast<const Type *>(pVoid);
+        Value = *static_cast<const Type *>(pVoid);
     }
 
     template<class Type>
-    void TParameter<Type>::SetValue(Type value) { this->val = value; }
+    void TParameter<Type>::SetValue(Type value) { this->Value = value; }
 
     template<class Type>
-    const void *TParameter<Type>::GetValueVoid() const { return &val; }
+    const void *TParameter<Type>::GetValueVoid() const { return &Value; }
 
     template<class Type>
     void TParameter<Type>::SetValueFromCommandLine(VariableValue var) {
         try {
-            this->val = var.as<Type>();
+            this->Value = var.as<Type>();
             // std::cout << "Parameter " << commandLineArgName << " being attributed value " << val << " from command line." << std::endl;
         } catch (cxxopts::exceptions::parsing &exception) {
-            auto msg = Str("Parameter '") + fullCLName + "' "
+            auto msg = Str("Parameter '") + GetFullCommandLineName() + "' "
                        + "failed conversion from command line input. Type is " + typeid(Type).name()
                        + ". Exception what(): " + exception.what();
 
@@ -56,39 +56,39 @@ namespace Slab::Core {
 
     template<class Type>
     auto TParameter<Type>::GetValue() const -> Type {
-        return val;
+        return Value;
     }
 
     template<class Type>
     auto TParameter<Type>::operator*() -> Type & {
-        return val;
+        return Value;
     }
 
     template<class Type>
     auto TParameter<Type>::operator*() const -> const Type & {
-        return val;
+        return Value;
     }
 
     template<class Type>
     TParameter<Type>::operator Type() const {
-        return val;
+        return Value;
     }
 
     template<class Type>
     auto TParameter<Type>::operator=(const Type &rhs) -> TParameter & {
-        val = rhs;
+        Value = rhs;
         return *this;
     }
 
     template<class Type>
     auto TParameter<Type>::operator=(Type &rhs) -> TParameter & {
-        val = rhs;
+        Value = rhs;
         return *this;
     }
 
     template<class Type>
     auto TParameter<Type>::operator<(const Type &rhs) -> bool {
-        return val < rhs;
+        return Value < rhs;
     }
 
     template

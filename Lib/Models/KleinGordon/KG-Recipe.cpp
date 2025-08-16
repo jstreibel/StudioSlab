@@ -20,11 +20,11 @@ namespace Slab::Models {
 
         const auto default_theme = Slab::Graphics::PlotThemeManager::GetDefault();
         auto themes = Slab::Graphics::PlotThemeManager::GetThemes();
-        Str available_themes = plotTheme.getDescription() + " Available themes are: ";
+        Str available_themes = plotTheme.GetDescription() + " Available themes are: ";
         for(auto &theme : themes)
             available_themes += Str("'") + theme + "', ";
 
-        plotTheme.setDescription(available_themes);
+        plotTheme.SetDescription(available_themes);
         plotTheme.SetValue(default_theme);
 
         Interface->AddParameters({&plotTheme,

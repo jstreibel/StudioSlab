@@ -49,8 +49,8 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
                 const auto Parameters = Interface->GetParameters();
                 for (const auto &Parameter : Parameters)
                 {
-                    auto ParamName = Parameter->getCommandLineArgumentName(true);
-                    auto ParamDescr = Parameter->getDescription();
+                    auto ParamName = Parameter->GetCommandLineArgumentName(true);
+                    auto ParamDescr = Parameter->GetDescription();
 
                     ImGui::Text("%s", ParamName.c_str());
                     ImGui::SameLine();

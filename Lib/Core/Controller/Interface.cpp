@@ -48,7 +48,7 @@ namespace Slab::Core {
             throw Exception("Error while inserting parameter in interface.");
         }
 
-        auto quotename = Str("\"") + parameter->getFullCommandLineName() + "\"";
+        auto quotename = Str("\"") + parameter->GetFullCommandLineName() + "\"";
         Log::Note() << "Parameter " << std::setw(25) << std::left << quotename << " registered to interface \"" << GetName()
                     << "\".";
     }
@@ -100,13 +100,13 @@ namespace Slab::Core {
         fix SHORT_NAME = false;
 
         for (auto &param: Parameters) {
-            auto nameShort = param->getCommandLineArgumentName(SHORT_NAME);
-            auto nameLong = param->getCommandLineArgumentName(LONG_NAME);
+            auto nameShort = param->GetCommandLineArgumentName(SHORT_NAME);
+            auto nameLong = param->GetCommandLineArgumentName(LONG_NAME);
 
             if (Contains(ParamNames, nameShort) || Contains(ParamNames, nameLong) ||
                 ParamNames.empty()) {
                 bool isLong = !nameLong.empty() && LongName;
-                ss << param->getCommandLineArgumentName(isLong) << "=" << param->ValueToString() << Separator;
+                ss << param->GetCommandLineArgumentName(isLong) << "=" << param->ValueToString() << Separator;
 
                 paramCount[isLong ? nameLong : nameShort]++;
             }
@@ -126,7 +126,7 @@ namespace Slab::Core {
     void FInterface::SetupFromCommandLine(CLVariablesMap vm) {
         try {
             for (auto param: Parameters) {
-                auto key = param->getCommandLineArgumentName(true);
+                auto key = param->GetCommandLineArgumentName(true);
                 auto val = vm[key];
 
                 param->SetValueFromCommandLine(val);

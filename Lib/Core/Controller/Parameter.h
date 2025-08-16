@@ -11,17 +11,28 @@
 
 namespace Slab::Core {
 
+    struct FParameterDescription {
+        FParameterDescription(const Str& Name, const Str& Description)
+        : FParameterDescription('\0',   Name,          Description) {}
+        FParameterDescription(const char Rubric, const Str& Description)
+        : FParameterDescription(Rubric, ToStr(Rubric), Description) {}
+        FParameterDescription(const char Rubric, const Str& Name, const Str& Description)
+        : Name(Name), Rubric(Rubric), Description(Description) {}
+
+        Str Name;
+        char Rubric;
+        Str Description;
+    };
+
     class FParameter {
-    protected:
-        Str shortCLName, longCLName, fullCLName, description;
 
     public:
         virtual ~FParameter() = default;
-        FParameter(const Str &commandLineArgName, const Str &description);
+        explicit FParameter(FParameterDescription);
 
         virtual auto AddToCommandLineOptionsGroup(CLODEasyInit &group) const -> void = 0;
-        auto getFullCommandLineName() const -> Str;
-        auto getCommandLineArgumentName(bool longNameIfPresent = false) const -> Str;
+        auto GetFullCommandLineName() const -> Str;
+        auto GetCommandLineArgumentName(bool longNameIfPresent = false) const -> Str;
 
         virtual auto ValueToString() const -> Str = 0;
 
@@ -32,16 +43,22 @@ namespace Slab::Core {
         virtual auto GetValueVoid() const -> const void * = 0;
 
         template<typename T>
-        const T& getValueAs() const { return *static_cast<const T*>(GetValueVoid()); }
+        const T& GetValueAs() const { return *static_cast<const T*>(GetValueVoid()); }
 
-        auto getDescription() const -> Str;
+        auto GetDescription() const -> Str;
 
-        void setDescription(Str newDescription);
+        void SetDescription(const Str& NewDescription);
 
-        bool operator<(const FParameter *rhs);
+        bool operator<(const FParameter *rhs) const;
 
         bool operator==(Str str) const;
 
+    private:
+        Str Name;
+        char Rubric;
+        Str Description;
+
+        // Str shortCLName, longCLName, fullCLName, description;
     };
 
     DefinePointers(FParameter)

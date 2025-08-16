@@ -10,7 +10,7 @@
 namespace Slab::Models::MolecularDynamics {
 
     class MolDynNumericConfig : public DynamicsNumericConfig {
-        IntegerParameter::Ptr n = IntegerParameter::New(10000, "steps", "Total timesteps to simulate.");
+        TPointer<IntegerParameter> n = New<IntegerParameter>(10000, FParameterDescription{"steps", "Total timesteps to simulate."});
 
     public:
         MolDynNumericConfig(bool do_register=true);

@@ -41,7 +41,7 @@ namespace Slab::Core {
                                  << ") initialized with the following values from command line:";
 
         for (auto &param: Interface->GetParameters())
-            note << "\n\t\t\t\t\t\t--" << std::left << std::setw(20) << param->getFullCommandLineName() << ": "
+            note << "\n\t\t\t\t\t\t--" << std::left << std::setw(20) << param->GetFullCommandLineName() << ": "
                  << param->ValueToString();
 
         note << Log::Flush;

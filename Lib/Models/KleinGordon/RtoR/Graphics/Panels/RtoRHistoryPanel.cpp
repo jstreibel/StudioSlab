@@ -66,7 +66,7 @@ namespace Slab::Models::KGRtoR {
                 ticks.push_back(Tick{0, "0"});
 
                 fix dk    = M_PI / params->GetL();
-                fix k_0 = dk * kParam->getValueAs<DevFloat>();
+                fix k_0 = dk * kParam->GetValueAs<DevFloat>();
                 auto k_max = M_PI / params->geth();
 
                 DevFloat k_val = k_0;

@@ -15,12 +15,12 @@ namespace Slab::Math {
 
     private:
         Device dev = Device::CPU;
-        IntegerParameter::Ptr deviceChoice = IntegerParameter::New(1, "dev", "Device on which to run simulation.\n"
+        TPointer<IntegerParameter> deviceChoice = New<IntegerParameter>(1, FParameterDescription{"dev", "Device on which to run simulation.\n"
                                                                              "\t0: CPU \n"
                                                                              "\t1: GPU 0 \n"
-                                                                             "\t2: GPU 1 ");
-        IntegerParameter::Ptr nThreads = IntegerParameter::New(1, "th,threads",
-                                                               "Number of threads, in case of CPU usage.");
+                                                                             "\t2: GPU 1 "});
+        TPointer<IntegerParameter> nThreads = New<IntegerParameter>(1, FParameterDescription{"th,threads",
+                                                               "Number of threads, in case of CPU usage."});
 
     public:
         explicit FDeviceConfig(bool doRegister = true);

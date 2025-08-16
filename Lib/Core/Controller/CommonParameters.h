@@ -11,18 +11,12 @@ namespace Slab::Core {
     template<class Type>
     class TParameter : public FParameter {
     protected:
-        Type val;
+        Type Value;
 
     public:
         typedef Type MyType;
 
-        typedef std::shared_ptr<TParameter> Ptr;
-
-        static Ptr New(Type Val, const Str &ArgName, const Str &Descr) {
-            return std::make_unique<TParameter>(Val, ArgName, Descr);
-        }
-
-        TParameter(Type Value, const Str &ArgName, const Str &ShortDescription);
+        TParameter(Type Value, const FParameterDescription& ParameterDescription);
 
         ~TParameter() override;
 
@@ -62,8 +56,8 @@ namespace Slab::Core {
     }
 
     template<class Type>
-    TParameter<Type>::TParameter(Type Value, const Str &ArgName, const Str &ShortDescription)
-            : FParameter(ArgName, ShortDescription), val(Value) {}
+    TParameter<Type>::TParameter(Type Value, const FParameterDescription& ParameterDescription)
+    : FParameter(ParameterDescription), Value(Value) {}
 
     template<class TypeA, class TypeB>
     auto operator*(const TParameter<TypeA> &p1, const TParameter<TypeB> &p2) -> TypeA {
@@ -156,7 +150,18 @@ namespace Slab::Core {
     typedef TParameter<Str> StringParameter;
     typedef TParameter<bool> BoolParameter;
 
+    class EnumParameter final : public IntegerParameter
+    {
+    public:
+        EnumParameter(int Value, FParameterDescription ParameterDescription, const StrVector& values)
+            : TParameter<int>(Value, ParameterDescription),
+              Values(values)
+        {
+        }
 
+    private:
+        StrVector Values;
+    };
 }
 
 #endif // DEFS_H

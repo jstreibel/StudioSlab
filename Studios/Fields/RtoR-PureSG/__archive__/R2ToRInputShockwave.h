@@ -15,11 +15,11 @@ namespace Slab::Math::R2toR {
 
     class R2toRInputShockwave : public R2toR::Builder {
     private:
-        RealParameter::Ptr eps   = RealParameter::New(1., "eps", "Quasi-shockwave 'epsilon' parameter.");
-        RealParameter::Ptr theta = RealParameter::New(0., "theta", "Ellipse rotation.");
-        RealParameter::Ptr E     = RealParameter::New(1., "E", "Total energy.");
-        RealParameter::Ptr e     = RealParameter::New(0., "e", "Eccentricity.");
-        RealParameter::Ptr t0    = RealParameter::New(0., "t0", "Initial time.");
+        TPointer<RealParameter> eps   = New<RealParameter>(1., "eps", "Quasi-shockwave 'epsilon' parameter.");
+        TPointer<RealParameter> theta = New<RealParameter>(0., "theta", "Ellipse rotation.");
+        TPointer<RealParameter> E     = New<RealParameter>(1., "E", "Total energy.");
+        TPointer<RealParameter> e     = New<RealParameter>(0., "e", "Eccentricity.");
+        TPointer<RealParameter> t0    = New<RealParameter>(0., "t0", "Initial time.");
     public:
         R2toRInputShockwave();
         auto getBoundary() -> void * override;
