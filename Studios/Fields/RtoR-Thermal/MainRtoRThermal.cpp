@@ -17,7 +17,7 @@ int run(int argc, const char **argv){
     using namespace Slab::Math;
     using namespace Studios::Fields::RtoRThermal;
 
-    CLInterfaceSelector selector("Dynamic thermal");
+    FCommandLineInterfaceSelector selector("Dynamic thermal");
     Vector<Slab::Models::KGRtoR::FKGRtoR_Recipe*>
             options = { new StatisticalBuilder,
                         new MachineGunBuilder,

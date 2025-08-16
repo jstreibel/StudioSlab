@@ -14,7 +14,7 @@ int run(int argc, const char **argv) {
     using namespace Slab::Core;
 
 
-    CLInterfaceSelector selector("Simulation builder selector");
+    FCommandLineInterfaceSelector selector("Simulation builder selector");
     auto option0 = Slab::New<Studios::Fields::R2toRLeadingDelta::Builder>( );
 
     /* sim 0 */selector.RegisterOption(option0->GetInterface());

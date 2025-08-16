@@ -16,7 +16,7 @@ int run(int argc, const char **argv) {
     using namespace Slab::Math;
     using namespace Slab::Models::KGRtoR;
 
-    CLInterfaceSelector selector("Simulation builder selector");
+    FCommandLineInterfaceSelector selector("Simulation builder selector");
 
     auto option0 = new Studios::PureSG::InputSymmetricOscillon();
     auto option1 = new Studios::PureSG::InputPerturbations();

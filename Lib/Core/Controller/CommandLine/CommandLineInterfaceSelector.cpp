@@ -15,19 +15,19 @@
 namespace Slab::Core {
 
 
-    CLInterfaceSelector::CLInterfaceSelector(Str name) : FInterfaceOwner(name + " interface selector", -1, true) {
+    FCommandLineInterfaceSelector::FCommandLineInterfaceSelector(Str name) : FInterfaceOwner(name + " interface selector", -1, true) {
         Interface->AddParameters({&selection});
     };
 
-    auto CLInterfaceSelector::GetCurrentCandidate() const -> TPointer<FInterface> {
-        if (currentSelection > candidates.size() - 1)
-            throw Str("Unknown sim type: ") + ToStr(currentSelection);
+    auto FCommandLineInterfaceSelector::GetCurrentCandidate() const -> TPointer<FInterface> {
+        if (CurrentSelection > Candidates.size() - 1)
+            throw Str("Unknown sim type: ") + ToStr(CurrentSelection);
 
-        return candidates[currentSelection];
+        return Candidates[CurrentSelection];
     }
 
-    auto CLInterfaceSelector::PreParse(int argc, const char **argv,
-                                       bool registerInInterfaceManager) -> const CLInterfaceSelector & {
+    auto FCommandLineInterfaceSelector::PreParse(int argc, const char **argv,
+                                       bool registerInInterfaceManager) -> const FCommandLineInterfaceSelector & {
         typedef std::string str;
 
         const str simStr("--sim");
@@ -38,9 +38,9 @@ namespace Slab::Core {
                 boost::split(result, arg, [](char c) { return (c == '='); });
 
                 if (result.size() == 1) {
-                    if (i < argc - 1) currentSelection = std::stoi(argv[i + 1]);
+                    if (i < argc - 1) CurrentSelection = std::stoi(argv[i + 1]);
                 } else if (result.size() == 2) {
-                    currentSelection = stoi(result[1]);
+                    CurrentSelection = stoi(result[1]);
                 } else {
                     throw "Command line error.";
                 }
@@ -61,24 +61,24 @@ namespace Slab::Core {
             interfaceManager.RegisterInterface(currSelection);
         }
 
-        generateHelpDescription();
+        GenerateHelpDescription();
 
         return *this;
     }
 
-    void CLInterfaceSelector::RegisterOption(TPointer<FInterface> interface) {
-        candidates.push_back(interface);
+    void FCommandLineInterfaceSelector::RegisterOption(TPointer<FInterface> interface) {
+        Candidates.push_back(interface);
 
-        generateHelpDescription();
+        GenerateHelpDescription();
     }
 
-    auto CLInterfaceSelector::generateHelpDescription() -> void {
+    auto FCommandLineInterfaceSelector::GenerateHelpDescription() -> void {
         StringStream simsHelp;
         simsHelp << "Sim types:\n";
 
         auto curr = GetCurrentCandidate();
-        for (int i = 0; i < candidates.size(); i++) {
-            auto cand = candidates[i];
+        for (int i = 0; i < Candidates.size(); i++) {
+            auto cand = Candidates[i];
             if (*cand == *curr) simsHelp << Log::BoldFace << Log::FGBlue;
             simsHelp << i << ". " << cand->GetName();
             if (*cand == *curr) simsHelp << Log::ResetFormatting;
