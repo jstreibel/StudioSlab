@@ -24,13 +24,8 @@
 using namespace Slab;
 
 class App : public Core::AppBase {
-    Core::MultiStringParameter snapshotDBFolders = Core::MultiStringParameter({"./"}, "db_folders", "the location of the snapshots "
-                                                                                        "database folders");
-
-    Core::StringParameter      criticalParameter = Core::StringParameter("harmonic", "param",
-                                                                         "the critical param of the db set; should "
-                                                                          "be the only changing value both on the "
-                                                                          "filenames and snapshot header");
+    Core::MultiStringParameter snapshotDBFolders = Core::MultiStringParameter({"./"}, Core::FParameterDescription{"db_folders", "the location of the snapshots database folders"});
+    Core::StringParameter      criticalParameter = Core::StringParameter("harmonic",  Core::FParameterDescription{"param", "the critical param of the db set; should be the only changing value both on the filenames and snapshot header"});
 
 public:
     App(int argc, const char **argv)

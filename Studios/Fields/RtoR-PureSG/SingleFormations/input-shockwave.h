@@ -8,8 +8,8 @@ namespace Studios::PureSG {
     private:
 
         unsigned int deltaType = 1;
-        RealParameter a0 = RealParameter(1., "a0", "Shockwave discontinuity value.");
-        RealParameter E = RealParameter(1., "E", "Shockwave simulation initial (and total) energy.");
+        RealParameter a0 = RealParameter(1., FParameterDescription{"a0", "Shockwave discontinuity value."});
+        RealParameter E  = RealParameter(1., FParameterDescription{'E', "Shockwave simulation initial (and total) energy."});
 
     public:
         InputShockwave();

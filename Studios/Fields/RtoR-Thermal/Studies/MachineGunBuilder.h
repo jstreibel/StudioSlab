@@ -10,8 +10,8 @@
 
 namespace Studios::Fields::RtoRThermal {
     class MachineGunBuilder  : public Builder {
-        RealParameter v1 = RealParameter{0.5, "v1", "Left oscillon's border speed."};
-        IntegerParameter n = IntegerParameter{10, "n", "Number of shooting tiny oscillons."};
+        RealParameter v1 =   RealParameter{0.5,   FParameterDescription{"v1", "Left oscillon's border speed."}};
+        IntegerParameter n = IntegerParameter{10, FParameterDescription{'n', "Number of shooting tiny oscillons."}};
 
     public:
         MachineGunBuilder();

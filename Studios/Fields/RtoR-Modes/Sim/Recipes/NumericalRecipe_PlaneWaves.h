@@ -12,9 +12,8 @@
 namespace Modes {
 
     class FNumericalRecipe_PlaneWaves final : public Models::KGRtoR::FKGRtoR_Recipe {
-        RealParameter    Q               = RealParameter   (1.0,  "Q", "Scale-invariant Q=Ak²=Aω²-4/π");
-        IntegerParameter harmonic        = IntegerParameter(10, "harmonic", "Harmonic number 'n'. "
-                                                                           "Wavenumber is computed as k=2πn/L. ");
+        RealParameter    Q               = RealParameter   (1.0,  FParameterDescription{'Q',        "Scale-invariant Q=Ak²=Aω²-4/π"});
+        IntegerParameter harmonic        = IntegerParameter(10,   FParameterDescription{"harmonic", "Harmonic number 'n'. Wavenumber is computed as k=2πn/L. "});
         TPointer<SquareWave> SquareWave;
 
     public:

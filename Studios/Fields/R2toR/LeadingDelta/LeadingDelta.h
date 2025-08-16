@@ -35,15 +35,9 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
 
 class Builder : public Models::KGR2toR::Builder {
-        RealParameter      W_0              = RealParameter(0.1, "W,W_0",
-                                                        "The height of corresponding analytic shockwave, "
-                                                        "which determines scale of the delta as "
-                                                        "C_n=(n-1)/2 W(0) with n=2.");
-        RealParameter      eps              = RealParameter(0.1, "eps",
-                                                        "Half the base width of regularized delta;");
-        RealParameter      deltaDuration    = RealParameter(-1, "delta_duration",
-                                                    "The duration of regularized delta. Negative "
-                                                    "values mean forever;");
+        RealParameter      W_0              = RealParameter(0.1, FParameterDescription{'W', "W_0", "The height of corresponding analytic shockwave, which determines scale of the delta as C_n=(n-1)/2 W(0) with n=2."});
+        RealParameter      eps              = RealParameter(0.1, FParameterDescription{"eps", "Half the base width of regularized delta;"});
+        RealParameter      deltaDuration    = RealParameter(-1,  FParameterDescription{"delta_duration", "The duration of regularized delta. Negative values mean forever;"});
 
         TPointer<RingDeltaFunc> drivingFunc;
 

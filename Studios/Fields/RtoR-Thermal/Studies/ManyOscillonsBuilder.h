@@ -10,7 +10,7 @@
 namespace Studios::Fields::RtoRThermal {
     class ManyOscillonsBuilder  : public Builder {
 
-        IntegerParameter nOscillons = IntegerParameter(100, "n_osc", "Number of oscillons distributed.");
+        IntegerParameter nOscillons = IntegerParameter(100, FParameterDescription{"n_osc", "Number of oscillons distributed."});
     public:
         ManyOscillonsBuilder();
         auto GetBoundary() -> Base::BoundaryConditions_ptr override;

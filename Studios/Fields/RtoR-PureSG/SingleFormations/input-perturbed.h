@@ -10,8 +10,8 @@ namespace Studios::PureSG {
 
 
     class InputPerturbations : public Builder {
-        RealParameter l   = RealParameter{1., "l", "Initial condition scale factor."};
-        RealParameter eps = RealParameter{1., "a", "Perturbation value. a=1 means no perturbation."};
+        RealParameter l   = RealParameter{1., FParameterDescription{'l', "Initial condition scale factor."}};
+        RealParameter eps = RealParameter{1., FParameterDescription{'a', "Perturbation value. a=1 means no perturbation."}};
 
     public:
         InputPerturbations();

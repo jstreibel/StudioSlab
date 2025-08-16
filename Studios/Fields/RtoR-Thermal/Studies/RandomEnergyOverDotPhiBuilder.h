@@ -9,7 +9,7 @@
 
 namespace Studios::Fields::RtoRThermal {
     class RandomEnergyOverDotPhiBuilder : public Builder {
-        RealParameter E = RealParameter{1. / 24, "E", "Total energy over space."};
+        RealParameter E = RealParameter{1. / 24, FParameterDescription{'E', "Total energy over space."}};
 
     public:
         RandomEnergyOverDotPhiBuilder();

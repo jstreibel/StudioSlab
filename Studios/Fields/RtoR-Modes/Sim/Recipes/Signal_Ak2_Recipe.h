@@ -15,8 +15,8 @@ namespace Modes {
 
 
     class Signal_Ak2_Recipe final : public Models::KGRtoR::FKGRtoR_Recipe {
-        RealParameter A              = RealParameter   (1.0,  "A",               "Amplitude of input sine wave");
-        RealParameter omega          = RealParameter(1.0, "w,omega", "Angular frequency 'ω=2πT' of input signal.");
+        RealParameter A              = RealParameter(1.0, FParameterDescription{'A',          "Amplitude of input sine wave"});
+        RealParameter omega          = RealParameter(1.0, FParameterDescription{'w', "omega", "Angular frequency 'ω=2πT' of input signal."});
 
     protected:
         auto BuildOpenGLOutput() -> void * override;

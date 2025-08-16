@@ -10,8 +10,8 @@
 namespace Studios::Fields::RtoRThermal {
 
     class StatisticalBuilder  : public Builder {
-        RealParameter E = RealParameter{1., "E,E0", "Initial distributed energy"};
-        IntegerParameter n = IntegerParameter{100, "n,n_osc", "Number of initial oscillons"};
+        RealParameter E    = RealParameter   {1.,  FParameterDescription{'E', "E0", "Initial distributed energy"}};
+        IntegerParameter n = IntegerParameter{100, FParameterDescription{'n', "n_osc", "Number of initial oscillons"}};
 
     public:
         StatisticalBuilder();

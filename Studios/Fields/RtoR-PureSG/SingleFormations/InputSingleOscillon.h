@@ -12,12 +12,11 @@ namespace Studios::PureSG {
     using namespace Slab::Core;
 
     class InputSingleOscillon : public Builder {
-        RealParameter v      = RealParameter(.0, "v", "Oscillon's border speed.");
-        RealParameter V      = RealParameter(.0, "u", "Oscillon's speed.");
-        RealParameter alpha  = RealParameter(.0, "alpha,a", "Oscillon's initial phase (alpha).");
-        RealParameter lambda = RealParameter(1., "lambda,l", "Oscillon's scale factor (lambda).");
-        BoolParameter mirror = BoolParameter(false, "mirror",
-                                             "Flag to signal use of negative relative signal between input oscillons field value.");
+        RealParameter v      = RealParameter(.0,    FParameterDescription{"v",           "Oscillon's border speed."});
+        RealParameter V      = RealParameter(.0,    FParameterDescription{"u",           "Oscillon's speed."});
+        RealParameter alpha  = RealParameter(.0,    FParameterDescription{'a', "alpha",  "Oscillon's initial phase (alpha)."});
+        RealParameter lambda = RealParameter(1.,    FParameterDescription{'l', "lambda", "Oscillon's scale factor (lambda)."});
+        BoolParameter mirror = BoolParameter(false, FParameterDescription{"mirror",      "Flag to signal use of negative relative signal between input oscillons field value."});
 
     public:
         InputSingleOscillon();
