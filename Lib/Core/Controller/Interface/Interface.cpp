@@ -46,9 +46,9 @@ namespace Slab::Core {
         return *result;
     }
 
-    FMessage FInterface::SendRequest(FRequest Request)
+    FPayloadData FInterface::SendRequest(FPayload Request)
     {
-        return FMessage{"[unknown request]"};
+        return FPayloadData{"[unknown request]"};
     }
 
     UniqueID FInterface::GetUniqueID() const {

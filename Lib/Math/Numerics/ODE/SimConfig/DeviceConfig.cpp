@@ -84,9 +84,9 @@ namespace Slab::Math {
         #endif
     }
 
-    void FDeviceConfig::notifyAllCLArgsSetupFinished() {
+    void FDeviceConfig::NotifyAllCLArgsSetupFinished() {
 
-        FCommandLineInterfaceListener::notifyAllCLArgsSetupFinished();
+        FCommandLineInterfaceListener::NotifyAllCLArgsSetupFinished();
     }
 
 

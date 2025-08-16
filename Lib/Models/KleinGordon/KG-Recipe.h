@@ -83,7 +83,7 @@ namespace Slab::Models {
 
         virtual auto buildSolver()  -> TPointer<Base::LinearStepSolver> = 0;
 
-        auto notifyAllCLArgsSetupFinished() -> void override;
+        auto NotifyAllCLArgsSetupFinished() -> void override;
     };
 
 }

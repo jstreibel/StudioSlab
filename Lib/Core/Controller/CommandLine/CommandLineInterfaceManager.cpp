@@ -80,7 +80,7 @@ namespace Slab::Core {
 
         for (const auto &interface: interfaces) {
             for (auto listener: interface->Listeners)
-                listener->notifyAllCLArgsSetupFinished();
+                listener->NotifyAllCLArgsSetupFinished();
         }
 
         Log::Debug() << "InterfaceManager finished feeding interfaces." << Log::Flush;

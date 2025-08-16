@@ -55,7 +55,7 @@ namespace Slab::Models {
     }
 
 
-    void KGRecipe::notifyAllCLArgsSetupFinished() {
+    void KGRecipe::NotifyAllCLArgsSetupFinished() {
         auto nThreads = DeviceConfig.get_nThreads();
         auto N = KGNumericConfig->getN(); // This is good for 2D too because it is computed in stripes.
         if (N % nThreads != 0)
@@ -69,7 +69,7 @@ namespace Slab::Models {
         else Core::BackendManager::Startup("Headless");
 
 
-        FCommandLineInterfaceListener::notifyAllCLArgsSetupFinished();
+        FCommandLineInterfaceListener::NotifyAllCLArgsSetupFinished();
     }
 
     void KGRecipe::setupForCurrentThread() {

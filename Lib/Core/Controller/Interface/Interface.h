@@ -24,7 +24,7 @@ namespace Slab::Core {
         [[nodiscard]] UniqueID GetUniqueID() const;
 
         virtual
-        FMessage SendRequest(FRequest);
+        FPayloadData SendRequest(FPayload);
 
         [[nodiscard]] auto GetParameters() const -> Vector<TPointer<const FParameter>>;
         [[nodiscard]] auto GetParameter(const Str& Key) const -> TPointer<FParameter>;

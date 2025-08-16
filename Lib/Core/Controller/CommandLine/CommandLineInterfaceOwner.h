@@ -18,7 +18,7 @@ namespace Slab::Core {
         explicit FCommandLineInterfaceOwner(bool IKnowIMustCallLateStart = false);
 
         virtual
-        Vector<FRequest> GetProtocols();
+        Vector<FPayload> GetProtocols();
 
         explicit FCommandLineInterfaceOwner(Str InterfaceName, int Priority = 10000, bool DoRegister = true);
 

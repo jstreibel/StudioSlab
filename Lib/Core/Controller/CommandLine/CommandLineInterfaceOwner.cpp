@@ -61,8 +61,8 @@ namespace Slab::Core {
         return Interface;
     }
 
-    Vector<FRequest> FCommandLineInterfaceOwner::GetProtocols() {
-        return Slab::Vector<FRequest>();
+    Vector<FPayload> FCommandLineInterfaceOwner::GetProtocols() {
+        return Slab::Vector<FPayload>();
     }
 
 

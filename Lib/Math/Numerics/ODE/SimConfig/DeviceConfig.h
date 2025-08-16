@@ -14,7 +14,7 @@ namespace Slab::Math {
         auto NotifyCLArgsSetupFinished() -> void override;
 
     public:
-        auto notifyAllCLArgsSetupFinished() -> void override;
+        auto NotifyAllCLArgsSetupFinished() -> void override;
 
     private:
         Device dev = Device::CPU;

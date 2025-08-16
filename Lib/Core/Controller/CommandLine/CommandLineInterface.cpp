@@ -179,13 +179,13 @@ namespace Slab::Core {
         Description = str;
     }
 
-    FMessage FCommandLineInterface::SendRequest(FRequest Request) const
+    void FCommandLineInterface::SendRequest(const FPayload& Payload) const
     {
-        if(!Contains(Protocols, Request)) {
-            return FMessage{"[unknown request]"};
+        if(!Contains(Protocols, Payload)) {
+
         }
 
-        return pOwner->requestIssued(Request);
+        pOwner->SendMessage(Payload);
     }
 
 

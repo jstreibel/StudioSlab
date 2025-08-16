@@ -109,7 +109,7 @@ namespace Slab::Graphics {
         return artist;
     }
 
-    Core::FMessage Plotter::SendRequest(Core::FRequest request) {
+    Core::FPayloadData Plotter::SendRequest(Core::FPayload request) {
         return FInterface::SendRequest(request);
     }
 

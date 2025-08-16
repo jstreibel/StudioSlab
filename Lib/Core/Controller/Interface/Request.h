@@ -9,15 +9,24 @@
 
 namespace Slab::Core {
 
-    using FCommand = Str;
+    using FPayloadData = Str;
 
-    class FRequest {
-        FCommand Command;
+    class FPayload {
     public:
-        bool operator==(const FRequest&) const;
+        explicit FPayload(FPayloadData);
 
-        bool operator==(const FCommand&) const;
+        bool operator==(const FPayload&) const;
+
+        bool operator==(const FPayloadData&) const;
+
+        static FPayload CommandLineParsingFinished;
+
+    private:
+        FPayloadData Data;
     };
+
+
+
 
 } // Slab::Core
 

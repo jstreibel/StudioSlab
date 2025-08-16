@@ -35,9 +35,9 @@ namespace Slab::Core {
         /**
          * Notify listeners that all interfaces have finished being set up from command line.
          */
-        virtual auto notifyAllCLArgsSetupFinished() -> void {};
+        virtual auto NotifyAllCLArgsSetupFinished() -> void {};
 
-        virtual auto requestIssued(FRequest) -> FMessage {return FMessage{"[no answer]"};};
+        virtual auto SendMessage(FPayload) -> void { };
     };
 
     class FCommandLineInterface final {
@@ -55,7 +55,7 @@ namespace Slab::Core {
 
         ~FCommandLineInterface();
 
-        [[nodiscard]] FMessage SendRequest(FRequest) const;
+        void SendRequest(const FPayload&) const;
 
         [[nodiscard]] auto GetGeneralDescription() const -> Str;
 
@@ -116,7 +116,7 @@ namespace Slab::Core {
 
         Vector<FCommandLineInterfaceListener *> Listeners;
 
-        Vector<FRequest> Protocols;
+        Vector<FPayload> Protocols;
 
         std::set<TPointer<FCommandLineParameter>> Parameters;
         std::set<TPointer<FCommandLineInterface>> SubInterfaces;

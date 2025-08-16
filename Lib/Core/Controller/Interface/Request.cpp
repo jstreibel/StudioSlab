@@ -6,13 +6,19 @@
 
 namespace Slab::Core {
 
-    bool FRequest::operator==(const FRequest &other) const
+    FPayload FPayload::CommandLineParsingFinished = FPayload{"CommandLineParsingFinished"};;
+
+    FPayload::FPayload(FPayloadData Data) : Data(Data)
     {
-        return Command == other.Command;
     }
 
-    bool FRequest::operator==(const FCommand &ReceivedCommand) const
+    bool FPayload::operator==(const FPayload &Other) const
     {
-        return Command == ReceivedCommand;
+        return Data == Other.Data;
+    }
+
+    bool FPayload::operator==(const FPayloadData &PayloadData) const
+    {
+        return Data == PayloadData;
     }
 } // Slab::Core
