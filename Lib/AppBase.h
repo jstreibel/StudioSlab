@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_APPBASE_H
 #define V_SHAPE_APPBASE_H
 
-#include "Core/Controller/CommandLine/CommandLineInterfaceOwner.h"
+#include "Core/Controller/CommandLineInterfaceOwner.h"
 
 
 namespace Slab::Core {

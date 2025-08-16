@@ -5,7 +5,7 @@
 
 #include "RtoRMonitor.h"
 
-#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
+#include "../../../../Core/Controller/CommandLineInterfaceManager.h"
 
 #include "Models/KleinGordon/KG-Solver.h"
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRRealtimePanel.h"
@@ -140,8 +140,8 @@ namespace Slab::Models::KGRtoR {
         static DevFloat stepMod, lastStepMod = 0;
         stepMod = (DevFloat) (LastPacket.GetSteps() % (this->getnSteps() * 100));
 
-        fix t = FCommandLineInterfaceManager::getInstance().getParameter("t")->getValueAs<DevFloat>();
-        fix steps = FCommandLineInterfaceManager::getInstance().getParameter("m")->getValueAs<Int>();
+        fix t = FCommandLineInterfaceManager::GetInstance().GetParameter("t")->getValueAs<DevFloat>();
+        fix steps = FCommandLineInterfaceManager::GetInstance().GetParameter("m")->getValueAs<Int>();
         fix dt = t/(DevFloat)steps;
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
             FullHistoryArtist->set_t((DevFloat)LastPacket.GetSteps()*dt);
@@ -156,8 +156,8 @@ namespace Slab::Models::KGRtoR {
 
         static DevFloat stepMod, lastStepMod = 0;
         stepMod = (DevFloat) (step % (this->getnSteps() * 100));
-        fix h = FCommandLineInterfaceManager::getInstance().getParameter("h")->getValueAs<DevFloat>();
-        fix r = FCommandLineInterfaceManager::getInstance().getParameter("r_dt")->getValueAs<DevFloat>();
+        fix h = FCommandLineInterfaceManager::GetInstance().GetParameter("h")->getValueAs<DevFloat>();
+        fix r = FCommandLineInterfaceManager::GetInstance().GetParameter("r_dt")->getValueAs<DevFloat>();
         fix dt = h*r;
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
             FullSFTHistoryArtist->set_t((DevFloat)LastPacket.GetSteps()*dt);

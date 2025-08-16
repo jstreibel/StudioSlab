@@ -8,7 +8,7 @@
 
 #include "Math/Function/RtoR/Operations/Histogram.h"
 
-#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
+#include "../../../../../Core/Controller/CommandLineInterfaceManager.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/Plot2D/Plotter.h"
 #include "Utils/Threads.h"
@@ -66,7 +66,7 @@ namespace Slab::Models::KGRtoR {
 
             addWindowToColumn(mTemperaturesGraph, 0);
 
-            auto TParam = FCommandLineInterfaceManager::getInstance().getParametersValues({"T"});
+            auto TParam = FCommandLineInterfaceManager::GetInstance().GetParametersValues({"T"});
             if (!TParam.empty()) {
                 auto T = std::stod(TParam[0].second);
                 auto pts = Math::Point2DVec({{-.1,                T},
@@ -166,7 +166,7 @@ namespace Slab::Models::KGRtoR {
         // *************************** MY BEAUTY *****************************
 
         guiWindow.AddVolatileStat("<\\br>");
-        for (const auto &p: FCommandLineInterfaceManager::getInstance().getParametersValues({"T", "k", "i"})) {
+        for (const auto &p: FCommandLineInterfaceManager::GetInstance().GetParametersValues({"T", "k", "i"})) {
             auto name = p.first;
             if (name == "i") name = "transient";
             guiWindow.AddVolatileStat(name + " = " + p.second);

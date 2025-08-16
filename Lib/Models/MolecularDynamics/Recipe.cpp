@@ -13,7 +13,7 @@
 #include "Recipe.h"
 
 #include "Core/SlabCore.h"
-#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
+#include "../../Core/Controller/CommandLineInterfaceManager.h"
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
 

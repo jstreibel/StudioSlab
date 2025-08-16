@@ -5,7 +5,7 @@
 #ifndef FIELDS_PARAMETERBASE_H
 #define FIELDS_PARAMETERBASE_H
 
-#include "Core/Controller/CommandLine/CommandLineParserDefs.h"
+#include "CommandLineParserDefs.h"
 
 #include "Utils/Types.h"
 

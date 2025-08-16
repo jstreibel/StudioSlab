@@ -7,7 +7,7 @@
 #include "AppBase.h"
 #include "CrashPad.h"
 
-#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
+#include "../../../Lib/Core/Controller/CommandLineCommonParameters.h"
 
 #include "Graphics/Window/WindowStyles.h"
 
@@ -33,7 +33,7 @@
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.h"
 
 #include "Graphics/Window/SlabWindowManager.h"
-#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
+#include "Core/Controller/CommandLineArgsManager.h"
 #include "Core/SlabCore.h"
 #include "Graphics/DataViewers/Viewers/Viewer3D.h"
 

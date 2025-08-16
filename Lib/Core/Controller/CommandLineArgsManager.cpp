@@ -21,7 +21,7 @@ namespace Slab::Core {
 
         allOptions.add_options("General")("help", "Print this help.");
 
-        auto interfaces = FCommandLineInterfaceManager::getInstance().getInterfaces();
+        auto interfaces = FCommandLineInterfaceManager::GetInstance().GetInterfaces();
         for (const auto interface: interfaces) {
             BuildOptionsDescription(*interface, allOptions);
             allOptions.add_options();
@@ -29,7 +29,7 @@ namespace Slab::Core {
 
         let result = allOptions.parse(argc, argv);
 
-        FCommandLineInterfaceManager::getInstance().feedInterfaces(result);
+        FCommandLineInterfaceManager::GetInstance().FeedInterfaces(result);
 
         if (result.count("help")) {
             std::cout << allOptions.help();
@@ -52,7 +52,7 @@ namespace Slab::Core {
                 p->AddToCommandLineOptionsGroup(group);
             }
             catch (cxxopts::exceptions::option_already_exists &e) {
-                fix same = FCommandLineInterfaceManager::getInstance().getParameter(p->getCommandLineArgumentName());
+                fix same = FCommandLineInterfaceManager::GetInstance().GetParameter(p->getCommandLineArgumentName());
                 Log::Error() << "Couldn't add CLI option '" << p->getFullCommandLineName() << "' (" << p->getDescription()
                              << "): option already exists as '"
                              << same->getFullCommandLineName() << "' (" << same->getDescription() << ")." << Log::Flush;

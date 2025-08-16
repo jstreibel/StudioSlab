@@ -56,9 +56,9 @@ namespace Slab::Core {
             Log::Info(
                     "InterfaceSelector is registering selected interface (and sub-interfaces if present) in InterfaceManager.");
 
-            auto &interfaceManager = FCommandLineInterfaceManager::getInstance();
+            auto &interfaceManager = FCommandLineInterfaceManager::GetInstance();
 
-            interfaceManager.registerInterface(currSelection);
+            interfaceManager.RegisterInterface(currSelection);
         }
 
         generateHelpDescription();

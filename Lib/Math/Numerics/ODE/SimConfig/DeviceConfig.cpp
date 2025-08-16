@@ -1,6 +1,6 @@
 
 
-#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
+#include "../../../../Core/Controller/CommandLineInterfaceManager.h"
 #include <omp.h>
 #include "DeviceConfig.h"
 

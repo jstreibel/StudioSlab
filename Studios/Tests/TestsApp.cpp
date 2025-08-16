@@ -5,7 +5,7 @@
 #include "TestsApp.h"
 
 #include "AppBase.h"
-#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
+#include "../../Lib/Core/Controller/CommandLineArgsManager.h"
 #include "Graphics/Window/SlabWindowManager.h"
 
 #include "BezierTests.h"

@@ -6,7 +6,10 @@
 
 namespace Slab::Graphics {
 
-    Plotter::Plotter(TPointer<Graphics::FPlot2DWindow> win) : Core::FInterface("Plot2D:Plotter"), plottingWindow(win) {}
+    Plotter::Plotter(TPointer<Graphics::FPlot2DWindow> win) : plottingWindow(win)
+    {
+
+    }
 
     PointSetArtist_ptr Plotter::addPointSet(const Math::PointSet_ptr &data, PlotStyle style, Str name, bool affectsGraphRanges, int zOrder) {
         return Plotter::AddPointSet(plottingWindow, data, style, std::move(name), affectsGraphRanges, zOrder);
@@ -107,10 +110,6 @@ namespace Slab::Graphics {
         graph->AddArtist(artist, zOrder);
 
         return artist;
-    }
-
-    Core::FPayloadData Plotter::SendRequest(Core::FPayload request) {
-        return FInterface::SendRequest(request);
     }
 
 

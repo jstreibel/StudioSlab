@@ -3,8 +3,8 @@
 
 #include "Utils/DeviceConfig.h"
 #include "Utils/TypesGPU.h"
-#include "Core/Controller/CommandLine/CommandLineInterfaceOwner.h"
-#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
+#include "../../../../Core/Controller/CommandLineInterfaceOwner.h"
+#include "../../../../Core/Controller/CommandLineCommonParameters.h"
 
 
 namespace Slab::Math {

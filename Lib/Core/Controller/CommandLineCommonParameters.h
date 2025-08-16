@@ -1,7 +1,7 @@
 #ifndef DEFS_H
 #define DEFS_H
 
-#include "Core/Controller/CommandLine/CommandLineParameter.h"
+#include "CommandLineParameter.h"
 
 // #define PARAMETER_TEMPLATE_SOURCE_ON_HEADER
 

@@ -4,9 +4,9 @@
 
 #include "AppBase.h"
 
-#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
+#include "Core/Controller/CommandLineArgsManager.h"
 
-#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
+#include "Core/Controller/CommandLineInterfaceManager.h"
 #include "Core/Tools/Log.h"
 #include "Utils/Compiler.h"
 

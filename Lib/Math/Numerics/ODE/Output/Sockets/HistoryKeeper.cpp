@@ -3,7 +3,7 @@
 #include "Math/Numerics/Socket.h"
 #include "Core/Tools/Log.h"
 
-#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
+#include "../../../../../Core/Controller/CommandLineInterfaceManager.h"
 
 
 namespace Slab::Math {
@@ -73,7 +73,7 @@ namespace Slab::Math {
         oss << R"(, "data_channels": 2)";
         oss << R"str(, "data_channel_names": ("phi", "ddtphi"), )str";
 
-        oss << ", " << Core::FCommandLineInterfaceManager::getInstance().renderAsPythonDictionaryEntries();
+        oss << ", " << Core::FCommandLineInterfaceManager::GetInstance().RenderAsPythonDictionaryEntries();
         oss << "}" << std::endl;
 
         return oss.str();

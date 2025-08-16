@@ -16,18 +16,17 @@
 #include "Graphics/Plot2D/Artists/R2SectionArtist.h"
 
 #include "Plot2DWindow.h"
-#include "Core/Controller/Interface/Interface.h"
 
 
 namespace Slab::Graphics {
 
-    class Plotter final : public Core::FInterface {
+    class Plotter final {
         TPointer<FPlot2DWindow> plottingWindow;
 
     public:
         explicit Plotter(TPointer<FPlot2DWindow>);
 
-        Core::FPayloadData SendRequest(Core::FPayload request) override;
+        // Core::FPayloadData SendRequest(Core::FPayload request) override;
 
         auto addPointSet             (const Math::PointSet_ptr&,               PlotStyle,          Str name="", bool affectsGraphRanges=true, int zOrder=0) -> PointSetArtist_ptr;
         auto addCurve                (const Math::RtoR2::ParametricCurve_ptr&, PlotStyle,   const Str& name, int zOrder=0) -> ParametricCurve2DArtist_ptr;

@@ -5,12 +5,11 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-#include "Controller/Interface/Interface.h"
 #include "Utils/String.h"
 
 namespace Slab::Core {
 
-    using FObject = FInterface;
+    // using FObject = FInterface;
 
 } // Slab::Core
 

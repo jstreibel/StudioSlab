@@ -1,7 +1,7 @@
 
 
 #include "CrashPad.h"
-#include "Core/Controller/CommandLine/CommandLineInterfaceSelector.h"
+#include "../../../Lib/Core/Controller/CommandLineInterfaceSelector.h"
 
 #include "MathApp.h"
 

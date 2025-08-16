@@ -8,7 +8,7 @@
 
 #include "imgui_internal.h"
 #include "3rdParty/ImGui.h"
-#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
+#include "../../Core/Controller/CommandLineInterfaceManager.h"
 #include "Core/Backend/BackendManager.h"
 
 #include "Math/SlabMath.h"
@@ -79,7 +79,7 @@ namespace Slab::Graphics {
         }
 
 
-        if (const auto AllInterfaces = Core::FCommandLineInterfaceManager::getInstance().getInterfaces();
+        if (const auto AllInterfaces = Core::FCommandLineInterfaceManager::GetInstance().GetInterfaces();
             !AllInterfaces.empty() && ImGui::CollapsingHeader("Interfaces")) {
 
             for (auto &Interface: AllInterfaces) {

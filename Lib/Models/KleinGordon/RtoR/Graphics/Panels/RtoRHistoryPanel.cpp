@@ -3,7 +3,7 @@
 //
 
 #include "3rdParty/ImGui.h"
-#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
+#include "../../../../../Core/Controller/CommandLineInterfaceManager.h"
 
 #include "RtoRHistoryPanel.h"
 
@@ -56,7 +56,7 @@ namespace Slab::Models::KGRtoR {
         AddWindow(kSection);
 
         {
-            auto kParam = Core::FCommandLineInterfaceManager::getInstance().getParameter("harmonic");
+            auto kParam = Core::FCommandLineInterfaceManager::GetInstance().GetParameter("harmonic");
 
             if(kParam != nullptr) {
                 using Tick = Graphics::FAxisArtist::Tick;

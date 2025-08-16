@@ -6,8 +6,8 @@
 #define FIELDS_INTERFACE_H
 
 #include "CommandLineParameter.h"
-#include "Core/Controller/Interface/Payload.h"
-#include "Core/Controller/Interface/Message.h"
+#include "Core/Controller/Payload.h"
+#include "Message.h"
 #include "Utils/List.h"
 
 #include <set>

@@ -6,7 +6,7 @@
 #define STUDIOSLAB_DYNAMICSNUMERICCONFIG_H
 
 #include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
-#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
+#include "../Core/Controller/CommandLineCommonParameters.h"
 #include "Utils/List.h"
 
 namespace Slab::Models {

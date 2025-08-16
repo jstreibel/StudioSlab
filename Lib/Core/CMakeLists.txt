@@ -17,16 +17,10 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		${CORE_CONTROLLER_SOURCES}
 		SlabCore.h
 		Backend/Modules/Modules.cpp
-		Controller/Interface/Payload.cpp
-		Controller/Interface/Payload.h
-		Controller/Interface/Message.cpp
-		Controller/Interface/Message.h
-		Controller/Interface/Interface.cpp
-		Controller/Interface/Interface.h
-		Controller/Interface/Parameter.cpp
-		Controller/Interface/Parameter.h
-		Controller/Interface/InterfaceManager.cpp
-		Controller/Interface/InterfaceManager.h
+		Controller/Payload.cpp
+		Controller/Payload.h
+		Controller/Message.cpp
+		Controller/Message.h
         Tools/UniqueObject.cpp
         Tools/UniqueObject.h
 		Backend/Backend.cpp

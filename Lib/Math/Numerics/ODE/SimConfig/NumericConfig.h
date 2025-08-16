@@ -8,8 +8,8 @@
 #ifndef PARAMS_H_
 #define PARAMS_H_
 
-#include "Core/Controller/CommandLine/CommandLineInterfaceOwner.h"
-#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
+#include "../../../../Core/Controller/CommandLineInterfaceOwner.h"
+#include "../../../../Core/Controller/CommandLineCommonParameters.h"
 #include "Utils/Types.h"
 #include "Utils/NativeTypes.h"
 #include "Utils/List.h"

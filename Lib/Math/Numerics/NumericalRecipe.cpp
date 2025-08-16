@@ -2,7 +2,7 @@
 // Created by joao on 10/17/21.
 //
 
-#include "Core/Controller/CommandLine/CommandLineInterfaceSelector.h"
+#include "../../Core/Controller/CommandLineInterfaceSelector.h"
 #include "Core/SlabCore.h"
 #include "Core/Tools/Log.h"
 #include "NumericalRecipe.h"

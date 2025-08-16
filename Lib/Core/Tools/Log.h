@@ -9,8 +9,8 @@
 #include "Utils/Types.h"
 #include "Utils/Timer.h"
 
-#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
-#include "Core/Controller/CommandLine/CommandLineInterfaceOwner.h"
+#include "../Controller/CommandLineCommonParameters.h"
+#include "../Controller/CommandLineInterfaceOwner.h"
 #include "Utils/Singleton.h"
 
 #include <iostream>

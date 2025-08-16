@@ -11,7 +11,7 @@
 
 #include "Math/Numerics/Metropolis/XYMetropolisAlgorithm.h"
 #include "Models/XY/SingleSim/SingleSimViewController.h"
-#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
+#include "../../Lib/Core/Controller/CommandLineArgsManager.h"
 #include "Graphics/Backend/SFML/SFMLSystemWindow.h"
 #include "Graphics/SlabGraphics.h"
 #include "Core/SlabCore.h"

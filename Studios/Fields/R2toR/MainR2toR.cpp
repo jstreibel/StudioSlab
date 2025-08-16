@@ -3,8 +3,8 @@
 //
 
 #include "CrashPad.h"
-#include "Core/Controller/CommandLine/CommandLineInterfaceSelector.h"
-#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
+#include "Core/Controller/CommandLineInterfaceSelector.h"
+#include "../../../Lib/Core/Controller/CommandLineInterfaceManager.h"
 #include "LeadingDelta/LeadingDelta.h"
 
 #include "MathApp.h"
@@ -27,7 +27,7 @@ int run(int argc, const char **argv) {
     auto input    = dynamic_cast<Models::KGR2toR::Builder*>(selectedInterface->GetOwner());
     auto input_ptr = TPointer<Models::KGR2toR::Builder>(input);
 
-    Slab::Core::FCommandLineInterfaceManager::getInstance().registerInterface(input->GetInterface());
+    Slab::Core::FCommandLineInterfaceManager::GetInstance().RegisterInterface(input->GetInterface());
 
     auto prog = Math::MathApp(argc, argv, input_ptr);
 

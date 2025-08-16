@@ -4,10 +4,10 @@
 #include "Stepper.h"
 #include "Math/Numerics/Socket.h"
 
-#include "Core/Controller/CommandLine/CommandLineInterface.h"
+#include "../../Core/Controller/CommandLineInterface.h"
 #include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
 #include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
-#include "Core/Controller/CommandLine/CommandLineInterfaceOwner.h"
+#include "../../Core/Controller/CommandLineInterfaceOwner.h"
 
 namespace Slab::Math::Base {
 

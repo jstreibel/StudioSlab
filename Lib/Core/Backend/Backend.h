@@ -4,7 +4,7 @@
 #include "Modules/Modules.h"
 #include "Modules/Module.h"
 
-#include "Core/Controller/CommandLine/CommandLineInterfaceOwner.h"
+#include "../Controller/CommandLineInterfaceOwner.h"
 
 
 
