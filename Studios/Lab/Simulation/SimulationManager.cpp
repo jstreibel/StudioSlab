@@ -18,6 +18,30 @@ FSimulationManager::FSimulationManager(Slab::TPointer<Slab::Graphics::FImGuiCont
 
 }
 
+void FSimulationManager::ExposeInterface(const Slab::TPointer<Slab::Core::FInterface>& Interface)
+{
+    ImGui::Text("%s", Interface->GetName().c_str());
+    ImGui::SameLine();
+    ImGui::TextDisabled("%s", Interface->GetGeneralDescription().c_str());
+
+    const auto Parameters = Interface->GetParameters();
+    for (const auto &Parameter : Parameters)
+    {
+        auto ParamName = Parameter->GetName();
+        auto ParamDescr = Parameter->GetDescription();
+
+        ImGui::Text(". %s: ", ParamName.c_str());
+        ImGui::SameLine();
+        ImGui::TextDisabled("%s", ParamDescr.c_str());
+    }
+
+    ImGui::NewLine();
+
+    const auto SubInterfaces = Interface->GetSubInterfaces();
+    for (const auto &SubInterface : SubInterfaces)
+        ExposeInterface(SubInterface);
+}
+
 bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& platform_window)
 {
     const auto ItemLocation = Slab::Graphics::MainMenuLocation{"Simulation", "Recipes", "𝕄²↦ℝ"};
@@ -43,22 +67,8 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
             for (const auto &Recipe : Recipes)
             {
                 const auto Interface = Recipe->GetInterface();
-                ImGui::Text("%s", Interface->GetName().c_str());
-                ImGui::SameLine();
-                ImGui::TextDisabled("%s", Interface->GetGeneralDescription().c_str());
 
-                ImGui::Separator();
-
-                const auto Parameters = Interface->GetParameters();
-                for (const auto &Parameter : Parameters)
-                {
-                    auto ParamName = Parameter->GetName();
-                    auto ParamDescr = Parameter->GetDescription();
-
-                    ImGui::Text("%s", ParamName.c_str());
-                    ImGui::SameLine();
-                    ImGui::TextDisabled("%s", ParamDescr.c_str());
-                }
+                ExposeInterface(Interface);
 
                 ImGui::Separator();
             }
