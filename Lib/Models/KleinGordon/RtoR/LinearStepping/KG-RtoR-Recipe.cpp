@@ -48,6 +48,14 @@ constexpr const Slab::CountType MAX_SNAPSHOTS = 200;
 
 namespace Slab::Models::KGRtoR {
 
+    FKGRtoRPotentialOptions::FKGRtoRPotentialOptions(bool bDoRegister)
+    : FInterfaceOwner("Options for the KG Potential", 10000, false)
+    {
+        Interface->AddParameters({&Potential, &MassSquared, &N_num});
+
+        if (bDoRegister) RegisterCLInterface(Interface);
+    }
+
     class Filter1D final : public Math::SpaceFilterBase{
         DimensionMetaData dim;
     public:
@@ -70,9 +78,11 @@ namespace Slab::Models::KGRtoR {
     };
 
     FKGRtoR_Recipe::FKGRtoR_Recipe(const Str &name, const Str& generalDescription, bool doRegister)
-            : Models::KGRecipe(New<FKGNumericConfig>(false), "RtoR-" + name, generalDescription,
-                               DONT_REGISTER_IMMEDIATELY) {
-        Interface->AddParameters({&Potential, &massSqr, &N_num, &BoundaryConditions});
+    : KGRecipe(New<FKGNumericConfig>(false), "RtoR-" + name, generalDescription, DONT_REGISTER_IMMEDIATELY)
+    , PotentialOptions(false) {
+        Interface->AddParameters({&BoundaryConditions});
+
+        Interface->AddSubInterface(PotentialOptions.GetInterface());
 
         if (doRegister) RegisterCLInterface(Interface);
     }
@@ -85,8 +95,8 @@ namespace Slab::Models::KGRtoR {
 
         auto outputFileName = Common::GetPWD() + "/" + this->SuggestFileName();
 
-        const auto shouldOutputOpenGL = *VisualMonitor;
-        const auto shouldOutputHistory = !*NoHistoryToFile;
+        const auto shouldOutputOpenGL = *OutputOptions.VisualMonitor;
+        const auto shouldOutputHistory = !*OutputOptions.NoHistoryToFile;
 
         // if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
         // else                Core::BackendManager::Startup("Headless");
@@ -98,27 +108,27 @@ namespace Slab::Models::KGRtoR {
         fix N = static_cast<DevFloat>(p.getN());
         fix L = p.GetL();
         fix xMin = p.getxMin();
-        fix Nₒᵤₜ = *OutputResolution > N ? N : *OutputResolution;
+        fix Nₒᵤₜ = *OutputOptions.OutputResolution > N ? N : *OutputOptions.OutputResolution;
         fix r = p.getr();
 
         /* ****************************************************************************************
            *************************** SNAPSHOT OUTPUT ********************************************
            **************************************************************************************** */
-        if (*TakeSnapshot) {
+        if (*OutputOptions.TakeSnapshot) {
             const auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + SuggestFileName();
             Sockets.emplace_back(Slab::New<SnapshotOutput>(snapshotFilename));
         }
-        if (*TakeSpaceDFTSnapshot) {
+        if (*OutputOptions.TakeSpaceDFTSnapshot) {
             const auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + SuggestFileName();
             Sockets.emplace_back(Slab::New<DFTSnapshotOutput>(N, L, snapshotFilename));
         }
-        if(*TakeTimeDFTSnapshot) {
+        if(*OutputOptions.TakeTimeDFTSnapshot) {
             auto time_dftsnapshots = getTimeDFTSnapshots();
 
             for(auto &socket : time_dftsnapshots)
@@ -133,7 +143,7 @@ namespace Slab::Models::KGRtoR {
         if (shouldOutputHistory) {
             OutputFormatterBase *outputFilter = new BinarySOF;
 
-            const auto dimData = DimensionMetaData({(unsigned) *OutputResolution}, {L / *OutputResolution});
+            const auto dimData = DimensionMetaData({(unsigned) *OutputOptions.OutputResolution}, {L / *OutputOptions.OutputResolution});
             // auto *spaceFilter = new ResolutionReductionFilter(dimData);
             auto *spaceFilter = new Filter1D(dimData);
 
@@ -193,17 +203,18 @@ namespace Slab::Models::KGRtoR {
 
         fix t = c.gett();
 
-        fix Δt    = *TimeDFTSnapshot_tDelta  <= 0 ? t : *TimeDFTSnapshot_tDelta;
-        fix t_len = *TimeDFTSnapshot_tLength <= 0 ? t : *TimeDFTSnapshot_tLength;
+        fix Δt    = *OutputOptions.TimeDFTSnapshot_tDelta  <= 0 ? t : *OutputOptions.TimeDFTSnapshot_tDelta;
+        fix t_len = *OutputOptions.TimeDFTSnapshot_tLength <= 0 ? t : *OutputOptions.TimeDFTSnapshot_tLength;
 
         const CountType snapshot_count = std::ceil(t / Δt);
 
         if(snapshot_count>MAX_SNAPSHOTS)
             throw Exception(
-                    Str("Error generating time-domain dft snapshots. The value of '--") +
-                            TimeDFTSnapshot_tDelta.GetCommandLineArgumentName(true) + "' is " + TimeDFTSnapshot_tDelta.ValueToString() +
-                    ", yielding a snapshot count of " + ToStr(snapshot_count) + ", which is above the " +
-                ToStr(MAX_SNAPSHOTS) + " limit.");
+                Str("Error generating time-domain dft snapshots. The value of '--")
+                + OutputOptions.TimeDFTSnapshot_tDelta.GetCommandLineArgumentName(true)
+                + "' is " + OutputOptions.TimeDFTSnapshot_tDelta.ValueToString()
+                + ", yielding a snapshot count of " + ToStr(snapshot_count)
+                + ", which is above the " + ToStr(MAX_SNAPSHOTS) + " limit.");
 
         FRealVector x_locations;
         {
@@ -319,19 +330,19 @@ namespace Slab::Models::KGRtoR {
     }
 
     RtoR::Function_ptr FKGRtoR_Recipe::getPotential() const {
-        if (*Potential == MASSLESS_WAVE_EQ) {
+        if (*PotentialOptions.Potential == MASSLESS_WAVE_EQ) {
             return Slab::New<RtoR::NullFunction>();
         }
-        if (*Potential == KLEIN_GORDON_POTENTIAL) {
-            return Slab::New<RtoR::HarmonicPotential>(*massSqr);
+        if (*PotentialOptions.Potential == KLEIN_GORDON_POTENTIAL) {
+            return Slab::New<RtoR::HarmonicPotential>(*PotentialOptions.MassSquared);
         }
-        if (*Potential == SIGNUM_GORDON_POTENTIAL) {
+        if (*PotentialOptions.Potential == SIGNUM_GORDON_POTENTIAL) {
             return Slab::New<RtoR::AbsFunction>();
         }
-        if (*Potential == REGULAR_SG_POTENTIAL) {
-            fix m2 = *massSqr;
+        if (*PotentialOptions.Potential == REGULAR_SG_POTENTIAL) {
+            fix m2 = *PotentialOptions.MassSquared;
             fix A = 4/M_PI/m2;
-            return Slab::New<Slab::Math::RtoR::NonlinearKGPotential>(A, *N_num, 1.0);
+            return Slab::New<RtoR::NonlinearKGPotential>(A, *PotentialOptions.N_num, 1.0);
         }
 
         throw Exception("Unknown potential");

@@ -11,23 +11,19 @@
 #include "Core/SlabCore.h"
 
 namespace Slab::Models {
+    FKGOutputOptions::FKGOutputOptions(bool bDoRegister)
+    : FInterfaceOwner("Output Options", 0, DONT_REGISTER)
+    {
+        const auto DefaultTheme = Graphics::PlotThemeManager::GetDefault();
+        auto Themes = Graphics::PlotThemeManager::GetThemes();
+        Str AvailableThemes = PlotTheme.GetDescription() + " Available themes are: ";
+        for(auto &theme : Themes)
+            AvailableThemes += Str("'") + theme + "', ";
 
-    KGRecipe::KGRecipe(const TPointer<FKGNumericConfig>& numeric_config,
-                       const Str &name, const Str& generalDescription, bool doRegister)
-            : FNumericalRecipe(numeric_config, name, generalDescription, DONT_REGISTER)
-            , KGNumericConfig(numeric_config)
-            , DeviceConfig(DONT_REGISTER){
+        PlotTheme.SetDescription(AvailableThemes);
+        PlotTheme.SetValue(DefaultTheme);
 
-        const auto default_theme = Slab::Graphics::PlotThemeManager::GetDefault();
-        auto themes = Slab::Graphics::PlotThemeManager::GetThemes();
-        Str available_themes = plotTheme.GetDescription() + " Available themes are: ";
-        for(auto &theme : themes)
-            available_themes += Str("'") + theme + "', ";
-
-        plotTheme.SetDescription(available_themes);
-        plotTheme.SetValue(default_theme);
-
-        Interface->AddParameters({&plotTheme,
+        Interface->AddParameters({&PlotTheme,
                                   &NoHistoryToFile,
                                   &OutputResolution,
                                   &VisualMonitor,
@@ -41,7 +37,30 @@ namespace Slab::Models {
                                   // &snapshotTime,
                                   });
 
+        if (bDoRegister) RegisterToManager();
+    }
+
+    void FKGOutputOptions::NotifyAllCLArgsSetupFinished()
+    {
+        FInterfaceOwner::NotifyAllCLArgsSetupFinished();
+
+        if(*VisualMonitor) {
+            StartBackend("GLFW");
+            Graphics::PlotThemeManager::SetTheme(*PlotTheme);
+        }
+        else BackendManager::Startup("Headless");
+    }
+
+
+    KGRecipe::KGRecipe(const TPointer<FKGNumericConfig>& numeric_config,
+                       const Str &name, const Str& generalDescription, bool doRegister)
+            : FNumericalRecipe(numeric_config, name, generalDescription, DONT_REGISTER)
+            , KGNumericConfig(numeric_config)
+            , DeviceConfig(DONT_REGISTER)
+            , OutputOptions(DONT_REGISTER)
+    {
         Interface->AddSubInterface(DeviceConfig.GetInterface());
+        Interface->AddSubInterface(OutputOptions.GetInterface());
 
         if (doRegister) {
             RegisterToManager();
@@ -61,13 +80,6 @@ namespace Slab::Models {
         if (N % nThreads != 0)
             throw Exception("Bad assertion N%nThreads. Expected 0 got "
                             + ToStr(N % nThreads) + ".");
-
-        if(*VisualMonitor) {
-            Core::StartBackend("GLFW");
-            Graphics::PlotThemeManager::SetTheme(*plotTheme);
-        }
-        else Core::BackendManager::Startup("Headless");
-
 
         FNumericalRecipe::NotifyAllCLArgsSetupFinished();
     }

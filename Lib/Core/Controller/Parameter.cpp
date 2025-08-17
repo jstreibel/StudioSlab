@@ -10,11 +10,15 @@
 
 
 namespace Slab::Core {
-
     FParameter::FParameter(const FParameterDescription& Description)
     : Description(Description)
     {
 
+    }
+
+    Str FParameter::GetName() const
+    {
+        return Description.Name;
     }
 
     auto FParameter::GetFullCommandLineName() const -> Str {

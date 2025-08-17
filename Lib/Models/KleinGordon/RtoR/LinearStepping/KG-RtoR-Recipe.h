@@ -17,20 +17,30 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Core;
 
-    class FKGRtoR_Recipe : public Slab::Models::KGRecipe {
+    class FKGRtoRPotentialOptions : public FInterfaceOwner
+    {
+    public:
+        IntegerParameter Potential = IntegerParameter(2, FParameterDescription{'V', "Potential",                      "Potential of wave equation:"
+                                                                                                                      "\n\t 0: massless"
+                                                                                                                      "\n\t 1: Klein-Gordon"
+                                                                                                                      "\n\t 2: signum-Gordon"
+                                                                                                                      "\n\t 3: regular SG expansion", FLongOptionFormatting{false}});
+        RealParameter    MassSquared =        RealParameter   (1.0, FParameterDescription{'M', "Mass Squared",        "Squared mass of the Klein-Gordon potential (on-shell ω²-k²-m²=0), if chosen.", FLongOptionFormatting{true}});
+        IntegerParameter N_num =              IntegerParameter(15,  FParameterDescription{'O', "expansion N",         "Order of regular SG expansion."});
+
+        FKGRtoRPotentialOptions(bool bDoRegister);
+    };
+
+    class FKGRtoR_Recipe : public KGRecipe {
     protected:
-        IntegerParameter Potential = IntegerParameter(2, FParameterDescription{'V', "potential",                     "Potential of wave equation:"
-                                                                                                                     "\n\t 0: massless"
-                                                                                                                     "\n\t 1: Klein-Gordon"
-                                                                                                                     "\n\t 2: signum-Gordon"
-                                                                                                                     "\n\t 3: regular SG expansion"});
-        RealParameter massSqr  =              RealParameter   (1.0, FParameterDescription{'M', "massSqr",            "Squared mass of the Klein-Gordon potential (on-shell ω²-k²-m²=0), if chosen."});
-        IntegerParameter N_num =              IntegerParameter(15,  FParameterDescription{'O', "N_num",              "Order of regular SG expansion."});
-        IntegerParameter BoundaryConditions = IntegerParameter(0,   FParameterDescription{'b', "boundary_condition", "Boundary space conditions (affects Laplacian): "
-                                                                                                                     "\n\t 0: fixed"
-                                                                                                                     "\n\t 1: periodic"});
+        IntegerParameter BoundaryConditions = IntegerParameter(0,   FParameterDescription{'b', "Boundary Conditions", "Boundary space conditions (affects Laplacian): "
+                                                                                                                      "\n\t 0: fixed"
+                                                                                                                      "\n\t 1: periodic",
+                                                                                                                      FLongOptionFormatting{true}});
 
         bool force_periodicBC = false;          // Gambiarris (ish)
+
+        FKGRtoRPotentialOptions PotentialOptions;
 
         Vector<TPointer<Socket>> getTimeDFTSnapshots();
         auto _newTimeDFTSnapshotOutput(const Str& folder, DevFloat t_start, DevFloat t_end, const FRealVector &x_locations) const -> TPointer<Socket>;

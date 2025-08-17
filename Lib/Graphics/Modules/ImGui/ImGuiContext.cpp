@@ -216,14 +216,14 @@ namespace Slab::Graphics {
 
     bool FImGuiContext::NotifyRender(const FPlatformWindow &Window) {
         AddMainMenuItem(MainMenuItem{
-            MainMenuLocation{"Window"},
+            MainMenuLocation{"System"},
             {
                 MainMenuLeafEntry{"Show metrics", "Alt+m", false},
             },
             [&Window, this](const Str& Item)
             {
                 if (Item == "Close") const_cast<FPlatformWindow*>(&Window)->SignalClose();
-                else if (Item == "Show metrics") bShowMetricsWindow = !bShowMetricsWindow;
+                else if (Item == "GUI metrics") bShowMetricsWindow = !bShowMetricsWindow;
             }
         });
 

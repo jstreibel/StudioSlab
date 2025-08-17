@@ -87,7 +87,7 @@ namespace Modes {
         fix dk = 2*M_PI/L;
         fix k_0 = dk*this->k.GetValue();
         if(*omega < 0) {
-            fix m2 = *massSqr;
+            fix m2 = *PotentialOptions.MassSquared;
             fix ohm_temp = sqrt(k_0*k_0 + m2);
             omega.SetValue(ohm_temp/dk);
 

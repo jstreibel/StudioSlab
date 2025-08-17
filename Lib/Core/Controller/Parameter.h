@@ -33,6 +33,8 @@ namespace Slab::Core {
         virtual ~FParameter() = default;
         explicit FParameter(const FParameterDescription&);
 
+        Str GetName() const;
+
         virtual auto AddToCommandLineOptionsGroup(CLODEasyInit &group) const -> void = 0;
         auto GetFullCommandLineName() const -> Str;
         auto GetCommandLineArgumentName(bool longNameIfPresent = false) const -> Str;

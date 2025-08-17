@@ -44,18 +44,20 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
             {
                 const auto Interface = Recipe->GetInterface();
                 ImGui::Text("%s", Interface->GetName().c_str());
-                ImGui::Text("%s", Interface->GetGeneralDescription().c_str());
+                ImGui::SameLine();
+                ImGui::TextDisabled("%s", Interface->GetGeneralDescription().c_str());
+
+                ImGui::Separator();
 
                 const auto Parameters = Interface->GetParameters();
                 for (const auto &Parameter : Parameters)
                 {
-                    auto ParamName = Parameter->GetCommandLineArgumentName(true);
+                    auto ParamName = Parameter->GetName();
                     auto ParamDescr = Parameter->GetDescription();
 
                     ImGui::Text("%s", ParamName.c_str());
                     ImGui::SameLine();
                     ImGui::TextDisabled("%s", ParamDescr.c_str());
-
                 }
 
                 ImGui::Separator();

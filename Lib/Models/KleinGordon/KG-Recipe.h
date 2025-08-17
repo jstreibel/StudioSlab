@@ -18,9 +18,10 @@ namespace Slab::Models {
     using namespace Slab::Core;
     using namespace Slab::Math;
 
-    class KGRecipe : public Base::FNumericalRecipe {
-    protected:
-        StringParameter  plotTheme                    = StringParameter("Dark", FParameterDescription{"plot_theme", "Choose plotting theme."});
+    class FKGOutputOptions final : public FInterfaceOwner
+    {
+    public:
+        StringParameter  PlotTheme                    = StringParameter("Dark", FParameterDescription{"plot_theme", "Choose plotting theme."});
         BoolParameter    TakeSnapshot                   = BoolParameter(false,  FParameterDescription{'s', "snapshot", "Take a snapshot of simulation at the end."});
         RealParameter    snapshotTime                   = RealParameter(-1.0,   FParameterDescription{"snapshotTime", "Force snapshot to be taken at some time prior to end (after will result in no output."});
         BoolParameter    TakeSpaceDFTSnapshot           = BoolParameter(false,  FParameterDescription{"dft_snapshot", "Take a snapshot of discrete Fourier transform (DFT) of field at the end."});
@@ -33,8 +34,17 @@ namespace Slab::Models {
         BoolParameter    VisualMonitor                  = BoolParameter(false,  FParameterDescription{'g', "visual_monitor", "Monitor simulation visually."});
         BoolParameter    VisualMonitor_startPaused      = BoolParameter(false,  FParameterDescription{'p', "visual_monitor_paused", "Start visual monitored simulation paused."});
 
+        explicit FKGOutputOptions(bool bDoRegister);
+
+    protected:
+        auto NotifyAllCLArgsSetupFinished() -> void override;
+    };
+
+    class KGRecipe : public Base::FNumericalRecipe {
+    protected:
         TPointer<FKGNumericConfig> KGNumericConfig;
-        Math::FDeviceConfig DeviceConfig;
+        FDeviceConfig DeviceConfig;
+        FKGOutputOptions OutputOptions;
     public:
         explicit KGRecipe(const TPointer<FKGNumericConfig>& numeric_config, const Str& name="Klein-Gordon",
                           const Str& generalDescription="The Klein-Gordon scalar field equation builder",

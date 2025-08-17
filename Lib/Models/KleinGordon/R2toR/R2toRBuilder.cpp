@@ -40,7 +40,7 @@ namespace Slab::Models::KGR2toR {
         Vector<TPointer<Socket>> sockets;
 
         ///********************************************************************************************/
-        if(*TakeSnapshot) {
+        if(*OutputOptions.TakeSnapshot) {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
@@ -57,7 +57,7 @@ namespace Slab::Models::KGR2toR {
 
 
         ///********************************************************************************************/
-        if (!*NoHistoryToFile) {
+        if (!*OutputOptions.NoHistoryToFile) {
             // const DevFloat t = kg_numeric_config->gett();
 
             RtoR2::StraightLine section;
@@ -74,7 +74,7 @@ namespace Slab::Models::KGR2toR {
                 section = RtoR2::StraightLine(R * x0, R * xf);
             }
 
-            const UInt outputResolutionX = *OutputResolution;
+            const UInt outputResolutionX = *OutputOptions.OutputResolution;
 
             OutputFormatterBase *outputFilter = new BinarySOF;
 
@@ -96,7 +96,7 @@ namespace Slab::Models::KGR2toR {
 
 
         ///********************************************************************************************/
-        if (*VisualMonitor) {
+        if (*OutputOptions.VisualMonitor) {
             auto Backend = Slab::Graphics::GetGraphicsBackend();
 
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
