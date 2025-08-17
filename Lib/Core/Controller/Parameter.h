@@ -5,6 +5,7 @@
 #ifndef FIELDS_PARAMETERBASE_H
 #define FIELDS_PARAMETERBASE_H
 
+#include "CommandLine/CommandLineHelpers.h"
 #include "CommandLine/CommandLineParserDefs.h"
 
 #include "Utils/Types.h"
@@ -12,23 +13,25 @@
 namespace Slab::Core {
 
     struct FParameterDescription {
-        FParameterDescription(const Str& Name, const Str& Description)
-        : FParameterDescription('\0',   Name,          Description) {}
-        FParameterDescription(const char Rubric, const Str& Description)
-        : FParameterDescription(Rubric, ToStr(Rubric), Description) {}
-        FParameterDescription(const char Rubric, const Str& Name, const Str& Description)
-        : Name(Name), Rubric(Rubric), Description(Description) {}
+        FParameterDescription(const Str& Name, const Str& Description, FLongOptionFormatting Formatting = FLongOptionFormatting())
+        : FParameterDescription('\0',   Name,          Description, Formatting) {}
+        FParameterDescription(const char Rubric, const Str& Description, FLongOptionFormatting Formatting = FLongOptionFormatting())
+        : FParameterDescription(Rubric, Str(1, Rubric), Description, Formatting) {}
+        FParameterDescription(const char Rubric, const Str& Name, const Str& Description, FLongOptionFormatting Formatting = FLongOptionFormatting())
+        : Name(Name), Rubric(Rubric), Description(Description), Formatting(Formatting) {}
 
         Str Name;
         char Rubric;
         Str Description;
+
+        FLongOptionFormatting Formatting;
     };
 
     class FParameter {
 
     public:
         virtual ~FParameter() = default;
-        explicit FParameter(FParameterDescription);
+        explicit FParameter(const FParameterDescription&);
 
         virtual auto AddToCommandLineOptionsGroup(CLODEasyInit &group) const -> void = 0;
         auto GetFullCommandLineName() const -> Str;
@@ -54,9 +57,7 @@ namespace Slab::Core {
         bool operator==(Str str) const;
 
     private:
-        Str Name;
-        char Rubric;
-        Str Description;
+        FParameterDescription Description;
 
         // Str shortCLName, longCLName, fullCLName, description;
     };

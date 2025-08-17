@@ -4,42 +4,44 @@
 
 #include "Parameter.h"
 
+#include "CommandLine/CommandLineHelpers.h"
 #include "Utils/StringFormatting.h"
 #include "Utils/Utils.h"
 
 
 namespace Slab::Core {
 
-    FParameter::FParameter(FParameterDescription Description)
-            : Description(Description.Description)
+    FParameter::FParameter(const FParameterDescription& Description)
+    : Description(Description)
     {
-        Rubric = Description.Rubric;
-        Name = Description.Name;
+
     }
 
     auto FParameter::GetFullCommandLineName() const -> Str {
-        if (Rubric == '\0') return ToSnakeCase(Name);
+        if (Description.Rubric == '\0') return SanitizeToValidLongOption(Description.Name, Description.Formatting);
 
-        return ToStr(Rubric) + "," + ToSnakeCase(Name);
+        return Str(1, Description.Rubric) + "," + SanitizeToValidLongOption(Description.Name, Description.Formatting);
     }
 
-    auto FParameter::GetCommandLineArgumentName(bool longNameIfPresent) const -> Str {
-        return ToSnakeCase(longNameIfPresent ? Name : ToStr(Rubric));
+    auto FParameter::GetCommandLineArgumentName(bool LongNameIfPresent) const -> Str {
+        if (LongNameIfPresent) return SanitizeToValidLongOption(Description.Name, Description.Formatting);
+
+        return Description.Rubric != '\0' ? Str(1, Description.Rubric) : SanitizeToValidLongOption(Description.Name, Description.Formatting);
     }
 
-    auto FParameter::GetDescription() const -> Str { return Description; }
+    auto FParameter::GetDescription() const -> Str { return Description.Description; }
 
     bool FParameter::operator<(const FParameter *rhs) const
     {
-        return Name < rhs->Name;
+        return Description.Name < rhs->Description.Name;
     }
 
     void FParameter::SetDescription(const Str& NewDescription) {
-        Description = NewDescription;
+        Description.Description = NewDescription;
     }
 
     bool FParameter::operator==(Str str) const {
-        return Name == str;
+        return Description.Name == str;
     }
 
 

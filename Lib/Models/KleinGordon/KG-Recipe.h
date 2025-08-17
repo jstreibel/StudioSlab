@@ -24,7 +24,7 @@ namespace Slab::Models {
         BoolParameter    TakeSnapshot                   = BoolParameter(false,  FParameterDescription{'s', "snapshot", "Take a snapshot of simulation at the end."});
         RealParameter    snapshotTime                   = RealParameter(-1.0,   FParameterDescription{"snapshotTime", "Force snapshot to be taken at some time prior to end (after will result in no output."});
         BoolParameter    TakeSpaceDFTSnapshot           = BoolParameter(false,  FParameterDescription{"dft_snapshot", "Take a snapshot of discrete Fourier transform (DFT) of field at the end."});
-        BoolParameter    TakeTimeDFTSnapshot            = BoolParameter(false,  FParameterDescription{"time_dft_snapshot", "Take time domain dft's of field from '--time_dft_tstart' until that plus 'time_dft_length', and repeat every 'time_dft_delta'."});
+        BoolParameter    TakeTimeDFTSnapshot            = BoolParameter(false,  FParameterDescription{"Time DFT Snapshot", "Take time-domain dft's of field from '--time_dft_tstart' until that plus 'time_dft_length', and repeat every 'time_dft_delta'.", FLongOptionFormatting{true, '-'}});
         /* RealParameter    timeDFTSnapshot_tStart         = RealParameter(0.0 ,FParameterDescription{ "time_dft_start", "Time domain dft starting time."}); */
         RealParameter    TimeDFTSnapshot_tLength        = RealParameter(-1.,    FParameterDescription{"time_dft_length", "Length of time-domain dft snapshots. If left negative, it is all from t=0."});
         RealParameter    TimeDFTSnapshot_tDelta         = RealParameter(-1.,    FParameterDescription{"time_dft_delta", "Interval between each '--time_dft_snapshot'. Leave negative for one single dft snapshot at the end of the simulation."});

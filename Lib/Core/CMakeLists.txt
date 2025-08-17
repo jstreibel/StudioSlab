@@ -26,6 +26,7 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		Backend/Backend.cpp
         FObject.cpp
         FObject.h
+        Controller/CommandLine/CommandLineHelpers.h
 
 )
 

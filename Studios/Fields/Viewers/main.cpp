@@ -40,7 +40,7 @@
 using namespace Slab;
 
 class App : public Core::AppBase {
-    Core::StringParameter      filename = Core::StringParameter("", "filename,f", ".oscb file.");
+    Core::StringParameter      filename = Core::StringParameter("", Core::FParameterDescription{'f', "filename", ".oscb file."});
 
 public:
     App(int argc, const char **argv)

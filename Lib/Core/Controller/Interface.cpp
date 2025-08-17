@@ -13,9 +13,8 @@
 namespace Slab::Core {
 
     FInterface::FInterface(const Str& Name, FInterfaceOwner *pOwner, int Priority)
-            : pOwner(pOwner), Priority(Priority), Protocols(pOwner->GetProtocols()) {
-
-
+            : pOwner(pOwner), Priority(Priority), Protocols(pOwner->GetProtocols())
+    {
         auto tokens = Common::SplitString(Name, Delimiter, 2);
         this->Name = tokens[0];
         this->Description = tokens.size() > 1 ? tokens[1] : this->Description;

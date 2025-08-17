@@ -6,6 +6,7 @@
 #include <catch2/catch_all.hpp>
 #include <Math/Formalism/Categories.h>
 
+#include "Core/Controller/CommandLine/CommandLineHelpers.h"
 #include "Utils/StringFormatting.h"
 
 using RealT = double;    // if DevFloat is an alias (e.g., double)
@@ -15,35 +16,65 @@ TEST_CASE("Convert string to snake case", "[Str]")
 {
     struct Case { std::string in, expect; };
 
-    std::vector<Case> cases = {
-        {"HelloWorld",                    "hello_world"},
-        {"ThisIsAnExample",               "this_is_an_example"},
-        {"already_snake_case",            "already_snake_case"},
-        {"Spaces   and   dashes---ok",    "spaces_and_dashes_ok"},
-        {"  leading__and__trailing  ",    "leading_and_trailing"},
-        {"mixed-Separators.and spaces",   "mixed_separators_and_spaces"},
-        {"XMLHttpRequest",                "xml_http_request"},
-        {"HTTPRequest",                   "http_request"},
-        {"userID",                        "user_id"},
-        {"version2Update",                "version2_update"},
-        {"V2Ray",                         "v2_ray"},
-        {"fooBAR",                        "foo_bar"},
-        {"FOOBar",                        "foo_bar"},
-        {"FOO",                           "foo"},
-        {"foo__bar",                      "foo_bar"},
-        {"foo--bar..baz",                 "foo_bar_baz"},
-        {"--__..",                        ""},                  // only separators -> empty
-        {"naïve café",                    "na_ve_caf"},        // non-ASCII bytes treated as non-alnum
-        {"money$maker",                   "money_maker"},
-        {"end_with_sep__",                "end_with_sep"},
-        {"9Lives",                        "9_lives"},
-        {"life9Life",                     "life9_life"},
-    };
+    {
+        std::vector<Case> cases = {
+            {"HelloWorld",                    "hello_world"},
+            {"ThisIsAnExample",               "this_is_an_example"},
+            {"already_snake_case",            "already_snake_case"},
+            {"Spaces   and   dashes---ok",    "spaces_and_dashes_ok"},
+            {"  leading__and__trailing  ",    "leading_and_trailing"},
+            {"mixed-Separators.and spaces",   "mixed_separators_and_spaces"},
+            {"XMLHttpRequest",                "xml_http_request"},
+            {"HTTPRequest",                   "http_request"},
+            {"userID",                        "user_id"},
+            {"version2Update",                "version2_update"},
+            {"V2Ray",                         "v2_ray"},
+            {"fooBAR",                        "foo_bar"},
+            {"FOOBar",                        "foo_bar"},
+            {"FOO",                           "foo"},
+            {"foo__bar",                      "foo_bar"},
+            {"foo--bar..baz",                 "foo_bar_baz"},
+            {"--__..",                        ""},                  // only separators -> empty
+            {"naïve café",                    "na_ve_caf"},        // non-ASCII bytes treated as non-alnum
+            {"money$maker",                   "money_maker"},
+            {"end_with_sep__",                "end_with_sep"},
+            {"9Lives",                        "9_lives"},
+            {"life9Life",                     "life9_life"},
+        };
+        for (const auto& tc : cases) {
+            std::string got = Slab::ToSnakeCase(tc.in);
 
-    for (const auto& tc : cases) {
-        std::string got = Slab::ToSnakeCase(tc.in);
+            REQUIRE(got == tc.expect);
+        }
+    }
 
-        REQUIRE(got == tc.expect);
+    {
+        REQUIRE(Slab::Core::IsValidCLIArg("Hello-There_my-friend")); // true
+        REQUIRE(!Slab::Core::IsValidCLIArg("-poop$ie\""));           // false
+        REQUIRE(Slab::Core::IsValidCLIArg("option1"));               // true
+        REQUIRE(!Slab::Core::IsValidCLIArg("9lives"));               // false (starts with digit)
+        REQUIRE(!Slab::Core::IsValidCLIArg(""));                     // false
+    }
+
+    {
+        std::vector<Case> cases = {
+            {"Hello-There_my-friend",  "hello-there_my-friend"},
+            {"  hello  there  ",       "hello-there"},
+            {"miXeD__Case",            "mixed__case"},          // underscores preserved
+            {"dots.and,spaces",        "dots-and-spaces"},
+            {"foo---bar",              "foo-bar"},              // collapse to single '-'
+            {"__lead__trail__",        "lead__trail"},          // trims ends
+            {"9lives",                 "x-9lives"},             // must start with letter
+            {"--already-option",       "already-option"},
+            {"-poop$ie\"",             "x-poopie"},             // sanitizes and prefixes
+            {"",                       "x"},                    // empty -> "x"
+            {"naïve café",             "na-ve-caf"},            // non-ASCII bytes -> separators
+        };
+
+        for (auto& tc : cases) {
+            auto got = Slab::Core::SanitizeToValidLongOption(tc.in);
+            REQUIRE(got == tc.expect);
+        }
     }
 
 }
