@@ -9,6 +9,8 @@
 
 #include <iomanip>
 
+#include "Utils/Sets.h"
+
 
 namespace Slab::Core {
 
@@ -30,6 +32,11 @@ namespace Slab::Core {
         std::copy(Parameters.begin(), Parameters.end(), std::back_inserter(constParameters));
 
         return constParameters;
+    }
+
+    auto FInterface::GetParameters() -> Set<TPointer<FParameter>>
+    {
+        return Parameters;
     }
 
     auto FInterface::GetSubInterfaces() const -> Vector<TPointer<FInterface>> {

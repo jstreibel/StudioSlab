@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "ParameterGUIRenderer.h"
 #include "Graphics/Modules/GUIModule/GUIContext.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 
@@ -18,28 +19,26 @@ FSimulationManager::FSimulationManager(Slab::TPointer<Slab::Graphics::FImGuiCont
 
 }
 
-void FSimulationManager::ExposeInterface(const Slab::TPointer<Slab::Core::FInterface>& Interface)
+void FSimulationManager::ExposeInterface(const Slab::TPointer<Slab::Core::FInterface>& Interface, int Level)
 {
-    ImGui::Text("%s", Interface->GetName().c_str());
-    ImGui::SameLine();
-    ImGui::TextDisabled("%s", Interface->GetGeneralDescription().c_str());
-
-    const auto Parameters = Interface->GetParameters();
-    for (const auto &Parameter : Parameters)
+    ImGui::Indent(Level * 15);
+    if (ImGui::CollapsingHeader(Interface->GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
     {
-        auto ParamName = Parameter->GetName();
-        auto ParamDescr = Parameter->GetDescription();
+        ImGui::TextDisabled("%s", Interface->GetGeneralDescription().c_str());
 
-        ImGui::Text(". %s: ", ParamName.c_str());
-        ImGui::SameLine();
-        ImGui::TextDisabled("%s", ParamDescr.c_str());
+        const auto Parameters = Interface->GetParameters();
+        for (const auto &Parameter : Parameters)
+        {
+            ParameterGUIRenderer::RenderParameter(Parameter);
+        }
+
+        ImGui::NewLine();
+
+        const auto SubInterfaces = Interface->GetSubInterfaces();
+        for (const auto &SubInterface : SubInterfaces)
+            ExposeInterface(SubInterface, Level + 1);
     }
-
-    ImGui::NewLine();
-
-    const auto SubInterfaces = Interface->GetSubInterfaces();
-    for (const auto &SubInterface : SubInterfaces)
-        ExposeInterface(SubInterface);
+    ImGui::Unindent(Level * 15);
 }
 
 bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& platform_window)
@@ -69,8 +68,6 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
                 const auto Interface = Recipe->GetInterface();
 
                 ExposeInterface(Interface);
-
-                ImGui::Separator();
             }
         }
         ImGui::End();

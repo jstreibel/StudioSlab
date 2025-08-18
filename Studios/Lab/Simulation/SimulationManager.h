@@ -17,7 +17,7 @@ public:
 
     bool NotifyRender(const Slab::Graphics::FPlatformWindow&) override;
 
-    static void ExposeInterface(const Slab::TPointer<Slab::Core::FInterface>&);
+    static void ExposeInterface(const Slab::TPointer<Slab::Core::FInterface>&, int Level=0);
 
 private:
     void AddRecipe(Slab::TPointer<Slab::Math::Base::FNumericalRecipe>);

@@ -12,6 +12,8 @@
 
 #include <set>
 
+#include "Utils/Sets.h"
+
 namespace Slab::Math::Base
 {
     class FNumericalRecipe;
@@ -71,6 +73,8 @@ namespace Slab::Core {
         [[nodiscard]] auto GetSubInterfaces() const -> Vector<TPointer<FInterface>>;
 
         [[nodiscard]] auto GetParameters() const -> Vector<TPointer<const FParameter>>;
+
+        [[nodiscard]] auto GetParameters() -> Set<TPointer<FParameter>>;
 
         [[nodiscard]] auto GetParameter(const Str& key) const -> TPointer<FParameter>;
 
