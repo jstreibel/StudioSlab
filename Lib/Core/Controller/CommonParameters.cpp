@@ -59,6 +59,12 @@ namespace Slab::Core {
         return Value;
     }
 
+    template <class Type>
+    auto TParameter<Type>::GetValue() -> Type&
+    {
+        return Value;
+    }
+
     template<class Type>
     auto TParameter<Type>::operator*() -> Type & {
         return Value;

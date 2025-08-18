@@ -22,10 +22,10 @@ FSimulationManager::FSimulationManager(Slab::TPointer<Slab::Graphics::FImGuiCont
 void FSimulationManager::ExposeInterface(const Slab::TPointer<Slab::Core::FInterface>& Interface, int Level)
 {
     ImGui::Indent(Level * 15);
-    if (ImGui::CollapsingHeader(Interface->GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen))
+    if (const auto Flags = Level == 0 ? 0 : ImGuiTreeNodeFlags_DefaultOpen; ImGui::CollapsingHeader(Interface->GetName().c_str(), Flags))
     {
         ImGui::TextDisabled("%s", Interface->GetGeneralDescription().c_str());
-
+        ImGui::NewLine();
         const auto Parameters = Interface->GetParameters();
         for (const auto &Parameter : Parameters)
         {

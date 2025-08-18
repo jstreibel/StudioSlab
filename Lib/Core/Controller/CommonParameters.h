@@ -34,6 +34,8 @@ namespace Slab::Core {
 
         auto GetValue() const -> Type;
 
+        auto GetValue() -> Type&;
+
         auto operator*() -> Type &;
 
         auto operator*() const -> const Type &;
