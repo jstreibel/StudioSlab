@@ -39,9 +39,9 @@ namespace Slab::Graphics {
 
         EModKeys mod_keys;
 
-        Timer SinceLeftPressed;
-        Timer SinceCenterPressed;
-        Timer SinceRightPressed;
+        FTimer SinceLeftPressed;
+        FTimer SinceCenterPressed;
+        FTimer SinceRightPressed;
 
         bool NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) override;
 

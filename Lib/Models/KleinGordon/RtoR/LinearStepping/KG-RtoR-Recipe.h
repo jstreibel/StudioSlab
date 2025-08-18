@@ -28,7 +28,7 @@ namespace Slab::Models::KGRtoR {
         RealParameter    MassSquared =        RealParameter   (1.0, FParameterDescription{'M', "Mass Squared",        "Squared mass of the Klein-Gordon potential (on-shell ω²-k²-m²=0), if chosen.", FLongOptionFormatting{true}});
         IntegerParameter N_num =              IntegerParameter(15,  FParameterDescription{'O', "expansion N",         "Order of regular SG expansion."});
 
-        FKGRtoRPotentialOptions(bool bDoRegister);
+        explicit FKGRtoRPotentialOptions(bool bDoRegister);
     };
 
     class FKGRtoR_Recipe : public KGRecipe {

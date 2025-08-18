@@ -45,7 +45,7 @@ namespace Slab::Core {
         bool bManageDebugStream = true;
 #endif
 
-        Timer Timer;
+        FTimer Timer;
 
     public:
         static auto GetSingleton() -> Log &;

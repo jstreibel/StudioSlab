@@ -13,7 +13,7 @@
 
 #include <boost/stacktrace.hpp>
 
-#define WITH_STACK_TRACE
+// #define WITH_STACK_TRACE
 
 #ifdef NDEBUG
 #define RELEASE_COMPILE

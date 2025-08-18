@@ -12,11 +12,8 @@ namespace Slab::Core {
 
     MTaskManager::~MTaskManager() {
         if(destructorPolicy == WaitAll) {
-            for(const auto &job : Jobs) {
-                auto thread = job.second;
-                if (thread->joinable()) thread->join();
-
-                auto task = job.first;
+            for(const auto & [Task, JobThread] : Jobs) {
+                if (JobThread->joinable()) JobThread->join();
             }
         }
         else if(destructorPolicy == AbortAll)
@@ -65,30 +62,40 @@ namespace Slab::Core {
     }
 
     void MTaskManager::Abort(const Job& Job) {
-        auto &task = Job.first;
-        auto &thread = Job.second;
+        auto &Task = Job.Task;
+        auto &Thread = Job.JobThread;
 
-        Job.first->Release();
+        Task->Release();
 
-        if(task->IsTaskRunning()) {
-            task->Abort();
-            Log::Info() << "Sent abort signal to task \"" << task->GetName() << "\"." << Log::Flush;
+        if(Task->IsTaskRunning()) {
+            Task->Abort();
+            Log::Info() << "Sent abort signal to task \"" << Task->GetName() << "\"." << Log::Flush;
         }
 
-        if(thread->joinable()) {
-            Log::Status() << "Waiting for task \"" << task->GetName() << "\" thread to join...";
-            thread->join();
-            Log::Success() << "Task \"" << task->GetName() << "\" thread has joined main thread.";
+        if(Thread->joinable()) {
+            Log::Status() << "Waiting for task \"" << Task->GetName() << "\" thread to join...";
+            Thread->join();
+            Log::Success() << "Task \"" << Task->GetName() << "\" thread has joined main thread.";
         }
 
     }
 
     auto MTaskManager::HasRunningTasks() const -> bool {
-        return std::ranges::any_of(Jobs, [](const Job &job){ return job.first->IsTaskRunning(); });
+        return std::ranges::any_of(Jobs, [](const Job &job){ return job.Task->IsTaskRunning(); });
+    }
+
+    auto MTaskManager::GetNumberOfRunningTasks() const -> size_t
+    {
+        return Jobs.size();
     }
 
     void MTaskManager::PruneThreads()
     {
         NOT_IMPLEMENTED_CLASS_METHOD
+    }
+
+    Vector<MTaskManager::Job> MTaskManager::GetAllJobs()
+    {
+        return Jobs;
     }
 } // Slab::Core

@@ -27,26 +27,25 @@ namespace Slab::Models {
                                                                     "ignored unless '--mode' is properly set."});
 
         TPointer<RealParameter> rdt = New<RealParameter>(.1, FParameterDescription{"r_dt", "Timestep 'r' parameter such that dt=r*h."});
-        UInt n{};
 
     public:
         explicit FKGNumericConfig(bool doRegister = true);
 
         FKGNumericConfig(const FKGNumericConfig &) = delete;
 
-        auto to_string() const -> Str override;
+        [[nodiscard]] auto to_string() const -> Str override;
 
-        auto getn() const -> UInt override;
+        [[nodiscard]] auto getn() const -> UInt override;
 
-        auto Getdt() const -> DevFloat;
+        [[nodiscard]] auto Getdt() const -> DevFloat;
 
-        auto getr() const -> DevFloat;
+        [[nodiscard]] auto getr() const -> DevFloat;
 
-        auto getxMin() const -> DevFloat;
+        [[nodiscard]] auto getxMin() const -> DevFloat;
 
-        auto getxMax() const -> DevFloat;
+        [[nodiscard]] auto getxMax() const -> DevFloat;
 
-        auto geth() const -> DevFloat;
+        [[nodiscard]] auto geth() const -> DevFloat;
 
         auto NotifyCLArgsSetupFinished() -> void override;
 

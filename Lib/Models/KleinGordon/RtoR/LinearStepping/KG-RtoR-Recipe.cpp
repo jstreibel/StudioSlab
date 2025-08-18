@@ -365,10 +365,10 @@ namespace Slab::Models::KGRtoR {
     bool FKGRtoR_Recipe::usesPeriodicBC() const { return force_periodicBC; }
 
     Str FKGRtoR_Recipe::SuggestFileName() const {
-        const auto strParams = Interface->ToString({"massSqr"}, " ");
-        Log::Debug() << strParams << Log::Flush;
-        const auto voidSuggestion = FNumericalRecipe::SuggestFileName();
-        return voidSuggestion + " " + strParams;
+        const auto StrParams = Interface->ToString({"mass-squared"}, " ");
+        const auto ParentSuggestion = FNumericalRecipe::SuggestFileName();
+
+        return ParentSuggestion + " " + StrParams;
     }
 
 

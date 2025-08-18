@@ -138,7 +138,7 @@ namespace Studios {
         oscillons_dirty = true;
         ddt_oscillons_dirty = true;
 
-        Slab::Timer timer;
+        Slab::FTimer timer;
         renderOscillons();
         this->setFunction(rendered_phi);
         render_time = timer.getElTime_msec();

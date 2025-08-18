@@ -48,7 +48,7 @@ namespace Slab::Math {
             }
         }
 
-        Timer timer;
+        FTimer timer;
 
         for (size_t Ti = 0; Ti < count; Ti++) {
             if (timer.GetElapsedTime_Seconds() > 1) {

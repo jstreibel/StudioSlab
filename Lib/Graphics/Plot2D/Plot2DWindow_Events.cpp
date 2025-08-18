@@ -13,7 +13,7 @@ namespace Slab {
     Graphics::FPlot2DWindow::NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) {
         if(Graphics::FSlabWindow::NotifyMouseButton(button, state, keys)) return true;
 
-        static auto time = Timer();
+        static auto time = FTimer();
 
         if (button == EMouseButton::MouseButton_RIGHT) {
             if (state == EKeyState::Press) {

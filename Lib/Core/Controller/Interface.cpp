@@ -97,10 +97,9 @@ namespace Slab::Core {
     }
 
     auto FInterface::ToString(const StrVector &ParamNames, const Str& Separator, bool LongName) const -> Str {
-        std::stringstream ss("");
+        std::stringstream StringStream("");
 
-        std::map<Str, int> paramCount;
-        for (auto &p: ParamNames) paramCount[p] = 0;
+        std::vector ParamCount(ParamNames.size(), 0);
 
         fix LONG_NAME = true;
         fix SHORT_NAME = false;
@@ -112,21 +111,16 @@ namespace Slab::Core {
             if (Contains(ParamNames, nameShort) || Contains(ParamNames, nameLong) ||
                 ParamNames.empty()) {
                 bool isLong = !nameLong.empty() && LongName;
-                ss << param->GetCommandLineArgumentName(isLong) << "=" << param->ValueToString() << Separator;
-
-                paramCount[isLong ? nameLong : nameShort]++;
+                StringStream << param->GetCommandLineArgumentName(isLong) << "=" << param->ValueToString() << Separator;
             }
         }
 
-        for (auto &pCount: paramCount)
-            if (pCount.second == 0)
-                Log::Warning() << __PRETTY_FUNCTION__ << " could not find parameter " << pCount.first << Log::Flush;
+        auto ReturnString = StringStream.str();
+        if (ReturnString.back() == Separator.back() && ReturnString.size() > Separator.size())
+            for (int i = 0; i < Separator.size(); i++) ReturnString.pop_back(); // remove trailing separator
 
-        auto str = ss.str();
-        if (!Parameters.empty())
-            for (int i = 0; i < Separator.size(); i++) str.pop_back(); // remove trailing sparator
 
-        return str;
+        return ReturnString;
     }
 
     void FInterface::SetupFromCommandLine(CLVariablesMap vm) {

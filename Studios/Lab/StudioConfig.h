@@ -9,7 +9,7 @@ class StudioConfig
 {
 public:
     static constexpr int SidePaneWidth = 800;
-    static constexpr const char* SidePaneId = "SidePane##MainWindow";
+    static constexpr const char* SidePaneId = "##MainWindowSidePane";
 };
 
 #endif //STUDIOCONFIG_H

@@ -42,7 +42,9 @@ namespace Modes {
 
         const auto StrParams = Interface->ToString(Params, SEPARATOR);
 
-        return FKGRtoR_Recipe::SuggestFileName() + SEPARATOR + StrParams;
+        fix ParentFileName = FKGRtoR_Recipe::SuggestFileName();
+
+        return ParentFileName + SEPARATOR + StrParams;
     }
 
 } // Modes

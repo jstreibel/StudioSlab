@@ -45,9 +45,6 @@ namespace Slab::Models {
                 Log::Attention("NumericParams option --mode=2 => N = ceil(h*N) = ") << *N;
                 break;
         }
-
-        auto dt = **h * **rdt;
-        n = UInt(round(**t / dt));
     }
 
     Str FKGNumericConfig::to_string() const {
@@ -59,7 +56,10 @@ namespace Slab::Models {
     auto FKGNumericConfig::getr() const -> floatt { return **rdt; }
 
     UInt FKGNumericConfig::getn() const {
-        return n;
+        const auto dt = this->Getdt();
+        const auto t = gett();
+        const auto n = static_cast<UInt>(round(t / dt));
+        return n > 0 ? n : 1;
     }
 
 

@@ -26,7 +26,7 @@ namespace Slab::Graphics {
         AnimStepCallback<T> step_callback;
         AnimFinishCallback finish_callback;
 
-        Timer Timer; // inicializa sozinho
+        FTimer Timer; // inicializa sozinho
     };
 
     template<typename T>

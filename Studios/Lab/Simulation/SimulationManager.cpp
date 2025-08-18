@@ -11,7 +11,12 @@
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 
 #include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_PlaneWaves.h"
+#include "Core/SlabCore.h"
+#include "Core/Backend/Modules/TaskManager/TaskManager.h"
+#include "Math/Numerics/NumericTask.h"
 #include "Models/MolecularDynamics/Recipe.h"
+
+#define MAX_INTERFACE_DEPTH 10
 
 FSimulationManager::FSimulationManager(Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext)
 : ImGuiContext(std::move(ImGuiContext))
@@ -21,16 +26,22 @@ FSimulationManager::FSimulationManager(Slab::TPointer<Slab::Graphics::FImGuiCont
 
 void FSimulationManager::ExposeInterface(const Slab::TPointer<Slab::Core::FInterface>& Interface, int Level)
 {
-    ImGui::Indent(Level * 15);
-    if (const auto Flags = Level == 0 ? 0 : ImGuiTreeNodeFlags_DefaultOpen; ImGui::CollapsingHeader(Interface->GetName().c_str(), Flags))
+    if (Level > MAX_INTERFACE_DEPTH)
     {
-        ImGui::TextDisabled("%s", Interface->GetGeneralDescription().c_str());
-        ImGui::NewLine();
-        const auto Parameters = Interface->GetParameters();
-        for (const auto &Parameter : Parameters)
+        throw Exception("Maximum Interface depth exceeded. Cyclic Interface referencing?");
+    }
+
+    if (Level == 0 || ImGui::CollapsingHeader(Interface->GetName().c_str()))
+    {
+        IN GeneralDescription = Interface->GetGeneralDescription();
+        if (!GeneralDescription.empty())
         {
-            ParameterGUIRenderer::RenderParameter(Parameter);
+            ImGui::TextDisabled("%s", Interface->GetGeneralDescription().c_str());
+            ImGui::NewLine();
         }
+
+        for (const auto Parameters = Interface->GetParameters();
+            const auto &Parameter : Parameters) ParameterGUIRenderer::RenderParameter(Parameter);
 
         ImGui::NewLine();
 
@@ -38,7 +49,6 @@ void FSimulationManager::ExposeInterface(const Slab::TPointer<Slab::Core::FInter
         for (const auto &SubInterface : SubInterfaces)
             ExposeInterface(SubInterface, Level + 1);
     }
-    ImGui::Unindent(Level * 15);
 }
 
 bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& platform_window)
@@ -53,30 +63,38 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
             if (ItemString == "Signum-Gordon Plane Waves")
             {
                 auto Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
-                AddRecipe(Recipe);
+                BeginRecipe(Recipe);
             }
         }
     };
     ImGuiContext->AddMainMenuItem(Item);
 
-    if (!Recipes.empty())
+    if (Recipe != nullptr)
     {
-        if (ImGui::Begin("Recipes"))
-        {
-            for (const auto &Recipe : Recipes)
-            {
-                const auto Interface = Recipe->GetInterface();
+        const auto Interface = Recipe->GetInterface();
 
-                ExposeInterface(Interface);
-            }
+        bool bOpen = true;
+        if (ImGui::Begin(Interface->GetName().c_str(), &bOpen)) ExposeInterface(Interface);
+
+        if (ImGui::Button("Run"))
+        {
+            const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
+            const auto Task = Slab::New<Slab::Math::NumericTask>(Recipe, false);
+            TaskManager->AddTask(Task);
+            Recipe = nullptr;
         }
+
         ImGui::End();
+
+        if (!bOpen) Recipe = nullptr;
+
+
     }
 
     return FPlatformWindowEventListener::NotifyRender(platform_window);
 }
 
-void FSimulationManager::AddRecipe(Slab::TPointer<Slab::Math::Base::FNumericalRecipe> Recipe)
+void FSimulationManager::BeginRecipe(Slab::TPointer<Slab::Math::Base::FNumericalRecipe> Recipe)
 {
-    Recipes.push_back(std::move(Recipe));
+    this->Recipe = std::move(Recipe);
 }

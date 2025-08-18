@@ -16,7 +16,7 @@ namespace Slab::Graphics {
         void writeStats();
 
     protected:
-        Timer frameTimer = Timer();
+        FTimer frameTimer = FTimer();
         TPointer<FGUIWindow> GuiWindow;
 
         const CountType MaxSteps;

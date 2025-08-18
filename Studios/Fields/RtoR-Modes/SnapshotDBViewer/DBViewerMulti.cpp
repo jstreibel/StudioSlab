@@ -315,7 +315,7 @@ namespace Modes::DatabaseViewer {
     }
 
     auto DBViewerMulti::NotifyMouseButton(Graphics::EMouseButton button, Graphics::EKeyState state, Graphics::EModKeys keys) -> bool {
-        static Timer timer;
+        static FTimer timer;
         auto elTime = timer.getElTime_msec();
         if(button==Graphics::MouseButton_LEFT){
             if(state==Graphics::Press) timer.reset();

@@ -68,9 +68,9 @@ namespace Studios::Fields::R2toRLeadingDelta {
     void OutGL::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if (!LastPacket.hasValidData()) return;
 
-        static auto timer = Timer();
+        static auto timer = FTimer();
         // auto elTime = timer.getElTime_msec();
-        timer = Timer();
+        timer = FTimer();
 
         auto &rd = *ringDelta1;
 

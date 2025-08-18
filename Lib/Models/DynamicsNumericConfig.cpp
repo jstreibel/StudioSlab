@@ -20,7 +20,14 @@ namespace Slab::Models {
 
     auto DynamicsNumericConfig::GetL() const -> floatt { return **L; }
 
-    auto DynamicsNumericConfig::gett() const -> floatt { return **t; }
+    auto DynamicsNumericConfig::gett() const -> floatt
+    {
+        if (**t < 0) {
+            *t = **L * .5;
+            Log::Attention("NumericParams") << " parameter 't' is <0. Setting to t = L/2 = " << *t;
+        }
+        return **t;
+    }
 
     auto DynamicsNumericConfig::sett(DevFloat t_max) -> void {
         Log::Attention() << "Command line argument '" << t->GetCommandLineArgumentName(true) << "' "
@@ -32,10 +39,7 @@ namespace Slab::Models {
     void DynamicsNumericConfig::NotifyCLArgsSetupFinished() {
         Math::FNumericConfig::NotifyCLArgsSetupFinished();
 
-        if (**t < 0) {
-            *t = **L * .5;
-            Log::Attention("NumericParams") << " parameter 't' is <0. Setting to t = L/2 = " << *t;
-        }
+        (void)gett();
     }
 
 

@@ -7,6 +7,8 @@
 #include "imgui.h"
 #include "StudioConfig.h"
 #include "StudioSlab.h"
+#include "Core/SlabCore.h"
+#include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Graphics/SlabGraphics.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 
@@ -48,7 +50,24 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
         ImGui::SetNextWindowSize(ImVec2(StudioConfig::SidePaneWidth, static_cast<float>(HeightSysWin - MenuHeight)), ImGuiCond_Appearing);
         if (ImGui::Begin(StudioConfig::SidePaneId, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
         {
-            ImGui::Text("Side pane");
+            const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
+
+            ImGui::SeparatorText("Tasks");
+            auto Jobs = TaskManager->GetAllJobs();
+            for (auto & [Task, JobThread] : Jobs)
+            {
+                ImGui::Text("%s: ", Task->GetName().c_str());
+                ImGui::SameLine();
+                switch (Task->GetStatus())
+                {
+                case Slab::Core::TaskRunning:        ImGui::TextColored(ImVec4(0,   0,   1, 1), "Running"); break;
+                case Slab::Core::TaskAborted:        ImGui::TextColored(ImVec4(.8f, .4f, 0, 1), "Aborted"); break;
+                case Slab::Core::TaskError:          ImGui::TextColored(ImVec4(1,   0,   1, 1), "Error"); break;
+                case Slab::Core::TaskSuccess:        ImGui::TextColored(ImVec4(0,   1,   0, 1), "Success"); break;
+                case Slab::Core::TaskNotInitialized: ImGui::TextColored(ImVec4(1,   1,   0, 1), "Running"); break;
+                default:
+                }
+            }
 
             if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth());
                 SidePaneWidth != WindowWidth)

@@ -42,9 +42,9 @@ namespace Slab::Graphics {
 
         isPaused = currStep == lastStep;
 
-        static auto timer = Timer();
+        static auto timer = FTimer();
         auto elTime = timer.getElTime_msec();
-        timer = Timer();
+        timer = FTimer();
 
         // const auto &p = params;
         // const auto L = p.getL();
@@ -87,7 +87,7 @@ namespace Slab::Graphics {
         fix remainingTimeMin = timeToFinish / 60;
         fix remainingTimeSec = timeToFinish % 60;
 
-        static auto totalTime = Timer();
+        static auto totalTime = FTimer();
 
         if (hasFinished) totalTime.stop();
 

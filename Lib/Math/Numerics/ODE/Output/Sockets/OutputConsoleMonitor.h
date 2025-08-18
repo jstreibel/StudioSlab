@@ -9,7 +9,7 @@ namespace Slab::Math {
 
     class OutputConsoleMonitor : public Socket {
     private:
-        Timer timer = Timer();
+        FTimer timer = FTimer();
         const CountType total_steps;
 
     protected:

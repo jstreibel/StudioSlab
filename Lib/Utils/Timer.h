@@ -12,21 +12,21 @@ namespace Slab {
     using CPUTimes = boost::timer::cpu_times;
     using Nanosecond = boost::timer::nanosecond_type;
 
-    class Timer {
+    class FTimer {
     public:
-        Timer() = default;
+        FTimer() = default;
 
-        ~Timer() {}
+        ~FTimer() = default;
 
         void reset() { timer = CPUTimer(); }
 
-        DevFloat GetElapsedTime_Seconds()   const { return (DevFloat)timer.elapsed().wall * 1e-9; }
+        [[nodiscard]] DevFloat GetElapsedTime_Seconds()   const { return (DevFloat)timer.elapsed().wall * 1e-9; }
 
-        DevFloat getElTime_msec()  const { return (DevFloat)timer.elapsed().wall * 1e-6; }
+        [[nodiscard]] DevFloat getElTime_msec()  const { return (DevFloat)timer.elapsed().wall * 1e-6; }
 
-        DevFloat getElTime_musec() const { return (DevFloat)timer.elapsed().wall * 1e-3; }
+        [[nodiscard]] DevFloat getElTime_musec() const { return (DevFloat)timer.elapsed().wall * 1e-3; }
 
-        boost::timer::nanosecond_type
+        [[nodiscard]] boost::timer::nanosecond_type
         getElTime_nsec()  const { return timer.elapsed().wall; }
 
         void stop() { timer.stop(); }

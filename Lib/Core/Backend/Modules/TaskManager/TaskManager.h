@@ -14,7 +14,11 @@ namespace Slab::Core {
 
         class MTaskManager final : public SlabModule {
             using FTaskPointer = TPointer<FTask>;
-            typedef Pair<FTaskPointer, TPointer<std::thread>> Job;
+            struct Job
+            {
+                FTaskPointer Task;
+                TPointer<std::thread> JobThread;
+            };
             Vector<Job> Jobs;
 
             std::mutex AddJobMutex;
@@ -30,11 +34,13 @@ namespace Slab::Core {
             ~MTaskManager() override;
 
             [[nodiscard]] auto HasRunningTasks() const -> bool;
+            [[nodiscard]] auto GetNumberOfRunningTasks() const -> size_t;
 
             /**
              * Signals all finished jobs to end their threads in a safe manner.
              */
             void PruneThreads();
+            Vector<Job> GetAllJobs();
 
             static void Abort(const Job& Job);
 

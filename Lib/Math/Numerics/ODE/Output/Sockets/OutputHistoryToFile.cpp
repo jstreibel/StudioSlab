@@ -54,7 +54,7 @@ namespace Slab::Math {
             }
         }
 
-        Timer timer;
+        FTimer timer;
 
         using Core::Log;
 

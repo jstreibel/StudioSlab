@@ -20,9 +20,9 @@ public:
     static void ExposeInterface(const Slab::TPointer<Slab::Core::FInterface>&, int Level=0);
 
 private:
-    void AddRecipe(Slab::TPointer<Slab::Math::Base::FNumericalRecipe>);
+    void BeginRecipe(Slab::TPointer<Slab::Math::Base::FNumericalRecipe>);
 
-    Slab::Vector<Slab::TPointer<Slab::Math::Base::FNumericalRecipe>> Recipes;
+    Slab::TPointer<Slab::Math::Base::FNumericalRecipe> Recipe;
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
 
 };
