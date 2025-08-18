@@ -6,7 +6,7 @@
 #define STUDIOSLAB_MONITOR_H
 
 #include "Graphics/Window/SlabWindow.h"
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
@@ -20,7 +20,7 @@ namespace Slab::Models::MolecularDynamics {
 
     using namespace Slab;
 
-    class Monitor : public Math::Socket, public Graphics::FSlabWindow {
+    class Monitor : public Math::FOutputChannel, public Graphics::FSlabWindow {
         sf::RenderWindow &renderWindow;
 
         Vector<sf::Vertex> molShapes;

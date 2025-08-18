@@ -12,7 +12,7 @@ namespace Slab::Models::KGRtoR {
 
     SnapshotOutput::SnapshotOutput(const Str &fileName,
                                    const Str &socketName, const Str &description)
-    : Socket(socketName, -1, description)
+    : FOutputChannel(socketName, -1, description)
     , outputFileName(fileName + suffix)
     {    }
 
@@ -34,8 +34,8 @@ namespace Slab::Models::KGRtoR {
     }
 
 
-    bool SnapshotOutput::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
-        Socket::notifyIntegrationHasFinished(theVeryLastOutputInformation);
+    bool SnapshotOutput::NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
+        FOutputChannel::NotifyIntegrationHasFinished(theVeryLastOutputInformation);
 
         auto f = filterData(theVeryLastOutputInformation);
 

@@ -15,7 +15,7 @@ namespace Slab::Models::KGRtoR {
 
     Slab::Models::KGRtoR::CenterTimeDFTOutput::CenterTimeDFTOutput(
             DevFloat t_max, CountType max_steps, TimeDFTOutputConfig dftConfig)
-    : Socket(Str("Single-location time-DFT"), 10,
+    : FOutputChannel(Str("Single-location time-DFT"), 10,
              Str("t_start=")    + ToStr(Common::max(dftConfig.t_start, 0.0)) +
              Str(" ... t_end=") + ToStr(Common::min(dftConfig.t_end, t_max)))
     , filename(dftConfig.filename + ".time.dft.simsnap")
@@ -43,15 +43,15 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    size_t CenterTimeDFTOutput::computeNextRecStep(UInt currStep) {
+    size_t CenterTimeDFTOutput::ComputeNextRecStep(UInt currStep) {
         if(currStep < step_start)
             return step_start;
 
-        return Socket::computeNextRecStep(currStep);
+        return FOutputChannel::ComputeNextRecStep(currStep);
     }
 
-    bool CenterTimeDFTOutput::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
-        Socket::notifyIntegrationHasFinished(theVeryLastOutputInformation);
+    bool CenterTimeDFTOutput::NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
+        FOutputChannel::NotifyIntegrationHasFinished(theVeryLastOutputInformation);
         using DFT = Slab::Math::RtoR::DFT;
 
         Vector<TPointer<RtoR::NumericFunction>> maggies;

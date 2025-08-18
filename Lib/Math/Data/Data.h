@@ -29,12 +29,13 @@ namespace Slab::Math {
         DataName data_name;
 
     public:
+        virtual ~Data() = default;
         explicit Data(DataName);
 
-        UniqueID
+        [[nodiscard]] UniqueID
         get_id() const;
 
-        DataName
+        [[nodiscard]] DataName
         get_data_name() const;
 
         void

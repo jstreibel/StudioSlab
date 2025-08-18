@@ -3,7 +3,7 @@
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Graphics/Window/GUIWindow.h"
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 
 #include <vector>
@@ -12,7 +12,7 @@ namespace Slab::Graphics {
 
     using namespace Math;
 
-    class BaseMonitor : public Socket, public WindowPanel {
+    class BaseMonitor : public FOutputChannel, public WindowPanel {
         void writeStats();
 
     protected:

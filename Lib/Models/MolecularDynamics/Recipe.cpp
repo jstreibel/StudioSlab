@@ -32,8 +32,8 @@ namespace Slab::Models::MolecularDynamics {
         Core::RegisterCLInterface(Interface);
     }
 
-    Vector<TPointer<Math::Socket>> Recipe::BuildOutputSockets() {
-        Vector<TPointer<Math::Socket>> sockets;
+    Vector<TPointer<Math::FOutputChannel>> Recipe::BuildOutputSockets() {
+        Vector<TPointer<Math::FOutputChannel>> sockets;
 
         auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(NumericConfig);
 

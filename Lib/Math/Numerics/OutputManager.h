@@ -1,17 +1,17 @@
 #ifndef OUTPUTMANAGER_H
 #define OUTPUTMANAGER_H
 
-#include "Socket.h"
+#include "OutputChannel.h"
 
 
 namespace Slab::Math {
 
     class FOutputManager final {
     protected:
-        Vector<Socket_ptr > outputs;
+        Vector<FOutputChannel_ptr > Outputs;
 
     public:
-        explicit FOutputManager(CountType max_steps);
+        explicit FOutputManager(CountType MaxSteps=0);
 
         ~FOutputManager();
 
@@ -19,21 +19,22 @@ namespace Slab::Math {
          * This parameter comes in by reference because copying it can be very heavy. OTOH it is treated as if it is
          * allocated on the HEAP.
          *
-         * @param infoVolatile the information to output.
+         * @param InfoVolatile the information to output.
+         * @param ForceOutput
          */
-        void output(OutputPacket &infoVolatile, bool force = false);
+        void Output(const OutputPacket &InfoVolatile, bool ForceOutput = false) const;
 
-        void notifyIntegrationFinished(const OutputPacket &info);
+        void NotifyIntegrationFinished(const OutputPacket &info) const;
 
         /****** QUERY ******/
-        auto computeNStepsToNextOutput(UInt currStep) -> UInt;
+        auto ComputeNStepsToNextOutput(UInt CurrStep) -> UInt;
 
         /****** INPUT/OUTPUT ******/
-        void addOutputChannel(TPointer<Socket> out);
-
+        void AddOutputChannel(TPointer<FOutputChannel> out);
+        void SetMaxSteps(UInt MaxSteps);
 
     private:
-        const size_t maxSteps;
+        size_t MaxSteps;
 
 
     };

@@ -87,8 +87,8 @@ namespace Slab::Models::KGRtoR {
         if (doRegister) RegisterCLInterface(Interface);
     }
 
-    auto FKGRtoR_Recipe::BuildOutputSockets() -> Vector<TPointer<Socket>> {
-        Vector<TPointer<Socket>> Sockets;
+    auto FKGRtoR_Recipe::BuildOutputSockets() -> Vector<TPointer<FOutputChannel>> {
+        Vector<TPointer<FOutputChannel>> Sockets;
 
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
@@ -149,7 +149,7 @@ namespace Slab::Models::KGRtoR {
 
             fix stepsInterval = static_cast<UInt>(N / (Nₒᵤₜ * r));
 
-            Socket_ptr out = Slab::New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
+            FOutputChannel_ptr out = Slab::New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
             Sockets.emplace_back(out);
         }
 
@@ -198,7 +198,7 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    Vector<TPointer<Socket>> FKGRtoR_Recipe::getTimeDFTSnapshots() {
+    Vector<TPointer<FOutputChannel>> FKGRtoR_Recipe::getTimeDFTSnapshots() {
         auto &c = *KGNumericConfig;
 
         fix t = c.gett();
@@ -236,7 +236,7 @@ namespace Slab::Models::KGRtoR {
         }
 
         int i=0;
-        Vector<TPointer<Socket>> sockets;
+        Vector<TPointer<FOutputChannel>> sockets;
         do {
             fix t_end   = t - i*Δt;
             fix t_start = Common::max(t_end-t_len, 0.0);
@@ -251,7 +251,7 @@ namespace Slab::Models::KGRtoR {
         return sockets;
     }
 
-    TPointer<Socket>
+    TPointer<FOutputChannel>
     FKGRtoR_Recipe::_newTimeDFTSnapshotOutput(const Str& folder, const DevFloat t_start, const DevFloat t_end, const FRealVector &x_locations) const {
 
         Utils::TouchFolder(folder);

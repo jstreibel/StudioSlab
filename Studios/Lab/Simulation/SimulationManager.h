@@ -7,6 +7,7 @@
 #include "Graphics/Backend/Events/SystemWindowEventListener.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 #include "Math/Numerics/NumericalRecipe.h"
+#include "Math/Numerics/OutputManager.h"
 #include "Math/Numerics/ODE/Solver/BoundaryConditions.h"
 
 
@@ -20,9 +21,15 @@ public:
     static void ExposeInterface(const Slab::TPointer<Slab::Core::FInterface>&, int Level=0);
 
 private:
-    void BeginRecipe(Slab::TPointer<Slab::Math::Base::FNumericalRecipe>);
+    struct FMaterial
+    {
+        Slab::TPointer<Slab::Math::Base::FNumericalRecipe> Recipe = nullptr;
+        Slab::TPointer<Slab::Math::FOutputManager> OutputManager = nullptr;
+    } Material;
 
-    Slab::TPointer<Slab::Math::Base::FNumericalRecipe> Recipe;
+    void BeginRecipe(FMaterial);
+
+
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
 
 };

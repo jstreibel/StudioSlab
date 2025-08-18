@@ -19,7 +19,7 @@ namespace Slab::Graphics {
     using Core::Log;
 
     BaseMonitor::BaseMonitor(const CountType MaxSteps, const Str &ChannelName, int StepsBetweenDraws)
-    : Socket(ChannelName, StepsBetweenDraws), WindowPanel(FSlabWindowConfig{{}}), MaxSteps(MaxSteps)
+    : FOutputChannel(ChannelName, StepsBetweenDraws), WindowPanel(FSlabWindowConfig{{}}), MaxSteps(MaxSteps)
     , GuiWindow(New<FGUIWindow>(FSlabWindowConfig(ChannelName)))
     {
         AddWindow(GuiWindow);
@@ -99,7 +99,7 @@ namespace Slab::Graphics {
         GuiWindow->AddVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(MaxSteps));
         // guiWindow.addVolatileStat(Str("dt = ") + ToStr(dt, 2, true));
         GuiWindow->AddVolatileStat("");
-        GuiWindow->AddVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
+        GuiWindow->AddVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(Get_nSteps()) + ")");
         GuiWindow->AddVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
         GuiWindow->AddVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
         if (currStep != lastStep || hasFinished)
@@ -134,31 +134,31 @@ namespace Slab::Graphics {
     }
 
     bool BaseMonitor::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
-        static fix baseNSteps = getnSteps();
+        static fix baseNSteps = Get_nSteps();
         static let multiplier = 1;
 
         if (false) {
             if (key == '=') {
                 multiplier++;
-                setnSteps(baseNSteps * multiplier);
+                Set_nSteps(baseNSteps * multiplier);
             } else if (key == '-') {
                 if (multiplier > 1) multiplier--;
-                setnSteps(baseNSteps * multiplier);
+                Set_nSteps(baseNSteps * multiplier);
             }
         } else {
             if (key == '=') {
-                setnSteps(getnSteps() + 1);
+                Set_nSteps(Get_nSteps() + 1);
                 return true;
             } else if (key == '+') {
-                auto nSteps = getnSteps();
-                if (nSteps >= 10) setnSteps((int) (nSteps * 1.1));
-                else setnSteps(10);
+                auto nSteps = Get_nSteps();
+                if (nSteps >= 10) Set_nSteps((int) (nSteps * 1.1));
+                else Set_nSteps(10);
                 return true;
             } else if (key == '-') {
-                setnSteps(getnSteps() - 1);
+                Set_nSteps(Get_nSteps() - 1);
                 return true;
             } else if (key == '_') {
-                setnSteps((int) (getnSteps() / 1.1));
+                Set_nSteps((int) (Get_nSteps() / 1.1));
                 return true;
             }
         }

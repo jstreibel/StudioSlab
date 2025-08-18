@@ -36,8 +36,8 @@ namespace Slab::Models::KGR2toR {
     Builder::Builder(const Str& name, const Str& description, bool do_register)
             : Models::KGRecipe(New<Models::FKGNumericConfig>(false), name, description, do_register) {    }
 
-    Vector<TPointer<Socket>> Builder::BuildOutputSockets() {
-        Vector<TPointer<Socket>> sockets;
+    Vector<TPointer<FOutputChannel>> Builder::BuildOutputSockets() {
+        Vector<TPointer<FOutputChannel>> sockets;
 
         ///********************************************************************************************/
         if(*OutputOptions.TakeSnapshot) {

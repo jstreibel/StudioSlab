@@ -28,7 +28,7 @@ namespace Slab::Math {
 
         explicit R2toRMetropolisRecipe(UInt max_steps);
 
-        auto BuildOutputSockets() -> Vector<TPointer<Socket>> override;
+        auto BuildOutputSockets() -> Vector<TPointer<FOutputChannel>> override;
 
         auto buildStepper() -> TPointer<Stepper> override;
     };

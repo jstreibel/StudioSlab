@@ -21,7 +21,7 @@ namespace Slab::Math {
             : HistoryKeeper(stepsInterval, spaceFilter),
               outFileName(std::move(outputFileName)),
               outputFormatter(*(new BinarySOF())) {
-        this->name = "Full (1+1) history output";
+        this->Name = "Full (1+1) history output";
 
         file.open(outFileName, std::ios::out);
 

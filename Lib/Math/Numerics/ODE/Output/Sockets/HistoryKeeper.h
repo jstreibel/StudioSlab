@@ -1,14 +1,14 @@
 #ifndef OUTPUTHISTORY_H
 #define OUTPUTHISTORY_H
 
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 #include "Math/Numerics/ODE/Output/Format/SpaceFilterBase.h"
 
 #define M_GUESS 1024 //1048576 // 1024*1024
 
 namespace Slab::Math {
 
-    class HistoryKeeper : public Socket {
+    class HistoryKeeper : public FOutputChannel {
     private:
         /** Dump is called whenever memory needs purging. Child class should dispose of all info contained in history,
          * because history will be purged. */
@@ -31,9 +31,9 @@ namespace Slab::Math {
 
         [[nodiscard]] auto getUtilMemLoadBytes() const -> long long unsigned int;
 
-        auto shouldOutput(long unsigned timestep) -> bool override;
+        auto ShouldOutput(long unsigned timestep) -> bool override;
 
-        auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
+        auto NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
 
         auto renderMetaDataAsPythonDictionary() const -> Str;
     };

@@ -55,7 +55,7 @@ set ( NUMERICS_SOURCES
 
 		Numerics/OutputManager.cpp
 
-		Numerics/Socket.cpp
+        Numerics/OutputChannel.cpp
 		Numerics/ODE/Output/Sockets/OutputConsoleMonitor.cpp
 		Numerics/ODE/Output/Sockets/HistoryKeeper.cpp
 		Numerics/ODE/Output/Sockets/OutputHistoryToFile.cpp

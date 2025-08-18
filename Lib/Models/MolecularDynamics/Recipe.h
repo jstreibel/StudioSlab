@@ -8,7 +8,7 @@
 #include "../../Core/Controller/CommonParameters.h"
 
 #include "Math/Numerics/NumericalRecipe.h"
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 
 namespace Slab::Models::MolecularDynamics {
 
@@ -27,7 +27,7 @@ namespace Slab::Models::MolecularDynamics {
     public:
         Recipe();
 
-        auto BuildOutputSockets() -> Vector<TPointer<Math::Socket>> override;
+        auto BuildOutputSockets() -> Vector<TPointer<Math::FOutputChannel>> override;
 
         auto buildStepper() -> TPointer<Math::Stepper> override;
 

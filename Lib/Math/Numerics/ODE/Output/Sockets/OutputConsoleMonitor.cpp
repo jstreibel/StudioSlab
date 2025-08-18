@@ -5,12 +5,12 @@
 namespace Slab::Math {
 
     OutputConsoleMonitor::OutputConsoleMonitor(const CountType total_steps, CountType steps_interval)
-    : Socket("Console monitor output", static_cast<int>(steps_interval))
+    : FOutputChannel("Console monitor output", static_cast<int>(steps_interval))
     , total_steps(total_steps) {
 
     }
 
-    bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
+    bool OutputConsoleMonitor::NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
         // Isso aqui eh para aparecer o 100% completo (se nao fica uns quebrados).
         OutputPacket dummyInfo = OutputPacket(nullptr, total_steps);
 

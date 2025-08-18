@@ -5,12 +5,12 @@
 #ifndef STUDIOSLAB_KG2DSNAPSHOTOUTPUT_H
 #define STUDIOSLAB_KG2DSNAPSHOTOUTPUT_H
 
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 
 
 namespace Slab::Models::KGR2toR {
 
-    class KG2DSnapshotOutput : public Math::Socket {
+    class KG2DSnapshotOutput : public Math::FOutputChannel {
         Str filename;
 
     protected:
@@ -19,7 +19,7 @@ namespace Slab::Models::KGR2toR {
     public:
         explicit KG2DSnapshotOutput(Str filename);
 
-        auto notifyIntegrationHasFinished(const Math::OutputPacket &theVeryLastOutputInformation) -> bool override;
+        auto NotifyIntegrationHasFinished(const Math::OutputPacket &theVeryLastOutputInformation) -> bool override;
     };
 
 }

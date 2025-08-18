@@ -1,6 +1,6 @@
 #include "HistoryKeeper.h"
 
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 #include "Core/Tools/Log.h"
 
 #include "../../../../../Core/Controller/InterfaceManager.h"
@@ -11,7 +11,7 @@ namespace Slab::Math {
     const long long unsigned int ONE_GB = 1073741824;
 
     HistoryKeeper::HistoryKeeper(size_t recordStepsInterval, SpaceFilterBase *filter)
-            : Socket("History output", int(recordStepsInterval)), spaceFilter(*filter),
+            : FOutputChannel("History output", int(recordStepsInterval)), spaceFilter(*filter),
               count(0), countTotal(0) {
         // TODO: assert(ModelBuilder::getInstance().getParams().getN()>=outputResolutionX);
     }
@@ -33,12 +33,12 @@ namespace Slab::Math {
         return count * N * sizeof(DevFloat);
     }
 
-    auto HistoryKeeper::shouldOutput(long unsigned timestep) -> bool {
+    auto HistoryKeeper::ShouldOutput(long unsigned timestep) -> bool {
         // const bool should = (/*t >= tStart && */t <= tEnd) && Socket::shouldOutput(t, timestep);
 
         // return should;
 
-        return Socket::shouldOutput(timestep);;
+        return FOutputChannel::ShouldOutput(timestep);;
     }
 
     void HistoryKeeper::HandleOutput(const OutputPacket &packet) {
@@ -57,7 +57,7 @@ namespace Slab::Math {
         ++count;
     }
 
-    auto HistoryKeeper::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
+    auto HistoryKeeper::NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
         _dump(true);
         return true;
     }

@@ -42,8 +42,8 @@ namespace Slab::Models::KGRtoR {
 
         FKGRtoRPotentialOptions PotentialOptions;
 
-        Vector<TPointer<Socket>> getTimeDFTSnapshots();
-        auto _newTimeDFTSnapshotOutput(const Str& folder, DevFloat t_start, DevFloat t_end, const FRealVector &x_locations) const -> TPointer<Socket>;
+        Vector<TPointer<FOutputChannel>> getTimeDFTSnapshots();
+        auto _newTimeDFTSnapshotOutput(const Str& folder, DevFloat t_start, DevFloat t_end, const FRealVector &x_locations) const -> TPointer<FOutputChannel>;
 
         virtual auto BuildOpenGLOutput() -> void*;
 
@@ -63,7 +63,7 @@ namespace Slab::Models::KGRtoR {
         [[nodiscard]] RtoR::Function_ptr getPotential() const;
         virtual TPointer<Base::FunctionT<DevFloat, DevFloat>> GetNonHomogenousTerm();
 
-        auto BuildOutputSockets()   -> Vector<TPointer<Socket>> override;
+        auto BuildOutputSockets()   -> Vector<TPointer<FOutputChannel>> override;
 
         auto buildSolver()  -> TPointer<Base::LinearStepSolver> override;
 

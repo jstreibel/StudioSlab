@@ -5,55 +5,57 @@
 
 namespace Slab::Math {
 
-    FOutputManager::FOutputManager(CountType max_steps) : maxSteps(max_steps) {}
+    FOutputManager::FOutputManager(const CountType MaxSteps) : MaxSteps(MaxSteps) {}
 
     FOutputManager::~FOutputManager() = default; // No need to destroy output objects in vectors;
 
-    void FOutputManager::output(OutputPacket &infoVolatile, bool force) {
-        const size_t steps = infoVolatile.GetSteps();
+    void FOutputManager::Output(const OutputPacket &InfoVolatile, const bool ForceOutput) const
+    {
+        const size_t Steps = InfoVolatile.GetSteps();
 
-        for (auto &out : outputs) {
-            auto shouldOutput = out->shouldOutput(steps) || force;
-            if (shouldOutput) {
-                out->output(infoVolatile);
+        for (auto &Out : Outputs) {
+            if (Out->ShouldOutput(Steps) || ForceOutput) {
+                Out->Output(InfoVolatile);
             }
         }
 
     }
 
 
-    auto FOutputManager::computeNStepsToNextOutput(UInt currStep) -> UInt {
-        CountType nSteps = maxSteps;
+    auto FOutputManager::ComputeNStepsToNextOutput(UInt CurrStep) -> UInt {
+        CountType nSteps = MaxSteps;
 
-        for (auto &socket: outputs) {
-            const size_t nextRecStep = socket->computeNextRecStep(currStep);
-
-            if (nextRecStep < nSteps) nSteps = nextRecStep;
+        for (const auto &Channel: Outputs) {
+            if (const size_t NextRecStep = Channel->ComputeNextRecStep(CurrStep); NextRecStep < nSteps) nSteps = NextRecStep;
         }
 
-        return nSteps < currStep ? 1 : nSteps - currStep;
+        return nSteps < CurrStep ? 1 : nSteps - CurrStep;
     }
 
-    void FOutputManager::addOutputChannel(Socket_ptr out) {
-        outputs.push_back(out);
+    void FOutputManager::AddOutputChannel(FOutputChannel_ptr out) {
+        Outputs.push_back(out);
 
         Core::Log::Status() << "Output manager added "
-                      << Core::Log::FGBlue    << out->getName()
+                      << Core::Log::FGBlue    << out->GetName()
                       << Core::Log::FGMagenta << " : "
-                      << Core::Log::FGBlue    << out->getDescription()
+                      << Core::Log::FGBlue    << out->GetDescription()
                       << Core::Log::ResetFormatting << " output channel. Updates every "
-                      << Core::Log::FGGreen << out->getnSteps()
+                      << Core::Log::FGGreen << out->Get_nSteps()
                       << Core::Log::ResetFormatting << " sim steps."
                       << Core::Log::Flush;
     }
 
-    void FOutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) {
-        for (const auto& output: outputs) {
-            if (!output->notifyIntegrationHasFinished(theVeryLastOutputInformation))
-                Core::Log::Error() << "Error while finishing " << output->getName() << "..." << Core::Log::Flush;
+    void FOutputManager::SetMaxSteps(UInt MaxSteps)
+    {
+        this->MaxSteps = MaxSteps;
+    }
+
+    void FOutputManager::NotifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) const
+    {
+        for (const auto& output: Outputs) {
+            if (!output->NotifyIntegrationHasFinished(theVeryLastOutputInformation))
+                Core::Log::Error() << "Error while finishing " << output->GetName() << "..." << Core::Log::Flush;
         }
-
-
     }
 
 

@@ -12,7 +12,7 @@ namespace Slab::Models::KGRtoR {
         FKGEnergy &hamiltonian,
         const Str &name,
         const Str &description)
-    : Socket(name, 1, description)
+    : FOutputChannel(name, 1, description)
     , WindowPanel(FSlabWindowConfig(name))
     , guiWindow(guiWindow)
     , Params(params)

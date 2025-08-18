@@ -78,6 +78,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                         break;
                     case Slab::Core::TaskSuccess:
                         ImGui::TextColored(ImVec4(0,   1,   0, 1), "Success");
+                        ImGui::SameLine();
                         if (ImGui::Button("X"))
                         {
                             Task->Release();
@@ -111,33 +112,44 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
 
             // SHOW DATA **********************************************************************
             auto AllData = Slab::Math::EnumerateAllData();
-            if (!AllData.empty()) for (const auto & [Name, Type] : AllData)
+            if (!AllData.empty())
             {
-                auto DataWrap = Slab::Math::DataManager::GetData(Name);
-                ImGui::Text("%s: %s", Name.c_str(), Type.c_str());
-
-                if (auto Data = DataWrap.GetData(); Data == nullptr)
+                ImGui::SeparatorText("Data");
+                if (ImGui::Button("Prune Data"))
                 {
-                    ImGui::SameLine();
-                    ImGui::TextColored(ImVec4{0.75f,0,0,1}, "No data");
+                    Slab::Math::DataManager::Prune();
                 }
                 else
                 {
-                    ImGui::SameLine();
-                    ImGui::TextColored(ImVec4{0,0.75,0,1}, "Available");
-                }
+                    ImGui::Text("Available data:");
+                    for (const auto& [Name, Type] : AllData)
+                    {
+                        auto DataWrap = Slab::Math::DataManager::GetData(Name);
+                        ImGui::Text("%s: %s", Name.c_str(), Type.c_str());
 
+                        if (auto Data = DataWrap.GetData(); Data == nullptr)
+                        {
+                            ImGui::SameLine();
+                            ImGui::TextColored(ImVec4{0.75f, 0, 0, 1}, "No data");
+                        }
+                        else
+                        {
+                            ImGui::SameLine();
+                            ImGui::TextColored(ImVec4{0, 0.75, 0, 1}, "Available");
+                        }
+                    }
+                }
             }
 
-
             if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth());
-                SidePaneWidth != WindowWidth)
+                    SidePaneWidth != WindowWidth)
             {
                 SidePaneWidth = WindowWidth;
                 NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
             }
+
+            ImGui::End();
         }
-        ImGui::End();
 
         // Main menu entries
         {

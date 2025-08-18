@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_SIMHISTORY_H
 #define STUDIOSLAB_SIMHISTORY_H
 
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Bypass.h"
@@ -16,7 +16,7 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    class SimHistory : public Socket {
+    class SimHistory : public FOutputChannel {
         R2toR::FNumericFunction_ptr data;
         IntVector timesteps;
 

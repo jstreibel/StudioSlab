@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_RTORPANEL_H
 #define STUDIOSLAB_RTORPANEL_H
 
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
@@ -22,7 +22,7 @@ namespace Slab::Models::KGRtoR {
     using namespace Math;
     using namespace Graphics;
 
-    class FRtoRPanel : public WindowPanel, public Socket {
+    class FRtoRPanel : public WindowPanel, public FOutputChannel {
     protected:
         FGUIWindow &guiWindow;
         TPointer<FKGNumericConfig> Params;

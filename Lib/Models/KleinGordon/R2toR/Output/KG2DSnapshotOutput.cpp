@@ -15,7 +15,7 @@
 namespace Slab::Models::KGR2toR {
 
     KG2DSnapshotOutput::KG2DSnapshotOutput(Str filename)
-    : Math::Socket("KG ℝ²↦ℝ snapshot", -1, "Output field data from last simulation step."), filename(std::move(filename)) {
+    : Math::FOutputChannel("KG ℝ²↦ℝ snapshot", -1, "Output field data from last simulation step."), filename(std::move(filename)) {
 
     }
 
@@ -23,8 +23,8 @@ namespace Slab::Models::KGR2toR {
 
     }
 
-    bool KG2DSnapshotOutput::notifyIntegrationHasFinished(const Math::OutputPacket &final_output) {
-        if(!Socket::notifyIntegrationHasFinished(final_output)) return false;
+    bool KG2DSnapshotOutput::NotifyIntegrationHasFinished(const Math::OutputPacket &final_output) {
+        if(!FOutputChannel::NotifyIntegrationHasFinished(final_output)) return false;
 
         using StateType = Slab::Math::R2toR::EquationState;
         IN stateData = final_output.GetNakedStateData<StateType>();

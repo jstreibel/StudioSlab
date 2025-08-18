@@ -29,11 +29,17 @@ namespace Slab::Math {
         TotalSteps = Recipe->GetNumericConfig()->getn();
         StepsConcluded = 0;
         stepper = Recipe->buildStepper();
-        OutputManager = New<FOutputManager>(TotalSteps);
         BenchmarkData = New<Core::BenchmarkData>(TotalSteps/100);
-        for(auto sockets = Recipe->BuildOutputSockets();
-            const auto &socket : sockets)
-            OutputManager->addOutputChannel(socket);
+
+        if (OutputManager == nullptr)
+        {
+            OutputManager = New<FOutputManager>(TotalSteps);
+            for(auto sockets = Recipe->BuildOutputSockets(); const auto &socket : sockets)
+            {
+                OutputManager->AddOutputChannel(socket);
+            }
+        }
+        else OutputManager->SetMaxSteps(TotalSteps);
 
 #if ATTEMP_REALTIME
         {
@@ -83,7 +89,7 @@ namespace Slab::Math {
     }
 
     bool NumericTask::_cycleUntilOutputOrFinish() {
-        const size_t nCyclesToNextOutput = OutputManager->computeNStepsToNextOutput(StepsConcluded);
+        const size_t nCyclesToNextOutput = OutputManager->ComputeNStepsToNextOutput(StepsConcluded);
 
         if (nCyclesToNextOutput > 50000) {
             Log::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << Log::Flush;
@@ -98,7 +104,7 @@ namespace Slab::Math {
 
     void NumericTask::output(const bool force) {
         OutputPacket info = getOutputInfo();
-        OutputManager->output(info, force);
+        OutputManager->Output(info, force);
     }
 
     size_t NumericTask::getSteps() const { return StepsConcluded; }
@@ -126,13 +132,19 @@ namespace Slab::Math {
         // Para cumprir com os steps quebrados faltantes:
         if (StepsConcluded < n) if(!_cycle(n - StepsConcluded)) return Core::TaskError;
 
-        OutputManager->notifyIntegrationFinished(getOutputInfo());
+        OutputManager->NotifyIntegrationFinished(getOutputInfo());
 
         return Core::TaskSuccess;
     }
 
     void NumericTask::Abort() {
         forceStopFlag = true;
+    }
+
+    void NumericTask::SetOutputManager(const TPointer<FOutputManager>& CustomManager)
+    {
+        if(CustomManager == nullptr) return;
+        OutputManager = CustomManager;
     }
 
     TPointer<const Base::FNumericalRecipe> NumericTask::GetRecipe() const

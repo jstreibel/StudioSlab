@@ -1,13 +1,13 @@
 #ifndef OUTPUTCONSOLEMONITOR_H
 #define OUTPUTCONSOLEMONITOR_H
 
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 #include "Utils/Timer.h"
 
 
 namespace Slab::Math {
 
-    class OutputConsoleMonitor : public Socket {
+    class OutputConsoleMonitor : public FOutputChannel {
     private:
         FTimer timer = FTimer();
         const CountType total_steps;
@@ -17,7 +17,7 @@ namespace Slab::Math {
 
     public:
         explicit OutputConsoleMonitor(CountType total_steps, CountType steps_interval=100);
-        bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) override;
+        bool NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) override;
     };
 
 

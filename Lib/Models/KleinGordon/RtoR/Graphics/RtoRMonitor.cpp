@@ -82,7 +82,7 @@ namespace Slab::Models::KGRtoR {
 
     void Monitor::HandleOutput(const OutputPacket &outInfo) {
         for (const auto &dataView: DataViews)
-            dataView->output(outInfo);
+            dataView->Output(outInfo);
 
         Graphics::BaseMonitor::HandleOutput(outInfo);
     }
@@ -138,7 +138,7 @@ namespace Slab::Models::KGRtoR {
         }
 
         static DevFloat stepMod, lastStepMod = 0;
-        stepMod = (DevFloat) (LastPacket.GetSteps() % (this->getnSteps() * 100));
+        stepMod = (DevFloat) (LastPacket.GetSteps() % (this->Get_nSteps() * 100));
 
         fix t = FInterfaceManager::GetInstance().GetParameter("t")->GetValueAs<DevFloat>();
         fix steps = FInterfaceManager::GetInstance().GetParameter("m")->GetValueAs<Int>();
@@ -155,7 +155,7 @@ namespace Slab::Models::KGRtoR {
         fix step = LastPacket.GetSteps();
 
         static DevFloat stepMod, lastStepMod = 0;
-        stepMod = (DevFloat) (step % (this->getnSteps() * 100));
+        stepMod = (DevFloat) (step % (this->Get_nSteps() * 100));
         fix h = FInterfaceManager::GetInstance().GetParameter("h")->GetValueAs<DevFloat>();
         fix r = FInterfaceManager::GetInstance().GetParameter("r_dt")->GetValueAs<DevFloat>();
         fix dt = h*r;

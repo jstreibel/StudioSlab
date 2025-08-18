@@ -7,7 +7,7 @@
 
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 
 #include <fstream>
 
@@ -16,7 +16,7 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    class SnapshotOutput : public Socket {
+    class SnapshotOutput : public FOutputChannel {
         Str outputFileName;
 
     protected:
@@ -28,7 +28,7 @@ namespace Slab::Models::KGRtoR {
     public:
         explicit SnapshotOutput(const Str &fileName);
 
-        auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
+        auto NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
 
         static bool
         OutputNumericFunction(const Math::DiscreteSpace&, const Str& filename, const Vector<Pair<Str,Str>>& xtraPyDictEntries={});

@@ -34,11 +34,11 @@ namespace Slab::Math {
         // Core::RegisterCLInterface(interface);
     }
 
-    Vector<TPointer<Socket>> RtoRActionMetropolisRecipe::BuildOutputSockets() {
+    Vector<TPointer<FOutputChannel>> RtoRActionMetropolisRecipe::BuildOutputSockets() {
         fix total_steps = GetNumericConfig()->getn();
 
         auto console_monitor = New<OutputConsoleMonitor>(total_steps);
-        console_monitor->setnSteps((int)1000);
+        console_monitor->Set_nSteps((int)1000);
 
         return {console_monitor};
     }

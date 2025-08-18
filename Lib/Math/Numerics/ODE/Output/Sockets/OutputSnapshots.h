@@ -1,12 +1,12 @@
 #ifndef OUTPUTSNAPSHOTS1D_H
 #define OUTPUTSNAPSHOTS1D_H
 
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 
 
 namespace Slab::Math {
 
-    class OutputSnapshot : public Socket {
+    class OutputSnapshot : public FOutputChannel {
 
     private:
         Vector<size_t> snapSteps;
@@ -24,13 +24,13 @@ namespace Slab::Math {
         void doOutput(const OutputPacket &outInfo, const Str &customFileDescription = "",
                              size_t T_fileNamePrecision = 4);
 
-        size_t computeNextRecStep(UInt currStep) override;
+        size_t ComputeNextRecStep(UInt currStep) override;
 
     protected:
         virtual void _outputToFile(std::ofstream &file) = 0;
 
     protected:
-        bool shouldOutput(long unsigned timeStep) override;
+        bool ShouldOutput(long unsigned timeStep) override;
 
         void HandleOutput(const OutputPacket &outInfo) override {
             OutputSnapshot::doOutput(outInfo, customFileDescription, 4);

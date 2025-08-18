@@ -16,7 +16,7 @@ namespace Slab::Models::KGRtoR {
 
     SimHistory::SimHistory(CountType max_steps, DevFloat t_max, Resolution N_x, Resolution N_t,
                            DevFloat xMin, DevFloat L, const Str &name)
-            : Socket(name, StepsInterval,
+            : FOutputChannel(name, StepsInterval,
                      "A specific history tracker designed to watch the full sim history through visual monitors.")
             , max_steps(max_steps), max_t(t_max), N_x((int)N_x), N_t((int)N_t) {
         fix t = t_max;

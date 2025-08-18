@@ -6,7 +6,7 @@
 #define V_SHAPE_OUTPUTSHOCKWAVEZEROS_H
 
 
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 #include <fstream>
 
 

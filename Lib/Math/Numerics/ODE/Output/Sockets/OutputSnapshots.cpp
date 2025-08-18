@@ -5,7 +5,7 @@
 #include "OutputSnapshots.h"
 
 #include "Math/Numerics/ODE/Output/Format/CustomStringSeparatedSOF.h"
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 #include "Core/Tools/Log.h"
 
 #include "../../../../../Core/Controller/InterfaceManager.h"
@@ -21,7 +21,7 @@ namespace Slab::Math {
 
     OutputSnapshot::OutputSnapshot(Str customFileDescription,
                                    const size_t T_fileNamePrecision)
-            : Socket("Snapshot output", 1),
+            : FOutputChannel("Snapshot output", 1),
               customFileDescription(std::move(customFileDescription)),
               T_fileNamePrecision(T_fileNamePrecision) {}
 
@@ -86,14 +86,14 @@ namespace Slab::Math {
         Log::Success() << "Snapshot saved! File '" << fileName << "'" << Log::Flush;
     }
 
-    bool OutputSnapshot::shouldOutput(const long unsigned timeStep) {
+    bool OutputSnapshot::ShouldOutput(const long unsigned timeStep) {
         for (const size_t step: snapSteps)
             if (step == timeStep) return true;
 
         return false;
     }
 
-    size_t OutputSnapshot::computeNextRecStep(UInt currStep) {
+    size_t OutputSnapshot::ComputeNextRecStep(UInt currStep) {
         size_t smallest = snapSteps.back();
         for (auto step: snapSteps) if (step < smallest) smallest = step;
 

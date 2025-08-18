@@ -2,7 +2,7 @@
 #define SIMULATION_H
 
 #include "Stepper.h"
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 
 #include "../../Core/Controller/Interface.h"
 #include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
@@ -11,7 +11,7 @@
 
 namespace Slab::Math::Base {
 
-    using OutputSockets = Vector<TPointer<Socket>>;
+    using OutputSockets = Vector<TPointer<FOutputChannel>>;
 
     class FNumericalRecipe : public Core::FInterfaceOwner {
     protected:

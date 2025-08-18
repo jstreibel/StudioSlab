@@ -6,6 +6,7 @@
 
 #include <utility>
 
+#include "crude_json.h"
 #include "ParameterGUIRenderer.h"
 #include "Graphics/Modules/GUIModule/GUIContext.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
@@ -51,6 +52,13 @@ void FSimulationManager::ExposeInterface(const Slab::TPointer<Slab::Core::FInter
     }
 }
 
+Slab::TPointer<Slab::Math::FOutputManager> MakeGenericRtoROutputManager()
+{
+    auto OutputManager = Slab::New<Slab::Math::FOutputManager>();
+
+    return OutputManager;
+}
+
 bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& platform_window)
 {
     const auto ItemLocation = Slab::Graphics::MainMenuLocation{"Simulation", "Recipes", "𝕄²↦ℝ"};
@@ -62,16 +70,17 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
         {
             if (ItemString == "Signum-Gordon Plane Waves")
             {
-                auto Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
-                BeginRecipe(Recipe);
+                const auto Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
+
+                BeginRecipe({Recipe, nullptr});
             }
         }
     };
     ImGuiContext->AddMainMenuItem(Item);
 
-    if (Recipe != nullptr)
+    if (Material.Recipe != nullptr)
     {
-        const auto Interface = Recipe->GetInterface();
+        const auto Interface = Material.Recipe->GetInterface();
 
         bool bOpen = true;
         if (ImGui::Begin(Interface->GetName().c_str(), &bOpen)) ExposeInterface(Interface);
@@ -79,22 +88,26 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
         if (ImGui::Button("Run"))
         {
             const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
-            const auto Task = Slab::New<Slab::Math::NumericTask>(Recipe);
+            const auto Task = Slab::New<Slab::Math::NumericTask>(Material.Recipe);
+            if (Material.OutputManager != nullptr) Task->SetOutputManager(Material.OutputManager);
             TaskManager->AddTask(Task);
-            Recipe = nullptr;
+            Material.OutputManager = nullptr;
+            Material.Recipe = nullptr;
         }
 
         ImGui::End();
 
-        if (!bOpen) Recipe = nullptr;
-
-
+        if (!bOpen)
+        {
+            Material.Recipe = nullptr;
+            Material.OutputManager = nullptr;
+        }
     }
 
     return FPlatformWindowEventListener::NotifyRender(platform_window);
 }
 
-void FSimulationManager::BeginRecipe(Slab::TPointer<Slab::Math::Base::FNumericalRecipe> Recipe)
+void FSimulationManager::BeginRecipe(FMaterial Material)
 {
-    this->Recipe = std::move(Recipe);
+    this->Material = std::move(Material);
 }

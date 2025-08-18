@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_CENTERTIMEDFTOUTPUT_H
 #define STUDIOSLAB_CENTERTIMEDFTOUTPUT_H
 
-#include "Math/Numerics/Socket.h"
+#include "Math/Numerics/OutputChannel.h"
 
 namespace Slab::Models::KGRtoR {
 
@@ -16,7 +16,7 @@ namespace Slab::Models::KGRtoR {
         DevFloat t_end;
     };
 
-    class CenterTimeDFTOutput final : public Math::Socket {
+    class CenterTimeDFTOutput final : public Math::FOutputChannel {
         Str filename;
         Vector<FRealVector> dataset;
         Vector<DevFloat> x_measure;
@@ -27,10 +27,10 @@ namespace Slab::Models::KGRtoR {
         auto HandleOutput(const Math::OutputPacket &packet) -> void override;
 
     public:
-        auto computeNextRecStep(UInt currStep) -> size_t override;
+        auto ComputeNextRecStep(UInt currStep) -> size_t override;
 
     public:
-        auto notifyIntegrationHasFinished(const Math::OutputPacket &theVeryLastOutputInformation) -> bool override;
+        auto NotifyIntegrationHasFinished(const Math::OutputPacket &theVeryLastOutputInformation) -> bool override;
 
     public:
         CenterTimeDFTOutput(DevFloat t_max, CountType max_steps, TimeDFTOutputConfig timeDFTSnapshotConfig);
