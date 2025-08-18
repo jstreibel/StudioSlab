@@ -9,17 +9,20 @@
 #include "../Module.h"
 
 #include "Task.h"
+#include "Utils/List.h"
 
 namespace Slab::Core {
 
         class MTaskManager final : public SlabModule {
             using FTaskPointer = TPointer<FTask>;
-            struct Job
+            struct FJob
             {
                 FTaskPointer Task;
                 TPointer<std::thread> JobThread;
+
+                bool operator==(const FJob& RHS) const { return Task == RHS.Task && JobThread == RHS.JobThread; }
             };
-            Vector<Job> Jobs;
+            TList<FJob> Jobs;
 
             std::mutex AddJobMutex;
 
@@ -36,18 +39,16 @@ namespace Slab::Core {
             [[nodiscard]] auto HasRunningTasks() const -> bool;
             [[nodiscard]] auto GetNumberOfRunningTasks() const -> size_t;
 
-            /**
-             * Signals all finished jobs to end their threads in a safe manner.
-             */
-            void PruneThreads();
-            Vector<Job> GetAllJobs();
+            TList<FJob> GetAllJobs();
 
-            static void Abort(const Job& Job);
+            bool ClearJob(const FJob&);
+
+            static void Abort(const FJob& Job);
 
             /**
              * Add a task to the manager and start it immediately in a new thread.
              */
-            Job AddTask(const TPointer<FTask>& Task);
+            FJob AddTask(const TPointer<FTask>& Task);
 
             void AbortAllTasks() const;
 

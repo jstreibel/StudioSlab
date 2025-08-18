@@ -16,14 +16,14 @@ namespace Slab::Math {
     , TotalSteps(0)
     , StepsConcluded(0)
     , stepper(nullptr) {
-        if (pre_init) init();
+        if (pre_init) Init();
     }
 
     NumericTask::~NumericTask() {
         Log::Note() << "Avg. integration time: " << BenchmarkData << Log::Flush;
     }
 
-    void NumericTask::init() {
+    void NumericTask::Init() {
         if (isInitialized()) { throw Exception("Numeric task already initialized"); }
 
         TotalSteps = Recipe->GetNumericConfig()->getn();
@@ -83,7 +83,7 @@ namespace Slab::Math {
     }
 
     bool NumericTask::_cycleUntilOutputOrFinish() {
-        size_t nCyclesToNextOutput = OutputManager->computeNStepsToNextOutput(StepsConcluded);
+        const size_t nCyclesToNextOutput = OutputManager->computeNStepsToNextOutput(StepsConcluded);
 
         if (nCyclesToNextOutput > 50000) {
             Log::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << Log::Flush;
@@ -113,7 +113,7 @@ namespace Slab::Math {
     }
 
     Core::ETaskStatus NumericTask::Run() {
-        if (!isInitialized()) init();
+        if (!isInitialized()) Init();
 
         Recipe->setupForCurrentThread();
 
@@ -135,4 +135,13 @@ namespace Slab::Math {
         forceStopFlag = true;
     }
 
+    TPointer<const Base::FNumericalRecipe> NumericTask::GetRecipe() const
+    {
+        return Recipe;
+    }
+
+    TPointer<Base::FNumericalRecipe> NumericTask::GetRecipe()
+    {
+        return Recipe;
+    }
 }

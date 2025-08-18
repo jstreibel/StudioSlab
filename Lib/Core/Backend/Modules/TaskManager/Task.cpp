@@ -11,7 +11,7 @@ namespace Slab::Core {
     FTask::FTask(Str name) : Name(std::move(name)), bContinueFlag(false) {
     }
 
-    void FTask::start() {
+    void FTask::Start() {
         TaskStatus = TaskRunning;
         ThreadStatus = ThreadRunning;
 

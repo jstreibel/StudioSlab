@@ -45,15 +45,18 @@ namespace Slab::Math {
 
         ~NumericTask() override;
 
-        void init();
-        auto isInitialized() const -> bool;
+        void Init();
+        [[nodiscard]] auto isInitialized() const -> bool;
 
         void Abort() override;
 
-        auto getSteps() const -> size_t;
+        [[nodiscard]] TPointer<const Base::FNumericalRecipe> GetRecipe() const;
+        TPointer<Base::FNumericalRecipe> GetRecipe();
 
-        auto getBenchmarkData() const -> const Core::BenchmarkData &;
-        float GetProgress() const;
+        [[nodiscard]] auto getSteps() const -> size_t;
+
+        [[nodiscard]] auto getBenchmarkData() const -> const Core::BenchmarkData &;
+        [[nodiscard]] float GetProgress() const;
     };
 
 

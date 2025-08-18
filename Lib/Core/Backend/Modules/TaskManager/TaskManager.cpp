@@ -20,9 +20,9 @@ namespace Slab::Core {
             AbortAllTasks();
     }
 
-    auto MTaskManager::AddTask(const FTaskPointer& Task) -> MTaskManager::Job {
+    auto MTaskManager::AddTask(const FTaskPointer& Task) -> MTaskManager::FJob {
         auto funky = [Task]() {
-            Task->start();
+            Task->Start();
 
             switch (Task->GetStatus()) {
                 case TaskNotInitialized:
@@ -45,7 +45,7 @@ namespace Slab::Core {
         auto thread = New<std::thread>(funky);
         Log::Critical() << "Started job \"" << Task->GetName() << "\" on thread "
                         << "[id " << thread->get_id() << "] [handle " << thread->native_handle() << "] " << Log::Flush;
-        auto job = Job(Task, thread);
+        auto job = FJob(Task, thread);
 
         {
             std::lock_guard lock(AddJobMutex); // make sure things go smooth on adding tasks
@@ -61,7 +61,7 @@ namespace Slab::Core {
             Abort(job);
     }
 
-    void MTaskManager::Abort(const Job& Job) {
+    void MTaskManager::Abort(const FJob& Job) {
         auto &Task = Job.Task;
         auto &Thread = Job.JobThread;
 
@@ -81,7 +81,7 @@ namespace Slab::Core {
     }
 
     auto MTaskManager::HasRunningTasks() const -> bool {
-        return std::ranges::any_of(Jobs, [](const Job &job){ return job.Task->IsTaskRunning(); });
+        return std::ranges::any_of(Jobs, [](const FJob &job){ return job.Task->IsTaskRunning(); });
     }
 
     auto MTaskManager::GetNumberOfRunningTasks() const -> size_t
@@ -89,13 +89,20 @@ namespace Slab::Core {
         return Jobs.size();
     }
 
-    void MTaskManager::PruneThreads()
-    {
-        NOT_IMPLEMENTED_CLASS_METHOD
-    }
-
-    Vector<MTaskManager::Job> MTaskManager::GetAllJobs()
+    TList<MTaskManager::FJob> MTaskManager::GetAllJobs()
     {
         return Jobs;
+    }
+
+    bool MTaskManager::ClearJob(const FJob& Job)
+    {
+        if (Job.Task->IsTaskRunning()) return false;
+
+        Job.Task->Release();
+        Job.JobThread->join();
+
+        Jobs.remove(Job);
+
+        return true;
     }
 } // Slab::Core

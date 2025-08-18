@@ -36,7 +36,7 @@ namespace Slab::Core {
         /**
          * The entirety of the thread work starts and ends here.
          */
-        void start();
+        void Start();
 
         [[nodiscard]] bool IsTaskRunning() const;
         [[nodiscard]] bool IsThreadRunning() const;

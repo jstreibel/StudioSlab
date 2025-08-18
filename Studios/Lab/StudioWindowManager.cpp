@@ -59,17 +59,34 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
             if (!Jobs.empty())
             {
                 ImGui::SeparatorText("Tasks");
-                for (auto & [Task, JobThread] : Jobs)
+                for (auto & Job : Jobs)
                 {
+                    auto &[Task, JobThread] = Job;
                     ImGui::Text("%s: ", Task->GetName().c_str());
                     ImGui::SameLine();
+
                     switch (Task->GetStatus())
                     {
-                    case Slab::Core::TaskRunning:        ImGui::TextColored(ImVec4(0,   0,   1, 1), "Running"); break;
-                    case Slab::Core::TaskAborted:        ImGui::TextColored(ImVec4(.8f, .4f, 0, 1), "Aborted"); break;
-                    case Slab::Core::TaskError:          ImGui::TextColored(ImVec4(1,   0,   1, 1), "Error");   break;
-                    case Slab::Core::TaskSuccess:        ImGui::TextColored(ImVec4(0,   1,   0, 1), "Success"); break;
-                    case Slab::Core::TaskNotInitialized: ImGui::TextColored(ImVec4(1,   1,   0, 1), "Running"); break;
+                    case Slab::Core::TaskRunning:
+                        ImGui::TextColored(ImVec4(0,   0,   1, 1), "Running");
+                        break;
+                    case Slab::Core::TaskAborted:
+                        ImGui::TextColored(ImVec4(.8f, .4f, 0, 1), "Aborted");
+                        break;
+                    case Slab::Core::TaskError:
+                        ImGui::TextColored(ImVec4(1,   0,   1, 1), "Error");
+                        break;
+                    case Slab::Core::TaskSuccess:
+                        ImGui::TextColored(ImVec4(0,   1,   0, 1), "Success");
+                        if (ImGui::Button("X"))
+                        {
+                            Task->Release();
+                            TaskManager->ClearJob(Job);
+                        }
+                        break;
+                    case Slab::Core::TaskNotInitialized:
+                        ImGui::TextColored(ImVec4(1,   1,   0, 1), "Running");
+                        break;
                     default:
                         ImGui::TextColored(ImVec4(1,   0,   0, 1), "Unknown state");
                     }

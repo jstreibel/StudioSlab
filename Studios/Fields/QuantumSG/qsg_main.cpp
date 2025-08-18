@@ -34,7 +34,7 @@ protected:
     void OnStart() override {
         GET task_manager = Slab::GetModule<Slab::Core::MTaskManager>("TaskManager");
 
-        numeric_task->init();
+        numeric_task->Init();
 
         auto job = task_manager.AddTask(numeric_task);
     };
