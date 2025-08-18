@@ -6,14 +6,14 @@
 
 namespace Slab::Math {
 
-    class OutputManager final {
+    class FOutputManager final {
     protected:
         Vector<Socket_ptr > outputs;
 
     public:
-        explicit OutputManager(CountType max_steps);
+        explicit FOutputManager(CountType max_steps);
 
-        ~OutputManager();
+        ~FOutputManager();
 
         /**
          * This parameter comes in by reference because copying it can be very heavy. OTOH it is treated as if it is

@@ -5,11 +5,11 @@
 
 namespace Slab::Math {
 
-    OutputManager::OutputManager(CountType max_steps) : maxSteps(max_steps) {}
+    FOutputManager::FOutputManager(CountType max_steps) : maxSteps(max_steps) {}
 
-    OutputManager::~OutputManager() = default; // No need to destroy output objects in vectors;
+    FOutputManager::~FOutputManager() = default; // No need to destroy output objects in vectors;
 
-    void OutputManager::output(OutputPacket &infoVolatile, bool force) {
+    void FOutputManager::output(OutputPacket &infoVolatile, bool force) {
         const size_t steps = infoVolatile.GetSteps();
 
         for (auto &out : outputs) {
@@ -22,7 +22,7 @@ namespace Slab::Math {
     }
 
 
-    auto OutputManager::computeNStepsToNextOutput(UInt currStep) -> UInt {
+    auto FOutputManager::computeNStepsToNextOutput(UInt currStep) -> UInt {
         CountType nSteps = maxSteps;
 
         for (auto &socket: outputs) {
@@ -34,7 +34,7 @@ namespace Slab::Math {
         return nSteps < currStep ? 1 : nSteps - currStep;
     }
 
-    void OutputManager::addOutputChannel(Socket_ptr out) {
+    void FOutputManager::addOutputChannel(Socket_ptr out) {
         outputs.push_back(out);
 
         Core::Log::Status() << "Output manager added "
@@ -47,7 +47,7 @@ namespace Slab::Math {
                       << Core::Log::Flush;
     }
 
-    void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) {
+    void FOutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) {
         for (const auto& output: outputs) {
             if (!output->notifyIntegrationHasFinished(theVeryLastOutputInformation))
                 Core::Log::Error() << "Error while finishing " << output->getName() << "..." << Core::Log::Flush;

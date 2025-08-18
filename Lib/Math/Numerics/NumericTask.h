@@ -18,17 +18,17 @@ const auto FORCE_INITIAL_OUTPUT = true;
 namespace Slab::Math {
 
     class NumericTask final : public Core::FTask {
-        TPointer<Base::FNumericalRecipe> recipe;
+        TPointer<Base::FNumericalRecipe> Recipe;
 
-        UInt totalSteps;
-        UInt stepsConcluded;
+        UInt TotalSteps;
+        UInt StepsConcluded;
 
         Stepper_ptr stepper;
-        TPointer<OutputManager> outputManager;
+        TPointer<FOutputManager> OutputManager;
 
         std::atomic<bool> forceStopFlag = false;
 
-        TPointer<Core::BenchmarkData> benchmarkData;
+        TPointer<Core::BenchmarkData> BenchmarkData;
 
         void output(bool force = false);
 
@@ -53,7 +53,7 @@ namespace Slab::Math {
         auto getSteps() const -> size_t;
 
         auto getBenchmarkData() const -> const Core::BenchmarkData &;
-
+        float GetProgress() const;
     };
 
 

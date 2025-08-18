@@ -12,28 +12,28 @@ namespace Slab::Math {
 
     NumericTask::NumericTask(const TPointer <Base::FNumericalRecipe> &recipe, const bool pre_init)
     : FTask("Numeric Integration")
-    , recipe(recipe)
-    , totalSteps(0)
-    , stepsConcluded(0)
+    , Recipe(recipe)
+    , TotalSteps(0)
+    , StepsConcluded(0)
     , stepper(nullptr) {
         if (pre_init) init();
     }
 
     NumericTask::~NumericTask() {
-        Log::Note() << "Avg. integration time: " << benchmarkData << Log::Flush;
+        Log::Note() << "Avg. integration time: " << BenchmarkData << Log::Flush;
     }
 
     void NumericTask::init() {
         if (isInitialized()) { throw Exception("Numeric task already initialized"); }
 
-        totalSteps = recipe->GetNumericConfig()->getn();
-        stepsConcluded = 0;
-        stepper = recipe->buildStepper();
-        outputManager = New<OutputManager>(totalSteps);
-        benchmarkData = New<Core::BenchmarkData>(totalSteps/100);
-        for(auto sockets = recipe->BuildOutputSockets();
+        TotalSteps = Recipe->GetNumericConfig()->getn();
+        StepsConcluded = 0;
+        stepper = Recipe->buildStepper();
+        OutputManager = New<FOutputManager>(TotalSteps);
+        BenchmarkData = New<Core::BenchmarkData>(TotalSteps/100);
+        for(auto sockets = Recipe->BuildOutputSockets();
             const auto &socket : sockets)
-            outputManager->addOutputChannel(socket);
+            OutputManager->addOutputChannel(socket);
 
 #if ATTEMP_REALTIME
         {
@@ -63,19 +63,19 @@ namespace Slab::Math {
     OutputPacket NumericTask::getOutputInfo() {
         auto currentState = stepper->getCurrentState();
 
-        return {currentState, stepsConcluded};
+        return {currentState, StepsConcluded};
     }
 
     bool NumericTask::_cycle(size_t nCycles) {
         if(forceStopFlag) return false;
 
-        benchmarkData->StartMeasure();
+        BenchmarkData->StartMeasure();
         stepper->step(nCycles);
-        benchmarkData->StoreMeasure(static_cast<int>(nCycles));
+        BenchmarkData->StoreMeasure(static_cast<int>(nCycles));
 
-        stepsConcluded += nCycles;
+        StepsConcluded += nCycles;
 
-        fix forceOutput = stepsConcluded >= totalSteps;
+        fix forceOutput = StepsConcluded >= TotalSteps;
 
         output(forceOutput);
 
@@ -83,7 +83,7 @@ namespace Slab::Math {
     }
 
     bool NumericTask::_cycleUntilOutputOrFinish() {
-        size_t nCyclesToNextOutput = outputManager->computeNStepsToNextOutput(stepsConcluded);
+        size_t nCyclesToNextOutput = OutputManager->computeNStepsToNextOutput(StepsConcluded);
 
         if (nCyclesToNextOutput > 50000) {
             Log::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << Log::Flush;
@@ -98,30 +98,35 @@ namespace Slab::Math {
 
     void NumericTask::output(const bool force) {
         OutputPacket info = getOutputInfo();
-        outputManager->output(info, force);
+        OutputManager->output(info, force);
     }
 
-    size_t NumericTask::getSteps() const { return stepsConcluded; }
+    size_t NumericTask::getSteps() const { return StepsConcluded; }
 
     const Core::BenchmarkData &NumericTask::getBenchmarkData() const {
-        return *benchmarkData;
+        return *BenchmarkData;
+    }
+
+    float NumericTask::GetProgress() const
+    {
+        return static_cast<float>(StepsConcluded) / static_cast<float>(TotalSteps);
     }
 
     Core::ETaskStatus NumericTask::Run() {
         if (!isInitialized()) init();
 
-        recipe->setupForCurrentThread();
+        Recipe->setupForCurrentThread();
 
-        const size_t n = totalSteps;
+        const size_t n = TotalSteps;
 
-        while (!forceStopFlag && stepsConcluded < n && _cycleUntilOutputOrFinish()) { }
+        while (!forceStopFlag && StepsConcluded < n && _cycleUntilOutputOrFinish()) { }
 
         if(forceStopFlag)                                       return Core::TaskAborted;
 
         // Para cumprir com os steps quebrados faltantes:
-        if (stepsConcluded < n) if(!_cycle(n - stepsConcluded)) return Core::TaskError;
+        if (StepsConcluded < n) if(!_cycle(n - StepsConcluded)) return Core::TaskError;
 
-        outputManager->notifyIntegrationFinished(getOutputInfo());
+        OutputManager->notifyIntegrationFinished(getOutputInfo());
 
         return Core::TaskSuccess;
     }

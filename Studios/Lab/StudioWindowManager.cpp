@@ -11,6 +11,7 @@
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Graphics/SlabGraphics.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
+#include "Math/Numerics/NumericTask.h"
 
 #include "Simulation/SimulationManager.h"
 
@@ -62,11 +63,25 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                 {
                 case Slab::Core::TaskRunning:        ImGui::TextColored(ImVec4(0,   0,   1, 1), "Running"); break;
                 case Slab::Core::TaskAborted:        ImGui::TextColored(ImVec4(.8f, .4f, 0, 1), "Aborted"); break;
-                case Slab::Core::TaskError:          ImGui::TextColored(ImVec4(1,   0,   1, 1), "Error"); break;
+                case Slab::Core::TaskError:          ImGui::TextColored(ImVec4(1,   0,   1, 1), "Error");   break;
                 case Slab::Core::TaskSuccess:        ImGui::TextColored(ImVec4(0,   1,   0, 1), "Success"); break;
                 case Slab::Core::TaskNotInitialized: ImGui::TextColored(ImVec4(1,   1,   0, 1), "Running"); break;
                 default:
+                    ImGui::TextColored(ImVec4(1,   0,   0, 1), "Unknown state");
                 }
+
+                try
+                {
+                    auto NumericTask = dynamic_cast<Slab::Math::NumericTask*>(Task.get());
+                    fix Progress = NumericTask->GetProgress();
+
+                    ImGui::ProgressBar(Progress);
+
+                } catch (std::bad_cast &Exception)
+                {
+
+                }
+
             }
 
             if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth());
