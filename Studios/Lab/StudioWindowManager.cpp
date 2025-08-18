@@ -11,6 +11,7 @@
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Graphics/SlabGraphics.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
+#include "Math/SlabMath.h"
 #include "Math/Numerics/NumericTask.h"
 
 #include "Simulation/SimulationManager.h"
@@ -53,6 +54,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
         {
             const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
 
+            // SHOW JOBS **********************************************************************
             auto Jobs = TaskManager->GetAllJobs();
             if (!Jobs.empty())
             {
@@ -89,6 +91,27 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
 
                 }
             }
+
+            // SHOW DATA **********************************************************************
+            auto AllData = Slab::Math::EnumerateAllData();
+            if (!AllData.empty()) for (const auto & [Name, Type] : AllData)
+            {
+                auto DataWrap = Slab::Math::DataManager::GetData(Name);
+                ImGui::Text("%s: %s", Name.c_str(), Type.c_str());
+
+                if (auto Data = DataWrap.GetData(); Data == nullptr)
+                {
+                    ImGui::SameLine();
+                    ImGui::TextColored(ImVec4{0.75f,0,0,1}, "No data");
+                }
+                else
+                {
+                    ImGui::SameLine();
+                    ImGui::TextColored(ImVec4{0,0.75,0,1}, "Available");
+                }
+
+            }
+
 
             if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth());
                 SidePaneWidth != WindowWidth)

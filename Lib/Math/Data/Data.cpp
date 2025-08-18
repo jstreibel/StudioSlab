@@ -51,7 +51,7 @@ namespace Slab::Math {
         return data.lock()->get_data_type();
     }
 
-    auto DataWrap::get_data() const -> TPointer<Data> {
+    auto DataWrap::GetData() const -> TPointer<Data> {
         if(!is_valid()) return nullptr;
 
         return data.lock();

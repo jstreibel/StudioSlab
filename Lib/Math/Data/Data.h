@@ -61,7 +61,7 @@ namespace Slab::Math {
         DataType get_type() const;
 
         virtual auto
-        get_data() const -> TPointer<Data>;
+        GetData() const -> TPointer<Data>;
 
         bool is_valid() const;
 

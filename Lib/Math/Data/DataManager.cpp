@@ -109,9 +109,9 @@ namespace Slab::Math {
 
         map.erase(entry->first);
 
-        if(proxy.is_valid()) proxy.get_data()->data_name = new_name;
+        if(proxy.is_valid()) proxy.GetData()->data_name = new_name;
 
-        return RegisterData(new_name, proxy.get_data());
+        return RegisterData(new_name, proxy.GetData());
     }
 
 
