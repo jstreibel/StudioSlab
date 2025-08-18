@@ -53,35 +53,41 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
         {
             const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
 
-            ImGui::SeparatorText("Tasks");
             auto Jobs = TaskManager->GetAllJobs();
-            for (auto & [Task, JobThread] : Jobs)
+            if (!Jobs.empty())
             {
-                ImGui::Text("%s: ", Task->GetName().c_str());
-                ImGui::SameLine();
-                switch (Task->GetStatus())
+                ImGui::SeparatorText("Tasks");
+                for (auto & [Task, JobThread] : Jobs)
                 {
-                case Slab::Core::TaskRunning:        ImGui::TextColored(ImVec4(0,   0,   1, 1), "Running"); break;
-                case Slab::Core::TaskAborted:        ImGui::TextColored(ImVec4(.8f, .4f, 0, 1), "Aborted"); break;
-                case Slab::Core::TaskError:          ImGui::TextColored(ImVec4(1,   0,   1, 1), "Error");   break;
-                case Slab::Core::TaskSuccess:        ImGui::TextColored(ImVec4(0,   1,   0, 1), "Success"); break;
-                case Slab::Core::TaskNotInitialized: ImGui::TextColored(ImVec4(1,   1,   0, 1), "Running"); break;
-                default:
-                    ImGui::TextColored(ImVec4(1,   0,   0, 1), "Unknown state");
+                    ImGui::Text("%s: ", Task->GetName().c_str());
+                    ImGui::SameLine();
+                    switch (Task->GetStatus())
+                    {
+                    case Slab::Core::TaskRunning:        ImGui::TextColored(ImVec4(0,   0,   1, 1), "Running"); break;
+                    case Slab::Core::TaskAborted:        ImGui::TextColored(ImVec4(.8f, .4f, 0, 1), "Aborted"); break;
+                    case Slab::Core::TaskError:          ImGui::TextColored(ImVec4(1,   0,   1, 1), "Error");   break;
+                    case Slab::Core::TaskSuccess:        ImGui::TextColored(ImVec4(0,   1,   0, 1), "Success"); break;
+                    case Slab::Core::TaskNotInitialized: ImGui::TextColored(ImVec4(1,   1,   0, 1), "Running"); break;
+                    default:
+                        ImGui::TextColored(ImVec4(1,   0,   0, 1), "Unknown state");
+                    }
+
+                    if (Task->GetStatus() == Slab::Core::TaskRunning)
+                    {
+                        try
+                        {
+                            auto NumericTask = dynamic_cast<Slab::Math::NumericTask*>(Task.get());
+                            fix Progress = NumericTask->GetProgress();
+                            ImGui::SameLine();
+                            ImGui::ProgressBar(Progress);
+
+                        } catch (std::bad_cast &Exception)
+                        {
+
+                        }
+                    }
+
                 }
-
-                try
-                {
-                    auto NumericTask = dynamic_cast<Slab::Math::NumericTask*>(Task.get());
-                    fix Progress = NumericTask->GetProgress();
-
-                    ImGui::ProgressBar(Progress);
-
-                } catch (std::bad_cast &Exception)
-                {
-
-                }
-
             }
 
             if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth());
