@@ -11,7 +11,7 @@ namespace Slab::Math {
         Vector<FOutputChannel_ptr > Outputs;
 
     public:
-        explicit FOutputManager(CountType MaxSteps=0);
+        explicit FOutputManager(CountType MaxSteps);
 
         ~FOutputManager();
 

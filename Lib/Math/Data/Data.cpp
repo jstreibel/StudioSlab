@@ -8,14 +8,14 @@
 namespace Slab::Math {
     CountType Data::n = 0;
 
-    Data::Data(DataName name) : id(name=="[invalid]" ? 0 : ++n /* zero is reserved */), data_name(name) {}
+    Data::Data(FDataName name) : id(name=="[invalid]" ? 0 : ++n /* zero is reserved */), data_name(name) {}
 
     UniqueID Data::get_id() const { return id; }
 
-    DataName Data::get_data_name() const { return data_name; }
+    FDataName Data::get_data_name() const { return data_name; }
 
-    void Data::change_data_name(DataName new_name) {
-        DataManager::ChangeDataName(data_name, new_name);
+    void Data::change_data_name(FDataName new_name) {
+        DataRegistry::ChangeDataName(data_name, new_name);
     }
 
 
@@ -31,51 +31,51 @@ namespace Slab::Math {
 
 
 
-    DataWrap::DataWrap(TVolatile<Data> data) : data(data) { }
+    FDataWrap::FDataWrap(TVolatile<Data> data) : data(data) { }
 
-    UniqueID DataWrap::get_id() const {
+    UniqueID FDataWrap::get_id() const {
         if(!is_valid()) return 0;
 
         return data.lock()->get_id();
     }
 
-    DataName DataWrap::get_name() const {
+    FDataName FDataWrap::get_name() const {
         if(!is_valid()) return "";
 
         return data.lock()->get_data_name();
     }
 
-    DataType DataWrap::get_type() const {
+    DataType FDataWrap::get_type() const {
         if(!is_valid()) return "";
 
         return data.lock()->get_data_type();
     }
 
-    auto DataWrap::GetData() const -> TPointer<Data> {
+    auto FDataWrap::GetData() const -> TPointer<Data> {
         if(!is_valid()) return nullptr;
 
         return data.lock();
     }
 
-    bool DataWrap::is_valid() const {
+    bool FDataWrap::is_valid() const {
         return !data.expired();
     }
 
-    bool DataWrap::operator<(const DataWrap &rhs) const {
+    bool FDataWrap::operator<(const FDataWrap &rhs) const {
         if(!is_valid() || !rhs.is_valid()) return false;
 
         return *data.lock() < *rhs.data.lock();
     }
 
-    bool DataWrap::operator>(const DataWrap &rhs) const {
+    bool FDataWrap::operator>(const FDataWrap &rhs) const {
         return rhs < *this;
     }
 
-    bool DataWrap::operator<=(const DataWrap &rhs) const {
+    bool FDataWrap::operator<=(const FDataWrap &rhs) const {
         return !(rhs < *this);
     }
 
-    bool DataWrap::operator>=(const DataWrap &rhs) const {
+    bool FDataWrap::operator>=(const FDataWrap &rhs) const {
         return !(*this < rhs);
     }
 

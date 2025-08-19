@@ -13,7 +13,7 @@ namespace Slab::Math {
 
     using UniqueID = CountType;
     using DataType = Str;
-    using DataName = Str;
+    using FDataName = Str;
     using DataChangeCallback = std::function<void(TPointer<Data>)>;
 
     enum DataBehavior {
@@ -22,24 +22,24 @@ namespace Slab::Math {
     };
 
     class Data {
-        friend class DataManager;
+        friend class DataRegistry;
 
         static CountType n;
         const UniqueID id;
-        DataName data_name;
+        FDataName data_name;
 
     public:
         virtual ~Data() = default;
-        explicit Data(DataName);
+        explicit Data(FDataName);
 
         [[nodiscard]] UniqueID
         get_id() const;
 
-        [[nodiscard]] DataName
+        [[nodiscard]] FDataName
         get_data_name() const;
 
         void
-        change_data_name(DataName);
+        change_data_name(FDataName);
 
         virtual DataType
         get_data_type() const = 0;
@@ -50,29 +50,30 @@ namespace Slab::Math {
         bool operator>=(const Data &rhs) const;
     };
 
-    class DataWrap {
+    class FDataWrap {
         TVolatile<Data> data;
 
     public:
-        DataWrap() = default;
-        explicit DataWrap(TVolatile<Data>);
+        virtual ~FDataWrap() = default;
+        FDataWrap() = default;
+        explicit FDataWrap(TVolatile<Data>);
 
-        UniqueID get_id() const;
-        DataName get_name() const;
-        DataType get_type() const;
+        [[nodiscard]] UniqueID get_id() const;
+        [[nodiscard]] FDataName get_name() const;
+        [[nodiscard]] DataType get_type() const;
 
         virtual auto
         GetData() const -> TPointer<Data>;
 
         bool is_valid() const;
 
-        bool operator<(const DataWrap &rhs) const;
+        bool operator<(const FDataWrap &rhs) const;
 
-        bool operator>(const DataWrap &rhs) const;
+        bool operator>(const FDataWrap &rhs) const;
 
-        bool operator<=(const DataWrap &rhs) const;
+        bool operator<=(const FDataWrap &rhs) const;
 
-        bool operator>=(const DataWrap &rhs) const;
+        bool operator>=(const FDataWrap &rhs) const;
     };
 
 } // Slab::Math

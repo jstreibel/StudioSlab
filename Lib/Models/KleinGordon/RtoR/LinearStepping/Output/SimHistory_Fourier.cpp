@@ -20,7 +20,7 @@ namespace Slab::Models::KGRtoR {
 
         auto DftNewData = RtoR::DFT::Compute(phi);
 
-        fix dt = max_t / (DevFloat)max_steps;
+        fix dt = Max_t / (DevFloat)MaxSteps;
         auto result = DFTInstantResult{Input.GetSteps()*dt, DftNewData};
         DFTDataHistory.emplace_back(result);
 

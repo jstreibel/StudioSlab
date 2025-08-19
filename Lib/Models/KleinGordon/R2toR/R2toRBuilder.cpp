@@ -63,7 +63,7 @@ namespace Slab::Models::KGR2toR {
             RtoR2::StraightLine section;
             auto angleDegrees = 22.5;
             {
-                const DevFloat rMin = KGNumericConfig->getxMin();
+                const DevFloat rMin = KGNumericConfig->Get_xMin();
                 const DevFloat rMax = KGNumericConfig->getxMax();
                 const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
 
@@ -83,7 +83,7 @@ namespace Slab::Models::KGR2toR {
 
             const auto N = (DevFloat) KGNumericConfig->getN();
             const DevFloat Np = outputResolutionX;
-            const DevFloat r = KGNumericConfig->getr();
+            const DevFloat r = KGNumericConfig->Get_r();
             const auto stepsInterval = UInt(N / (Np * r));
 
             auto outputFileName = this->SuggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
@@ -116,7 +116,7 @@ namespace Slab::Models::KGR2toR {
 
     R2toR::FNumericFunction_ptr Builder::newFunctionArbitrary() {
         const size_t N = KGNumericConfig->getN();
-        const floatt xLeft = KGNumericConfig->getxMin();
+        const floatt xLeft = KGNumericConfig->Get_xMin();
         fix h = KGNumericConfig->geth();
 
         if (DeviceConfig == CPU)

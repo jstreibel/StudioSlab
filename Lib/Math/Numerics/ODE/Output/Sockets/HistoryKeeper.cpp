@@ -11,7 +11,7 @@ namespace Slab::Math {
     const long long unsigned int ONE_GB = 1073741824;
 
     HistoryKeeper::HistoryKeeper(size_t recordStepsInterval, SpaceFilterBase *filter)
-            : FOutputChannel("History output", int(recordStepsInterval)), spaceFilter(*filter),
+            : FOutputChannel("History output", static_cast<int>(recordStepsInterval)), spaceFilter(*filter),
               count(0), countTotal(0) {
         // TODO: assert(ModelBuilder::getInstance().getParams().getN()>=outputResolutionX);
     }

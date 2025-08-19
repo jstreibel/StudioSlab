@@ -10,12 +10,13 @@
 namespace Slab::Math {
     using namespace Slab::Core;
 
+    constexpr static char PDeviceLongName[] = "dev";
+
     class FDeviceConfig : public FInterfaceOwner {
         auto NotifyCLArgsSetupFinished() -> void override;
 
-    private:
         Device dev = Device::CPU;
-        TPointer<IntegerParameter> deviceChoice = New<IntegerParameter>(1, FParameterDescription{"dev", "Device on which to run simulation.\n"
+        TPointer<IntegerParameter> deviceChoice = New<IntegerParameter>(1, FParameterDescription{PDeviceLongName, "Device on which to run simulation.\n"
                                                                              "\t0: CPU \n"
                                                                              "\t1: GPU 0 \n"
                                                                              "\t2: GPU 1 "});

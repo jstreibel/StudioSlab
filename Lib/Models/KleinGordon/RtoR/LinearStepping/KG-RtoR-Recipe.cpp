@@ -103,13 +103,13 @@ namespace Slab::Models::KGRtoR {
 
         const FKGNumericConfig &p = dynamic_cast<FKGNumericConfig&>(*NumericConfig);
 
-        fix t = p.gett();
+        fix t = p.Get_t();
         fix max_steps = p.getn();
         fix N = static_cast<DevFloat>(p.getN());
         fix L = p.GetL();
-        fix xMin = p.getxMin();
+        fix xMin = p.Get_xMin();
         fix Nₒᵤₜ = *OutputOptions.OutputResolution > N ? N : *OutputOptions.OutputResolution;
-        fix r = p.getr();
+        fix r = p.Get_r();
 
         /* ****************************************************************************************
            *************************** SNAPSHOT OUTPUT ********************************************
@@ -177,8 +177,8 @@ namespace Slab::Models::KGRtoR {
                 Sockets.emplace_back(simHistory);
                 Sockets.emplace_back(ftHistory);
 
-                outputOpenGL->SetSimulationHistory(Slab::Naked(simHistory->getData()));
-                outputOpenGL->SetSpaceFourierHistory(Slab::Naked(ftHistory->getData()),
+                outputOpenGL->SetSimulationHistory(simHistory->GetData());
+                outputOpenGL->SetSpaceFourierHistory(ftHistory->GetData(),
                                                      ftHistory->GetDFTDataHistory());
             }
 
@@ -201,7 +201,7 @@ namespace Slab::Models::KGRtoR {
     Vector<TPointer<FOutputChannel>> FKGRtoR_Recipe::getTimeDFTSnapshots() {
         auto &c = *KGNumericConfig;
 
-        fix t = c.gett();
+        fix t = c.Get_t();
 
         fix Δt    = *OutputOptions.TimeDFTSnapshot_tDelta  <= 0 ? t : *OutputOptions.TimeDFTSnapshot_tDelta;
         fix t_len = *OutputOptions.TimeDFTSnapshot_tLength <= 0 ? t : *OutputOptions.TimeDFTSnapshot_tLength;
@@ -219,7 +219,7 @@ namespace Slab::Models::KGRtoR {
         FRealVector x_locations;
         {
             fix L = c.GetL();
-            fix xMin = c.getxMin();
+            fix xMin = c.Get_xMin();
 
             if(fix k_param = FInterfaceManager::GetInstance().GetParameter("k")){
                 fix k_n = k_param->GetValueAs<DevFloat>();
@@ -260,14 +260,14 @@ namespace Slab::Models::KGRtoR {
         TimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, t_start, t_end};
 
         fix &conf = *KGNumericConfig;
-        return Slab::New<CenterTimeDFTOutput>(conf.gett(), conf.getn(), dftConfig);
+        return Slab::New<CenterTimeDFTOutput>(conf.Get_t(), conf.getn(), dftConfig);
     }
 
     RtoR::NumericFunction_ptr FKGRtoR_Recipe::newFunctionArbitrary() const {
         fix &conf = *KGNumericConfig;
 
         const size_t N = conf.getN();
-        const floatt xLeft = conf.getxMin();
+        const floatt xLeft = conf.Get_xMin();
         const floatt xRight = xLeft + conf.GetL();
 
         auto laplacianType = force_periodicBC || *BoundaryConditions == 1

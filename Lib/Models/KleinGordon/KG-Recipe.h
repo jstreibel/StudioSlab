@@ -36,19 +36,22 @@ namespace Slab::Models {
 
         explicit FKGOutputOptions(bool bDoRegister);
 
+        [[nodiscard]] Int GetOutputResolution() const { return *OutputResolution; };
+
     protected:
         auto NotifyAllCLArgsSetupFinished() -> void override;
     };
 
     class KGRecipe : public Base::FNumericalRecipe {
-    protected:
-        TPointer<FKGNumericConfig> KGNumericConfig;
-        FDeviceConfig DeviceConfig;
-        FKGOutputOptions OutputOptions;
+
     public:
         explicit KGRecipe(const TPointer<FKGNumericConfig>& numeric_config, const Str& name="Klein-Gordon",
                           const Str& generalDescription="The Klein-Gordon scalar field equation builder",
                           bool doRegister=false);
+
+        [[nodiscard]] TPointer<const FKGNumericConfig> GetKGNumericConfig() const { return KGNumericConfig;}
+        [[nodiscard]] FDeviceConfig GetDeviceConfig() const { return DeviceConfig; }
+        [[nodiscard]] FKGOutputOptions GetOutputOptions() const { return OutputOptions; };
 
         virtual void* getHamiltonian() = 0;
 
@@ -59,6 +62,11 @@ namespace Slab::Models {
         virtual auto buildSolver()  -> TPointer<Base::LinearStepSolver> = 0;
 
         auto NotifyAllCLArgsSetupFinished() -> void override;
+
+    protected:
+        TPointer<FKGNumericConfig> KGNumericConfig;
+        FDeviceConfig DeviceConfig;
+        FKGOutputOptions OutputOptions;
     };
 
 }

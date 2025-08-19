@@ -20,7 +20,7 @@ namespace Slab::Models::KGRtoR {
      FKGEnergy &hamiltonian)
     : FRtoRPanel(params, guiWindow, hamiltonian, "Histories", "Panel to view 1-d sections of histories.")
     {
-        fix xMin = params->getxMin();
+        fix xMin = params->Get_xMin();
         fix xMax = params->getxMax();
         fix h = params->geth();
         fix kMin = 0;
@@ -93,7 +93,7 @@ namespace Slab::Models::KGRtoR {
             auto t_max = (float) LastPacket.GetSteps() * Params->Getdt();
             if (ImGui::SliderFloat("t##poopsie", &t, 0, t_max) |
                 ImGui::DragFloat("t##choopsie", &t, 5.e-5f * t_max, 0, t_max)) {
-                fix xMin = Params->getxMin();
+                fix xMin = Params->Get_xMin();
                 fix xMax = Params->getxMax();
                 fix h = Params->geth();
                 fix kMin = 0;

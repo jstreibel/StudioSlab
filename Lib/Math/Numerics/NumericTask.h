@@ -53,7 +53,7 @@ namespace Slab::Math {
         /**
          * Option to provide a custom FOutputManager. Means the NumericTask will not call
          * FNumericalRecipe::BuildOutputChannels. Notice that the constructor's pre_init parameter ideally is
-         * set to 'false', if you'll provide a CustomManager.
+         * set to 'false', if you'll provide a CustomManager. Does nothing is CustomManager is nullptr.
          * @param CustomManager the custom manager to replace the default one, provided by FNumericalRecipe.
          */
         void SetOutputManager(const TPointer<FOutputManager> &CustomManager);

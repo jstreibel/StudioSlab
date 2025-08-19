@@ -16,7 +16,7 @@ namespace Slab::Models {
         if(do_register) RegisterToManager();
     }
 
-    auto FKGNumericConfig::getxMin() const -> floatt { return **xCenter - **L * .5; }
+    auto FKGNumericConfig::Get_xMin() const -> floatt { return **xCenter - **L * .5; }
 
     auto FKGNumericConfig::getxMax() const -> floatt { return **xCenter + **L * .5; }
 
@@ -53,11 +53,11 @@ namespace Slab::Models {
         return GetInterface()->ToString({"L", "N"}, SEPARATOR);
     }
 
-    auto FKGNumericConfig::getr() const -> floatt { return **rdt; }
+    auto FKGNumericConfig::Get_r() const -> floatt { return **rdt; }
 
     UInt FKGNumericConfig::getn() const {
         const auto dt = this->Getdt();
-        const auto t = gett();
+        const auto t = Get_t();
         const auto n = static_cast<UInt>(round(t / dt));
         return n > 0 ? n : 1;
     }

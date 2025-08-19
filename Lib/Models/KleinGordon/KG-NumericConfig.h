@@ -39,9 +39,9 @@ namespace Slab::Models {
 
         [[nodiscard]] auto Getdt() const -> DevFloat;
 
-        [[nodiscard]] auto getr() const -> DevFloat;
+        [[nodiscard]] auto Get_r() const -> DevFloat;
 
-        [[nodiscard]] auto getxMin() const -> DevFloat;
+        [[nodiscard]] auto Get_xMin() const -> DevFloat;
 
         [[nodiscard]] auto getxMax() const -> DevFloat;
 

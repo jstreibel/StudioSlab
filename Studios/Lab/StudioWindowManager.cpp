@@ -50,7 +50,8 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
         fix MenuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
         ImGui::SetNextWindowPos(ImVec2(0, static_cast<float>(MenuHeight)));
         ImGui::SetNextWindowSize(ImVec2(StudioConfig::SidePaneWidth, static_cast<float>(HeightSysWin - MenuHeight)), ImGuiCond_Appearing);
-        if (ImGui::Begin(StudioConfig::SidePaneId, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse))
+        fix WindowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
+        if (ImGui::Begin(StudioConfig::SidePaneId, nullptr, WindowFlags))
         {
             const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
 
@@ -111,22 +112,28 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
             }
 
             // SHOW DATA **********************************************************************
-            auto AllData = Slab::Math::EnumerateAllData();
-            if (!AllData.empty())
+            auto AllManagedData = Slab::Math::DataKeeper::GetDataList();
+            if (!AllManagedData.empty())
             {
-                ImGui::SeparatorText("Data");
-                if (ImGui::Button("Prune Data"))
+                ImGui::NewLine();
+                ImGui::SeparatorText("Managed Data");
+                for (auto Data : AllManagedData)
                 {
-                    Slab::Math::DataManager::Prune();
+                    ImGui::Text("%s [%s]", Data->get_data_name().c_str(), Data->get_data_type().c_str());
                 }
-                else
-                {
-                    ImGui::Text("Available data:");
-                    for (const auto& [Name, Type] : AllData)
-                    {
-                        auto DataWrap = Slab::Math::DataManager::GetData(Name);
-                        ImGui::Text("%s: %s", Name.c_str(), Type.c_str());
+            }
 
+            auto AllDataRegistries = Slab::Math::EnumerateAllData();
+            if (!AllDataRegistries.empty())
+            {
+                ImGui::NewLine();
+                ImGui::SeparatorText("Registered Data");
+                {
+                    for (const auto& [Name, Type] : AllDataRegistries)
+                    {
+                        auto DataWrap = Slab::Math::DataRegistry::GetData(Name);
+
+                        ImGui::Text("[");
                         if (auto Data = DataWrap.GetData(); Data == nullptr)
                         {
                             ImGui::SameLine();
@@ -137,8 +144,14 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                             ImGui::SameLine();
                             ImGui::TextColored(ImVec4{0, 0.75, 0, 1}, "Available");
                         }
+                        ImGui::SameLine();
+                        ImGui::Text("] ");
+                        ImGui::SameLine();
+                        ImGui::Text("%s [%s]", Name.c_str(), Type.c_str());
                     }
                 }
+
+                if (ImGui::Button("Prune Data")) Slab::Math::DataRegistry::Prune();
             }
 
             if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth());

@@ -11,10 +11,20 @@
 namespace Slab::Math {
 
     template<typename T, typename... Args>
-    TPointer<T> DataAlloc(const DataName &name, Args&&... args) {
+    TPointer<T> DataAlloc(const FDataName &name, Args&&... args) {
         auto data = New<T>(std::forward<Args>(args)...);
 
-        DataManager::RegisterData(name, data);
+        DataRegistry::RegisterData(name, data);
+
+        return data;
+    }
+
+    template<typename T, typename... Args>
+    TPointer<T> DataAllocAndManage(const FDataName &name, Args&&... args) {
+        auto data = New<T>(std::forward<Args>(args)...);
+
+        DataRegistry::RegisterData(name, data);
+        DataKeeper::AddData(data);
 
         return data;
     }

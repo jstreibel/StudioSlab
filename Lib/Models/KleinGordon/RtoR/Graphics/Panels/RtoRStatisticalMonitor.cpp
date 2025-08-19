@@ -62,7 +62,7 @@ namespace Slab::Models::KGRtoR {
                                            Slab::Naked(temperature3HistoryData),
                                            (*style++).permuteColors(), "τ₂");
             // mTemperaturesGraph.addPointSet(DummyPtr(temperature4HistoryData), (*style++), "(τₖ+τ₂)/2");
-            mTemperaturesGraph->GetRegion().animate_xMax(params->gett());
+            mTemperaturesGraph->GetRegion().animate_xMax(params->Get_t());
 
             addWindowToColumn(mTemperaturesGraph, 0);
 
@@ -70,7 +70,7 @@ namespace Slab::Models::KGRtoR {
             if (!TParam.empty()) {
                 auto T = std::stod(TParam[0].second);
                 auto pts = Math::Point2DVec({{-.1,                T},
-                                             {params->gett() + .1, T}});
+                                             {params->Get_t() + .1, T}});
                 auto Tstyle = (*style++).permuteColors();
                 Tstyle.filled = false;
                 Graphics::Plotter::AddPointSet(mTemperaturesGraph,
@@ -179,7 +179,7 @@ namespace Slab::Models::KGRtoR {
         guiWindow.AddExternalDraw([this]() {
             if (ImGui::CollapsingHeader("Statistical")) {
                 auto transient = (float) transientHint;
-                if (ImGui::SliderFloat("Transient hint", &transient, .0f, (float) Params->gett())) {
+                if (ImGui::SliderFloat("Transient hint", &transient, .0f, (float) Params->Get_t())) {
                     SetTransientHint((DevFloat) transient);
                 }
             }

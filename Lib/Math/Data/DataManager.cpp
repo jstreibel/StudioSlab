@@ -8,30 +8,30 @@
 
 namespace Slab::Math {
 
-    DataManager::DataManager() : Singleton("Data Manager") {}
+    DataRegistry::DataRegistry() : Singleton("Data Manager") {}
 
-    DataName DataManager::RegisterData(DataName name, TPointer<Data> data) {
+    FDataName DataRegistry::RegisterData(FDataName name, TPointer<Data> data) {
         if(name.empty()) name = ToStr(data->get_id());
 
         data->data_name = name;
 
         Prune();
 
-        auto &map = DataManager::GetInstance().data_map;
+        auto &map = DataRegistry::GetInstance().DataMap;
 
-        if(map.find(name) != map.end())
+        if(map.contains(name))
             name += " [id:" + ToStr(data->id) + "]";
 
-        if(map.find(name) != map.end())
+        if(map.contains(name))
             throw Exception("Corrupted database: some data is using reserved code. Problem with dataset '"
                             + name + "'.");
 
-        map[name] = DataWrap(data);
+        map[name] = FDataWrap(data);
 
         return name;
     }
 
-    TPointer<R2toR::FNumericFunction> DataManager::AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation loc) {
+    TPointer<R2toR::FNumericFunction> DataRegistry::AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation loc) {
         fix hx = r.x/(DevFloat)N;
         fix hy = r.y/(DevFloat)M;
 
@@ -60,25 +60,25 @@ namespace Slab::Math {
         NOT_IMPLEMENTED
     }
 
-    void DataManager::Prune() {
-        auto &data_map = GetInstance().data_map;
+    void DataRegistry::Prune() {
+        auto &data_map = GetInstance().DataMap;
 
         std::erase_if(data_map, [](const auto& pair) {
-            const DataWrap& proxy = pair.second;
+            const FDataWrap& proxy = pair.second;
             return !proxy.is_valid();
         });
     }
 
-    Vector<DataManager::EntryDescription> DataManager::GetAllDataEntries() {
-        Vector<DataManager::EntryDescription> entries;
-        for(auto &entry : GetInstance().data_map)
+    Vector<DataRegistry::EntryDescription> DataRegistry::GetAllDataEntries() {
+        Vector<DataRegistry::EntryDescription> entries;
+        for(auto &entry : GetInstance().DataMap)
             entries.emplace_back(EntryDescription(entry.first, entry.second.get_type()) );
 
         return entries;
     }
 
-    DataWrap DataManager::GetData(const DataName& name) {
-        auto &data_map = DataManager::GetInstance().data_map;
+    FDataWrap DataRegistry::GetData(const FDataName& name) {
+        auto &data_map = DataRegistry::GetInstance().DataMap;
 
         auto entry = data_map.find(name);
 
@@ -91,16 +91,16 @@ namespace Slab::Math {
                 DataType get_data_type() const override { return "[invalid]"; }
             } invalid_data;
 
-            return DataWrap(Dummy(invalid_data));
+            return FDataWrap(Dummy(invalid_data));
         }
 
         return entry->second;
     }
 
-    DataName DataManager::ChangeDataName(const DataName &old_name, const DataName &new_name) {
+    FDataName DataRegistry::ChangeDataName(const FDataName &old_name, const FDataName &new_name) {
         Prune();
 
-        auto &map = GetInstance().data_map;
+        auto &map = GetInstance().DataMap;
         auto entry = map.find(old_name);
 
         if(entry == map.end()) return "";
@@ -114,5 +114,19 @@ namespace Slab::Math {
         return RegisterData(new_name, proxy.GetData());
     }
 
+    DataKeeper::~DataKeeper() = default;
 
+    TList<TPointer<Data>> DataKeeper::GetDataList()
+    {
+        return DataKeeper::GetInstance().DataList;
+    }
+
+    void DataKeeper::AddData(const TPointer<Data>& Data)
+    {
+        auto &DataList = DataKeeper::GetInstance().DataList;
+
+        if (Contains(DataList, Data)) return;
+
+        DataList.push_back(Data);
+    }
 } // Slab::Math

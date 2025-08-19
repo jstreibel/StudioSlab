@@ -15,21 +15,21 @@
 
 namespace Slab::Math {
 
-    enum DataLocation {
+    enum DataLocation
+    {
         NativeMemory,
         GPU
     };
 
-    class DataManager : public Singleton<DataManager> {
-        HashMap<DataName, DataWrap> data_map;
-
+    class DataRegistry final : public Singleton<DataRegistry>
+    {
     public:
-        struct EntryDescription { DataName name; DataType type; };
+        struct EntryDescription { FDataName Name; DataType Type; };
 
-        explicit DataManager();
+        explicit DataRegistry();
 
-        static DataName
-        RegisterData(DataName, TPointer<Data>);
+        static FDataName
+        RegisterData(FDataName, TPointer<Data>);
 
         static void Prune();
 
@@ -41,9 +41,29 @@ namespace Slab::Math {
         AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation)
         -> TPointer<R2toR::FNumericFunction>;
 
-        static DataWrap GetData(const DataName&);
+        static FDataWrap GetData(const FDataName&);
 
-        static DataName ChangeDataName(const DataName &old_name, const DataName &new_name);
+        static FDataName ChangeDataName(const FDataName &old_name, const FDataName &new_name);
+
+    private:
+        HashMap<FDataName, FDataWrap> DataMap;
+
+    };
+
+    class DataKeeper final : public Singleton<DataKeeper>
+    {
+
+    public:
+
+        explicit DataKeeper() : Singleton("Data Keeper") { }
+
+        ~DataKeeper() override;
+        static TList<TPointer<Data>> GetDataList();
+
+        static void AddData(const TPointer<Data>& Data);
+
+    private:
+        TList<TPointer<Data>> DataList;
     };
 
 } // Slab::Math

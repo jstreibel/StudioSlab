@@ -13,16 +13,16 @@ namespace Slab::Math {
 
     }
 
-    void MathModule::RegisterData(const DataName &name, TPointer<Data> data) {
-        DataManager::RegisterData(name, data);
+    void MathModule::RegisterData(const FDataName &name, TPointer<Data> data) {
+        DataRegistry::RegisterData(name, data);
     }
 
-    DataWrap MathModule::GetData(const DataName& name) {
-        return DataManager::GetData(name);
+    FDataWrap MathModule::GetData(const FDataName& name) {
+        return DataRegistry::GetData(name);
     }
 
-    Vector<DataManager::EntryDescription> MathModule::GetDataEntries() {
-        return DataManager::GetAllDataEntries();
+    Vector<DataRegistry::EntryDescription> MathModule::GetDataEntries() {
+        return DataRegistry::GetAllDataEntries();
     }
 
 

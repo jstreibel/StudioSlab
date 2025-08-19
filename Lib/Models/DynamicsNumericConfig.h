@@ -28,7 +28,7 @@ namespace Slab::Models {
         auto getN() const -> UInt;
         auto GetL() const -> DevFloat;
 
-        auto gett() const -> DevFloat;
+        auto Get_t() const -> DevFloat;
         auto sett(DevFloat) -> void;
 
         auto NotifyCLArgsSetupFinished() -> void override;

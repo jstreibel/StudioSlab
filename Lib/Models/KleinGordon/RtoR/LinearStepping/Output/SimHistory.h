@@ -8,36 +8,38 @@
 #include "Math/Numerics/OutputChannel.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
-#include "Math/Function/RtoR/Model/FunctionsCollection/Bypass.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.h"
-
 
 namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
     class SimHistory : public FOutputChannel {
-        R2toR::FNumericFunction_ptr data;
-        IntVector timesteps;
-
-        virtual auto Transfer(const OutputPacket &packet, ValarrayWrapper <DevFloat> &dataOut) -> void;
-
-    protected:
-        const CountType max_steps;
-        const DevFloat max_t;
-        const int N_t, N_x;
-
-        auto HandleOutput(const OutputPacket &packet) -> void override;
 
     public:
-        SimHistory(CountType max_steps, DevFloat t_max,
+        SimHistory(CountType MaxSteps, DevFloat tMax,
                    Resolution N_x,
                    Resolution N_t,
                    DevFloat xMin,
                    DevFloat L,
-                   const Str &name = "SimulationHistory");
+                   const Str &ChannelName = "SimulationHistory",
+                   bool bManageData = false);
 
-        auto getData() const -> const R2toR::FNumericFunction &;
+        [[nodiscard]] auto GetData() const -> TPointer<const R2toR::FNumericFunction>;
+        [[nodiscard]] auto GetData()       -> TPointer<R2toR::FNumericFunction>;
+
+    protected:
+        const CountType MaxSteps;
+        const DevFloat Max_t;
+        const int N_t, N_x;
+
+        auto HandleOutput(const OutputPacket &Packet) -> void override;
+
+    private:
+        R2toR::FNumericFunction_ptr Data;
+        IntVector Timesteps;
+
+        virtual auto Transfer(const OutputPacket &Packet, ValarrayWrapper <DevFloat> &DataOut) -> void;
 
     };
 

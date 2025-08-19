@@ -19,7 +19,7 @@ namespace Slab::Models::KGRtoR {
 
     RtoRFourierPanel::RtoRFourierPanel(const TPointer<FKGNumericConfig> &params, FKGEnergy &hamiltonian, FGUIWindow &guiWindow)
     : FRtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
-    , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params->gett()+10.0})
+    , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params->Get_t()+10.0})
     {
         kSpaceGraph  = Slab::New<FPlot2DWindow>("ℱₓ");
         ωSpaceGraph  = Slab::New<FPlot2DWindow>("ℱₜ");
@@ -119,7 +119,7 @@ namespace Slab::Models::KGRtoR {
 
                 if (ImGui::SliderFloat("cutoff k", &k, 0.0, (float) kMax)) {
                     kFilterCutoff = k;
-                    fix t = Params->gett();
+                    fix t = Params->Get_t();
                     cutoffLine.getx0() = {kFilterCutoff, -10.0};
                     cutoffLine.getr() = {0, 10.0 + t};
 
@@ -141,7 +141,7 @@ namespace Slab::Models::KGRtoR {
 
             if (ImGui::CollapsingHeader("t-filter, ℱₜ & ℱₜₓ")) {
                 static auto t_0 = .0f;
-                static fix tMax = (float) FRtoRPanel::Params->gett();
+                static fix tMax = (float) FRtoRPanel::Params->Get_t();
                 static auto t_f = tMax;
                 static auto auto_update_Ft = false;
                 static auto auto_update_Ftx = false;
@@ -186,7 +186,7 @@ namespace Slab::Models::KGRtoR {
     void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
         assert((sizeof(DevFloat)==sizeof(double)) && " make sure this code is compatible with fftw3");
 
-        fix xMin = FRtoRPanel::Params->getxMin();
+        fix xMin = FRtoRPanel::Params->Get_xMin();
         fix L = FRtoRPanel::Params->GetL();
         fix N = (*dftData)[0].Result.modeCount();
         fix hx = L/N;

@@ -20,7 +20,7 @@ namespace Slab::Models {
 
     auto DynamicsNumericConfig::GetL() const -> floatt { return **L; }
 
-    auto DynamicsNumericConfig::gett() const -> floatt
+    auto DynamicsNumericConfig::Get_t() const -> floatt
     {
         if (**t < 0) {
             *t = **L * .5;
@@ -39,7 +39,7 @@ namespace Slab::Models {
     void DynamicsNumericConfig::NotifyCLArgsSetupFinished() {
         Math::FNumericConfig::NotifyCLArgsSetupFinished();
 
-        (void)gett();
+        (void)Get_t();
     }
 
 

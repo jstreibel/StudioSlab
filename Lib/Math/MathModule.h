@@ -13,9 +13,9 @@ namespace Slab::Math {
     public:
         MathModule();
 
-        void RegisterData(const DataName&, TPointer<Data>);
-        DataWrap GetData(const DataName&);
-        Vector<DataManager::EntryDescription> GetDataEntries();
+        void RegisterData(const FDataName&, TPointer<Data>);
+        FDataWrap GetData(const FDataName&);
+        Vector<DataRegistry::EntryDescription> GetDataEntries();
 
     };
 } // Slab::Math

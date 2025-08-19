@@ -12,7 +12,7 @@ namespace Slab::Math {
     void Startup();
     void Finish();
 
-    Vector<DataManager::EntryDescription> EnumerateAllData();
+    Vector<DataRegistry::EntryDescription> EnumerateAllData();
 }
 
 #endif //STUDIOSLAB_SLABMATH_H

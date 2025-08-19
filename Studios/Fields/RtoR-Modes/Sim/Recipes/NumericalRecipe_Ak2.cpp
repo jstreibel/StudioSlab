@@ -70,7 +70,7 @@ namespace Modes {
 
         fix L = config->GetL();
         fix n = config->getn();
-        fix a = config->getr();
+        fix a = config->Get_r();
 
         switch (*BCSelection) {
             case 0:

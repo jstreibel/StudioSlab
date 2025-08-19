@@ -19,7 +19,7 @@ namespace Studios::Fields::RtoRThermal {
     auto ManyOscillonsBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
         int n = *nOscillons;
         auto L = KGNumericConfig->GetL();
-        auto xMin = KGNumericConfig->getxMin();
+        auto xMin = KGNumericConfig->Get_xMin();
 
         RtoR::FunctionSummable initCondPhi, initCondDPhiDt;
 
