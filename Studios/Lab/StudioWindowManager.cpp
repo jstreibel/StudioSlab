@@ -163,11 +163,13 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                         if (ImGui::Selectable("View##DataOptions"))
                         {
                             using NumericFunction = Slab::Math::R2toR::FNumericFunction;
+                            auto Cast = [](auto Obj) {return Slab::DynamicPointerCast<NumericFunction>(Obj);};
+                            using Plotter = Slab::Graphics::FPlotter;
                             Slab::TPointer<NumericFunction> Function;
-                            try { Function = Slab::DynamicPointerCast<NumericFunction>(SelectedData); } catch (std::bad_cast &){ }
+                            try { Function = Cast(SelectedData); } catch (std::bad_cast &){ }
 
                             auto PlotWindow = Slab::New<Slab::Graphics::FPlot2DWindow>(SelectedData->get_data_name());
-                            Slab::Graphics::FPlotter::AddR2toRFunction(PlotWindow, Function, SelectedData->get_data_name());
+                            Plotter::AddR2toRFunction(PlotWindow, Function, SelectedData->get_data_name());
 
                             auto Window = Slab::New<Slab::Graphics::FSlabWindow_ImGuiWrapper>(PlotWindow, ImGuiContext);
 

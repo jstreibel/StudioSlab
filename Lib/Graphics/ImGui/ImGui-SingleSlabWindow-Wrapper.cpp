@@ -21,6 +21,26 @@
 namespace Slab::Graphics {
     Atomic<CountType> FSlabWindow_ImGuiWrapper::Count = 0;
 
+    void FSlabWindow_ImGuiWrapper::CursorEntered(bool cond)
+    {
+        FSlabWindow::CursorEntered(cond);
+    }
+
+    bool FSlabWindow_ImGuiWrapper::NotifyMouseMotion(int x, int y, int dx, int dy)
+    {
+        if (SlabWindow->IsPointWithin({x, y})) SlabWindow->NotifyMouseMotion(x, y, dx, dy);
+
+        return FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
+    }
+
+    bool FSlabWindow_ImGuiWrapper::NotifyMouseWheel(double dx, double dy)
+    {
+        auto MouseState = GetMouseState();
+        if (SlabWindow->IsPointWithin({MouseState->x, MouseState->y})) SlabWindow->NotifyMouseWheel(dx, dy);
+
+        return FSlabWindow::NotifyMouseWheel(dx, dy);
+    }
+
     FSlabWindow_ImGuiWrapper::FSlabWindow_ImGuiWrapper(TPointer<FSlabWindow> SlabWindow, TPointer<FImGuiContext> Context)
     : FSlabWindow(SlabWindow->GetConfig())
     , Id(Str("ImGuiWindow##") + ToStr(++Count))

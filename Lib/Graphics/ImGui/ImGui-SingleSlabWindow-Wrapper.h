@@ -24,7 +24,14 @@ namespace Slab::Graphics {
         Str WindowId;
     };
 
-    class FSlabWindow_ImGuiWrapper final : public FSlabWindow {
+    class FSlabWindow_ImGuiWrapper final : public FSlabWindow
+    {
+    public:
+        void CursorEntered(bool) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyMouseWheel(double dx, double dy) override;
+
+    private:
         static Atomic<CountType> Count;
         Str Id;
 
