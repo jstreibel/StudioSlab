@@ -14,7 +14,7 @@ namespace Slab::Math {
     TPointer<T> DataAlloc(const FDataName &name, Args&&... args) {
         auto data = New<T>(std::forward<Args>(args)...);
 
-        DataRegistry::RegisterData(name, data);
+        FDataRegistry::RegisterData(name, data);
 
         return data;
     }
@@ -23,8 +23,8 @@ namespace Slab::Math {
     TPointer<T> DataAllocAndManage(const FDataName &name, Args&&... args) {
         auto data = New<T>(std::forward<Args>(args)...);
 
-        DataRegistry::RegisterData(name, data);
-        DataKeeper::AddData(data);
+        FDataRegistry::RegisterData(name, data);
+        FDataManager::AddData(data);
 
         return data;
     }

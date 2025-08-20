@@ -20,7 +20,9 @@ public:
     bool NotifySystemWindowReshape(int w, int h) override;
 
 private:
-    Slab::TPointer<Slab::Graphics::FSlabWindow> SlabWindow;
+    using FSlabWindowPtr = Slab::TPointer<Slab::Graphics::FSlabWindow>;
+    using FSlabWindowVec = Slab::Vector<FSlabWindowPtr>;
+    FSlabWindowVec SlabWindows;
     int WidthSysWin = 200, HeightSysWin = 200;
 
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;

@@ -33,11 +33,9 @@ StudioWindowManager::StudioWindowManager(): SidePaneWidth(StudioConfig::SidePane
 
 void StudioWindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>& Window, bool hidden)
 {
-    if (SlabWindow != nullptr) RemoveResponder(SlabWindow);
-
-    SlabWindow = Window;
-
     AddResponder(Window);
+
+    SlabWindows.emplace_back(Window);
 
     NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
 }
@@ -113,8 +111,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
             }
 
             // SHOW DATA **********************************************************************
-            auto AllManagedData = Slab::Math::FDataManager::GetDataList();
-            if (!AllManagedData.empty())
+            if (const auto AllManagedData = Slab::Math::FDataManager::GetDataList(); !AllManagedData.empty())
             {
                 ImGui::SeparatorText("Data");
                 static int SelectedRow = -1;
@@ -173,14 +170,16 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
 
             }
 
-
-
-            auto AllDataRegistries = Slab::Math::EnumerateAllData();
-            if (!AllDataRegistries.empty())
+            if (auto AllDataRegistries = Slab::Math::EnumerateAllData(); !AllDataRegistries.empty() && ImGui::CollapsingHeader("Data Registry"))
             {
-                ImGui::NewLine();
-                ImGui::SeparatorText("Registered Data");
+                if (ImGui::Button("Prune Data"))
                 {
+                    Slab::Math::FDataRegistry::Prune();
+                }
+                else
+                {
+                    ImGui::NewLine();
+                    ImGui::SeparatorText("Registered Data");
                     for (const auto& [Name, Type] : AllDataRegistries)
                     {
                         auto DataWrap = Slab::Math::FDataRegistry::GetData(Name);
@@ -202,14 +201,9 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                         ImGui::Text("%s [%s]", Name.c_str(), Type.c_str());
                     }
                 }
-
-                if (ImGui::Button("Prune Data")) Slab::Math::FDataRegistry::Prune();
             }
 
-
-
-            if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth());
-                    SidePaneWidth != WindowWidth)
+            if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth()); SidePaneWidth != WindowWidth)
             {
                 SidePaneWidth = WindowWidth;
                 NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
@@ -246,6 +240,7 @@ bool StudioWindowManager::NotifySystemWindowReshape(int w, int h)
     WidthSysWin = w;
     HeightSysWin = h;
 
+    /*
     if (SlabWindow != nullptr)
     {
         fix MenuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
@@ -255,6 +250,7 @@ bool StudioWindowManager::NotifySystemWindowReshape(int w, int h)
         SlabWindow->Set_x(SidePaneWidth + Gaps);
         SlabWindow->Set_y(MenuHeight + Gaps);
     }
+    */
 
     return FWindowManager::NotifySystemWindowReshape(w, h);
 }
