@@ -15,7 +15,7 @@ namespace Slab::Math {
     FDataName Data::get_data_name() const { return data_name; }
 
     void Data::change_data_name(FDataName new_name) {
-        DataRegistry::ChangeDataName(data_name, new_name);
+        FDataRegistry::ChangeDataName(data_name, new_name);
     }
 
 

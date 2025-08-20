@@ -22,7 +22,7 @@ namespace Slab::Math {
     };
 
     class Data {
-        friend class DataRegistry;
+        friend class FDataRegistry;
 
         static CountType n;
         const UniqueID id;

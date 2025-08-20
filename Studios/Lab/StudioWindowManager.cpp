@@ -113,7 +113,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
             }
 
             // SHOW DATA **********************************************************************
-            auto AllManagedData = Slab::Math::DataKeeper::GetDataList();
+            auto AllManagedData = Slab::Math::FDataManager::GetDataList();
             if (!AllManagedData.empty())
             {
                 ImGui::SeparatorText("Data");
@@ -163,7 +163,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
 
                         if (ImGui::Selectable("Delete##DataOptions"))
                         {
-                            Slab::Math::DataKeeper::Delete(SelectedData);
+                            Slab::Math::FDataManager::Delete(SelectedData);
                             SelectedData = nullptr;
                         }
                         ImGui::EndPopup();
@@ -183,7 +183,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                 {
                     for (const auto& [Name, Type] : AllDataRegistries)
                     {
-                        auto DataWrap = Slab::Math::DataRegistry::GetData(Name);
+                        auto DataWrap = Slab::Math::FDataRegistry::GetData(Name);
 
                         ImGui::Text("[");
                         if (auto Data = DataWrap.GetData(); Data == nullptr)
@@ -203,7 +203,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                     }
                 }
 
-                if (ImGui::Button("Prune Data")) Slab::Math::DataRegistry::Prune();
+                if (ImGui::Button("Prune Data")) Slab::Math::FDataRegistry::Prune();
             }
 
 

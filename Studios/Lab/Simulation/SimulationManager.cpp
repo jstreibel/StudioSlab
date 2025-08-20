@@ -84,7 +84,7 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
                         MaxSteps, t, NOut, MOut, xMin, L, KGRecipe->GetInterface()->GetName() + " (History)", true);
 
                     auto Data = SimHistory->GetData();
-                    Slab::Math::DataKeeper::AddData(Data);
+                    Slab::Math::FDataManager::AddData(Data);
 
                     auto OutputManager = Slab::New<Slab::Math::FOutputManager>(MaxSteps);
                     OutputManager->AddOutputChannel(SimHistory);

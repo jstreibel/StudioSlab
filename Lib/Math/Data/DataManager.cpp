@@ -8,16 +8,16 @@
 
 namespace Slab::Math {
 
-    DataRegistry::DataRegistry() : Singleton("Data Manager") {}
+    FDataRegistry::FDataRegistry() : Singleton("Data Manager") {}
 
-    FDataName DataRegistry::RegisterData(FDataName name, TPointer<Data> data) {
+    FDataName FDataRegistry::RegisterData(FDataName name, TPointer<Data> data) {
         if(name.empty()) name = ToStr(data->get_id());
 
         data->data_name = name;
 
         Prune();
 
-        auto &map = DataRegistry::GetInstance().DataMap;
+        auto &map = FDataRegistry::GetInstance().DataMap;
 
         if(map.contains(name))
             name += " [id:" + ToStr(data->id) + "]";
@@ -31,7 +31,7 @@ namespace Slab::Math {
         return name;
     }
 
-    TPointer<R2toR::FNumericFunction> DataRegistry::AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation loc) {
+    TPointer<R2toR::FNumericFunction> FDataRegistry::AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation loc) {
         fix hx = r.x/(DevFloat)N;
         fix hy = r.y/(DevFloat)M;
 
@@ -60,7 +60,7 @@ namespace Slab::Math {
         NOT_IMPLEMENTED
     }
 
-    void DataRegistry::Prune() {
+    void FDataRegistry::Prune() {
         auto &data_map = GetInstance().DataMap;
 
         std::erase_if(data_map, [](const auto& pair) {
@@ -69,16 +69,16 @@ namespace Slab::Math {
         });
     }
 
-    Vector<DataRegistry::EntryDescription> DataRegistry::GetAllDataEntries() {
-        Vector<DataRegistry::EntryDescription> entries;
+    Vector<FDataRegistry::EntryDescription> FDataRegistry::GetAllDataEntries() {
+        Vector<FDataRegistry::EntryDescription> entries;
         for(auto &entry : GetInstance().DataMap)
             entries.emplace_back(EntryDescription(entry.first, entry.second.get_type()) );
 
         return entries;
     }
 
-    FDataWrap DataRegistry::GetData(const FDataName& name) {
-        auto &data_map = DataRegistry::GetInstance().DataMap;
+    FDataWrap FDataRegistry::GetData(const FDataName& name) {
+        auto &data_map = FDataRegistry::GetInstance().DataMap;
 
         auto entry = data_map.find(name);
 
@@ -98,7 +98,7 @@ namespace Slab::Math {
         return entry->second;
     }
 
-    FDataName DataRegistry::ChangeDataName(const FDataName &old_name, const FDataName &new_name) {
+    FDataName FDataRegistry::ChangeDataName(const FDataName &old_name, const FDataName &new_name) {
         Prune();
 
         auto &map = GetInstance().DataMap;
@@ -115,22 +115,22 @@ namespace Slab::Math {
         return RegisterData(new_name, proxy.GetData());
     }
 
-    DataKeeper::~DataKeeper() = default;
+    FDataManager::~FDataManager() = default;
 
-    void DataKeeper::Delete(const TPointer<Data>& Data)
+    void FDataManager::Delete(const TPointer<Data>& Data)
     {
         auto &DataList = GetInstance().DataList;
         DataList.remove(Data);
     }
 
-    TList<TPointer<Data>> DataKeeper::GetDataList()
+    TList<TPointer<Data>> FDataManager::GetDataList()
     {
-        return DataKeeper::GetInstance().DataList;
+        return FDataManager::GetInstance().DataList;
     }
 
-    void DataKeeper::AddData(const TPointer<Data>& Data)
+    void FDataManager::AddData(const TPointer<Data>& Data)
     {
-        auto &DataList = DataKeeper::GetInstance().DataList;
+        auto &DataList = FDataManager::GetInstance().DataList;
 
         if (Contains(DataList, Data)) return;
 

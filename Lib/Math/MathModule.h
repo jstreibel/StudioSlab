@@ -15,7 +15,7 @@ namespace Slab::Math {
 
         void RegisterData(const FDataName&, TPointer<Data>);
         FDataWrap GetData(const FDataName&);
-        Vector<DataRegistry::EntryDescription> GetDataEntries();
+        Vector<FDataRegistry::EntryDescription> GetDataEntries();
 
     };
 } // Slab::Math

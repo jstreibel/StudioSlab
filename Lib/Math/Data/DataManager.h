@@ -21,12 +21,12 @@ namespace Slab::Math {
         GPU
     };
 
-    class DataRegistry final : public Singleton<DataRegistry>
+    class FDataRegistry final : public Singleton<FDataRegistry>
     {
     public:
         struct EntryDescription { FDataName Name; DataType Type; };
 
-        explicit DataRegistry();
+        explicit FDataRegistry();
 
         static FDataName
         RegisterData(FDataName, TPointer<Data>);
@@ -50,14 +50,14 @@ namespace Slab::Math {
 
     };
 
-    class DataKeeper final : public Singleton<DataKeeper>
+    class FDataManager final : public Singleton<FDataManager>
     {
 
     public:
 
-        explicit DataKeeper() : Singleton("Data Keeper") { }
+        explicit FDataManager() : Singleton("Data Keeper") { }
 
-        ~DataKeeper() override;
+        ~FDataManager() override;
         static void Delete(const TPointer<Data>& Data);
         static TList<TPointer<Data>> GetDataList();
 
