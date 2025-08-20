@@ -26,7 +26,8 @@ namespace Slab::Graphics {
         // HasMainMenu  = 0x1,
         SlabWindowNoDecoration = 0x2,
         SlabWindowDontClear    = 0x4,
-        SlabWindowWantsFullscreen   = 0x8
+        SlabWindowWantsFullscreen   = 0x8,
+        SlabWindowClose = 0x16
     };
 
     struct FSlabWindowConfig {
@@ -65,6 +66,9 @@ namespace Slab::Graphics {
 
         auto NotifySystemWindowReshape(int w, int h)           -> bool final;
         auto NotifyRender(const FPlatformWindow&)              -> bool final;
+
+        void Close();
+        bool WantsClose() const;
 
         /**
          *  Override the value used to compute viewport positions in OpenGL environments.

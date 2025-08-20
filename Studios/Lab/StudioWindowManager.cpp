@@ -206,12 +206,12 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                         if (auto Data = DataWrap.GetData(); Data == nullptr)
                         {
                             ImGui::SameLine();
-                            ImGui::TextColored(ImVec4{0.75f, 0, 0, 1}, "No data");
+                            ImGui::TextColored(ImVec4{0.75f, 0, 0, 1}, "Deleted");
                         }
                         else
                         {
                             ImGui::SameLine();
-                            ImGui::TextColored(ImVec4{0, 0.75, 0, 1}, "Available");
+                            ImGui::TextColored(ImVec4{0, 0.75, 0, 1}, "Active");
                         }
                         ImGui::SameLine();
                         ImGui::Text("] ");
@@ -244,6 +244,8 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
             }
         }
     }
+
+    for (auto Window : SlabWindows) if (Window->WantsClose()){ RemoveResponder(Window); std::erase(SlabWindows, Window); }
 
     FWindowManager::NotifyRender(PlatformWindow);
 

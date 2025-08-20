@@ -196,6 +196,16 @@ namespace Slab::Graphics {
         return FPlatformWindowEventListener::NotifyRender(PlatformWindow);
     }
 
+    void FSlabWindow::Close()
+    {
+        Config.Flags |= SlabWindowClose;
+    }
+
+    bool FSlabWindow::WantsClose() const
+    {
+        return Config.Flags & SlabWindowClose;
+    }
+
     void FSlabWindow::OverrideSystemWindowHeight(const int Height) {
         HeightOverride = Height;
     }

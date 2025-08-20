@@ -68,8 +68,9 @@ namespace Slab::Graphics {
 
             ImGui::SetNextWindowSizeConstraints({500,500}, {FLT_MAX, FLT_MAX});
             auto UniqueId = SlabWindow->GetUniqueName();
-            if(Fix WindowFlags = ImGuiWindowFlags_NoCollapse;
-               ImGui::Begin(UniqueId.c_str(), nullptr, WindowFlags))
+            bool bOpen = !WantsClose();
+            if(Fix WindowFlags = ImGuiWindowFlags_NoCollapse ;
+               ImGui::Begin(UniqueId.c_str(), &bOpen, WindowFlags))
             {
                 fix Pos = ImGui::GetWindowPos();
                 fix ContentMin = ImGui::GetWindowContentRegionMin();
@@ -106,6 +107,8 @@ namespace Slab::Graphics {
             }
 
             ImGui::End();
+
+            if (bOpen == false) this->Close();
         });
 
         SlabWindow->RegisterDeferredDrawCalls(PlatformWindow);

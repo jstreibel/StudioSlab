@@ -80,8 +80,8 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
                     fix MaxSteps = NumericConfig->getn();
                     fix xMin = NumericConfig->Get_xMin();
 
-                    auto SimHistory = Slab::New<Slab::Models::KGRtoR::SimHistory>(
-                        MaxSteps, t, NOut, MOut, xMin, L, KGRecipe->GetInterface()->GetName() + " (History)", true);
+                    const auto SimHistory = Slab::New<Slab::Models::KGRtoR::SimHistory>(
+                        MaxSteps, t, NOut, MOut, xMin, L, KGRecipe->GetInterface()->GetName(), true);
 
                     auto Data = SimHistory->GetData();
                     Slab::Math::FDataManager::AddData(Data);
