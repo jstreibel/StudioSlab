@@ -21,29 +21,29 @@ namespace Slab::Models::KGRtoR {
     , MaxSteps(MaxSteps), Max_t(tMax), N_x((int)N_x), N_t((int)N_t)
     {
         fix t = tMax;
-        fix timeResolution =static_cast<DevFloat>(N_t);
+        fix TimeResolution = static_cast<DevFloat>(N_t);
 
-        fix hx = L / (DevFloat) N_x;
-        fix ht = t / timeResolution;
+        fix hx = L / static_cast<DevFloat>(N_x);
+        fix ht = t / TimeResolution;
 
-        auto sizeMB = DevFloat((DevFloat) N_x * timeResolution * sizeof(DevFloat)) / (1024 * 1024.);
+        const auto SizeMB = static_cast<DevFloat>(N_x) * TimeResolution * sizeof(DevFloat) / (1024 * 1024.);
 
-        Log::Critical() << ChannelName << " is about to allocate " << sizeMB
-                        << "MB of data to store full " << N_x << 'x' << (int) timeResolution + 1
+        Log::Critical() << ChannelName << " is about to allocate " << SizeMB
+                        << "MB of data to store full " << N_x << 'x' << (int) TimeResolution + 1
                         << "x8 bytes simulation history." << Log::Flush;
 
 
-        fix safeTimeResolution = timeResolution + 1;
+        fix SafeTimeResolution = TimeResolution + 1;
         if (bManageData)
         {
-            Data = DataAllocAndManage<R2toR::NumericFunction_CPU>(ChannelName, N_x, (int) safeTimeResolution, xMin, 0.0, hx, ht);
+            Data = DataAllocAndManage<R2toR::NumericFunction_CPU>(ChannelName, N_x, (int) SafeTimeResolution, xMin, 0.0, hx, ht);
         }
         else
         {
-            Data = DataAlloc<R2toR::NumericFunction_CPU>(ChannelName, N_x, (int) safeTimeResolution, xMin, 0.0, hx, ht);
+            Data = DataAlloc<R2toR::NumericFunction_CPU>(ChannelName, N_x, (int) SafeTimeResolution, xMin, 0.0, hx, ht);
         }
 
-        Log::Success() << ChannelName << " allocated " << sizeMB << " of data." << Log::Flush;
+        Log::Success() << ChannelName << " allocated " << SizeMB << " of data." << Log::Flush;
     }
 
     auto SimHistory::Transfer(const OutputPacket &Packet, ValarrayWrapper<DevFloat> &DataOut) -> void {

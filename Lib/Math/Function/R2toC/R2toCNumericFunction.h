@@ -15,6 +15,7 @@ namespace Slab::Math::R2toC {
         ComplexArray data;
 
     public:
+
         const DevFloat x0, y0;
         const DevFloat Lx, Ly;
         const Resolution N, M;
@@ -22,7 +23,7 @@ namespace Slab::Math::R2toC {
         NumericFunction(Resolution N, Resolution M, DevFloat x0, DevFloat y0, DevFloat Lx, DevFloat Ly);
         ~NumericFunction() = default;
 
-
+        float get_data_size_MiB() override;
 
         Complex operator()(Real2D x) const override;
         Complex &At(Real2D x);

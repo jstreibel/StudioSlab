@@ -14,6 +14,8 @@ namespace Slab::Math::RtoR {
 
     class NumericFunction : public Base::NumericFunction<DevFloat, DevFloat> {
     public:
+        float get_data_size_MiB() override { return N * sizeof(DevFloat) / 1024.f / 1024.f; };
+
         using NumericAlgebra<Base::NumericFunction<DevFloat, DevFloat>>::operator=;
 
         enum LaplacianType {

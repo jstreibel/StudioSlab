@@ -68,6 +68,11 @@ namespace Slab::Math {
         return At(n, m);
     }
 
+    float R2toR::FNumericFunction::get_data_size_MiB()
+    {
+        return N * M * sizeof(DevFloat) / 1024.f / 1024.f;
+    }
+
     UInt R2toR::FNumericFunction::getN() const { return N; }
 
     UInt R2toR::FNumericFunction::getM() const { return M; }

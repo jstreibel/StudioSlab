@@ -5,6 +5,7 @@
 #include "StudioWindowManager.h"
 
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "StudioConfig.h"
 #include "StudioSlab.h"
 #include "Core/SlabCore.h"
@@ -50,7 +51,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
         fix MenuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
         ImGui::SetNextWindowPos(ImVec2(0, static_cast<float>(MenuHeight)));
         ImGui::SetNextWindowSize(ImVec2(StudioConfig::SidePaneWidth, static_cast<float>(HeightSysWin - MenuHeight)), ImGuiCond_Appearing);
-        fix WindowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
+        constexpr auto WindowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
         if (ImGui::Begin(StudioConfig::SidePaneId, nullptr, WindowFlags))
         {
             const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
@@ -115,13 +116,54 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
             auto AllManagedData = Slab::Math::DataKeeper::GetDataList();
             if (!AllManagedData.empty())
             {
-                ImGui::NewLine();
-                ImGui::SeparatorText("Managed Data");
-                for (auto Data : AllManagedData)
+                ImGui::SeparatorText("Data");
+                static int SelectedRow = -1;
+                if (ImGui::BeginTable("Data Table", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
                 {
-                    ImGui::Text("%s [%s]", Data->get_data_name().c_str(), Data->get_data_type().c_str());
+                    // ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
+                    // ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_NoHide);
+                    // ImGui::TableSetupColumn("Size (MiB)", ImGuiTableColumnFlags_NoHide);
+                    // ImGui::TableHeadersRow();
+
+                    int Row = 0;
+                    for (const auto& Data : AllManagedData)
+                    {
+                        ImGui::TableNextRow();
+
+                        ImGui::TableSetColumnIndex(0);
+                        bool RowSelected = (SelectedRow == Row);
+                        if (ImGui::Selectable(Data->get_data_name().c_str(), RowSelected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap))
+                        {
+                            SelectedRow = Row; // mark which row is selected
+                            ImGui::OpenPopup("Data Options##DataOptions");
+                        }
+
+                        ImGui::TableSetColumnIndex(1);
+                        ImGui::Text("%s", Data->get_data_type().c_str());
+
+                        auto Size = Data->get_data_size_MiB();
+                        ImGui::TableSetColumnIndex(2);
+                        ImGui::Text("%.3fMiB", Size);
+
+                        ++Row;
+                    }
+                    if (ImGui::BeginPopup("Data Options##DataOptions"))
+                    {
+                        ImGui::Text("Data Options");
+                        ImGui::Separator();
+                        if (ImGui::Selectable("View##DataOptions"))
+                        {}
+
+                        if (ImGui::Selectable("Delete##DataOptions"))
+                        {}
+                        ImGui::EndPopup();
+                    }
+                    ImGui::EndTable();
                 }
+
             }
+
+
 
             auto AllDataRegistries = Slab::Math::EnumerateAllData();
             if (!AllDataRegistries.empty())
@@ -153,6 +195,8 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
 
                 if (ImGui::Button("Prune Data")) Slab::Math::DataRegistry::Prune();
             }
+
+
 
             if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth());
                     SidePaneWidth != WindowWidth)

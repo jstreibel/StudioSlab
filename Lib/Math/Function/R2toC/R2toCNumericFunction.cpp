@@ -16,6 +16,11 @@ namespace Slab::Math::R2toC {
 
     }
 
+    float NumericFunction::get_data_size_MiB()
+    {
+        return N * M * sizeof(Complex) / 1024.0f / 1024.0f;
+    }
+
     Complex NumericFunction::operator()(Real2D x) const {
         return const_cast<NumericFunction*>(this)->At(x);
     }

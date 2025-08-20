@@ -88,7 +88,8 @@ namespace Slab::Math {
             static class InvalidData : public Data {
             public:
                 explicit InvalidData() : Data("[invalid]") {}
-                DataType get_data_type() const override { return "[invalid]"; }
+                [[nodiscard]] DataType get_data_type() const override { return "[invalid]"; }
+                float get_data_size_MiB() override { return 0; };
             } invalid_data;
 
             return FDataWrap(Dummy(invalid_data));

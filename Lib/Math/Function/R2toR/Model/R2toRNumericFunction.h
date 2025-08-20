@@ -27,6 +27,7 @@ namespace Slab::Math::R2toR {
     typedef Base::NumericFunction<Real2D, DevFloat> DiscrBase;
 
     class FNumericFunction : public Base::NumericFunction<Real2D,DevFloat> {
+
     protected:
         const UInt N, M;
         const DevFloat xMin, xMax,
@@ -55,6 +56,8 @@ namespace Slab::Math::R2toR {
         At(UInt n, UInt m) const = 0;
         virtual DevFloat&
         At(UInt n, UInt m) = 0;
+
+        float get_data_size_MiB() override;
 
         auto getN()      const -> UInt;
         auto getM()      const -> UInt;

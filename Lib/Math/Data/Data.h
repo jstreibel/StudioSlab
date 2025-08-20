@@ -44,6 +44,9 @@ namespace Slab::Math {
         virtual DataType
         get_data_type() const = 0;
 
+        virtual
+        float get_data_size_MiB() = 0;
+
         bool operator<(const Data &rhs) const;
         bool operator>(const Data &rhs) const;
         bool operator<=(const Data &rhs) const;
