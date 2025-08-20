@@ -373,7 +373,7 @@ namespace Slab::Graphics {
                                          {kFilterCutoff, function->getDomain().yMax+10.0});
 
         if(function_artist == nullptr) {
-            function_artist = Plotter::AddR2toRFunction(xSpaceGraph, function, "ϕ");
+            function_artist = FPlotter::AddR2toRFunction(xSpaceGraph, function, "ϕ");
             function_artist->SetAffectGraphRanges(true);
         } else {
             function_artist->setFunction(function);

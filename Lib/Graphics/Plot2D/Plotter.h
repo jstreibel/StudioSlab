@@ -20,11 +20,11 @@
 
 namespace Slab::Graphics {
 
-    class Plotter final {
+    class FPlotter final {
         TPointer<FPlot2DWindow> plottingWindow;
 
     public:
-        explicit Plotter(TPointer<FPlot2DWindow>);
+        explicit FPlotter(TPointer<FPlot2DWindow>);
 
         // Core::FPayloadData SendRequest(Core::FPayload request) override;
 

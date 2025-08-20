@@ -20,24 +20,24 @@ namespace Slab::Models {
         AddWindow(FullHistoriesWindow, true);
 
         auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
-        EnergyHistoryArtist    = Graphics::Plotter::AddPointSet(TotalEnergiesWindow, EnergyHistory,
+        EnergyHistoryArtist    = Graphics::FPlotter::AddPointSet(TotalEnergiesWindow, EnergyHistory,
                                                                   style, "e", true);
-        KineticHistoryArtist   = Graphics::Plotter::AddPointSet(TotalEnergiesWindow, KineticHistory,
+        KineticHistoryArtist   = Graphics::FPlotter::AddPointSet(TotalEnergiesWindow, KineticHistory,
                                                                   style, "½(𝜕ₜf)²", true);
-        GradHistoryArtist      = Graphics::Plotter::AddPointSet(TotalEnergiesWindow, GradHistory,
+        GradHistoryArtist      = Graphics::FPlotter::AddPointSet(TotalEnergiesWindow, GradHistory,
                                                                   style, "½(𝜕ₓf)²", true);
-        PotentialHistoryArtist = Graphics::Plotter::AddPointSet(TotalEnergiesWindow, PotentialHistory,
+        PotentialHistoryArtist = Graphics::FPlotter::AddPointSet(TotalEnergiesWindow, PotentialHistory,
                                                                   style, "|f|", true);
 
-        Func_Artist         = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "ϕ(x,t)");
-        ddtFunc_Artist      = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "T¹¹=𝜕ₜϕ");
+        Func_Artist         = Graphics::FPlotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "ϕ(x,t)");
+        ddtFunc_Artist      = Graphics::FPlotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "T¹¹=𝜕ₜϕ");
 
-        EnergyMapArtist    = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "T⁰⁰=e(x,t)");
-        KineticMapArtist   = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "k(x,t)");
-        GradMapArtist      = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "g(x,t)");
-        PotentialMapArtist = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "v(x,t)");
+        EnergyMapArtist    = Graphics::FPlotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "T⁰⁰=e(x,t)");
+        KineticMapArtist   = Graphics::FPlotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "k(x,t)");
+        GradMapArtist      = Graphics::FPlotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "g(x,t)");
+        PotentialMapArtist = Graphics::FPlotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "v(x,t)");
 
-        MomentumFlowMapArtist = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "T⁰¹=-𝜕ₓϕ𝜕ₜϕ");
+        MomentumFlowMapArtist = Graphics::FPlotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "T⁰¹=-𝜕ₓϕ𝜕ₜϕ");
 
         EnergyMapArtist   ->SetAffectGraphRanges(true);
         KineticMapArtist  ->SetAffectGraphRanges(true);

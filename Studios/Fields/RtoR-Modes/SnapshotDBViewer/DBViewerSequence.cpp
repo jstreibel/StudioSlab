@@ -43,7 +43,7 @@ namespace Modes::DatabaseViewer {
             style.filled = false;
             style.setPrimitive(Slab::Graphics::Solid);
             auto funky = Math::RtoR::NativeFunction([](DevFloat x) { return x; }).Clone();
-            Graphics::Plotter::AddRtoRFunction(Naked(mashupDisplay), funky, style, "m=0", 1000, 3);
+            Graphics::FPlotter::AddRtoRFunction(Naked(mashupDisplay), funky, style, "m=0", 1000, 3);
         }
 
         // Setup masses Re and Im pointsets.
@@ -52,10 +52,10 @@ namespace Modes::DatabaseViewer {
             style.setPrimitive(Graphics::VerticalLines);
             style.filled = false;
             style.thickness = 1.5;
-            Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(massesReal_pointSet), style,
+            Graphics::FPlotter::AddPointSet(Naked(massesGraph), Naked(massesReal_pointSet), style,
                                            "m=sqrt(ωₚₑₐₖ²-k²)", true);
             style.lineColor = style.lineColor.brg();
-            Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(massesImag_pointSet), style,
+            Graphics::FPlotter::AddPointSet(Naked(massesGraph), Naked(massesImag_pointSet), style,
                                            "ℑ[m=√(ωₚₑₐₖ²-k²)]");
             //style.lineColor = style.lineColor.brg();
             //style.thickness = 3.0;
@@ -73,13 +73,13 @@ namespace Modes::DatabaseViewer {
             auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             style.thickness = 3;
             style.filled = false;
-            KGRelation_artist = Graphics::Plotter::AddPointSet(Naked(mashupDisplay), KGRelation, style,
+            KGRelation_artist = Graphics::FPlotter::AddPointSet(Naked(mashupDisplay), KGRelation, style,
                                                                "ω²-kₚₑₐₖ²-m²=0", false, z_order(1));
 
             style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.setPrimitive(Graphics::Point);
             style.thickness = 8;
-            Graphics::Plotter::AddPointSet(Naked(mashupDisplay), Naked(maxValuesPointSet), style,
+            Graphics::FPlotter::AddPointSet(Naked(mashupDisplay), Naked(maxValuesPointSet), style,
                                            "main modes", false, z_order(2));
             // allDataDisplay.setColorMap(Graphics::ColorMaps["blues"]);
 

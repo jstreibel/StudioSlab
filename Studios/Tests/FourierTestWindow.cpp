@@ -24,7 +24,7 @@ namespace Tests {
 
     using namespace Slab;
 
-    using Plot = Graphics::Plotter;
+    using Plot = Graphics::FPlotter;
 
     fix π = (float)Math::Constants::pi;
 

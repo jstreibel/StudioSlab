@@ -178,7 +178,7 @@ namespace Slab::Models::KGRtoR {
         kSpaceGraph->AddArtist(dftFunctionArtist);
         // kSpaceGraph->addArtist(dftFunctionArtist->getColorBarArtist());
 
-        Graphics::Plotter::AddCurve(kSpaceGraph,
+        Graphics::FPlotter::AddCurve(kSpaceGraph,
                                     Slab::Naked(cutoffLine),
                                     PlotThemeManager::GetCurrent()->FuncPlotStyles[0], "k cutoff");
     }

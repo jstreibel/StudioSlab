@@ -43,7 +43,7 @@ void setup_viewer(const Slab::TPointer<Slab::Math::R2toR::NumericFunction_CPU>& 
     plot_window->NotifyReshape(1200, 800);
     fix lims = field->getDomain();
     plot_window->GetRegion().setLimits(lims.xMin, lims.xMax, lims.yMin, lims.yMax);
-    auto arts = Slab::Graphics::Plotter::AddR2toRFunction(plot_window, field, "ϕ(t,x)");
+    auto arts = Slab::Graphics::FPlotter::AddR2toRFunction(plot_window, field, "ϕ(t,x)");
     arts->setDataMutable(true);
 
     auto viewer = Slab::New<Slab::Graphics::MainViewer>();

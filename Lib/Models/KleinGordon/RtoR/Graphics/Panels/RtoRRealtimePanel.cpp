@@ -53,16 +53,16 @@ namespace Slab::Models::KGRtoR {
 
             auto sty = CurrStyle->FuncPlotStyles.begin();
 
-            Plotter::AddPointSet(Naked(EnergyGraph),
+            FPlotter::AddPointSet(Naked(EnergyGraph),
                                            Naked(UHistoryData),
                                            *sty, "U/L");
-            Plotter::AddPointSet(Naked(EnergyGraph),
+            FPlotter::AddPointSet(Naked(EnergyGraph),
                                            Naked(KHistoryData),
                                            *++sty, "K/L");
-            Plotter::AddPointSet(Naked(EnergyGraph),
+            FPlotter::AddPointSet(Naked(EnergyGraph),
                                            Naked(WHistoryData),
                                            *++sty, "<(𝜕ₓϕ)²>/2=∫(𝜕ₓϕ)²dx/2L");
-            Plotter::AddPointSet(Naked(EnergyGraph),
+            FPlotter::AddPointSet(Naked(EnergyGraph),
                                            Naked(VHistoryData),
                                            *++sty, "<V(ϕ)>=∫V(ϕ)dx/L");
 
@@ -73,14 +73,14 @@ namespace Slab::Models::KGRtoR {
 
         {
             fix V_str = Hamiltonian.GetThePotential()->Symbol();
-            vArtist = Plotter::AddRtoRFunction(Naked(FieldsGraph),
+            vArtist = FPlotter::AddRtoRFunction(Naked(FieldsGraph),
                                                          Hamiltonian.getPotentialDensity(), V_style,
                                                          Str("V(ϕ)=") + V_str, 1024);
-            kArtist = Plotter::AddRtoRFunction(Naked(FieldsGraph),
+            kArtist = FPlotter::AddRtoRFunction(Naked(FieldsGraph),
                                                          Hamiltonian.getKineticDensity(), K_style, "K/L", 1024);
-            wArtist = Plotter::AddRtoRFunction(Naked(FieldsGraph),
+            wArtist = FPlotter::AddRtoRFunction(Naked(FieldsGraph),
                                                          Hamiltonian.getGradientDensity(), W_style, "(𝜕ₓϕ)²", 1024);
-            uArtist = Plotter::AddRtoRFunction(Naked(FieldsGraph),
+            uArtist = FPlotter::AddRtoRFunction(Naked(FieldsGraph),
                                                          Hamiltonian.getEnergyDensity(), U_style, "E/L", 1024);
         }
 

@@ -21,8 +21,8 @@ namespace Tests {
         auto window = New<Graphics::FPlot2DWindow>("V-shape series test");
         auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         style.filled = false;
-        Graphics::Plotter::AddRtoRFunction(window, potential, style, "KG V-shape");
-        Graphics::Plotter::AddRtoRFunction(window, derivs, style, "V'");
+        Graphics::FPlotter::AddRtoRFunction(window, potential, style, "KG V-shape");
+        Graphics::FPlotter::AddRtoRFunction(window, derivs, style, "V'");
 
         AddWindow(Naked(stats), Right, 0.15);
         AddWindow(window);

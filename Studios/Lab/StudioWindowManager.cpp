@@ -11,7 +11,10 @@
 #include "Core/SlabCore.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Graphics/SlabGraphics.h"
+#include "Graphics/ImGui/ImGuiWindowManager.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Plot2D/Plotter.h"
 #include "Math/SlabMath.h"
 #include "Math/Numerics/NumericTask.h"
 
@@ -29,6 +32,11 @@ StudioWindowManager::StudioWindowManager(): SidePaneWidth(StudioConfig::SidePane
 
     this->AddResponder(ImGuiContext);
     this->AddResponder(SimulationManager);
+}
+
+void StudioWindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>& SlabWindow)
+{
+    AddSlabWindow(SlabWindow, false);
 }
 
 void StudioWindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>& Window, bool hidden)
@@ -55,8 +63,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
             const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
 
             // SHOW JOBS **********************************************************************
-            auto Jobs = TaskManager->GetAllJobs();
-            if (!Jobs.empty())
+            if (auto Jobs = TaskManager->GetAllJobs(); !Jobs.empty())
             {
                 ImGui::SeparatorText("Tasks");
                 for (auto & Job : Jobs)
@@ -96,12 +103,12 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                     {
                         try
                         {
-                            auto NumericTask = dynamic_cast<Slab::Math::NumericTask*>(Task.get());
+                            const auto NumericTask = dynamic_cast<Slab::Math::NumericTask*>(Task.get());
                             fix Progress = NumericTask->GetProgress();
                             ImGui::SameLine();
                             ImGui::ProgressBar(Progress);
 
-                        } catch (std::bad_cast &Exception)
+                        } catch (std::bad_cast &)
                         {
 
                         }
@@ -155,7 +162,16 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                         ImGui::Separator();
                         if (ImGui::Selectable("View##DataOptions"))
                         {
+                            using NumericFunction = Slab::Math::R2toR::FNumericFunction;
+                            Slab::TPointer<NumericFunction> Function;
+                            try { Function = Slab::DynamicPointerCast<NumericFunction>(SelectedData); } catch (std::bad_cast &){ }
 
+                            auto PlotWindow = Slab::New<Slab::Graphics::FPlot2DWindow>(SelectedData->get_data_name());
+                            Slab::Graphics::FPlotter::AddR2toRFunction(PlotWindow, Function, SelectedData->get_data_name());
+
+                            auto Window = Slab::New<Slab::Graphics::FSlabWindow_ImGuiWrapper>(PlotWindow, ImGuiContext);
+
+                            AddSlabWindow(Window, false);
                         }
 
                         if (ImGui::Selectable("Delete##DataOptions"))

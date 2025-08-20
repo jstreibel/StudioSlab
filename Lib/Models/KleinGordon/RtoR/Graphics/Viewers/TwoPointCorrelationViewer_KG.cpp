@@ -12,7 +12,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    using Plotter = Graphics::Plotter;
+    using Plotter = Graphics::FPlotter;
     using Themes = Graphics::PlotThemeManager;
 
     TwoPointCorrelationViewer_KG::TwoPointCorrelationViewer_KG(const TPointer<Graphics::FGUIWindow> &guiWindow,

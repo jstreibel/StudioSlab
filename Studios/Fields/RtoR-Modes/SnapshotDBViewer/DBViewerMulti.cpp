@@ -43,10 +43,10 @@ namespace Modes::DatabaseViewer {
             style.setPrimitive(Graphics::VerticalLines);
             style.filled = false;
             style.thickness = 1.5;
-            Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(massesReal_pointSet), style,
+            Graphics::FPlotter::AddPointSet(Naked(massesGraph), Naked(massesReal_pointSet), style,
                                            "ℜ[m=√(ω²-kₚₑₐₖ²)]", true);
             style.lineColor = style.lineColor.brg();
-            Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(massesImag_pointSet), style,
+            Graphics::FPlotter::AddPointSet(Naked(massesGraph), Naked(massesImag_pointSet), style,
                                            "ℑ[m=√(ω²-kₚₑₐₖ²)]");
             //style.lineColor = style.lineColor.brg();
             //style.thickness = 3.0;
@@ -61,18 +61,18 @@ namespace Modes::DatabaseViewer {
             auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             style.thickness = 3;
             style.filled = false;
-            KGRelation_artist = Graphics::Plotter::AddPointSet(Naked(allDataDisplay), KGRelation, style,
+            KGRelation_artist = Graphics::FPlotter::AddPointSet(Naked(allDataDisplay), KGRelation, style,
                                                                "ω²-kₚₑₐₖ²-m²=0", false, z_order(1));
             style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             style.thickness = 3;
             style.filled = false;
-            KGRelation_high_k_artist = Graphics::Plotter::AddPointSet(Naked(allDataDisplay), KGRelation_high_k,
+            KGRelation_high_k_artist = Graphics::FPlotter::AddPointSet(Naked(allDataDisplay), KGRelation_high_k,
                                                                       style, "k=ω-½m²/ω+...", false, z_order(2));
 
             style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.setPrimitive(Graphics::Point);
             style.thickness = 8;
-            Graphics::Plotter::AddPointSet(Naked(allDataDisplay), Naked(maxValuesPointSet), style,
+            Graphics::FPlotter::AddPointSet(Naked(allDataDisplay), Naked(maxValuesPointSet), style,
                                            "main modes", false, z_order(2));
             // allDataDisplay.setColorMap(Graphics::ColorMaps["blues"]);
 
@@ -83,7 +83,7 @@ namespace Modes::DatabaseViewer {
         }
 
         {
-            currentFullParticularHistoryArtist = Graphics::Plotter::AddR2toRFunction(
+            currentFullParticularHistoryArtist = Graphics::FPlotter::AddR2toRFunction(
                     Naked(fullParticularHistoryDisplay), nullptr, "");
             // currentFullParticularHistoryArtist->setColorMap(Graphics::ColorMaps["BrBG"]->inverse().clone());
             // topRow.addWindow(DummyPtr(fullParticularHistoryDisplay));
@@ -341,7 +341,7 @@ namespace Modes::DatabaseViewer {
             auto dbRootFolder = dbParser->getRootDatabaseFolder();
 
             auto &cmap = Graphics::ColorMaps["blues"];
-            auto artie = Graphics::Plotter::AddR2toRFunction(Naked(allDataDisplay), fullField, dbRootFolder);
+            auto artie = Graphics::FPlotter::AddR2toRFunction(Naked(allDataDisplay), fullField, dbRootFolder);
             // artie->setColorMap(cmap->clone());
 
             fullFields.emplace_back(fullField);

@@ -32,16 +32,16 @@ namespace Slab::Models::KGRtoR {
 
         auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
 
-        Graphics::Plotter::AddPointSet(energy_window,
+        Graphics::FPlotter::AddPointSet(energy_window,
                                        Naked(histogram_data_energy),
                                        *style++, "E")->SetAffectGraphRanges(true);
-        Graphics::Plotter::AddPointSet(kinetic_window,
+        Graphics::FPlotter::AddPointSet(kinetic_window,
                                        Naked(histogram_data_kinetic),
                                        *style++, "K")->SetAffectGraphRanges(true);
-        Graphics::Plotter::AddPointSet(gradient_window,
+        Graphics::FPlotter::AddPointSet(gradient_window,
                                        Naked(histogram_data_gradient),
                                        *style++, "grad")->SetAffectGraphRanges(true);
-        Graphics::Plotter::AddPointSet(potential_window,
+        Graphics::FPlotter::AddPointSet(potential_window,
                                        Naked(histogram_data_potential),
                                        *style++, "V")->SetAffectGraphRanges(true);
     }

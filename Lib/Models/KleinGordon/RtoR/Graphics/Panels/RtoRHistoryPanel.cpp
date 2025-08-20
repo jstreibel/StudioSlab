@@ -120,7 +120,7 @@ namespace Slab::Models::KGRtoR {
                                                 const R2toRFunctionArtist_ptr &simHistoryGraph) {
         FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryGraph);
 
-        auto sectionArtist = Graphics::Plotter::AddR2Section(xSection, simulationHistory, "ϕ");
+        auto sectionArtist = Graphics::FPlotter::AddR2Section(xSection, simulationHistory, "ϕ");
         auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         sectionArtist->addSection(xLine, style.clone(), "ϕ(0,x)");
 
@@ -133,7 +133,7 @@ namespace Slab::Models::KGRtoR {
                                              const R2toRFunctionArtist_ptr &sftHistoryGraph) {
         FRtoRPanel::SetSpaceFourierHistory(sftHistory, history, sftHistoryGraph);
 
-        auto sectionArtist = Graphics::Plotter::AddR2Section(kSection, sftHistory, "ℱₓ(k)");
+        auto sectionArtist = Graphics::FPlotter::AddR2Section(kSection, sftHistory, "ℱₓ(k)");
         auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         style.setPrimitive(VerticalLines);
         style.filled = false;

@@ -19,7 +19,7 @@ namespace Slab::Models::KGRtoR {
                                const TPointer<R2toR::FNumericFunction> &func,
                                const TPointer<R2toR::FNumericFunction> &ddtFunc)
     : KGViewer(GuiWindow, func, ddtFunc) {
-        using Plotter = Graphics::Plotter;
+        using Plotter = Graphics::FPlotter;
         using Themes = Graphics::PlotThemeManager;
 
         auto window = New<Graphics::FPlot2DWindow>("Time-DFT space-average");

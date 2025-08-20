@@ -12,7 +12,7 @@
 #include <functional>
 
 using Handler = std::function<void(Slab::Core::FParameter&)>;
-static const std::unordered_map<std::type_index, Handler> table = {
+static const std::unordered_map<std::type_index, Handler> GTable = {
     {
         typeid(Slab::Core::RealParameter), [](Slab::Core::FParameter& Parameter)
         {
@@ -76,7 +76,7 @@ static const std::unordered_map<std::type_index, Handler> table = {
 };
 
 void Handle(Slab::Core::FParameter& Parameter) {
-    if (auto ParamEntry = table.find(typeid(Parameter)); ParamEntry != table.end())
+    if (auto ParamEntry = GTable.find(typeid(Parameter)); ParamEntry != GTable.end())
     {
         ParamEntry->second(Parameter);
     }

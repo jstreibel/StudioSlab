@@ -36,7 +36,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
         energyRatioData = New<PointSet>();
 
         auto theme = Graphics::PlotThemeManager::GetCurrent();
-        using Plotter = Graphics::Plotter;
+        using Plotter = Graphics::FPlotter;
 
         Plotter::AddPointSet(Dummy(mEnergyRatioGraph), energyRatioData,
                                        theme->FuncPlotStyles[0], "Numeric/analytic energy");

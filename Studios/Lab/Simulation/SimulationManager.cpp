@@ -54,7 +54,7 @@ void FSimulationManager::ExposeInterface(const Slab::TPointer<Slab::Core::FInter
 
 bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& platform_window)
 {
-    const auto ItemLocation = Slab::Graphics::MainMenuLocation{"Simulation", "Recipes", "𝕄²↦ℝ"};
+    const auto ItemLocation = Slab::Graphics::MainMenuLocation{"Simulations"};
     const auto Item = Slab::Graphics::MainMenuItem{ItemLocation,
         {
             {"Signum-Gordon Plane Waves"}

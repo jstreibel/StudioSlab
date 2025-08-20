@@ -18,15 +18,15 @@ namespace Slab::Models::KGRtoR {
     : KGViewer(gui_window)
     {
         history_window = New<Graphics::FPlot2DWindow>("Function");
-        function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
-        ddt_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕₜ(t,x)");
-        d2dt2_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕₜₜ(t,x)");
+        function_artist = Graphics::FPlotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
+        ddt_function_artist = Graphics::FPlotter::AddR2toRFunction(history_window, nullptr, "ϕₜ(t,x)");
+        d2dt2_function_artist = Graphics::FPlotter::AddR2toRFunction(history_window, nullptr, "ϕₜₜ(t,x)");
         AddWindow(history_window);
 
         slice_window = New<Graphics::FPlot2DWindow>("Slices");
-        function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕ");
-        ddt_function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕₜ");
-        d2dt2_function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕₜₜ");
+        function_section_artist = Graphics::FPlotter::AddR2Section(slice_window, nullptr, "ϕ");
+        ddt_function_section_artist = Graphics::FPlotter::AddR2Section(slice_window, nullptr, "ϕₜ");
+        d2dt2_function_section_artist = Graphics::FPlotter::AddR2Section(slice_window, nullptr, "ϕₜₜ");
 
         addWindowToColumn(slice_window, 0);
 
@@ -76,7 +76,7 @@ namespace Slab::Models::KGRtoR {
             style->filled = false;
             function_section_artist->addSection(function_section, style, "ϕ");
 
-            auto history_section_artist = Graphics::Plotter::AddCurve(history_window, function_section, *style, "History section");
+            auto history_section_artist = Graphics::FPlotter::AddCurve(history_window, function_section, *style, "History section");
 
         } else {
             function_section->getx0().x = domain.xMin;

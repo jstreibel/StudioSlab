@@ -47,6 +47,7 @@ namespace Slab::Graphics {
          * main context from the main window is used.
          */
         explicit FSlabWindow_ImGuiWrapper(TPointer<FSlabWindow> SlabWindow, TPointer<FImGuiContext> Context);
+        ~FSlabWindow_ImGuiWrapper() override = default;
 
         auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
 };

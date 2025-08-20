@@ -46,19 +46,19 @@ namespace Tests {
 
         static Math::Base::NativeFunction<Math::RtoR::Function> s_function(CubicBezierInterpolation);
         auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
-        Graphics::Plotter::AddRtoRFunction(Naked(Graph), Naked(s_function), style, "Bezier");
+        Graphics::FPlotter::AddRtoRFunction(Naked(Graph), Naked(s_function), style, "Bezier");
 
         Fix Lim = 1.e3;
         static Math::PointSet vertLine1{{{0.0, -Lim}, {0.0, Lim}}};
         static Math::PointSet vertLine2{{{1.0, -Lim}, {1.0, Lim}}};
         style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
-        Graphics::Plotter::AddPointSet(Naked(Graph), Naked(vertLine1), style, "Vertical Line 1", false);
-        Graphics::Plotter::AddPointSet(Naked(Graph), Naked(vertLine2), style, "Vertical Line 2", false);
+        Graphics::FPlotter::AddPointSet(Naked(Graph), Naked(vertLine1), style, "Vertical Line 1", false);
+        Graphics::FPlotter::AddPointSet(Naked(Graph), Naked(vertLine2), style, "Vertical Line 2", false);
 
         style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
         style.setPrimitive(Slab::Graphics::Point);
         style.thickness = 10;
-        Graphics::Plotter::AddPointSet(Naked(Graph), Naked(CurrentPoint), style, "Current Point", false);
+        Graphics::FPlotter::AddPointSet(Naked(Graph), Naked(CurrentPoint), style, "Current Point", false);
 
         Graph.GetRegion().setLimits(-.2, 1.2, -.5, 1.5);
 

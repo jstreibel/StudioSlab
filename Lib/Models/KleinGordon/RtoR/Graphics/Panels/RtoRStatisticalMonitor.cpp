@@ -52,13 +52,13 @@ namespace Slab::Models::KGRtoR {
 
             auto mTemperaturesGraph = Slab::New<Graphics::FPlot2DWindow>("T");
 
-            Graphics::Plotter::AddPointSet(mTemperaturesGraph,
+            Graphics::FPlotter::AddPointSet(mTemperaturesGraph,
                                            Slab::Naked(temperature1HistoryData),
                                            (*style++).permuteColors(), "τₖ=2<K>/L");
-            Graphics::Plotter::AddPointSet(mTemperaturesGraph,
+            Graphics::FPlotter::AddPointSet(mTemperaturesGraph,
                                            Slab::Naked(temperature2HistoryData),
                                            (*style++).permuteColors(), "τ");
-            Graphics::Plotter::AddPointSet(mTemperaturesGraph,
+            Graphics::FPlotter::AddPointSet(mTemperaturesGraph,
                                            Slab::Naked(temperature3HistoryData),
                                            (*style++).permuteColors(), "τ₂");
             // mTemperaturesGraph.addPointSet(DummyPtr(temperature4HistoryData), (*style++), "(τₖ+τ₂)/2");
@@ -73,7 +73,7 @@ namespace Slab::Models::KGRtoR {
                                              {params->Get_t() + .1, T}});
                 auto Tstyle = (*style++).permuteColors();
                 Tstyle.filled = false;
-                Graphics::Plotter::AddPointSet(mTemperaturesGraph,
+                Graphics::FPlotter::AddPointSet(mTemperaturesGraph,
                                                Slab::New<Math::PointSet>(pts), Tstyle, "T (nominal)");
             }
         }
@@ -86,16 +86,16 @@ namespace Slab::Models::KGRtoR {
 
 
             auto style = PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
-            Plotter::AddPointSet(mHistogramsGraphE,
+            FPlotter::AddPointSet(mHistogramsGraphE,
                                            Slab::Naked(histogramEData),
                                            *style++, "E");
-            Plotter::AddPointSet(mHistogramsGraphK,
+            FPlotter::AddPointSet(mHistogramsGraphK,
                                            Slab::Naked(histogramKData),
                                            *style++, "K");
-            Plotter::AddPointSet(mHistogramsGraphGrad,
+            FPlotter::AddPointSet(mHistogramsGraphGrad,
                                            Slab::Naked(histogramGradData),
                                            *style++, "grad");
-            Plotter::AddPointSet(mHistogramsGraphV,
+            FPlotter::AddPointSet(mHistogramsGraphV,
                                            Slab::Naked(histogramVData),
                                            *style++, "V");
 

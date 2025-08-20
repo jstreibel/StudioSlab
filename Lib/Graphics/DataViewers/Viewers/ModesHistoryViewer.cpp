@@ -21,13 +21,13 @@ namespace Slab::Graphics {
         xft_history_window = New<FPlot2DWindow>("Space DFT");
         xft_history_window->GetAxisArtist().SetHorizontalAxisLabel("k");
         xft_history_window->GetAxisArtist().setVerticalAxisLabel("t");
-        xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
+        xft_amplitudes_artist = FPlotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
         AddWindow(xft_history_window);
 
         modes_window = New<FPlot2DWindow>("Modes");
         modes_window->GetAxisArtist().SetHorizontalAxisLabel("t");
         modes_window->GetAxisArtist().setVerticalAxisLabel("|ℱₓ[ϕ]|");
-        modes_artist = Plotter::AddR2Section(modes_window, nullptr, "Modes artist");
+        modes_artist = FPlotter::AddR2Section(modes_window, nullptr, "Modes artist");
         modes_artist->SetAffectGraphRanges(true);
         AddWindow(modes_window);
     }
@@ -71,7 +71,7 @@ namespace Slab::Graphics {
             auto name = Str("k=") + ToStr(n) + "k₀";
 
             modes_artist->addSection(section, style->clone(), name);
-            auto curve_artist = Plotter::AddCurve(xft_history_window, section, *style, name, 1);
+            auto curve_artist = FPlotter::AddCurve(xft_history_window, section, *style, name, 1);
 
             curves_artists.emplace_back(curve_artist);
 

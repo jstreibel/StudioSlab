@@ -13,6 +13,7 @@ class StudioWindowManager final : public Slab::Graphics::FWindowManager {
 public:
     explicit StudioWindowManager();
 
+    void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>&);
     void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>&, bool hidden) override;
 
     bool NotifyRender(const Slab::Graphics::FPlatformWindow&) override;

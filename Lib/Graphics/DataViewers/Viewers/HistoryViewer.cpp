@@ -23,21 +23,21 @@ namespace Slab::Graphics {
     {
         history_window = New<FPlot2DWindow>("Function");
         history_window->GetAxisArtist().setVerticalAxisLabel("");
-        function_artist = Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
+        function_artist = FPlotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
         AddWindow(history_window);
 
         xft_history_window = New<FPlot2DWindow>("Space DFT");
         xft_history_window->GetAxisArtist().setVerticalAxisLabel("A");
         xft_history_window->GetAxisArtist().SetHorizontalAxisLabel("k");
-        xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
+        xft_amplitudes_artist = FPlotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
         AddWindow(xft_history_window, true);
 
         auto slice_window = New<FPlot2DWindow>("Space instant");
-        section_artist = Plotter::AddR2Section(slice_window, nullptr, "ϕ");
+        section_artist = FPlotter::AddR2Section(slice_window, nullptr, "ϕ");
         addWindowToColumn(slice_window, 0);
 
         auto dft_slice_window = New<FPlot2DWindow>("Space DFT instant");
-        dft_section_artist = Plotter::AddR2Section(dft_slice_window, nullptr, "ℱₓ[ϕ]");
+        dft_section_artist = FPlotter::AddR2Section(dft_slice_window, nullptr, "ℱₓ[ϕ]");
         addWindowToColumn(dft_slice_window, 1);
 
         history_window->TieRegion_xMaxMin(*slice_window);
@@ -62,7 +62,7 @@ namespace Slab::Graphics {
             style->filled = false;
             section_artist->addSection(function_section, style, "");
 
-            auto history_section_artist = Plotter::AddCurve(history_window, function_section, *style, "History section");
+            auto history_section_artist = FPlotter::AddCurve(history_window, function_section, *style, "History section");
             xft_history_window->AddArtist(history_section_artist);
         } else {
             function_section->getx0().x = domain.xMin;

@@ -12,7 +12,7 @@
 namespace Tests {
 
     Slab::TPointer<Slab::Graphics::FSlabWindow> GetImGuiTestWindow() {
-        using Plotter = Slab::Graphics::Plotter;
+        using Plotter = Slab::Graphics::FPlotter;
         auto theme = Slab::Graphics::PlotThemeManager::GetCurrent();
         auto plot_window = Slab::New<Slab::Graphics::FPlot2DWindow>("Test Window");
 
