@@ -58,6 +58,7 @@ namespace Slab::Math {
         explicit DataKeeper() : Singleton("Data Keeper") { }
 
         ~DataKeeper() override;
+        static void Delete(const TPointer<Data>& Data);
         static TList<TPointer<Data>> GetDataList();
 
         static void AddData(const TPointer<Data>& Data);

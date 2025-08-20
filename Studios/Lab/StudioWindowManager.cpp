@@ -118,6 +118,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
             {
                 ImGui::SeparatorText("Data");
                 static int SelectedRow = -1;
+
                 if (ImGui::BeginTable("Data Table", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
                 {
                     // ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
@@ -125,16 +126,20 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                     // ImGui::TableSetupColumn("Size (MiB)", ImGuiTableColumnFlags_NoHide);
                     // ImGui::TableHeadersRow();
 
+                    static Slab::TPointer<Slab::Math::Data> SelectedData;
                     int Row = 0;
                     for (const auto& Data : AllManagedData)
                     {
                         ImGui::TableNextRow();
 
                         ImGui::TableSetColumnIndex(0);
-                        bool RowSelected = (SelectedRow == Row);
-                        if (ImGui::Selectable(Data->get_data_name().c_str(), RowSelected, ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap))
+                        if (bool RowSelected = SelectedRow == Row;
+                            ImGui::Selectable(Data->get_data_name().c_str(),
+                                RowSelected,
+                                ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap))
                         {
                             SelectedRow = Row; // mark which row is selected
+                            SelectedData = Data;
                             ImGui::OpenPopup("Data Options##DataOptions");
                         }
 
@@ -152,10 +157,15 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                         ImGui::Text("Data Options");
                         ImGui::Separator();
                         if (ImGui::Selectable("View##DataOptions"))
-                        {}
+                        {
+
+                        }
 
                         if (ImGui::Selectable("Delete##DataOptions"))
-                        {}
+                        {
+                            Slab::Math::DataKeeper::Delete(SelectedData);
+                            SelectedData = nullptr;
+                        }
                         ImGui::EndPopup();
                     }
                     ImGui::EndTable();

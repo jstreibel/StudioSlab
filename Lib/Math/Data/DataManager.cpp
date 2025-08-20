@@ -117,6 +117,12 @@ namespace Slab::Math {
 
     DataKeeper::~DataKeeper() = default;
 
+    void DataKeeper::Delete(const TPointer<Data>& Data)
+    {
+        auto &DataList = GetInstance().DataList;
+        DataList.remove(Data);
+    }
+
     TList<TPointer<Data>> DataKeeper::GetDataList()
     {
         return DataKeeper::GetInstance().DataList;
