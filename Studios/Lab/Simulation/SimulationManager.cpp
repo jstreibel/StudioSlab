@@ -7,10 +7,15 @@
 #include <utility>
 
 #include "ParameterGUIRenderer.h"
+#include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_Ak2.h"
 #include "Graphics/Modules/GUIModule/GUIContext.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 
 #include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_PlaneWaves.h"
+#include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_Ak2.h"
+#include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_wkA.h"
+#include "../../Fields/RtoR-Modes/Sim/Recipes/Signal_Ak2_Recipe.h"
+
 #include "Core/SlabCore.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Math/Data/DataManager.h"
@@ -54,45 +59,58 @@ void FSimulationManager::ExposeInterface(const Slab::TPointer<Slab::Core::FInter
 
 bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& platform_window)
 {
-    const auto ItemLocation = Slab::Graphics::MainMenuLocation{"Simulations"};
+    static auto BuilderFunc = [](Slab::TPointer<Slab::Math::Base::FNumericalRecipe> BaseRecipe)
+    {
+        const auto KGRecipe = Slab::DynamicPointerCast<Slab::Models::KGRecipe>(std::move(BaseRecipe));
+        const auto NumericConfig = Slab::DynamicPointerCast<Slab::Models::FKGNumericConfig>(KGRecipe->GetNumericConfig());
+
+        fix NOut = KGRecipe->GetOutputOptions().GetOutputResolution();
+        fix L = NumericConfig->GetL();
+        fix t = NumericConfig->Get_t();
+        fix MOut = t/L * static_cast<Slab::DevFloat>(NOut);
+        fix MaxSteps = NumericConfig->getn();
+        fix xMin = NumericConfig->Get_xMin();
+
+        const auto SimHistory = Slab::New<Slab::Models::KGRtoR::SimHistory>(
+            MaxSteps, t, NOut, MOut, xMin, L, KGRecipe->GetInterface()->GetName(), true);
+
+        auto Data = SimHistory->GetData();
+        Slab::Math::FDataManager::AddData(Data);
+
+        auto OutputManager = Slab::New<Slab::Math::FOutputManager>(MaxSteps);
+        OutputManager->AddOutputChannel(SimHistory);
+
+        return OutputManager;
+    };
+
+    const auto ItemLocation = Slab::Graphics::MainMenuLocation{"Simulations", "ℝ↦ℝ", "Plane-wave inputs"};
     const auto Item = Slab::Graphics::MainMenuItem{ItemLocation,
         {
-            {"Signum-Gordon Plane Waves"}
+            {"Plane Waves", "Analytic Signum-Gordon"},
+            {"Monochromatic sine wave##1", "{ω,k,A} parameters"},
+            {"Monochromatic sine wave##2", "Q=Ak² invariant parameter"},
+            {"Monochromatic signal", "Q=Ak² invariant parameter"}
         },
         [this](const Slab::Str &ItemString)
         {
-            if (ItemString == "Signum-Gordon Plane Waves")
+            Slab::TPointer<Slab::Models::KGRecipe> Recipe;
+
+            if (ItemString == "Plane Waves")                     Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
+            else if (ItemString == "Monochromatic sine wave##1") Recipe = Slab::New<Modes::NumericalRecipe_wkA>();
+            else if (ItemString == "Monochromatic sine wave##2") Recipe = Slab::New<Modes::NumericalRecipe_Ak2>();
+            else if (ItemString == "Monochromatic signal")       Recipe = Slab::New<Modes::Signal_Ak2_Recipe>();
+
+            if (Recipe == nullptr)
             {
-                const auto Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
-                auto Param = Slab::DynamicPointerCast<Slab::Core::IntegerParameter>(
-                    Recipe->GetDeviceConfig().GetInterface()->GetParameter(Slab::Math::PDeviceLongName));
-                Param->SetValue(0);
-
-                auto BuilderFunc = [](Slab::TPointer<Slab::Math::Base::FNumericalRecipe> BaseRecipe)
-                {
-                    const auto KGRecipe = Slab::DynamicPointerCast<Slab::Models::KGRecipe>(std::move(BaseRecipe));
-                    const auto NumericConfig = Slab::DynamicPointerCast<Slab::Models::FKGNumericConfig>(KGRecipe->GetNumericConfig());
-
-                    fix NOut = KGRecipe->GetOutputOptions().GetOutputResolution();
-                    fix L = NumericConfig->GetL();
-                    fix t = NumericConfig->Get_t();
-                    fix MOut = t/L * static_cast<Slab::DevFloat>(NOut);
-                    fix MaxSteps = NumericConfig->getn();
-                    fix xMin = NumericConfig->Get_xMin();
-
-                    const auto SimHistory = Slab::New<Slab::Models::KGRtoR::SimHistory>(
-                        MaxSteps, t, NOut, MOut, xMin, L, KGRecipe->GetInterface()->GetName(), true);
-
-                    auto Data = SimHistory->GetData();
-                    Slab::Math::FDataManager::AddData(Data);
-
-                    auto OutputManager = Slab::New<Slab::Math::FOutputManager>(MaxSteps);
-                    OutputManager->AddOutputChannel(SimHistory);
-
-                    return OutputManager;
-                };
-                BeginRecipe(FMaterial{Recipe, BuilderFunc});
+                Slab::Core::Log::Error() << "Internal error: unidentified item " << ItemString << Slab::Core::Log::Flush;
+                return;
             }
+
+            const auto DeviceParam = Slab::DynamicPointerCast<Slab::Core::IntegerParameter>(
+                    Recipe->GetDeviceConfig().GetInterface()->GetParameter(Slab::Math::PDeviceLongName));
+            DeviceParam->SetValue(0);
+
+            BeginRecipe(FMaterial{Recipe, BuilderFunc});
         }
     };
     ImGuiContext->AddMainMenuItem(Item);

@@ -5,6 +5,9 @@ endif()
 
 set (STUDIO_EXTERNAL_SOURCES
         ../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_PlaneWaves.cpp
+        ../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_Ak2.cpp
+        ../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_wkA.cpp
+        ../Fields/RtoR-Modes/Sim/Recipes/Signal_Ak2_Recipe.cpp
         ../Fields/RtoR-Modes/Sim/SquareWave.cpp
         ../Fields/RtoR-Modes/Sim/BoundaryCondition.cpp
         ../Fields/RtoR-Modes/Sim/Monitor.cpp

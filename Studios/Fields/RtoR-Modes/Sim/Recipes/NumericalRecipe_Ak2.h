@@ -14,7 +14,7 @@ namespace Modes {
     using namespace Slab::Math;
 
 
-    class NumericalRecipe_Ak2 final : public Slab::Models::KGRtoR::FKGRtoR_Recipe {
+    class NumericalRecipe_Ak2 final : public Models::KGRtoR::FKGRtoR_Recipe {
         IntegerParameter BCSelection = IntegerParameter(0, FParameterDescription{"BC", "Boundary conditions selection:"
                                                                                        "\n\t0: sine signal with 'omega' angular frequency in vacuum IC."
                                                                                        "\n\t1: IC sine wave with 'omega' angular frequency and 'wave_number' wave number."
@@ -35,9 +35,8 @@ namespace Modes {
         auto BuildOpenGLOutput() -> void * override;
 
     public:
-        auto SuggestFileName() const -> Str override;
+        [[nodiscard]] auto SuggestFileName() const -> Str override;
 
-    public:
         explicit NumericalRecipe_Ak2(bool doRegister=true);
 
         auto GetBoundary() -> Slab::Math::Base::BoundaryConditions_ptr override;
