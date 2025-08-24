@@ -22,7 +22,7 @@ namespace Modes {
         auto BuildOpenGLOutput() -> void * override;
 
     public:
-        auto SuggestFileName() const -> Str override;
+        [[nodiscard]] auto SuggestFileName() const -> Str override;
 
         explicit Signal_Ak2_Recipe(bool doRegister=true);
 
