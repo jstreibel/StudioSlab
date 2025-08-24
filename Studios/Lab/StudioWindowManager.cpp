@@ -4,6 +4,8 @@
 
 #include "StudioWindowManager.h"
 
+#include <utility>
+
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "StudioConfig.h"
@@ -163,7 +165,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
                         if (ImGui::Selectable("View##DataOptions"))
                         {
                             using NumericFunction = Slab::Math::R2toR::FNumericFunction;
-                            auto Cast = [](auto Obj) {return Slab::DynamicPointerCast<NumericFunction>(Obj);};
+                            auto Cast = [](auto Obj) {return Slab::DynamicPointerCast<NumericFunction>(std::move(Obj));};
                             using Plotter = Slab::Graphics::FPlotter;
                             Slab::TPointer<NumericFunction> Function;
                             try { Function = Cast(SelectedData); } catch (std::bad_cast &){ }
