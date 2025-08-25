@@ -26,12 +26,30 @@ namespace Slab::Graphics {
 
     class FSlabWindow_ImGuiWrapper final : public FSlabWindow
     {
+
     public:
+
         void CursorEntered(bool) override;
+
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
+
         bool NotifyMouseWheel(double dx, double dy) override;
 
+        /**
+         * @param SlabWindow The window to wrap with an ImGui window.
+         * @param Context The ImGui context within which to show this window. If nullptr, then the
+         * main context from the main window is used.
+         */
+        explicit FSlabWindow_ImGuiWrapper(TPointer<FSlabWindow> SlabWindow, TPointer<FImGuiContext> Context);
+
+        ~FSlabWindow_ImGuiWrapper() override = default;
+
+        auto ImmediateDraw(const FPlatformWindow&) -> void override;
+        auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
+
+
     private:
+
         static Atomic<CountType> Count;
         Str Id;
 
@@ -40,23 +58,14 @@ namespace Slab::Graphics {
 
         /**
          * Thread carefully, o lander
+         * You're dealing with raw pointers here
+         * This is no man's land in 2025
          */
         struct FCallbackData
         {
             FSlabWindow* SlabWindow                 = nullptr;
             const FPlatformWindow* PlatformWindow   = nullptr;
         } CallBackData;
-
-    public:
-        /**
-         * @param SlabWindow The window to wrap with an ImGui window.
-         * @param Context The ImGui context within which to show this window. If nullptr, then the
-         * main context from the main window is used.
-         */
-        explicit FSlabWindow_ImGuiWrapper(TPointer<FSlabWindow> SlabWindow, TPointer<FImGuiContext> Context);
-        ~FSlabWindow_ImGuiWrapper() override = default;
-
-        auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
 };
 
 } // Slab::Graphics
