@@ -29,12 +29,6 @@ namespace Slab::Graphics {
 
     public:
 
-        void CursorEntered(bool) override;
-
-        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
-
-        bool NotifyMouseWheel(double dx, double dy) override;
-
         /**
          * @param SlabWindow The window to wrap with an ImGui window.
          * @param Context The ImGui context within which to show this window. If nullptr, then the
