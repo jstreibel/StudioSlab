@@ -10,11 +10,9 @@
 #include "Graphics/Styles/Colors.h"
 
 #include "Graphics/Backend/Events/MouseState.h"
-#include "Graphics/Backend/Events/KeyMap.h"
 #include "Graphics/Types2D.h"
 #include "Graphics/Window/WindowStyles.h"
 #include "Core/Tools/UniqueObject.h"
-#include "Graphics/Backend/PlatformWindow.h"
 
 #include <vector>
 #include <memory>
@@ -42,17 +40,6 @@ namespace Slab::Graphics {
     };
 
     class FSlabWindow : protected Core::UniqueObject, public FPlatformWindowEventListener {
-        friend class FSlabWindowManager;
-
-        [[nodiscard]] bool SetupViewport(const FPlatformWindow& PlatformWindow) const;
-
-        TPointer<FMouseState> MouseState;
-
-    protected:
-        FSlabWindowConfig Config;
-        Resolution MinWidth=800, MinHeight=450;
-        Int HeightOverride = -1;
-        bool Active=false;
 
     public:
 
@@ -68,7 +55,7 @@ namespace Slab::Graphics {
         auto NotifyRender(const FPlatformWindow&)              -> bool final;
 
         void Close();
-        bool WantsClose() const;
+        [[nodiscard]] bool WantsClose() const;
 
         /**
          *  Override the value used to compute viewport positions in OpenGL environments.
@@ -117,6 +104,19 @@ namespace Slab::Graphics {
         [[nodiscard]] auto GetHeight()                                 const -> int;
         auto SetMinimumWidth(Resolution)                       -> void;
         auto SetMinimumHeight(Resolution)                      -> void;
+
+    protected:
+        FSlabWindowConfig Config;
+        Resolution MinWidth=800, MinHeight=450;
+        Int HeightOverride = -1;
+        bool Active=false;
+
+    private:
+        friend class FSlabWindowManager;
+
+        [[nodiscard]] bool SetupViewport(const FPlatformWindow& PlatformWindow) const;
+
+        TPointer<FMouseState> MouseState;
     };
 
     DefinePointers(FSlabWindow)

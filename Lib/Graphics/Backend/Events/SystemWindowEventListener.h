@@ -17,16 +17,6 @@ namespace Slab::Graphics {
     using FOwnerPlatformWindow = TVolatile<class FPlatformWindow>;
 
     class FPlatformWindowEventListener {
-        Vector<TVolatile<FPlatformWindowEventListener>> DelegateResponders;
-        friend class FPlatformWindow;
-
-        int Priority;
-
-    protected:
-
-        void AddResponder(const TVolatile<FPlatformWindowEventListener>& responder);
-        void RemoveResponder(const TPointer<FPlatformWindowEventListener>& responder);
-        [[nodiscard]] bool HasResponders() const;
 
     public:
 
@@ -46,6 +36,19 @@ namespace Slab::Graphics {
         virtual bool NotifySystemWindowReshape(int w, int h);
 
         virtual bool NotifyRender(const FPlatformWindow&);
+
+    protected:
+
+        void AddResponder(const TVolatile<FPlatformWindowEventListener>& responder);
+        void RemoveResponder(const TPointer<FPlatformWindowEventListener>& responder);
+        [[nodiscard]] bool HasResponders() const;
+
+    private:
+
+        Vector<TVolatile<FPlatformWindowEventListener>> DelegateResponders;
+        friend class FPlatformWindow;
+
+        int Priority;
 
     };
 

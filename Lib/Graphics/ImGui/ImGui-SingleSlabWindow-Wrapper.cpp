@@ -36,6 +36,8 @@ namespace Slab::Graphics {
 
         this->SlabWindow->SetClear(false);
         this->SlabWindow->SetDecorate(false);
+
+        AddResponder(this->SlabWindow);
     }
 
 
@@ -62,6 +64,8 @@ namespace Slab::Graphics {
             ImGui::BeginChild(SlabWindow->GetTitle().c_str(), ChildSize,
                       bBorder,
                       ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+            IsFocused = ImGui::IsWindowFocused();
 
             // 3) Create a real item that owns interactions (blocks others)
             ImVec2 p0    = ImGui::GetCursorScreenPos();
@@ -162,4 +166,39 @@ namespace Slab::Graphics {
         if (bOpen == false) this->Close();
     }
 
+    bool FSlabWindow_ImGuiWrapper::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys)
+    {
+        if (!IsFocused) return false;
+
+        return FSlabWindow::NotifyKeyboard(key, state, modKeys);
+    }
+
+    bool FSlabWindow_ImGuiWrapper::NotifyCharacter(UInt codepoint)
+    {
+        if (!IsFocused) return false;
+
+        return FSlabWindow::NotifyCharacter(codepoint);
+    }
+
+    bool FSlabWindow_ImGuiWrapper::NotifyMouseButton(EMouseButton mouse_button, EKeyState key_state,
+        EModKeys mod_keys)
+    {
+        if (!IsFocused) return false;
+
+        return FSlabWindow::NotifyMouseButton(mouse_button, key_state, mod_keys);
+    }
+
+    bool FSlabWindow_ImGuiWrapper::NotifyMouseMotion(int x, int y, int dx, int dy)
+    {
+        if (!IsFocused) return false;
+
+        return FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
+    }
+
+    bool FSlabWindow_ImGuiWrapper::NotifyMouseWheel(double dx, double dy)
+    {
+        if (!IsFocused) return false;
+
+        return FSlabWindow::NotifyMouseWheel(dx, dy);
+    }
 } // Slab::Graphics

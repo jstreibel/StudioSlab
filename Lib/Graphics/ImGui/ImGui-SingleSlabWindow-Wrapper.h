@@ -40,6 +40,12 @@ namespace Slab::Graphics {
 
         auto ImmediateDraw(const FPlatformWindow&) -> void override;
 
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
+        bool NotifyCharacter(UInt codepoint) override;
+        bool NotifyMouseButton(EMouseButton, EKeyState, EModKeys) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyMouseWheel(double dx, double dy) override;
+
     private:
 
         static Atomic<CountType> Count;
@@ -58,7 +64,9 @@ namespace Slab::Graphics {
             FSlabWindow* SlabWindow                 = nullptr;
             const FPlatformWindow* PlatformWindow   = nullptr;
         } CallBackData;
-};
+
+        bool IsFocused = false;
+    };
 
 } // Slab::Graphics
 
