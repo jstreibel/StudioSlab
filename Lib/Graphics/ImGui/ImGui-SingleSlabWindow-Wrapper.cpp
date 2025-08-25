@@ -76,12 +76,16 @@ namespace Slab::Graphics {
 
             // 4) Consume mouse wheel here (prevents parent scroll)
             if (Hovered) {
-                fix Wheel = ImGui::GetIO().MouseWheel;
-                if (Wheel != 0.0f) {
+                fix &IO = ImGui::GetIO();
+
+                if (fix Wheel = IO.MouseWheel; Wheel != 0.0f) {
                     ImGui::SetItemUsingMouseWheel(); // tells ImGui we used the wheel
 
-                    SlabWindow->NotifyMouseWheel(0.0, Wheel);
+                    // SlabWindow->NotifyMouseWheel(0.0, Wheel);
                 }
+
+                constexpr int MAX_MOUSE_BUTTONS = 5;
+                auto MouseClicked = IO.MouseClicked;
             }
 
             // 5) Mouse interactions while active/hovered
@@ -89,8 +93,13 @@ namespace Slab::Graphics {
                 // PanBy(ImGui::GetMouseDragDelta());
                 ImGui::ResetMouseDragDelta();
             }
+
             if (Hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+            {
                 if constexpr (bPopupMenu) ImGui::OpenPopup("canvas_ctx");
+
+
+            }
 
             // 6) Keep inputs from propagating to the rest of the app/UI
             if (Hovered || Active) {
@@ -137,7 +146,7 @@ namespace Slab::Graphics {
                 ImGui::GetWindowDrawList()->AddCallback(Callback, &CallBackData);
             }
 
-            SlabWindow->RegisterDeferredDrawCalls(PlatformWindow);
+            // SlabWindow->RegisterDeferredDrawCalls(PlatformWindow);
 
             // Optional: context menu
             if constexpr (bPopupMenu) if (ImGui::BeginPopup("canvas_ctx")) {
