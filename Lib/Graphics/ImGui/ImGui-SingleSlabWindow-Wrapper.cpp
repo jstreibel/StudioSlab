@@ -15,6 +15,7 @@
 
 #include "imgui_internal.h"
 #include "3rdParty/freetype-gl/vertex-attribute.h"
+#include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/GLStateGuard.h"
 
 #define MyName
@@ -75,19 +76,7 @@ namespace Slab::Graphics {
         {
             constexpr auto bBorder = false;
 
-            fix FramePadding = ImGui::GetStyle().FramePadding;
-
-            fix ParentPos  = ImGui::GetWindowPos();
-            fix ContentRegionMin_Local = ImGui::GetWindowContentRegionMin();
-            fix ContentRegionMax_Local = ImGui::GetWindowContentRegionMax();
-            fix ContentRegionMin = ParentPos + ContentRegionMin_Local;
-            fix ContentRegionMax = ParentPos + ContentRegionMax_Local;
-
-            fix CanvasMin = ContentRegionMin + FramePadding;
-            fix CanvasMax = ContentRegionMax - FramePadding;
-            fix CanvasSize = CanvasMax - CanvasMin;
-
-            fix ChildSize = ImGui::GetWindowSize();
+            fix ChildSize = ImGui::GetContentRegionAvail();
 
             // Self-contained region with clipping/focus/scroll behavior
             ImGui::BeginChild(SlabWindow->GetTitle().c_str(), ChildSize,
@@ -134,13 +123,15 @@ namespace Slab::Graphics {
             // dl->AddRectFilled(p0, p0 + avail, IM_COL32(24,24,24,255));
             {
                 fix Pos = ImGui::GetWindowPos();
-                fix ContentMin = ImGui::GetWindowContentRegionMin();
-                fix ContentMax = ImGui::GetWindowContentRegionMax();
+                fix ContentMin_Local = ImGui::GetWindowContentRegionMin();
+                fix ContentMax_Local = ImGui::GetWindowContentRegionMax();
 
-                fix ContentWidth = ContentMax.x - ContentMin.x - FramePadding.x*2.f;
-                fix ContentHeight = ContentMax.y - ContentMin.y - FramePadding.y*2.f;
-                fix x = Pos.x + ContentMin.x;
-                fix y = Pos.y + ContentMin.y;
+                fix ContentWidth  = ContentMax_Local.x - ContentMin_Local.x;
+                fix ContentHeight = ContentMax_Local.y - ContentMin_Local.y;
+                fix x = Pos.x + ContentMin_Local.x;
+                fix y = Pos.y + ContentMin_Local.y;
+
+
                 // constexpr auto Min = 400;
                 // fix w = dim.x > Min ? dim.x : Min;
                 // fix h = dim.y > Min ? dim.y : Min;
