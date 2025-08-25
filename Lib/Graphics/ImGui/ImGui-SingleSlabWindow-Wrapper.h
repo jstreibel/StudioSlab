@@ -39,8 +39,6 @@ namespace Slab::Graphics {
         ~FSlabWindow_ImGuiWrapper() override = default;
 
         auto ImmediateDraw(const FPlatformWindow&) -> void override;
-        auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
-
 
     private:
 

@@ -43,6 +43,8 @@ namespace Slab::Graphics {
     {
         if constexpr (false) FSlabWindow::ImmediateDraw(PlatformWindow);
 
+        constexpr bool bPopupMenu = false;
+
         CallBackData.SlabWindow = SlabWindow.get();
         CallBackData.PlatformWindow = &PlatformWindow;
 
@@ -88,7 +90,7 @@ namespace Slab::Graphics {
                 ImGui::ResetMouseDragDelta();
             }
             if (Hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
-                ImGui::OpenPopup("canvas_ctx");
+                if constexpr (bPopupMenu) ImGui::OpenPopup("canvas_ctx");
 
             // 6) Keep inputs from propagating to the rest of the app/UI
             if (Hovered || Active) {
@@ -135,8 +137,10 @@ namespace Slab::Graphics {
                 ImGui::GetWindowDrawList()->AddCallback(Callback, &CallBackData);
             }
 
+            SlabWindow->RegisterDeferredDrawCalls(PlatformWindow);
+
             // Optional: context menu
-            if (ImGui::BeginPopup("canvas_ctx")) {
+            if constexpr (bPopupMenu) if (ImGui::BeginPopup("canvas_ctx")) {
                 // menu items...
                 ImGui::EndPopup();
             }
@@ -147,66 +151,6 @@ namespace Slab::Graphics {
         ImGui::End();
 
         if (bOpen == false) this->Close();
-    }
-
-    void FSlabWindow_ImGuiWrapper::RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow)
-    {
-        if constexpr (true) return;
-
-        FSlabWindow::RegisterDeferredDrawCalls(PlatformWindow);
-
-        CallBackData.SlabWindow = SlabWindow.get();
-        CallBackData.PlatformWindow = &PlatformWindow;
-
-        Context->AddDrawCall([this]() {
-            if (SlabWindow == nullptr) return;
-
-            ImGui::SetNextWindowSizeConstraints({500,500}, {FLT_MAX, FLT_MAX});
-            auto UniqueId = SlabWindow->GetUniqueName();
-            bool bOpen = !WantsClose();
-            if(Fix WindowFlags = ImGuiWindowFlags_NoCollapse ;
-               ImGui::Begin(UniqueId.c_str(), &bOpen, WindowFlags))
-            {
-                fix Pos = ImGui::GetWindowPos();
-                fix ContentMin = ImGui::GetWindowContentRegionMin();
-                fix ContentMax = ImGui::GetWindowContentRegionMax();
-
-                fix w = ContentMax.x - ContentMin.x;
-                fix h = ContentMax.y - ContentMin.y;
-                fix x = Pos.x + ContentMin.x;
-                fix y = Pos.y + ContentMin.y;
-                // constexpr auto Min = 400;
-                // fix w = dim.x > Min ? dim.x : Min;
-                // fix h = dim.y > Min ? dim.y : Min;
-
-                SlabWindow->Set_x(static_cast<int>(x));
-                // slab_window->sety(backend.getScreenHeight() - (y + dim.y));
-                SlabWindow->Set_y(static_cast<int>(y));
-                SlabWindow->NotifyReshape(static_cast<int>(w), static_cast<int>(h));
-
-                // Further defer
-                auto Callback = [](const ImDrawList *ParentList, const ImDrawCmd *DrawCommand)
-                {
-                    OpenGL::FGLStateGuard StateGuard{};
-
-                    if (DrawCommand->UserCallback == nullptr) return;
-
-                    const auto& [SlabWindow, PlatformWindow] = *static_cast<FCallbackData*>(DrawCommand->UserCallbackData);
-
-                    glPushAttrib(GL_VIEWPORT_BIT);
-                    SlabWindow->ImmediateDraw(*PlatformWindow);
-                    glPopAttrib();
-                };
-
-                ImGui::GetWindowDrawList()->AddCallback(Callback, &CallBackData);
-            }
-
-            ImGui::End();
-
-            if (bOpen == false) this->Close();
-        });
-
-        SlabWindow->RegisterDeferredDrawCalls(PlatformWindow);
     }
 
 } // Slab::Graphics
