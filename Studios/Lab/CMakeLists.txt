@@ -24,8 +24,8 @@ add_executable( StudioSlab
         StudioConfig.h
         Simulation/SimulationManager.cpp
         Simulation/SimulationManager.h
-        Simulation/ParameterGUIRenderer.cpp
-        Simulation/ParameterGUIRenderer.h
+        ParameterGUIRenderer.cpp
+        ParameterGUIRenderer.h
 )
 target_link_libraries( StudioSlab Slab )
 message(NOTICE "Added executable StudioSlab")

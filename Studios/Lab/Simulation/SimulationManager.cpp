@@ -6,7 +6,7 @@
 
 #include <utility>
 
-#include "ParameterGUIRenderer.h"
+#include "../ParameterGUIRenderer.h"
 #include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_Ak2.h"
 #include "Graphics/Modules/GUIModule/GUIContext.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"

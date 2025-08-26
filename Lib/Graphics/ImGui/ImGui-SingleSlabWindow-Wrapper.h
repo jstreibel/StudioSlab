@@ -66,6 +66,7 @@ namespace Slab::Graphics {
         } CallBackData;
 
         bool IsFocused = false;
+        bool Hovered   = false;
     };
 
 } // Slab::Graphics

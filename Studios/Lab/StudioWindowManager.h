@@ -13,12 +13,13 @@ class StudioWindowManager final : public Slab::Graphics::FWindowManager {
 public:
     explicit StudioWindowManager();
 
-    void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>&);
+    void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>&) override;
     void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>&, bool hidden) override;
 
     bool NotifyRender(const Slab::Graphics::FPlatformWindow&) override;
 
     bool NotifySystemWindowReshape(int w, int h) override;
+    Slab::TPointer<Slab::Graphics::FImGuiContext> GetImGuiContext();
 
 private:
     using FSlabWindowPtr = Slab::TPointer<Slab::Graphics::FSlabWindow>;

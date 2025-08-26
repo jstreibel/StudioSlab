@@ -79,12 +79,12 @@ namespace Slab::Math::Base {
         virtual auto isDiscrete()   const -> bool           { return discrete; }
 
         /** Returns a managed reference to a GPUFriendly version of this function. */
-        const GPUFriendly &getGPUFriendlyVersion() const { return *myGPUFriendlyVersion; }
+        [[nodiscard]] const GPUFriendly &getGPUFriendlyVersion() const { return *myGPUFriendlyVersion; }
 
-        bool isGPUFriendly() const { return (&getGPUFriendlyVersion()) != nullptr; }
+        [[nodiscard]] bool isGPUFriendly() const { return myGPUFriendlyVersion != nullptr; }
 
-        virtual Str Symbol() const { return "f(x)"; }
-        virtual Str generalName() const { return Common::getClassName(this); }
+        [[nodiscard]] virtual Str Symbol() const { return "f(x)"; }
+        [[nodiscard]] virtual Str generalName() const { return Common::getClassName(this); }
 
         // RENDERING
         struct RenderingOptions {

@@ -5,8 +5,10 @@
 #ifndef FIELDS_PARAMETERBASE_H
 #define FIELDS_PARAMETERBASE_H
 
-#include "CommandLine/CommandLineHelpers.h"
-#include "CommandLine/CommandLineParserDefs.h"
+#include <utility>
+
+#include "../CommandLine/CommandLineHelpers.h"
+#include "../CommandLine/CommandLineParserDefs.h"
 
 #include "Utils/Types.h"
 
@@ -17,8 +19,8 @@ namespace Slab::Core {
         : FParameterDescription('\0',   Name,          Description, Formatting) {}
         FParameterDescription(const char Rubric, const Str& Description, FLongOptionFormatting Formatting = FLongOptionFormatting())
         : FParameterDescription(Rubric, Str(1, Rubric), Description, Formatting) {}
-        FParameterDescription(const char Rubric, const Str& Name, const Str& Description, FLongOptionFormatting Formatting = FLongOptionFormatting())
-        : Name(Name), Rubric(Rubric), Description(Description), Formatting(Formatting) {}
+        FParameterDescription(const char Rubric, Str  Name, Str  Description, const FLongOptionFormatting Formatting = FLongOptionFormatting())
+        : Name(std::move(Name)), Rubric(Rubric), Description(std::move(Description)), Formatting(Formatting) {}
 
         Str Name;
         char Rubric;
@@ -31,26 +33,34 @@ namespace Slab::Core {
 
     public:
         virtual ~FParameter() = default;
-        explicit FParameter(const FParameterDescription&);
+        explicit FParameter(FParameterDescription );
 
-        Str GetName() const;
+        [[nodiscard]] Str GetName() const;
 
-        virtual auto AddToCommandLineOptionsGroup(CLODEasyInit &group) const -> void = 0;
-        auto GetFullCommandLineName() const -> Str;
-        auto GetCommandLineArgumentName(bool longNameIfPresent = false) const -> Str;
+        virtual auto
+        AddToCommandLineOptionsGroup(CLODEasyInit &group) const -> void = 0;
+        [[nodiscard]] auto
+        GetFullCommandLineName() const -> Str;
+        [[nodiscard]] auto
+        GetCommandLineArgumentName(bool longNameIfPresent = false) const -> Str;
 
-        virtual auto ValueToString() const -> Str = 0;
+        [[nodiscard]] virtual auto
+        ValueToString() const -> Str = 0;
 
-        virtual void SetValueFromCommandLine(VariableValue var) = 0;
+        virtual void
+        SetValueFromCommandLine(VariableValue var) = 0;
 
-        virtual void SetValue(const void *) = 0;
+        virtual void
+        SetValue(const void *) = 0;
 
-        virtual auto GetValueVoid() const -> const void * = 0;
+        [[nodiscard]] virtual auto
+        GetValueVoid() const -> const void * = 0;
 
-        template<typename T>
-        const T& GetValueAs() const { return *static_cast<const T*>(GetValueVoid()); }
+        template<typename T> const T&
+        GetValueAs() const { return *static_cast<const T*>(GetValueVoid()); }
 
-        auto GetDescription() const -> Str;
+        [[nodiscard]] auto
+        GetDescription() const -> Str;
 
         void SetDescription(const Str& NewDescription);
 

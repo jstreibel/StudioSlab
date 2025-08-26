@@ -4,7 +4,7 @@
 #include "Utils/DeviceConfig.h"
 #include "Utils/TypesGPU.h"
 #include "../../../../Core/Controller/InterfaceOwner.h"
-#include "../../../../Core/Controller/CommonParameters.h"
+#include "../../../../Core/Controller/Parameter/BuiltinParameters.h"
 
 
 namespace Slab::Math {

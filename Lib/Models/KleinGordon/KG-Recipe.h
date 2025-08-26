@@ -65,8 +65,8 @@ namespace Slab::Models {
 
     protected:
         TPointer<FKGNumericConfig> KGNumericConfig;
-        FDeviceConfig DeviceConfig;
-        FKGOutputOptions OutputOptions;
+        FDeviceConfig              DeviceConfig;
+        FKGOutputOptions           OutputOptions;
     };
 
 }

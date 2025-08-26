@@ -9,7 +9,7 @@
 #include "Utils/Types.h"
 #include "Utils/Timer.h"
 
-#include "../Controller/CommonParameters.h"
+#include "../Controller/Parameter/BuiltinParameters.h"
 #include "../Controller/InterfaceOwner.h"
 #include "Utils/Singleton.h"
 

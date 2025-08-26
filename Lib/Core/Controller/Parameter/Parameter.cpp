@@ -4,14 +4,16 @@
 
 #include "Parameter.h"
 
-#include "CommandLine/CommandLineHelpers.h"
+#include <utility>
+
+#include "../CommandLine/CommandLineHelpers.h"
 #include "Utils/StringFormatting.h"
 #include "Utils/Utils.h"
 
 
 namespace Slab::Core {
-    FParameter::FParameter(const FParameterDescription& Description)
-    : Description(Description)
+    FParameter::FParameter(FParameterDescription  Description)
+    : Description(std::move(Description))
     {
 
     }

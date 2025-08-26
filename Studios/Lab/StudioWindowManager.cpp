@@ -50,6 +50,172 @@ void StudioWindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSl
     NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
 }
 
+void ShowJobs()
+{
+    const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
+
+    // SHOW JOBS **********************************************************************
+    if (auto Jobs = TaskManager->GetAllJobs(); !Jobs.empty())
+    {
+        ImGui::SeparatorText("Tasks");
+        for (auto & Job : Jobs)
+        {
+            auto &[Task, JobThread] = Job;
+            ImGui::Text("%s: ", Task->GetName().c_str());
+            ImGui::SameLine();
+
+            switch (Task->GetStatus())
+            {
+            case Slab::Core::TaskRunning:
+                ImGui::TextColored(ImVec4(0,   0,   1, 1), "Running");
+                break;
+            case Slab::Core::TaskAborted:
+                ImGui::TextColored(ImVec4(.8f, .4f, 0, 1), "Aborted");
+                break;
+            case Slab::Core::TaskError:
+                ImGui::TextColored(ImVec4(1,   0,   1, 1), "Error");
+                break;
+            case Slab::Core::TaskSuccess:
+                ImGui::TextColored(ImVec4(0,   1,   0, 1), "Success");
+                ImGui::SameLine();
+                if (ImGui::Button("X"))
+                {
+                    Task->Release();
+                    TaskManager->ClearJob(Job);
+                }
+                break;
+            case Slab::Core::TaskNotInitialized:
+                ImGui::TextColored(ImVec4(1,   1,   0, 1), "Running");
+                break;
+            default:
+                ImGui::TextColored(ImVec4(1,   0,   0, 1), "Unknown state");
+            }
+
+            if (Task->GetStatus() == Slab::Core::TaskRunning)
+            {
+                try
+                {
+                    const auto NumericTask = dynamic_cast<Slab::Math::NumericTask*>(Task.get());
+                    fix Progress = NumericTask->GetProgress();
+                    ImGui::SameLine();
+                    ImGui::ProgressBar(Progress);
+
+                } catch (std::bad_cast &)
+                {
+
+                }
+            }
+
+        }
+    }
+}
+
+void ShowManagedData(StudioWindowManager& Self)
+{
+    if (const auto AllManagedData = Slab::Math::FDataManager::GetDataList(); !AllManagedData.empty())
+    {
+        ImGui::SeparatorText("Data");
+        static int SelectedRow = -1;
+
+        if (ImGui::BeginTable("Data Table", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
+        {
+            // ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
+            // ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_NoHide);
+            // ImGui::TableSetupColumn("Size (MiB)", ImGuiTableColumnFlags_NoHide);
+            // ImGui::TableHeadersRow();
+
+            static Slab::TPointer<Slab::Math::Data> SelectedData;
+            int Row = 0;
+            for (const auto& Data : AllManagedData)
+            {
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                if (bool RowSelected = SelectedRow == Row;
+                    ImGui::Selectable(Data->get_data_name().c_str(),
+                        RowSelected,
+                        ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap))
+                {
+                    SelectedRow = Row; // mark which row is selected
+                    SelectedData = Data;
+                    ImGui::OpenPopup("Data Options##DataOptions");
+                }
+
+                ImGui::TableSetColumnIndex(1);
+                ImGui::Text("%s", Data->get_data_type().c_str());
+
+                auto Size = Data->get_data_size_MiB();
+                ImGui::TableSetColumnIndex(2);
+                ImGui::Text("%.3fMiB", Size);
+
+                ++Row;
+            }
+            if (ImGui::BeginPopup("Data Options##DataOptions"))
+            {
+                ImGui::Text("Data Options");
+                ImGui::Separator();
+                if (ImGui::Selectable("View##DataOptions"))
+                {
+                    using NumericFunction = Slab::Math::R2toR::FNumericFunction;
+                    auto Cast = [](auto Obj) {return Slab::DynamicPointerCast<NumericFunction>(std::move(Obj));};
+                    using Plotter = Slab::Graphics::FPlotter;
+                    Slab::TPointer<NumericFunction> Function;
+                    try { Function = Cast(SelectedData); } catch (std::bad_cast &){ }
+
+                    auto PlotWindow = Slab::New<Slab::Graphics::FPlot2DWindow>(SelectedData->get_data_name());
+                    Plotter::AddR2toRFunction(PlotWindow, Function, SelectedData->get_data_name());
+
+                    auto Window = Slab::New<Slab::Graphics::FSlabWindow_ImGuiWrapper>(PlotWindow, Self.GetImGuiContext());
+
+                    Self.AddSlabWindow(Window, false);
+                }
+
+                if (ImGui::Selectable("Delete##DataOptions"))
+                {
+                    Slab::Math::FDataManager::Delete(SelectedData);
+                    SelectedData = nullptr;
+                }
+                ImGui::EndPopup();
+            }
+            ImGui::EndTable();
+        }
+
+    }
+
+    if (auto AllDataRegistries = Slab::Math::EnumerateAllData(); !AllDataRegistries.empty() && ImGui::CollapsingHeader("Data Registry"))
+    {
+        if (ImGui::Button("Prune Data"))
+        {
+            Slab::Math::FDataRegistry::Prune();
+        }
+        else
+        {
+            ImGui::NewLine();
+            ImGui::SeparatorText("Registered Data");
+            for (const auto& [Name, Type] : AllDataRegistries)
+            {
+                auto DataWrap = Slab::Math::FDataRegistry::GetData(Name);
+
+                ImGui::Text("[");
+                if (auto Data = DataWrap.GetData(); Data == nullptr)
+                {
+                    ImGui::SameLine();
+                    ImGui::TextColored(ImVec4{0.75f, 0, 0, 1}, "Deleted");
+                }
+                else
+                {
+                    ImGui::SameLine();
+                    ImGui::TextColored(ImVec4{0, 0.75, 0, 1}, "Active");
+                }
+                ImGui::SameLine();
+                ImGui::Text("] ");
+                ImGui::SameLine();
+                ImGui::Text("%s [%s]", Name.c_str(), Type.c_str());
+            }
+        }
+    }
+}
+
 bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& PlatformWindow)
 {
     ImGuiContext->NewFrame();
@@ -64,164 +230,10 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
         {
             const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
 
-            // SHOW JOBS **********************************************************************
-            if (auto Jobs = TaskManager->GetAllJobs(); !Jobs.empty())
-            {
-                ImGui::SeparatorText("Tasks");
-                for (auto & Job : Jobs)
-                {
-                    auto &[Task, JobThread] = Job;
-                    ImGui::Text("%s: ", Task->GetName().c_str());
-                    ImGui::SameLine();
-
-                    switch (Task->GetStatus())
-                    {
-                    case Slab::Core::TaskRunning:
-                        ImGui::TextColored(ImVec4(0,   0,   1, 1), "Running");
-                        break;
-                    case Slab::Core::TaskAborted:
-                        ImGui::TextColored(ImVec4(.8f, .4f, 0, 1), "Aborted");
-                        break;
-                    case Slab::Core::TaskError:
-                        ImGui::TextColored(ImVec4(1,   0,   1, 1), "Error");
-                        break;
-                    case Slab::Core::TaskSuccess:
-                        ImGui::TextColored(ImVec4(0,   1,   0, 1), "Success");
-                        ImGui::SameLine();
-                        if (ImGui::Button("X"))
-                        {
-                            Task->Release();
-                            TaskManager->ClearJob(Job);
-                        }
-                        break;
-                    case Slab::Core::TaskNotInitialized:
-                        ImGui::TextColored(ImVec4(1,   1,   0, 1), "Running");
-                        break;
-                    default:
-                        ImGui::TextColored(ImVec4(1,   0,   0, 1), "Unknown state");
-                    }
-
-                    if (Task->GetStatus() == Slab::Core::TaskRunning)
-                    {
-                        try
-                        {
-                            const auto NumericTask = dynamic_cast<Slab::Math::NumericTask*>(Task.get());
-                            fix Progress = NumericTask->GetProgress();
-                            ImGui::SameLine();
-                            ImGui::ProgressBar(Progress);
-
-                        } catch (std::bad_cast &)
-                        {
-
-                        }
-                    }
-
-                }
-            }
+            ShowJobs();
 
             // SHOW DATA **********************************************************************
-            if (const auto AllManagedData = Slab::Math::FDataManager::GetDataList(); !AllManagedData.empty())
-            {
-                ImGui::SeparatorText("Data");
-                static int SelectedRow = -1;
-
-                if (ImGui::BeginTable("Data Table", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
-                {
-                    // ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
-                    // ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_NoHide);
-                    // ImGui::TableSetupColumn("Size (MiB)", ImGuiTableColumnFlags_NoHide);
-                    // ImGui::TableHeadersRow();
-
-                    static Slab::TPointer<Slab::Math::Data> SelectedData;
-                    int Row = 0;
-                    for (const auto& Data : AllManagedData)
-                    {
-                        ImGui::TableNextRow();
-
-                        ImGui::TableSetColumnIndex(0);
-                        if (bool RowSelected = SelectedRow == Row;
-                            ImGui::Selectable(Data->get_data_name().c_str(),
-                                RowSelected,
-                                ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap))
-                        {
-                            SelectedRow = Row; // mark which row is selected
-                            SelectedData = Data;
-                            ImGui::OpenPopup("Data Options##DataOptions");
-                        }
-
-                        ImGui::TableSetColumnIndex(1);
-                        ImGui::Text("%s", Data->get_data_type().c_str());
-
-                        auto Size = Data->get_data_size_MiB();
-                        ImGui::TableSetColumnIndex(2);
-                        ImGui::Text("%.3fMiB", Size);
-
-                        ++Row;
-                    }
-                    if (ImGui::BeginPopup("Data Options##DataOptions"))
-                    {
-                        ImGui::Text("Data Options");
-                        ImGui::Separator();
-                        if (ImGui::Selectable("View##DataOptions"))
-                        {
-                            using NumericFunction = Slab::Math::R2toR::FNumericFunction;
-                            auto Cast = [](auto Obj) {return Slab::DynamicPointerCast<NumericFunction>(std::move(Obj));};
-                            using Plotter = Slab::Graphics::FPlotter;
-                            Slab::TPointer<NumericFunction> Function;
-                            try { Function = Cast(SelectedData); } catch (std::bad_cast &){ }
-
-                            auto PlotWindow = Slab::New<Slab::Graphics::FPlot2DWindow>(SelectedData->get_data_name());
-                            Plotter::AddR2toRFunction(PlotWindow, Function, SelectedData->get_data_name());
-
-                            auto Window = Slab::New<Slab::Graphics::FSlabWindow_ImGuiWrapper>(PlotWindow, ImGuiContext);
-
-                            AddSlabWindow(Window, false);
-                        }
-
-                        if (ImGui::Selectable("Delete##DataOptions"))
-                        {
-                            Slab::Math::FDataManager::Delete(SelectedData);
-                            SelectedData = nullptr;
-                        }
-                        ImGui::EndPopup();
-                    }
-                    ImGui::EndTable();
-                }
-
-            }
-
-            if (auto AllDataRegistries = Slab::Math::EnumerateAllData(); !AllDataRegistries.empty() && ImGui::CollapsingHeader("Data Registry"))
-            {
-                if (ImGui::Button("Prune Data"))
-                {
-                    Slab::Math::FDataRegistry::Prune();
-                }
-                else
-                {
-                    ImGui::NewLine();
-                    ImGui::SeparatorText("Registered Data");
-                    for (const auto& [Name, Type] : AllDataRegistries)
-                    {
-                        auto DataWrap = Slab::Math::FDataRegistry::GetData(Name);
-
-                        ImGui::Text("[");
-                        if (auto Data = DataWrap.GetData(); Data == nullptr)
-                        {
-                            ImGui::SameLine();
-                            ImGui::TextColored(ImVec4{0.75f, 0, 0, 1}, "Deleted");
-                        }
-                        else
-                        {
-                            ImGui::SameLine();
-                            ImGui::TextColored(ImVec4{0, 0.75, 0, 1}, "Active");
-                        }
-                        ImGui::SameLine();
-                        ImGui::Text("] ");
-                        ImGui::SameLine();
-                        ImGui::Text("%s [%s]", Name.c_str(), Type.c_str());
-                    }
-                }
-            }
+            ShowManagedData(*this);
 
             if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth()); SidePaneWidth != WindowWidth)
             {
@@ -275,5 +287,10 @@ bool StudioWindowManager::NotifySystemWindowReshape(int w, int h)
     */
 
     return FWindowManager::NotifySystemWindowReshape(w, h);
+}
+
+Slab::TPointer<Slab::Graphics::FImGuiContext> StudioWindowManager::GetImGuiContext()
+{
+    return ImGuiContext;
 }
 

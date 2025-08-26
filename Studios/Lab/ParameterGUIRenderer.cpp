@@ -5,7 +5,7 @@
 #include "ParameterGUIRenderer.h"
 
 #include "imgui.h"
-#include "Core/Controller/CommonParameters.h"
+#include "../../Lib/Core/Controller/Parameter/BuiltinParameters.h"
 
 #include <unordered_map>
 #include <typeindex>
@@ -35,8 +35,15 @@ static const std::unordered_map<std::type_index, Handler> GTable = {
         {
             auto& IntegerParameter = static_cast<Slab::Core::IntegerParameter&>(Parameter);
             int Value = IntegerParameter.GetValue();
-            float Speed = Value*1e-2f;
-            if (ImGui::DragInt(Parameter.GetName().c_str(), &Value, Speed < 1.e-1f ? 1.e-1f : Speed))
+
+            auto MinVal = IntegerParameter.GetAttributes().OtherAttributes[Slab::Core::CMinimumTag];
+            auto MaxVal = IntegerParameter.GetAttributes().OtherAttributes[Slab::Core::CMaximumTag];
+
+            fix Min = MinVal ? MinVal.value() : 0;
+            fix Max = MaxVal ? MaxVal.value() : 0;
+
+            fix Speed = Value*1e-2f;
+            if (ImGui::DragInt(Parameter.GetName().c_str(), &Value, Speed < 1.e-1f ? 1.e-1f : Speed, Min, Max))
                 IntegerParameter.SetValue(Value);
 
             if (ImGui::BeginItemTooltip())
@@ -82,7 +89,7 @@ void Handle(Slab::Core::FParameter& Parameter) {
     }
     else
     {
-        ImGui::TextColored(ImVec4(1, 0, 0, 1), (Slab::Str("Unknown parameter type")).c_str());
+        ImGui::TextColored(ImVec4(1, 0, 0, 1), "%s", Slab::Str("Unknown parameter type").c_str());
     }
 }
 

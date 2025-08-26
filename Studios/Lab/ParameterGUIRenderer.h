@@ -5,7 +5,7 @@
 #ifndef PARAMETERGUIRENDERER_H
 #define PARAMETERGUIRENDERER_H
 
-#include "Core/Controller/Parameter.h"
+#include "../../Lib/Core/Controller/Parameter/Parameter.h"
 
 
 class ParameterGUIRenderer {

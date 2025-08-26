@@ -6,7 +6,8 @@
 #define STUDIOSLAB_DYNAMICSNUMERICCONFIG_H
 
 #include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
-#include "../Core/Controller/CommonParameters.h"
+#include "../Core/Controller/Parameter/BuiltinParameters.h"
+#include "Core/Controller/Parameter/ParameterBuilder.h"
 #include "Utils/List.h"
 
 namespace Slab::Models {
@@ -15,8 +16,8 @@ namespace Slab::Models {
 
     class DynamicsNumericConfig : public Math::FNumericConfig {
     protected:
-        TPointer<IntegerParameter> N = New<IntegerParameter>(1024,
-            FParameterDescription{'N', "Discretization of space dimensions. Has to be POT for GPU"});
+        TPointer<IntegerParameter> N = MakeIntParam(1024,
+            FParameterDescription{'N', "Discretization of space dimensions. Has to be POT for GPU"}, FIntegerParameterOptions{128, 1<<18, false, true});
         TPointer<RealParameter> L = New<RealParameter>(10.,
             FParameterDescription{'L', "Space length"});
         TPointer<RealParameter> t = New<RealParameter>(-1,

@@ -5,7 +5,7 @@
 #ifndef FIELDS_INTERFACE_H
 #define FIELDS_INTERFACE_H
 
-#include "Parameter.h"
+#include "Parameter/Parameter.h"
 #include "Core/Controller/Payload.h"
 #include "Message.h"
 #include "Utils/List.h"

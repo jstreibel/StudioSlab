@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MOLDYN_BUILDER_H
 #define STUDIOSLAB_MOLDYN_BUILDER_H
 
-#include "../../Core/Controller/CommonParameters.h"
+#include "../../Core/Controller/Parameter/BuiltinParameters.h"
 
 #include "Math/Numerics/NumericalRecipe.h"
 #include "Math/Numerics/OutputChannel.h"

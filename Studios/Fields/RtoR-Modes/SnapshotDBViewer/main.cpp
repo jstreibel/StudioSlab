@@ -5,7 +5,7 @@
 #include "AppBase.h"
 #include "CrashPad.h"
 
-#include "../../../../Lib/Core/Controller/CommonParameters.h"
+#include "../../../../Lib/Core/Controller/Parameter/BuiltinParameters.h"
 #include "../../../../Lib/Core/Controller/InterfaceManager.h"
 
 #include "Graphics/Window/WindowStyles.h"

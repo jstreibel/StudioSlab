@@ -7,7 +7,7 @@
 
 #include "../Interface.h"
 #include "../InterfaceOwner.h"
-#include "../CommonParameters.h"
+#include "../Parameter/BuiltinParameters.h"
 
 
 namespace Slab::Core {
@@ -16,7 +16,7 @@ namespace Slab::Core {
         int CurrentSelection = 0;
         Vector<TPointer<FInterface>> Candidates;
 
-        IntegerParameter selection = IntegerParameter(0, {"sim", "Sim type selection"});
+        IntegerParameter selection = IntegerParameter(0, {"sim", "Sim type selection"}, {});
 
         auto GenerateHelpDescription() -> void;
 

@@ -13,8 +13,7 @@ namespace Slab::Graphics {
     class FWindowManager : public FPlatformWindowEventListener {
 
     public:
-
-        void AddSlabWindow(const TPointer<FSlabWindow>&);
+        virtual void AddSlabWindow(const TPointer<FSlabWindow>&);
 
         virtual void AddSlabWindow(const TPointer<FSlabWindow>&, bool hidden) = 0;
 

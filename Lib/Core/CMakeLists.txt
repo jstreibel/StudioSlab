@@ -27,6 +27,8 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
         FObject.cpp
         FObject.h
         Controller/CommandLine/CommandLineHelpers.h
+		Controller/Parameter/ParameterBuilder.cpp
+		Controller/Parameter/ParameterBuilder.h
 
 )
 

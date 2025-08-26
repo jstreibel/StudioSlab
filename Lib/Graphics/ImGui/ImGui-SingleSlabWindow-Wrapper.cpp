@@ -75,8 +75,8 @@ namespace Slab::Graphics {
                 ImGuiButtonFlags_MouseButtonMiddle);
 
             // States
-            bool Hovered = ImGui::IsItemHovered();
-            bool Active  = ImGui::IsItemActive();
+            Hovered = ImGui::IsItemHovered();
+            Active  = ImGui::IsItemActive();
 
             // 4) Consume mouse wheel here (prevents parent scroll)
             if (Hovered) {
@@ -101,8 +101,6 @@ namespace Slab::Graphics {
             if (Hovered && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
             {
                 if constexpr (bPopupMenu) ImGui::OpenPopup("canvas_ctx");
-
-
             }
 
             // 6) Keep inputs from propagating to the rest of the app/UI
