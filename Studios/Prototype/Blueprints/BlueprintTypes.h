@@ -48,7 +48,7 @@ namespace Slab::Blueprints {
 
     struct Pin
     {
-        ed::PinId   ID;
+       ed::PinId   ID;
         Blueprints::FBlueprintNode*     Node;
         Slab::Str Name;
         PinType     Type;
@@ -62,7 +62,7 @@ namespace Slab::Blueprints {
 
     struct FBlueprintNode
     {
-        ed::NodeId ID;
+       ed::NodeId ID;
         Slab::Str Name;
         Vector<Pin> Inputs;
         Vector<Pin> Outputs;
@@ -81,14 +81,14 @@ namespace Slab::Blueprints {
 
     struct Link
     {
-        ed::LinkId ID;
+       ed::LinkId ID;
 
-        ed::PinId StartPinID;
-        ed::PinId EndPinID;
+       ed::PinId StartPinID;
+       ed::PinId EndPinID;
 
         ImColor Color;
 
-        Link(ed::LinkId id, ed::PinId startPinId, ed::PinId endPinId):
+        Link(ed::LinkId id,ed::PinId startPinId,ed::PinId endPinId):
                 ID(id), StartPinID(startPinId), EndPinID(endPinId), Color(255, 255, 255)
         {
         }

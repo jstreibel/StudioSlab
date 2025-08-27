@@ -14,8 +14,8 @@
 #include "Utilities/builders.h"
 
 namespace Slab::Blueprints {
-    namespace ed = ax::NodeEditor; // TODO: separate blueprint rendering from representation
-    namespace util = ax::NodeEditor::Utilities;
+    namespace Editor = ax::NodeEditor; // TODO: separate blueprint rendering from representation
+    namespace EditorUtil = ax::NodeEditor::Utilities;
 
     enum class PinType
     {
@@ -48,7 +48,7 @@ namespace Slab::Blueprints {
 
     struct Pin
     {
-        ed::PinId   ID;
+        Editor::PinId   ID;
         Blueprints::FBlueprintNode*     Node;
         Slab::Str Name;
         PinType     Type;
@@ -62,7 +62,7 @@ namespace Slab::Blueprints {
 
     struct FBlueprintNode
     {
-        ed::NodeId ID;
+        Editor::NodeId ID;
         Slab::Str Name;
         Vector<Pin> Inputs;
         Vector<Pin> Outputs;
@@ -81,14 +81,14 @@ namespace Slab::Blueprints {
 
     struct Link
     {
-        ed::LinkId ID;
+        Editor::LinkId ID;
 
-        ed::PinId StartPinID;
-        ed::PinId EndPinID;
+        Editor::PinId StartPinID;
+        Editor::PinId EndPinID;
 
         ImColor Color;
 
-        Link(ed::LinkId id, ed::PinId startPinId, ed::PinId endPinId):
+        Link(Editor::LinkId id, Editor::PinId startPinId, Editor::PinId endPinId):
                 ID(id), StartPinID(startPinId), EndPinID(endPinId), Color(255, 255, 255)
         {
         }
@@ -96,7 +96,7 @@ namespace Slab::Blueprints {
 
     struct NodeIdLess
     {
-        bool operator()(const ed::NodeId& lhs, const ed::NodeId& rhs) const
+        bool operator()(const Editor::NodeId& lhs, const Editor::NodeId& rhs) const
         {
             return lhs.AsPointer() < rhs.AsPointer();
         }

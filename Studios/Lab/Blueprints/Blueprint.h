@@ -6,22 +6,22 @@
 #define STUDIOSLAB_BLUEPRINT_H
 
 #include "BlueprintTypes.h"
+#include "Utils/Map.h"
 
 namespace Slab::Blueprints {
 
     class FBlueprint {
-        int                  m_NextId = 1;
-        const int            m_PinIconSize = 24;
-        Vector<FBlueprintNode>    m_Nodes;
-        Vector<Link>    m_Links;
-
     public:
+        using FNodeSpawner = std::function<void(FBlueprintNode&)>;
+
+        FBlueprint();
+
         int GetNextId()
         {
             return m_NextId++;
         }
 
-        ed::LinkId GetNextLinkId()
+        Editor::LinkId GetNextLinkId()
         {
             return {static_cast<unsigned long>(GetNextId())};
         }
@@ -29,19 +29,23 @@ namespace Slab::Blueprints {
         auto GetNodes() -> Vector<FBlueprintNode>&;
         auto GetLinks() -> Vector<Link>&;
 
-        FBlueprintNode* FindNode(ed::NodeId id);
+        FBlueprintNode* FindNode(Editor::NodeId id);
 
-        Link* FindLink(ed::LinkId id);
+        Link* FindLink(Editor::LinkId id);
 
-        Pin* FindPin(ed::PinId id);
+        Pin* FindPin(Editor::PinId id);
 
-        bool IsPinLinked(ed::PinId id);
+        bool IsPinLinked(Editor::PinId id);
 
         bool CanCreateLink(Pin* a, Pin* b);
 
         bool CreateLink(Pin&a, Pin&b);
 
         void BuildNode(FBlueprintNode* node);
+
+        void RegisterSpawner(const Str& NodeClass, const FNodeSpawner& Spawner);
+
+        FBlueprintNode* SpawnNode(Str NodeClass);
 
         FBlueprintNode* SpawnInputActionNode();
 
@@ -76,6 +80,13 @@ namespace Slab::Blueprints {
         FBlueprintNode* SpawnHoudiniGroupNode();
 
         void BuildNodes();
+
+    private:
+        Map<Str, FNodeSpawner> m_NodeSpawners;
+        int                  m_NextId = 1;
+        const int            m_PinIconSize = 24;
+        Vector<FBlueprintNode>    m_Nodes;
+        Vector<Link>    m_Links;
     };
 
 } // Slab::Prototype

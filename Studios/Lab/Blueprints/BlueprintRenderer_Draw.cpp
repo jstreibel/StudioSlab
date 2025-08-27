@@ -66,7 +66,7 @@ namespace Slab::Blueprints {
 
             ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
 
-            ed::SetCurrentEditor(m_Editor);
+            Editor::SetCurrentEditor(m_Editor);
 
             //auto& style = ImGui::GetStyle();
 
@@ -79,9 +79,9 @@ namespace Slab::Blueprints {
                 }
             }
 
-            static ed::NodeId contextNodeId = 0;
-            static ed::LinkId contextLinkId = 0;
-            static ed::PinId contextPinId = 0;
+            static Editor::NodeId contextNodeId = 0;
+            static Editor::LinkId contextLinkId = 0;
+            static Editor::PinId contextPinId = 0;
             static bool createNewNode = false;
             static Pin *newNodeLinkPin = nullptr;
             static Pin *newLinkPin = nullptr;
@@ -123,11 +123,11 @@ namespace Slab::Blueprints {
             /**************************************************/
             /**************************************************/
 
-            ed::Begin("Node editor");
+            Editor::Begin("Node editor");
             {
                 auto cursorTopLeft = ImGui::GetCursorScreenPos();
 
-                util::BlueprintNodeBuilder builder(m_HeaderBackground,
+                EditorUtil::BlueprintNodeBuilder builder(m_HeaderBackground,
                                                    Graphics::GetTextureWidth(m_HeaderBackground),
                                                    Graphics::GetTextureHeight(m_HeaderBackground));
 
@@ -160,9 +160,9 @@ namespace Slab::Blueprints {
                                 if (newLinkPin && !CanCreateLink(newLinkPin, &output) && &output != newLinkPin)
                                     alpha = alpha * (48.0f / 255.0f);
 
-                                ed::BeginPin(output.ID, ed::PinKind::Output);
-                                ed::PinPivotAlignment(ImVec2(1.0f, 0.5f));
-                                ed::PinPivotSize(ImVec2(0, 0));
+                                Editor::BeginPin(output.ID, Editor::PinKind::Output);
+                                Editor::PinPivotAlignment(ImVec2(1.0f, 0.5f));
+                                Editor::PinPivotSize(ImVec2(0, 0));
                                 ImGui::BeginHorizontal(output.ID.AsPointer());
                                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
                                 if (!output.Name.empty()) {
@@ -173,7 +173,7 @@ namespace Slab::Blueprints {
                                 ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
                                 ImGui::EndHorizontal();
                                 ImGui::PopStyleVar();
-                                ed::EndPin();
+                                Editor::EndPin();
 
                                 //DrawItemRect(ImColor(255, 0, 0));
                             }
@@ -232,10 +232,10 @@ namespace Slab::Blueprints {
                             ImGui::InputText("##edit", buffer, 127);
                             ImGui::PopItemWidth();
                             if (ImGui::IsItemActive() && !wasActive) {
-                                ed::EnableShortcuts(false);
+                                Editor::EnableShortcuts(false);
                                 wasActive = true;
                             } else if (!ImGui::IsItemActive() && wasActive) {
-                                ed::EnableShortcuts(true);
+                                Editor::EnableShortcuts(true);
                                 wasActive = false;
                             }
                             ImGui::Spring(0);
@@ -260,21 +260,21 @@ namespace Slab::Blueprints {
                     const float rounding = 5.0f;
                     const float padding = 12.0f;
 
-                    const auto pinBackground = ed::GetStyle().Colors[ed::StyleColor_NodeBg];
+                    const auto pinBackground = Editor::GetStyle().Colors[Editor::StyleColor_NodeBg];
 
-                    ed::PushStyleColor(ed::StyleColor_NodeBg, ImColor(128, 128, 128, 200));
-                    ed::PushStyleColor(ed::StyleColor_NodeBorder, ImColor(32, 32, 32, 200));
-                    ed::PushStyleColor(ed::StyleColor_PinRect, ImColor(60, 180, 255, 150));
-                    ed::PushStyleColor(ed::StyleColor_PinRectBorder, ImColor(60, 180, 255, 150));
+                    Editor::PushStyleColor(Editor::StyleColor_NodeBg, ImColor(128, 128, 128, 200));
+                    Editor::PushStyleColor(Editor::StyleColor_NodeBorder, ImColor(32, 32, 32, 200));
+                    Editor::PushStyleColor(Editor::StyleColor_PinRect, ImColor(60, 180, 255, 150));
+                    Editor::PushStyleColor(Editor::StyleColor_PinRectBorder, ImColor(60, 180, 255, 150));
 
-                    ed::PushStyleVar(ed::StyleVar_NodePadding, ImVec4(0, 0, 0, 0));
-                    ed::PushStyleVar(ed::StyleVar_NodeRounding, rounding);
-                    ed::PushStyleVar(ed::StyleVar_SourceDirection, ImVec2(0.0f, 1.0f));
-                    ed::PushStyleVar(ed::StyleVar_TargetDirection, ImVec2(0.0f, -1.0f));
-                    ed::PushStyleVar(ed::StyleVar_LinkStrength, 0.0f);
-                    ed::PushStyleVar(ed::StyleVar_PinBorderWidth, 1.0f);
-                    ed::PushStyleVar(ed::StyleVar_PinRadius, 5.0f);
-                    ed::BeginNode(node.ID);
+                    Editor::PushStyleVar(Editor::StyleVar_NodePadding, ImVec4(0, 0, 0, 0));
+                    Editor::PushStyleVar(Editor::StyleVar_NodeRounding, rounding);
+                    Editor::PushStyleVar(Editor::StyleVar_SourceDirection, ImVec2(0.0f, 1.0f));
+                    Editor::PushStyleVar(Editor::StyleVar_TargetDirection, ImVec2(0.0f, -1.0f));
+                    Editor::PushStyleVar(Editor::StyleVar_LinkStrength, 0.0f);
+                    Editor::PushStyleVar(Editor::StyleVar_PinBorderWidth, 1.0f);
+                    Editor::PushStyleVar(Editor::StyleVar_PinRadius, 5.0f);
+                    Editor::BeginNode(node.ID);
 
                     ImGui::BeginVertical(node.ID.AsPointer());
                     ImGui::BeginHorizontal("inputs");
@@ -288,18 +288,18 @@ namespace Slab::Blueprints {
                         ImGui::Spring(1, 0);
                         inputsRect = ImGui_GetItemRect();
 
-                        ed::PushStyleVar(ed::StyleVar_PinArrowSize, 10.0f);
-                        ed::PushStyleVar(ed::StyleVar_PinArrowWidth, 10.0f);
+                        Editor::PushStyleVar(Editor::StyleVar_PinArrowSize, 10.0f);
+                        Editor::PushStyleVar(Editor::StyleVar_PinArrowWidth, 10.0f);
 #if IMGUI_VERSION_NUM > 18101
-                        ed::PushStyleVar(ed::StyleVar_PinCorners, ImDrawFlags_RoundCornersBottom);
+                        Editor::PushStyleVar(Editor::StyleVar_PinCorners, ImDrawFlags_RoundCornersBottom);
 #else
-                        ed::PushStyleVar(ed::StyleVar_PinCorners, 12);
+                        Editor::PushStyleVar(Editor::StyleVar_PinCorners, 12);
 #endif
-                        ed::BeginPin(pin.ID, ed::PinKind::Input);
-                        ed::PinPivotRect(inputsRect.GetTL(), inputsRect.GetBR());
-                        ed::PinRect(inputsRect.GetTL(), inputsRect.GetBR());
-                        ed::EndPin();
-                        ed::PopStyleVar(3);
+                        Editor::BeginPin(pin.ID, Editor::PinKind::Input);
+                        Editor::PinPivotRect(inputsRect.GetTL(), inputsRect.GetBR());
+                        Editor::PinRect(inputsRect.GetTL(), inputsRect.GetBR());
+                        Editor::EndPin();
+                        Editor::PopStyleVar(3);
 
                         if (newLinkPin && !CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
                             inputAlpha = (int) (255 * ImGui::GetStyle().Alpha * (48.0f / 255.0f));
@@ -335,15 +335,15 @@ namespace Slab::Blueprints {
                         outputsRect = ImGui_GetItemRect();
 
 #if IMGUI_VERSION_NUM > 18101
-                        ed::PushStyleVar(ed::StyleVar_PinCorners, ImDrawFlags_RoundCornersTop);
+                        Editor::PushStyleVar(Editor::StyleVar_PinCorners, ImDrawFlags_RoundCornersTop);
 #else
-                        ed::PushStyleVar(ed::StyleVar_PinCorners, 3);
+                        Editor::PushStyleVar(Editor::StyleVar_PinCorners, 3);
 #endif
-                        ed::BeginPin(pin.ID, ed::PinKind::Output);
-                        ed::PinPivotRect(outputsRect.GetTL(), outputsRect.GetBR());
-                        ed::PinRect(outputsRect.GetTL(), outputsRect.GetBR());
-                        ed::EndPin();
-                        ed::PopStyleVar();
+                        Editor::BeginPin(pin.ID, Editor::PinKind::Output);
+                        Editor::PinPivotRect(outputsRect.GetTL(), outputsRect.GetBR());
+                        Editor::PinRect(outputsRect.GetTL(), outputsRect.GetBR());
+                        Editor::EndPin();
+                        Editor::PopStyleVar();
 
                         if (newLinkPin && !CanCreateLink(newLinkPin, &pin) && &pin != newLinkPin)
                             outputAlpha = (int) (255 * ImGui::GetStyle().Alpha * (48.0f / 255.0f));
@@ -355,11 +355,11 @@ namespace Slab::Blueprints {
 
                     ImGui::EndVertical();
 
-                    ed::EndNode();
-                    ed::PopStyleVar(7);
-                    ed::PopStyleColor(4);
+                    Editor::EndNode();
+                    Editor::PopStyleVar(7);
+                    Editor::PopStyleColor(4);
 
-                    auto drawList = ed::GetNodeBackgroundDrawList(node.ID);
+                    auto drawList = Editor::GetNodeBackgroundDrawList(node.ID);
 
                     //const auto fringeScale = ImGui::GetStyle().AntiAliasFringeScale;
                     //const auto unitSize    = 1.0f / fringeScale;
@@ -418,21 +418,21 @@ namespace Slab::Blueprints {
                     const float padding = 12.0f;
 
 
-                    ed::PushStyleColor(ed::StyleColor_NodeBg, ImColor(229, 229, 229, 200));
-                    ed::PushStyleColor(ed::StyleColor_NodeBorder, ImColor(125, 125, 125, 200));
-                    ed::PushStyleColor(ed::StyleColor_PinRect, ImColor(229, 229, 229, 60));
-                    ed::PushStyleColor(ed::StyleColor_PinRectBorder, ImColor(125, 125, 125, 60));
+                    Editor::PushStyleColor(Editor::StyleColor_NodeBg, ImColor(229, 229, 229, 200));
+                    Editor::PushStyleColor(Editor::StyleColor_NodeBorder, ImColor(125, 125, 125, 200));
+                    Editor::PushStyleColor(Editor::StyleColor_PinRect, ImColor(229, 229, 229, 60));
+                    Editor::PushStyleColor(Editor::StyleColor_PinRectBorder, ImColor(125, 125, 125, 60));
 
-                    const auto pinBackground = ed::GetStyle().Colors[ed::StyleColor_NodeBg];
+                    const auto pinBackground = Editor::GetStyle().Colors[Editor::StyleColor_NodeBg];
 
-                    ed::PushStyleVar(ed::StyleVar_NodePadding, ImVec4(0, 0, 0, 0));
-                    ed::PushStyleVar(ed::StyleVar_NodeRounding, rounding);
-                    ed::PushStyleVar(ed::StyleVar_SourceDirection, ImVec2(0.0f, 1.0f));
-                    ed::PushStyleVar(ed::StyleVar_TargetDirection, ImVec2(0.0f, -1.0f));
-                    ed::PushStyleVar(ed::StyleVar_LinkStrength, 0.0f);
-                    ed::PushStyleVar(ed::StyleVar_PinBorderWidth, 1.0f);
-                    ed::PushStyleVar(ed::StyleVar_PinRadius, 6.0f);
-                    ed::BeginNode(node.ID);
+                    Editor::PushStyleVar(Editor::StyleVar_NodePadding, ImVec4(0, 0, 0, 0));
+                    Editor::PushStyleVar(Editor::StyleVar_NodeRounding, rounding);
+                    Editor::PushStyleVar(Editor::StyleVar_SourceDirection, ImVec2(0.0f, 1.0f));
+                    Editor::PushStyleVar(Editor::StyleVar_TargetDirection, ImVec2(0.0f, -1.0f));
+                    Editor::PushStyleVar(Editor::StyleVar_LinkStrength, 0.0f);
+                    Editor::PushStyleVar(Editor::StyleVar_PinBorderWidth, 1.0f);
+                    Editor::PushStyleVar(Editor::StyleVar_PinRadius, 6.0f);
+                    Editor::BeginNode(node.ID);
 
                     ImGui::BeginVertical(node.ID.AsPointer());
                     if (!node.Inputs.empty()) {
@@ -453,16 +453,16 @@ namespace Slab::Blueprints {
 #else
                             const auto allRoundCornersFlags = 15;
 #endif
-                            //ed::PushStyleVar(ed::StyleVar_PinArrowSize, 10.0f);
-                            //ed::PushStyleVar(ed::StyleVar_PinArrowWidth, 10.0f);
-                            ed::PushStyleVar(ed::StyleVar_PinCorners, allRoundCornersFlags);
+                            //Editor::PushStyleVar(Editor::StyleVar_PinArrowSize, 10.0f);
+                            //Editor::PushStyleVar(Editor::StyleVar_PinArrowWidth, 10.0f);
+                            Editor::PushStyleVar(Editor::StyleVar_PinCorners, allRoundCornersFlags);
 
-                            ed::BeginPin(pin.ID, ed::PinKind::Input);
-                            ed::PinPivotRect(inputsRect.GetCenter(), inputsRect.GetCenter());
-                            ed::PinRect(inputsRect.GetTL(), inputsRect.GetBR());
-                            ed::EndPin();
-                            //ed::PopStyleVar(3);
-                            ed::PopStyleVar(1);
+                            Editor::BeginPin(pin.ID, Editor::PinKind::Input);
+                            Editor::PinPivotRect(inputsRect.GetCenter(), inputsRect.GetCenter());
+                            Editor::PinRect(inputsRect.GetTL(), inputsRect.GetBR());
+                            Editor::EndPin();
+                            //Editor::PopStyleVar(3);
+                            Editor::PopStyleVar(1);
 
                             auto drawList = ImGui::GetWindowDrawList();
                             drawList->AddRectFilled(inputsRect.GetTL(), inputsRect.GetBR(),
@@ -520,12 +520,12 @@ namespace Slab::Blueprints {
                             const auto topRoundCornersFlags = 3;
 #endif
 
-                            ed::PushStyleVar(ed::StyleVar_PinCorners, topRoundCornersFlags);
-                            ed::BeginPin(pin.ID, ed::PinKind::Output);
-                            ed::PinPivotRect(outputsRect.GetCenter(), outputsRect.GetCenter());
-                            ed::PinRect(outputsRect.GetTL(), outputsRect.GetBR());
-                            ed::EndPin();
-                            ed::PopStyleVar();
+                            Editor::PushStyleVar(Editor::StyleVar_PinCorners, topRoundCornersFlags);
+                            Editor::BeginPin(pin.ID, Editor::PinKind::Output);
+                            Editor::PinPivotRect(outputsRect.GetCenter(), outputsRect.GetCenter());
+                            Editor::PinRect(outputsRect.GetTL(), outputsRect.GetBR());
+                            Editor::EndPin();
+                            Editor::PopStyleVar();
 
 
                             auto drawList = ImGui::GetWindowDrawList();
@@ -549,11 +549,11 @@ namespace Slab::Blueprints {
 
                     ImGui::EndVertical();
 
-                    ed::EndNode();
-                    ed::PopStyleVar(7);
-                    ed::PopStyleColor(4);
+                    Editor::EndNode();
+                    Editor::PopStyleVar(7);
+                    Editor::PopStyleColor(4);
 
-                    // auto drawList = ed::GetNodeBackgroundDrawList(node.ID);
+                    // auto drawList = Editor::GetNodeBackgroundDrawList(node.ID);
 
                     //const auto fringeScale = ImGui::GetStyle().AntiAliasFringeScale;
                     //const auto unitSize    = 1.0f / fringeScale;
@@ -594,9 +594,9 @@ namespace Slab::Blueprints {
                     const float commentAlpha = 0.75f;
 
                     ImGui::PushStyleVar(ImGuiStyleVar_Alpha, commentAlpha);
-                    ed::PushStyleColor(ed::StyleColor_NodeBg, ImColor(255, 255, 255, 64));
-                    ed::PushStyleColor(ed::StyleColor_NodeBorder, ImColor(255, 255, 255, 64));
-                    ed::BeginNode(node.ID);
+                    Editor::PushStyleColor(Editor::StyleColor_NodeBg, ImColor(255, 255, 255, 64));
+                    Editor::PushStyleColor(Editor::StyleColor_NodeBorder, ImColor(255, 255, 255, 64));
+                    Editor::BeginNode(node.ID);
                     ImGui::PushID(node.ID.AsPointer());
                     ImGui::BeginVertical("content");
                     ImGui::BeginHorizontal("horizontal");
@@ -604,28 +604,28 @@ namespace Slab::Blueprints {
                     ImGui::TextUnformatted(node.Name.c_str());
                     ImGui::Spring(1);
                     ImGui::EndHorizontal();
-                    ed::Group(node.Size);
+                    Editor::Group(node.Size);
                     ImGui::EndVertical();
                     ImGui::PopID();
-                    ed::EndNode();
-                    ed::PopStyleColor(2);
+                    Editor::EndNode();
+                    Editor::PopStyleColor(2);
                     ImGui::PopStyleVar();
 
-                    if (ed::BeginGroupHint(node.ID)) {
+                    if (Editor::BeginGroupHint(node.ID)) {
                         //auto alpha   = static_cast<int>(commentAlpha * ImGui::GetStyle().Alpha * 255);
                         auto bgAlpha = static_cast<int>(ImGui::GetStyle().Alpha * 255);
 
                         //ImGui::PushStyleVar(ImGuiStyleVar_Alpha, commentAlpha * ImGui::GetStyle().Alpha);
 
-                        auto min = ed::GetGroupMin();
-                        //auto max = ed::GetGroupMax();
+                        auto min = Editor::GetGroupMin();
+                        //auto max = Editor::GetGroupMax();
 
                         ImGui::SetCursorScreenPos(min - ImVec2(-8, ImGui::GetTextLineHeightWithSpacing() + 4));
                         ImGui::BeginGroup();
                         ImGui::TextUnformatted(node.Name.c_str());
                         ImGui::EndGroup();
 
-                        auto drawList = ed::GetHintBackgroundDrawList();
+                        auto drawList = Editor::GetHintBackgroundDrawList();
 
                         auto hintBounds = ImGui_GetItemRect();
                         auto hintFrameBounds = ImRect_Expanded(hintBounds, 8, 4);
@@ -642,14 +642,14 @@ namespace Slab::Blueprints {
 
                         //ImGui::PopStyleVar();
                     }
-                    ed::EndGroupHint();
+                    Editor::EndGroupHint();
                 }
 
                 for (auto &link: m_Links)
-                    ed::Link(link.ID, link.StartPinID, link.EndPinID, link.Color, 2.0f);
+                    Editor::Link(link.ID, link.StartPinID, link.EndPinID, link.Color, 2.0f);
 
                 if (!createNewNode) {
-                    if (ed::BeginCreate(ImColor(255, 255, 255), 2.0f)) {
+                    if (Editor::BeginCreate(ImColor(255, 255, 255), 2.0f)) {
                         auto showLabel = [](const char *label, ImColor color) {
                             ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetTextLineHeight());
                             auto size = ImGui::CalcTextSize(label);
@@ -667,8 +667,8 @@ namespace Slab::Blueprints {
                             ImGui::TextUnformatted(label);
                         };
 
-                        ed::PinId startPinId = 0, endPinId = 0;
-                        if (ed::QueryNewLink(&startPinId, &endPinId)) {
+                        Editor::PinId startPinId = 0, endPinId = 0;
+                        if (Editor::QueryNewLink(&startPinId, &endPinId)) {
                             auto startPin = FindPin(startPinId);
                             auto endPin = FindPin(endPinId);
 
@@ -681,22 +681,22 @@ namespace Slab::Blueprints {
 
                             if (startPin && endPin) {
                                 if (endPin == startPin) {
-                                    ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
+                                    Editor::RejectNewItem(ImColor(255, 0, 0), 2.0f);
                                 } else if (endPin->Kind == startPin->Kind) {
                                     showLabel("x Incompatible Pin Kind", ImColor(45, 32, 32, 180));
-                                    ed::RejectNewItem(ImColor(255, 0, 0), 2.0f);
+                                    Editor::RejectNewItem(ImColor(255, 0, 0), 2.0f);
                                 }
                                     //else if (endPin->Node == startPin->Node)
                                     //{
                                     //    showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
-                                    //    ed::RejectNewItem(ImColor(255, 0, 0), 1.0f);
+                                    //    Editor::RejectNewItem(ImColor(255, 0, 0), 1.0f);
                                     //}
                                 else if (endPin->Type != startPin->Type) {
                                     showLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
-                                    ed::RejectNewItem(ImColor(255, 128, 128), 1.0f);
+                                    Editor::RejectNewItem(ImColor(255, 128, 128), 1.0f);
                                 } else {
                                     showLabel("+ Create Link", ImColor(32, 45, 32, 180));
-                                    if (ed::AcceptNewItem(ImColor(128, 255, 128), 4.0f)) {
+                                    if (Editor::AcceptNewItem(ImColor(128, 255, 128), 4.0f)) {
                                         m_Links.emplace_back(Link(GetNextId(), startPinId, endPinId));
                                         m_Links.back().Color = GetIconColor(startPin->Type);
                                     }
@@ -704,30 +704,30 @@ namespace Slab::Blueprints {
                             }
                         }
 
-                        ed::PinId pinId = 0;
-                        if (ed::QueryNewNode(&pinId)) {
+                        Editor::PinId pinId = 0;
+                        if (Editor::QueryNewNode(&pinId)) {
                             newLinkPin = FindPin(pinId);
                             if (newLinkPin)
                                 showLabel("+ Create Node", ImColor(32, 45, 32, 180));
 
-                            if (ed::AcceptNewItem()) {
+                            if (Editor::AcceptNewItem()) {
                                 createNewNode = true;
                                 newNodeLinkPin = FindPin(pinId);
                                 newLinkPin = nullptr;
-                                ed::Suspend();
+                                Editor::Suspend();
                                 ImGui::OpenPopup("Create New Node");
-                                ed::Resume();
+                                Editor::Resume();
                             }
                         }
                     } else
                         newLinkPin = nullptr;
 
-                    ed::EndCreate();
+                    Editor::EndCreate();
 
-                    if (ed::BeginDelete()) {
-                        ed::NodeId nodeId = 0;
-                        while (ed::QueryDeletedNode(&nodeId)) {
-                            if (ed::AcceptDeletedItem()) {
+                    if (Editor::BeginDelete()) {
+                        Editor::NodeId nodeId = 0;
+                        while (Editor::QueryDeletedNode(&nodeId)) {
+                            if (Editor::AcceptDeletedItem()) {
                                 auto id = std::find_if(m_Nodes.begin(), m_Nodes.end(),
                                                        [nodeId](auto &node) { return node.ID == nodeId; });
                                 if (id != m_Nodes.end())
@@ -735,9 +735,9 @@ namespace Slab::Blueprints {
                             }
                         }
 
-                        ed::LinkId linkId = 0;
-                        while (ed::QueryDeletedLink(&linkId)) {
-                            if (ed::AcceptDeletedItem()) {
+                        Editor::LinkId linkId = 0;
+                        while (Editor::QueryDeletedLink(&linkId)) {
+                            if (Editor::AcceptDeletedItem()) {
                                 auto id = std::find_if(m_Links.begin(), m_Links.end(),
                                                        [linkId](auto &link) { return link.ID == linkId; });
                                 if (id != m_Links.end())
@@ -745,7 +745,7 @@ namespace Slab::Blueprints {
                             }
                         }
                     }
-                    ed::EndDelete();
+                    Editor::EndDelete();
                 }
 
                 ImGui::SetCursorScreenPos(cursorTopLeft);
@@ -753,20 +753,20 @@ namespace Slab::Blueprints {
 
 # if 1
             auto openPopupPosition = ImGui::GetMousePos();
-            ed::Suspend();
-            if (ed::ShowNodeContextMenu(&contextNodeId))
+            Editor::Suspend();
+            if (Editor::ShowNodeContextMenu(&contextNodeId))
                 ImGui::OpenPopup("Node Context Menu");
-            else if (ed::ShowPinContextMenu(&contextPinId))
+            else if (Editor::ShowPinContextMenu(&contextPinId))
                 ImGui::OpenPopup("Pin Context Menu");
-            else if (ed::ShowLinkContextMenu(&contextLinkId))
+            else if (Editor::ShowLinkContextMenu(&contextLinkId))
                 ImGui::OpenPopup("Link Context Menu");
-            else if (ed::ShowBackgroundContextMenu()) {
+            else if (Editor::ShowBackgroundContextMenu()) {
                 ImGui::OpenPopup("Create New Node");
                 newNodeLinkPin = nullptr;
             }
-            ed::Resume();
+            Editor::Resume();
 
-            ed::Suspend();
+            Editor::Suspend();
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8, 8));
             if (ImGui::BeginPopup("Node Context Menu")) {
                 auto node = FindNode(contextNodeId);
@@ -784,7 +784,7 @@ namespace Slab::Blueprints {
                     ImGui::Text("Unknown node: %p", contextNodeId.AsPointer());
                 ImGui::Separator();
                 if (ImGui::MenuItem("Delete"))
-                    ed::DeleteNode(contextNodeId);
+                    Editor::DeleteNode(contextNodeId);
                 ImGui::EndPopup();
             }
 
@@ -818,7 +818,7 @@ namespace Slab::Blueprints {
                     ImGui::Text("Unknown link: %p", contextLinkId.AsPointer());
                 ImGui::Separator();
                 if (ImGui::MenuItem("Delete"))
-                    ed::DeleteLink(contextLinkId);
+                    Editor::DeleteLink(contextLinkId);
                 ImGui::EndPopup();
             }
 
@@ -872,7 +872,7 @@ namespace Slab::Blueprints {
 
                     createNewNode = false;
 
-                    ed::SetNodePosition(node->ID, newNodePostion);
+                    Editor::SetNodePosition(node->ID, newNodePostion);
 
                     if (auto startPin = newNodeLinkPin) {
                         auto &pins = startPin->Kind == PinKind::Input ? node->Outputs : node->Inputs;
@@ -896,7 +896,7 @@ namespace Slab::Blueprints {
             } else
                 createNewNode = false;
             ImGui::PopStyleVar();
-            ed::Resume();
+            Editor::Resume();
 # endif
 
 
@@ -923,16 +923,16 @@ namespace Slab::Blueprints {
                 cubic_bezier_subdivide(acceptPoint, c);
             */
 
-            ed::End();
+            Editor::End();
 
             auto editorMin = ImGui::GetItemRectMin();
             auto editorMax = ImGui::GetItemRectMax();
 
             if (m_ShowOrdinals) {
-                int nodeCount = ed::GetNodeCount();
-                std::vector<ed::NodeId> orderedNodeIds;
+                int nodeCount = Editor::GetNodeCount();
+                std::vector<Editor::NodeId> orderedNodeIds;
                 orderedNodeIds.resize(static_cast<size_t>(nodeCount));
-                ed::GetOrderedNodeIds(orderedNodeIds.data(), nodeCount);
+                Editor::GetOrderedNodeIds(orderedNodeIds.data(), nodeCount);
 
 
                 auto drawList = ImGui::GetWindowDrawList();
@@ -940,10 +940,10 @@ namespace Slab::Blueprints {
 
                 int ordinal = 0;
                 for (auto &nodeId: orderedNodeIds) {
-                    auto p0 = ed::GetNodePosition(nodeId);
-                    auto p1 = p0 + ed::GetNodeSize(nodeId);
-                    p0 = ed::CanvasToScreen(p0);
-                    p1 = ed::CanvasToScreen(p1);
+                    auto p0 = Editor::GetNodePosition(nodeId);
+                    auto p1 = p0 + Editor::GetNodeSize(nodeId);
+                    p0 = Editor::CanvasToScreen(p0);
+                    p1 = Editor::CanvasToScreen(p1);
 
 
                     ImGuiTextBuffer builder;

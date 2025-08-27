@@ -28,13 +28,13 @@ namespace Slab::Blueprints {
 
         m_Context = DynamicPointerCast<Graphics::FImGuiContext>(std::move(GUIContext));
 
-        ed::Config config;
+        Editor::Config config;
 
         config.SettingsFile = "Blueprints.json";
 
         config.UserPointer = this;
 
-        config.LoadNodeSettings = [](ed::NodeId nodeId, char* data, void* userPointer) -> size_t
+        config.LoadNodeSettings = [](Editor::NodeId nodeId, char* data, void* userPointer) -> size_t
         {
             auto self = static_cast<FBlueprintRenderer*>(userPointer);
 
@@ -47,8 +47,8 @@ namespace Slab::Blueprints {
             return node->State.size();
         };
 
-        config.SaveNodeSettings = [](ed::NodeId nodeId, const char* data,
-                size_t size, ed::SaveReasonFlags reason, void* userPointer) -> bool
+        config.SaveNodeSettings = [](Editor::NodeId nodeId, const char* data,
+                size_t size, Editor::SaveReasonFlags reason, void* userPointer) -> bool
         {
             auto self = static_cast<FBlueprintRenderer*>(userPointer);
 
@@ -63,8 +63,8 @@ namespace Slab::Blueprints {
             return true;
         };
 
-        m_Editor = ed::CreateEditor(&config);
-        ed::SetCurrentEditor(m_Editor);
+        m_Editor = Editor::CreateEditor(&config);
+        Editor::SetCurrentEditor(m_Editor);
 
         auto location = Core::Resources::Folder + "Blueprints/";
         m_HeaderBackground = Graphics::LoadTexture(location + "BlueprintBackground.png");
@@ -72,11 +72,11 @@ namespace Slab::Blueprints {
         m_RestoreIcon      = Graphics::LoadTexture(location + "ic_restore_white_24dp.png");
     }
 
-    void FBlueprintRenderer::TouchNode(ed::NodeId id) {
+    void FBlueprintRenderer::TouchNode(Editor::NodeId id) {
         m_NodeTouchTime[id] = m_TouchTime;
     }
 
-    float FBlueprintRenderer::GetTouchProgress(ed::NodeId id) {
+    float FBlueprintRenderer::GetTouchProgress(Editor::NodeId id) {
         auto it = m_NodeTouchTime.find(id);
         if (it != m_NodeTouchTime.end() && it->second > 0.0f)
             return (m_TouchTime - it->second) / m_TouchTime;
@@ -138,12 +138,12 @@ namespace Slab::Blueprints {
 
         auto paneWidth = ImGui::GetContentRegionAvail().x;
 
-        auto& editorStyle = ed::GetStyle();
+        auto& editorStyle = Editor::GetStyle();
         ImGui::BeginHorizontal("Style buttons", ImVec2(paneWidth, 0), 1.0f);
         ImGui::TextUnformatted("Values");
         ImGui::Spring();
         if (ImGui::Button("Reset to defaults"))
-            editorStyle = ed::Style();
+            editorStyle = Editor::Style();
         ImGui::EndHorizontal();
         ImGui::Spacing();
         ImGui::DragFloat4("Node Padding", &editorStyle.NodePadding.x, 0.1f, 0.0f, 40.0f);
@@ -191,9 +191,9 @@ namespace Slab::Blueprints {
         ImGui::Spacing();
 
         ImGui::PushItemWidth(-160);
-        for (int i = 0; i < ed::StyleColor_Count; ++i)
+        for (int i = 0; i < Editor::StyleColor_Count; ++i)
         {
-            auto name = ed::GetStyleColorName((ed::StyleColor)i);
+            auto name = Editor::GetStyleColorName((Editor::StyleColor)i);
             if (!filter.PassFilter(name))
                 continue;
 
@@ -215,7 +215,7 @@ namespace Slab::Blueprints {
         ImGui::BeginHorizontal("Style Editor", ImVec2(paneWidth, 0));
         ImGui::Spring(0.0f, 0.0f);
         if (ImGui::Button("Zoom to Content"))
-            ed::NavigateToContent();
+            Editor::NavigateToContent();
         ImGui::Spring(0.0f);
         if (ImGui::Button("Show Flow"))
         {
@@ -223,7 +223,7 @@ namespace Slab::Blueprints {
                 auto links = blueprint->GetLinks();
 
                 for (auto &link: links)
-                    ed::Flow(link.ID);
+                    Editor::Flow(link.ID);
             }
         }
         ImGui::Spring();
@@ -235,13 +235,13 @@ namespace Slab::Blueprints {
         if (showStyleEditor)
             ShowStyleEditor(&showStyleEditor);
 
-        std::vector<ed::NodeId> selectedNodes;
-        std::vector<ed::LinkId> selectedLinks;
-        selectedNodes.resize(ed::GetSelectedObjectCount());
-        selectedLinks.resize(ed::GetSelectedObjectCount());
+        std::vector<Editor::NodeId> selectedNodes;
+        std::vector<Editor::LinkId> selectedLinks;
+        selectedNodes.resize(Editor::GetSelectedObjectCount());
+        selectedLinks.resize(Editor::GetSelectedObjectCount());
 
-        int nodeCount = ed::GetSelectedNodes(selectedNodes.data(), static_cast<int>(selectedNodes.size()));
-        int linkCount = ed::GetSelectedLinks(selectedLinks.data(), static_cast<int>(selectedLinks.size()));
+        int nodeCount = Editor::GetSelectedNodes(selectedNodes.data(), static_cast<int>(selectedNodes.size()));
+        int linkCount = Editor::GetSelectedLinks(selectedLinks.data(), static_cast<int>(selectedLinks.size()));
 
         selectedNodes.resize(nodeCount);
         selectedLinks.resize(linkCount);
@@ -281,13 +281,13 @@ namespace Slab::Blueprints {
                         &isSelected)) {
                     if (io.KeyCtrl) {
                         if (isSelected)
-                            ed::SelectNode(node.ID, true);
+                            Editor::SelectNode(node.ID, true);
                         else
-                            ed::DeselectNode(node.ID);
+                            Editor::DeselectNode(node.ID);
                     } else
-                        ed::SelectNode(node.ID, false);
+                        Editor::SelectNode(node.ID, false);
 
-                    ed::NavigateToSelection();
+                    Editor::NavigateToSelection();
                 }
                 if (ImGui::IsItemHovered() && !node.State.empty())
                     ImGui::SetTooltip("State: %s", node.State.c_str());
@@ -338,7 +338,7 @@ namespace Slab::Blueprints {
                     if (ImGui::InvisibleButton("restore",
                                                ImVec2((float) restoreIconWidth, (float) restoreIconHeight))) {
                         node.State = node.SavedState;
-                        ed::RestoreNodeState(node.ID);
+                        Editor::RestoreNodeState(node.ID);
                         node.SavedState.clear();
                     }
 
@@ -381,7 +381,7 @@ namespace Slab::Blueprints {
         ImGui::Text("Changed %d time%s", changeCount, changeCount > 1 ? "s" : "");
         ImGui::Spring();
         if (ImGui::Button("Deselect All"))
-            ed::ClearSelection();
+            Editor::ClearSelection();
         ImGui::EndHorizontal();
         ImGui::Indent();
         for (int i = 0; i < nodeCount; ++i) ImGui::Text("Node (%p)", selectedNodes[i].AsPointer());
@@ -392,11 +392,11 @@ namespace Slab::Blueprints {
             if(blueprint != nullptr) {
                 auto links = blueprint->GetLinks();
                 for (auto &link: links)
-                    ed::Flow(link.ID);
+                    Editor::Flow(link.ID);
             }
         }
 
-        if (ed::HasSelectionChanged())
+        if (Editor::HasSelectionChanged())
             ++changeCount;
 
         ImGui::EndChild();

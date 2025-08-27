@@ -14,7 +14,7 @@
 namespace Slab::Blueprints {
 
     class FBlueprintRenderer : public Graphics::FPlatformWindowEventListener {
-        ed::EditorContext* m_Editor = nullptr;
+        Editor::EditorContext* m_Editor = nullptr;
 
         TPointer<Graphics::FImGuiContext> m_Context;
         const int            m_PinIconSize = 24;
@@ -22,14 +22,14 @@ namespace Slab::Blueprints {
         ImTextureID          m_SaveIcon = nullptr;
         ImTextureID          m_RestoreIcon = nullptr;
         const float          m_TouchTime = 1.0f;
-        std::map<ed::NodeId, float, NodeIdLess> m_NodeTouchTime;
+        std::map<Editor::NodeId, float, NodeIdLess> m_NodeTouchTime;
         bool                 m_ShowOrdinals = false;
 
         TPointer<FBlueprint> blueprint;
 
-        void TouchNode(ed::NodeId id);
+        void TouchNode(Editor::NodeId id);
 
-        float GetTouchProgress(ed::NodeId id);
+        float GetTouchProgress(Editor::NodeId id);
 
         void UpdateTouch();
 

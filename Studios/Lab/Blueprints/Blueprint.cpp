@@ -5,52 +5,48 @@
 #include "Blueprint.h"
 
 namespace Slab::Blueprints {
+    FBlueprint::FBlueprint()
+    {
+        RegisterSpawner("InputAction", [](FBlueprintNode& Node)
+        {
+            fix Id = Node.ID;
+            Node.Name = "InputAction Fire";
+            Node.Color = ImColor(255, 128, 128);
 
-    auto FBlueprint::GetNodes() -> Vector<FBlueprintNode>&{
-        return m_Nodes;
+        });
     }
 
-    auto FBlueprint::GetLinks() -> Vector<Link>&{
-        return m_Links;
-    }
+    auto FBlueprint::GetNodes() -> Vector<FBlueprintNode>& { return m_Nodes; }
 
-    FBlueprintNode *FBlueprint::FindNode(ed::NodeId id) {
-        for (auto& node : m_Nodes)
-            if (node.ID == id)
-                return &node;
+    auto FBlueprint::GetLinks() -> Vector<Link>& { return m_Links; }
+
+    FBlueprintNode *FBlueprint::FindNode(Editor::NodeId id) {
+        for (auto& node : m_Nodes) if (node.ID == id) return &node;
 
         return nullptr;
     }
 
-    Link *FBlueprint::FindLink(ed::LinkId id) {
-        for (auto& link : m_Links)
-            if (link.ID == id)
-                return &link;
+    Link *FBlueprint::FindLink(Editor::LinkId id) {
+        for (auto& link : m_Links) if (link.ID == id) return &link;
 
         return nullptr;
     }
 
-    Pin *FBlueprint::FindPin(ed::PinId id) {
-        if (!id)
-            return nullptr;
+    Pin *FBlueprint::FindPin(Editor::PinId id) {
+        if (!id) return nullptr;
 
         for (auto& node : m_Nodes)
         {
-            for (auto& pin : node.Inputs)
-                if (pin.ID == id)
-                    return &pin;
+            for (auto& pin : node.Inputs) if (pin.ID == id) return &pin;
 
-            for (auto& pin : node.Outputs)
-                if (pin.ID == id)
-                    return &pin;
+            for (auto& pin : node.Outputs) if (pin.ID == id) return &pin;
         }
 
         return nullptr;
     }
 
-    bool FBlueprint::IsPinLinked(ed::PinId id) {
-        if (!id)
-            return false;
+    bool FBlueprint::IsPinLinked(Editor::PinId id) {
+        if (!id) return false;
 
         for (auto& link : m_Links)
             if (link.StartPinID == id || link.EndPinID == id)
@@ -86,6 +82,29 @@ namespace Slab::Blueprints {
             output.Node = node;
             output.Kind = PinKind::Output;
         }
+    }
+
+    void FBlueprint::RegisterSpawner(const Str& NodeClass, const FNodeSpawner& Spawner)
+    {
+        m_NodeSpawners[NodeClass] = Spawner;
+    }
+
+    FBlueprintNode* FBlueprint::SpawnNode(Str NodeClass)
+    {
+        auto It = m_NodeSpawners.find(NodeClass);
+        if (It == m_NodeSpawners.end()) return nullptr;
+
+        const auto Spawner = It->second;
+
+        auto Id = GetNextId();
+        m_Nodes.emplace_back(Id, ("Node " + ToStr(Id)).c_str(), ImColor(255, 128, 128));
+
+        auto &Node = m_Nodes.back();
+        Spawner(Node);
+
+        BuildNode(&Node);
+
+        return &Node;
     }
 
     FBlueprintNode *FBlueprint::SpawnInputActionNode() {
