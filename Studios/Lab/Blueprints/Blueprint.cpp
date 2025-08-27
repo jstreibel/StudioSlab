@@ -4,6 +4,8 @@
 
 #include "Blueprint.h"
 
+#include "Core/Controller/Interface.h"
+
 namespace Slab::Blueprints {
     Atomic<int> FBlueprint::m_NextId(1);
 
@@ -50,7 +52,8 @@ namespace Slab::Blueprints {
         return nullptr;
     }
 
-    bool FBlueprint::IsPinLinked(Editor::PinId id) {
+    bool FBlueprint::IsPinLinked(Editor::PinId id) const
+    {
         if (!id) return false;
 
         for (auto& link : m_Links)
@@ -94,9 +97,9 @@ namespace Slab::Blueprints {
         m_NodeSpawners[NodeClass] = Spawner;
     }
 
-    FBlueprintNode* FBlueprint::SpawnNode(Str NodeClass)
+    FBlueprintNode* FBlueprint::SpawnNode(const Str& NodeClass)
     {
-        auto It = m_NodeSpawners.find(NodeClass);
+        const auto It = m_NodeSpawners.find(NodeClass);
         if (It == m_NodeSpawners.end()) return nullptr;
 
         const auto Spawner = It->second;
@@ -106,6 +109,21 @@ namespace Slab::Blueprints {
 
         auto &Node = m_Nodes.back();
         Spawner(Node);
+
+        BuildNode(&Node);
+
+        return &Node;
+    }
+
+    FBlueprintNode* FBlueprint::SpawnNodeFromInterface(Core::FInterface& Interface)
+    {
+        fix Name = Interface.GetName();
+
+        m_Nodes.emplace_back(GetNextId(), Name.c_str(), ImColor(255, 128, 128));
+        auto &Node = m_Nodes.back();
+
+        for (auto &Parameter : Interface.GetParameters())
+            Node.Inputs.emplace_back(GetNextId(), Parameter->GetName().c_str(), PinType::Float);
 
         BuildNode(&Node);
 

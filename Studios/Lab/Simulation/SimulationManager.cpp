@@ -104,12 +104,15 @@ void FSimulationManager::CreateBlueprint(const Slab::Graphics::FPlatformWindow& 
     // PlatformWindow.AddEventListener(BlueprintRenderer);
     AddResponder(BlueprintRenderer);
 
+    auto Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
+
     FBlueprintNode* Node;
-    Node = Blueprint->SpawnNode("InputAction");    Editor::SetNodePosition(Node->ID, ImVec2(-252, 220));
-    Node = Blueprint->SpawnBranchNode();           Editor::SetNodePosition(Node->ID, ImVec2(-300, 351));
-    Node = Blueprint->SpawnDoNNode();              Editor::SetNodePosition(Node->ID, ImVec2(-238, 504));
-    Node = Blueprint->SpawnOutputActionNode();     Editor::SetNodePosition(Node->ID, ImVec2(71, 80));
-    Node = Blueprint->SpawnSetTimerNode();         Editor::SetNodePosition(Node->ID, ImVec2(168, 316));
+    Node = Blueprint->SpawnNodeFromInterface(*Recipe->GetInterface());
+    // Node = Blueprint->SpawnNode("InputAction");    Editor::SetNodePosition(Node->ID, ImVec2(-252, 220));
+    // Node = Blueprint->SpawnBranchNode();           Editor::SetNodePosition(Node->ID, ImVec2(-300, 351));
+    // Node = Blueprint->SpawnDoNNode();              Editor::SetNodePosition(Node->ID, ImVec2(-238, 504));
+    // Node = Blueprint->SpawnOutputActionNode();     Editor::SetNodePosition(Node->ID, ImVec2(71, 80));
+    // Node = Blueprint->SpawnSetTimerNode();         Editor::SetNodePosition(Node->ID, ImVec2(168, 316));
 
     // Node = Blueprint->SpawnTreeSequenceNode();     Editor::SetNodePosition(Node->ID, ImVec2(1028, 329));
     // Node = Blueprint->SpawnTreeTaskNode();         Editor::SetNodePosition(Node->ID, ImVec2(1204, 458));

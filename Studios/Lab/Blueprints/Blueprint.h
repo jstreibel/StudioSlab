@@ -9,6 +9,11 @@
 #include "Utils/Map.h"
 #include "Utils/Threads.h"
 
+namespace Slab::Core
+{
+    class FInterface;
+}
+
 namespace Slab::Blueprints {
 
     class FBlueprint {
@@ -22,7 +27,7 @@ namespace Slab::Blueprints {
             return m_NextId++;
         }
 
-        Editor::LinkId GetNextLinkId()
+        static Editor::LinkId GetNextLinkId()
         {
             return {static_cast<unsigned long>(GetNextId())};
         }
@@ -36,17 +41,21 @@ namespace Slab::Blueprints {
 
         Pin* FindPin(Editor::PinId id);
 
-        bool IsPinLinked(Editor::PinId id);
+        bool IsPinLinked(Editor::PinId id) const;
 
+        static
         bool CanCreateLink(Pin* a, Pin* b);
 
         bool CreateLink(Pin&a, Pin&b);
 
+        static
         void BuildNode(FBlueprintNode* node);
 
         void RegisterSpawner(const Str& NodeClass, const FNodeSpawner& Spawner);
 
-        FBlueprintNode* SpawnNode(Str NodeClass);
+        FBlueprintNode* SpawnNode(const Str& NodeClass);
+
+        FBlueprintNode* SpawnNodeFromInterface(Core::FInterface&);
 
         // FBlueprintNode* SpawnInputActionNode();
 
