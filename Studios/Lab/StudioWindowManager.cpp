@@ -50,6 +50,74 @@ void StudioWindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSl
     NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
 }
 
+void ShowJobs();
+void ShowManagedData(StudioWindowManager& Self);
+void ShowMainMenuEntries(const Slab::Graphics::FPlatformWindow &PlatformWindow, Slab::Graphics::FImGuiContext &ImGuiContext);
+
+bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& PlatformWindow)
+{
+    ImGuiContext->NewFrame();
+
+    // Local GUI logic
+    {
+        fix MenuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
+        ImGui::SetNextWindowPos(ImVec2(0, static_cast<float>(MenuHeight)));
+        ImGui::SetNextWindowSize(ImVec2(StudioConfig::SidePaneWidth, static_cast<float>(HeightSysWin - MenuHeight)), ImGuiCond_Appearing);
+        constexpr auto WindowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
+        if (ImGui::Begin(StudioConfig::SidePaneId, nullptr, WindowFlags))
+        {
+            const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
+
+            ShowJobs();
+            ShowManagedData(*this);
+
+            if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth()); SidePaneWidth != WindowWidth)
+            {
+                SidePaneWidth = WindowWidth;
+                NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
+            }
+
+            ImGui::End();
+        }
+
+        ShowMainMenuEntries(PlatformWindow, *ImGuiContext);
+    }
+
+    for (const auto& Window : SlabWindows) if (Window->WantsClose()){ RemoveResponder(Window); std::erase(SlabWindows, Window); }
+
+    FWindowManager::NotifyRender(PlatformWindow);
+
+    ImGuiContext->Render();
+
+    return true;
+}
+
+
+bool StudioWindowManager::NotifySystemWindowReshape(int w, int h)
+{
+    WidthSysWin = w;
+    HeightSysWin = h;
+
+    /*
+    if (SlabWindow != nullptr)
+    {
+        fix MenuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
+        fix Gaps = Slab::Graphics::WindowStyle::TilingGapSize;
+
+        SlabWindow->NotifyReshape(WidthSysWin-SidePaneWidth-2*Gaps, HeightSysWin-MenuHeight-2*Gaps);
+        SlabWindow->Set_x(SidePaneWidth + Gaps);
+        SlabWindow->Set_y(MenuHeight + Gaps);
+    }
+    */
+
+    return FWindowManager::NotifySystemWindowReshape(w, h);
+}
+
+Slab::TPointer<Slab::Graphics::FImGuiContext> StudioWindowManager::GetImGuiContext()
+{
+    return ImGuiContext;
+}
+
 void ShowJobs()
 {
     const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
@@ -216,81 +284,14 @@ void ShowManagedData(StudioWindowManager& Self)
     }
 }
 
-bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& PlatformWindow)
+void ShowMainMenuEntries(const Slab::Graphics::FPlatformWindow &PlatformWindow, Slab::Graphics::FImGuiContext &ImGuiContext)
 {
-    ImGuiContext->NewFrame();
-
-    // Local GUI logic
-    {
-        fix MenuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
-        ImGui::SetNextWindowPos(ImVec2(0, static_cast<float>(MenuHeight)));
-        ImGui::SetNextWindowSize(ImVec2(StudioConfig::SidePaneWidth, static_cast<float>(HeightSysWin - MenuHeight)), ImGuiCond_Appearing);
-        constexpr auto WindowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
-        if (ImGui::Begin(StudioConfig::SidePaneId, nullptr, WindowFlags))
-        {
-            const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
-
-            ShowJobs();
-
-            // SHOW DATA **********************************************************************
-            ShowManagedData(*this);
-
-            if (fix WindowWidth = static_cast<int>(ImGui::GetWindowWidth()); SidePaneWidth != WindowWidth)
-            {
-                SidePaneWidth = WindowWidth;
-                NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
-            }
-
-            ImGui::End();
-        }
-
-        // Main menu entries
-        {
-            {
-                auto ItemLocation = Slab::Graphics::MainMenuLocation{"System"};
-                auto Entry = Slab::Graphics::MainMenuLeafEntry{"Exit", "Alt+F4"};
-                auto Action = [&PlatformWindow](const Slab::Str &Item){
-                    if (Item == "Exit")
-                        const_cast<Slab::Graphics::FPlatformWindow*>(&PlatformWindow)->SignalClose();
-                };
-                auto Item = Slab::Graphics::MainMenuItem{ItemLocation, {Entry}, Action};
-                ImGuiContext->AddMainMenuItem(Item);
-            }
-        }
-    }
-
-    for (auto Window : SlabWindows) if (Window->WantsClose()){ RemoveResponder(Window); std::erase(SlabWindows, Window); }
-
-    FWindowManager::NotifyRender(PlatformWindow);
-
-    ImGuiContext->Render();
-
-    return true;
+    fix ItemLocation = Slab::Graphics::MainMenuLocation{"System"};
+    auto Entry = Slab::Graphics::MainMenuLeafEntry{"Exit", "Alt+F4"};
+    auto Action = [&PlatformWindow](const Slab::Str &Item){
+        if (Item == "Exit")
+            const_cast<Slab::Graphics::FPlatformWindow*>(&PlatformWindow)->SignalClose();
+    };
+    fix Item = Slab::Graphics::MainMenuItem{ItemLocation, {Entry}, Action};
+    ImGuiContext.AddMainMenuItem(Item);
 }
-
-
-bool StudioWindowManager::NotifySystemWindowReshape(int w, int h)
-{
-    WidthSysWin = w;
-    HeightSysWin = h;
-
-    /*
-    if (SlabWindow != nullptr)
-    {
-        fix MenuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
-        fix Gaps = Slab::Graphics::WindowStyle::TilingGapSize;
-
-        SlabWindow->NotifyReshape(WidthSysWin-SidePaneWidth-2*Gaps, HeightSysWin-MenuHeight-2*Gaps);
-        SlabWindow->Set_x(SidePaneWidth + Gaps);
-        SlabWindow->Set_y(MenuHeight + Gaps);
-    }
-    */
-
-    return FWindowManager::NotifySystemWindowReshape(w, h);
-}
-
-Slab::TPointer<Slab::Graphics::FImGuiContext> StudioWindowManager::GetImGuiContext()
-{
-    return ImGuiContext;
-}
-
