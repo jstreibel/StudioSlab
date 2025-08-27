@@ -22,13 +22,7 @@ namespace Slab::Core {
             Vector<MyType>                        ExcludedValues;
             std::function<bool(const MyType&)>    Validator = [](const MyType&) { return true; } ;
             std::function<MyType(const MyType&)>  Filter    = [](const MyType& UnfilteredValue) { return UnfilteredValue; } ;
-            std::map<Str, std::optional<MyType>>  OtherAttributes;
-
-            std::optional<MyType> operator[](const Str& Key) const
-            {
-
-            }
-
+            std::map<Str, std::optional<MyType>>  BuiltinAttributes;
         };
 
         TParameter(Type Value, const FParameterDescription& ParameterDescription, const TParameterAttributes& Attributes={});
