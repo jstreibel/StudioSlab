@@ -22,10 +22,9 @@
 #include "../../Fields/RtoR-PureSG/SingleFormations/input-shockwave.h"
 #include "../../Fields/RtoR-PureSG/SingleFormations/InputSingleOscillon.h"
 
-
-
 #include "Core/SlabCore.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
+#include "Graphics/SlabGraphics.h"
 #include "Math/Data/DataManager.h"
 #include "Math/Numerics/NumericTask.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/Output/SimHistory.h"
@@ -67,6 +66,101 @@ void FSimulationManager::ExposeInterface(const Slab::TPointer<Slab::Core::FInter
 }
 
 bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& platform_window)
+{
+    AddSimulationMenu();
+    AddBlueprintMenu(platform_window);
+
+    if (const auto Recipe = Material.GetRecipe(); Recipe != nullptr)
+    {
+        const auto Interface = Recipe->GetInterface();
+
+        bool bOpen = true;
+        if (ImGui::Begin(Interface->GetName().c_str(), &bOpen)) ExposeInterface(Interface);
+
+        if (ImGui::Button("Run"))
+        {
+            const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
+            const auto Task = Slab::New<Slab::Math::NumericTask>(Material.GetRecipe());
+            Task->SetOutputManager(Material.BuildOutputManager());
+            TaskManager->AddTask(Task);
+            Material.Clear();
+        }
+
+        ImGui::End();
+
+        if (!bOpen) Material.Clear();
+    }
+
+    return FPlatformWindowEventListener::NotifyRender(platform_window);
+}
+
+void FSimulationManager::CreateBlueprint(const Slab::Graphics::FPlatformWindow& PlatformWindow)
+{
+    using namespace Slab::Blueprints;
+
+    Blueprint = Slab::New<FBlueprint>();
+
+    BlueprintRenderer = Slab::New<FBlueprintRenderer>(Blueprint, ImGuiContext);
+    // main_platform_window->AddEventListener(blueprint_renderer);
+    AddResponder(BlueprintRenderer);
+
+    FBlueprintNode* Node;
+    Node = Blueprint->SpawnInputActionNode();      ed::SetNodePosition(Node->ID, ImVec2(-252, 220));
+    Node = Blueprint->SpawnBranchNode();           ed::SetNodePosition(Node->ID, ImVec2(-300, 351));
+    Node = Blueprint->SpawnDoNNode();              ed::SetNodePosition(Node->ID, ImVec2(-238, 504));
+    Node = Blueprint->SpawnOutputActionNode();     ed::SetNodePosition(Node->ID, ImVec2(71, 80));
+    Node = Blueprint->SpawnSetTimerNode();         ed::SetNodePosition(Node->ID, ImVec2(168, 316));
+
+    Node = Blueprint->SpawnTreeSequenceNode();     ed::SetNodePosition(Node->ID, ImVec2(1028, 329));
+    Node = Blueprint->SpawnTreeTaskNode();         ed::SetNodePosition(Node->ID, ImVec2(1204, 458));
+    Node = Blueprint->SpawnTreeTask2Node();        ed::SetNodePosition(Node->ID, ImVec2(868, 538));
+
+    Node = Blueprint->SpawnComment();              ed::SetNodePosition(Node->ID, ImVec2(112, 576)); ed::SetGroupSize(Node->ID, ImVec2(384, 154));
+    Node = Blueprint->SpawnComment();              ed::SetNodePosition(Node->ID, ImVec2(800, 224)); ed::SetGroupSize(Node->ID, ImVec2(640, 400));
+
+    Node = Blueprint->SpawnLessNode();             ed::SetNodePosition(Node->ID, ImVec2(366, 652));
+    Node = Blueprint->SpawnWeirdNode();            ed::SetNodePosition(Node->ID, ImVec2(144, 652));
+    Node = Blueprint->SpawnMessageNode();          ed::SetNodePosition(Node->ID, ImVec2(-348, 698));
+    Node = Blueprint->SpawnPrintStringNode();      ed::SetNodePosition(Node->ID, ImVec2(-69, 652));
+
+    Node = Blueprint->SpawnHoudiniTransformNode(); ed::SetNodePosition(Node->ID, ImVec2(500, -70));
+    Node = Blueprint->SpawnHoudiniGroupNode();     ed::SetNodePosition(Node->ID, ImVec2(500, 42));
+
+    ed::NavigateToContent();
+
+    Blueprint->BuildNodes();
+
+    auto nodes = Blueprint->GetNodes();
+
+    Blueprint->CreateLink(nodes[5].Outputs[0], nodes[6].Outputs[0]);
+    Blueprint->CreateLink(nodes[5].Outputs[0], nodes[6].Inputs[0]);
+    Blueprint->CreateLink(nodes[5].Outputs[0], nodes[7].Inputs[0]);
+
+    Blueprint->CreateLink(nodes[14].Outputs[0], nodes[15].Inputs[0]);
+}
+
+void FSimulationManager::AddBlueprintMenu(const Slab::Graphics::FPlatformWindow& PlatformWindow)
+{
+    const auto ItemLocation = Slab::Graphics::MainMenuLocation{"Simulations"};
+    const auto Item = Slab::Graphics::MainMenuItem{ItemLocation,
+        { {"Blueprint", "Custom Simulation"} },
+        [this, &PlatformWindow](const Slab::Str &ItemString)
+        {
+            if (ItemString == "Blueprint")
+            {
+                CreateBlueprint(PlatformWindow);
+
+                return;
+            }
+
+            Slab::Core::Log::Error() << "Internal error: unidentified item " << ItemString << Slab::Core::Log::Flush;
+        }
+    };
+
+    ImGuiContext->AddMainMenuItem(Item);
+}
+
+void FSimulationManager::AddSimulationMenu()
 {
     static auto BuilderFunc = [](Slab::TPointer<Slab::Math::Base::FNumericalRecipe> BaseRecipe)
     {
@@ -134,30 +228,8 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
             BeginRecipe(FMaterial{Recipe, BuilderFunc});
         }
     };
+
     ImGuiContext->AddMainMenuItem(Item);
-
-    if (const auto Recipe = Material.GetRecipe(); Recipe != nullptr)
-    {
-        const auto Interface = Recipe->GetInterface();
-
-        bool bOpen = true;
-        if (ImGui::Begin(Interface->GetName().c_str(), &bOpen)) ExposeInterface(Interface);
-
-        if (ImGui::Button("Run"))
-        {
-            const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
-            const auto Task = Slab::New<Slab::Math::NumericTask>(Material.GetRecipe());
-            Task->SetOutputManager(Material.BuildOutputManager());
-            TaskManager->AddTask(Task);
-            Material.Clear();
-        }
-
-        ImGui::End();
-
-        if (!bOpen) Material.Clear();
-    }
-
-    return FPlatformWindowEventListener::NotifyRender(platform_window);
 }
 
 void FSimulationManager::BeginRecipe(FMaterial Material)

@@ -10,7 +10,8 @@
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 #include "Math/Numerics/NumericalRecipe.h"
 #include "Math/Numerics/OutputManager.h"
-
+#include "../Blueprints/Blueprint.h"
+#include "../Blueprints/BlueprintRenderer.h"
 
 class FSimulationManager final : public Slab::Graphics::FPlatformWindowEventListener {
 public:
@@ -54,7 +55,14 @@ private:
 
     } Material;
 
+    void AddBlueprintMenu(const Slab::Graphics::FPlatformWindow& PlatformWindow);
+    void CreateBlueprint(const Slab::Graphics::FPlatformWindow& PlatformWindow);
+
+    void AddSimulationMenu();
     void BeginRecipe(FMaterial);
+
+    Slab::TPointer<Slab::Blueprints::FBlueprint> Blueprint;
+    Slab::TPointer<Slab::Blueprints::FBlueprintRenderer> BlueprintRenderer;
 
 
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;

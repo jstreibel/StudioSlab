@@ -3,6 +3,18 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 else()
 endif()
 
+set (BLUEPRINT_SOURCES
+        Blueprints/Blueprint.cpp
+        Blueprints/Blueprint.h
+        Blueprints/BlueprintTypes.h
+        Blueprints/Utilities/widgets.cpp
+        Blueprints/Utilities/drawing.cpp
+        Blueprints/Utilities/builders.cpp
+        Blueprints/BlueprintRenderer.cpp
+        Blueprints/BlueprintRenderer.h
+        Blueprints/BlueprintRenderer_Draw.cpp
+)
+
 set (STUDIO_EXTERNAL_SOURCES
         ../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_PlaneWaves.cpp
         ../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_Ak2.cpp
@@ -23,6 +35,7 @@ set (STUDIO_EXTERNAL_SOURCES
 
 add_executable( StudioSlab
         ${STUDIO_EXTERNAL_SOURCES}
+        ${BLUEPRINT_SOURCES}
 
         MainStudioSlab.cpp
         StudioSlabApp.cpp
