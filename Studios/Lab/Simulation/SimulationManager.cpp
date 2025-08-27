@@ -12,9 +12,17 @@
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 
 #include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_PlaneWaves.h"
-#include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_Ak2.h"
+// #include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_Ak2.h"
 #include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_wkA.h"
 #include "../../Fields/RtoR-Modes/Sim/Recipes/Signal_Ak2_Recipe.h"
+
+#include "../../Fields/RtoR-PureSG/InteractingFormations/input-general-oscillons.h"
+#include "../../Fields/RtoR-PureSG/InteractingFormations/input-sym-oscillons.h"
+#include "../../Fields/RtoR-PureSG/SingleFormations/input-perturbed.h"
+#include "../../Fields/RtoR-PureSG/SingleFormations/input-shockwave.h"
+#include "../../Fields/RtoR-PureSG/SingleFormations/InputSingleOscillon.h"
+
+
 
 #include "Core/SlabCore.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
@@ -23,6 +31,7 @@
 #include "Models/KleinGordon/RtoR/LinearStepping/Output/SimHistory.h"
 
 #define MAX_INTERFACE_DEPTH 10
+
 
 FSimulationManager::FSimulationManager(Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext)
 : ImGuiContext(std::move(ImGuiContext))
@@ -89,16 +98,28 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
             {"Plane Waves", "Analytic Signum-Gordon"},
             {"Monochromatic sine wave##1", "{ω,k,A} parameters"},
             {"Monochromatic sine wave##2", "Q=Ak² invariant parameter"},
-            {"Monochromatic signal", "Q=Ak² invariant parameter"}
+            {"Monochromatic signal", "Q=Ak² invariant parameter"},
+            {"---"},
+            {"Symmetric Oscillon Scattering"},
+            {"General Oscillon Scattering"},
+            {"---"},
+            {"Perturbed Simple Oscillon"},
+            {"Shockwave"},
+            {"Single Oscillon"},
         },
         [this](const Slab::Str &ItemString)
         {
             Slab::TPointer<Slab::Models::KGRecipe> Recipe;
 
-            if (ItemString == "Plane Waves")                     Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
-            else if (ItemString == "Monochromatic sine wave##1") Recipe = Slab::New<Modes::NumericalRecipe_wkA>();
-            else if (ItemString == "Monochromatic sine wave##2") Recipe = Slab::New<Modes::NumericalRecipe_Ak2>();
-            else if (ItemString == "Monochromatic signal")       Recipe = Slab::New<Modes::Signal_Ak2_Recipe>();
+            if      (ItemString == "Plane Waves")                 Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
+            else if (ItemString == "Monochromatic sine wave##1")  Recipe = Slab::New<Modes::NumericalRecipe_wkA>();
+            else if (ItemString == "Monochromatic sine wave##2")  Recipe = Slab::New<Modes::NumericalRecipe_Ak2>();
+            else if (ItemString == "Monochromatic signal")        Recipe = Slab::New<Modes::Signal_Ak2_Recipe>();
+            else if (ItemString == "Symmetric Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::InputSymmetricOscillon>();
+            else if (ItemString == "Perturbed Simple Oscillon")   Recipe = Slab::New<Studios::PureSG::InputPerturbations>();
+            else if (ItemString == "General Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::InputGeneralOscillons>();
+            else if (ItemString == "Shockwave")                   Recipe = Slab::New<Studios::PureSG::InputShockwave>();
+            else if (ItemString == "Single Oscillon")             Recipe = Slab::New<Studios::PureSG::InputSingleOscillon>();
 
             if (Recipe == nullptr)
             {
