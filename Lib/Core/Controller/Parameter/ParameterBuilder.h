@@ -9,10 +9,16 @@
 
 namespace Slab::Core
 {
-    TPointer<RealParameter> MakePositiveRealParameter(
+    struct FRealParameterOptions
+    {
+        std::optional<DevFloat> MinVal;
+        std::optional<DevFloat> MaxVal;
+    };
+
+    TPointer<RealParameter> MakeRealParam(
         DevFloat BaseValue,
         const FParameterDescription& ParameterDescription,
-        bool bIncludeZero, DevFloat eps=1.e-3);
+        const FRealParameterOptions& Options);
 
     struct FIntegerParameterOptions
     {
@@ -27,7 +33,7 @@ namespace Slab::Core
     TPointer<IntegerParameter> MakeIntParam(
         Int BaseValue,
         const FParameterDescription& ParameterDescription,
-        FIntegerParameterOptions Options);
+        const FIntegerParameterOptions& Options);
 }
 
 #endif //PARAMETERBUILDER_H

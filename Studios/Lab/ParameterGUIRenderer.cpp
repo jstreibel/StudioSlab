@@ -36,8 +36,8 @@ static const std::unordered_map<std::type_index, Handler> GTable = {
             auto& IntegerParameter = static_cast<Slab::Core::IntegerParameter&>(Parameter);
             int Value = IntegerParameter.GetValue();
 
-            auto MinVal = IntegerParameter.GetAttributes().OtherAttributes[Slab::Core::CMinimumTag];
-            auto MaxVal = IntegerParameter.GetAttributes().OtherAttributes[Slab::Core::CMaximumTag];
+            auto MinVal = IntegerParameter.GetAttributes().BuiltinAttributes[Slab::Core::CMinimumTag];
+            auto MaxVal = IntegerParameter.GetAttributes().BuiltinAttributes[Slab::Core::CMaximumTag];
 
             fix Min = MinVal ? MinVal.value() : 0;
             fix Max = MaxVal ? MaxVal.value() : 0;
