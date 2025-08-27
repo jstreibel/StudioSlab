@@ -823,7 +823,7 @@ namespace Slab::Blueprints {
             }
 
             if (ImGui::BeginPopup("Create New Node")) {
-                auto newNodePostion = openPopupPosition;
+                auto newNodePosition = openPopupPosition;
                 //ImGui::SetCursorScreenPos(ImGui::GetMousePosOnOpeningCurrentPopup());
 
                 //auto drawList = ImGui::GetWindowDrawList();
@@ -831,7 +831,7 @@ namespace Slab::Blueprints {
 
                 FBlueprintNode *node = nullptr;
                 if (ImGui::MenuItem("Input Action"))
-                    node = blueprint->SpawnInputActionNode();
+                    node = blueprint->SpawnNode("InputAction");
                 if (ImGui::MenuItem("Output Action"))
                     node = blueprint->SpawnOutputActionNode();
                 if (ImGui::MenuItem("Branch"))
@@ -872,7 +872,7 @@ namespace Slab::Blueprints {
 
                     createNewNode = false;
 
-                    Editor::SetNodePosition(node->ID, newNodePostion);
+                    Editor::SetNodePosition(node->ID, newNodePosition);
 
                     if (auto startPin = newNodeLinkPin) {
                         auto &pins = startPin->Kind == PinKind::Input ? node->Outputs : node->Inputs;

@@ -105,7 +105,7 @@ void FSimulationManager::CreateBlueprint(const Slab::Graphics::FPlatformWindow& 
     AddResponder(BlueprintRenderer);
 
     FBlueprintNode* Node;
-    Node = Blueprint->SpawnInputActionNode();      Editor::SetNodePosition(Node->ID, ImVec2(-252, 220));
+    Node = Blueprint->SpawnNode("InputAction");    Editor::SetNodePosition(Node->ID, ImVec2(-252, 220));
     Node = Blueprint->SpawnBranchNode();           Editor::SetNodePosition(Node->ID, ImVec2(-300, 351));
     Node = Blueprint->SpawnDoNNode();              Editor::SetNodePosition(Node->ID, ImVec2(-238, 504));
     Node = Blueprint->SpawnOutputActionNode();     Editor::SetNodePosition(Node->ID, ImVec2(71, 80));

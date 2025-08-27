@@ -5,13 +5,18 @@
 #include "Blueprint.h"
 
 namespace Slab::Blueprints {
+    Atomic<int> FBlueprint::m_NextId(1);
+
     FBlueprint::FBlueprint()
     {
         RegisterSpawner("InputAction", [](FBlueprintNode& Node)
         {
-            fix Id = Node.ID;
             Node.Name = "InputAction Fire";
             Node.Color = ImColor(255, 128, 128);
+
+            Node.Outputs.emplace_back(FBlueprint::GetNextId(), "",         PinType::Delegate);
+            Node.Outputs.emplace_back(FBlueprint::GetNextId(), "Pressed",  PinType::Flow);
+            Node.Outputs.emplace_back(FBlueprint::GetNextId(), "Released", PinType::Flow);
 
         });
     }
@@ -105,17 +110,6 @@ namespace Slab::Blueprints {
         BuildNode(&Node);
 
         return &Node;
-    }
-
-    FBlueprintNode *FBlueprint::SpawnInputActionNode() {
-        m_Nodes.emplace_back(GetNextId(), "InputAction Fire", ImColor(255, 128, 128));
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Delegate);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "Pressed", PinType::Flow);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "Released", PinType::Flow);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
     }
 
     FBlueprintNode *FBlueprint::SpawnBranchNode() {

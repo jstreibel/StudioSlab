@@ -7,6 +7,7 @@
 
 #include "BlueprintTypes.h"
 #include "Utils/Map.h"
+#include "Utils/Threads.h"
 
 namespace Slab::Blueprints {
 
@@ -16,7 +17,7 @@ namespace Slab::Blueprints {
 
         FBlueprint();
 
-        int GetNextId()
+        static int GetNextId()
         {
             return m_NextId++;
         }
@@ -47,7 +48,7 @@ namespace Slab::Blueprints {
 
         FBlueprintNode* SpawnNode(Str NodeClass);
 
-        FBlueprintNode* SpawnInputActionNode();
+        // FBlueprintNode* SpawnInputActionNode();
 
         FBlueprintNode* SpawnBranchNode();
 
@@ -83,9 +84,9 @@ namespace Slab::Blueprints {
 
     private:
         Map<Str, FNodeSpawner> m_NodeSpawners;
-        int                  m_NextId = 1;
-        const int            m_PinIconSize = 24;
-        Vector<FBlueprintNode>    m_Nodes;
+        static Atomic<int>     m_NextId;
+        const int              m_PinIconSize = 24;
+        Vector<FBlueprintNode> m_Nodes;
         Vector<Link>    m_Links;
     };
 
