@@ -28,6 +28,8 @@ namespace Slab::Core {
         TParameter(Type Value, const FParameterDescription& ParameterDescription, const TParameterAttributes& Attributes={});
         ~TParameter() override;
 
+        EParameterType GetType() const override;
+
         [[nodiscard]] auto ValueToString() const -> Str override;
 
         auto AddToCommandLineOptionsGroup(CLODEasyInit &base) const -> void override;

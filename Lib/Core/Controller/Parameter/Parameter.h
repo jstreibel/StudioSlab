@@ -35,11 +35,13 @@ namespace Slab::Core {
         ParameterType_String,
         ParameterType_MultiString,
         ParameterType_Bool,
-        // Enum,
-        // Vector,
-        // Matrix,
-        // VectorOfVectors,
-        // MatrixOfMatrices,
+        // ParameterType_Struct,
+        // ParameterType_Enum,
+        // ParameterType_Vector,
+        // ParameterType_Matrix,
+        // ParameterType_VectorOfVectors,
+        // ParameterType_MatrixOfMatrices,
+        ParameterType_Uninformed,
     };
 
     class FParameter {
@@ -49,6 +51,8 @@ namespace Slab::Core {
         explicit FParameter(FParameterDescription );
 
         [[nodiscard]] Str GetName() const;
+
+        virtual EParameterType GetType() const { return EParameterType::ParameterType_Uninformed; };
 
         virtual auto
         AddToCommandLineOptionsGroup(CLODEasyInit &group) const -> void = 0;

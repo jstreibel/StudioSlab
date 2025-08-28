@@ -123,11 +123,23 @@ namespace Slab::Blueprints {
         auto &Node = m_Nodes.back();
 
         for (auto &Parameter : Interface.GetParameters())
-            Node.Inputs.emplace_back(GetNextId(), Parameter->GetName().c_str(), PinType::Float);
+        {
+            auto Type = PinType::Float;
+            switch (Parameter->GetType())
+            {
+            case Core::EParameterType::ParameterType_Integer: Type = PinType::Int; break;
+            case Core::EParameterType::ParameterType_Bool: Type = PinType::Bool; break;
+            case Core::EParameterType::ParameterType_String: Type = PinType::String; break;
+            case Core::EParameterType::ParameterType_Float: Type = PinType::Float; break;
+            case Core::EParameterType::ParameterType_MultiString: Type = PinType::Delegate; break;
+            case Core::EParameterType::ParameterType_Uninformed: Type = PinType::Object; break;
+            }
+            Node.Inputs.emplace_back(GetNextId(), Parameter->GetName().c_str(), Type);
+        }
 
         for (const auto &SubInterface : Interface.GetSubInterfaces())
         {
-            Node.Inputs.emplace_back(GetNextId(), SubInterface->GetName().c_str(), PinType::Object);
+            Node.Inputs.emplace_back(GetNextId(), SubInterface->GetName().c_str(), PinType::Function);
         }
 
         BuildNode(&Node);

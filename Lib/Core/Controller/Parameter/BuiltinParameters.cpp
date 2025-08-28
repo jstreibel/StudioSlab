@@ -16,6 +16,19 @@
 namespace Slab::Core {
 
     template<class Type>      TParameter<Type>::~TParameter() = default;
+
+    template <class Type>
+    EParameterType TParameter<Type>::GetType() const
+    {
+        if constexpr (std::is_same_v<Type, int>)      { return EParameterType::ParameterType_Integer; }
+        if constexpr (std::is_same_v<Type, DevFloat>) { return EParameterType::ParameterType_Float; }
+        if constexpr (std::is_same_v<Type, Str>)      { return EParameterType::ParameterType_String; }
+        if constexpr (std::is_same_v<Type, StrVector>){ return EParameterType::ParameterType_MultiString; }
+        if constexpr (std::is_same_v<Type, bool>)     { return EParameterType::ParameterType_Bool; }
+
+        return FParameter::GetType();
+    }
+
     template<class Type> auto TParameter<Type>::ValueToString() const -> std::string { return ToStr(Value); }
     template<class Type> auto TParameter<Type>::AddToCommandLineOptionsGroup(CLODEasyInit &add) const -> void
     {
@@ -52,7 +65,9 @@ namespace Slab::Core {
 
     template<class Type>
     TParameter<Type>::TParameter(Type Value, const FParameterDescription& ParameterDescription, const TParameterAttributes& Attributes)
-    : FParameter(ParameterDescription), Value(Value), Attributes(Attributes)
+    : FParameter(ParameterDescription)
+    , Value(Value)
+    , Attributes(Attributes)
     {
         if (!Attributes.Validator(Value)) {
             throw std::invalid_argument("Invalid Value " + ToStr(Value) + " to Parameter '" + ParameterDescription.Name + "'");
