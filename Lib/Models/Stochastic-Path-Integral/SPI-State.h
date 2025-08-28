@@ -29,7 +29,7 @@ namespace Slab::Models::StochasticPathIntegrals {
 
         [[nodiscard]] auto category() const -> Str override;
 
-        [[nodiscard]] auto replicate() const -> TPointer<EquationState> override;
+        [[nodiscard]] auto Replicate(std::optional<Str> Name) const -> TPointer<EquationState> override;
 
         [[nodiscard]] auto getPhi() const -> TPointer<Math::R2toR::FNumericFunction>;
         [[nodiscard]] auto getPhi() -> TPointer<Math::R2toR::FNumericFunction>;

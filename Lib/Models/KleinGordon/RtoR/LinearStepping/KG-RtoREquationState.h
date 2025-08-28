@@ -44,7 +44,7 @@ namespace Slab::Models::KGRtoR {
             return nullptr;
         }
 
-        [[nodiscard]] auto replicate() const -> TPointer<Base::EquationState> override;
+        [[nodiscard]] auto Replicate(std::optional<Str> Name) const -> TPointer<Base::EquationState> override;
 
         [[nodiscard]] auto category() const -> Str override;
     };

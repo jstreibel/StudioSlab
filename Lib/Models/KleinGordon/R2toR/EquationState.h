@@ -21,7 +21,7 @@ namespace Slab::Math::R2toR {
             NOT_IMPLEMENTED_CLASS_METHOD
         }
 
-        [[nodiscard]] auto replicate() const -> TPointer<Base::EquationState> override;
+        [[nodiscard]] auto Replicate(std::optional<Str> Name) const -> TPointer<Base::EquationState> override;
 
         [[nodiscard]] auto category() const -> Str override;
     };

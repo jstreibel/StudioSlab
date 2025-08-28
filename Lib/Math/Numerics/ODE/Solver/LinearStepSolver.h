@@ -19,7 +19,7 @@ namespace Slab::Math::Base {
 
         virtual ~LinearStepSolver() = default;
 
-        [[nodiscard]] virtual auto NewEqState() const -> EquationState_ptr;
+        [[nodiscard]] virtual auto NewEqState(std::optional<Str> Name) const -> EquationState_ptr;
 
         virtual EquationState& applyBC(EquationState &state, DevFloat t, DevFloat dt);
         virtual EquationState& F(const EquationState &in, EquationState &out, DevFloat t) = 0;

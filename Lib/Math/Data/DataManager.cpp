@@ -20,7 +20,7 @@ namespace Slab::Math {
         auto &map = FDataRegistry::GetInstance().DataMap;
 
         if(map.contains(name))
-            name += " [id:" + ToStr(data->id) + "]";
+            name += " (" + ToStr(data->id) + ")";
 
         if(map.contains(name))
             throw Exception("Corrupted database: some data is using reserved code. Problem with dataset '"

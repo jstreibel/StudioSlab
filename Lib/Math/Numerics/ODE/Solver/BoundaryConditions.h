@@ -19,7 +19,7 @@ namespace Slab::Math::Base {
 
         explicit BoundaryConditions(TPointer<const EquationState> prototype);
 
-        [[nodiscard]] EquationState_ptr newEqState() const;
+        [[nodiscard]] EquationState_ptr NewEqState(std::optional<Str> Name) const;
 
         virtual void Apply(EquationState &toFunction, DevFloat t) const = 0;
     };

@@ -8,8 +8,8 @@ namespace Slab::Math {
     Euler::Euler(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt)
     : _H(solver)
     , dt(dt)
-    , _f(solver->NewEqState())
-    , _temp(solver->NewEqState())
+    , _f(solver->NewEqState("Euler 'f'"))
+    , _temp(solver->NewEqState("Euler 'temp'"))
     {
 
     }

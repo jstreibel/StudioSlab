@@ -16,8 +16,8 @@ namespace Slab::Math::Base {
         return this->F(in, out, t);
     }
 
-    auto LinearStepSolver::NewEqState() const -> EquationState_ptr {
-        return du->newEqState();
+    auto LinearStepSolver::NewEqState(std::optional<Str> Name) const -> EquationState_ptr {
+        return du->NewEqState(Name);
     }
 
 }

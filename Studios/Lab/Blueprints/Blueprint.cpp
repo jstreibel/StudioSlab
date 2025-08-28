@@ -125,6 +125,11 @@ namespace Slab::Blueprints {
         for (auto &Parameter : Interface.GetParameters())
             Node.Inputs.emplace_back(GetNextId(), Parameter->GetName().c_str(), PinType::Float);
 
+        for (const auto &SubInterface : Interface.GetSubInterfaces())
+        {
+            Node.Inputs.emplace_back(GetNextId(), SubInterface->GetName().c_str(), PinType::Object);
+        }
+
         BuildNode(&Node);
 
         return &Node;

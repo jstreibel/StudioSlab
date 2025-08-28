@@ -38,16 +38,12 @@ namespace Slab::Math::Base {
         Str generalName() const override { return "general discrete"; }
 
         DataType get_data_type() const override {
-            DataType type = "Numeric:RegularGrid";
+            DataType type = "f:?↦ℝ";
 
             if(space == nullptr) return type;
 
             fix d = space->getMetaData().getNDim();
-
-            type += ":ℝ" + Map<UInt, Str>{{1, ""}, {2,"²"}, {3, "³"}}[d-1] +"↦ℝ";
-
-            if(space->dataOnGPU()) type += ":GPU";
-            else                   type += ":CPU";
+            type = "f:ℝ" + Map<UInt, Str>{{1, ""}, {2,"²"}, {3, "³"}}[d] +"↦ℝ";
 
             return type;
         }

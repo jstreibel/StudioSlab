@@ -45,7 +45,7 @@ namespace Slab::Models::StochasticPathIntegrals {
         return "1st-order|R2->R";
     }
 
-    auto SPIState::replicate() const -> TPointer<EquationState> {
+    auto SPIState::Replicate(std::optional<Str> Name) const -> TPointer<EquationState> {
         return New<SPIState>(MathCast(data->Clone()));
     }
 

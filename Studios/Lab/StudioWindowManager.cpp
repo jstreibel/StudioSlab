@@ -276,9 +276,7 @@ void ShowManagedData(StudioWindowManager& Self)
                     ImGui::TextColored(ImVec4{0, 0.75, 0, 1}, "Active");
                 }
                 ImGui::SameLine();
-                ImGui::Text("] ");
-                ImGui::SameLine();
-                ImGui::Text("%s [%s]", Name.c_str(), Type.c_str());
+                ImGui::Text("] %s '%s'", Type.c_str(), Name.c_str());
             }
         }
     }

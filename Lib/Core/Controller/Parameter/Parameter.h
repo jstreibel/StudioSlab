@@ -29,6 +29,19 @@ namespace Slab::Core {
         FLongOptionFormatting Formatting;
     };
 
+    enum class EParameterType {
+        ParameterType_Integer,
+        ParameterType_Float,
+        ParameterType_String,
+        ParameterType_MultiString,
+        ParameterType_Bool,
+        // Enum,
+        // Vector,
+        // Matrix,
+        // VectorOfVectors,
+        // MatrixOfMatrices,
+    };
+
     class FParameter {
 
     public:

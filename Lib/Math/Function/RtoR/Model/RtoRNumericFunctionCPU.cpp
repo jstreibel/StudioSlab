@@ -71,7 +71,7 @@ namespace Slab::Math::RtoR {
     }
 
     Function_ptr NumericFunction_CPU::Clone() const {
-        return DataAlloc<NumericFunction_CPU> (this->get_data_name() + " [clone]", *this);
+        return DataAlloc<NumericFunction_CPU> (this->get_data_name(), *this);
     }
 
     TPointer<Base::NumericFunction <DevFloat, DevFloat>> NumericFunction_CPU::CloneWithSize(UInt outN) const {

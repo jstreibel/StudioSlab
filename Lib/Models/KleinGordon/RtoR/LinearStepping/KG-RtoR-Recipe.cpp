@@ -77,8 +77,8 @@ namespace Slab::Models::KGRtoR {
         }
     };
 
-    FKGRtoR_Recipe::FKGRtoR_Recipe(const Str &name, const Str& generalDescription, bool doRegister)
-    : KGRecipe(New<FKGNumericConfig>(false), "RtoR-" + name, generalDescription, DONT_REGISTER_IMMEDIATELY)
+    FKGRtoR_Recipe::FKGRtoR_Recipe(const Str &Name, const Str& generalDescription, bool doRegister)
+    : KGRecipe(New<FKGNumericConfig>(false), Name, generalDescription, DONT_REGISTER_IMMEDIATELY)
     , PotentialOptions(false) {
         Interface->AddParameters({&BoundaryConditions});
 

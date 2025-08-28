@@ -26,7 +26,7 @@ namespace Slab::Math::Base {
          * Produce a replica of this EquationState with all parameters replicated, except for the state data itself.
          * @return the replica.
          */
-        [[nodiscard]] virtual auto replicate() const -> TPointer<EquationState> = 0;
+        [[nodiscard]] virtual auto Replicate(std::optional<Str> Name) const -> TPointer<EquationState> = 0;
 
         /**
          * Gets the (unique) category of the EquationState: first order R->R, second order, etc.
