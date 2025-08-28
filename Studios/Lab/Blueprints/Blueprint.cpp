@@ -6,7 +6,9 @@
 
 #include "Core/Controller/Interface.h"
 
-namespace Slab::Blueprints {
+using namespace Slab;
+
+namespace Lab::Blueprints {
     Atomic<int> FBlueprint::m_NextId(1);
 
     FBlueprint::FBlueprint()

@@ -11,7 +11,7 @@
 #include "Graphics/OpenGL/OpenGL.h"
 
 namespace Slab::Graphics {
-    using SlabTextureID= void*;
+    using SlabTextureID = void*;
 
     struct SlabTexture
     {

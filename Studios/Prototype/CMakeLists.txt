@@ -1,3 +1,3 @@
 # add_subdirectory(MarylouStrings)
 
-add_subdirectory(Blueprints)
+# add_subdirectory(Blueprints)

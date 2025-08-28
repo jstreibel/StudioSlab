@@ -14,28 +14,9 @@
 namespace Slab::Blueprints {
 
     class FBlueprintRenderer : public Graphics::FPlatformWindowEventListener {
-        ed::EditorContext* m_Editor = nullptr;
-
-        TPointer<Graphics::FImGuiContext> m_Context;
-        const int            m_PinIconSize = 24;
-        ImTextureID          m_HeaderBackground = nullptr;
-        ImTextureID          m_SaveIcon = nullptr;
-        ImTextureID          m_RestoreIcon = nullptr;
-        const float          m_TouchTime = 1.0f;
-        std::map<ed::NodeId, float, NodeIdLess> m_NodeTouchTime;
-        bool                 m_ShowOrdinals = false;
-
-        TPointer<FBlueprint> blueprint;
-
-        void TouchNode(ed::NodeId id);
-
-        float GetTouchProgress(ed::NodeId id);
-
-        void UpdateTouch();
-
-        void DoDrawing();
 
     public:
+
         explicit FBlueprintRenderer(TPointer<FBlueprint> blueprint, TPointer<Graphics::FImGuiContext>);
 
         ImColor GetIconColor(PinType type);;
@@ -47,6 +28,29 @@ namespace Slab::Blueprints {
         void ShowLeftPane(float paneWidth);
 
         bool NotifyRender(const Graphics::FPlatformWindow&) override;
+
+    private:
+
+        ed::EditorContext* m_Editor = nullptr;
+
+        TPointer<Graphics::FImGuiContext> m_Context;
+        const int            m_PinIconSize = 24;
+        ImTextureID          m_HeaderBackground = nullptr;
+        ImTextureID          m_SaveIcon = nullptr;
+        ImTextureID          m_RestoreIcon = nullptr;
+        const float          m_TouchTime = 1.0f;
+        std::map<ed::NodeId, float, NodeIdLess> m_NodeTouchTime;
+        bool                 m_ShowOrdinals = false;
+
+        TPointer<FBlueprint> Blueprint;
+
+        void TouchNode(ed::NodeId id);
+
+        float GetTouchProgress(ed::NodeId id);
+
+        void UpdateTouch();
+
+        void DoDrawing();
 
     };
 

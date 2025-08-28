@@ -13,7 +13,7 @@
 
 #include "Utilities/builders.h"
 
-namespace Slab::Blueprints {
+namespace Lab::Blueprints {
     namespace Editor = ax::NodeEditor; // TODO: separate blueprint rendering from representation
     namespace EditorUtil = ax::NodeEditor::Utilities;
 
@@ -64,14 +64,14 @@ namespace Slab::Blueprints {
     {
         Editor::NodeId ID;
         Slab::Str Name;
-        Vector<Pin> Inputs;
-        Vector<Pin> Outputs;
+        Slab::Vector<Pin> Inputs;
+        Slab::Vector<Pin> Outputs;
         ImColor Color;
         NodeType Type;
         ImVec2 Size;
 
-        Str State;
-        Str SavedState;
+        Slab::Str State;
+        Slab::Str SavedState;
 
         FBlueprintNode(int id, const char* name, ImColor color = ImColor(255, 255, 255)):
                 ID(id), Name(name), Color(color), Type(NodeType::Blueprint), Size(0, 0)

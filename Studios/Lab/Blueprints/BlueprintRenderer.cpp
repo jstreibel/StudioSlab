@@ -4,6 +4,7 @@
 
 #include "BlueprintRenderer.h"
 
+#include <ranges>
 #include <utility>
 
 #include "Utilities/drawing.h"
@@ -15,14 +16,14 @@
 #include "Graphics/OpenGL/Images.h"
 
 
-namespace Slab::Blueprints {
+namespace Lab::Blueprints {
 
     using namespace ax;
 
     using ax::Widgets::IconType;
 
     FBlueprintRenderer::FBlueprintRenderer(TPointer<FBlueprint> blueprint, TPointer<Graphics::FImGuiContext> GUIContext )
-    : blueprint(std::move(blueprint))
+    : Blueprint(std::move(blueprint))
     {
         assert(GUIContext != nullptr);
 
@@ -38,7 +39,7 @@ namespace Slab::Blueprints {
         {
             auto self = static_cast<FBlueprintRenderer*>(userPointer);
 
-            auto node = self->blueprint->FindNode(nodeId);
+            auto node = self->Blueprint->FindNode(nodeId);
             if (!node)
                 return 0;
 
@@ -52,7 +53,7 @@ namespace Slab::Blueprints {
         {
             auto self = static_cast<FBlueprintRenderer*>(userPointer);
 
-            auto node = self->blueprint->FindNode(nodeId);
+            auto node = self->Blueprint->FindNode(nodeId);
             if (!node)
                 return false;
 
@@ -70,27 +71,23 @@ namespace Slab::Blueprints {
         m_HeaderBackground = Graphics::LoadTexture(location + "BlueprintBackground.png");
         m_SaveIcon         = Graphics::LoadTexture(location + "ic_save_white_24dp.png");
         m_RestoreIcon      = Graphics::LoadTexture(location + "ic_restore_white_24dp.png");
+
+        Builder = EditorUtil::BlueprintNodeBuilder(m_HeaderBackground, Graphics::GetTextureWidth(m_HeaderBackground), Graphics::GetTextureHeight(m_HeaderBackground));
     }
 
-    void FBlueprintRenderer::TouchNode(Editor::NodeId id) {
-        m_NodeTouchTime[id] = m_TouchTime;
-    }
+    void FBlueprintRenderer::TouchNode(const Editor::NodeId id) { m_NodeTouchTime[id] = m_TouchTime; }
 
-    float FBlueprintRenderer::GetTouchProgress(Editor::NodeId id) {
+    float FBlueprintRenderer::GetTouchProgress(const Editor::NodeId id) {
         auto it = m_NodeTouchTime.find(id);
         if (it != m_NodeTouchTime.end() && it->second > 0.0f)
             return (m_TouchTime - it->second) / m_TouchTime;
-        else
-            return 0.0f;
+
+        return 0.0f;
     }
 
     void FBlueprintRenderer::UpdateTouch() {
-        const auto deltaTime = ImGui::GetIO().DeltaTime;
-        for (auto& entry : m_NodeTouchTime)
-        {
-            if (entry.second > 0.0f)
-                entry.second -= deltaTime;
-        }
+        const auto DeltaTime = ImGui::GetIO().DeltaTime;
+        for (auto& Val : m_NodeTouchTime | std::views::values) if (Val > 0.0f) Val -= DeltaTime;
     }
 
     ImColor FBlueprintRenderer::GetIconColor(PinType type) {
@@ -108,7 +105,8 @@ namespace Slab::Blueprints {
         }
     }
 
-    void FBlueprintRenderer::DrawPinIcon(const Pin &pin, bool connected, int alpha) {
+    void FBlueprintRenderer::DrawPinIcon(const Pin &pin, const bool connected, const int alpha) const
+    {
         IconType iconType;
         ImColor  color = GetIconColor(pin.Type);
         color.Value.w = alpha / 255.0f;
@@ -146,22 +144,22 @@ namespace Slab::Blueprints {
             editorStyle = Editor::Style();
         ImGui::EndHorizontal();
         ImGui::Spacing();
-        ImGui::DragFloat4("Node Padding", &editorStyle.NodePadding.x, 0.1f, 0.0f, 40.0f);
-        ImGui::DragFloat("Node Rounding", &editorStyle.NodeRounding, 0.1f, 0.0f, 40.0f);
-        ImGui::DragFloat("Node Border Width", &editorStyle.NodeBorderWidth, 0.1f, 0.0f, 15.0f);
-        ImGui::DragFloat("Hovered Node Border Width", &editorStyle.HoveredNodeBorderWidth, 0.1f, 0.0f, 15.0f);
-        ImGui::DragFloat("Hovered Node Border Offset", &editorStyle.HoverNodeBorderOffset, 0.1f, -40.0f, 40.0f);
-        ImGui::DragFloat("Selected Node Border Width", &editorStyle.SelectedNodeBorderWidth, 0.1f, 0.0f, 15.0f);
+        ImGui::DragFloat4("Node Padding",               &editorStyle.NodePadding.x, 0.1f, 0.0f, 40.0f);
+        ImGui::DragFloat("Node Rounding",               &editorStyle.NodeRounding, 0.1f, 0.0f, 40.0f);
+        ImGui::DragFloat("Node Border Width",           &editorStyle.NodeBorderWidth, 0.1f, 0.0f, 15.0f);
+        ImGui::DragFloat("Hovered Node Border Width",   &editorStyle.HoveredNodeBorderWidth, 0.1f, 0.0f, 15.0f);
+        ImGui::DragFloat("Hovered Node Border Offset",  &editorStyle.HoverNodeBorderOffset, 0.1f, -40.0f, 40.0f);
+        ImGui::DragFloat("Selected Node Border Width",  &editorStyle.SelectedNodeBorderWidth, 0.1f, 0.0f, 15.0f);
         ImGui::DragFloat("Selected Node Border Offset", &editorStyle.SelectedNodeBorderOffset, 0.1f, -40.0f, 40.0f);
-        ImGui::DragFloat("Pin Rounding", &editorStyle.PinRounding, 0.1f, 0.0f, 40.0f);
-        ImGui::DragFloat("Pin Border Width", &editorStyle.PinBorderWidth, 0.1f, 0.0f, 15.0f);
-        ImGui::DragFloat("Link Strength", &editorStyle.LinkStrength, 1.0f, 0.0f, 500.0f);
+        ImGui::DragFloat("Pin Rounding",                &editorStyle.PinRounding, 0.1f, 0.0f, 40.0f);
+        ImGui::DragFloat("Pin Border Width",            &editorStyle.PinBorderWidth, 0.1f, 0.0f, 15.0f);
+        ImGui::DragFloat("Link Strength",               &editorStyle.LinkStrength, 1.0f, 0.0f, 500.0f);
         //ImVec2  SourceDirection;
         //ImVec2  TargetDirection;
-        ImGui::DragFloat("Scroll Duration", &editorStyle.ScrollDuration, 0.001f, 0.0f, 2.0f);
-        ImGui::DragFloat("Flow Marker Distance", &editorStyle.FlowMarkerDistance, 1.0f, 1.0f, 200.0f);
-        ImGui::DragFloat("Flow Speed", &editorStyle.FlowSpeed, 1.0f, 1.0f, 2000.0f);
-        ImGui::DragFloat("Flow Duration", &editorStyle.FlowDuration, 0.001f, 0.0f, 5.0f);
+        ImGui::DragFloat("Scroll Duration",             &editorStyle.ScrollDuration, 0.001f, 0.0f, 2.0f);
+        ImGui::DragFloat("Flow Marker Distance",        &editorStyle.FlowMarkerDistance, 1.0f, 1.0f, 200.0f);
+        ImGui::DragFloat("Flow Speed",                  &editorStyle.FlowSpeed, 1.0f, 1.0f, 2000.0f);
+        ImGui::DragFloat("Flow Duration",               &editorStyle.FlowDuration, 0.001f, 0.0f, 5.0f);
         //ImVec2  PivotAlignment;
         //ImVec2  PivotSize;
         //ImVec2  PivotScale;
@@ -219,8 +217,8 @@ namespace Slab::Blueprints {
         ImGui::Spring(0.0f);
         if (ImGui::Button("Show Flow"))
         {
-            if(blueprint != nullptr) {
-                auto links = blueprint->GetLinks();
+            if(Blueprint != nullptr) {
+                auto links = Blueprint->GetLinks();
 
                 for (auto &link: links)
                     Editor::Flow(link.ID);
@@ -258,8 +256,8 @@ namespace Slab::Blueprints {
         ImGui::Spacing(); ImGui::SameLine();
         ImGui::TextUnformatted("Nodes");
         ImGui::Indent();
-        if(blueprint != nullptr) {
-            auto nodes = blueprint->GetNodes();
+        if(Blueprint != nullptr) {
+            auto nodes = Blueprint->GetNodes();
 
             for (auto &node: nodes) {
                 ImGui::PushID(node.ID.AsPointer());
@@ -389,8 +387,8 @@ namespace Slab::Blueprints {
         ImGui::Unindent();
 
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Z))) {
-            if(blueprint != nullptr) {
-                auto links = blueprint->GetLinks();
+            if(Blueprint != nullptr) {
+                auto links = Blueprint->GetLinks();
                 for (auto &link: links)
                     Editor::Flow(link.ID);
             }

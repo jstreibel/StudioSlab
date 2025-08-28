@@ -14,7 +14,7 @@ namespace Slab::Core
     class FInterface;
 }
 
-namespace Slab::Blueprints {
+namespace Lab::Blueprints {
 
     class FBlueprint {
     public:
@@ -32,8 +32,8 @@ namespace Slab::Blueprints {
             return {static_cast<unsigned long>(GetNextId())};
         }
 
-        auto GetNodes() -> Vector<FBlueprintNode>&;
-        auto GetLinks() -> Vector<Link>&;
+        auto GetNodes() -> Slab::Vector<FBlueprintNode>&;
+        auto GetLinks() -> Slab::Vector<Link>&;
 
         FBlueprintNode* FindNode(Editor::NodeId id);
 
@@ -51,11 +51,11 @@ namespace Slab::Blueprints {
         static
         void BuildNode(FBlueprintNode* node);
 
-        void RegisterSpawner(const Str& NodeClass, const FNodeSpawner& Spawner);
+        void RegisterSpawner(const Slab::Str& NodeClass, const FNodeSpawner& Spawner);
 
-        FBlueprintNode* SpawnNode(const Str& NodeClass);
+        FBlueprintNode* SpawnNode(const Slab::Str& NodeClass);
 
-        FBlueprintNode* SpawnNodeFromInterface(Core::FInterface&);
+        FBlueprintNode* SpawnNodeFromInterface(Slab::Core::FInterface&);
 
         // FBlueprintNode* SpawnInputActionNode();
 
@@ -92,11 +92,11 @@ namespace Slab::Blueprints {
         void BuildNodes();
 
     private:
-        Map<Str, FNodeSpawner> m_NodeSpawners;
-        static Atomic<int>     m_NextId;
+        Slab::Map<Slab::Str, FNodeSpawner> m_NodeSpawners;
+        static Slab::Atomic<int>     m_NextId;
         const int              m_PinIconSize = 24;
-        Vector<FBlueprintNode> m_Nodes;
-        Vector<Link>    m_Links;
+        Slab::Vector<FBlueprintNode> m_Nodes;
+        Slab::Vector<Link>    m_Links;
     };
 
 } // Slab::Prototype

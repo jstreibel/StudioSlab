@@ -11,9 +11,38 @@
 #include "Blueprint.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 
-namespace Slab::Blueprints {
+namespace Lab::Blueprints {
+
+    using namespace Slab;
 
     class FBlueprintRenderer : public Graphics::FPlatformWindowEventListener {
+    public:
+        explicit FBlueprintRenderer(TPointer<FBlueprint> blueprint, TPointer<Graphics::FImGuiContext>);
+
+        static ImColor GetIconColor(PinType type);;
+
+        void DrawPinIcon(const Pin& pin, bool connected, int alpha) const;;
+
+        static void ShowStyleEditor(bool* show = nullptr);
+
+        void ShowLeftPane(float paneWidth);
+
+        bool NotifyRender(const Graphics::FPlatformWindow&) override;
+
+    private:
+        struct FRendererState
+        {
+            Editor::NodeId ContextNodeId = 0;
+            Editor::LinkId ContextLinkId = 0;
+            Editor::PinId ContextPinId = 0;
+            bool bCreateNewNode = false;
+            Pin *NewNodeLinkPin = nullptr;
+            Pin *NewLinkPin = nullptr;
+
+            float LeftPaneWidth = 400.0f;
+            float RightPaneWidth = 800.0f;
+        } MyState;
+
         Editor::EditorContext* m_Editor = nullptr;
 
         TPointer<Graphics::FImGuiContext> m_Context;
@@ -25,7 +54,8 @@ namespace Slab::Blueprints {
         std::map<Editor::NodeId, float, NodeIdLess> m_NodeTouchTime;
         bool                 m_ShowOrdinals = false;
 
-        TPointer<FBlueprint> blueprint;
+        EditorUtil::BlueprintNodeBuilder Builder;
+        TPointer<FBlueprint> Blueprint;
 
         void TouchNode(Editor::NodeId id);
 
@@ -35,19 +65,14 @@ namespace Slab::Blueprints {
 
         void DoDrawing();
 
-    public:
-        explicit FBlueprintRenderer(TPointer<FBlueprint> blueprint, TPointer<Graphics::FImGuiContext>);
+        static void ShowOrdinals();
 
-        ImColor GetIconColor(PinType type);;
+        void HandleBlueprintOrSimpleNodeType(FBlueprintNode&);
+        void HandleTreeNodeType(FBlueprintNode&) const;
+        void HandleHoudiniNodeType(FBlueprintNode&) const;
+        static void HandleCommentNodeType(FBlueprintNode&);
 
-        void DrawPinIcon(const Pin& pin, bool connected, int alpha);;
-
-        static void ShowStyleEditor(bool* show = nullptr);
-
-        void ShowLeftPane(float paneWidth);
-
-        bool NotifyRender(const Graphics::FPlatformWindow&) override;
-
+        void ShowContextMenus();
     };
 
 } // Slab::Blueprints

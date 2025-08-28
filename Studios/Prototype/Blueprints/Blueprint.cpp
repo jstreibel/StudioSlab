@@ -4,7 +4,7 @@
 
 #include "Blueprint.h"
 
-namespace Slab::Blueprints {
+namespace Slab::Prototype {
 
     auto FBlueprint::GetNodes() -> Vector<FBlueprintNode>&{
         return m_Nodes;

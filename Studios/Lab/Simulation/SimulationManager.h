@@ -61,8 +61,8 @@ private:
     void AddSimulationMenu();
     void BeginRecipe(FMaterial);
 
-    Slab::TPointer<Slab::Blueprints::FBlueprint> Blueprint;
-    Slab::TPointer<Slab::Blueprints::FBlueprintRenderer> BlueprintRenderer;
+    Slab::TPointer<Lab::Blueprints::FBlueprint> Blueprint;
+    Slab::TPointer<Lab::Blueprints::FBlueprintRenderer> BlueprintRenderer;
 
 
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;

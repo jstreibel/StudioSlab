@@ -97,28 +97,16 @@ namespace Slab::Blueprints {
             /**************************************************/
             /**************************************************/
             /****** ALGUMAS DEFINICOES ************************/
-            if(blueprint == nullptr) NOT_IMPLEMENTED
+            if(Blueprint == nullptr) NOT_IMPLEMENTED
 
-            auto &m_Nodes = blueprint->GetNodes();
-            auto &m_Links = blueprint->GetLinks();
-            auto CanCreateLink = [this](Pin*a, Pin*b){
-                return blueprint->CanCreateLink(a,b);
-            };
-            auto IsPinLinked   = [this](ax::NodeEditor::PinId  id) {
-                return blueprint->IsPinLinked(id);
-            };
-            auto FindPin       = [this](ax::NodeEditor::PinId id) {
-                return blueprint->FindPin(id);
-            };
-            auto FindNode      = [this](ax::NodeEditor::NodeId id) {
-                return blueprint->FindNode(id);
-            };
-            auto FindLink      = [this](ax::NodeEditor::LinkId id) {
-                return blueprint->FindLink(id);
-            };
-            auto GetNextId     = [this]() {
-                return blueprint->GetNextId();
-            };
+            auto &m_Nodes = Blueprint->GetNodes();
+            auto &m_Links = Blueprint->GetLinks();
+            auto CanCreateLink = [this](Pin*a, Pin*b)              { return Blueprint->CanCreateLink(a,b); };
+            auto IsPinLinked   = [this](ax::NodeEditor::PinId  id) { return Blueprint->IsPinLinked(id);    };
+            auto FindPin       = [this](ax::NodeEditor::PinId id)  { return Blueprint->FindPin(id);        };
+            auto FindNode      = [this](ax::NodeEditor::NodeId id) { return Blueprint->FindNode(id);       };
+            auto FindLink      = [this](ax::NodeEditor::LinkId id) { return Blueprint->FindLink(id);       };
+            auto GetNextId     = [this]()                          { return Blueprint->GetNextId();        };
             /**************************************************/
             /**************************************************/
             /**************************************************/
@@ -127,10 +115,9 @@ namespace Slab::Blueprints {
             {
                 auto cursorTopLeft = ImGui::GetCursorScreenPos();
 
-                util::BlueprintNodeBuilder builder(m_HeaderBackground,
-                                                   Graphics::GetTextureWidth(m_HeaderBackground),
-                                                   Graphics::GetTextureHeight(m_HeaderBackground));
+                util::BlueprintNodeBuilder builder(m_HeaderBackground);
 
+                // Handle 'Blueprint' and 'Simple' node types
                 for (auto &node: m_Nodes) {
                     if (node.Type != NodeType::Blueprint && node.Type != NodeType::Simple)
                         continue;
@@ -253,6 +240,7 @@ namespace Slab::Blueprints {
                     builder.End();
                 }
 
+                // Handle 'Tree' node type
                 for (auto &node: m_Nodes) {
                     if (node.Type != NodeType::Tree)
                         continue;
@@ -410,6 +398,7 @@ namespace Slab::Blueprints {
                     //ImGui::PopStyleVar();
                 }
 
+                // Handle 'Houdini' node type
                 for (auto &node: m_Nodes) {
                     if (node.Type != NodeType::Houdini)
                         continue;
@@ -587,6 +576,7 @@ namespace Slab::Blueprints {
                     //ImGui::PopStyleVar();
                 }
 
+                // Handle 'Comment' node type
                 for (auto &node: m_Nodes) {
                     if (node.Type != NodeType::Comment)
                         continue;
@@ -645,6 +635,7 @@ namespace Slab::Blueprints {
                     ed::EndGroupHint();
                 }
 
+                // Handle links
                 for (auto &link: m_Links)
                     ed::Link(link.ID, link.StartPinID, link.EndPinID, link.Color, 2.0f);
 
@@ -751,7 +742,6 @@ namespace Slab::Blueprints {
                 ImGui::SetCursorScreenPos(cursorTopLeft);
             }
 
-# if 1
             auto openPopupPosition = ImGui::GetMousePos();
             ed::Suspend();
             if (ed::ShowNodeContextMenu(&contextNodeId))
@@ -831,44 +821,44 @@ namespace Slab::Blueprints {
 
                 FBlueprintNode *node = nullptr;
                 if (ImGui::MenuItem("Input Action"))
-                    node = blueprint->SpawnInputActionNode();
+                    node = Blueprint->SpawnInputActionNode();
                 if (ImGui::MenuItem("Output Action"))
-                    node = blueprint->SpawnOutputActionNode();
+                    node = Blueprint->SpawnOutputActionNode();
                 if (ImGui::MenuItem("Branch"))
-                    node = blueprint->SpawnBranchNode();
+                    node = Blueprint->SpawnBranchNode();
                 if (ImGui::MenuItem("Do N"))
-                    node = blueprint->SpawnDoNNode();
+                    node = Blueprint->SpawnDoNNode();
                 if (ImGui::MenuItem("Set Timer"))
-                    node = blueprint->SpawnSetTimerNode();
+                    node = Blueprint->SpawnSetTimerNode();
                 if (ImGui::MenuItem("Less"))
-                    node = blueprint->SpawnLessNode();
+                    node = Blueprint->SpawnLessNode();
                 if (ImGui::MenuItem("Weird"))
-                    node = blueprint->SpawnWeirdNode();
+                    node = Blueprint->SpawnWeirdNode();
                 if (ImGui::MenuItem("Trace by Channel"))
-                    node = blueprint->SpawnTraceByChannelNode();
+                    node = Blueprint->SpawnTraceByChannelNode();
                 if (ImGui::MenuItem("Print String"))
-                    node = blueprint->SpawnPrintStringNode();
+                    node = Blueprint->SpawnPrintStringNode();
                 ImGui::Separator();
                 if (ImGui::MenuItem("Comment"))
-                    node = blueprint->SpawnComment();
+                    node = Blueprint->SpawnComment();
                 ImGui::Separator();
                 if (ImGui::MenuItem("Sequence"))
-                    node = blueprint->SpawnTreeSequenceNode();
+                    node = Blueprint->SpawnTreeSequenceNode();
                 if (ImGui::MenuItem("Move To"))
-                    node = blueprint->SpawnTreeTaskNode();
+                    node = Blueprint->SpawnTreeTaskNode();
                 if (ImGui::MenuItem("Random Wait"))
-                    node = blueprint->SpawnTreeTask2Node();
+                    node = Blueprint->SpawnTreeTask2Node();
                 ImGui::Separator();
                 if (ImGui::MenuItem("Message"))
-                    node = blueprint->SpawnMessageNode();
+                    node = Blueprint->SpawnMessageNode();
                 ImGui::Separator();
                 if (ImGui::MenuItem("Transform"))
-                    node = blueprint->SpawnHoudiniTransformNode();
+                    node = Blueprint->SpawnHoudiniTransformNode();
                 if (ImGui::MenuItem("Group"))
-                    node = blueprint->SpawnHoudiniGroupNode();
+                    node = Blueprint->SpawnHoudiniGroupNode();
 
                 if (node) {
-                    blueprint->BuildNodes();
+                    Blueprint->BuildNodes();
 
                     createNewNode = false;
 
@@ -897,8 +887,6 @@ namespace Slab::Blueprints {
                 createNewNode = false;
             ImGui::PopStyleVar();
             ed::Resume();
-# endif
-
 
             /*
                 cubic_bezier_t c;
@@ -964,10 +952,6 @@ namespace Slab::Blueprints {
 
                 drawList->PopClipRect();
             }
-
-
-            //ImGui::ShowTestWindow();
-            //ImGui::ShowMetricsWindow();
         }
 
         ImGui::PopStyleVar(2);

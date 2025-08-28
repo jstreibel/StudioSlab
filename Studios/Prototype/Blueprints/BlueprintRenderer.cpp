@@ -22,7 +22,7 @@ namespace Slab::Blueprints {
     using ax::Widgets::IconType;
 
     FBlueprintRenderer::FBlueprintRenderer(TPointer<FBlueprint> blueprint, TPointer<Graphics::FImGuiContext> GUIContext )
-    : blueprint(std::move(blueprint))
+    : Blueprint(std::move(blueprint))
     {
         assert(GUIContext != nullptr);
 
@@ -38,7 +38,7 @@ namespace Slab::Blueprints {
         {
             auto self = static_cast<FBlueprintRenderer*>(userPointer);
 
-            auto node = self->blueprint->FindNode(nodeId);
+            auto node = self->Blueprint->FindNode(nodeId);
             if (!node)
                 return 0;
 
@@ -52,7 +52,7 @@ namespace Slab::Blueprints {
         {
             auto self = static_cast<FBlueprintRenderer*>(userPointer);
 
-            auto node = self->blueprint->FindNode(nodeId);
+            auto node = self->Blueprint->FindNode(nodeId);
             if (!node)
                 return false;
 
@@ -219,8 +219,8 @@ namespace Slab::Blueprints {
         ImGui::Spring(0.0f);
         if (ImGui::Button("Show Flow"))
         {
-            if(blueprint != nullptr) {
-                auto links = blueprint->GetLinks();
+            if(Blueprint != nullptr) {
+                auto links = Blueprint->GetLinks();
 
                 for (auto &link: links)
                     ed::Flow(link.ID);
@@ -258,8 +258,8 @@ namespace Slab::Blueprints {
         ImGui::Spacing(); ImGui::SameLine();
         ImGui::TextUnformatted("Nodes");
         ImGui::Indent();
-        if(blueprint != nullptr) {
-            auto nodes = blueprint->GetNodes();
+        if(Blueprint != nullptr) {
+            auto nodes = Blueprint->GetNodes();
 
             for (auto &node: nodes) {
                 ImGui::PushID(node.ID.AsPointer());
@@ -389,8 +389,8 @@ namespace Slab::Blueprints {
         ImGui::Unindent();
 
         if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Z))) {
-            if(blueprint != nullptr) {
-                auto links = blueprint->GetLinks();
+            if(Blueprint != nullptr) {
+                auto links = Blueprint->GetLinks();
                 for (auto &link: links)
                     ed::Flow(link.ID);
             }

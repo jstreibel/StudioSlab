@@ -96,7 +96,7 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
 
 void FSimulationManager::CreateBlueprint(const Slab::Graphics::FPlatformWindow& PlatformWindow)
 {
-    using namespace Slab::Blueprints;
+    using namespace Lab::Blueprints;
 
     Blueprint = Slab::New<FBlueprint>();
 
