@@ -101,53 +101,26 @@ void FSimulationManager::CreateBlueprint(const Slab::Graphics::FPlatformWindow& 
     Blueprint = Slab::New<FBlueprint>();
 
     BlueprintRenderer = Slab::New<FBlueprintRenderer>(Blueprint, ImGuiContext);
-    // PlatformWindow.AddEventListener(BlueprintRenderer);
     AddResponder(BlueprintRenderer);
 
-    auto Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
+    const auto Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
 
     FBlueprintNode* Node;
     Node = Blueprint->SpawnNodeFromInterface(*Recipe->GetInterface());
-    // Node = Blueprint->SpawnNode("InputAction");    Editor::SetNodePosition(Node->ID, ImVec2(-252, 220));
-    // Node = Blueprint->SpawnBranchNode();           Editor::SetNodePosition(Node->ID, ImVec2(-300, 351));
-    // Node = Blueprint->SpawnDoNNode();              Editor::SetNodePosition(Node->ID, ImVec2(-238, 504));
-    // Node = Blueprint->SpawnOutputActionNode();     Editor::SetNodePosition(Node->ID, ImVec2(71, 80));
-    // Node = Blueprint->SpawnSetTimerNode();         Editor::SetNodePosition(Node->ID, ImVec2(168, 316));
-
-    // Node = Blueprint->SpawnTreeSequenceNode();     Editor::SetNodePosition(Node->ID, ImVec2(1028, 329));
-    // Node = Blueprint->SpawnTreeTaskNode();         Editor::SetNodePosition(Node->ID, ImVec2(1204, 458));
-    // Node = Blueprint->SpawnTreeTask2Node();        Editor::SetNodePosition(Node->ID, ImVec2(868, 538));
-
-    // Node = Blueprint->SpawnComment();              Editor::SetNodePosition(Node->ID, ImVec2(112, 576)); Editor::SetGroupSize(Node->ID, ImVec2(384, 154));
-    // Node = Blueprint->SpawnComment();              Editor::SetNodePosition(Node->ID, ImVec2(800, 224)); Editor::SetGroupSize(Node->ID, ImVec2(640, 400));
-
-    // Node = Blueprint->SpawnLessNode();             Editor::SetNodePosition(Node->ID, ImVec2(366, 652));
-    // Node = Blueprint->SpawnWeirdNode();            Editor::SetNodePosition(Node->ID, ImVec2(144, 652));
-    // Node = Blueprint->SpawnMessageNode();          Editor::SetNodePosition(Node->ID, ImVec2(-348, 698));
-    // Node = Blueprint->SpawnPrintStringNode();      Editor::SetNodePosition(Node->ID, ImVec2(-69, 652));
-
-    // Node = Blueprint->SpawnHoudiniTransformNode(); Editor::SetNodePosition(Node->ID, ImVec2(500, -70));
-    // Node = Blueprint->SpawnHoudiniGroupNode();     Editor::SetNodePosition(Node->ID, ImVec2(500, 42));
 
     Editor::NavigateToContent();
 
     Blueprint->BuildNodes();
-
-    // auto nodes = Blueprint->GetNodes();
-    // Blueprint->CreateLink(nodes[5].Outputs[0], nodes[6].Outputs[0]);
-    // Blueprint->CreateLink(nodes[5].Outputs[0], nodes[6].Inputs[0]);
-    // Blueprint->CreateLink(nodes[5].Outputs[0], nodes[7].Inputs[0]);
-    // Blueprint->CreateLink(nodes[14].Outputs[0], nodes[15].Inputs[0]);
 }
 
 void FSimulationManager::AddBlueprintMenu(const Slab::Graphics::FPlatformWindow& PlatformWindow)
 {
     const auto ItemLocation = Slab::Graphics::MainMenuLocation{"Simulations"};
     const auto Item = Slab::Graphics::MainMenuItem{ItemLocation,
-        { {"Blueprint", "Custom Simulation"} },
+        { {"Custom Simulation"} },
         [this, &PlatformWindow](const Slab::Str &ItemString)
         {
-            if (ItemString == "Blueprint")
+            if (ItemString == "Custom Simulation")
             {
                 CreateBlueprint(PlatformWindow);
 

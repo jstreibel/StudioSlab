@@ -836,26 +836,11 @@ namespace Lab::Blueprints {
             auto newNodePosition = openPopupPosition;
 
             FBlueprintNode *node = nullptr;
-            if (ImGui::MenuItem("Input Action"))     node = Blueprint->SpawnNode("InputAction");
-            if (ImGui::MenuItem("Output Action"))    node = Blueprint->SpawnOutputActionNode();
-            if (ImGui::MenuItem("Branch"))           node = Blueprint->SpawnBranchNode();
-            if (ImGui::MenuItem("Do N"))             node = Blueprint->SpawnDoNNode();
-            if (ImGui::MenuItem("Set Timer"))        node = Blueprint->SpawnSetTimerNode();
-            if (ImGui::MenuItem("Less"))             node = Blueprint->SpawnLessNode();
-            if (ImGui::MenuItem("Weird"))            node = Blueprint->SpawnWeirdNode();
-            if (ImGui::MenuItem("Trace by Channel")) node = Blueprint->SpawnTraceByChannelNode();
-            if (ImGui::MenuItem("Print String"))     node = Blueprint->SpawnPrintStringNode();
-            ImGui::Separator();
-            if (ImGui::MenuItem("Comment"))          node = Blueprint->SpawnComment();
-            ImGui::Separator();
-            if (ImGui::MenuItem("Sequence"))         node = Blueprint->SpawnTreeSequenceNode();
-            if (ImGui::MenuItem("Move To"))          node = Blueprint->SpawnTreeTaskNode();
-            if (ImGui::MenuItem("Random Wait"))      node = Blueprint->SpawnTreeTask2Node();
-            ImGui::Separator();
-            if (ImGui::MenuItem("Message"))          node = Blueprint->SpawnMessageNode();
-            ImGui::Separator();
-            if (ImGui::MenuItem("Transform"))        node = Blueprint->SpawnHoudiniTransformNode();
-            if (ImGui::MenuItem("Group"))            node = Blueprint->SpawnHoudiniGroupNode();
+            for (auto &Spawner : Blueprint->GetNodeSpawners())
+            {
+                fix NodeClass = Spawner.first;
+                if (ImGui::MenuItem(NodeClass.c_str())) node = Blueprint->SpawnNode(NodeClass);
+            }
 
             if (node) {
                 Blueprint->BuildNodes();
@@ -875,7 +860,7 @@ namespace Lab::Blueprints {
                             if (startPin->Kind == PinKind::Input)
                                 std::swap(startPin, endPin);
 
-                            m_Links.emplace_back(Link(FBlueprint::GetNextId(), startPin->ID, endPin->ID));
+                            m_Links.emplace_back(FBlueprint::GetNextId(), startPin->ID, endPin->ID);
                             m_Links.back().Color = GetIconColor(startPin->Type);
 
                             break;

@@ -19,6 +19,7 @@ namespace Lab::Blueprints {
     class FBlueprint {
     public:
         using FNodeSpawner = std::function<void(FBlueprintNode&)>;
+        using FNodeSpawnerMap = Slab::Map<Slab::Str, FNodeSpawner>;
 
         FBlueprint();
 
@@ -42,6 +43,7 @@ namespace Lab::Blueprints {
         Pin* FindPin(Editor::PinId id);
 
         bool IsPinLinked(Editor::PinId id) const;
+        FNodeSpawnerMap GetNodeSpawners();
 
         static
         bool CanCreateLink(Pin* a, Pin* b);
@@ -57,42 +59,12 @@ namespace Lab::Blueprints {
 
         FBlueprintNode* SpawnNodeFromInterface(Slab::Core::FInterface&);
 
-        // FBlueprintNode* SpawnInputActionNode();
-
-        FBlueprintNode* SpawnBranchNode();
-
-        FBlueprintNode* SpawnDoNNode();
-
-        FBlueprintNode* SpawnOutputActionNode();
-
-        FBlueprintNode* SpawnPrintStringNode();
-
-        FBlueprintNode* SpawnMessageNode();
-
-        FBlueprintNode* SpawnSetTimerNode();
-
-        FBlueprintNode* SpawnLessNode();
-
-        FBlueprintNode* SpawnWeirdNode();
-
-        FBlueprintNode* SpawnTraceByChannelNode();
-
-        FBlueprintNode* SpawnTreeSequenceNode();
-
-        FBlueprintNode* SpawnTreeTaskNode();
-
-        FBlueprintNode* SpawnTreeTask2Node();
-
-        FBlueprintNode* SpawnComment();
-
-        FBlueprintNode* SpawnHoudiniTransformNode();
-
-        FBlueprintNode* SpawnHoudiniGroupNode();
-
         void BuildNodes();
 
+        void SetupDemo();
+
     private:
-        Slab::Map<Slab::Str, FNodeSpawner> m_NodeSpawners;
+        FNodeSpawnerMap m_NodeSpawners;
         static Slab::Atomic<int>     m_NextId;
         const int              m_PinIconSize = 24;
         Slab::Vector<FBlueprintNode> m_Nodes;

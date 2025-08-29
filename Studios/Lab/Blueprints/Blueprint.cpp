@@ -11,19 +11,7 @@ using namespace Slab;
 namespace Lab::Blueprints {
     Atomic<int> FBlueprint::m_NextId(1);
 
-    FBlueprint::FBlueprint()
-    {
-        RegisterSpawner("InputAction", [](FBlueprintNode& Node)
-        {
-            Node.Name = "InputAction Fire";
-            Node.Color = ImColor(255, 128, 128);
-
-            Node.Outputs.emplace_back(FBlueprint::GetNextId(), "",         PinType::Delegate);
-            Node.Outputs.emplace_back(FBlueprint::GetNextId(), "Pressed",  PinType::Flow);
-            Node.Outputs.emplace_back(FBlueprint::GetNextId(), "Released", PinType::Flow);
-
-        });
-    }
+    FBlueprint::FBlueprint() = default;
 
     auto FBlueprint::GetNodes() -> Vector<FBlueprintNode>& { return m_Nodes; }
 
@@ -63,6 +51,11 @@ namespace Lab::Blueprints {
                 return true;
 
         return false;
+    }
+
+    FBlueprint::FNodeSpawnerMap FBlueprint::GetNodeSpawners()
+    {
+        return m_NodeSpawners;
     }
 
     bool FBlueprint::CanCreateLink(Pin *a, Pin *b) {
@@ -107,7 +100,8 @@ namespace Lab::Blueprints {
         const auto Spawner = It->second;
 
         auto Id = GetNextId();
-        m_Nodes.emplace_back(Id, ("Node " + ToStr(Id)).c_str(), ImColor(255, 128, 128));
+        fix GenericName = "Node " + ToStr(Id);
+        m_Nodes.emplace_back(Id, NodeClass.c_str(), ImColor(255, 128, 128));
 
         auto &Node = m_Nodes.back();
         Spawner(Node);
@@ -149,185 +143,174 @@ namespace Lab::Blueprints {
         return &Node;
     }
 
-    FBlueprintNode *FBlueprint::SpawnBranchNode() {
-        m_Nodes.emplace_back(GetNextId(), "Branch");
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Condition", PinType::Bool);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "True", PinType::Flow);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "False", PinType::Flow);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnDoNNode() {
-        m_Nodes.emplace_back(GetNextId(), "Do N");
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Enter", PinType::Flow);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "N", PinType::Int);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Reset", PinType::Flow);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "Exit", PinType::Flow);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "Counter", PinType::Int);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnOutputActionNode() {
-        m_Nodes.emplace_back(GetNextId(), "OutputAction");
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Sample", PinType::Float);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "Condition", PinType::Bool);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Event", PinType::Delegate);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnPrintStringNode() {
-        m_Nodes.emplace_back(GetNextId(), "Print String");
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "In String", PinType::String);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Flow);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnMessageNode() {
-        m_Nodes.emplace_back(GetNextId(), "", ImColor(128, 195, 248));
-        m_Nodes.back().Type = NodeType::Simple;
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "Message", PinType::String);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnSetTimerNode() {
-        m_Nodes.emplace_back(GetNextId(), "Set Timer", ImColor(128, 195, 248));
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Object", PinType::Object);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Function Name", PinType::Function);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Time", PinType::Float);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Looping", PinType::Bool);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Flow);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnLessNode() {
-        m_Nodes.emplace_back(GetNextId(), "<", ImColor(128, 195, 248));
-        m_Nodes.back().Type = NodeType::Simple;
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Float);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Float);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Float);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnWeirdNode() {
-        m_Nodes.emplace_back(GetNextId(), "o.O", ImColor(128, 195, 248));
-        m_Nodes.back().Type = NodeType::Simple;
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Float);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Float);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Float);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnTraceByChannelNode() {
-        m_Nodes.emplace_back(GetNextId(), "Single Line Trace by Channel", ImColor(255, 128, 64));
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Start", PinType::Flow);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "End", PinType::Int);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Trace Channel", PinType::Float);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Trace Complex", PinType::Bool);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Actors to Ignore", PinType::Int);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Draw Debug Type", PinType::Bool);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "Ignore Self", PinType::Bool);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Flow);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "Out Hit", PinType::Float);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "Return Value", PinType::Bool);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnTreeSequenceNode() {
-        m_Nodes.emplace_back(GetNextId(), "Sequence");
-        m_Nodes.back().Type = NodeType::Tree;
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Flow);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnTreeTaskNode() {
-        m_Nodes.emplace_back(GetNextId(), "Move To");
-        m_Nodes.back().Type = NodeType::Tree;
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnTreeTask2Node() {
-        m_Nodes.emplace_back(GetNextId(), "Random Wait");
-        m_Nodes.back().Type = NodeType::Tree;
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnComment() {
-        m_Nodes.emplace_back(GetNextId(), "Test Comment");
-        m_Nodes.back().Type = NodeType::Comment;
-        m_Nodes.back().Size = ImVec2(300, 200);
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnHoudiniTransformNode() {
-        m_Nodes.emplace_back(GetNextId(), "Transform");
-        m_Nodes.back().Type = NodeType::Houdini;
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Flow);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
-    FBlueprintNode *FBlueprint::SpawnHoudiniGroupNode() {
-        m_Nodes.emplace_back(GetNextId(), "Group");
-        m_Nodes.back().Type = NodeType::Houdini;
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-        m_Nodes.back().Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-        m_Nodes.back().Outputs.emplace_back(GetNextId(), "", PinType::Flow);
-
-        BuildNode(&m_Nodes.back());
-
-        return &m_Nodes.back();
-    }
-
     void FBlueprint::BuildNodes() {
         for (auto& node : m_Nodes)
             BuildNode(&node);
     }
 
+    void FBlueprint::SetupDemo()
+    {
+        RegisterSpawner("Input Action", [](FBlueprintNode& Node)
+        {
+            Node.Name = "InputAction Fire";
+            Node.Color = ImColor(255, 128, 128);
+
+            Node.Outputs.emplace_back(GetNextId(), "",         PinType::Delegate);
+            Node.Outputs.emplace_back(GetNextId(), "Pressed",  PinType::Flow);
+            Node.Outputs.emplace_back(GetNextId(), "Released", PinType::Flow);
+
+        });
+        RegisterSpawner("Branch", [](FBlueprintNode& Node)
+        {
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Flow);
+            Node.Inputs.emplace_back(GetNextId(), "Condition", PinType::Bool);
+            Node.Outputs.emplace_back(GetNextId(), "True", PinType::Flow);
+            Node.Outputs.emplace_back(GetNextId(), "False", PinType::Flow);
+        });
+        RegisterSpawner("Do N", [](FBlueprintNode& Node)
+        {
+            Node.Inputs.emplace_back(GetNextId(), "Enter", PinType::Flow);
+            Node.Inputs.emplace_back(GetNextId(), "N", PinType::Int);
+            Node.Inputs.emplace_back(GetNextId(), "Reset", PinType::Flow);
+            Node.Outputs.emplace_back(GetNextId(), "Exit", PinType::Flow);
+            Node.Outputs.emplace_back(GetNextId(), "Counter", PinType::Int);
+        });
+        RegisterSpawner("Output Action", [](FBlueprintNode& Node)
+        {
+            Node.Name = "OutputAction";
+            Node.Inputs.emplace_back(GetNextId(), "Sample", PinType::Float);
+            Node.Outputs.emplace_back(GetNextId(), "Condition", PinType::Bool);
+            Node.Inputs.emplace_back(GetNextId(), "Event", PinType::Delegate);
+        });
+        RegisterSpawner("Print String", [](FBlueprintNode& Node)
+        {
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Flow);
+            Node.Inputs.emplace_back(GetNextId(), "In String", PinType::String);
+            Node.Outputs.emplace_back(GetNextId(), "", PinType::Flow);
+        });
+        RegisterSpawner("Message",  [](FBlueprintNode& Node)
+        {
+            Node.Name = "";
+            Node.Color = ImColor(128, 195, 248);
+            Node.Type = NodeType::Simple;
+            Node.Outputs.emplace_back(GetNextId(), "Message", PinType::String);
+        });
+        RegisterSpawner("Set Timer", [](FBlueprintNode& Node)
+        {
+            Node.Color = ImColor(128, 195, 248);
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Flow);
+            Node.Inputs.emplace_back(GetNextId(), "Object", PinType::Object);
+            Node.Inputs.emplace_back(GetNextId(), "Function Name", PinType::Function);
+            Node.Inputs.emplace_back(GetNextId(), "Time", PinType::Float);
+            Node.Inputs.emplace_back(GetNextId(), "Looping", PinType::Bool);
+            Node.Outputs.emplace_back(GetNextId(), "", PinType::Flow);
+        });
+        RegisterSpawner("Less", [](FBlueprintNode& Node)
+        {
+            Node.Name = "<";
+            Node.Color = ImColor(128, 195, 248);
+            Node.Type = NodeType::Simple;
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Float);
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Float);
+            Node.Outputs.emplace_back(GetNextId(), "", PinType::Float);
+        });
+        RegisterSpawner("Weird", [](FBlueprintNode& Node)
+        {
+            Node.Name = "o.O";
+            Node.Color = ImColor(128, 195, 248);
+            Node.Type = NodeType::Simple;
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Bool);
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Float);
+            Node.Outputs.emplace_back(GetNextId(), "", PinType::Delegate);
+        });
+        RegisterSpawner("Trace by Channel", [](FBlueprintNode& Node)
+        {
+            Node.Name = "Single Line Trace by Channel";
+            Node.Color = ImColor(255, 128, 64);
+
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Flow);
+            Node.Inputs.emplace_back(GetNextId(), "Start", PinType::Flow);
+            Node.Inputs.emplace_back(GetNextId(), "End", PinType::Int);
+            Node.Inputs.emplace_back(GetNextId(), "Trace Channel", PinType::Float);
+            Node.Inputs.emplace_back(GetNextId(), "Trace Complex", PinType::Bool);
+            Node.Inputs.emplace_back(GetNextId(), "Actors to Ignore", PinType::Int);
+            Node.Inputs.emplace_back(GetNextId(), "Draw Debug Type", PinType::Bool);
+            Node.Inputs.emplace_back(GetNextId(), "Ignore Self", PinType::Bool);
+            Node.Outputs.emplace_back(GetNextId(), "", PinType::Flow);
+            Node.Outputs.emplace_back(GetNextId(), "Out Hit", PinType::Float);
+            Node.Outputs.emplace_back(GetNextId(), "Return Value", PinType::Bool);
+        });
+        RegisterSpawner("Tree Sequence", [](FBlueprintNode& Node)
+        {
+            Node.Name = "Sequence";
+            Node.Type = NodeType::Tree;
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Flow);
+            Node.Outputs.emplace_back(GetNextId(), "", PinType::Flow);
+        });
+        RegisterSpawner("Tree Task", [](FBlueprintNode& Node)
+        {
+            Node.Name = "Move To";
+            Node.Type = NodeType::Tree;
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Flow);
+        });
+        RegisterSpawner("Random Wait", [](FBlueprintNode& Node)
+        {
+            Node.Type = NodeType::Tree;
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Flow);
+        });
+        RegisterSpawner("Test Comment", [](FBlueprintNode& Node)
+        {
+            Node.Type = NodeType::Comment;
+            Node.Size = ImVec2(300, 200);
+        });
+        RegisterSpawner("Houdini Transform", [](FBlueprintNode& Node)
+        {
+            Node.Name = "Transform";
+            Node.Type = NodeType::Houdini;
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Flow);
+            Node.Outputs.emplace_back(GetNextId(), "", PinType::Flow);
+        });
+        RegisterSpawner("Houdini Group", [](FBlueprintNode& Node)
+        {
+            Node.Name = "Group";
+            Node.Type = NodeType::Houdini;
+
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Flow);
+            Node.Inputs.emplace_back(GetNextId(), "", PinType::Flow);
+            Node.Outputs.emplace_back(GetNextId(), "", PinType::Flow);
+        });
+
+        const FBlueprintNode* Node = nullptr;
+
+        Node = SpawnNode("Input Action");     if (Node != nullptr) Editor::SetNodePosition(Node->ID, ImVec2(-252, 220));
+        Node = SpawnNode("Branch");           if (Node != nullptr) Editor::SetNodePosition(Node->ID, ImVec2(-300, 351));
+        Node = SpawnNode("Do N");             if (Node != nullptr) Editor::SetNodePosition(Node->ID, ImVec2(-238, 504));
+        Node = SpawnNode("Output Action");    if (Node != nullptr) Editor::SetNodePosition(Node->ID, ImVec2(71, 80));
+        Node = SpawnNode("Set Timer");        if (Node != nullptr) Editor::SetNodePosition(Node->ID, ImVec2(168, 316));
+
+        Node = SpawnNode("Tree Sequence");    if (Node != nullptr) Editor::SetNodePosition(Node->ID, ImVec2(1028, 329));
+        Node = SpawnNode("Tree Task");        if (Node != nullptr) Editor::SetNodePosition(Node->ID, ImVec2(1204, 458));
+        Node = SpawnNode("Random Wait");      if (Node != nullptr) Editor::SetNodePosition(Node->ID, ImVec2(868, 538));
+
+        Node = SpawnNode("Test Comment");     if (Node != nullptr) Editor::SetNodePosition(Node->ID, ImVec2(112, 576)); Editor::SetGroupSize(Node->ID, ImVec2(384, 154));
+        Node = SpawnNode("Test Comment");     if (Node != nullptr) Editor::SetNodePosition(Node->ID, ImVec2(800, 224)); Editor::SetGroupSize(Node->ID, ImVec2(640, 400));
+
+        // Node = SpawnLessNode();             Editor::SetNodePosition(Node->ID, ImVec2(366, 652));
+        // Node = SpawnWeirdNode();            Editor::SetNodePosition(Node->ID, ImVec2(144, 652));
+        // Node = SpawnMessageNode();          Editor::SetNodePosition(Node->ID, ImVec2(-348, 698));
+        // Node = SpawnPrintStringNode();      Editor::SetNodePosition(Node->ID, ImVec2(-69, 652));
+
+        // Node = SpawnHoudiniTransformNode(); Editor::SetNodePosition(Node->ID, ImVec2(500, -70));
+        // Node = SpawnHoudiniGroupNode();     Editor::SetNodePosition(Node->ID, ImVec2(500, 42));
+
+        Editor::NavigateToContent();
+
+        BuildNodes();
+
+        // auto nodes = GetNodes();
+        // CreateLink(nodes[5].Outputs[0], nodes[6].Outputs[0]);
+        // CreateLink(nodes[5].Outputs[0], nodes[6].Inputs[0]);
+        // CreateLink(nodes[5].Outputs[0], nodes[7].Inputs[0]);
+        // CreateLink(nodes[14].Outputs[0], nodes[15].Inputs[0]);
+    }
 } // Slab::Prototype
