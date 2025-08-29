@@ -76,7 +76,7 @@ namespace Slab::Math {
         // Solve the system of equations using Gaussian elimination or any other method
         for (int i = 0; i < 4; ++i) {
             for (int j = i+1; j < 4; ++j) {
-                if (abs(A[i][i]) < abs(A[j][i])) {
+                if (fabs(A[i][i]) < fabs(A[j][i])) {
                     std::swap(A[i], A[j]);
                     std::swap(Y[i], Y[j]);
                 }
