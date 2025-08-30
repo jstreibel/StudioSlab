@@ -2,12 +2,11 @@
 // Created by joao on 8/14/25.
 //
 
-#include "StudioWindowManager.h"
+#include "LabWindowManager.h"
 
 #include <utility>
 
 #include "imgui.h"
-#include "imgui_internal.h"
 #include "StudioConfig.h"
 #include "StudioSlab.h"
 #include "Core/SlabCore.h"
@@ -57,6 +56,7 @@ void ShowMainMenuEntries(const Slab::Graphics::FPlatformWindow &PlatformWindow, 
 bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& PlatformWindow)
 {
     ImGuiContext->NewFrame();
+    ImGuiContext->SetupOptionalMenuItems();
 
     // Local GUI logic
     {

@@ -128,6 +128,11 @@ namespace Slab::Graphics {
         ImplementationCalls.Draw();
     }
 
+    void FImGuiContext::SetupOptionalMenuItems()
+    {
+        FImGuiModule::SetupOptionalMenuItems(*this);
+    }
+
     void FImGuiContext::Bind() {
         ImGui::SetCurrentContext(r_Context);
     }

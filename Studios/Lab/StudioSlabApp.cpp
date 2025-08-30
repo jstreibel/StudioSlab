@@ -4,7 +4,7 @@
 
 #include "StudioSlabApp.h"
 
-#include "StudioWindowManager.h"
+#include "LabWindowManager.h"
 #include "Core/SlabCore.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 

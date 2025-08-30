@@ -40,8 +40,8 @@ add_executable( StudioSlab
         MainStudioSlab.cpp
         StudioSlabApp.cpp
         StudioSlabApp.h
-        StudioWindowManager.cpp
-        StudioWindowManager.h
+        LabWindowManager.cpp
+        LabWindowManager.h
         StudioConfig.h
         Simulation/SimulationManager.cpp
         Simulation/SimulationManager.h

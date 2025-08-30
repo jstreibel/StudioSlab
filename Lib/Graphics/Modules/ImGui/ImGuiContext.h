@@ -73,6 +73,7 @@ namespace Slab::Graphics {
         void Bind() override;
         void NewFrame() override;
         void Render() override;
+        void SetupOptionalMenuItems();
     };
 
 } // Slab::Graphics
