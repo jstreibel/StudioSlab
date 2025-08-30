@@ -9,12 +9,12 @@
 #include "Graphics/OpenGL/Images.h"
 
 namespace Lab::Blueprints {
-    static inline ImRect ImGui_GetItemRect()
+    static ImRect ImGui_GetItemRect()
     {
         return {ImGui::GetItemRectMin(), ImGui::GetItemRectMax()};
     }
 
-    static inline ImRect ImRect_Expanded(const ImRect& rect, float x, float y)
+    static ImRect ImRect_Expanded(const ImRect& rect, float x, float y)
     {
         auto result = rect;
         result.Min.x -= x;
@@ -37,7 +37,7 @@ namespace Lab::Blueprints {
 
     void FBlueprintRenderer::DoDrawing()
     {
-        auto window_flags = 0;
+        constexpr auto WindowFlags = 0;
 
         ImGui::SetNextWindowPos(ImVec2(100, 100), ImGuiCond_Once);
         ImGui::SetNextWindowSize({2400, 1350}, ImGuiCond_Once);
@@ -46,7 +46,7 @@ namespace Lab::Blueprints {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 
-        ImGui::Begin("Content", nullptr, window_flags);
+        ImGui::Begin("Content", nullptr, WindowFlags);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, windowBorderSize);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, windowRounding);
 
@@ -71,20 +71,15 @@ namespace Lab::Blueprints {
 
             auto &m_Nodes = Blueprint->GetNodes();
             auto &m_Links = Blueprint->GetLinks();
-            auto CanCreateLink = [this](Pin*a, Pin*b)              { return Blueprint->CanCreateLink(a,b); };
-            auto FindPin       = [this](ax::NodeEditor::PinId id)  { return Blueprint->FindPin(id);        };
-            auto FindNode      = [this](ax::NodeEditor::NodeId id) { return Blueprint->FindNode(id);       };
-            auto FindLink      = [this](ax::NodeEditor::LinkId id) { return Blueprint->FindLink(id);       };
-            auto GetNextId     = [this]()                          { return Blueprint->GetNextId();        };
             /**************************************************/
             /**************************************************/
             /**************************************************/
 
             Editor::Begin("Node editor");
             {
-                auto cursorTopLeft = ImGui::GetCursorScreenPos();
+                const auto CursorTopLeft = ImGui::GetCursorScreenPos();
 
-                // Handle 'Blueprint' and 'Simple' node types
+                // Handle 'Blueprint' and 'Simple' node types.
                 for (auto &node: m_Nodes) {
                     if (node.Type != NodeType::Blueprint && node.Type != NodeType::Simple)
                         continue;
@@ -119,114 +114,10 @@ namespace Lab::Blueprints {
                 // Handle links
                 for (auto &link: m_Links) Editor::Link(link.ID, link.StartPinID, link.EndPinID, link.Color, 2.0f);
 
-                if (!MyState.bCreateNewNode)
-                {
-                    if (Editor::BeginCreate(ImColor(255, 255, 255), 2.0f))
-                    {
-                        auto ShowLabel = [](const char *label, ImColor color) {
-                            ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetTextLineHeight());
-                            auto size = ImGui::CalcTextSize(label);
+                // Handle node creation
+                HandleNodeCreation();
 
-                            auto padding = ImGui::GetStyle().FramePadding;
-                            auto spacing = ImGui::GetStyle().ItemSpacing;
-
-                            ImGui::SetCursorPos(ImGui::GetCursorPos() + ImVec2(spacing.x, -spacing.y));
-
-                            auto rectMin = ImGui::GetCursorScreenPos() - padding;
-                            auto rectMax = ImGui::GetCursorScreenPos() + size + padding;
-
-                            auto drawList = ImGui::GetWindowDrawList();
-                            drawList->AddRectFilled(rectMin, rectMax, color, size.y * 0.15f);
-                            ImGui::TextUnformatted(label);
-                        };
-
-                        Editor::PinId startPinId = 0, endPinId = 0;
-                        if (Editor::QueryNewLink(&startPinId, &endPinId)) {
-                            auto startPin = FindPin(startPinId);
-                            auto endPin = FindPin(endPinId);
-
-                            MyState.NewLinkPin = startPin ? startPin : endPin;
-
-                            if (startPin->Kind == PinKind::Input) {
-                                std::swap(startPin, endPin);
-                                std::swap(startPinId, endPinId);
-                            }
-
-                            if (startPin && endPin) {
-                                if (endPin == startPin) {
-                                    Editor::RejectNewItem(ImColor(255, 0, 0), 2.0f);
-                                }
-                                else if (endPin->Kind == startPin->Kind) {
-                                    ShowLabel("x Incompatible Pin Kind", ImColor(45, 32, 32, 180));
-                                    Editor::RejectNewItem(ImColor(255, 0, 0), 2.0f);
-                                }
-                                    //else if (endPin->Node == startPin->Node)
-                                    //{
-                                    //    showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
-                                    //    Editor::RejectNewItem(ImColor(255, 0, 0), 1.0f);
-                                    //}
-                                else if (endPin->Type != startPin->Type) {
-                                    ShowLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
-                                    Editor::RejectNewItem(ImColor(255, 128, 128), 1.0f);
-                                }
-                                else {
-                                    ShowLabel("+ Create Link", ImColor(32, 45, 32, 180));
-                                    if (Editor::AcceptNewItem(ImColor(128, 255, 128), 4.0f)) {
-                                        m_Links.emplace_back(Link(GetNextId(), startPinId, endPinId));
-                                        m_Links.back().Color = GetIconColor(startPin->Type);
-                                    }
-                                }
-                            }
-                        }
-
-                        Editor::PinId pinId = 0;
-                        if (Editor::QueryNewNode(&pinId)) {
-                            MyState.NewLinkPin = FindPin(pinId);
-                            if (MyState.NewLinkPin)
-                                ShowLabel("+ Create Node", ImColor(32, 45, 32, 180));
-
-                            if (Editor::AcceptNewItem()) {
-                                MyState.bCreateNewNode = true;
-                                MyState.NewNodeLinkPin = FindPin(pinId);
-                                MyState.NewLinkPin = nullptr;
-                                Editor::Suspend();
-                                ImGui::OpenPopup("Create New Node");
-                                Editor::Resume();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        MyState.NewLinkPin = nullptr;
-                    }
-
-                    Editor::EndCreate();
-
-                    if (Editor::BeginDelete()) {
-                        Editor::NodeId nodeId = 0;
-                        while (Editor::QueryDeletedNode(&nodeId)) {
-                            if (Editor::AcceptDeletedItem()) {
-                                auto id = std::find_if(m_Nodes.begin(), m_Nodes.end(),
-                                                       [nodeId](auto &node) { return node.ID == nodeId; });
-                                if (id != m_Nodes.end())
-                                    m_Nodes.erase(id);
-                            }
-                        }
-
-                        Editor::LinkId linkId = 0;
-                        while (Editor::QueryDeletedLink(&linkId)) {
-                            if (Editor::AcceptDeletedItem()) {
-                                auto id = std::find_if(m_Links.begin(), m_Links.end(),
-                                                       [linkId](auto &link) { return link.ID == linkId; });
-                                if (id != m_Links.end())
-                                    m_Links.erase(id);
-                            }
-                        }
-                    }
-                    Editor::EndDelete();
-                }
-
-                ImGui::SetCursorScreenPos(cursorTopLeft);
+                ImGui::SetCursorScreenPos(CursorTopLeft);
             }
 
             ShowContextMenus();

@@ -53,10 +53,7 @@ namespace Lab::Blueprints {
         return false;
     }
 
-    FBlueprint::FNodeSpawnerMap FBlueprint::GetNodeSpawners()
-    {
-        return m_NodeSpawners;
-    }
+    FBlueprint::FNodeSpawnerMap FBlueprint::GetNodeSpawners() { return m_NodeSpawners; }
 
     bool FBlueprint::CanCreateLink(Pin *a, Pin *b) {
         if (!a || !b || a == b || a->Kind == b->Kind || a->Type != b->Type || a->Node == b->Node)
@@ -87,10 +84,7 @@ namespace Lab::Blueprints {
         }
     }
 
-    void FBlueprint::RegisterSpawner(const Str& NodeClass, const FNodeSpawner& Spawner)
-    {
-        m_NodeSpawners[NodeClass] = Spawner;
-    }
+    void FBlueprint::RegisterSpawner(const Str& NodeClass, const FNodeSpawner& Spawner) { m_NodeSpawners[NodeClass] = Spawner; }
 
     FBlueprintNode* FBlueprint::SpawnNode(const Str& NodeClass)
     {
@@ -143,10 +137,7 @@ namespace Lab::Blueprints {
         return &Node;
     }
 
-    void FBlueprint::BuildNodes() {
-        for (auto& node : m_Nodes)
-            BuildNode(&node);
-    }
+    void FBlueprint::BuildNodes() { for (auto& node : m_Nodes) BuildNode(&node); }
 
     void FBlueprint::SetupDemo()
     {

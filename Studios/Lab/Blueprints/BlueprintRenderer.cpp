@@ -90,6 +90,122 @@ namespace Lab::Blueprints {
         for (auto& Val : m_NodeTouchTime | std::views::values) if (Val > 0.0f) Val -= DeltaTime;
     }
 
+    void FBlueprintRenderer::HandleNodeCreation()
+    {
+        auto FindPin = [this](NodeEditor::PinId id)  { return Blueprint->FindPin(id); };
+        auto &m_Links = Blueprint->GetLinks();
+        auto &m_Nodes = Blueprint->GetNodes();
+
+        if (!MyState.bCreateNewNode)
+        {
+            if (Editor::BeginCreate(ImColor(255, 255, 255), 2.0f))
+            {
+                auto ShowLabel = [](const char *label, ImColor color)
+                {
+                    ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ImGui::GetTextLineHeight());
+                    const auto size = ImGui::CalcTextSize(label);
+
+                    const auto padding = ImGui::GetStyle().FramePadding;
+                    const auto spacing = ImGui::GetStyle().ItemSpacing;
+
+                    ImGui::SetCursorPos(ImGui::GetCursorPos() + ImVec2(spacing.x, -spacing.y));
+
+                    const auto rectMin = ImGui::GetCursorScreenPos() - padding;
+                    const auto rectMax = ImGui::GetCursorScreenPos() + size + padding;
+
+                    const auto drawList = ImGui::GetWindowDrawList();
+                    drawList->AddRectFilled(rectMin, rectMax, color, size.y * 0.15f);
+                    ImGui::TextUnformatted(label);
+                };
+
+                Editor::PinId startPinId = 0, endPinId = 0;
+                if (Editor::QueryNewLink(&startPinId, &endPinId)) {
+                    auto StartPin = FindPin(startPinId);
+                    auto EndPin = FindPin(endPinId);
+
+                    MyState.NewLinkPin = StartPin ? StartPin : EndPin;
+
+                    assert(StartPin != nullptr && EndPin != nullptr);
+                    if (StartPin->Kind == PinKind::Input) {
+                        std::swap(StartPin, EndPin);
+                        std::swap(startPinId, endPinId);
+                    }
+
+                    if (StartPin && EndPin) {
+                        if (EndPin == StartPin) {
+                            Editor::RejectNewItem(ImColor(255, 0, 0), 2.0f);
+                        }
+                        else if (EndPin->Kind == StartPin->Kind) {
+                            ShowLabel("x Incompatible Pin Kind", ImColor(45, 32, 32, 180));
+                            Editor::RejectNewItem(ImColor(255, 0, 0), 2.0f);
+                        }
+                            //else if (endPin->Node == startPin->Node)
+                            //{
+                            //    showLabel("x Cannot connect to self", ImColor(45, 32, 32, 180));
+                            //    Editor::RejectNewItem(ImColor(255, 0, 0), 1.0f);
+                            //}
+                        else if (EndPin->Type != StartPin->Type) {
+                            ShowLabel("x Incompatible Pin Type", ImColor(45, 32, 32, 180));
+                            Editor::RejectNewItem(ImColor(255, 128, 128), 1.0f);
+                        }
+                        else {
+                            ShowLabel("+ Create Link", ImColor(32, 45, 32, 180));
+                            if (Editor::AcceptNewItem(ImColor(128, 255, 128), 4.0f)) {
+                                m_Links.emplace_back(Link(FBlueprint::GetNextId(), startPinId, endPinId));
+                                m_Links.back().Color = GetIconColor(StartPin->Type);
+                            }
+                        }
+                    }
+                }
+
+                Editor::PinId pinId = 0;
+                if (Editor::QueryNewNode(&pinId)) {
+                    MyState.NewLinkPin = FindPin(pinId);
+                    if (MyState.NewLinkPin)
+                        ShowLabel("+ Create Node", ImColor(32, 45, 32, 180));
+
+                    if (Editor::AcceptNewItem()) {
+                        MyState.bCreateNewNode = true;
+                        MyState.NewNodeLinkPin = FindPin(pinId);
+                        MyState.NewLinkPin = nullptr;
+                        Editor::Suspend();
+                        ImGui::OpenPopup("Create New Node");
+                        Editor::Resume();
+                    }
+                }
+            }
+            else
+            {
+                MyState.NewLinkPin = nullptr;
+            }
+
+            Editor::EndCreate();
+
+            if (Editor::BeginDelete()) {
+                Editor::NodeId nodeId = 0;
+                while (Editor::QueryDeletedNode(&nodeId)) {
+                    if (Editor::AcceptDeletedItem()) {
+                        auto id = std::find_if(m_Nodes.begin(), m_Nodes.end(),
+                                               [nodeId](auto &node) { return node.ID == nodeId; });
+                        if (id != m_Nodes.end())
+                            m_Nodes.erase(id);
+                    }
+                }
+
+                Editor::LinkId linkId = 0;
+                while (Editor::QueryDeletedLink(&linkId)) {
+                    if (Editor::AcceptDeletedItem()) {
+                        auto id = std::find_if(m_Links.begin(), m_Links.end(),
+                                               [linkId](auto &link) { return link.ID == linkId; });
+                        if (id != m_Links.end())
+                            m_Links.erase(id);
+                    }
+                }
+            }
+            Editor::EndDelete();
+        }
+    }
+
     ImColor FBlueprintRenderer::GetIconColor(PinType type) {
         switch (type)
         {
