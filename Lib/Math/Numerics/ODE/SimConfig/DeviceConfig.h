@@ -10,13 +10,13 @@
 namespace Slab::Math {
     using namespace Slab::Core;
 
-    constexpr static char PDeviceLongName[] = "dev";
+    constexpr static char PDeviceParamLongName[] = "dev";
 
-    class FDeviceConfig : public FInterfaceOwner {
-        auto NotifyCLArgsSetupFinished() -> void override;
+    class FDeviceConfig final : public FInterfaceOwner {
+        auto NotifyInterfaceSetupIsFinished() -> void override;
 
-        Device dev = Device::CPU;
-        TPointer<IntegerParameter> deviceChoice = New<IntegerParameter>(1, FParameterDescription{PDeviceLongName, "Device on which to run simulation.\n"
+        // Device dev = Device::CPU;
+        TPointer<IntegerParameter> deviceChoice = New<IntegerParameter>(1, FParameterDescription{PDeviceParamLongName, "Device on which to run simulation.\n"
                                                                              "\t0: CPU \n"
                                                                              "\t1: GPU 0 \n"
                                                                              "\t2: GPU 1 "});
@@ -28,13 +28,13 @@ namespace Slab::Math {
 
         void setupForThread();
 
-        auto get_nThreads() const -> unsigned int { return **nThreads; }
+        [[nodiscard]] auto get_nThreads() const -> unsigned int { return **nThreads; }
 
-        bool operator==(const int &RHS) const { return this->dev == RHS; }
+        bool operator==(const int &RHS) const { return this->GetDevice() == RHS; }
 
-        bool operator!=(const int &RHS) const { return this->dev != RHS; }
+        bool operator!=(const int &RHS) const { return this->GetDevice() != RHS; }
 
-        auto getDevice() const -> Device;
+        [[nodiscard]] auto GetDevice() const -> Device;
 
 
     };

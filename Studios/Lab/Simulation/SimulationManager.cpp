@@ -5,6 +5,7 @@
 #include "SimulationManager.h"
 
 #include <utility>
+#include <sys/wait.h>
 
 #include "../ParameterGUIRenderer.h"
 #include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_Ak2.h"
@@ -12,7 +13,7 @@
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 
 #include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_PlaneWaves.h"
-// #include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_Ak2.h"
+
 #include "../../Fields/RtoR-Modes/Sim/Recipes/NumericalRecipe_wkA.h"
 #include "../../Fields/RtoR-Modes/Sim/Recipes/Signal_Ak2_Recipe.h"
 
@@ -22,11 +23,14 @@
 #include "../../Fields/RtoR-PureSG/SingleFormations/input-shockwave.h"
 #include "../../Fields/RtoR-PureSG/SingleFormations/InputSingleOscillon.h"
 
+#include "../../Fields/R2toR/LeadingDelta/LeadingDelta.h"
+
 #include "Core/SlabCore.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Graphics/SlabGraphics.h"
 #include "Math/Data/DataManager.h"
 #include "Math/Numerics/NumericTask.h"
+#include "Math/Numerics/ODE/Output/Sockets/DummyOutput.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/Output/SimHistory.h"
 
 #define MAX_INTERFACE_DEPTH 10
@@ -80,7 +84,7 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
         if (ImGui::Button("Run"))
         {
             const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
-            const auto Task = Slab::New<Slab::Math::NumericTask>(Material.GetRecipe());
+            const auto Task = Slab::New<Slab::Math::NumericTask>(Material.GetRecipe(), false);
             Task->SetOutputManager(Material.BuildOutputManager());
             TaskManager->AddTask(Task);
             Material.Clear();
@@ -137,77 +141,132 @@ void FSimulationManager::AddBlueprintMenu(const Slab::Graphics::FPlatformWindow&
 
 void FSimulationManager::AddSimulationMenu()
 {
-    static auto BuilderFunc = [](Slab::TPointer<Slab::Math::Base::FNumericalRecipe> BaseRecipe)
     {
-        const auto KGRecipe = Slab::DynamicPointerCast<Slab::Models::KGRecipe>(std::move(BaseRecipe));
-        const auto NumericConfig = Slab::DynamicPointerCast<Slab::Models::FKGNumericConfig>(KGRecipe->GetNumericConfig());
-
-        fix NOut = KGRecipe->GetOutputOptions().GetOutputResolution();
-        fix L = NumericConfig->GetL();
-        fix t = NumericConfig->Get_t();
-        fix MOut = t/L * static_cast<Slab::DevFloat>(NOut);
-        fix MaxSteps = NumericConfig->getn();
-        fix xMin = NumericConfig->Get_xMin();
-
-        const auto SimHistory = Slab::New<Slab::Models::KGRtoR::SimHistory>(
-            MaxSteps, t, NOut, MOut, xMin, L, KGRecipe->GetInterface()->GetName(), true);
-
-        auto Data = SimHistory->GetData();
-        Slab::Math::FDataManager::AddData(Data);
-
-        auto OutputManager = Slab::New<Slab::Math::FOutputManager>(MaxSteps);
-        OutputManager->AddOutputChannel(SimHistory);
-
-        return OutputManager;
-    };
-
-    const auto ItemLocation = Slab::Graphics::MainMenuLocation{"Simulations", "ℝ↦ℝ", "Plane-wave inputs"};
-    const auto Item = Slab::Graphics::MainMenuItem{ItemLocation,
+        static auto RtoROutputManagerBuilderFunc = [](Slab::TPointer<Slab::Math::Base::FNumericalRecipe> BaseRecipe)
         {
-            {"Plane Waves", "Analytic Signum-Gordon"},
-            {"Monochromatic sine wave##1", "{ω,k,A} parameters"},
-            {"Monochromatic sine wave##2", "Q=Ak² invariant parameter"},
-            {"Monochromatic signal", "Q=Ak² invariant parameter"},
-            {Slab::Graphics::MainMenuSeparator},
-            {"Symmetric Oscillon Scattering"},
-            {"General Oscillon Scattering"},
-            {Slab::Graphics::MainMenuSeparator},
-            {"Perturbed Simple Oscillon"},
-            {"Shockwave"},
-            {"Single Oscillon"},
-        },
-        [this](const Slab::Str &ItemString)
-        {
-            Slab::TPointer<Slab::Models::KGRecipe> Recipe;
+            const auto KGRecipe = Slab::DynamicPointerCast<Slab::Models::KGRecipe>(std::move(BaseRecipe));
+            const auto NumericConfig = Slab::DynamicPointerCast<Slab::Models::FKGNumericConfig>(KGRecipe->GetNumericConfig());
 
-            if      (ItemString == "Plane Waves")                 Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
-            else if (ItemString == "Monochromatic sine wave##1")  Recipe = Slab::New<Modes::NumericalRecipe_wkA>();
-            else if (ItemString == "Monochromatic sine wave##2")  Recipe = Slab::New<Modes::NumericalRecipe_Ak2>();
-            else if (ItemString == "Monochromatic signal")        Recipe = Slab::New<Modes::Signal_Ak2_Recipe>();
-            else if (ItemString == "Symmetric Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::InputSymmetricOscillon>();
-            else if (ItemString == "Perturbed Simple Oscillon")   Recipe = Slab::New<Studios::PureSG::InputPerturbations>();
-            else if (ItemString == "General Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::InputGeneralOscillons>();
-            else if (ItemString == "Shockwave")                   Recipe = Slab::New<Studios::PureSG::InputShockwave>();
-            else if (ItemString == "Single Oscillon")             Recipe = Slab::New<Studios::PureSG::InputSingleOscillon>();
+            fix NOut = KGRecipe->GetOutputOptions().GetOutputResolution();
+            fix L = NumericConfig->GetL();
+            fix t = NumericConfig->Get_t();
+            fix MOut = t/L * static_cast<Slab::DevFloat>(NOut);
+            fix MaxSteps = NumericConfig->getn();
+            fix xMin = NumericConfig->Get_xMin();
 
-            if (Recipe == nullptr)
+            const auto SimHistory = Slab::New<Slab::Models::KGRtoR::SimHistory>(
+                MaxSteps, t, NOut, MOut, xMin, L, KGRecipe->GetInterface()->GetName(), true);
+
+            auto Data = SimHistory->GetData();
+            Slab::Math::FDataManager::AddData(Data);
+
+            auto OutputManager = Slab::New<Slab::Math::FOutputManager>(MaxSteps);
+            OutputManager->AddOutputChannel(SimHistory);
+
+            return OutputManager;
+        };
+
+        const auto ItemLocation = Slab::Graphics::MainMenuLocation{"Simulations", "ℝ↦ℝ"};
+        const auto Item = Slab::Graphics::MainMenuItem{ItemLocation,
             {
-                Slab::Core::Log::Error() << "Internal error: unidentified item " << ItemString << Slab::Core::Log::Flush;
-                return;
-            }
+                    {"Plane Waves", "Analytic Signum-Gordon"},
+                    {"Monochromatic sine wave##1", "{ω,k,A} parameters"},
+                    {"Monochromatic sine wave##2", "Q=Ak² invariant parameter"},
+                    {"Monochromatic signal", "Q=Ak² invariant parameter"},
+                    {Slab::Graphics::MainMenuSeparator},
+                    {"Symmetric Oscillon Scattering"},
+                    {"General Oscillon Scattering"},
+                    {Slab::Graphics::MainMenuSeparator},
+                    {"Perturbed Simple Oscillon"},
+                    {"Shockwave"},
+                    {"Single Oscillon"},
+                },
+                [this](const Slab::Str &ItemString)
+                {
+                    Slab::TPointer<Slab::Models::KGRecipe> Recipe;
 
-            const auto DeviceParam = Slab::DynamicPointerCast<Slab::Core::IntegerParameter>(
-                    Recipe->GetDeviceConfig().GetInterface()->GetParameter(Slab::Math::PDeviceLongName));
-            DeviceParam->SetValue(0);
+                    if      (ItemString == "Plane Waves")                 Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
+                    else if (ItemString == "Monochromatic sine wave##1")  Recipe = Slab::New<Modes::NumericalRecipe_wkA>();
+                    else if (ItemString == "Monochromatic sine wave##2")  Recipe = Slab::New<Modes::NumericalRecipe_Ak2>();
+                    else if (ItemString == "Monochromatic signal")        Recipe = Slab::New<Modes::Signal_Ak2_Recipe>();
+                    else if (ItemString == "Symmetric Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::InputSymmetricOscillon>();
+                    else if (ItemString == "Perturbed Simple Oscillon")   Recipe = Slab::New<Studios::PureSG::InputPerturbations>();
+                    else if (ItemString == "General Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::InputGeneralOscillons>();
+                    else if (ItemString == "Shockwave")                   Recipe = Slab::New<Studios::PureSG::InputShockwave>();
+                    else if (ItemString == "Single Oscillon")             Recipe = Slab::New<Studios::PureSG::InputSingleOscillon>();
 
-            BeginRecipe(FMaterial{Recipe, BuilderFunc});
-        }
-    };
+                    if (Recipe == nullptr)
+                    {
+                        Slab::Core::Log::Error() << "Internal error: unidentified item " << ItemString << Slab::Core::Log::Flush;
+                        return;
+                    }
 
-    ImGuiContext->AddMainMenuItem(Item);
+                    const auto DeviceParam = Slab::DynamicPointerCast<Slab::Core::IntegerParameter>(
+                            Recipe->GetDeviceConfig().GetInterface()->GetParameter(Slab::Math::PDeviceParamLongName));
+                    DeviceParam->SetValue(0);
+
+                    BeginRecipe(FMaterial{Recipe, RtoROutputManagerBuilderFunc});
+                }
+        };
+
+        ImGuiContext->AddMainMenuItem(Item);
+    }
+
+
+    {
+        static auto R2toROutputManagerBuilderFunc = [](Slab::TPointer<Slab::Math::Base::FNumericalRecipe> BaseRecipe)
+        {
+            const auto KGRecipe = Slab::DynamicPointerCast<Slab::Models::KGRecipe>(std::move(BaseRecipe));
+            const auto NumericConfig = Slab::DynamicPointerCast<Slab::Models::FKGNumericConfig>(KGRecipe->GetNumericConfig());
+
+            fix MaxSteps = NumericConfig->getn();
+
+            fix DummyOutput = Slab::New<Slab::Math::FDummyOutput>();
+
+            // auto Data = SimHistory->GetData();
+            // Slab::Math::FDataManager::AddData(Data);
+
+            auto OutputManager = Slab::New<Slab::Math::FOutputManager>(MaxSteps);
+            OutputManager->AddOutputChannel(DummyOutput);
+
+            return OutputManager;
+        };
+
+        const auto ItemLocation = Slab::Graphics::MainMenuLocation{"Simulations", "ℝ²↦ℝ"};
+        const auto Item = Slab::Graphics::MainMenuItem{ItemLocation,
+            {
+                    {"Shockwave", ""},
+                },
+                [this](const Slab::Str &ItemString)
+                {
+                    Slab::TPointer<Slab::Models::KGRecipe> Recipe;
+
+                    if (ItemString == "Shockwave") Recipe = Slab::New<Studios::Fields::R2toRLeadingDelta::Builder>();
+
+                    if (Recipe == nullptr)
+                    {
+                        Slab::Core::Log::Error() << "Internal error: unidentified item " << ItemString << Slab::Core::Log::Flush;
+                        return;
+                    }
+
+                    const auto DeviceParam = Slab::DynamicPointerCast<Slab::Core::IntegerParameter>(
+                            Recipe->GetDeviceConfig().GetInterface()->GetParameter(Slab::Math::PDeviceParamLongName));
+                    DeviceParam->SetValue(1);
+
+                    Recipe->NotifyInterfaceSetupIsFinished();
+                    Recipe->NotifyAllInterfacesSetupIsFinished();
+
+                    BeginRecipe(FMaterial{Recipe, R2toROutputManagerBuilderFunc});
+                }
+        };
+
+        ImGuiContext->AddMainMenuItem(Item);
+    }
+
+
 }
 
-void FSimulationManager::BeginRecipe(FMaterial Material)
+void FSimulationManager::BeginRecipe(FMaterial RecipeMaterial)
 {
-    this->Material = std::move(Material);
+    this->Material = std::move(RecipeMaterial);
 }

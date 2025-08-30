@@ -63,6 +63,8 @@ namespace Slab::Math {
 
         [[nodiscard]] auto getSteps() const -> size_t;
 
+        [[nodiscard]] auto GetStepper() const -> Stepper_ptr;
+
         [[nodiscard]] auto getBenchmarkData() const -> const Core::BenchmarkData &;
         [[nodiscard]] float GetProgress() const;
     };

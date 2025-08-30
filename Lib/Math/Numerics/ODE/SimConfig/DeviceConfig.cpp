@@ -25,25 +25,14 @@ namespace Slab::Math {
         });
     };
 
+    void FDeviceConfig::NotifyInterfaceSetupIsFinished() {
+        FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
-    auto FDeviceConfig::getDevice() const -> Device {
-        return dev;
-    }
+        auto Dev = GetDevice();
 
-    void FDeviceConfig::NotifyCLArgsSetupFinished() {
-        FInterfaceOwner::NotifyCLArgsSetupFinished();
-
-    #if USE_CUDA
-        unsigned int dev_n = **deviceChoice;
-    #else
-        unsigned int dev_n = 0;
-    #endif
-
-        this->dev = dev_n == 0 ? CPU : (dev_n == 1 || dev_n == 2 ? GPU : UNKNOWN);
-
-        if (dev == UNKNOWN) {
-            throw Exception(Str("Unknown device ") + std::to_string(dev_n) + Str("."));
-        } else if (dev == Device::CPU) {
+        if (Dev == UNKNOWN) {
+            throw Exception(Str("Unknown device ") + std::to_string(**deviceChoice) + Str("."));
+        } else if (Dev == Device::CPU) {
             #if OMP_SUPPORT == true
             omp_set_num_threads(**nThreads);
             #endif
@@ -51,7 +40,7 @@ namespace Slab::Math {
             Log::Info() << "Running on CPU @ " << *nThreads << " thread"
                         << (**nThreads > 1 ? "s." : ".") << Log::Flush;
 
-        } else if (dev == Device::GPU) {
+        } else if (Dev == Device::GPU) {
     #if USE_CUDA
             setupForThread();
     #else
@@ -84,4 +73,14 @@ namespace Slab::Math {
         #endif
     }
 
+    Device FDeviceConfig::GetDevice() const
+    {
+#if USE_CUDA
+        const unsigned int dev_n = **deviceChoice;
+#else
+        unsigned int dev_n = 0;
+#endif
+
+        return dev_n == 0 ? CPU : (dev_n == 1 || dev_n == 2 ? GPU : UNKNOWN);
+    }
 }

@@ -4,6 +4,8 @@
 
 #include "RungeKutta4.h"
 
+#include "Math/Data/DataManager.h"
+
 
 namespace Slab::Math {
     RungeKutta4::RungeKutta4(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt, Slab::CountType totalSwapStates)

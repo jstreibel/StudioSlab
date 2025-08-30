@@ -34,7 +34,7 @@ namespace Slab::Models {
         auto Get_t() const -> DevFloat;
         auto sett(DevFloat) -> void;
 
-        auto NotifyCLArgsSetupFinished() -> void override;
+        auto NotifyInterfaceSetupIsFinished() -> void override;
     };
 
 } // Models

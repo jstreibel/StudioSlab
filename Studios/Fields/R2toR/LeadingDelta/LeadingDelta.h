@@ -50,7 +50,7 @@ class Builder : public Models::KGR2toR::Builder {
     public:
         explicit Builder(bool do_register = false);
 
-        auto NotifyCLArgsSetupFinished() -> void   override;
+        auto NotifyInterfaceSetupIsFinished() -> void   override;
 
         auto getBoundary()               -> Slab::Math::Base::BoundaryConditions_ptr override;
 

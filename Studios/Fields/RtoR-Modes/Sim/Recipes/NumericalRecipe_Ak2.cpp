@@ -63,8 +63,8 @@ namespace Modes {
         throw Exception(Str("Unknown initial condition ") + ToStr(*BCSelection));
     }
 
-    void NumericalRecipe_Ak2::NotifyCLArgsSetupFinished() {
-        FInterfaceOwner::NotifyCLArgsSetupFinished();
+    void NumericalRecipe_Ak2::NotifyInterfaceSetupIsFinished() {
+        FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
         auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 

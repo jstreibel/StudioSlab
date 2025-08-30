@@ -39,7 +39,7 @@ namespace Slab::Models {
         [[nodiscard]] Int GetOutputResolution() const { return *OutputResolution; };
 
     protected:
-        auto NotifyAllCLArgsSetupFinished() -> void override;
+        auto NotifyAllInterfacesSetupIsFinished() -> void override;
     };
 
     class KGRecipe : public Base::FNumericalRecipe {
@@ -61,7 +61,7 @@ namespace Slab::Models {
 
         virtual auto buildSolver()  -> TPointer<Base::LinearStepSolver> = 0;
 
-        auto NotifyAllCLArgsSetupFinished() -> void override;
+        auto NotifyAllInterfacesSetupIsFinished() -> void override;
 
     protected:
         TPointer<FKGNumericConfig> KGNumericConfig;

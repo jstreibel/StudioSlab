@@ -30,7 +30,7 @@ namespace Slab::Core {
                          << "\" did NOT immediately register to InterfaceManager." << Log::Flush;
     }
 
-    void FInterfaceOwner::NotifyCLArgsSetupFinished() {
+    void FInterfaceOwner::NotifyInterfaceSetupIsFinished() {
         // Log::Info() << "Interface " << Log::FGCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting
         //               << " (priority " << interface->priority << ") "
         //               << "has been setup from command-line." << Log::Flush;
@@ -47,7 +47,7 @@ namespace Slab::Core {
         note << Log::Flush;
     }
 
-    auto FInterfaceOwner::NotifyAllCLArgsSetupFinished() -> void
+    auto FInterfaceOwner::NotifyAllInterfacesSetupIsFinished() -> void
     {}
 
     auto FInterfaceOwner::RegisterToManager() const -> void {
@@ -69,9 +69,9 @@ namespace Slab::Core {
         FCommandLineInterfaceListener::SendMessage(Payload);
 
         if (Payload == FPayload::CommandLineParsingFinished)
-            NotifyCLArgsSetupFinished();
+            NotifyInterfaceSetupIsFinished();
         else if (Payload == FPayload::AllCommandLineParsingFinished)
-            NotifyAllCLArgsSetupFinished();
+            NotifyAllInterfacesSetupIsFinished();
 
         // else
         //     Log::WarningImportant( "Interface " << Log::FGCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting

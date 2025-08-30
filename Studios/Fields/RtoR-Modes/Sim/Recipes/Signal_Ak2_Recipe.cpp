@@ -33,8 +33,8 @@ namespace Modes {
         return New <SignalBC> (prototype, *A,  *omega);
     }
 
-    void Signal_Ak2_Recipe::NotifyCLArgsSetupFinished() {
-        FInterfaceOwner::NotifyCLArgsSetupFinished();
+    void Signal_Ak2_Recipe::NotifyInterfaceSetupIsFinished() {
+        FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
         const auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 

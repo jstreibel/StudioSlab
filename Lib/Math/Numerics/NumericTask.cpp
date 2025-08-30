@@ -109,6 +109,11 @@ namespace Slab::Math {
 
     size_t NumericTask::getSteps() const { return StepsConcluded; }
 
+    auto NumericTask::GetStepper() const -> Stepper_ptr
+    {
+        return stepper;
+    }
+
     const Core::BenchmarkData &NumericTask::getBenchmarkData() const {
         return *BenchmarkData;
     }

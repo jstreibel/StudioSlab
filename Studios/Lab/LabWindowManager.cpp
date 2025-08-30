@@ -250,35 +250,79 @@ void ShowManagedData(StudioWindowManager& Self)
 
     }
 
-    if (auto AllDataRegistries = Slab::Math::EnumerateAllData(); !AllDataRegistries.empty() && ImGui::CollapsingHeader("Data Registry"))
+    if (const auto AllDataRegistries = Slab::Math::EnumerateAllData(); !AllDataRegistries.empty() && ImGui::CollapsingHeader("Data Registry"))
     {
-        if (ImGui::Button("Prune Data"))
+        if (ImGui::Button("Prune Data")) Slab::Math::FDataRegistry::Prune();
+
+        static int SelectedRow = -1;
+
+        if (ImGui::BeginTable("Volatile Data", 3, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg))
         {
-            Slab::Math::FDataRegistry::Prune();
-        }
-        else
-        {
-            ImGui::NewLine();
-            ImGui::SeparatorText("Registered Data");
-            for (const auto& [Name, Type] : AllDataRegistries)
+            ImGui::TableSetupColumn("State", ImGuiTableColumnFlags_NoHide);
+            ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoHide);
+            ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_NoHide);
+
+
+            ImGui::TableHeadersRow();
+
+            static Slab::Math::FDataRegistry::EntryDescription SelectedRegistry{""};
+            int Row = 0;
+            for (const auto& RegistryDescription : AllDataRegistries)
             {
+                fix Name = RegistryDescription.Name;
+
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
                 auto DataWrap = Slab::Math::FDataRegistry::GetData(Name);
 
-                ImGui::Text("[");
                 if (auto Data = DataWrap.GetData(); Data == nullptr)
                 {
-                    ImGui::SameLine();
                     ImGui::TextColored(ImVec4{0.75f, 0, 0, 1}, "Deleted");
                 }
                 else
                 {
-                    ImGui::SameLine();
                     ImGui::TextColored(ImVec4{0, 0.75, 0, 1}, "Active");
                 }
-                ImGui::SameLine();
-                ImGui::Text("] %s '%s'", Type.c_str(), Name.c_str());
+
+
+                ImGui::TableSetColumnIndex(1);
+                if (bool RowSelected = SelectedRow == Row;
+                    ImGui::Selectable(Name.c_str(), RowSelected,
+                        ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap))
+                {
+                    SelectedRow = Row; // mark which row is selected
+                    SelectedRegistry = RegistryDescription;
+                    ImGui::OpenPopup("Registry Options##DataOptions");
+                }
+
+                ImGui::TableSetColumnIndex(2);
+                ImGui::Text("%s", RegistryDescription.Type.c_str());
+
+                ++Row;
             }
+            if (ImGui::BeginPopup("Registry Options##DataOptions"))
+            {
+                ImGui::Text("Registry Options");
+                ImGui::Separator();
+
+                fix InstanceExists = Slab::Math::FDataManager::Contains(SelectedRegistry);
+                fix Flags = InstanceExists ? ImGuiSelectableFlags_Disabled : ImGuiSelectableFlags_None;
+                if (ImGui::Selectable("Manage##DataOptions", false, Flags))
+                {
+                    fix DataWrap = Slab::Math::FDataRegistry::GetData(SelectedRegistry.Name);
+                    if (fix Data = DataWrap.GetData(); Data != nullptr)
+                        Slab::Math::FDataManager::AddData(Data);
+                }
+                ImGui::EndPopup();
+            }
+            ImGui::EndTable();
         }
+
+
+
+
+
     }
 }
 

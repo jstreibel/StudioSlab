@@ -14,9 +14,6 @@ namespace Slab::Core {
     protected:
         TPointer<FInterface> Interface;
 
-        virtual auto NotifyCLArgsSetupFinished() -> void;
-        virtual auto NotifyAllCLArgsSetupFinished() -> void ;;
-
     public:
         explicit FInterfaceOwner(bool IKnowIMustCallLateStart = false);
 
@@ -31,9 +28,13 @@ namespace Slab::Core {
 
         auto GetInterface() -> TPointer<FInterface>;
 
-        auto GetInterface() const -> TPointer<FInterface>;
+        [[nodiscard]] auto GetInterface() const -> TPointer<FInterface>;
 
         auto SendMessage(FPayload) -> void override;
+
+        virtual auto NotifyInterfaceSetupIsFinished() -> void;
+
+        virtual auto NotifyAllInterfacesSetupIsFinished() -> void ;;
     };
 
 

@@ -31,6 +31,11 @@ set (STUDIO_EXTERNAL_SOURCES
         ../Fields/RtoR-Modes/Sim/SquareWave.cpp
         ../Fields/RtoR-Modes/Sim/BoundaryCondition.cpp
         ../Fields/RtoR-Modes/Sim/Monitor.cpp
+
+        ../Fields/R2toR/LeadingDelta/LeadingDelta.cpp
+        ../Fields/R2toR/LeadingDelta/RingDeltaFunc.cpp
+        ../Fields/R2toR/LeadingDelta/RingDeltaFunc.cu
+        ../Fields/R2toR/LeadingDelta/Monitor.cpp
         )
 
 add_executable( StudioSlab

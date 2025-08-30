@@ -199,8 +199,8 @@ namespace Slab::Core {
         *Log::GetSingleton().pMainStream << Log::Flush;
     }
 
-    void Log::NotifyCLArgsSetupFinished() {
-        FInterfaceOwner::NotifyCLArgsSetupFinished();
+    void Log::NotifyInterfaceSetupIsFinished() {
+        FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
 
 #if !FORCE_VERBOSE

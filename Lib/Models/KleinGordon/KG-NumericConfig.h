@@ -47,7 +47,7 @@ namespace Slab::Models {
 
         [[nodiscard]] auto geth() const -> DevFloat;
 
-        auto NotifyCLArgsSetupFinished() -> void override;
+        auto NotifyInterfaceSetupIsFinished() -> void override;
 
 
     };

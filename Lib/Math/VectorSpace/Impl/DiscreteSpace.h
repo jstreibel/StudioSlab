@@ -5,10 +5,6 @@
 #ifndef V_SHAPE_DISCRETESPACE_H
 #define V_SHAPE_DISCRETESPACE_H
 
-
-#include <utility>
-
-#include "Utils/NativeTypes.h"
 #include "Math/VectorSpace/Algebra/NumericAlgebra.h"
 #include "Core/Tools/Log.h"
 #include "Math/VectorSpace/DimensionMetaData.h"
@@ -31,22 +27,24 @@ namespace Slab::Math {
 
         virtual ~DiscreteSpace();
 
-        auto hostCopy(UInt maxResolution) const -> DiscreteSpaceCPU *;
+        [[nodiscard]] auto hostCopy(UInt maxResolution) const -> DiscreteSpaceCPU *;
 
-        const DimensionMetaData &getMetaData() const { return dimensionMetaData; }
+        [[nodiscard]] const DimensionMetaData &getMetaData() const { return dimensionMetaData; }
 
-        UInt getTotalDiscreteSites() const;
+        [[nodiscard]] UInt getTotalDiscreteSites() const;
+
+        [[nodiscard]] virtual
+        auto IsDataOnGPU() const -> bool { return false; }
+
+        [[nodiscard]] virtual
+        auto getDeviceData() const -> const DeviceVector & { throw Exception("trying to access device data on host Space"); };
+
+        [[nodiscard]] virtual Device GetDevice() const = 0;
 
         virtual
-        auto dataOnGPU() const -> bool { return false; }
+        auto getDeviceData() -> DeviceVector & { throw Exception("trying to access device data on host Space"); };
 
-        virtual
-        auto getDeviceData() const -> const DeviceVector & { throw "trying to access device data on host Space"; };
-
-        virtual
-        auto getDeviceData() -> DeviceVector & { throw "trying to access device data on host Space"; };
-
-        auto getHostData(bool sync = false) const -> const RealArray &;
+        [[nodiscard]] auto getHostData(bool sync = false) const -> const RealArray &;
 
         auto getHostData(bool sync = false) -> RealArray &;
 

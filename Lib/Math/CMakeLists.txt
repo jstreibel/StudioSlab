@@ -144,6 +144,8 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		Function/R2toR/Model/FunctionsCollection/NullFunction.h
 		Numerics/ODE/Steppers/Euler.cpp
 		Numerics/ODE/Steppers/Euler.h
+		Numerics/ODE/Output/Sockets/DummyOutput.cpp
+		Numerics/ODE/Output/Sockets/DummyOutput.h
 )
 
 

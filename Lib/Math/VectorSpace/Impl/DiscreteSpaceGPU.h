@@ -12,8 +12,12 @@
 namespace Slab::Math {
 
 #if USE_CUDA
-class DiscreteSpaceGPU : public DiscreteSpace {
+
+class DiscreteSpaceGPU : public DiscreteSpace
+{
+
 public:
+
     explicit DiscreteSpaceGPU(DimensionMetaData dim);
     ~DiscreteSpaceGPU() override;
 
@@ -27,7 +31,8 @@ public:
 
     auto setToValue(const DiscreteSpace &param) -> void override;
 
-    auto dataOnGPU() const -> bool override;
+    [[nodiscard]] auto IsDataOnGPU() const -> bool override;
+    [[nodiscard]] Device GetDevice() const override;
 
     auto getDeviceData()       ->       DeviceVector & override;
     auto getDeviceData() const -> const DeviceVector & override;
@@ -35,19 +40,23 @@ public:
     void notifyHostIsUpdated();
 
 protected:
+
     void syncHost() const override;
     void upload() override;
 
 private:
+
     bool hostIsUpdated = false;
     RealArray &XHost = data;
     DeviceVector XDev;
 };
+
 #else
+
 class DiscreteSpaceGPU : public DiscreteSpace {
 public:
     DiscreteSpaceGPU(DimensionMetaData dim) : DiscreteSpace(dim){
-        throw "Error instatiating DiscreteSpaceGPU: program compiled with no GPU support.";
+        throw "Error instantiating DiscreteSpaceGPU: program compiled with no GPU support.";
     };
     ~DiscreteSpaceGPU() {};
 

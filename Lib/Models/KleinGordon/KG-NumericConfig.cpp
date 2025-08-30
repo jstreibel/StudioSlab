@@ -28,8 +28,8 @@ namespace Slab::Models {
         return **rdt * **h;
     }
 
-    void FKGNumericConfig::NotifyCLArgsSetupFinished() {
-        DynamicsNumericConfig::NotifyCLArgsSetupFinished();
+    void FKGNumericConfig::NotifyInterfaceSetupIsFinished() {
+        DynamicsNumericConfig::NotifyInterfaceSetupIsFinished();
 
         switch (**dimMode) {
             case 0:

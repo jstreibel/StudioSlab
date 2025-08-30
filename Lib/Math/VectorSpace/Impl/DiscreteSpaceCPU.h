@@ -14,6 +14,8 @@ namespace Slab::Math {
     public:
         explicit DiscreteSpaceCPU(DimensionMetaData dim);
 
+        [[nodiscard]] Device GetDevice() const override { return CPU; };
+
         auto Add(const DiscreteSpace &toi) -> DiscreteSpace & override;
 
         auto StoreAddition(const DiscreteSpace &space1, const DiscreteSpace &space2) -> DiscreteSpace & override;

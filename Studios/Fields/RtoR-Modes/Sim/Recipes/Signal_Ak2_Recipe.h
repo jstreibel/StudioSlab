@@ -28,7 +28,7 @@ namespace Modes {
 
         auto GetBoundary() -> Base::BoundaryConditions_ptr override;
 
-        auto NotifyCLArgsSetupFinished() -> void override;
+        auto NotifyInterfaceSetupIsFinished() -> void override;
     };
 
 } // Modes

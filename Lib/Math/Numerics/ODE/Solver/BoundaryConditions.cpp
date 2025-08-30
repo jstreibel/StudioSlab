@@ -14,6 +14,4 @@ namespace Slab::Math::Base {
     {
         return prototype->Replicate(Name);
     }
-
-
 }

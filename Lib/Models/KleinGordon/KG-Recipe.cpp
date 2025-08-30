@@ -40,9 +40,9 @@ namespace Slab::Models {
         if (bDoRegister) RegisterToManager();
     }
 
-    void FKGOutputOptions::NotifyAllCLArgsSetupFinished()
+    void FKGOutputOptions::NotifyAllInterfacesSetupIsFinished()
     {
-        FInterfaceOwner::NotifyAllCLArgsSetupFinished();
+        FInterfaceOwner::NotifyAllInterfacesSetupIsFinished();
 
         if(*VisualMonitor) {
             StartBackend("GLFW");
@@ -74,14 +74,14 @@ namespace Slab::Models {
     }
 
 
-    void KGRecipe::NotifyAllCLArgsSetupFinished() {
+    void KGRecipe::NotifyAllInterfacesSetupIsFinished() {
         auto nThreads = DeviceConfig.get_nThreads();
         auto N = KGNumericConfig->getN(); // This is good for 2D too because it is computed in stripes.
         if (N % nThreads != 0)
             throw Exception("Bad assertion N%nThreads. Expected 0 got "
                             + ToStr(N % nThreads) + ".");
 
-        FNumericalRecipe::NotifyAllCLArgsSetupFinished();
+        FNumericalRecipe::NotifyAllInterfacesSetupIsFinished();
     }
 
     void KGRecipe::setupForCurrentThread() {

@@ -11,7 +11,7 @@ namespace Slab::Math::RtoR {
             : NumericFunction::NumericFunction(toCopy.N,
                                                  toCopy.xMin,
                                                  toCopy.xMax,
-                                                 toCopy.dev,
+                                                 toCopy.GetDevice(),
                                                  toCopy.laplacianType) {}
 
     NumericFunction::NumericFunction(UInt N, DevFloat xMin, DevFloat xMax, Device dev, LaplacianType laplacianType)

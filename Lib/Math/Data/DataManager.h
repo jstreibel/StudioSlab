@@ -15,10 +15,10 @@
 
 namespace Slab::Math {
 
-    enum DataLocation
+    enum EDataLocation
     {
-        NativeMemory,
-        GPU
+        DataLocation_NativeMemory,
+        DataLocation_GPU
     };
 
     class FDataRegistry final : public Singleton<FDataRegistry>
@@ -38,7 +38,7 @@ namespace Slab::Math {
         -> Vector<EntryDescription>;
 
         static auto
-        AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation)
+        AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, EDataLocation)
         -> TPointer<R2toR::FNumericFunction>;
 
         static FDataWrap GetData(const FDataName&);
@@ -58,6 +58,7 @@ namespace Slab::Math {
         explicit FDataManager() : Singleton("Data Keeper") { }
 
         ~FDataManager() override;
+        static bool Contains(const FDataRegistry::EntryDescription& EntryDescription);
         static void Delete(const TPointer<Data>& Data);
         static TList<TPointer<Data>> GetDataList();
 

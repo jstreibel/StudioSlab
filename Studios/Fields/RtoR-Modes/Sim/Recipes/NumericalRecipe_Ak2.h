@@ -43,7 +43,7 @@ namespace Modes {
 
         TPointer<Base::FunctionT<DevFloat, DevFloat>> GetNonHomogenousTerm() override;
 
-        auto NotifyCLArgsSetupFinished() -> void override;
+        auto NotifyInterfaceSetupIsFinished() -> void override;
     };
 
 } // Modes

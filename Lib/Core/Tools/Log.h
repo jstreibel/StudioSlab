@@ -172,7 +172,7 @@ namespace Slab::Core {
 
         static auto FlushAll() -> void;
 
-        auto NotifyCLArgsSetupFinished() -> void override;
+        auto NotifyInterfaceSetupIsFinished() -> void override;
 
     };
 

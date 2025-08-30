@@ -24,9 +24,6 @@ namespace Slab::Math::Base {
     {
         TPointer<DiscreteSpace> space;
 
-    protected:
-        Device dev=CPU;
-
     public:
         using NumericAlgebra<Base::NumericFunction<InCategory, DevFloat>>::operator=;
         using NumericAlgebra<NumericFunction>::operator+=;
@@ -35,9 +32,11 @@ namespace Slab::Math::Base {
         typedef FunctionT<InCategory, OutCategory> MyBase;
         typedef std::shared_ptr<NumericFunction<InCategory,OutCategory>> Ptr;
 
-        Str generalName() const override { return "general discrete"; }
+        [[nodiscard]] Device GetDevice() const { return space->GetDevice(); };
 
-        DataType get_data_type() const override {
+        [[nodiscard]] Str generalName() const override { return "general discrete"; }
+
+        [[nodiscard]] DataType get_data_type() const override {
             DataType type = "f:?↦ℝ";
 
             if(space == nullptr) return type;
@@ -48,7 +47,7 @@ namespace Slab::Math::Base {
             return type;
         }
 
-        NumericFunction(DimensionMetaData dim, Device dev) : MyBase(nullptr, true), Data(generalName()), dev(dev) {
+        NumericFunction(DimensionMetaData dim, Device dev) : MyBase(nullptr, true), Data(generalName()) {
             switch(dev){
                 case Device::CPU:
                     space = New<DiscreteSpaceCPU>(dim);
@@ -64,12 +63,12 @@ namespace Slab::Math::Base {
         };
 
         NumericFunction(const NumericFunction& to_clone)
-        : NumericFunction(to_clone.space.get()->getMetaData(), to_clone.dev) {
+        : NumericFunction(to_clone.space.get()->getMetaData(), to_clone.GetDevice()) {
 
         }
 
 
-        virtual ~NumericFunction() = default;
+        ~NumericFunction() override = default;
 
         virtual TPointer<NumericFunction> CloneWithSize(UInt N) const { NOT_IMPLEMENTED }
         virtual NumericFunction &Set(const MyBase &func) = 0;
@@ -132,6 +131,7 @@ namespace Slab::Math::Base {
         }
 
         auto getSpace()       ->       DiscreteSpace& { return *space; }
+        [[nodiscard]]
         auto getSpace() const -> const DiscreteSpace& { return *space; }
 
     };

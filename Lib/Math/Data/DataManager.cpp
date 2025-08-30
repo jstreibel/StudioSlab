@@ -31,7 +31,7 @@ namespace Slab::Math {
         return name;
     }
 
-    TPointer<R2toR::FNumericFunction> FDataRegistry::AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation loc) {
+    TPointer<R2toR::FNumericFunction> FDataRegistry::AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, EDataLocation loc) {
         fix hx = r.x/(DevFloat)N;
         fix hy = r.y/(DevFloat)M;
 
@@ -117,6 +117,18 @@ namespace Slab::Math {
 
     FDataManager::~FDataManager() = default;
 
+    bool FDataManager::Contains(const FDataRegistry::EntryDescription& EntryDescription)
+    {
+        auto &DataList = GetInstance().DataList;
+
+        fix Result = std::ranges::find_if(DataList, [&EntryDescription](const auto& Entry)
+        {
+            return Entry->get_data_name() == EntryDescription.Name;
+        });
+
+        return Result != DataList.end();
+    }
+
     void FDataManager::Delete(const TPointer<Data>& Data)
     {
         auto &DataList = GetInstance().DataList;
@@ -132,7 +144,7 @@ namespace Slab::Math {
     {
         auto &DataList = FDataManager::GetInstance().DataList;
 
-        if (Contains(DataList, Data)) return;
+        if (Slab::Contains(DataList, Data)) return;
 
         DataList.push_back(Data);
     }

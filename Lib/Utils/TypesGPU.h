@@ -7,14 +7,6 @@
 
 #include "NativeTypes.h"
 
-namespace Slab {
-    enum Device {
-        CPU = 1,
-        GPU = 2,
-        UNKNOWN = 3
-    };
-}
-
 #if USE_CUDA == true
 
 // #define __forceinline__ __inline__ __attribute__((always_inline))

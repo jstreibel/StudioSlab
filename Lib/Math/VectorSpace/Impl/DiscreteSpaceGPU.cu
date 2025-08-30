@@ -144,12 +144,14 @@ namespace Slab::Math {
         hostIsUpdated = true;
     }
 
-    bool DiscreteSpaceGPU::dataOnGPU() const {
+    bool DiscreteSpaceGPU::IsDataOnGPU() const {
         return true;
     }
 
-
-
+    Device DiscreteSpaceGPU::GetDevice() const
+    {
+        return GPU;
+    }
 }
 
 

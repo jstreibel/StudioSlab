@@ -36,8 +36,8 @@ namespace Slab::Models {
         t->SetValue(t_max);
     }
 
-    void DynamicsNumericConfig::NotifyCLArgsSetupFinished() {
-        Math::FNumericConfig::NotifyCLArgsSetupFinished();
+    void DynamicsNumericConfig::NotifyInterfaceSetupIsFinished() {
+        Math::FNumericConfig::NotifyInterfaceSetupIsFinished();
 
         (void)Get_t();
     }

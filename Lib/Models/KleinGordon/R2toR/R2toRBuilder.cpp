@@ -120,11 +120,11 @@ namespace Slab::Models::KGR2toR {
         fix h = KGNumericConfig->geth();
 
         if (DeviceConfig == CPU)
-            return DataAlloc<R2toR::NumericFunction_CPU>("IntegrationData [CPU]", N, N, xLeft, xLeft, h, h);
+            return DataAlloc<R2toR::NumericFunction_CPU>("IntegrationData@CPU", N, N, xLeft, xLeft, h, h);
 
 #if USE_CUDA
         else if (DeviceConfig == Device::GPU)
-            return New<R2toR::NumericFunction_GPU>(N, xLeft, h);
+            return DataAlloc<R2toR::NumericFunction_GPU>("IntegrationData@GPU", N, xLeft, h);
 #endif
 
         throw Exception("Error while instantiating Field: device not recognized.");

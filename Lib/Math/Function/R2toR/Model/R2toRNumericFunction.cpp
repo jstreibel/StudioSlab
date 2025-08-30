@@ -19,7 +19,7 @@ namespace Slab::Math {
 // Created by joao on 30/09/2019.
     R2toR::FNumericFunction::FNumericFunction(UInt N, UInt M, DevFloat xMin, DevFloat yMin, DevFloat hx, DevFloat hy, Device dev)
             : NumericFunctionBase(DimensionMetaData({N, M}, {hx, hy}), dev), N(N), M(M), xMin(xMin),
-              xMax(xMin + (DevFloat) N * hx), yMin(yMin), yMax(yMin + (DevFloat) M * hy), hx(hx), hy(hy) {}
+              xMax(xMin + static_cast<DevFloat>(N) * hx), yMin(yMin), yMax(yMin + static_cast<DevFloat>(M) * hy), hx(hx), hy(hy) {}
 
     // R2toR::NumericFunction::NumericFunction(const NumericConfig &p, Device dev)
     //         : R2toR::NumericFunction(p.getN(), p.getN(), p.getxMin(), p.getxMin(), p.geth(), p.geth(), dev) {}
@@ -133,7 +133,8 @@ namespace Slab::Math {
     }
 
     Str R2toR::FNumericFunction::generalName() const {
-        return Base::NumericFunction<Real2D, DevFloat>::generalName() + " 2D " + (dev == GPU ? "GPU" : "CPU");
+        auto IsOnGPU = this->getSpace().IsDataOnGPU();
+        return Base::NumericFunction<Real2D, DevFloat>::generalName() + " 2D " + (IsOnGPU ? "GPU" : "CPU");
     }
 
     bool R2toR::FNumericFunction::domainContainsPoint(Real2D x) const {

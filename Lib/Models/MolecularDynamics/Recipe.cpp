@@ -77,8 +77,8 @@ namespace Slab::Models::MolecularDynamics {
         throw Exception(Str("Unknown particle dynamics model '") + ToStr(*model) + "'.");
     }
 
-    void Recipe::NotifyCLArgsSetupFinished() {
-        FInterfaceOwner::NotifyCLArgsSetupFinished();
+    void Recipe::NotifyInterfaceSetupIsFinished() {
+        FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
 
