@@ -90,6 +90,92 @@ namespace Lab::Blueprints {
         for (auto& Val : m_NodeTouchTime | std::views::values) if (Val > 0.0f) Val -= DeltaTime;
     }
 
+    bool FBlueprintRenderer::NotifyRender(const Graphics::FPlatformWindow&) {
+
+        constexpr auto WindowFlags = 0;
+
+        ImGui::SetNextWindowPos(ImVec2(100, 100), ImGuiCond_Once);
+        ImGui::SetNextWindowSize({2400, 1350}, ImGuiCond_Once);
+        const auto windowBorderSize = ImGui::GetStyle().WindowBorderSize;
+        const auto windowRounding   = ImGui::GetStyle().WindowRounding;
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+
+        ImGui::Begin("Content", nullptr, WindowFlags);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, windowBorderSize);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, windowRounding);
+
+        // "OnFrame(io.DeltaTime);":
+        {
+            UpdateTouch();
+
+            // ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
+
+            Editor::SetCurrentEditor(m_Editor);
+
+            Splitter(true, 4.0f, &MyState.LeftPaneWidth, &MyState.RightPaneWidth, 50.0f, 50.0f);
+
+            ShowLeftPane(MyState.LeftPaneWidth - 4.0f);
+
+            ImGui::SameLine(0.0f, 12.0f);
+
+            /**************************************************/
+            /**************************************************/
+            /****** ALGUMAS DEFINICOES ************************/
+            if(Blueprint == nullptr) NOT_IMPLEMENTED
+
+            auto &m_Nodes = Blueprint->GetNodes();
+            auto &m_Links = Blueprint->GetLinks();
+            /**************************************************/
+            /**************************************************/
+            /**************************************************/
+
+            Editor::Begin("Node editor");
+            {
+                const auto CursorTopLeft = ImGui::GetCursorScreenPos();
+
+                for (auto &node: m_Nodes) {
+                    switch (node.Type)
+                    {
+                    case NodeType::Blueprint:
+                    case NodeType::Simple:
+                        HandleBlueprintOrSimpleNodeType(node);
+                        break;
+                    case NodeType::Tree:
+                        HandleTreeNodeType(node);
+                        break;
+                    case NodeType::Houdini:
+                        HandleHoudiniNodeType(node);
+                        break;
+                    case NodeType::Comment:
+                        HandleCommentNodeType(node);
+                        break;
+                    }
+                }
+
+                // Handle links
+                for (auto &link: m_Links) Editor::Link(link.ID, link.StartPinID, link.EndPinID, link.Color, 2.0f);
+
+                // Handle node creation
+                HandleNodeCreation();
+
+                ImGui::SetCursorScreenPos(CursorTopLeft);
+            }
+
+            ShowContextMenus();
+
+            Editor::End();
+
+            if (m_ShowOrdinals) ShowOrdinals();
+        }
+
+        ImGui::PopStyleVar(2);
+        ImGui::End();
+        ImGui::PopStyleVar(2);
+
+        return true;
+    }
+
     void FBlueprintRenderer::HandleNodeCreation()
     {
         auto FindPin = [this](NodeEditor::PinId id)  { return Blueprint->FindPin(id); };
@@ -341,13 +427,11 @@ namespace Lab::Blueprints {
             }
         }
         ImGui::Spring();
-        if (ImGui::Button("Edit Style"))
-            showStyleEditor = true;
+        if constexpr (false) if (ImGui::Button("Edit Style")) showStyleEditor = true;
         ImGui::EndHorizontal();
-        ImGui::Checkbox("Show Ordinals", &m_ShowOrdinals);
+        if constexpr (false) ImGui::Checkbox("Show Ordinals", &m_ShowOrdinals);
 
-        if (showStyleEditor)
-            ShowStyleEditor(&showStyleEditor);
+        if (showStyleEditor) ShowStyleEditor(&showStyleEditor);
 
         std::vector<Editor::NodeId> selectedNodes;
         std::vector<Editor::LinkId> selectedLinks;

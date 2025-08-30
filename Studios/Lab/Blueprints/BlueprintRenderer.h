@@ -64,8 +64,6 @@ namespace Lab::Blueprints {
         void UpdateTouch();
 
         void HandleNodeCreation();
-        void DoDrawing();
-
         static void ShowOrdinals();
 
         void HandleBlueprintOrSimpleNodeType(FBlueprintNode&);
