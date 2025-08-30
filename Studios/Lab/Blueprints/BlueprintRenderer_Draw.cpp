@@ -79,36 +79,23 @@ namespace Lab::Blueprints {
             {
                 const auto CursorTopLeft = ImGui::GetCursorScreenPos();
 
-                // Handle 'Blueprint' and 'Simple' node types.
                 for (auto &node: m_Nodes) {
-                    if (node.Type != NodeType::Blueprint && node.Type != NodeType::Simple)
-                        continue;
-
-                    HandleBlueprintOrSimpleNodeType(node);
-                }
-
-                // Handle 'Tree' node type
-                for (auto &node: m_Nodes) {
-                    if (node.Type != NodeType::Tree)
-                        continue;
-
-                    HandleTreeNodeType(node);
-                }
-
-                // Handle 'Houdini' node type
-                for (auto &node: m_Nodes) {
-                    if (node.Type != NodeType::Houdini)
-                        continue;
-
-                    HandleHoudiniNodeType(node);
-                }
-
-                // Handle 'Comment' node type
-                for (auto &node: m_Nodes) {
-                    if (node.Type != NodeType::Comment)
-                        continue;
-
-                    HandleCommentNodeType(node);
+                    switch (node.Type)
+                    {
+                    case NodeType::Blueprint:
+                    case NodeType::Simple:
+                        HandleBlueprintOrSimpleNodeType(node);
+                        break;
+                    case NodeType::Tree:
+                        HandleTreeNodeType(node);
+                        break;
+                    case NodeType::Houdini:
+                        HandleHoudiniNodeType(node);
+                        break;
+                    case NodeType::Comment:
+                        HandleCommentNodeType(node);
+                        break;
+                    }
                 }
 
                 // Handle links
@@ -172,30 +159,30 @@ namespace Lab::Blueprints {
         drawList->PopClipRect();
     }
 
-    void FBlueprintRenderer::HandleBlueprintOrSimpleNodeType(FBlueprintNode& node)
+    void FBlueprintRenderer::HandleBlueprintOrSimpleNodeType(FBlueprintNode& Node)
     {
-        if (node.Type != NodeType::Blueprint && node.Type != NodeType::Simple)
+        if (Node.Type != NodeType::Blueprint && Node.Type != NodeType::Simple)
             return;
 
-        const auto isSimple = node.Type == NodeType::Simple;
+        const auto isSimple = Node.Type == NodeType::Simple;
 
         bool hasOutputDelegates = false;
-        for (auto &output: node.Outputs) if (output.Type == PinType::Delegate) hasOutputDelegates = true;
+        for (auto &output: Node.Outputs) if (output.Type == PinType::Delegate) hasOutputDelegates = true;
 
         const auto CanCreateLink = FBlueprint::CanCreateLink;
         const auto IsPinLinked = [this](const Editor::PinId id) { return Blueprint->IsPinLinked(id); };
 
-        Builder.Begin(node.ID);
+        Builder.Begin(Node.ID);
         if (!isSimple) {
-            Builder.Header(node.Color);
+            Builder.Header(Node.Color);
             ImGui::Spring(0);
-            ImGui::TextUnformatted(node.Name.c_str());
+            ImGui::TextUnformatted(Node.Name.c_str());
             ImGui::Spring(1);
             ImGui::Dummy(ImVec2(0, 28));
             if (hasOutputDelegates) {
                 ImGui::BeginVertical("delegates", ImVec2(0, 28));
                 ImGui::Spring(1, 0);
-                for (auto &output: node.Outputs) {
+                for (auto &output: Node.Outputs) {
                     if (output.Type != PinType::Delegate)
                         continue;
 
@@ -228,7 +215,7 @@ namespace Lab::Blueprints {
             Builder.EndHeader();
         }
 
-        for (auto &input: node.Inputs) {
+        for (auto &input: Node.Inputs) {
             auto alpha = ImGui::GetStyle().Alpha;
             if (MyState.NewLinkPin && !CanCreateLink(MyState.NewLinkPin, &input) && &input != MyState.NewLinkPin)
                 alpha = alpha * (48.0f / 255.0f);
@@ -253,11 +240,11 @@ namespace Lab::Blueprints {
             Builder.Middle();
 
             ImGui::Spring(1, 0);
-            ImGui::TextUnformatted(node.Name.c_str());
+            ImGui::TextUnformatted(Node.Name.c_str());
             ImGui::Spring(1, 0);
         }
 
-        for (auto &output: node.Outputs) {
+        for (auto &output: Node.Outputs) {
             if (!isSimple && output.Type == PinType::Delegate)
                 continue;
 
@@ -663,7 +650,10 @@ namespace Lab::Blueprints {
         if      (Editor::ShowNodeContextMenu(&MyState.ContextNodeId)) ImGui::OpenPopup("Node Context Menu");
         else if (Editor::ShowPinContextMenu (&MyState.ContextPinId))  ImGui::OpenPopup("Pin Context Menu");
         else if (Editor::ShowLinkContextMenu(&MyState.ContextLinkId)) ImGui::OpenPopup("Link Context Menu");
-        else if (Editor::ShowBackgroundContextMenu())       { ImGui::OpenPopup("Create New Node"); MyState.NewNodeLinkPin = nullptr; }
+        else if (Editor::ShowBackgroundContextMenu())
+        {
+            ImGui::OpenPopup("Create New Node"); MyState.NewNodeLinkPin = nullptr;
+        }
         Editor::Resume();
 
         Editor::Suspend();

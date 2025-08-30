@@ -103,6 +103,7 @@ void FSimulationManager::CreateBlueprint(const Slab::Graphics::FPlatformWindow& 
     BlueprintRenderer = Slab::New<FBlueprintRenderer>(Blueprint, ImGuiContext);
     AddResponder(BlueprintRenderer);
 
+    Blueprint->SetupDemo();
     const auto Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
 
     FBlueprintNode* Node;
