@@ -254,10 +254,15 @@ namespace Slab::Graphics {
             if (CurrentDepth < MaxDepth-1)
                 AddItem(CurrentDepth+1, Item);
             else {
-                auto action = Item.Action;
+                const auto Action = Item.Action;
                 for(const auto & [Label, Shortcut, Selected, Enabled] : Item.SubItems) {
+                    if (Label == MainMenuSeparator)
+                    {
+                        ImGui::Separator();
+                        continue;
+                    }
                     if (ImGui::MenuItem(Label.c_str(), Shortcut.c_str(), Selected, Enabled))
-                        action(Label);
+                        Action(Label);
                 }
             }
 

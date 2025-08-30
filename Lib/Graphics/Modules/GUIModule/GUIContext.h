@@ -13,8 +13,9 @@ namespace Slab::Graphics {
 
     using MainMenuAction = std::function<void(Str leaf_entry)>;
     using MainMenuLocation = Vector<Str>;
+    constexpr static auto MainMenuSeparator = "<-sep->";
     struct MainMenuLeafEntry {
-        Str label;
+        Str Label = MainMenuSeparator;
         Str shortcut;
         bool selected=false;
         bool enabled=true;
