@@ -27,7 +27,7 @@ namespace Slab::Models::KGRtoR {
     , step_end  ((int)(t_end  /t_max * (DevFloat)max_steps))
     {    }
 
-    void Slab::Models::KGRtoR::CenterTimeDFTOutput::HandleOutput(const Slab::Math::OutputPacket &packet) {
+    void Slab::Models::KGRtoR::CenterTimeDFTOutput::HandleOutput(const Slab::Math::FOutputPacket &packet) {
         assert(x_measure.size() == dataset.size());
 
         fix curr_step = packet.GetSteps();
@@ -50,7 +50,7 @@ namespace Slab::Models::KGRtoR {
         return FOutputChannel::ComputeNextRecStep(currStep);
     }
 
-    bool CenterTimeDFTOutput::NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
+    bool CenterTimeDFTOutput::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
         FOutputChannel::NotifyIntegrationHasFinished(theVeryLastOutputInformation);
         using DFT = Slab::Math::RtoR::DFT;
 

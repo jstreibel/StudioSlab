@@ -21,7 +21,7 @@ namespace Slab::Models::MolecularDynamics {
         NewtonMechanicsModel MechanicsModel;
 
         Graphics::PointContainer q, p;
-        TPointer<MoleculesState> state;
+        TPointer<FMoleculesState> State;
         CountType currStep=0;
 
         DevFloat dt;

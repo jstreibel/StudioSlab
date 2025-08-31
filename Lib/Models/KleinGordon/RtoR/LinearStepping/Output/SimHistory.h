@@ -33,13 +33,13 @@ namespace Slab::Models::KGRtoR {
         const DevFloat Max_t;
         const int N_t, N_x;
 
-        auto HandleOutput(const OutputPacket &Packet) -> void override;
+        auto HandleOutput(const FOutputPacket &Packet) -> void override;
 
     private:
         R2toR::FNumericFunction_ptr Data;
         IntVector Timesteps;
 
-        virtual auto Transfer(const OutputPacket &Packet, ValarrayWrapper <DevFloat> &DataOut) -> void;
+        virtual auto Transfer(const FOutputPacket &Packet, ValarrayWrapper <DevFloat> &DataOut) -> void;
 
     };
 

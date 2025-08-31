@@ -110,7 +110,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     }
 
     auto Builder::buildOpenGLOutput() -> Models::KGR2toR::OutputOpenGL * {
-        return new OutGL(KGNumericConfig->getn(), ringDelta1);
+        return new OutGL(KGNumericConfig->Get_n(), ringDelta1);
     }
 
     Str Builder::SuggestFileName() const {

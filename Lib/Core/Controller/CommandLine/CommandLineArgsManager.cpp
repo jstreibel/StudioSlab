@@ -17,7 +17,7 @@ namespace Slab::Core {
     void CLArgsManager::Parse(int argc, const char **argv) {
         Log::Info() << "CLArgsManager parsing command line options." << Log::Flush;
 
-        CLOptionsDescription allOptions("Pendulum");
+        CLOptionsDescription allOptions("StudioSlab");
 
         allOptions.add_options("General")("help", "Print this help.");
 
@@ -39,21 +39,21 @@ namespace Slab::Core {
         Log::Info() << "CLArgsManager finished parsing command line options." << Log::Flush;
     }
 
-    auto CLArgsManager::BuildOptionsDescription(const FInterface &anInterface, CLOptionsDescription &opts) -> void {
-        auto desc = anInterface.GetGeneralDescription();
-        auto name = anInterface.GetName() + (desc != "" ? Str(" (") + desc + ")" : "");
+    auto CLArgsManager::BuildOptionsDescription(const FInterface &Interface, CLOptionsDescription &Opts) -> void {
+        fix Desc = Interface.GetGeneralDescription();
+        fix Name = Interface.GetName() + (Desc != "" ? Str(" (") + Desc + ")" : "");
 
-        auto group = opts.add_options(name);
+        auto Group = Opts.add_options(Name);
 
-        auto paramMap = anInterface.GetParameters();
+        auto ParamMap = Interface.GetParameters();
 
-        for (const auto p: paramMap)
+        for (const auto Param: ParamMap)
             try {
-                p->AddToCommandLineOptionsGroup(group);
+                Param->AddToCommandLineOptionsGroup(Group);
             }
             catch (cxxopts::exceptions::option_already_exists &e) {
-                fix same = FInterfaceManager::GetInstance().GetParameter(p->GetCommandLineArgumentName());
-                Log::Error() << "Couldn't add CLI option '" << p->GetFullCommandLineName() << "' (" << p->GetDescription()
+                fix same = FInterfaceManager::GetInstance().GetParameter(Param->GetCommandLineArgumentName());
+                Log::Error() << "Couldn't add CLI option '" << Param->GetFullCommandLineName() << "' (" << Param->GetDescription()
                              << "): option already exists as '"
                              << same->GetFullCommandLineName() << "' (" << same->GetDescription() << ")." << Log::Flush;
                 throw e;

@@ -5,7 +5,7 @@
 #include "MoleculesState.h"
 
 namespace Slab::Models::MolecularDynamics {
-    auto MoleculesState::category() const -> Str {
+    auto FMoleculesState::category() const -> Str {
         return "2nd-order|R->R3N";
     }
 } // Slab::Models::MolecularDynamics

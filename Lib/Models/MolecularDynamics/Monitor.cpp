@@ -103,12 +103,12 @@ namespace Slab::Models::MolecularDynamics {
         molShape.setOrigin(CUTOFF_RADIUS, CUTOFF_RADIUS);
     }
 
-    void Monitor::HandleOutput(const Math::OutputPacket &packet) {    }
+    void Monitor::HandleOutput(const Math::FOutputPacket &packet) {    }
 
     void Monitor::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         // Window::draw();
 
-        auto state = LastPacket.GetNakedStateData<MoleculesState>();
+        auto state = LastPacket.GetNakedStateData<FMoleculesState>();
         auto v_q = state->first();
         auto v_p = state->second();
 

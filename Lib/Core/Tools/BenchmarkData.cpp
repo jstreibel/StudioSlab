@@ -18,16 +18,16 @@ namespace Slab::Core {
 // #define nClasses (1 + (lastClass-firstClass) / classInterval) // +1 pra sobras
 #define classInterval ((lastClass-firstClass) / nClasses)
 
-    BenchmarkData::BenchmarkData(CountType reserveMemory) {
+    FBenchmarkData::FBenchmarkData(CountType reserveMemory) {
         Measures.reserve(reserveMemory);
         Log::Status() << "BenchmarkData started." << Log::Flush;
     }
 
-    BenchmarkData::~BenchmarkData() = default;
+    FBenchmarkData::~FBenchmarkData() = default;
 
-    void BenchmarkData::StartMeasure() { Timer = CPUTimer(); }
+    void FBenchmarkData::StartMeasure() { Timer = CPUTimer(); }
 
-    void BenchmarkData::StoreMeasure(int nSteps) {
+    void FBenchmarkData::StoreMeasure(int nSteps) {
         Timer.stop();
 
         const auto measure = Timer.elapsed().wall / nSteps;
@@ -40,7 +40,7 @@ namespace Slab::Core {
          */
     }
 
-    auto BenchmarkData::GetAverage() const -> Nanosecond {
+    auto FBenchmarkData::GetAverage() const -> Nanosecond {
         Nanosecond sum = 0;
 
         for (auto v: Measures) sum += v;
@@ -50,13 +50,13 @@ namespace Slab::Core {
         return count > 0 ? sum / (Nanosecond)count : 0;
     }
 
-    void BenchmarkData::Print(OStream &out) const {
+    void FBenchmarkData::Print(OStream &out) const {
             const auto avg = long((DevFloat)GetAverage() * 1e-3);
 
             out << "Histogram measured average time: " << avg << " μs/step.";
     }
 
-    OStream &operator<<(OStream &os, const BenchmarkData &hist) {
+    OStream &operator<<(OStream &os, const FBenchmarkData &hist) {
 
         hist.Print(os);
 

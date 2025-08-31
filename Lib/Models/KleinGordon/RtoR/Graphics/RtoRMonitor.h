@@ -54,7 +54,7 @@ namespace Slab::Models::KGRtoR {
         void UpdateSFTHistoryGraph();
 
     protected:
-        void HandleOutput(const OutputPacket &outInfo) override;
+        void HandleOutput(const FOutputPacket &outInfo) override;
 
     public:
         Monitor(const TPointer<FKGNumericConfig> &params,

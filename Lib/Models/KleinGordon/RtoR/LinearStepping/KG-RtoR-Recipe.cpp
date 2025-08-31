@@ -61,7 +61,7 @@ namespace Slab::Models::KGRtoR {
     public:
         explicit Filter1D(DimensionMetaData dim) : dim(std::move(dim)) {}
 
-        auto operator()(const OutputPacket &outputInfo) -> DiscreteSpacePair override {
+        auto operator()(const FOutputPacket &outputInfo) -> DiscreteSpacePair override {
             auto nakedData = outputInfo.GetNakedStateData<KGRtoR::EquationState>();
 
             auto N_new = dim.getN(0);
@@ -104,7 +104,7 @@ namespace Slab::Models::KGRtoR {
         const FKGNumericConfig &p = dynamic_cast<FKGNumericConfig&>(*NumericConfig);
 
         fix t = p.Get_t();
-        fix max_steps = p.getn();
+        fix max_steps = p.Get_n();
         fix N = static_cast<DevFloat>(p.getN());
         fix L = p.GetL();
         fix xMin = p.Get_xMin();
@@ -260,7 +260,7 @@ namespace Slab::Models::KGRtoR {
         TimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, t_start, t_end};
 
         fix &conf = *KGNumericConfig;
-        return Slab::New<CenterTimeDFTOutput>(conf.Get_t(), conf.getn(), dftConfig);
+        return Slab::New<CenterTimeDFTOutput>(conf.Get_t(), conf.Get_n(), dftConfig);
     }
 
     RtoR::NumericFunction_ptr FKGRtoR_Recipe::newFunctionArbitrary() const {

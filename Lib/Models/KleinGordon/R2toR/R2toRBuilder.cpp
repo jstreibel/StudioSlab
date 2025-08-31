@@ -108,7 +108,7 @@ namespace Slab::Models::KGR2toR {
 
             sockets.emplace_back(glOut);
         }
-        else sockets.emplace_back(New<OutputConsoleMonitor>(KGNumericConfig->getn()));
+        else sockets.emplace_back(New<OutputConsoleMonitor>(KGNumericConfig->Get_n()));
 
         return sockets;
 
@@ -143,7 +143,7 @@ namespace Slab::Models::KGR2toR {
     auto Builder::buildOpenGLOutput() -> OutputOpenGL * {
         // t_max, max_steps, x_min, x_max, y_min, y_max
         IN conf = *KGNumericConfig;
-        return new OutputOpenGL(conf.getn());
+        return new OutputOpenGL(conf.Get_n());
     }
 
     auto Builder::newFieldState() -> R2toR::EquationState_ptr {

@@ -163,7 +163,7 @@ void ShowJobs()
             {
                 try
                 {
-                    const auto NumericTask = dynamic_cast<Slab::Math::NumericTask*>(Task.get());
+                    const auto NumericTask = dynamic_cast<Slab::Math::FNumericTask*>(Task.get());
                     fix Progress = NumericTask->GetProgress();
                     ImGui::SameLine();
                     ImGui::ProgressBar(Progress);

@@ -17,36 +17,36 @@ const auto FORCE_INITIAL_OUTPUT = true;
 
 namespace Slab::Math {
 
-    class NumericTask final : public Core::FTask {
+    class FNumericTask final : public Core::FTask {
         TPointer<Base::FNumericalRecipe> Recipe;
 
         UInt TotalSteps;
         UInt StepsConcluded;
 
-        Stepper_ptr stepper;
+        FStepper_ptr Stepper;
         TPointer<FOutputManager> OutputManager;
 
         std::atomic<bool> forceStopFlag = false;
 
-        TPointer<Core::BenchmarkData> BenchmarkData;
+        TPointer<Core::FBenchmarkData> BenchmarkData;
 
-        void output(bool force = false);
+        void Output(bool force = false);
 
-        OutputPacket getOutputInfo();
+        FOutputPacket GetOutputInfo();
 
-        auto _cycle(size_t nCycles) -> bool;
+        auto Cycle(size_t nCycles) -> bool;
 
-        auto _cycleUntilOutputOrFinish() -> bool;
+        auto CycleUntilOutputOrFinish() -> bool;
 
     protected:
         Core::ETaskStatus Run() override;
     public:
-        explicit NumericTask(const TPointer<Base::FNumericalRecipe> &recipe, bool pre_init=true);
+        explicit FNumericTask(const TPointer<Base::FNumericalRecipe> &recipe, bool pre_init=true);
 
-        ~NumericTask() override;
+        ~FNumericTask() override;
 
         void Init();
-        [[nodiscard]] auto isInitialized() const -> bool;
+        [[nodiscard]] auto IsInitialized() const -> bool;
 
         void Abort() override;
 
@@ -61,11 +61,11 @@ namespace Slab::Math {
         [[nodiscard]] TPointer<const Base::FNumericalRecipe> GetRecipe() const;
         TPointer<Base::FNumericalRecipe> GetRecipe();
 
-        [[nodiscard]] auto getSteps() const -> size_t;
+        [[nodiscard]] auto GetSteps() const -> size_t;
 
-        [[nodiscard]] auto GetStepper() const -> Stepper_ptr;
+        [[nodiscard]] auto GetStepper() const -> FStepper_ptr;
 
-        [[nodiscard]] auto getBenchmarkData() const -> const Core::BenchmarkData &;
+        [[nodiscard]] auto GetBenchmarkData() const -> const Core::FBenchmarkData &;
         [[nodiscard]] float GetProgress() const;
     };
 

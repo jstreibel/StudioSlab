@@ -24,13 +24,13 @@ namespace Slab::Models::KGRtoR {
         int step_start, step_end;
 
     protected:
-        auto HandleOutput(const Math::OutputPacket &packet) -> void override;
+        auto HandleOutput(const Math::FOutputPacket &packet) -> void override;
 
     public:
         auto ComputeNextRecStep(UInt currStep) -> size_t override;
 
     public:
-        auto NotifyIntegrationHasFinished(const Math::OutputPacket &theVeryLastOutputInformation) -> bool override;
+        auto NotifyIntegrationHasFinished(const Math::FOutputPacket &theVeryLastOutputInformation) -> bool override;
 
     public:
         CenterTimeDFTOutput(DevFloat t_max, CountType max_steps, TimeDFTOutputConfig timeDFTSnapshotConfig);

@@ -10,26 +10,26 @@ namespace Slab::Math {
 
     using Core::Log;
 
-    NumericTask::NumericTask(const TPointer <Base::FNumericalRecipe> &recipe, const bool pre_init)
+    FNumericTask::FNumericTask(const TPointer <Base::FNumericalRecipe> &recipe, const bool pre_init)
     : FTask("Numeric Integration")
     , Recipe(recipe)
     , TotalSteps(0)
     , StepsConcluded(0)
-    , stepper(nullptr) {
+    , Stepper(nullptr) {
         if (pre_init) Init();
     }
 
-    NumericTask::~NumericTask() {
+    FNumericTask::~FNumericTask() {
         Log::Note() << "Avg. integration time: " << BenchmarkData << Log::Flush;
     }
 
-    void NumericTask::Init() {
-        if (isInitialized()) { throw Exception("Numeric task already initialized"); }
+    void FNumericTask::Init() {
+        if (IsInitialized()) { throw Exception("Numeric task already initialized"); }
 
-        TotalSteps = Recipe->GetNumericConfig()->getn();
+        TotalSteps = Recipe->GetNumericConfig()->Get_n();
         StepsConcluded = 0;
-        stepper = Recipe->buildStepper();
-        BenchmarkData = New<Core::BenchmarkData>(TotalSteps/100);
+        Stepper = Recipe->BuildStepper();
+        BenchmarkData = New<Core::FBenchmarkData>(TotalSteps/100);
 
         if (OutputManager == nullptr)
         {
@@ -59,36 +59,36 @@ namespace Slab::Math {
         }
 #endif
 
-        this->output(FORCE_INITIAL_OUTPUT);
+        this->Output(FORCE_INITIAL_OUTPUT);
     }
 
-    auto NumericTask::isInitialized() const -> bool {
-        return stepper != nullptr;
+    auto FNumericTask::IsInitialized() const -> bool {
+        return Stepper != nullptr;
     }
 
-    OutputPacket NumericTask::getOutputInfo() {
-        auto currentState = stepper->GetCurrentState();
+    FOutputPacket FNumericTask::GetOutputInfo() {
+        auto currentState = Stepper->GetCurrentState();
 
         return {currentState, StepsConcluded};
     }
 
-    bool NumericTask::_cycle(size_t nCycles) {
+    bool FNumericTask::Cycle(size_t nCycles) {
         if(forceStopFlag) return false;
 
         BenchmarkData->StartMeasure();
-        stepper->Step(nCycles);
+        Stepper->Step(nCycles);
         BenchmarkData->StoreMeasure(static_cast<int>(nCycles));
 
         StepsConcluded += nCycles;
 
         fix forceOutput = StepsConcluded >= TotalSteps;
 
-        output(forceOutput);
+        Output(forceOutput);
 
         return true;
     }
 
-    bool NumericTask::_cycleUntilOutputOrFinish() {
+    bool FNumericTask::CycleUntilOutputOrFinish() {
         const size_t nCyclesToNextOutput = OutputManager->ComputeNStepsToNextOutput(StepsConcluded);
 
         if (nCyclesToNextOutput > 50000) {
@@ -99,65 +99,65 @@ namespace Slab::Math {
             return false;
         }
 
-        return _cycle(nCyclesToNextOutput);
+        return Cycle(nCyclesToNextOutput);
     }
 
-    void NumericTask::output(const bool force) {
-        OutputPacket info = getOutputInfo();
+    void FNumericTask::Output(const bool force) {
+        FOutputPacket info = GetOutputInfo();
         OutputManager->Output(info, force);
     }
 
-    size_t NumericTask::getSteps() const { return StepsConcluded; }
+    size_t FNumericTask::GetSteps() const { return StepsConcluded; }
 
-    auto NumericTask::GetStepper() const -> Stepper_ptr
+    auto FNumericTask::GetStepper() const -> FStepper_ptr
     {
-        return stepper;
+        return Stepper;
     }
 
-    const Core::BenchmarkData &NumericTask::getBenchmarkData() const {
+    const Core::FBenchmarkData &FNumericTask::GetBenchmarkData() const {
         return *BenchmarkData;
     }
 
-    float NumericTask::GetProgress() const
+    float FNumericTask::GetProgress() const
     {
         return static_cast<float>(StepsConcluded) / static_cast<float>(TotalSteps);
     }
 
-    Core::ETaskStatus NumericTask::Run() {
-        if (!isInitialized()) Init();
+    Core::ETaskStatus FNumericTask::Run() {
+        if (!IsInitialized()) Init();
 
         Recipe->setupForCurrentThread();
 
         const size_t n = TotalSteps;
 
-        while (!forceStopFlag && StepsConcluded < n && _cycleUntilOutputOrFinish()) { }
+        while (!forceStopFlag && StepsConcluded < n && CycleUntilOutputOrFinish()) { }
 
         if(forceStopFlag)                                       return Core::TaskAborted;
 
         // Para cumprir com os steps quebrados faltantes:
-        if (StepsConcluded < n) if(!_cycle(n - StepsConcluded)) return Core::TaskError;
+        if (StepsConcluded < n) if(!Cycle(n - StepsConcluded)) return Core::TaskError;
 
-        OutputManager->NotifyIntegrationFinished(getOutputInfo());
+        OutputManager->NotifyIntegrationFinished(GetOutputInfo());
 
         return Core::TaskSuccess;
     }
 
-    void NumericTask::Abort() {
+    void FNumericTask::Abort() {
         forceStopFlag = true;
     }
 
-    void NumericTask::SetOutputManager(const TPointer<FOutputManager>& CustomManager)
+    void FNumericTask::SetOutputManager(const TPointer<FOutputManager>& CustomManager)
     {
         if(CustomManager == nullptr) return;
         OutputManager = CustomManager;
     }
 
-    TPointer<const Base::FNumericalRecipe> NumericTask::GetRecipe() const
+    TPointer<const Base::FNumericalRecipe> FNumericTask::GetRecipe() const
     {
         return Recipe;
     }
 
-    TPointer<Base::FNumericalRecipe> NumericTask::GetRecipe()
+    TPointer<Base::FNumericalRecipe> FNumericTask::GetRecipe()
     {
         return Recipe;
     }

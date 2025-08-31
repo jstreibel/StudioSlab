@@ -7,7 +7,7 @@ namespace Slab::Models::MolecularDynamics {
 
     using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
 
-    class LennardJones : public Langevin {
+    class LennardJones final : public Langevin {
     protected:
         DevFloat U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
 

@@ -6,7 +6,7 @@
 
 namespace Slab::Math
 {
-    auto FDummyOutput::HandleOutput(const OutputPacket&) -> void
+    auto FDummyOutput::HandleOutput(const FOutputPacket&) -> void
     {
     }
 

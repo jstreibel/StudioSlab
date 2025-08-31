@@ -13,11 +13,11 @@ namespace Slab::Math {
         const CountType total_steps;
 
     protected:
-        void HandleOutput(const OutputPacket &outputInfo) override;
+        void HandleOutput(const FOutputPacket &outputInfo) override;
 
     public:
         explicit OutputConsoleMonitor(CountType total_steps, CountType steps_interval=100);
-        bool NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) override;
+        bool NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) override;
     };
 
 

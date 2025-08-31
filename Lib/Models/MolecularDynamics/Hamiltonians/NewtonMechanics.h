@@ -43,7 +43,7 @@ namespace Slab::Models::MolecularDynamics {
 
         explicit NewtonMechanics(TPointer<Config> config);
 
-        ~NewtonMechanics();
+        virtual ~NewtonMechanics();
 
         auto setDissipation(DevFloat k) -> void;
 

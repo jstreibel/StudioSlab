@@ -45,7 +45,7 @@ namespace Slab::Models::MolecularDynamics {
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
     protected:
-        auto HandleOutput(const Math::OutputPacket &packet) -> void override;
+        auto HandleOutput(const Math::FOutputPacket &packet) -> void override;
     };
 
 } // MolecularDynamics

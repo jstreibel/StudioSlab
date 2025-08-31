@@ -15,7 +15,7 @@ namespace Slab::Math {
     public:
         explicit ResolutionReductionFilter(DimensionMetaData newDim);
 
-        DiscreteSpacePair operator()(const OutputPacket &outputInfo) override;
+        DiscreteSpacePair operator()(const FOutputPacket &outputInfo) override;
 
         auto getOutputDim() const -> DimensionMetaData override;
 

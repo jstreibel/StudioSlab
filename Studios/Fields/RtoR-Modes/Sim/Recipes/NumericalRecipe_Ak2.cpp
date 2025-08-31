@@ -69,7 +69,7 @@ namespace Modes {
         auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 
         fix L = config->GetL();
-        fix n = config->getn();
+        fix n = config->Get_n();
         fix a = config->Get_r();
 
         switch (*BCSelection) {

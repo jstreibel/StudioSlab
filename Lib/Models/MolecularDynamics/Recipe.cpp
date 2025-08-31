@@ -23,23 +23,22 @@
 #include "Graphics/Window/SlabWindowManager.h"
 
 namespace Slab::Models::MolecularDynamics {
-    Recipe::Recipe()
-    : FNumericalRecipe(New<Slab::Models::MolecularDynamics::MolDynNumericConfig>(), "2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
-    , molDynamicsInterface(New <FInterface> ("Molecular dynamics 2-d", this, 100))
+    FRecipe::FRecipe()
+    : FNumericalRecipe(New<MolDynNumericConfig>(false), "2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
     {
-        molDynamicsInterface->AddParameters({&temperature, &dissipation, &model});
-        Interface->AddSubInterface(molDynamicsInterface);
-        Core::RegisterCLInterface(Interface);
+        Interface->AddParameters({&Temperature, &Dissipation, &Model});
+
+        RegisterToManager();
     }
 
-    Vector<TPointer<Math::FOutputChannel>> Recipe::BuildOutputSockets() {
+    Vector<TPointer<Math::FOutputChannel>> FRecipe::BuildOutputSockets() {
         Vector<TPointer<Math::FOutputChannel>> sockets;
 
         auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(NumericConfig);
 
-        sockets.emplace_back(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig->getn()));
+        sockets.emplace_back(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig->Get_n()));
 
-        MolecularDynamics::Monitor::Model simModel = *model==0
+        MolecularDynamics::Monitor::Model simModel = *Model==0
                 ? MolecularDynamics::Monitor::Model::LennardJones
                 : MolecularDynamics::Monitor::Model::SoftDisk;
         auto monitor = New <MolecularDynamics::Monitor>(numericConfig, simModel);
@@ -55,29 +54,29 @@ namespace Slab::Models::MolecularDynamics {
         return sockets;
     }
 
-    TPointer<Math::FStepper> Recipe::buildStepper() {
+    TPointer<Math::FStepper> FRecipe::BuildStepper() {
         auto c = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(NumericConfig);
 
-        fix T = *temperature;
-        fix k = *dissipation;
+        fix T = *Temperature;
+        fix k = *Dissipation;
 
-        if (*model == 0) {
+        if (*Model == 0) {
             LennardJones lj(c, T);
             lj.setDissipation(k);
             lj.setTemperature(T);
             return New <MolecularDynamics::TVerletStepper<LennardJones>>(c, lj);
         }
-        if (*model == 1) {
+        if (*Model == 1) {
             SoftDisk sd(c, 0);
             sd.setDissipation(k);
             sd.setTemperature(T);
             return New<MolecularDynamics::TVerletStepper<SoftDisk>>(c, sd);
         }
 
-        throw Exception(Str("Unknown particle dynamics model '") + ToStr(*model) + "'.");
+        throw Exception(Str("Unknown particle dynamics model '") + ToStr(*Model) + "'.");
     }
 
-    void Recipe::NotifyInterfaceSetupIsFinished() {
+    void FRecipe::NotifyInterfaceSetupIsFinished() {
         FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";

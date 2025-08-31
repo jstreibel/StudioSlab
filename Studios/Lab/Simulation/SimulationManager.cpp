@@ -84,7 +84,7 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
         if (ImGui::Button("Run"))
         {
             const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
-            const auto Task = Slab::New<Slab::Math::NumericTask>(Material.GetRecipe(), false);
+            const auto Task = Slab::New<Slab::Math::FNumericTask>(Material.GetRecipe(), false);
             Task->SetOutputManager(Material.BuildOutputManager());
             TaskManager->AddTask(Task);
             Material.Clear();
@@ -151,7 +151,7 @@ void FSimulationManager::AddSimulationMenu()
             fix L = NumericConfig->GetL();
             fix t = NumericConfig->Get_t();
             fix MOut = t/L * static_cast<Slab::DevFloat>(NOut);
-            fix MaxSteps = NumericConfig->getn();
+            fix MaxSteps = NumericConfig->Get_n();
             fix xMin = NumericConfig->Get_xMin();
 
             const auto SimHistory = Slab::New<Slab::Models::KGRtoR::SimHistory>(
@@ -219,7 +219,7 @@ void FSimulationManager::AddSimulationMenu()
             const auto KGRecipe = Slab::DynamicPointerCast<Slab::Models::KGRecipe>(std::move(BaseRecipe));
             const auto NumericConfig = Slab::DynamicPointerCast<Slab::Models::FKGNumericConfig>(KGRecipe->GetNumericConfig());
 
-            fix MaxSteps = NumericConfig->getn();
+            fix MaxSteps = NumericConfig->Get_n();
 
             fix DummyOutput = Slab::New<Slab::Math::FDummyOutput>();
 

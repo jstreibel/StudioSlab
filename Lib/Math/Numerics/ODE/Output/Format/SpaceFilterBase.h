@@ -21,7 +21,7 @@ namespace Slab::Math {
          * @param space input DiscreteSpace to be filtered.
          * @return a filtered copy of `space`  parameter.
          */
-        virtual auto operator()(const OutputPacket &outputInfo) -> DiscreteSpacePair = 0;
+        virtual auto operator()(const FOutputPacket &outputInfo) -> DiscreteSpacePair = 0;
 
         virtual auto getOutputDim() const -> DimensionMetaData = 0;
     };

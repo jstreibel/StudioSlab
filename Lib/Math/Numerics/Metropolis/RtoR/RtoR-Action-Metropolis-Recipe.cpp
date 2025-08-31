@@ -35,7 +35,7 @@ namespace Slab::Math {
     }
 
     Vector<TPointer<FOutputChannel>> RtoRActionMetropolisRecipe::BuildOutputSockets() {
-        fix total_steps = GetNumericConfig()->getn();
+        fix total_steps = GetNumericConfig()->Get_n();
 
         auto console_monitor = New<OutputConsoleMonitor>(total_steps);
         console_monitor->Set_nSteps((int)1000);
@@ -43,7 +43,7 @@ namespace Slab::Math {
         return {console_monitor};
     }
 
-    TPointer<FStepper> RtoRActionMetropolisRecipe::buildStepper() {
+    TPointer<FStepper> RtoRActionMetropolisRecipe::BuildStepper() {
         RtoRMetropolisSetup setup;
 
         Temperature T=1E-2;

@@ -33,7 +33,7 @@ namespace Slab::Models::StochasticPathIntegrals {
     auto SPIRecipe::BuildOutputSockets() -> Base::OutputSockets {
         Base::OutputSockets sockets;
 
-        auto monitor = New<KGR2toR::OutputOpenGL>(SPI_NumericConfig->getn());
+        auto monitor = New<KGR2toR::OutputOpenGL>(SPI_NumericConfig->Get_n());
         auto manager = Slab::New<Graphics::FSlabWindowManager>();
         manager->AddSlabWindow(monitor, false);
 
@@ -43,7 +43,7 @@ namespace Slab::Models::StochasticPathIntegrals {
         return sockets;
     }
 
-    auto SPIRecipe::buildStepper() -> TPointer<FStepper> {
+    auto SPIRecipe::BuildStepper() -> TPointer<FStepper> {
         fix L = SPI_NumericConfig->getL();
         fix t = SPI_NumericConfig->gett();
         fix N = SPI_NumericConfig->getN();

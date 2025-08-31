@@ -15,12 +15,12 @@ namespace Slab::Models::MolecularDynamics {
     TVerletStepper<Model>::TVerletStepper(Config c, Model mechModel)
             : FStepper()
             , MechanicsModel(mechModel)
-            , q(c->getN()), p(c->getN()), state(New<MoleculesState>(q, p))
+            , q(c->getN()), p(c->getN()), State(New<FMoleculesState>(q, p))
             , dt(c->getdt()){
         const CountType N = c->getN();
         const DevFloat L = c->GetL();
 
-        if (1) {
+        if constexpr  (true) {
             auto lim = (.5 * L - .5 * CUTOFF_RADIUS);
 
             for (auto &_q: q) {
@@ -51,14 +51,14 @@ namespace Slab::Models::MolecularDynamics {
 
     template<class Model>
     void TVerletStepper<Model>::Step(CountType n_steps) {
-        static boost::numeric::odeint::velocity_verlet<Graphics::PointContainer> stepperVerlet;
+        static boost::numeric::odeint::velocity_verlet<Graphics::PointContainer> StepperVerlet;
 
-        auto pointPairMolecules = std::make_pair(std::ref(q), std::ref(p));
+        auto PointPairMolecules = std::make_pair(std::ref(q), std::ref(p));
 
         for (auto i = 0; i < n_steps; ++i) {
             const auto t = dt * (DevFloat) currStep;
 
-            stepperVerlet.do_step(MechanicsModel, pointPairMolecules, t, dt);
+            StepperVerlet.do_step(MechanicsModel, PointPairMolecules, t, dt);
 
             ++currStep;
         }
@@ -66,8 +66,7 @@ namespace Slab::Models::MolecularDynamics {
 
     template<class Model>
     Math::Base::EquationState_constptr TVerletStepper<Model>::GetCurrentState() const {
-        NOT_IMPLEMENTED
-        // return &state;
+        return State;
     }
 
 }

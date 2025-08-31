@@ -16,7 +16,7 @@ namespace Slab::Models::KGRtoR {
     protected:
         const CountType N_DFT_modes;
         const DevFloat k_max;
-        auto filterData(const OutputPacket &packet) -> RtoR::NumericFunction_CPU override;
+        auto filterData(const FOutputPacket &packet) -> RtoR::NumericFunction_CPU override;
     public:
         DFTSnapshotOutput(Resolution N, DevFloat L, const Str &fileName);
     };

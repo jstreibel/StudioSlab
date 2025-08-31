@@ -20,15 +20,15 @@ namespace Slab::Models::KGRtoR {
         Str outputFileName;
 
     protected:
-        auto HandleOutput(const OutputPacket &packet) -> void override;
+        auto HandleOutput(const FOutputPacket &packet) -> void override;
 
-        virtual auto filterData(const OutputPacket &packet) -> RtoR::NumericFunction_CPU;
+        virtual auto filterData(const FOutputPacket &packet) -> RtoR::NumericFunction_CPU;
 
         SnapshotOutput(const Str &fileName, const Str &socketName, const Str &description);
     public:
         explicit SnapshotOutput(const Str &fileName);
 
-        auto NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
+        auto NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) -> bool override;
 
         static bool
         OutputNumericFunction(const Math::DiscreteSpace&, const Str& filename, const Vector<Pair<Str,Str>>& xtraPyDictEntries={});

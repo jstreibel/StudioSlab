@@ -26,6 +26,10 @@ namespace Slab::Core {
     auto FParameter::GetFullCommandLineName() const -> Str {
         if (Description.Rubric == '\0') return SanitizeToValidLongOption(Description.Name, Description.Formatting);
 
+        fix RubricStr = Str(1, Description.Rubric);
+
+        if (RubricStr == Description.Name) return RubricStr;
+
         return Str(1, Description.Rubric) + "," + SanitizeToValidLongOption(Description.Name, Description.Formatting);
     }
 

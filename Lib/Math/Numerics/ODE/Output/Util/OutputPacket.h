@@ -11,14 +11,14 @@
 
 namespace Slab::Math {
 
-    class OutputPacket {
+    class FOutputPacket {
         TPointer<const Base::EquationState> stateData = nullptr;
         size_t currentStep = 0;
 
     public:
-        OutputPacket() = default;
-        OutputPacket(const OutputPacket &packet) : OutputPacket(packet.stateData, packet.currentStep) {}
-        OutputPacket(Base::EquationState_constptr stateData, size_t currentStep)
+        FOutputPacket() = default;
+        FOutputPacket(const FOutputPacket &packet) : FOutputPacket(packet.stateData, packet.currentStep) {}
+        FOutputPacket(Base::EquationState_constptr stateData, size_t currentStep)
         : stateData(std::move(stateData))
         , currentStep(currentStep)
         {}
@@ -29,7 +29,7 @@ namespace Slab::Math {
          * @param oi The OutputInfo to copy.
          * @return LHS of equality.
          */
-        OutputPacket &operator=(const OutputPacket &otherPacky) = default;
+        FOutputPacket &operator=(const FOutputPacket &otherPacky) = default;
 
         bool hasValidData() {
             return stateData != nullptr;

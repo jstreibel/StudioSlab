@@ -32,7 +32,7 @@ namespace Slab::Core {
 
         [[nodiscard]] auto ValueToString() const -> Str override;
 
-        auto AddToCommandLineOptionsGroup(CLODEasyInit &base) const -> void override;
+        auto AddToCommandLineOptionsGroup(CLODEasyInit &AddToCL) const -> void override;
 
         void SetValueFromCommandLine     (VariableValue var) override;
 

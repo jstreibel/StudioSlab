@@ -15,14 +15,14 @@
 
 namespace Slab::Core {
 
-    class BenchmarkData {
+    class FBenchmarkData {
         CPUTimer Timer;
         Vector<Nanosecond> Measures;
 
     public:
-        explicit BenchmarkData(CountType reserveMemory=0);
+        explicit FBenchmarkData(CountType reserveMemory=0);
 
-        ~BenchmarkData();
+        ~FBenchmarkData();
 
         void StartMeasure();
 
@@ -32,7 +32,7 @@ namespace Slab::Core {
 
         void Print(OStream &out = Log::Info()) const;
 
-        friend OStream &operator<<(OStream &os, const BenchmarkData &hist);
+        friend OStream &operator<<(OStream &os, const FBenchmarkData &hist);
 
     };
 

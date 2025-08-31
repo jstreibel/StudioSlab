@@ -11,7 +11,7 @@ namespace Slab::Math
     class FDummyOutput : public FOutputChannel
     {
     protected:
-        auto HandleOutput(const OutputPacket&) -> void override;
+        auto HandleOutput(const FOutputPacket&) -> void override;
 
     public:
         FDummyOutput();

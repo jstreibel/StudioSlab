@@ -22,9 +22,9 @@ namespace Slab::Math {
          * @param InfoVolatile the information to output.
          * @param ForceOutput
          */
-        void Output(const OutputPacket &InfoVolatile, bool ForceOutput = false) const;
+        void Output(const FOutputPacket &InfoVolatile, bool ForceOutput = false) const;
 
-        void NotifyIntegrationFinished(const OutputPacket &info) const;
+        void NotifyIntegrationFinished(const FOutputPacket &info) const;
 
         /****** QUERY ******/
         auto ComputeNStepsToNextOutput(UInt CurrStep) -> UInt;

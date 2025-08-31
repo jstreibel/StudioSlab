@@ -9,7 +9,7 @@ namespace Slab::Math {
 
     FOutputManager::~FOutputManager() = default; // No need to destroy output objects in vectors;
 
-    void FOutputManager::Output(const OutputPacket &InfoVolatile, const bool ForceOutput) const
+    void FOutputManager::Output(const FOutputPacket &InfoVolatile, const bool ForceOutput) const
     {
         const size_t Steps = InfoVolatile.GetSteps();
 
@@ -50,7 +50,7 @@ namespace Slab::Math {
         this->MaxSteps = MaxSteps;
     }
 
-    void FOutputManager::NotifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) const
+    void FOutputManager::NotifyIntegrationFinished(const FOutputPacket &theVeryLastOutputInformation) const
     {
         for (const auto& output: Outputs) {
             if (!output->NotifyIntegrationHasFinished(theVeryLastOutputInformation))

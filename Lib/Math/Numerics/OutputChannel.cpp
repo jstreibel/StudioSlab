@@ -40,12 +40,12 @@ namespace Slab::Math {
         throw "Boundary not implemented.";
     }
 
-    void FOutputChannel::Output(const OutputPacket &outData) {
+    void FOutputChannel::Output(const FOutputPacket &outData) {
         HandleOutput(outData);
         LastPacket = outData;
     }
 
-    auto FOutputChannel::NotifyIntegrationHasFinished(const OutputPacket &TheVeryLastOutputInformation) -> bool {
+    auto FOutputChannel::NotifyIntegrationHasFinished(const FOutputPacket &TheVeryLastOutputInformation) -> bool {
         LastPacket = TheVeryLastOutputInformation;
         return true;
     }

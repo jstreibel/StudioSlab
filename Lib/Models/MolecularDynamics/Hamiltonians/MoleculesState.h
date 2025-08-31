@@ -16,21 +16,20 @@ namespace Slab::Models::MolecularDynamics {
     // typedef Pair<Graphics::PointContainer &, Graphics::PointContainer &> State;
     typedef Pair<Graphics::PointContainer, Graphics::PointContainer> VerletMoleculeContainer;
 
-    class MoleculesState : public Math::Base::EquationState {
-        Pair<Graphics::PointContainer &, Graphics::PointContainer &> data;
+    class FMoleculesState final : public Math::Base::EquationState {
+        Pair<Graphics::PointContainer &, Graphics::PointContainer &> Data;
 
         static auto& Cast(const auto &eqState)
-        { return dynamic_cast<const MoleculesState&>(eqState); }
+        { return dynamic_cast<const FMoleculesState&>(eqState); }
 
         static auto& Cast(auto &eqState)
-        { return dynamic_cast<MoleculesState&>(eqState); }
-
+        { return dynamic_cast<FMoleculesState&>(eqState); }
 
     public:
-        MoleculesState(Graphics::PointContainer &q, Graphics::PointContainer &p) : data(q, p) {};
+        FMoleculesState(Graphics::PointContainer &q, Graphics::PointContainer &p) : Data(q, p) {};
 
-        [[nodiscard]] Graphics::PointContainer &first() const { return data.first; }
-        [[nodiscard]] Graphics::PointContainer &second() const { return data.second; }
+        [[nodiscard]] Graphics::PointContainer &first() const { return Data.first; }
+        [[nodiscard]] Graphics::PointContainer &second() const { return Data.second; }
 
         [[nodiscard]] auto category() const -> Str override;
 

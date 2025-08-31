@@ -19,7 +19,7 @@ namespace Slab::Math::R2toR {
     public:
         DimensionReductionFilter(UInt resolution, RtoR2::StraightLine alongLine, DevFloat L);
 
-        DiscreteSpacePair operator()(const OutputPacket &outputInfo) override;
+        DiscreteSpacePair operator()(const FOutputPacket &outputInfo) override;
 
         DimensionMetaData getOutputDim() const override;
 

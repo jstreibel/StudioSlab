@@ -15,7 +15,7 @@
 
 namespace Slab::Models::KGR2toR {
 
-    auto getPhi(const OutputPacket& packet) {
+    auto getPhi(const FOutputPacket& packet) {
         fix category = packet.getStateCategory();
         if (category == "2nd-order|R2->R") {
             IN state = *packet.GetNakedStateData<R2toR::EquationState>();

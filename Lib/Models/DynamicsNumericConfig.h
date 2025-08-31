@@ -16,14 +16,14 @@ namespace Slab::Models {
 
     class DynamicsNumericConfig : public Math::FNumericConfig {
     protected:
-        TPointer<IntegerParameter> N = MakeIntParam(1024,
-            FParameterDescription{'N', "Discretization of space dimensions. Has to be POT for GPU"},
+        TPointer<IntegerParameter> N = MakeIntParam(128,
+            FParameterDescription{'N', "Number of Molecules to simulate"},
             FIntegerParameterOptions{128, 1<<18, false, true});
-        TPointer<RealParameter> L = MakeRealParam(10.,
-            FParameterDescription{'L', "Space length"},
+        TPointer<RealParameter> L = MakeRealParam(100.,
+            FParameterDescription{'L', "Space length. Simulation will be an LxL box"},
             FRealParameterOptions{1e-2, 1.e5});
         TPointer<RealParameter> t = New<RealParameter>(-1,
-            FParameterDescription{'t', "Max simulation time. If left negative, defaults to L/2. Note that this value can be overridden by simulation."});
+            FParameterDescription{'t', "Max simulation time. If left negative, it is unbounded"});
 
     public:
         explicit DynamicsNumericConfig(bool do_register);

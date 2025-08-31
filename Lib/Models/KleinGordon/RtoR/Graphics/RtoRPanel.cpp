@@ -36,7 +36,7 @@ namespace Slab::Models::KGRtoR {
         spaceFTHistoryArtist = sftHistoryArtist;
     }
 
-    void FRtoRPanel::HandleOutput(const Math::OutputPacket &packet) {
+    void FRtoRPanel::HandleOutput(const Math::FOutputPacket &packet) {
 
     }
 

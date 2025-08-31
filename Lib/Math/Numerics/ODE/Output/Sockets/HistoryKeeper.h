@@ -14,7 +14,7 @@ namespace Slab::Math {
          * because history will be purged. */
         virtual void _dump(bool integrationIsFinished) = 0;
 
-        void HandleOutput(const OutputPacket &outInfo) final;
+        void HandleOutput(const FOutputPacket &outInfo) final;
 
     protected:
         SpaceFilterBase &spaceFilter;
@@ -33,7 +33,7 @@ namespace Slab::Math {
 
         auto ShouldOutput(long unsigned timestep) -> bool override;
 
-        auto NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
+        auto NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) -> bool override;
 
         auto renderMetaDataAsPythonDictionary() const -> Str;
     };

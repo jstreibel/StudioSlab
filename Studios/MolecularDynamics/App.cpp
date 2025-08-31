@@ -14,25 +14,27 @@
 
 namespace Studios::MolecularDynamics {
 
-    Slab::Models::MolecularDynamics::Recipe recipe;
+    static Slab::Models::MolecularDynamics::FRecipe Recipe;
 
     MolecularDynamics::App::App(int argc, const char **argv)
             : AppBase(argc, argv) {
         Slab::Core::BackendManager::Startup("SFML");
-
-        numericTask = Slab::New<Slab::Math::NumericTask>(Slab::Dummy(recipe));
 
         Slab::Core::CLArgsManager::Parse(argc, argv);
     }
 
     int MolecularDynamics::App::run() {
 
+        NumericTask = Slab::New<Slab::Math::FNumericTask>(Slab::Dummy(Recipe));
+
         auto taskManager = Slab::DynamicPointerCast<Slab::Core::MTaskManager>(Slab::Core::GetModule("TaskManager"));
-        taskManager->AddTask(numericTask);
+        taskManager->AddTask(NumericTask);
 
         Slab::Graphics::GetGraphicsBackend()->Run();
 
         Slab::Core::Log::Info() << "MolecularDynamics finished." << Slab::Core::Log::Flush;
+
+        NumericTask->Abort();
 
         return true;
     }

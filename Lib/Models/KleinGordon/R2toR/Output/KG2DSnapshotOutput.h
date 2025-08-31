@@ -14,12 +14,12 @@ namespace Slab::Models::KGR2toR {
         Str filename;
 
     protected:
-        auto HandleOutput(const Math::OutputPacket &packet) -> void override;
+        auto HandleOutput(const Math::FOutputPacket &packet) -> void override;
 
     public:
         explicit KG2DSnapshotOutput(Str filename);
 
-        auto NotifyIntegrationHasFinished(const Math::OutputPacket &theVeryLastOutputInformation) -> bool override;
+        auto NotifyIntegrationHasFinished(const Math::FOutputPacket &theVeryLastOutputInformation) -> bool override;
     };
 
 }

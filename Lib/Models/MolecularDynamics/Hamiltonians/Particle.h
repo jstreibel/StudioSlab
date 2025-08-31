@@ -9,7 +9,7 @@
 
 #include "Graphics/Types2D.h"
 
-#define CUTOFF_RADIUS 4
+#define CUTOFF_RADIUS 5
 
 
 namespace Slab::Models::MolecularDynamics {

@@ -14,7 +14,7 @@ namespace Slab::Math {
 
     }
 
-    auto ResolutionReductionFilter::operator()(const OutputPacket &outputInfo) -> DiscreteSpacePair {
+    auto ResolutionReductionFilter::operator()(const FOutputPacket &outputInfo) -> DiscreteSpacePair {
         NOT_IMPLEMENTED
 
         /*

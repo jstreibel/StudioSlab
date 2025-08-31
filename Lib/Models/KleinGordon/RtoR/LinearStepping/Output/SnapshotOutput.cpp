@@ -21,10 +21,10 @@ namespace Slab::Models::KGRtoR {
     {    }
 
 
-    void SnapshotOutput::HandleOutput(const OutputPacket &) { /* do nothing */ }
+    void SnapshotOutput::HandleOutput(const FOutputPacket &) { /* do nothing */ }
 
 
-    auto SnapshotOutput::filterData(const OutputPacket &packet) -> RtoR::NumericFunction_CPU {
+    auto SnapshotOutput::filterData(const FOutputPacket &packet) -> RtoR::NumericFunction_CPU {
         NOT_IMPLEMENTED
         /*
         auto &phi = packet.GetNakedStateData<EquationState>()->getPhi();
@@ -34,7 +34,7 @@ namespace Slab::Models::KGRtoR {
     }
 
 
-    bool SnapshotOutput::NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
+    bool SnapshotOutput::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
         FOutputChannel::NotifyIntegrationHasFinished(theVeryLastOutputInformation);
 
         auto f = filterData(theVeryLastOutputInformation);

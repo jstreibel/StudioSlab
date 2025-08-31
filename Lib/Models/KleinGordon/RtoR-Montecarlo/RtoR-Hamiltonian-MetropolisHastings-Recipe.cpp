@@ -35,7 +35,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
     }
 
     auto RtoRHamiltonianMetropolisHastingsRecipe::BuildOutputSockets() -> Vector<TPointer<FOutputChannel>> {
-        fix total_steps = GetNumericConfig()->getn();
+        fix total_steps = GetNumericConfig()->Get_n();
 
         auto console_monitor = New<OutputConsoleMonitor>(total_steps);
         console_monitor->Set_nSteps((int)1000);
@@ -43,7 +43,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
         return {console_monitor};
     }
 
-    auto RtoRHamiltonianMetropolisHastingsRecipe::buildStepper() -> TPointer<FStepper> {
+    auto RtoRHamiltonianMetropolisHastingsRecipe::BuildStepper() -> TPointer<FStepper> {
         RtoRMetropolisSetup setup;
 
         Temperature T=1E-2;

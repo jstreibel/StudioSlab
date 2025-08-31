@@ -23,7 +23,7 @@ namespace Slab::Math {
     }
 
     auto MathApp::run() -> int {
-        const auto integrationTask = Slab::New<NumericTask>(Recipe);
+        const auto integrationTask = Slab::New<FNumericTask>(Recipe);
 
         const auto TaskManager = dynamic_cast<Core::MTaskManager*>
                 (Core::BackendManager::GetModule("TaskManager").get());

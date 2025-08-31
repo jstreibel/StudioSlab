@@ -13,7 +13,7 @@ namespace Slab::Models::KGRtoR {
     SimHistory_DFT::SimHistory_DFT(CountType max_steps, DevFloat t_max, Resolution N, DevFloat L, Resolution N_time)
             : SimHistory(max_steps, t_max, NDFTModes, N_time, 0, kMaxDFT, "SimulationHistory (k-space DFT)") {}
 
-    auto SimHistory_DFT::Transfer(const OutputPacket &Input, ValarrayWrapper<DevFloat> &DataOut) -> void {
+    auto SimHistory_DFT::Transfer(const FOutputPacket &Input, ValarrayWrapper<DevFloat> &DataOut) -> void {
         IN stateIn = *Input.GetNakedStateData<KGRtoR::EquationState>();
 
         IN phi = dynamic_cast<RtoR::NumericFunction&>(stateIn.getPhi());

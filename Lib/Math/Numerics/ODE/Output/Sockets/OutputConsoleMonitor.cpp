@@ -10,15 +10,15 @@ namespace Slab::Math {
 
     }
 
-    bool OutputConsoleMonitor::NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
+    bool OutputConsoleMonitor::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
         // Isso aqui eh para aparecer o 100% completo (se nao fica uns quebrados).
-        OutputPacket dummyInfo = OutputPacket(nullptr, total_steps);
+        FOutputPacket dummyInfo = FOutputPacket(nullptr, total_steps);
 
         this->HandleOutput(dummyInfo);
         return true;
     }
 
-    void OutputConsoleMonitor::HandleOutput(const OutputPacket &outputInfo) {
+    void OutputConsoleMonitor::HandleOutput(const FOutputPacket &outputInfo) {
         static Vector<DevFloat> measures;
         auto elTime = timer.GetElapsedTime_Seconds();
 

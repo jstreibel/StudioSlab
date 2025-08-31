@@ -22,7 +22,7 @@
 namespace Slab::Models::KGRtoR {
 
     Monitor::Monitor(const TPointer<FKGNumericConfig> &params, FKGEnergy &hamiltonian, const Str &name)
-    : BaseMonitor(params->getn(), Str("ℝ↦ℝ ") + name, 10)
+    : BaseMonitor(params->Get_n(), Str("ℝ↦ℝ ") + name, 10)
     , Hamiltonian(hamiltonian)
     , FullHistoryGraph(   Slab::New<FPlot2DWindow>("Full field history"))
     , FullSFTHistoryGraph(Slab::New<FPlot2DWindow>("Full space FT history"))
@@ -80,7 +80,7 @@ namespace Slab::Models::KGRtoR {
         if (oldDataView != nullptr) oldDataView->notifyBecameInvisible();
     }
 
-    void Monitor::HandleOutput(const OutputPacket &outInfo) {
+    void Monitor::HandleOutput(const FOutputPacket &outInfo) {
         for (const auto &dataView: DataViews)
             dataView->Output(outInfo);
 

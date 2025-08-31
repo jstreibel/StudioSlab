@@ -7,7 +7,7 @@
 
 #define AssertSizes(a) assert((a).first().size() == (a).second().size());
 #define AssertCompatibility(a, b)    \
-    assert((a).data.first.size() == (b).data.first.size());
+    assert((a).Data.first.size() == (b).Data.first.size());
 
 #define TinySetup(STATE, STATE_NAME) \
     auto &STATE_NAME = Cast(STATE);          \

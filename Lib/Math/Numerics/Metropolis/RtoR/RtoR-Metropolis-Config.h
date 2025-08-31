@@ -21,7 +21,7 @@ namespace Slab::Math {
     public:
         explicit MetropolisRtoRConfig(UInt max_steps);
 
-        auto getn() const -> UInt override;;
+        auto Get_n() const -> UInt override;;
 
         auto to_string() const -> Str override;;
     };

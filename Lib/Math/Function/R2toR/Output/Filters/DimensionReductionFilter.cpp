@@ -18,7 +18,7 @@ namespace Slab::Math::R2toR {
                                               << " to " << (alongLine.getx0() + alongLine.getr()) << Core::Log::Flush;
     }
 
-    DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outputInfo) {
+    DiscreteSpacePair DimensionReductionFilter::operator()(const FOutputPacket &outputInfo) {
         IN kgState = *outputInfo.GetNakedStateData<R2toR::EquationState>();
         auto &f = dynamic_cast<R2toR::FNumericFunction&>(kgState.getPhi());
         // const DiscreteSpace &dPhiSpace = *outputInfo.getSpaceData().second;

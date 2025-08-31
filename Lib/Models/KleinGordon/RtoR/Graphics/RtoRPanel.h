@@ -35,7 +35,7 @@ namespace Slab::Models::KGRtoR {
         R2toRFunctionArtist_ptr spaceFTHistoryArtist{};
         const FDFTDataHistory *dftData{};
 
-        auto HandleOutput(const OutputPacket &packet) -> void override;
+        auto HandleOutput(const FOutputPacket &packet) -> void override;
 
     public:
         FRtoRPanel(TPointer<FKGNumericConfig>params,

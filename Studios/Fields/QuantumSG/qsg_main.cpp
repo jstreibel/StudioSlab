@@ -18,13 +18,13 @@
 
 class SPIApp final : public Slab::FApplication {
     Slab::TPointer<Slab::Models::StochasticPathIntegrals::SPIRecipe> recipe;
-    Slab::TPointer<Slab::Math::NumericTask> numeric_task;
+    Slab::TPointer<Slab::Math::FNumericTask> numeric_task;
 
 public:
     SPIApp(const int argc, const char *argv[])
     : FApplication("SPI-App", argc, argv)
     , recipe(Slab::New<Slab::Models::StochasticPathIntegrals::SPIRecipe>())
-    , numeric_task(Slab::New<Slab::Math::NumericTask>(recipe, false))
+    , numeric_task(Slab::New<Slab::Math::FNumericTask>(recipe, false))
     {    }
 
     ~SPIApp() override = default;

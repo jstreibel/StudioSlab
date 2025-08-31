@@ -15,10 +15,10 @@ namespace Slab::Math {
         int IntervalStepsBetweenOutputs; // Number of steps between recordings.
 
     protected:
-        OutputPacket LastPacket;
+        FOutputPacket LastPacket;
         Str Name, Description;
 
-        virtual auto HandleOutput(const OutputPacket &) -> void = 0;
+        virtual auto HandleOutput(const FOutputPacket &) -> void = 0;
 
     public:
         explicit FOutputChannel(Str name = "", int nStepsInterval = 1, Str Description = "");
@@ -27,7 +27,7 @@ namespace Slab::Math {
 
         // std::shared_ptr<FOutputChannel> Ptr;
 
-        virtual auto NotifyIntegrationHasFinished(const OutputPacket &TheVeryLastOutputInformation) -> bool;
+        virtual auto NotifyIntegrationHasFinished(const FOutputPacket &TheVeryLastOutputInformation) -> bool;
 
         [[nodiscard]] auto GetDescription() const -> Str;
 
@@ -49,7 +49,7 @@ namespace Slab::Math {
 
         virtual auto Set_nSteps(int nSteps) -> void;
 
-        void Output(const OutputPacket &outData);
+        void Output(const FOutputPacket &outData);
 
     };
 

@@ -30,10 +30,11 @@ namespace Slab::Core {
     }
 
     template<class Type> auto TParameter<Type>::ValueToString() const -> std::string { return ToStr(Value); }
-    template<class Type> auto TParameter<Type>::AddToCommandLineOptionsGroup(CLODEasyInit &add) const -> void
+    template<class Type> auto TParameter<Type>::AddToCommandLineOptionsGroup(CLODEasyInit &AddToCL) const -> void
     {
-        auto value = CLOptions::value<Type>()->default_value(ToStr(Value));
-        add(GetFullCommandLineName(), GetDescription(), value);
+        auto CastValue = CLOptions::value<Type>()->default_value(ToStr(Value));
+        fix FullCommandLineName = GetFullCommandLineName();
+        AddToCL(FullCommandLineName, GetDescription(), CastValue);
     }
 
     template<class Type>       void TParameter<Type>::SetValue(const void *pVoid)

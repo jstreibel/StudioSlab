@@ -21,7 +21,7 @@ namespace Slab::Math {
 
         void addSnapshotStep(size_t snapshotStep);
 
-        void doOutput(const OutputPacket &outInfo, const Str &customFileDescription = "",
+        void doOutput(const FOutputPacket &outInfo, const Str &customFileDescription = "",
                              size_t T_fileNamePrecision = 4);
 
         size_t ComputeNextRecStep(UInt currStep) override;
@@ -32,7 +32,7 @@ namespace Slab::Math {
     protected:
         bool ShouldOutput(long unsigned timeStep) override;
 
-        void HandleOutput(const OutputPacket &outInfo) override {
+        void HandleOutput(const FOutputPacket &outInfo) override {
             OutputSnapshot::doOutput(outInfo, customFileDescription, 4);
         }
     };

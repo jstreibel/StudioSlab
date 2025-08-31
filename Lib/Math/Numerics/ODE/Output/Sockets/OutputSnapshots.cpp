@@ -33,7 +33,7 @@ namespace Slab::Math {
         Log::Attention() << "A snapshot will be taken at the step " << snapshotStep << Log::Flush;
     }
 
-    void OutputSnapshot::doOutput(const OutputPacket &outInfo, const Str &customFileDescription,
+    void OutputSnapshot::doOutput(const FOutputPacket &outInfo, const Str &customFileDescription,
                                   const size_t T_fileNamePrecision) {
         StringStream filePhiNameStream;
         filePhiNameStream.setf(std::ios::fixed, std::ios::floatfield);

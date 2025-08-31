@@ -19,11 +19,11 @@ namespace Slab::Models::KGR2toR {
 
     }
 
-    void KG2DSnapshotOutput::HandleOutput(const Math::OutputPacket &) {
+    void KG2DSnapshotOutput::HandleOutput(const Math::FOutputPacket &) {
 
     }
 
-    bool KG2DSnapshotOutput::NotifyIntegrationHasFinished(const Math::OutputPacket &final_output) {
+    bool KG2DSnapshotOutput::NotifyIntegrationHasFinished(const Math::FOutputPacket &final_output) {
         if(!FOutputChannel::NotifyIntegrationHasFinished(final_output)) return false;
 
         using StateType = Slab::Math::R2toR::EquationState;

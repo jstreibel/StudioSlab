@@ -19,7 +19,7 @@ namespace Slab::Core {
 
         static void Parse(int argc, const char **argv);
 
-        static auto BuildOptionsDescription(const FInterface &anInterface, CLOptionsDescription &opts) -> void;
+        static auto BuildOptionsDescription(const FInterface &Interface, CLOptionsDescription &Opts) -> void;
 
     };
 

@@ -41,7 +41,7 @@ namespace Slab::Math {
         return FOutputChannel::ShouldOutput(timestep);;
     }
 
-    void HistoryKeeper::HandleOutput(const OutputPacket &packet) {
+    void HistoryKeeper::HandleOutput(const FOutputPacket &packet) {
         if (getUtilMemLoadBytes() > 4 * ONE_GB) {
             Core::Log::Critical() << "Dumping " << (getUtilMemLoadBytes() * 4e-6) << "GB of data." << Core::Log::Flush;
             this->_dump(false);
@@ -57,7 +57,7 @@ namespace Slab::Math {
         ++count;
     }
 
-    auto HistoryKeeper::NotifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
+    auto HistoryKeeper::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) -> bool {
         _dump(true);
         return true;
     }
