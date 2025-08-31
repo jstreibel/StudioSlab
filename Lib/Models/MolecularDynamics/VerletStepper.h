@@ -22,7 +22,7 @@ namespace Slab::Models::MolecularDynamics {
 
         Graphics::PointContainer q, p;
         TPointer<FMoleculesState> State;
-        CountType currStep=0;
+        CountType CurrStep=0;
 
         DevFloat dt;
 

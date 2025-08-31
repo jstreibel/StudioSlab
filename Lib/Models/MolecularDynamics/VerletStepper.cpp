@@ -56,11 +56,11 @@ namespace Slab::Models::MolecularDynamics {
         auto PointPairMolecules = std::make_pair(std::ref(q), std::ref(p));
 
         for (auto i = 0; i < n_steps; ++i) {
-            const auto t = dt * (DevFloat) currStep;
+            const auto t = dt * (DevFloat) CurrStep;
 
             StepperVerlet.do_step(MechanicsModel, PointPairMolecules, t, dt);
 
-            ++currStep;
+            ++CurrStep;
         }
     }
 
