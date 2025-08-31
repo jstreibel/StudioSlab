@@ -79,8 +79,8 @@ namespace Slab::Models::MolecularDynamics {
     void FMolecularDynamicsRecipe::NotifyInterfaceSetupIsFinished() {
         FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
-        Log::Attention() << "ParticleDynamics::Builder will ignore NumericParams '-t' argument and set it to negative.";
-        DynamicPointerCast<MolDynNumericConfig>(GetNumericConfig())->Set_t(-1);
+        // Log::Attention() << "ParticleDynamics::Builder will ignore NumericParams '-t' argument and set it to negative.";
+        // DynamicPointerCast<MolDynNumericConfig>(GetNumericConfig())->Set_t(-1);
     }
 
 } // MolecularDynamics
