@@ -17,8 +17,8 @@ namespace Slab::Models::MolecularDynamics {
     using namespace Slab;
 
     template<class NewtonMechanicsModel>
-    class VerletStepper : public Math::Stepper {
-        NewtonMechanicsModel mechanicsModel;
+    class TVerletStepper : public Math::FStepper {
+        NewtonMechanicsModel MechanicsModel;
 
         Graphics::PointContainer q, p;
         TPointer<MoleculesState> state;
@@ -29,11 +29,11 @@ namespace Slab::Models::MolecularDynamics {
     public:
         using Config = TPointer<Models::MolecularDynamics::MolDynNumericConfig>;
 
-        explicit VerletStepper(Config config, NewtonMechanicsModel mechModel);
+        explicit TVerletStepper(Config config, NewtonMechanicsModel mechModel);
 
-        void step(CountType n_steps) override;
+        void Step(CountType n_steps) override;
 
-        auto getCurrentState() const -> Math::Base::EquationState_constptr override;
+        auto GetCurrentState() const -> Math::Base::EquationState_constptr override;
     };
 
 }

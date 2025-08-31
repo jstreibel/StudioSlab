@@ -43,7 +43,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
         return {console_monitor};
     }
 
-    auto RtoRHamiltonianMetropolisHastingsRecipe::buildStepper() -> TPointer<Stepper> {
+    auto RtoRHamiltonianMetropolisHastingsRecipe::buildStepper() -> TPointer<FStepper> {
         RtoRMetropolisSetup setup;
 
         Temperature T=1E-2;

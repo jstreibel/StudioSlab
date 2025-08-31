@@ -11,7 +11,7 @@
 namespace Slab::Math {
 
     template<typename SiteType, typename ValueType>
-    class MontecarloStepper : public Math::Stepper {
+    class MontecarloStepper : public Math::FStepper {
     public:
         using Algorithm = MetropolisAlgorithm<SiteType, ValueType>;
         using Setup = MetropolisSetup<SiteType, ValueType>;
@@ -19,12 +19,12 @@ namespace Slab::Math {
         explicit MontecarloStepper(TPointer<Algorithm> algorithm) : algorithm(algorithm) { };
         MontecarloStepper() = delete;
 
-        void step(size_t n_steps) override {
+        void Step(size_t n_steps) override {
             for(auto i=0; i<n_steps; ++i) algorithm->step();
         }
 
 
-        auto getCurrentState() const -> TPointer<const Base::EquationState> override {
+        auto GetCurrentState() const -> TPointer<const Base::EquationState> override {
             return Slab::Math::Base::EquationState_constptr();
         }
 

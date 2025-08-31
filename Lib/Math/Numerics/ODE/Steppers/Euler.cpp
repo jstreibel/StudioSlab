@@ -14,7 +14,7 @@ namespace Slab::Math {
 
     }
 
-    void Euler::step(size_t n_steps) {
+    void Euler::Step(size_t n_steps) {
 
         auto &H = *_H;
         auto &f = *_f;
@@ -33,7 +33,7 @@ namespace Slab::Math {
         step_counter += n_steps;
     }
 
-    auto Euler::getCurrentState() const -> TPointer<const Base::EquationState> {
+    auto Euler::GetCurrentState() const -> TPointer<const Base::EquationState> {
         return _f;
     }
 }

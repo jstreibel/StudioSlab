@@ -49,7 +49,7 @@ namespace Slab::Math {
         return field_data;
     }
 
-    TPointer<Stepper> R2toRMetropolisRecipe::buildStepper() {
+    TPointer<FStepper> R2toRMetropolisRecipe::buildStepper() {
         R2toRMetropolisSetup setup;
 
         Temperature T=0.1;

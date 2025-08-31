@@ -22,7 +22,7 @@ namespace Slab::Models::StochasticPathIntegrals {
 
         auto BuildOutputSockets() -> Math::Base::OutputSockets override;
 
-        auto buildStepper() -> TPointer<Math::Stepper> override;
+        auto buildStepper() -> TPointer<Math::FStepper> override;
     };
 
 } // StochasticPathIntegrals::Models::Slab

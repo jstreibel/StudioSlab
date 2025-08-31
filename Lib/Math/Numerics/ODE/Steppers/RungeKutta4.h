@@ -23,7 +23,7 @@
 
 namespace Slab::Math {
 
-    class RungeKutta4 : public Stepper {
+    class RungeKutta4 : public FStepper {
         Mutex mutey;
 
         TPointer<Base::LinearStepSolver> _H;
@@ -43,9 +43,9 @@ namespace Slab::Math {
 
         ~RungeKutta4() override = default;
 
-        void step(const CountType n_steps) override;
+        void Step(const CountType n_steps) override;
 
-        [[nodiscard]] auto getCurrentState() const -> Base::EquationState_constptr override;
+        [[nodiscard]] auto GetCurrentState() const -> Base::EquationState_constptr override;
 
     };
 

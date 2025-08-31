@@ -9,7 +9,7 @@
 
 namespace Slab::Math {
 
-    class Euler final : public Stepper {
+    class Euler final : public FStepper {
         TPointer<Base::LinearStepSolver> _H;
 
         Base::EquationState_ptr _f;
@@ -22,9 +22,9 @@ namespace Slab::Math {
     public:
         explicit Euler(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt);
 
-        void step(size_t n_steps) override;
+        void Step(size_t n_steps) override;
 
-        auto getCurrentState() const -> TPointer<const Base::EquationState> override;
+        auto GetCurrentState() const -> TPointer<const Base::EquationState> override;
     };
 
 }

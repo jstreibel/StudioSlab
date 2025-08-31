@@ -30,7 +30,7 @@ namespace Slab::Math {
 
         auto BuildOutputSockets() -> Vector<TPointer<FOutputChannel>> override;
 
-        auto buildStepper() -> TPointer<Stepper> override;
+        auto buildStepper() -> TPointer<FStepper> override;
     };
 
 } // Slab::Math

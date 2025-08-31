@@ -55,7 +55,7 @@ namespace Slab::Models::MolecularDynamics {
         return sockets;
     }
 
-    TPointer<Math::Stepper> Recipe::buildStepper() {
+    TPointer<Math::FStepper> Recipe::buildStepper() {
         auto c = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(NumericConfig);
 
         fix T = *temperature;
@@ -65,13 +65,13 @@ namespace Slab::Models::MolecularDynamics {
             LennardJones lj(c, T);
             lj.setDissipation(k);
             lj.setTemperature(T);
-            return New <MolecularDynamics::VerletStepper<LennardJones>>(c, lj);
+            return New <MolecularDynamics::TVerletStepper<LennardJones>>(c, lj);
         }
         if (*model == 1) {
             SoftDisk sd(c, 0);
             sd.setDissipation(k);
             sd.setTemperature(T);
-            return New<MolecularDynamics::VerletStepper<SoftDisk>>(c, sd);
+            return New<MolecularDynamics::TVerletStepper<SoftDisk>>(c, sd);
         }
 
         throw Exception(Str("Unknown particle dynamics model '") + ToStr(*model) + "'.");

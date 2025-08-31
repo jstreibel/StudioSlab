@@ -12,6 +12,7 @@ public:
     StudioSlabApp(int argc, const char* argv[]);
 
 protected:
+    Slab::TPointer<Slab::Graphics::GraphicBackend> CreatePlatform() override;
     void OnStart() override;
 };
 

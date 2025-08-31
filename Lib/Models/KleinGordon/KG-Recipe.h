@@ -57,7 +57,7 @@ namespace Slab::Models {
 
         void setupForCurrentThread() override;
 
-        TPointer<Stepper> buildStepper() override;
+        TPointer<FStepper> buildStepper() override;
 
         virtual auto buildSolver()  -> TPointer<Base::LinearStepSolver> = 0;
 

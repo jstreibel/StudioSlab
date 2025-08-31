@@ -13,6 +13,12 @@ StudioSlabApp::StudioSlabApp(int argc, const char* argv[]): FApplication("Studio
 
 }
 
+Slab::TPointer<Slab::Graphics::GraphicBackend> StudioSlabApp::CreatePlatform()
+{
+    // return Slab::DynamicPointerCast<Slab::Graphics::GraphicBackend>(Slab::CreatePlatform("SFML"));
+    return Slab::DynamicPointerCast<Slab::Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
+}
+
 void StudioSlabApp::OnStart()
 {
     FApplication::OnStart();

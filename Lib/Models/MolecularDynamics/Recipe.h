@@ -29,7 +29,7 @@ namespace Slab::Models::MolecularDynamics {
 
         auto BuildOutputSockets() -> Vector<TPointer<Math::FOutputChannel>> override;
 
-        auto buildStepper() -> TPointer<Math::Stepper> override;
+        auto buildStepper() -> TPointer<Math::FStepper> override;
 
         auto NotifyInterfaceSetupIsFinished() -> void override;
 

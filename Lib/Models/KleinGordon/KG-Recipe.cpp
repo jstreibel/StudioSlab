@@ -67,7 +67,7 @@ namespace Slab::Models {
         }
     }
 
-    auto KGRecipe::buildStepper() -> TPointer<Stepper> {
+    auto KGRecipe::buildStepper() -> TPointer<FStepper> {
         auto solver = buildSolver();
 
         return New <RungeKutta4> (solver, KGNumericConfig->Getdt());

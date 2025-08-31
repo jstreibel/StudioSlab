@@ -43,7 +43,7 @@ namespace Slab::Math {
         return {console_monitor};
     }
 
-    TPointer<Stepper> RtoRActionMetropolisRecipe::buildStepper() {
+    TPointer<FStepper> RtoRActionMetropolisRecipe::buildStepper() {
         RtoRMetropolisSetup setup;
 
         Temperature T=1E-2;

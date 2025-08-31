@@ -7,19 +7,19 @@
 
 namespace Slab::Math {
 
-    class Stepper {
+    class FStepper {
     public:
-        Stepper() = default;
+        FStepper() = default;
 
-        virtual ~Stepper() = default;
+        virtual ~FStepper() = default;
 
     public:
-        virtual void step(size_t n_steps) = 0;
+        virtual void Step(size_t n_steps) = 0;
 
-        virtual auto getCurrentState() const -> Base::EquationState_constptr = 0;
+        virtual auto GetCurrentState() const -> Base::EquationState_constptr = 0;
     };
 
-    DefinePointers(Stepper)
+    DefinePointers(FStepper)
 
 }
 

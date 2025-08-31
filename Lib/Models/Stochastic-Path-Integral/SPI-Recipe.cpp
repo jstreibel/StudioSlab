@@ -43,7 +43,7 @@ namespace Slab::Models::StochasticPathIntegrals {
         return sockets;
     }
 
-    auto SPIRecipe::buildStepper() -> TPointer<Stepper> {
+    auto SPIRecipe::buildStepper() -> TPointer<FStepper> {
         fix L = SPI_NumericConfig->getL();
         fix t = SPI_NumericConfig->gett();
         fix N = SPI_NumericConfig->getN();

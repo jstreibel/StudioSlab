@@ -67,7 +67,7 @@ namespace Slab::Math {
     }
 
     OutputPacket NumericTask::getOutputInfo() {
-        auto currentState = stepper->getCurrentState();
+        auto currentState = stepper->GetCurrentState();
 
         return {currentState, StepsConcluded};
     }
@@ -76,7 +76,7 @@ namespace Slab::Math {
         if(forceStopFlag) return false;
 
         BenchmarkData->StartMeasure();
-        stepper->step(nCycles);
+        stepper->Step(nCycles);
         BenchmarkData->StoreMeasure(static_cast<int>(nCycles));
 
         StepsConcluded += nCycles;

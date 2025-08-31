@@ -30,7 +30,7 @@ namespace Slab::Math::Base {
         virtual void setupForCurrentThread() { };
 
         virtual auto BuildOutputSockets()         -> OutputSockets = 0;
-        virtual auto buildStepper()               -> TPointer<Stepper> = 0;
+        virtual auto buildStepper()               -> TPointer<FStepper> = 0;
 
         [[nodiscard]] virtual auto SuggestFileName()      const -> Str;
 

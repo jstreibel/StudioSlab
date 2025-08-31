@@ -29,7 +29,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
 
         auto BuildOutputSockets() -> Vector<TPointer<FOutputChannel>> override;
 
-        auto buildStepper() -> TPointer<Stepper> override;
+        auto buildStepper() -> TPointer<FStepper> override;
     };
 
 } // Slab::Math
