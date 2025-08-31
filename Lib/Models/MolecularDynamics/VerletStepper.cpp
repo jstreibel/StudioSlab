@@ -16,7 +16,7 @@ namespace Slab::Models::MolecularDynamics {
             : FStepper()
             , MechanicsModel(mechModel)
             , q(c->getN()), p(c->getN()), State(New<FMoleculesState>(q, p))
-            , dt(c->getdt()){
+            , dt(c->Get_dt()){
         const CountType N = c->getN();
         const DevFloat L = c->GetL();
 
@@ -56,7 +56,7 @@ namespace Slab::Models::MolecularDynamics {
         auto PointPairMolecules = std::make_pair(std::ref(q), std::ref(p));
 
         for (auto i = 0; i < n_steps; ++i) {
-            const auto t = dt * (DevFloat) CurrStep;
+            const auto t = dt * static_cast<DevFloat>(CurrStep);
 
             StepperVerlet.do_step(MechanicsModel, PointPairMolecules, t, dt);
 

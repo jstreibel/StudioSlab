@@ -14,7 +14,7 @@
 
 namespace Studios::MolecularDynamics {
 
-    static Slab::Models::MolecularDynamics::FRecipe Recipe;
+    static Slab::Models::MolecularDynamics::FMolecularDynamicsRecipe Recipe;
 
     MolecularDynamics::App::App(int argc, const char **argv)
             : AppBase(argc, argv) {

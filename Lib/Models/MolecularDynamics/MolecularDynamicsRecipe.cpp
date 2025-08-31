@@ -10,7 +10,7 @@
 #include "Hamiltonians/SoftDisk/SoftDisk.h"
 
 #include "Monitor.h"
-#include "Recipe.h"
+#include "MolecularDynamicsRecipe.h"
 
 #include "Core/SlabCore.h"
 #include "../../Core/Controller/InterfaceManager.h"
@@ -23,7 +23,7 @@
 #include "Graphics/Window/SlabWindowManager.h"
 
 namespace Slab::Models::MolecularDynamics {
-    FRecipe::FRecipe()
+    FMolecularDynamicsRecipe::FMolecularDynamicsRecipe()
     : FNumericalRecipe(New<MolDynNumericConfig>(false), "2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
     {
         Interface->AddParameters({&Temperature, &Dissipation, &Model});
@@ -31,7 +31,7 @@ namespace Slab::Models::MolecularDynamics {
         RegisterToManager();
     }
 
-    Vector<TPointer<Math::FOutputChannel>> FRecipe::BuildOutputSockets() {
+    Vector<TPointer<Math::FOutputChannel>> FMolecularDynamicsRecipe::BuildOutputSockets() {
         Vector<TPointer<Math::FOutputChannel>> sockets;
 
         auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(NumericConfig);
@@ -54,7 +54,7 @@ namespace Slab::Models::MolecularDynamics {
         return sockets;
     }
 
-    TPointer<Math::FStepper> FRecipe::BuildStepper() {
+    TPointer<Math::FStepper> FMolecularDynamicsRecipe::BuildStepper() {
         auto c = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(NumericConfig);
 
         fix T = *Temperature;
@@ -76,12 +76,11 @@ namespace Slab::Models::MolecularDynamics {
         throw Exception(Str("Unknown particle dynamics model '") + ToStr(*Model) + "'.");
     }
 
-    void FRecipe::NotifyInterfaceSetupIsFinished() {
+    void FMolecularDynamicsRecipe::NotifyInterfaceSetupIsFinished() {
         FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
-        Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
-
-        DynamicPointerCast<Models::MolecularDynamics::MolDynNumericConfig>(GetNumericConfig())->sett(-1);
+        Log::Attention() << "ParticleDynamics::Builder will ignore NumericParams '-t' argument and set it to negative.";
+        DynamicPointerCast<MolDynNumericConfig>(GetNumericConfig())->Set_t(-1);
     }
 
 } // MolecularDynamics

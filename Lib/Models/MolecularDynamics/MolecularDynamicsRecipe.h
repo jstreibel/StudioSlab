@@ -15,7 +15,7 @@ namespace Slab::Models::MolecularDynamics {
     using namespace Slab;
     using namespace Slab::Core;
 
-    class FRecipe final : public Math::Base::FNumericalRecipe {
+    class FMolecularDynamicsRecipe final : public Math::Base::FNumericalRecipe {
         RealParameter Temperature = RealParameter    (0.0, FParameterDescription{'T', "temperature", "The system temperature in Langevin simulations."});
         RealParameter Dissipation = RealParameter    (0.0, FParameterDescription{'k', "dissipation_factor", "The system energy dissipation factor."});
         IntegerParameter Model    = IntegerParameter (  1, FParameterDescription{"model", "The physical model to use:"
@@ -25,7 +25,7 @@ namespace Slab::Models::MolecularDynamics {
         // FInterface_ptr MolDynamicsInterface;
 
     public:
-        FRecipe();
+        FMolecularDynamicsRecipe();
 
         auto BuildOutputSockets() -> Vector<TPointer<Math::FOutputChannel>> override;
 

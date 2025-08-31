@@ -29,7 +29,7 @@ namespace Slab::Models {
         return **t;
     }
 
-    auto DynamicsNumericConfig::sett(DevFloat t_max) -> void {
+    auto DynamicsNumericConfig::Set_t(DevFloat t_max) const -> void {
         Log::Attention() << "Command line argument '" << t->GetCommandLineArgumentName(true) << "' "
                          << "being overridden and set to " << t_max << ";" << Log::Flush;
 

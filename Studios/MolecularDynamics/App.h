@@ -7,7 +7,7 @@
 
 
 #include "AppBase.h"
-#include "Models/MolecularDynamics/Recipe.h"
+#include "Models/MolecularDynamics/MolecularDynamicsRecipe.h"
 #include "Graphics/Backend/SFML/SFMLBackend.h"
 #include "Math/Numerics/NumericTask.h"
 

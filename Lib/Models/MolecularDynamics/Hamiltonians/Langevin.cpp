@@ -17,7 +17,7 @@ namespace Slab::Models::MolecularDynamics {
     }
 
     Graphics::Point2D Langevin::F_nh(DevFloat) {
-        fix dt = numeric_config->getdt();
+        fix dt = numeric_config->Get_dt();
 
         fix alpha = sqrt(2 * T / dt);
         return alpha * xi();

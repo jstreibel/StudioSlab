@@ -97,7 +97,7 @@ set ( MOLDYN_SOURCES
 		MolecularDynamics/Hamiltonians/Hash/FixedSizeMoleculeContainer.h 	MolecularDynamics/Hamiltonians/Hash/FixedSizeMoleculeContainer.cpp
 		MolecularDynamics/Hamiltonians/Hash/HashParams.h
 
-		MolecularDynamics/Recipe.h 				  MolecularDynamics/Recipe.cpp
+        MolecularDynamics/MolecularDynamicsRecipe.h MolecularDynamics/MolecularDynamicsRecipe.cpp
 		MolecularDynamics/VerletStepper.h 		  MolecularDynamics/VerletStepper.cpp
 		MolecularDynamics/Hamiltonians/Particle.h MolecularDynamics/Hamiltonians/Particle.cpp
 		MolecularDynamics/Monitor.h 			  MolecularDynamics/Monitor.cpp

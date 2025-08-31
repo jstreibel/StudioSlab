@@ -22,7 +22,7 @@ namespace Slab::Models::MolecularDynamics {
         return Slab::Str();
     }
 
-    auto MolDynNumericConfig::getdt() const -> DevFloat {
+    auto MolDynNumericConfig::Get_dt() const -> DevFloat {
         return **t / **n;
     }
 

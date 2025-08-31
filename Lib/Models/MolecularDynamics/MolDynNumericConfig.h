@@ -17,7 +17,7 @@ namespace Slab::Models::MolecularDynamics {
 
         auto Get_n() const -> UInt override;
 
-        auto getdt() const -> DevFloat;
+        auto Get_dt() const -> DevFloat;
 
         auto to_string() const -> Str override;
     };

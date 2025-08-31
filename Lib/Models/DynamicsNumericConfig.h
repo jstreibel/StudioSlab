@@ -17,13 +17,13 @@ namespace Slab::Models {
     class DynamicsNumericConfig : public Math::FNumericConfig {
     protected:
         TPointer<IntegerParameter> N = MakeIntParam(128,
-            FParameterDescription{'N', "Number of Molecules to simulate"},
+            FParameterDescription{'N', "Number of base DOF"},
             FIntegerParameterOptions{128, 1<<18, false, true});
         TPointer<RealParameter> L = MakeRealParam(100.,
-            FParameterDescription{'L', "Space length. Simulation will be an LxL box"},
+            FParameterDescription{'L', "Space base length"},
             FRealParameterOptions{1e-2, 1.e5});
         TPointer<RealParameter> t = New<RealParameter>(-1,
-            FParameterDescription{'t', "Max simulation time. If left negative, it is unbounded"});
+            FParameterDescription{'t', "Max simulation time. If left negative, behavior depends on particular recipe"});
 
     public:
         explicit DynamicsNumericConfig(bool do_register);
@@ -32,7 +32,7 @@ namespace Slab::Models {
         auto GetL() const -> DevFloat;
 
         auto Get_t() const -> DevFloat;
-        auto sett(DevFloat) -> void;
+        auto Set_t(DevFloat) const -> void;
 
         auto NotifyInterfaceSetupIsFinished() -> void override;
     };
