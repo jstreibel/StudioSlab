@@ -20,7 +20,7 @@
 namespace Slab::Models::MolecularDynamics {
 
     #define SHOW_DOT false
-    #define SHOW_RADIUS true
+    #define SHOW_RADIUS false
 
     #define SFML_Backend DynamicPointerCast<Graphics::SFMLBackend>(Slab::Graphics::GetGraphicsBackend())
 
@@ -56,14 +56,16 @@ namespace Slab::Models::MolecularDynamics {
 
                     if(r>=0.98*CUTOFF_RADIUS && SHOW_RADIUS && false)
                         molImg.setPixel(i, j, sf::Color(0, 255, 0, 255));
-                    else if(r < 0.5*1.12*σ && SHOW_DOT)
+                    if constexpr (SHOW_DOT) if(r < 0.5*1.12*σ)
                         molImg.setPixel(i, j, sf::Color(255, 255, 255, 255));
-                    else if(!SHOW_DOT){
+                    if constexpr (!SHOW_DOT) {
                         DevFloat U;
                         DevFloat factor;
 
-                        if     (model == Model::LennardJones){ U = LennardJones::U(r); factor = U/ε; }
-                        else if(model == Model::SoftDisk)    { U = SoftDisk::    U(r); factor = U; }
+                        switch (model) {
+                        case LennardJones: U = LennardJones::U(r); factor = U/ε; break;
+                        case SoftDisk:     U = SoftDisk::    U(r); factor = U;   break;
+                        }
 
                         auto alpha = 255.0;
                         auto color = posColor;
@@ -94,7 +96,7 @@ namespace Slab::Models::MolecularDynamics {
         }
 
         molShape.setTexture(&molTexture);
-        if(SHOW_RADIUS) {
+        if constexpr (SHOW_RADIUS) {
             molShape.setOutlineThickness(0.1);
             auto color = skyBlue;
             color.a = 50;
