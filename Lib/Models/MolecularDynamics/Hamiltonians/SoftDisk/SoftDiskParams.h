@@ -19,11 +19,11 @@ namespace Slab::Models::MolecularDynamics {
 //#define SIMSPACE_SIDE_SIZE 2.00 // metade da largura do espaco
 
 
-#define ε 1.0
-#define σ CUTOFF_RADIUS // raio da interacao
-#define ALPHA 2 // expoente do potencial (quanto maior, mais soft)
+constexpr DevFloat ε = 1.0;
+constexpr DevFloat σ = CUTOFF_RADIUS; // raio da interacao
+constexpr DevFloat ALPHA = 2; // expoente do potencial (quanto maior, mais soft)
 
-    const DevFloat Temperature = 10e-3;
+    // const DevFloat Temperature = 10e-3;
 
 }
 
