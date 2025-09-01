@@ -20,32 +20,33 @@ namespace Slab::Models::MolecularDynamics {
 
     using namespace Slab;
 
-    class Monitor : public Math::FOutputChannel, public Graphics::FSlabWindow {
-        sf::RenderWindow &renderWindow;
+    class FMolecularDynamicsMonitor final : public Math::FOutputChannel, public Graphics::FSlabWindow {
 
-        Vector<sf::Vertex> molShapes;
-
-        sf::CircleShape molShape;
-        sf::Texture molTexture;
-
-        // Vector<sf::Vertex[MOLS_HISTORY_SIZE]> moleculesHistory;
-
-        CountType N;
-        float L;
     public:
         enum Model {
             LennardJones,
             SoftDisk
         };
 
-        using Config = Models::MolecularDynamics::MolDynNumericConfig;
+        using Config = MolDynNumericConfig;
 
-        Monitor(const TPointer<Config>&, Model);
+        FMolecularDynamicsMonitor(const TPointer<Config>&, Model);
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
     protected:
-        auto HandleOutput(const Math::FOutputPacket &packet) -> void override;
+        auto HandleOutput(const Math::FOutputPacket&) -> void override;
+
+    private:
+        sf::CircleShape MoleculeShape;
+        sf::Texture MolTexture;
+        sf::Image MolRenderedPotential;
+
+        // Vector<sf::Vertex[MOLS_HISTORY_SIZE]> MoleculesHistory;
+
+        CountType N;
+        float L;
+
     };
 
 } // MolecularDynamics

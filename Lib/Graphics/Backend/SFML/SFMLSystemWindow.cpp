@@ -8,7 +8,7 @@
 namespace Slab::Graphics {
     sf::RenderWindow *new_sfml_native_window(){
         sf::ContextSettings contextSettings;
-        contextSettings.depthBits = 32;
+        // contextSettings.depthBits = 32;
         contextSettings.majorVersion = 4;
         contextSettings.minorVersion = 6;
         contextSettings.antialiasingLevel = 8;

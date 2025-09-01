@@ -26,6 +26,7 @@ namespace Slab {
     typedef Real32 *RealData;
     typedef int Int;
     typedef unsigned int UInt;
+    typedef unsigned char UInt8;
     typedef long long IntBig;
     typedef unsigned long UIntBig;
     typedef std::size_t CountType;

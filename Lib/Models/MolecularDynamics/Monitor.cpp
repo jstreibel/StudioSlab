@@ -19,114 +19,107 @@
 
 namespace Slab::Models::MolecularDynamics {
 
-    #define SHOW_DOT false
-    #define SHOW_RADIUS false
+    #define SHOW_DOT true
+    #define SHOW_RADIUS true
+    #define SHOW_HASH_GRID false
 
     #define SFML_Backend DynamicPointerCast<Graphics::SFMLBackend>(Slab::Graphics::GetGraphicsBackend())
 
-    Monitor::Monitor(const TPointer<Config>& config, Model model)
+    FMolecularDynamicsMonitor::FMolecularDynamicsMonitor(const TPointer<Config>& config, Model model)
     : FOutputChannel("Particle dynamics monitor", 10)
     , FSlabWindow(Graphics::FSlabWindowConfig("Particle Dynamics Monitor"))
-    , renderWindow(*(sf::RenderWindow*)SFML_Backend->GetMainSystemWindow()->GetRawPlatformWindowPointer())
-    , molShapes(2*config->getN())
-    , molShape(CUTOFF_RADIUS, 36)
-    , molTexture()
-    , N(config->getN()), L(float(config->GetL()))
+    , MoleculeShape(CUTOFF_RADIUS, 36)
+    , N(config->getN()), L(static_cast<float>(config->GetL()))
     {
-        sf::Color skyBlue(135, 206, 235, 255);
-        sf::Color someRed(235, 206, 135, 255);
+        const sf::Color skyBlue(135, 206, 235, 255);
+        const sf::Color someRed(235, 206, 135, 255);
 
-        auto negColor = skyBlue;
-        auto posColor = someRed;
+        const auto negColor = skyBlue;
+        const auto posColor = someRed;
 
         {
-            sf::Image molImg;
-            const int texDim = 256;
+            constexpr int TexDim = 256;
 
-            Pair<double, double> nearestZero = {1.e3, .0},
-                    smallest    = {.0,   .0},
-                    largest     = {.0,   .0};
+            Pair<double, double> NearestZero = {1.e3, .0},
+                    Smallest    = {.0,   .0},
+                    Largest     = {.0,   .0};
 
-            molImg.create(texDim, texDim, sf::Color(255, 0, 255, 0));
-            for (auto i = 0; i < texDim; ++i) {
-                for (auto j = 0; j < texDim; ++j) {
-                    const double x = 2.*(i/double(texDim) - .5);
-                    const double y = 2.*(j/double(texDim) - .5);
+            MolRenderedPotential.create(TexDim, TexDim, sf::Color(255, 0, 255, 0));
+            for (auto i = 0; i < TexDim; ++i) {
+                for (auto j = 0; j < TexDim; ++j) {
+                    const double x = 2.*(i/static_cast<double>(TexDim) - .5);
+                    const double y = 2.*(j/static_cast<double>(TexDim) - .5);
                     const double r = sqrt(x*x + y*y)*CUTOFF_RADIUS;
 
-                    if(r>=0.98*CUTOFF_RADIUS && SHOW_RADIUS && false)
-                        molImg.setPixel(i, j, sf::Color(0, 255, 0, 255));
+                    if constexpr (SHOW_RADIUS) if(r>=0.98*CUTOFF_RADIUS)
+                        MolRenderedPotential.setPixel(i, j, sf::Color(0, 255, 0, 255));
                     if constexpr (SHOW_DOT) if(r < 0.5*1.12*σ)
-                        molImg.setPixel(i, j, sf::Color(255, 255, 255, 255));
+                        MolRenderedPotential.setPixel(i, j, sf::Color(255, 255, 255, 255));
                     if constexpr (!SHOW_DOT) {
                         DevFloat U;
-                        DevFloat factor;
+                        DevFloat factor=.0;
 
                         switch (model) {
                         case LennardJones: U = LennardJones::U(r); factor = U/ε; break;
                         case SoftDisk:     U = SoftDisk::    U(r); factor = U;   break;
                         }
 
-                        auto alpha = 255.0;
-                        auto color = posColor;
+                        auto Alpha = 255.0;
+                        auto Color = posColor;
 
                         if(U<0){
-                            color = negColor;
-                            alpha *= factor;
+                            Color = negColor;
+                            Alpha *= factor;
                         }  else {
-                            alpha *= (factor>1?1.0:factor);
+                            Alpha *= factor>1?1.0:factor;
                         }
 
-                        color.a = alpha;
+                        Color.a = Alpha>255. ? 255 : Alpha<.0 ? 0 : static_cast<UInt8>(Alpha);
 
-                        molImg.setPixel(i, j, color);
+                        Color = {0,0,255,255};
+                        MolRenderedPotential.setPixel(i, j, Color);
 
-                        if(fabs(U)<fabs(nearestZero.first)) nearestZero={U, r};
-                        if(U<smallest.first)                smallest   ={U, r};
-                        if(U>largest.first)                 largest    ={U, r};
+                        if(fabs(U)<fabs(NearestZero.first)) NearestZero={U, r};
+                        if(U<Smallest.first)                Smallest   ={U, r};
+                        if(U>Largest.first)                 Largest    ={U, r};
                     }
                 }
             }
 
-            Core::Log::Info("ParticleDynamics::Monitor: ")
-                      << "\n\t\t\t\t\tNearest zero " << nearestZero.first << " @ r=" << nearestZero.second
-                      << "\n\t\t\t\t\tSmallest     " << smallest.first << " @ r=" << smallest.second
-                      << "\n\t\t\t\t\tLargest      " << largest.first << " @ r=" << largest.second;
-            molTexture.loadFromImage(molImg);
+            Log::Info("ParticleDynamics::Monitor: ")
+                      << "\n\t\t\t\t\tNearest zero " << NearestZero.first << " @ r=" << NearestZero.second
+                      << "\n\t\t\t\t\tSmallest     " << Smallest.first << " @ r=" << Smallest.second
+                      << "\n\t\t\t\t\tLargest      " << Largest.first << " @ r=" << Largest.second;
+            MolTexture.loadFromImage(MolRenderedPotential);
         }
 
-        molShape.setTexture(&molTexture);
+        MoleculeShape.setTexture(&MolTexture, true);
         if constexpr (SHOW_RADIUS) {
-            molShape.setOutlineThickness(0.1);
+            MoleculeShape.setOutlineThickness(0.1);
             auto color = skyBlue;
             color.a = 50;
-            molShape.setOutlineColor(color);
+            MoleculeShape.setOutlineColor(color);
         }
-        molShape.setOrigin(CUTOFF_RADIUS, CUTOFF_RADIUS);
+        MoleculeShape.setOrigin(CUTOFF_RADIUS, CUTOFF_RADIUS);
     }
 
-    void Monitor::HandleOutput(const Math::FOutputPacket &packet) {    }
-
-    void Monitor::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
-        // Window::draw();
+    void FMolecularDynamicsMonitor::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+        auto& RenderWindow = *static_cast<sf::RenderWindow*>(PlatformWindow.GetRawPlatformWindowPointer());
 
         auto state = LastPacket.GetNakedStateData<FMoleculesState>();
         auto v_q = state->first();
         auto v_p = state->second();
 
-        const auto O = .0f;
-
         const auto L_bitMore = (float)L * 1.2f;
         sf::Color bg(0 , 0, 0);
-        sf::Color skyBlue(135, 206, 235, 32);
+        const sf::Color Azure(135, 206, 235, 32);
 
-        const float ratio = (float)renderWindow.getSize().x / (float)renderWindow.getSize().y;
-        renderWindow.setView(sf::View(sf::Vector2f(.0, .0), sf::Vector2f(L_bitMore*ratio, -L_bitMore)));
-        renderWindow.clear(bg);
-
-        sf::Shape &moleculeShape = molShape;
+        const float ratio = static_cast<float>(RenderWindow.getSize().x) / static_cast<float>(RenderWindow.getSize().y);
+        RenderWindow.setView(sf::View(sf::Vector2f(.0, .0), sf::Vector2f(L_bitMore*ratio, -L_bitMore)));
+        RenderWindow.clear(bg);
 
         // Hash grid
+        if constexpr (SHOW_HASH_GRID)
         {
             sf::Color umPreto(32, 32, 32);
             sf::Color cor = umPreto;
@@ -143,12 +136,14 @@ namespace Slab::Models::MolecularDynamics {
                 subdivs.emplace_back(base + sf::Vector2f{il, L}, cor);
             }
 
-            renderWindow.draw(&subdivs[0], subdivs.size(), sf::Lines);
+            RenderWindow.draw(&subdivs[0], subdivs.size(), sf::Lines);
         }
 
 
         // Particles
         {
+            constexpr auto O = .0f;
+
             sf::Vector2f offsets[9] = {{-L, -L},
                                        { O, -L},
                                        { L, -L},
@@ -158,27 +153,29 @@ namespace Slab::Models::MolecularDynamics {
                                        {-L,  L},
                                        { O,  L},
                                        { L,  L}};
+
             for (auto &q : v_q) {
                 int c = 0;
                 for (auto &o : offsets) {
-                    moleculeShape.setPosition(sf::Vector2f((float)q.x, (float)q.y) + o);
+                    MoleculeShape.setPosition(sf::Vector2f(static_cast<float>(q.x), static_cast<float>(q.y)) + o);
                     if (c == 4)
-                        moleculeShape.setFillColor(sf::Color(255, 255, 255, 100));
+                        MoleculeShape.setFillColor(sf::Color(255, 255, 255, 80));
                     else
-                        moleculeShape.setFillColor(sf::Color(255, 255, 255, 65));
+                        MoleculeShape.setFillColor(sf::Color(255, 255, 255, 25));
 
                     c++;
-                    renderWindow.draw(moleculeShape);
+                    RenderWindow.draw(MoleculeShape);
                 }
             }
-            renderWindow.draw(&molShapes[0], N, sf::Lines);
+
+            // RenderWindow.draw(&MolShapes[0], N, sf::Lines);
         }
 
 
         // Boundaries
         {
-            sf::Color rosaChoqueDaNina(255, 20, 147);
-            sf::Color cor = rosaChoqueDaNina;
+            sf::Color RosaChoqueDaNina(255, 20, 147);
+            sf::Color cor = RosaChoqueDaNina;
             sf::Vertex box[] = {
                     sf::Vertex(sf::Vector2f(-.5f * L,  .5f * L), cor),
                     sf::Vertex(sf::Vector2f( .5f * L,  .5f * L), cor),
@@ -186,22 +183,24 @@ namespace Slab::Models::MolecularDynamics {
                     sf::Vertex(sf::Vector2f(-.5f * L, -.5f * L), cor),
                     sf::Vertex(sf::Vector2f(-.5f * L,  .5f * L), cor)
             };
-            renderWindow.draw(box, 5, sf::LineStrip);
+            RenderWindow.draw(box, 5, sf::LineStrip);
         }
 
 
         // Big circle indicating the interaction cutoff radius
-        if(0)
+        if constexpr (false)
         {
             sf::CircleShape molRadius(CUTOFF_RADIUS);
             molRadius.setPosition(-.5f * L - 3 * CUTOFF_RADIUS, .5f * L - 2 * CUTOFF_RADIUS);
-            renderWindow.draw(molRadius);
+            RenderWindow.draw(molRadius);
 
             // molShape.setPosition( -.5f * L - 3 * CUTOFF_RADIUS, .5f * L - 5 * CUTOFF_RADIUS);
             // renderWindow.draw(molShape);
         }
     }
 
-
-
+    auto FMolecularDynamicsMonitor::HandleOutput(const Math::FOutputPacket&) -> void
+    {
+        // Dummy
+    }
 } // MolecularDynamics

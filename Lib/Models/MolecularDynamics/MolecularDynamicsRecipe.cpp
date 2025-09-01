@@ -34,16 +34,16 @@ namespace Slab::Models::MolecularDynamics {
     Vector<TPointer<Math::FOutputChannel>> FMolecularDynamicsRecipe::BuildOutputSockets() {
         Vector<TPointer<Math::FOutputChannel>> sockets;
 
-        auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(NumericConfig);
+        auto numericConfig = DynamicPointerCast<MolDynNumericConfig>(NumericConfig);
 
-        sockets.emplace_back(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig->Get_n()));
+        sockets.emplace_back(Slab::New <Math::OutputConsoleMonitor> (numericConfig->Get_n()));
 
-        MolecularDynamics::Monitor::Model simModel = *Model==0
-                ? MolecularDynamics::Monitor::Model::LennardJones
-                : MolecularDynamics::Monitor::Model::SoftDisk;
-        auto monitor = New <MolecularDynamics::Monitor>(numericConfig, simModel);
+        FMolecularDynamicsMonitor::Model simModel = *Model==0
+                ? FMolecularDynamicsMonitor::Model::LennardJones
+                : FMolecularDynamicsMonitor::Model::SoftDisk;
+        auto monitor = Slab::New <FMolecularDynamicsMonitor>(numericConfig, simModel);
 
-        const auto MainPlatformWindow = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
+        const auto MainPlatformWindow = Graphics::GetGraphicsBackend()->GetMainSystemWindow();
 
         const auto WindowManager = New<Graphics::FSlabWindowManager>();
         MainPlatformWindow->AddAndOwnEventListener(WindowManager);
