@@ -82,7 +82,7 @@ namespace Slab::Models::MolecularDynamics {
         return 0.0;
     }
 
-    DevFloat SoftDisk::U(DevFloat r) {
+    DevFloat SoftDisk::U(const DevFloat r) {
 
         if( r > σ) return .0;
 

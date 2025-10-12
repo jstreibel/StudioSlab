@@ -11,7 +11,7 @@
 
 namespace Slab::Models::MolecularDynamics {
 
-    LennardJones::LennardJones(TPointer<Config> config, DevFloat T)
+    LennardJones::LennardJones(const TPointer<Config>& config, const DevFloat T)
             : Langevin(config, T) {}
 
     inline Graphics::Point2D LennardJones::dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
@@ -52,12 +52,12 @@ namespace Slab::Models::MolecularDynamics {
         return resultForce;
     }
 
-    DevFloat MolecularDynamics::LennardJones::U(DevFloat r) {
+    DevFloat LennardJones::U(DevFloat r) {
         auto inv_n = σ / r;
         return 4. * ε * (POW12(inv_n) - POW6(inv_n));
     }
 
-    DevFloat MolecularDynamics::LennardJones::U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
+    DevFloat LennardJones::U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
         const DevFloat SIGMA_SQR = σ * σ;
         DevFloat distSqr;
 
