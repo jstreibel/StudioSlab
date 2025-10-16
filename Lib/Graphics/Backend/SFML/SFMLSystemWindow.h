@@ -19,6 +19,11 @@ namespace Slab::Graphics {
         Vector<TVolatile<SFMLListener>> sfml_listeners;
         sf::RenderWindow *sfml_native_window = nullptr;
         sf::Font font;
+
+    public:
+        void Clear(const FColor&) const override;
+
+    private:
         sf::Text text;
 
         Mutex off_sync;
@@ -26,7 +31,7 @@ namespace Slab::Graphics {
         void PollEvents();
 
     protected:
-        void Cycle() override;
+        void Tick() override;
         void Flush() override;
 
     public:

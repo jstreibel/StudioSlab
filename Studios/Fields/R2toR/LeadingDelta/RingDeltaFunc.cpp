@@ -32,4 +32,13 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
         return a*delta(r-t, eps);
     }
+
+    #if !USE_CUDA
+    bool RingDeltaFunc::renderToNumericFunction(ArbFunc *toFunc) const
+    {
+        Slab::Core::Log::Error("RingDeltaFunc::renderToNumericFunction only implemented in GPU. Current compilation has no GPU support");
+        NOT_IMPLEMENTED_CLASS_METHOD
+    }
+    #endif
+
 }

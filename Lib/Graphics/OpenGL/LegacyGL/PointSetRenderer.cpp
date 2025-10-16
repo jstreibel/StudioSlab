@@ -7,14 +7,9 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    bool Legacy::RenderPointSett(const Math::PointSet_constptr& pSet, PlotStyle style) noexcept {
-        if(pSet== nullptr) return true;
+    void RenderPlotOrPointset(const Point2DVec& pts, PlotStyle style) noexcept {
 
-        IN pts = pSet->getPoints();
-
-        if(pts.empty()) return true;
-
-        if (style.filled && !(style.getPrimitive() == Point || style.getPrimitive() == Lines)) {
+        if (style.filled && !(style.getPrimitive() == Points || style.getPrimitive() == Lines)) {
             const auto color = style.fillColor;
 
             glColor4f(color.r, color.g, color.b, color.a);
@@ -48,8 +43,8 @@ namespace Slab::Graphics::OpenGL {
             auto color = style.lineColor;
             glColor4f(color.r, color.g, color.b, color.a);
 
-            if (style.getPrimitive() != Solid
-                && style.getPrimitive() != VerticalLines
+            if (style.getPrimitive() != PlottingSolid
+                && style.getPrimitive() != PlottingVerticalLinesWithCircles
                 && style.getPrimitive() != LinePrimitive::Lines) {
                 glDisable(GL_LINE_SMOOTH);
                 glEnable(GL_LINE_STIPPLE);
@@ -57,8 +52,8 @@ namespace Slab::Graphics::OpenGL {
             } else glEnable(GL_LINE_SMOOTH);
 
             auto primitive = GL_LINE_STRIP;
-            if (style.getPrimitive() == Point || style.getPrimitive() == VerticalLines) {
-                fix ptSizeFactor = style.getPrimitive() == VerticalLines ? 5.0 : 1.0;
+            if (style.getPrimitive() == Points || style.getPrimitive() == PlottingVerticalLinesWithCircles) {
+                fix ptSizeFactor = style.getPrimitive() == PlottingVerticalLinesWithCircles ? 5.0 : 1.0;
 
                 primitive = GL_POINTS;
                 glEnable(GL_POINT_SMOOTH);
@@ -78,7 +73,7 @@ namespace Slab::Graphics::OpenGL {
             }
             glEnd();
 
-            if (style.getPrimitive() == VerticalLines) {
+            if (style.getPrimitive() == PlottingVerticalLinesWithCircles) {
                 glBegin(GL_LINES);
                 {
                     for (auto p: pts) {
@@ -88,7 +83,63 @@ namespace Slab::Graphics::OpenGL {
                 }
                 glEnd();
             }
+        }
+    }
 
+    void RenderOtherPrimitives(const Point2DVec& pts, PlotStyle style) noexcept {
+
+        const auto color = style.fillColor;
+        glColor4f(color.r, color.g, color.b, color.a);
+
+        GLenum Primitive;
+        switch (style.getPrimitive()) {
+            case LineStrip:
+                Primitive = GL_LINE_STRIP;
+                break;
+            case LineLoop:
+                Primitive = GL_LINE_LOOP;
+                break;
+            case Triangles:
+                Primitive = GL_TRIANGLES;
+                break;
+            case Quads:
+                Primitive = GL_QUADS;
+                break;
+            default:
+                return;
+        }
+
+        glBegin(Primitive);
+        for (const auto p: pts) glVertex2d(p.x, p.y);
+        glEnd();
+    }
+
+    bool Legacy::RenderPointSet(const PointSet_constptr& pSet, const PlotStyle& style) noexcept {
+        if(pSet== nullptr) return true;
+
+        IN pts = pSet->getPoints();
+
+        if(pts.empty()) return true;
+
+        switch (style.getPrimitive()) {
+        case PlottingSolid:
+        case PlottingDotted:
+        case PlottingDashed:
+        case PlottingDotDashed:
+        case PlottingVerticalLinesWithCircles:
+        case Lines:
+        case Points:
+            RenderPlotOrPointset(pts, style);
+            break;
+
+        case LineStrip:
+        case LineLoop:
+        case Triangles:
+        case Quads:
+            RenderOtherPrimitives(pts, style);
+            break;
+        case __COUNT__:
+            break;
         }
 
         return !CheckGLErrors(Str(__PRETTY_FUNCTION__));

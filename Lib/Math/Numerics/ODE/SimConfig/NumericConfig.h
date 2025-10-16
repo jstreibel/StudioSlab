@@ -26,7 +26,7 @@ namespace Slab::Math {
         FNumericConfig(const FNumericConfig &) = delete;
 
         virtual
-        auto Get_n() const -> UInt = 0;
+        auto Get_n() const -> UIntBig = 0;
 
         virtual
         auto to_string() const -> Str = 0;

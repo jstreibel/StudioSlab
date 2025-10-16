@@ -6,9 +6,16 @@
 #define STUDIOSLAB_SHAPERENDERER_H
 
 #include "Graphics/Plot2D/Shapes/Shape.h"
+#include "Graphics/Styles/Colors.h"
+#include "Math/Formalism/Categories.h"
 
 namespace Slab::Graphics::OpenGL::Legacy {
-    void RenderRectanglee(const RectangleShape &);
+    void SetColor(const FColor&);
+
+    void DrawRectangle(const RectangleShape &);
+
+    void DrawLine(const Math::Real2D& start, const Math::Real2D& end, const FColor& color=White);
+
 }
 
 #endif //STUDIOSLAB_SHAPERENDERER_H

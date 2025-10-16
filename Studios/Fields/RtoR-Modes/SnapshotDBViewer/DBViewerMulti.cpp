@@ -40,7 +40,7 @@ namespace Modes::DatabaseViewer {
 
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
-            style.setPrimitive(Graphics::VerticalLines);
+            style.setPrimitive(Graphics::PlottingVerticalLinesWithCircles);
             style.filled = false;
             style.thickness = 1.5;
             Graphics::FPlotter::AddPointSet(Naked(massesGraph), Naked(massesReal_pointSet), style,
@@ -70,7 +70,7 @@ namespace Modes::DatabaseViewer {
                                                                       style, "k=ω-½m²/ω+...", false, z_order(2));
 
             style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
-            style.setPrimitive(Graphics::Point);
+            style.setPrimitive(Graphics::Points);
             style.thickness = 8;
             Graphics::FPlotter::AddPointSet(Naked(allDataDisplay), Naked(maxValuesPointSet), style,
                                            "main modes", false, z_order(2));

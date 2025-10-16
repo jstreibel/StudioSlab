@@ -133,14 +133,14 @@ namespace Slab::Graphics::OpenGL::Legacy {
         auto c = style.lineColor;
         glColor4f(c.r, c.g, c.b, c.a);
 
-        if (style.getPrimitive() != Solid) {
+        if (style.getPrimitive() != PlottingSolid) {
             glDisable(GL_LINE_SMOOTH);
             glEnable(GL_LINE_STIPPLE);
             glLineStipple(style.getStippleFactor(), style.getStipplePattern());
         } else glEnable(GL_LINE_SMOOTH);
 
         GLenum mode = GL_LINE_STRIP;
-        if(style.getPrimitive()==Point || style.getPrimitive()==VerticalLines) {
+        if(style.getPrimitive()==Points || style.getPrimitive()==PlottingVerticalLinesWithCircles) {
             mode = GL_POINTS;
             glPointSize(10*style.thickness);
             glLineWidth(style.thickness);
@@ -148,7 +148,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
             glDisable(GL_LINE_STIPPLE);
         }
 
-        if(style.getPrimitive()==VerticalLines) {
+        if(style.getPrimitive()==PlottingVerticalLinesWithCircles) {
             glBegin(GL_LINES);
             {
                 for (DevFloat s = sMin; s <= sMax; s += ds) {

@@ -34,7 +34,7 @@ namespace Slab::Math {
         if (OutputManager == nullptr)
         {
             OutputManager = New<FOutputManager>(TotalSteps);
-            for(auto sockets = Recipe->BuildOutputSockets(); const auto &socket : sockets)
+            for(const auto sockets = Recipe->BuildOutputSockets(); const auto &socket : sockets)
             {
                 OutputManager->AddOutputChannel(socket);
             }

@@ -35,7 +35,7 @@ namespace Slab::Models {
 
         [[nodiscard]] auto to_string() const -> Str override;
 
-        [[nodiscard]] auto Get_n() const -> UInt override;
+        [[nodiscard]] auto Get_n() const -> UIntBig override;
 
         [[nodiscard]] auto Getdt() const -> DevFloat;
 

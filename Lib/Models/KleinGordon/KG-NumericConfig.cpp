@@ -55,7 +55,7 @@ namespace Slab::Models {
 
     auto FKGNumericConfig::Get_r() const -> floatt { return **rdt; }
 
-    UInt FKGNumericConfig::Get_n() const {
+    UIntBig FKGNumericConfig::Get_n() const {
         const auto dt = this->Getdt();
         const auto t = Get_t();
         const auto n = static_cast<UInt>(round(t / dt));

@@ -9,17 +9,30 @@
 
 
 namespace Slab::Graphics::OpenGL::Legacy {
-    void RenderRectanglee(const RectangleShape &rectangleShape) {
+    void SetColor(const FColor& Color) {
+        glColor4f(Color.r, Color.g, Color.b, Color.a);
+    }
+
+    void DrawRectangle(const RectangleShape &rectangleShape) {
         fix tl = rectangleShape.top_left;
         fix br = rectangleShape.bottom_right;
 
-        glBegin(GL_LINE_LOOP);
+        glBegin(GL_QUADS);
         {
             glVertex2f(tl.x, tl.y);
             glVertex2f(br.x, tl.y);
             glVertex2f(br.x, br.y);
             glVertex2f(tl.x, br.y);
         }
+        glEnd();
+    }
+
+    void DrawLine(const Real2D& start, const Real2D& end, const FColor& color) {
+        SetColor(color);
+
+        glBegin(GL_LINES);
+        glVertex2d(start.x, start.y);
+        glVertex2d(end.x, end.y);
         glEnd();
     }
 

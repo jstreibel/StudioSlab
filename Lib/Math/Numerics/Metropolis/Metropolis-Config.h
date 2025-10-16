@@ -16,7 +16,7 @@ namespace Slab::Math {
     public:
         explicit MetropolisConfig(UInt max_steps);
 
-        auto Get_n() const -> UInt override;
+        auto Get_n() const -> UIntBig override;
 
         auto to_string() const -> Str override;
     };

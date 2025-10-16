@@ -13,7 +13,7 @@
 #include "Core/Backend/Modules/TaskManager/Task.h"
 #include "Core/Tools/BenchmarkData.h"
 
-const auto FORCE_INITIAL_OUTPUT = true;
+constexpr auto FORCE_INITIAL_OUTPUT = true;
 
 namespace Slab::Math {
 

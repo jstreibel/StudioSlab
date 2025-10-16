@@ -30,7 +30,7 @@ namespace Slab::Graphics {
 
         auto PointSet = curve.get()->renderToPointSet();
 
-        bool bReturnValue = OpenGL::Legacy::RenderPointSett(PointSet, plotStyle);
+        bool bReturnValue = OpenGL::Legacy::RenderPointSet(PointSet, plotStyle);
 
         return bReturnValue;
     }

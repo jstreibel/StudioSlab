@@ -33,8 +33,8 @@ namespace Slab {
          * OnStart is called after command line arguments are parsed and CreatePlatform() \
          * is called, respectively.
          */
-        virtual void OnStart() { };
-        virtual bool CanClose() { return true; };
+        virtual void OnStart() { }
+        virtual bool CanClose() { return true; }
 
     public:
         FApplication(Str name, const int argc, const char *argv[]);

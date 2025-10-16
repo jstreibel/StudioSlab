@@ -96,7 +96,7 @@ namespace Slab::Graphics {
             glColor4f(color.r, color.g, color.b, color.a);
             glLineWidth(style.thickness);
 
-            if (style.getPrimitive() != Graphics::Solid) {
+            if (style.getPrimitive() != Graphics::PlottingSolid) {
                 glDisable(GL_LINE_SMOOTH);
                 glEnable(GL_LINE_STIPPLE);
                 glLineStipple(style.getStippleFactor(), style.getStipplePattern());

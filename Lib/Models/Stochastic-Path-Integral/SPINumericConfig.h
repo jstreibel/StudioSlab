@@ -22,7 +22,7 @@ namespace Slab::Models::StochasticPathIntegrals {
         auto gett() const -> DevFloat;
         auto getN() const -> UInt;
         auto getdT() const -> DevFloat;
-        auto Get_n() const -> UInt override;
+        auto Get_n() const -> UIntBig override;
 
         auto to_string() const -> Str override;
     };

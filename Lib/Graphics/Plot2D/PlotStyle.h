@@ -19,16 +19,20 @@
 namespace Slab::Graphics {
 
     enum LinePrimitive {
-        Solid=0,
-        Dotted,
-        Dashed,
-        DotDashed,
-
-        VerticalLines,
+        PlottingSolid=0,
+        PlottingDotted,
+        PlottingDashed,
+        PlottingDotDashed,
+        PlottingVerticalLinesWithCircles,
 
         Lines,
+        LineStrip,
+        LineLoop,
 
-        Point,
+        Triangles,
+        Quads,
+
+        Points,
 
         __COUNT__
     };
@@ -44,13 +48,13 @@ namespace Slab::Graphics {
         void setPrimitive(LinePrimitive);
 
         void setStippleFactor(GLint);
-        auto getStippleFactor() -> GLint;
+        auto getStippleFactor() const -> GLint;
 
         void setStipplePattern(GLshort);
-        auto getStipplePattern() -> GLshort;
+        auto getStipplePattern() const -> GLshort;
 
         explicit PlotStyle(FColor color,
-                           LinePrimitive primitive=Solid,
+                           LinePrimitive primitive=PlottingSolid,
                            bool filled=true,
                            FColor fillColor=Nil,
                            float thickness=1.3);

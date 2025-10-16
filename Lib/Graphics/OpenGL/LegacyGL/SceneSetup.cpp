@@ -39,6 +39,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
 
         CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
     }
+
     void RestoreFromLegacyMode()
     {
         if(!Core::BackendManager::IsModuleLoaded("ModernOpenGL")) return;

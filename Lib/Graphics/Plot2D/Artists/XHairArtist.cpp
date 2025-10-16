@@ -44,7 +44,7 @@ namespace Slab::Graphics {
             OpenGL::Legacy::FShaderGuard Guard{};
 
             OpenGL::Legacy::SetupOrtho(region_rect);
-            bResult = OpenGL::Legacy::RenderPointSett(Naked(XHair), currStyle->XHairStyle);
+            bResult = OpenGL::Legacy::RenderPointSet(Naked(XHair), currStyle->XHairStyle);
         }
 
         return bResult;

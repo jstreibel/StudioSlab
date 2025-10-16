@@ -41,7 +41,7 @@ namespace Modes::DatabaseViewer {
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.filled = false;
-            style.setPrimitive(Slab::Graphics::Solid);
+            style.setPrimitive(Slab::Graphics::PlottingSolid);
             auto funky = Math::RtoR::NativeFunction([](DevFloat x) { return x; }).Clone();
             Graphics::FPlotter::AddRtoRFunction(Naked(mashupDisplay), funky, style, "m=0", 1000, 3);
         }
@@ -49,7 +49,7 @@ namespace Modes::DatabaseViewer {
         // Setup masses Re and Im pointsets.
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
-            style.setPrimitive(Graphics::VerticalLines);
+            style.setPrimitive(Graphics::PlottingVerticalLinesWithCircles);
             style.filled = false;
             style.thickness = 1.5;
             Graphics::FPlotter::AddPointSet(Naked(massesGraph), Naked(massesReal_pointSet), style,
@@ -77,7 +77,7 @@ namespace Modes::DatabaseViewer {
                                                                "ω²-kₚₑₐₖ²-m²=0", false, z_order(1));
 
             style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
-            style.setPrimitive(Graphics::Point);
+            style.setPrimitive(Graphics::Points);
             style.thickness = 8;
             Graphics::FPlotter::AddPointSet(Naked(mashupDisplay), Naked(maxValuesPointSet), style,
                                            "main modes", false, z_order(2));

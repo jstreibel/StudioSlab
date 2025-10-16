@@ -38,15 +38,17 @@ Int SFMLSystemWindow::GetHeight() const {
     return (Int)sfml_native_window->getSize().y;
 }
 
-void SFMLSystemWindow::Cycle() {
-    sfml_native_window->clear();
-
+void SFMLSystemWindow::Tick() {
     auto win = sfml_native_window;
     IterateReferences(sfml_listeners, FuncRun(render, win));
 }
 
 void SFMLSystemWindow::Flush() {
     sfml_native_window->display();
+}
+
+void SFMLSystemWindow::Clear(const FColor&) const {
+    sfml_native_window->clear();
 }
 
 void SFMLSystemWindow::PollEvents() {

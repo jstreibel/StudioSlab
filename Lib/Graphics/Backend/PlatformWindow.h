@@ -13,6 +13,7 @@
 #include "Graphics/Backend/Events/MouseState.h"
 #include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
 #include "Graphics/Modules/GUIModule/GUIContext.h"
+#include "Graphics/Styles/Colors.h"
 
 namespace Slab::Graphics {
 
@@ -36,7 +37,7 @@ namespace Slab::Graphics {
 
         TPointer<FMouseState> MouseState = nullptr;
 
-        virtual void Cycle() = 0;
+        virtual void Tick() = 0;
         virtual void Flush() = 0;
     public:
         FPlatformWindow() = delete;
@@ -45,6 +46,7 @@ namespace Slab::Graphics {
         virtual ~FPlatformWindow() = default;
 
         void Render();
+        virtual void Clear(const FColor&) const = 0;
 
         [[nodiscard]] virtual Int GetHeight() const = 0;
         [[nodiscard]] virtual Int GetWidth() const = 0;

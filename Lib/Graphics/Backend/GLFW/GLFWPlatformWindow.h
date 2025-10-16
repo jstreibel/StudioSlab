@@ -32,7 +32,8 @@ namespace Slab::Graphics {
         explicit FGLFWPlatformWindow();
         ~FGLFWPlatformWindow() override;
 
-        void Cycle() override;
+        void Tick() override;
+        void Clear(const FColor&) const override;
         void Flush() override;
 
         Int GetWidth() const override;

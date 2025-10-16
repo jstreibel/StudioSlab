@@ -15,7 +15,7 @@ namespace Slab::Models::MolecularDynamics {
     public:
         MolDynNumericConfig(bool do_register=true);
 
-        auto Get_n() const -> UInt override;
+        auto Get_n() const -> UIntBig override;
 
         auto Get_dt() const -> DevFloat;
 

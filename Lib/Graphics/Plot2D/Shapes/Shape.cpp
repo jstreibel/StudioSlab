@@ -22,7 +22,7 @@ namespace Slab::Graphics {
         OpenGL::Legacy::FShaderGuard Guard{};
 
         OpenGL::Legacy::SetupOrtho(window.GetRegion().getRect());
-        OpenGL::Legacy::RenderRectanglee(*this);
+        OpenGL::Legacy::DrawRectangle(*this);
     }
 
 

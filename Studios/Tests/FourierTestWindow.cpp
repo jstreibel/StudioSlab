@@ -158,7 +158,7 @@ namespace Tests {
             auto style = theme->FuncPlotStyles[1];
             style.lineColor.inverse();
             style.thickness = 2.5;
-            style.setPrimitive(Slab::Graphics::VerticalLines);
+            style.setPrimitive(Slab::Graphics::PlottingVerticalLinesWithCircles);
             style.filled = false;
             style.lineColor.a = 0.8;
 
@@ -169,7 +169,7 @@ namespace Tests {
             style = theme->FuncPlotStyles[3];
             style.lineColor.inverse();
             style.thickness = 2.5;
-            style.setPrimitive(Slab::Graphics::VerticalLines);
+            style.setPrimitive(Slab::Graphics::PlottingVerticalLinesWithCircles);
             style.filled = false;
             style.lineColor.a = 0.8;
             imagFTArtist.setStyle(style);

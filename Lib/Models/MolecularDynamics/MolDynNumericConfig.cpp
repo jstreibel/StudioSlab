@@ -13,7 +13,7 @@ namespace Slab::Models::MolecularDynamics {
         if(do_register) RegisterToManager();
     }
 
-    UInt MolDynNumericConfig::Get_n() const {
+    UIntBig MolDynNumericConfig::Get_n() const {
         return **n;
     }
 

@@ -29,7 +29,7 @@ namespace Slab::Graphics {
 
         OpenGL::Legacy::SetupOrtho(graph2D.GetRegion().getRect());
 
-        bool bResult = OpenGL::Legacy::RenderPointSett(pointSet, plotStyle);
+        bool bResult = OpenGL::Legacy::RenderPointSet(pointSet, plotStyle);
 
         return bResult;
     }

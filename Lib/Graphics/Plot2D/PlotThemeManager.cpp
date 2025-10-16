@@ -161,14 +161,14 @@ namespace Slab::Graphics {
 
         // https://www.learnui.design/tools/data-color-picker.html
         Vector<PlotStyle> graphs = {
-                PlotStyle{FColor::FromHex("#004c6d"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#1d617f"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#347691"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#498ca3"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#5fa2b5"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#76b9c7"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#8ed0da"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#a7e7ec"), LinePrimitive::Solid}
+                PlotStyle{FColor::FromHex("#004c6d"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#1d617f"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#347691"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#498ca3"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#5fa2b5"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#76b9c7"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#8ed0da"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#a7e7ec"), LinePrimitive::PlottingSolid}
         };
 
         auto XHairColor = axisColor;
@@ -177,7 +177,7 @@ namespace Slab::Graphics {
         XHairStyle.setPrimitive(Lines);
         XHairStyle.thickness = .5;
 
-        auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
+        auto gridLinesScheme = PlotStyle(tickColor, PlottingDotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
         auto writer = std::make_shared<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 17);
@@ -200,14 +200,14 @@ namespace Slab::Graphics {
 
         // https://www.learnui.design/tools/data-color-picker.html
         const Vector<PlotStyle> graphs = {
-                PlotStyle{FColor::FromHex("#003f5c"), LinePrimitive::Solid, true, Nil, 1.5},
-                PlotStyle{FColor::FromHex("#2f4b7c"), LinePrimitive::Solid, true, Nil, 1.5},
-                PlotStyle{FColor::FromHex("#665191"), LinePrimitive::Solid, true, Nil, 1.5},
-                PlotStyle{FColor::FromHex("#a05195"), LinePrimitive::Solid, true, Nil, 1.5},
-                PlotStyle{FColor::FromHex("#d45087"), LinePrimitive::Solid, true, Nil, 1.5},
-                PlotStyle{FColor::FromHex("#f95d6a"), LinePrimitive::Solid, true, Nil, 1.5},
-                PlotStyle{FColor::FromHex("#ff7c43"), LinePrimitive::Solid, true, Nil, 1.5},
-                PlotStyle{FColor::FromHex("#ffa600"), LinePrimitive::Solid, true, Nil, 1.5}
+                PlotStyle{FColor::FromHex("#003f5c"), LinePrimitive::PlottingSolid, true, Nil, 1.5},
+                PlotStyle{FColor::FromHex("#2f4b7c"), LinePrimitive::PlottingSolid, true, Nil, 1.5},
+                PlotStyle{FColor::FromHex("#665191"), LinePrimitive::PlottingSolid, true, Nil, 1.5},
+                PlotStyle{FColor::FromHex("#a05195"), LinePrimitive::PlottingSolid, true, Nil, 1.5},
+                PlotStyle{FColor::FromHex("#d45087"), LinePrimitive::PlottingSolid, true, Nil, 1.5},
+                PlotStyle{FColor::FromHex("#f95d6a"), LinePrimitive::PlottingSolid, true, Nil, 1.5},
+                PlotStyle{FColor::FromHex("#ff7c43"), LinePrimitive::PlottingSolid, true, Nil, 1.5},
+                PlotStyle{FColor::FromHex("#ffa600"), LinePrimitive::PlottingSolid, true, Nil, 1.5}
         };
 
         auto XHairColor = axisColor;
@@ -218,7 +218,7 @@ namespace Slab::Graphics {
 
         XHairStyle.thickness = 1;
 
-        auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
+        auto gridLinesScheme = PlotStyle(tickColor, PlottingDotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
         gridLinesScheme.thickness = 1;
 
@@ -239,14 +239,14 @@ namespace Slab::Graphics {
 
         // https://www.learnui.design/tools/data-color-picker.html
         Vector<PlotStyle> graphs = {
-                PlotStyle{FColor::FromHex("#ff0000"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#00ff00"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#0000ff"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#00ffff"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#ff00ff"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#ffff00"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#7f7fff"), LinePrimitive::Solid},
-                PlotStyle{FColor::FromHex("#7fff7f"), LinePrimitive::Solid}
+                PlotStyle{FColor::FromHex("#ff0000"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#00ff00"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#0000ff"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#00ffff"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#ff00ff"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#ffff00"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#7f7fff"), LinePrimitive::PlottingSolid},
+                PlotStyle{FColor::FromHex("#7fff7f"), LinePrimitive::PlottingSolid}
         };
 
         auto XHairColor = axisColor;
@@ -256,7 +256,7 @@ namespace Slab::Graphics {
         XHairStyle.setPrimitive(Lines);
         XHairStyle.thickness = 1;
 
-        auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
+        auto gridLinesScheme = PlotStyle(tickColor, PlottingDotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
         auto writer = std::make_shared<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 24);
@@ -284,9 +284,9 @@ namespace Slab::Graphics {
         FColor graph1c_fill = {graph1c.rgb(), .25f};
 
         Vector<PlotStyle> graphs = {
-                PlotStyle{graph1a, LinePrimitive::Solid, true, graph1a_fill, 3},
-                PlotStyle{graph1b, LinePrimitive::DotDashed, true, graph1b_fill, 1},
-                PlotStyle{graph1c, LinePrimitive::Dashed, true, graph1c_fill, 3}};
+                PlotStyle{graph1a, LinePrimitive::PlottingSolid, true, graph1a_fill, 3},
+                PlotStyle{graph1b, LinePrimitive::PlottingDotDashed, true, graph1b_fill, 1},
+                PlotStyle{graph1c, LinePrimitive::PlottingDashed, true, graph1c_fill, 3}};
 
         auto XHairColor = axisColor;
         XHairColor.a = .89;
@@ -296,7 +296,7 @@ namespace Slab::Graphics {
         XHairStyle.thickness = 2;
         XHairStyle.filled = false;
 
-        auto gridLinesScheme = PlotStyle(tickColor, Dashed, false, Nil, 1);
+        auto gridLinesScheme = PlotStyle(tickColor, PlottingDashed, false, Nil, 1);
         gridLinesScheme.lineColor.a = 0.15;
 
         auto writer = std::make_shared<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 40);
@@ -332,14 +332,14 @@ Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 90
         FColor tickColor = {.2,.2,.2,1};
 
         Vector<PlotStyle> graphs = {
-                PlotStyle{FColor::FromHex("#003f5c"), LinePrimitive::Solid, FILLED, Nil, 0.8},
-                PlotStyle{FColor::FromHex("#2f4b7c"), LinePrimitive::Solid, FILLED, Nil, 0.8},
-                PlotStyle{FColor::FromHex("#665191"), LinePrimitive::Solid, FILLED, Nil, 0.8},
-                PlotStyle{FColor::FromHex("#a05195"), LinePrimitive::Solid, FILLED, Nil, 0.8},
-                PlotStyle{FColor::FromHex("#d45087"), LinePrimitive::Solid, FILLED, Nil, 0.8},
-                PlotStyle{FColor::FromHex("#f95d6a"), LinePrimitive::Solid, FILLED, Nil, 0.8},
-                PlotStyle{FColor::FromHex("#ff7c43"), LinePrimitive::Solid, FILLED, Nil, 0.8},
-                PlotStyle{FColor::FromHex("#ffa600"), LinePrimitive::Solid, FILLED, Nil, 0.8},
+                PlotStyle{FColor::FromHex("#003f5c"), LinePrimitive::PlottingSolid, FILLED, Nil, 0.8},
+                PlotStyle{FColor::FromHex("#2f4b7c"), LinePrimitive::PlottingSolid, FILLED, Nil, 0.8},
+                PlotStyle{FColor::FromHex("#665191"), LinePrimitive::PlottingSolid, FILLED, Nil, 0.8},
+                PlotStyle{FColor::FromHex("#a05195"), LinePrimitive::PlottingSolid, FILLED, Nil, 0.8},
+                PlotStyle{FColor::FromHex("#d45087"), LinePrimitive::PlottingSolid, FILLED, Nil, 0.8},
+                PlotStyle{FColor::FromHex("#f95d6a"), LinePrimitive::PlottingSolid, FILLED, Nil, 0.8},
+                PlotStyle{FColor::FromHex("#ff7c43"), LinePrimitive::PlottingSolid, FILLED, Nil, 0.8},
+                PlotStyle{FColor::FromHex("#ffa600"), LinePrimitive::PlottingSolid, FILLED, Nil, 0.8},
         };
 
         auto XHairColor = axisColor;
@@ -350,7 +350,7 @@ Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 90
         XHairStyle.thickness = 1;
         XHairStyle.filled = false;
 
-        auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
+        auto gridLinesScheme = PlotStyle(tickColor, PlottingDotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
         auto writer = std::make_shared<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 24);
@@ -377,15 +377,15 @@ Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 90
         fix fill = FILLED;
 
         Vector<PlotStyle> graphs = {
-                PlotStyle{FColor::FromHex("#ff0000"), LinePrimitive::Solid, fill, Nil, lineWidth},
-                PlotStyle{FColor::FromHex("#00ff00"), LinePrimitive::Solid, fill, Nil, lineWidth},
-                PlotStyle{FColor::FromHex("#0000ff"), LinePrimitive::Solid, fill, Nil, lineWidth},
-                PlotStyle{FColor::FromHex("#ff00ff"), LinePrimitive::Solid, fill, Nil, lineWidth},
-                PlotStyle{FColor::FromHex("#00ffff"), LinePrimitive::Solid, fill, Nil, lineWidth},
-                PlotStyle{FColor::FromHex("#ffff00"), LinePrimitive::Solid, fill, Nil, lineWidth},
-                PlotStyle{FColor::FromHex("#700000"), LinePrimitive::Solid, fill, Nil, lineWidth},
-                PlotStyle{FColor::FromHex("#007000"), LinePrimitive::Solid, fill, Nil, lineWidth},
-                PlotStyle{FColor::FromHex("#000070"), LinePrimitive::Solid, fill, Nil, lineWidth},
+                PlotStyle{FColor::FromHex("#ff0000"), LinePrimitive::PlottingSolid, fill, Nil, lineWidth},
+                PlotStyle{FColor::FromHex("#00ff00"), LinePrimitive::PlottingSolid, fill, Nil, lineWidth},
+                PlotStyle{FColor::FromHex("#0000ff"), LinePrimitive::PlottingSolid, fill, Nil, lineWidth},
+                PlotStyle{FColor::FromHex("#ff00ff"), LinePrimitive::PlottingSolid, fill, Nil, lineWidth},
+                PlotStyle{FColor::FromHex("#00ffff"), LinePrimitive::PlottingSolid, fill, Nil, lineWidth},
+                PlotStyle{FColor::FromHex("#ffff00"), LinePrimitive::PlottingSolid, fill, Nil, lineWidth},
+                PlotStyle{FColor::FromHex("#700000"), LinePrimitive::PlottingSolid, fill, Nil, lineWidth},
+                PlotStyle{FColor::FromHex("#007000"), LinePrimitive::PlottingSolid, fill, Nil, lineWidth},
+                PlotStyle{FColor::FromHex("#000070"), LinePrimitive::PlottingSolid, fill, Nil, lineWidth},
         };
 
         auto XHairColor = axisColor;
@@ -395,7 +395,7 @@ Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 90
         XHairStyle.thickness = 1;
         XHairStyle.filled = false;
 
-        auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
+        auto gridLinesScheme = PlotStyle(tickColor, PlottingDotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
         // auto labelsWriter = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(19), 24);

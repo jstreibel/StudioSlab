@@ -8,7 +8,7 @@
 #include "Core/SlabCore.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 
-StudioSlabApp::StudioSlabApp(int argc, const char* argv[]): FApplication("Studio Slab", argc, argv)
+StudioSlabApp::StudioSlabApp(int argc, const char* argv[]) : FApplication("Studio Slab", argc, argv)
 {
 
 }

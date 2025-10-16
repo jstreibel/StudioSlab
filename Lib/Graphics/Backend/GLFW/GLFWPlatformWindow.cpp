@@ -208,7 +208,7 @@ namespace Slab::Graphics {
         }
     }
 
-    void FGLFWPlatformWindow::Cycle() {
+    void FGLFWPlatformWindow::Tick() {
         if(r_Window==nullptr) return;
 
         auto PlatformWindow = static_cast<GLFWwindow *>(r_Window);
@@ -217,13 +217,15 @@ namespace Slab::Graphics {
 
         glfwPollEvents();
 
-        auto clear_color = WindowStyle::PlatformWindow_BackgroundColor;
-        glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         static auto Render = FuncRun(Render, PlatformWindow);
 
         IterateReferences(GLFWListeners, Render, IterateAll);
+    }
+
+    void FGLFWPlatformWindow::Clear(const FColor& ClearColor) const {
+        // auto clear_color = WindowStyle::PlatformWindow_BackgroundColor;
+        glClearColor(ClearColor.r, ClearColor.g, ClearColor.b, ClearColor.a);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     void FGLFWPlatformWindow::Flush()

@@ -19,7 +19,7 @@ namespace Slab::Models::StochasticPathIntegrals {
 
     auto SPINumericConfig::getdT() const -> DevFloat { return *dT; }
 
-    auto SPINumericConfig::Get_n() const -> UInt { return *nT; }
+    auto SPINumericConfig::Get_n() const -> UIntBig { return *nT; }
 
     auto SPINumericConfig::to_string() const -> Str {
         return "<StochasticPathIntegrals>";

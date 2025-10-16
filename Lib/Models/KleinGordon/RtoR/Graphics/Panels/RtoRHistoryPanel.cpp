@@ -135,7 +135,7 @@ namespace Slab::Models::KGRtoR {
 
         auto sectionArtist = Graphics::FPlotter::AddR2Section(kSection, sftHistory, "ℱₓ(k)");
         auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
-        style.setPrimitive(VerticalLines);
+        style.setPrimitive(PlottingVerticalLinesWithCircles);
         style.filled = false;
         sectionArtist->addSection(kLine, style.clone(), "");
         sectionArtist->setSamples(sftHistory->getN());

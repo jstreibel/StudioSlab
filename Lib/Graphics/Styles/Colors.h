@@ -11,7 +11,6 @@
 namespace Slab::Graphics {
     struct FColor
     {
-    public:
         float r, g, b, a;
 
         FColor();
@@ -44,6 +43,9 @@ namespace Slab::Graphics {
     extern FColor White;
     extern FColor Black;
     extern FColor Red;
+    extern FColor LapisLazuli;
+    extern FColor GrassGreen;
+    extern FColor DarkGrass;
     const FColor Nil = FColor(-1, -1, -1, -1);
 
     using rgb = struct {

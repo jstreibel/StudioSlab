@@ -11,7 +11,7 @@ namespace Slab::Math {
         // registerToManager();
     }
 
-    auto MetropolisRtoRConfig::Get_n() const -> UInt { return max_steps; }
+    auto MetropolisRtoRConfig::Get_n() const -> UIntBig { return max_steps; }
 
     auto MetropolisRtoRConfig::to_string() const -> Str { return {}; }
 }

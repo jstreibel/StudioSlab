@@ -137,7 +137,7 @@ namespace Slab::Graphics {
             GuiContext->NewFrame();
         }
 
-        Cycle();
+        Tick();
 
         if (GuiContext != nullptr) GuiContext->Render();
 

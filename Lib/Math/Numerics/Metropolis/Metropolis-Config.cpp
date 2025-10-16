@@ -14,7 +14,7 @@ namespace Slab::Math {
             : FNumericConfig(DONT_REGISTER), max_steps(max_steps) {
     }
 
-    UInt MetropolisConfig::Get_n() const {
+    UIntBig MetropolisConfig::Get_n() const {
         return max_steps;
     }
 
