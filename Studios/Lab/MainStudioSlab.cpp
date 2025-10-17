@@ -6,5 +6,5 @@
 
 int main(const int argc, const char *argv[])
 {
-    return Slab::Run<StudioSlabApp>(argc, argv);
+    return Slab::Run<LittlePlaneDesigner>(argc, argv);
 }

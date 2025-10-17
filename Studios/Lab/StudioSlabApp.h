@@ -7,9 +7,9 @@
 
 #include "StudioSlab.h"
 
-class StudioSlabApp final : public Slab::FApplication {
+class LittlePlaneDesigner final : public Slab::FApplication {
 public:
-    StudioSlabApp(int argc, const char* argv[]);
+    LittlePlaneDesigner(int argc, const char* argv[]);
 
 protected:
     Slab::TPointer<Slab::Graphics::GraphicBackend> CreatePlatform() override;

@@ -51,6 +51,9 @@ namespace Slab::Math {
 
     const
     Point2DVec &PointSet::getPoints() const { return points; }
+
+    Point2DVec& PointSet::getPoints() { return points; }
+
     // Point2DVec &PointSet::getPoints()       { return points; }
 
     void PointSet::clear() { points.clear(); }
