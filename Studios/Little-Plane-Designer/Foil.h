@@ -28,6 +28,12 @@ class IAirfoil
 
     virtual double Cl(double AlphaRad) const = 0;
     virtual double Cd(double AlphaRad) const = 0;
+    /**
+     * $C_{m,c/4}$ is the pitching-moment coefficient about the quarter-chord point,
+     *  not the overall about an arbitrary reference.
+     * @param AlphaRad
+     * @return
+     */
     virtual double Cm_c4(double AlphaRad) const = 0;
 
 };
@@ -165,16 +171,18 @@ inline FAirfoilForces ComputeAirfoilForces(const IAirfoil& Airfoil, const b2Body
 
     // Directions
     const b2Vec2 AirfoilForwardWorldVector = b2Body_GetWorldVector(Body, b2Vec2(-1.0f, 0.0f));
-    DebugDraw_LegacyGL.DrawForce(AirfoilForwardWorldVector, c4_world, 1);
+    // DebugDraw_LegacyGL.DrawVector(AirfoilForwardWorldVector, c4_world, 1);
 
     // Kinematics at c/4: use WORLD CENTER, not position
+    // TODO: COM and c/4 MUST coincide
     const b2Vec2 COM = b2Body_GetWorldCenterOfMass(Body);
     const b2Vec2 LinearSpeed = b2Body_GetLinearVelocity(Body);
     const float  w    = b2Body_GetAngularVelocity(Body);
     const b2Vec2 r    = c4_world - COM;
     const b2Vec2 v_point = LinearSpeed + b2Vec2(-w * r.y, w * r.x);
     DebugDraw_LegacyGL.handle()->DrawPointFcn(COM, 5.0f, b2_colorWhite, &DebugDraw_LegacyGL);
-    DebugDraw_LegacyGL.DrawForce(LinearSpeed, COM, 1.0f/4.f, b2_colorWhite);
+    DebugDraw_LegacyGL.DrawVector(LinearSpeed, COM, 1.0f/4.f, b2_colorWhite);
+    DebugDraw_LegacyGL.DrawVector(v_point, COM, 1.0f, b2_colorBurlywood);
 
     // Wind
     const b2Vec2 wind = -v_point;

@@ -194,7 +194,7 @@ protected:
         Drawer.drawBounds = false;
         Drawer.drawIslands = false;
 
-        // b2World_Draw(world, &Drawer);
+        b2World_Draw(world, &Drawer);
 
         // DebugDraw_LegacyGL.DrawForce(AirfoilForces.lift, AirfoilForces.loc, 1.0f, b2_colorCoral);
         // DebugDraw_LegacyGL.DrawForce(AirfoilForces.drag, AirfoilForces.loc, 1.0f, b2_colorDarkRed);
