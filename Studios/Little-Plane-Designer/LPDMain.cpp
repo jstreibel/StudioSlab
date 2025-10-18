@@ -3,6 +3,7 @@
 //
 
 #include "Application.h"
+#include "DebugDraw.h"
 #include "Foil.h"
 #include "StudioSlab.h"
 #include "Graphics/SlabGraphics.h"
@@ -21,8 +22,6 @@ public:
         using namespace Slab;
 
         const Graphics::PlotStyle Wing{Graphics::White, Graphics::LineLoop};
-
-        PlatformWindow.Clear(Graphics::LapisLazuli);
 
         const Math::PointSet AirfoilPoints = Airfoil.GetProfileVertices();
         Math::PointSet Points = AirfoilPoints;
@@ -45,17 +44,24 @@ public:
         Drawer::ResetModelView();
         Drawer::SetupOrtho({-ViewSize*.5, ViewSize*.5, -.1*ViewHeight, .9*ViewHeight});
 
-        Drawer::SetColor(Graphics::DarkGrass);
-        Drawer::DrawRectangle({Graphics::Point2D{-100, 0}, Graphics::Point2D{100, -5}});
-        Drawer::DrawLine({-100, 0}, {100, 0}, Graphics::GrassGreen);
+        if constexpr (false) {
+            PlatformWindow.Clear(Graphics::LapisLazuli);
 
-        for (auto &Point : Points.getPoints()) {
-            fix px = Point.x;
-            fix py = Point.y;
-            Point.x = x + px*c - py*s;
-            Point.y = y + px*s + py*c;
+            Drawer::SetColor(Graphics::DarkGrass);
+            Drawer::DrawRectangle({Graphics::Point2D{-100, 0}, Graphics::Point2D{100, -5}});
+            Drawer::DrawLine({-100, 0}, {100, 0}, Graphics::GrassGreen);
+
+            for (auto &Point : Points.getPoints()) {
+                fix px = Point.x;
+                fix py = Point.y;
+                Point.x = x + px*c - py*s;
+                Point.y = y + px*s + py*c;
+            }
+            Drawer::RenderPointSet(Dummy(Points), Wing);
+        } else {
+            PlatformWindow.Clear(Graphics::Black);
+            DebugDraw();
         }
-        Drawer::RenderPointSet(Dummy(Points), Wing);
 
         return true;
     }
@@ -131,6 +137,11 @@ protected:
         P.span  = 0.10f;
         P.rho   = 1.225;
         P.le_local = (b2Vec2){ -0.25f*chord, 0.0f };   // LE in local frame
+    }
+
+    void DebugDraw() const {
+        static LegacyGLDebugDraw DebugDraw_LegacyGL;
+        b2World_Draw(world, DebugDraw_LegacyGL.handle());
     }
 };
 
