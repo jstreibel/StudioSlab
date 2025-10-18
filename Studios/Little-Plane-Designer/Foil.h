@@ -160,6 +160,8 @@ struct FAirfoilForces {
     static auto Null() { return FAirfoilForces{b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), 0.0f}; }
 };
 
+inline Graphics::Point2D ToPoint2D(const b2Vec2& v) { return Graphics::Point2D{v.x, v.y}; }
+
 inline FAirfoilForces ComputeAirfoilForces(
     const IAirfoil& Airfoil,
     const b2BodyId& Body,
@@ -193,6 +195,7 @@ inline FAirfoilForces ComputeAirfoilForces(
     // if (WindOnPointLen < 1e-3f) return FAirfoilForces::Null();
     const b2Vec2 WindOnPointUnit = b2Normalize(WindOnPoint); // TODO: could take advantage of already computed length above
     DebugDraw_LegacyGL.DrawVector(WindOnPoint, c4_world, 0.1f, b2_colorHotPink);
+    DebugDraw_LegacyGL.Write("Wind direction", c4_world + WindOnPoint*0.1f);
 
     // AoA
     auto chord_hat = perpCCW(AirfoilForwardWorldVector);

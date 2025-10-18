@@ -29,7 +29,7 @@ public:
         fix ViewHeight = ViewSize / AspectRatio;
         Drawer::ResetModelView();
         Drawer::SetupOrtho({-ViewSize*.5, ViewSize*.5, -.1*ViewHeight, .9*ViewHeight});
-        const auto Writer = DebugDraw_LegacyGL->Writer;
+        const auto Writer = DebugDraw_LegacyGL->GetWriter();
         Writer->Reshape(WinWidth, WinHeight);
         Writer->SetPenPositionTransform([this, ViewHeight, WinWidth, WinHeight](const Graphics::Point2D& pt) {
             return Graphics::FromSpaceToViewportCoord(pt,
@@ -38,7 +38,6 @@ public:
         });
 
         PlatformWindow.Clear(Graphics::LapisLazuli);
-        // Writer->Write(Str("Hello World!"), {0.1f, 0.1f}, Graphics::White);
 
         const auto AirfoilForces = Foil::ComputeAirfoilForces(Airfoil, WingBody, P, *DebugDraw_LegacyGL);
         // Apply at c/4
@@ -69,7 +68,7 @@ public:
                 Drawer::RenderPointSet(Dummy(Points), Wing);
             }
         } else if (true) {
-            DebugDraw(AirfoilForces);
+            DebugDraw();
         }
 
         return true;
@@ -199,7 +198,7 @@ protected:
         SetupWing();
     }
 
-    void DebugDraw(const Foil::FAirfoilForces &AirfoilForces) {
+    void DebugDraw() const {
         auto &Drawer = *DebugDraw_LegacyGL->handle();
         // Drawer.drawMass = false;
         Drawer.drawBounds = false;

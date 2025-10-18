@@ -123,6 +123,17 @@ public:
         endPrim();
     }
 
+    void Write(std::string s, b2Vec2 p, const b2HexColor c = b2_colorWhite) const {
+
+        Writer->Write(std::string(s), {p.x, p.y}, ToFColor(c, m_alpha));
+
+        Slab::Graphics::OpenGL::Texture::deactivate();
+        Slab::Graphics::OpenGL::FShader::LegacyGL();
+    }
+
+    Slab::TPointer<Slab::Graphics::OpenGL::FWriterOpenGL> GetWriter() const {
+        return Writer;
+    }
 
 private:
     // ---- helpers ----
@@ -309,17 +320,13 @@ private:
     {
         auto* self = static_cast<LegacyGLDebugDraw*>(ctx);
         auto alpha = self->m_alpha;
-        self->Writer->Write(std::string(s), {p.x, p.y}, ToFColor(c, alpha));
 
-        Slab::Graphics::OpenGL::Texture::deactivate();
-        Slab::Graphics::OpenGL::FShader::LegacyGL();
+        self->Write(std::string(s), {p.x, p.y}, c);
     }
 
     b2DebugDraw m_dd{};
     float m_alpha{1.0f};
     int   m_circleSegments{24};
-
-public:
     Slab::TPointer<Slab::Graphics::OpenGL::FWriterOpenGL> Writer;
 };
 
