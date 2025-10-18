@@ -39,7 +39,7 @@ public:
 
         PlatformWindow.Clear(Graphics::LapisLazuli);
 
-        const auto AirfoilForces = Foil::ComputeAirfoilForces(Airfoil, WingBody, P, *DebugDraw_LegacyGL);
+        const auto AirfoilForces = Foil::ComputeAirfoilForces(Airfoil, WingBody, AeroParams, *DebugDraw_LegacyGL);
         // Apply at c/4
         b2Body_ApplyForce (WingBody, AirfoilForces.GetTotalForce(), AirfoilForces.loc, true);
         b2Body_ApplyTorque(WingBody, AirfoilForces.torque, true);
@@ -48,26 +48,29 @@ public:
         constexpr int subSteps = 60;
         b2World_Step(world, timeStep, subSteps);
 
-        if constexpr (false) {
+        if constexpr (true) {
             Drawer::SetColor(Graphics::DarkGrass);
             Drawer::DrawRectangle({Graphics::Point2D{-100, 0}, Graphics::Point2D{100, -5}});
             Drawer::DrawLine({-100, 0}, {100, 0}, Graphics::GrassGreen);
 
             {
-                const Graphics::PlotStyle Wing{Graphics::White, Graphics::LineLoop};
-                const Math::PointSet AirfoilPoints = Airfoil.GetProfileVertices(8);
+                Graphics::PlotStyle WingStyle{Graphics::White, Graphics::LineLoop};
+                WingStyle.thickness = 2.0f;
+                const Math::PointSet AirfoilPoints = Airfoil.GetProfileVertices(200);
                 Math::PointSet Points = AirfoilPoints;
                 const auto [x, y] = b2Body_GetPosition(WingBody);
                 const auto [c, s] = b2Body_GetRotation(WingBody);
                 for (auto &Point : Points.getPoints()) {
-                    fix px = Point.x;
+                    fix chord = AeroParams.ChordLength;
+                    fix px = Point.x-chord*.5f;
                     fix py = Point.y;
+
                     Point.x = x + px*c - py*s;
                     Point.y = y + px*s + py*c;
                 }
-                Drawer::RenderPointSet(Dummy(Points), Wing);
+                Drawer::RenderPointSet(Dummy(Points), WingStyle);
             }
-        } else if (true) {
+        } else if constexpr (true) {
             DebugDraw();
         }
 
@@ -92,7 +95,7 @@ protected:
 
     b2WorldId world;
     b2BodyId WingBody;
-    Foil::FAeroParams P;
+    Foil::FAeroParams AeroParams;
 
     const float BoxHalfWidth = 0.5f;
     const float BoxHalfHeight = 0.06f;
@@ -127,7 +130,7 @@ protected:
         // Dynamic box
         b2BodyDef bodyDef = b2DefaultBodyDef();
         bodyDef.type = b2_dynamicBody;
-        bodyDef.position = (b2Vec2){ViewSize*.0f, ViewSize*.25f};
+        bodyDef.position = (b2Vec2){ViewSize*(.5f), ViewSize*.25f};
         bodyDef.rotation = b2MakeRot(0.0123f);
         bodyDef.angularVelocity = 0.8354123f;
         bodyDef.linearVelocity = (b2Vec2){-1.f, 0.0f};
@@ -170,10 +173,10 @@ protected:
         b2CreatePolygonShape(WingBody, &sdef, &WingShape);
 
         // 4) Aero reference consistent with geometry
-        P.ChordLength = Chord;
-        P.span  = 0.10f;
-        P.rho   = 1.225;
-        P.LE_local = (b2Vec2){ -0.25f*Chord, 0.0f };   // LE in local frame
+        AeroParams.ChordLength = Chord;
+        AeroParams.span  = 0.10f;
+        AeroParams.rho   = 1.225;
+        AeroParams.LE_local = (b2Vec2){ -0.25f*Chord, 0.0f };   // LE in local frame
 
         SetBodyCOM(-0.25f*Chord, WingBody);
     }

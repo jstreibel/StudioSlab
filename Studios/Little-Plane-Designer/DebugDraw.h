@@ -94,16 +94,16 @@ public:
         endPrim();
     }
 
-    void DrawTorque(b2BodyId bodyId, float torque, float radius=0.5f, int segments=24) const
+    void DrawPseudoVector(float mag, b2Vec2 c, float scale=1.0f, b2HexColor color=b2_colorOrange, int segments=24) const
     {
-        if (std::fabs(torque) <= 1e-6f) return;
+        if (std::fabs(mag) <= 1e-6f) return;
 
         // center of mass
-        const b2Vec2 c = b2Body_GetWorldCenterOfMass(bodyId);
-        const float dir = torque > 0.0f ? 1.0f : -1.0f;
+        const float dir = mag > 0.0f ? 1.0f : -1.0f;
+        fix radius = mag * scale;
 
         // ring
-        glColor(b2_colorOrange, m_alpha);
+        glColor(color, m_alpha);
         ::glDisable(GL_TEXTURE_2D);
         ::glBegin(GL_LINE_STRIP);
         for (int i = 0; i <= segments; ++i) {

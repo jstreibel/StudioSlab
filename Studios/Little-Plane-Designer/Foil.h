@@ -10,7 +10,6 @@
 #include "Math/Point.h"
 #include "Math/VectorSpace/Impl/PointSet.h"
 #include "Utils/String.h"
-#include "Utils/Arrays.h"
 
 using namespace Slab;
 
@@ -41,22 +40,22 @@ class IAirfoil
 class Airfoil_NACA2412 : public IAirfoil
 {
 public:
-  // ---- Polars ----
-  double Cl(const double alpha_rad) const override {
-    double cl = a * (alpha_rad - alpha0);
-    if (cl > cl_max) cl = cl_max;
-    if (cl < cl_min) cl = cl_min;
-    return cl;
-  }
-  double Cd(const double alpha_rad) const override {
-    const double cl = Cl(alpha_rad);
-    return cd0 + k * cl * cl;
-  }
-  double Cm_c4(double /*alpha_rad*/) const override { return cm_c4; } // approx. constant
+      // ---- Polars ----
+      double Cl(const double alpha_rad) const override {
+        double cl = a * (alpha_rad - alpha0);
+        if (cl > cl_max) cl = cl_max;
+        if (cl < cl_min) cl = cl_min;
+        return cl;
+      }
+      double Cd(const double alpha_rad) const override {
+        const double cl = Cl(alpha_rad);
+        return cd0 + k * cl * cl;
+      }
+      double Cm_c4(double /*alpha_rad*/) const override { return cm_c4; } // approx. constant
 
-  // Return a single polyline: start at TE on lower surface,
-  // go to LE, then back to TE on upper surface. N+1 points per side.
-  Math::PointSet GetProfileVertices(int N = 200) const override {
+      // Return a single polyline: start at TE on lower surface,
+      // go to LE, then back to TE on upper surface. N+1 points per side.
+      Math::PointSet GetProfileVertices(int N = 200) const override {
     if (N < 2) N = 2;
     Math::Point2DVec v;
     v.reserve(2 * (N + 1));
@@ -98,7 +97,7 @@ private:
     double cl_max = 1.4;        // +stall
     double cl_min = -1.2;       // -stall
     double cd0    = 0.008;      // profile drag @ Cl≈0
-    double k      = 0.010;      // induced-like term
+    double k      = 0.040;      // induced-like term
     double cm_c4  = -0.05;      // pitching moment about c/4
 
     static double deg2rad(const double deg) { return deg * M_PI / 180.0; }
@@ -133,12 +132,8 @@ struct FAeroParams {
 // Rotate +90° helper
 static b2Vec2 perpCCW(const b2Vec2& v) { return b2Vec2(-v.y, v.x); }
 
-static float len(const b2Vec2& v) { return std::sqrt(v.x*v.x + v.y*v.y); }
-
-static b2Vec2 nrm(const b2Vec2& v) {
-    const float L = len(v);
-    return L > 0 ? 1.0f/L * v : b2Vec2(0,0);
-}
+// Rotate -90° helper
+static b2Vec2 perpCW(const b2Vec2& v) { return b2Vec2(v.y, -v.x); }
 
 // Signed AoA between chord direction and incoming wind
 static double signedAoA(const b2Vec2& chord_hat, const b2Vec2& wind_hat) {
@@ -174,7 +169,7 @@ inline FAirfoilForces ComputeAirfoilForces(
     // DebugDraw_LegacyGL.handle()->DrawPointFcn(c4_world, 5.0f, b2_colorYellow, &DebugDraw_LegacyGL);
 
     // Directions
-    const b2Vec2 AirfoilForwardWorldVector = b2Body_GetWorldVector(Body, b2Vec2(-1.0f, 0.0f));
+    const b2Vec2 AirfoilForwardWorldUnit = b2Body_GetWorldVector(Body, b2Vec2(-1.0f, 0.0f));
     // DebugDraw_LegacyGL.DrawVector(AirfoilForwardWorldVector, c4_world, 1);
 
     // Kinematics at c/4: use WORLD CENTER, not position
@@ -198,42 +193,39 @@ inline FAirfoilForces ComputeAirfoilForces(
     DebugDraw_LegacyGL.Write("Wind direction", c4_world + WindOnPoint*0.1f);
 
     // AoA
-    auto chord_hat = perpCCW(AirfoilForwardWorldVector);
-    const double dot = std::clamp<double>(chord_hat.x*WindOnPointUnit.x + chord_hat.y*WindOnPointUnit.y, -1.0, 1.0);
-    const double det = (double)chord_hat.x*WindOnPointUnit.y - (double)chord_hat.y*WindOnPointUnit.x;
-    const double aoa = -std::atan2(det, dot);
+    const auto AirfoilNormalUnit = perpCW(AirfoilForwardWorldUnit);
+    const double Cos = std::clamp<double>(AirfoilNormalUnit.x*WindOnPointUnit.x + AirfoilNormalUnit.y*WindOnPointUnit.y, -1.0, 1.0);
+    const double Sin = static_cast<double>(AirfoilNormalUnit.x)*WindOnPointUnit.y - static_cast<double>(AirfoilNormalUnit.y)*WindOnPointUnit.x;
+    const double AoA = -std::atan2(Sin, Cos);
+    DebugDraw_LegacyGL.DrawVector(AirfoilNormalUnit, c4_world, 1.f, b2_colorGold);
+    DebugDraw_LegacyGL.Write(Str("Airfoil normal @ " + ToStr(AoA/M_PI*180.0) + "deg AoA"), c4_world + AirfoilNormalUnit);
 
     // Coeffs
-    double Cl = Airfoil.Cl(aoa);
-    double Cd = Airfoil.Cd(aoa);
-    double Cm = Airfoil.Cm_c4(aoa);
+    const double Cl = Airfoil.Cl(AoA);
+    const double Cd = Airfoil.Cd(AoA);
+    const double Cm_c4 = Airfoil.Cm_c4(AoA);
 
     // Dynamic pressure (keep density sane)
-    const double rho = std::clamp(P.rho, 0.1, 5.0);       // guard
-    const double q   = 0.5 * rho * (double)WindOnPointLen * (double)WindOnPointLen;
+    const double q   = 0.5 * P.rho * static_cast<double>(WindOnPointLen) * static_cast<double>(WindOnPointLen);
     const double S   = P.ChordLength * P.span;
 
     // Magnitudes
     const double Lmag = q * S * Cl;
     const double Dmag = q * S * Cd;
-    double Tmag = q * P.span * P.ChordLength * P.ChordLength * Cm;
+    double Tmag = q * P.span * P.ChordLength * P.ChordLength * Cm_c4;
 
-    // Simple aero angular damping to suppress runaway spin
-    const double c_rot = 0.05 * q * S * P.ChordLength;          // tune
-    Tmag -= c_rot * (double)ω;
+        // Forces
+    const b2Vec2 drag = -static_cast<float>(-Dmag) * WindOnPointUnit;
+    const b2Vec2 lift = +static_cast<float>(+Lmag) * b2Vec2(-WindOnPointUnit.y, WindOnPointUnit.x);
 
-    // Optional caps for stability
-    const double Fcap = 50.0 * S;                         // tune to your mass scale
-    const double Tcap = 50.0 * S * P.ChordLength;
-    const double Lm = std::clamp(Lmag, -Fcap, Fcap);
-    const double Dm = std::clamp(Dmag, -Fcap, Fcap);
-    Tmag = std::clamp(Tmag, -Tcap, Tcap);
+    constexpr auto drag_scale = 10.0f;
+    DebugDraw_LegacyGL.DrawVector(drag, c4_world, drag_scale, b2_colorRed);
+    DebugDraw_LegacyGL.Write("drag", c4_world + drag*drag_scale, b2_colorRed);
+    DebugDraw_LegacyGL.DrawVector(lift, c4_world, 1.f, b2_colorAliceBlue);
+    DebugDraw_LegacyGL.Write("lift", c4_world + lift, b2_colorAliceBlue);
+    DebugDraw_LegacyGL.DrawPseudoVector(Tmag, COM);
 
-    // Forces
-    const b2Vec2 drag = -(float)(-Dm) * WindOnPointUnit;
-    const b2Vec2 lift = (float)( Lm) * b2Vec2(-WindOnPointUnit.y, WindOnPointUnit.x);
-
-    return FAirfoilForces{drag, lift, c4_world, (float)Tmag};}
+    return FAirfoilForces{drag, lift, c4_world, static_cast<float>(Tmag)};}
 
 inline FAirfoilForces ComputeAirfoilForces2(const IAirfoil& Airfoil, const b2BodyId& Body, const FAeroParams& P)
 {
