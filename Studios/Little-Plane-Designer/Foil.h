@@ -5,6 +5,7 @@
 #ifndef STUDIOSLAB_FOIL_H
 #define STUDIOSLAB_FOIL_H
 
+#include "DebugDraw.h"
 #include "box2d/box2d.h"
 #include "Math/Point.h"
 #include "Math/VectorSpace/Impl/PointSet.h"
@@ -114,13 +115,13 @@ private:
 };
 
 struct FAeroParams {
-    double chord = 1.0;     // meters
+    double ChordLength = 1.0;     // meters
     double span  = 0.1;     // meters (effective 2D "depth")
     double rho   = 1.225;   // kg/m^3
     // local geometry: LE at x=0, chord along +x in body local frame
 
     // b2Vec2 le_local = {0.0f, 0.0f}; // leading-edge local point
-    b2Vec2 le_local = {-0.25f/* x chord */, 0.0f}; // leading-edge local point
+    b2Vec2 LE_local = {-0.25f/* x chord */, 0.0f}; // leading-edge local point
 };
 
 // Rotate +90° helper
@@ -146,17 +147,90 @@ static double signedAoA(const b2Vec2& chord_hat, const b2Vec2& wind_hat) {
 // Apply aero forces and moment at quarter-chord using Box2D C API.
 // Requires: IAirfoil { double Cl(double), Cd(double), Cm_c4(double) }.
 // Params: chord in meters, span effective depth, rho density, le_local leading edge in body-local coords.
-inline void ApplyAirfoilForces(const IAirfoil& Airfoil, const b2BodyId& Body, const FAeroParams& P)
+struct FAirfoilForces {
+    b2Vec2 drag, lift, loc;
+    float torque;
+    b2Vec2 GetTotalForce() const { return drag+lift; }
+    static auto Null() { return FAirfoilForces{b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), 0.0f}; }
+};
+
+inline FAirfoilForces ComputeAirfoilForces(const IAirfoil& Airfoil, const b2BodyId& Body, const FAeroParams& P)
+{
+    static LegacyGLDebugDraw DebugDraw_LegacyGL;
+
+    // Geometry
+    const b2Vec2 c4_local = P.LE_local;
+    const b2Vec2 c4_world = b2Body_GetWorldPoint(Body, c4_local);
+    // DebugDraw_LegacyGL.handle()->DrawPointFcn(c4_world, 5.0f, b2_colorYellow, &DebugDraw_LegacyGL);
+
+    // Directions
+    const b2Vec2 AirfoilForwardWorldVector = b2Body_GetWorldVector(Body, b2Vec2(-1.0f, 0.0f));
+    DebugDraw_LegacyGL.DrawForce(AirfoilForwardWorldVector, c4_world, 1);
+
+    // Kinematics at c/4: use WORLD CENTER, not position
+    const b2Vec2 COM = b2Body_GetWorldCenterOfMass(Body);
+    const b2Vec2 LinearSpeed = b2Body_GetLinearVelocity(Body);
+    const float  w    = b2Body_GetAngularVelocity(Body);
+    const b2Vec2 r    = c4_world - COM;
+    const b2Vec2 v_point = LinearSpeed + b2Vec2(-w * r.y, w * r.x);
+    DebugDraw_LegacyGL.handle()->DrawPointFcn(COM, 5.0f, b2_colorWhite, &DebugDraw_LegacyGL);
+    DebugDraw_LegacyGL.DrawForce(LinearSpeed, COM, 1.0f/4.f, b2_colorWhite);
+
+    // Wind
+    const b2Vec2 wind = -v_point;
+    const float  V    = std::sqrt(wind.x*wind.x + wind.y*wind.y);
+    if (V < 1e-3f) return FAirfoilForces::Null();
+    const b2Vec2 w_hat = (1.0f / V) * wind;
+
+    // AoA
+    auto chord_hat = perpCCW(AirfoilForwardWorldVector);
+    const double dot = std::clamp<double>(chord_hat.x*w_hat.x + chord_hat.y*w_hat.y, -1.0, 1.0);
+    const double det = (double)chord_hat.x*w_hat.y - (double)chord_hat.y*w_hat.x;
+    const double aoa = -std::atan2(det, dot);
+
+    // Coeffs
+    double Cl = Airfoil.Cl(aoa);
+    double Cd = Airfoil.Cd(aoa);
+    double Cm = Airfoil.Cm_c4(aoa);
+
+    // Dynamic pressure (keep density sane)
+    const double rho = std::clamp(P.rho, 0.1, 5.0);       // guard
+    const double q   = 0.5 * rho * (double)V * (double)V;
+    const double S   = P.ChordLength * P.span;
+
+    // Magnitudes
+    const double Lmag = q * S * Cl;
+    const double Dmag = q * S * Cd;
+    double Tmag = q * P.span * P.ChordLength * P.ChordLength * Cm;
+
+    // Simple aero angular damping to suppress runaway spin
+    const double c_rot = 0.05 * q * S * P.ChordLength;          // tune
+    Tmag -= c_rot * (double)w;
+
+    // Optional caps for stability
+    const double Fcap = 50.0 * S;                         // tune to your mass scale
+    const double Tcap = 50.0 * S * P.ChordLength;
+    const double Lm = std::clamp(Lmag, -Fcap, Fcap);
+    const double Dm = std::clamp(Dmag, -Fcap, Fcap);
+    Tmag = std::clamp(Tmag, -Tcap, Tcap);
+
+    // Forces
+    const b2Vec2 drag = -(float)(-Dm) * w_hat;
+    const b2Vec2 lift = (float)( Lm) * b2Vec2(-w_hat.y, w_hat.x);
+
+    return FAirfoilForces{drag, lift, c4_world, (float)Tmag};}
+
+inline FAirfoilForces ComputeAirfoilForces2(const IAirfoil& Airfoil, const b2BodyId& Body, const FAeroParams& P)
 {
     // Geometry
-    const float c = (float)P.chord;
-    const b2Vec2 c4_local = P.le_local + b2Vec2(0.25f * c, 0.0f);
+    const float c = (float)P.ChordLength;
+    const b2Vec2 c4_local = P.LE_local + b2Vec2(0.25f * c, 0.0f);
     const b2Vec2 c4_world = b2Body_GetWorldPoint(Body, c4_local);
 
     // Directions
     const b2Vec2 t_world = b2Body_GetWorldVector(Body, b2Vec2(1.0f, 0.0f));
     const float tlen = std::sqrt(t_world.x*t_world.x + t_world.y*t_world.y);
-    if (tlen <= 0.0f) return;
+    if (tlen <= 0.0f) return FAirfoilForces::Null();
     const b2Vec2 chord_hat = (1.0f / tlen) * t_world;
 
     // Kinematics at c/4: use WORLD CENTER, not position
@@ -169,7 +243,7 @@ inline void ApplyAirfoilForces(const IAirfoil& Airfoil, const b2BodyId& Body, co
     // Wind
     const b2Vec2 wind = -v_point;
     const float  V    = std::sqrt(wind.x*wind.x + wind.y*wind.y);
-    if (V < 1e-3f) return;
+    if (V < 1e-3f) return FAirfoilForces::Null();
     const b2Vec2 w_hat = (1.0f / V) * wind;
 
     // AoA
@@ -185,32 +259,29 @@ inline void ApplyAirfoilForces(const IAirfoil& Airfoil, const b2BodyId& Body, co
     // Dynamic pressure (keep density sane)
     const double rho = std::clamp(P.rho, 0.1, 5.0);       // guard
     const double q   = 0.5 * rho * (double)V * (double)V;
-    const double S   = P.chord * P.span;
+    const double S   = P.ChordLength * P.span;
 
     // Magnitudes
     const double Lmag = q * S * Cl;
     const double Dmag = q * S * Cd;
-    double Tmag = q * P.span * P.chord * P.chord * Cm;
+    double Tmag = q * P.span * P.ChordLength * P.ChordLength * Cm;
 
     // Simple aero angular damping to suppress runaway spin
-    const double c_rot = 0.05 * q * S * P.chord;          // tune
+    const double c_rot = 0.05 * q * S * P.ChordLength;          // tune
     Tmag -= c_rot * (double)w;
 
     // Optional caps for stability
     const double Fcap = 50.0 * S;                         // tune to your mass scale
-    const double Tcap = 50.0 * S * P.chord;
+    const double Tcap = 50.0 * S * P.ChordLength;
     const double Lm = std::clamp(Lmag, -Fcap, Fcap);
     const double Dm = std::clamp(Dmag, -Fcap, Fcap);
     Tmag = std::clamp(Tmag, -Tcap, Tcap);
 
     // Forces
-    const b2Vec2 drag = (float)(-Dm) * w_hat;
+    const b2Vec2 drag = -(float)(-Dm) * w_hat;
     const b2Vec2 lift = (float)( Lm) * b2Vec2(-w_hat.y, w_hat.x);
-    const b2Vec2 F    = drag + lift;
 
-    // Apply at c/4
-    b2Body_ApplyForce(Body, F, c4_world, true);
-    b2Body_ApplyTorque(Body, (float)Tmag, true);
+    return FAirfoilForces{drag, lift, c4_world, (float)Tmag};
 }
 }
 

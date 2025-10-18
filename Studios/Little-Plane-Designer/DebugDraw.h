@@ -58,6 +58,64 @@ public:
     void setAlpha(float a) { m_alpha = a; }
     void setCircleSegments(int n) { m_circleSegments = n > 3 ? n : 3; }
 
+    void DrawForce(b2Vec2 f, b2Vec2 p, float scale, b2HexColor color=b2_colorYellow) const
+    {
+        const float mag = std::sqrt(f.x*f.x + f.y*f.y);
+        if (mag <= 1e-6f) return;
+
+        const b2Vec2 tip{ p.x + scale * f.x, p.y + scale * f.y };
+
+        // shaft
+        glColor(color, m_alpha);
+        beginLines(1.5f);
+        ::glVertex2f(p.x,   p.y);
+        ::glVertex2f(tip.x, tip.y);
+        endPrim();
+
+        // arrow head
+        const float headLen = 0.15f * std::max(0.5f, std::min(scale*mag, 2.0f));
+        const float ang = std::atan2(f.y, f.x);
+        const float a1 = ang + 2.61799388f; // +150 deg
+        const float a2 = ang - 2.61799388f; // -150 deg
+
+        beginLines(1.5f);
+        ::glVertex2f(tip.x, tip.y);
+        ::glVertex2f(tip.x + headLen * std::cos(a1), tip.y + headLen * std::sin(a1));
+        ::glVertex2f(tip.x, tip.y);
+        ::glVertex2f(tip.x + headLen * std::cos(a2), tip.y + headLen * std::sin(a2));
+        endPrim();
+    }
+
+    void DrawTorque(b2BodyId bodyId, float torque, float radius=0.5f, int segments=24) const
+    {
+        if (std::fabs(torque) <= 1e-6f) return;
+
+        // center of mass
+        const b2Vec2 c = b2Body_GetWorldCenterOfMass(bodyId);
+        const float dir = torque > 0.0f ? 1.0f : -1.0f;
+
+        // ring
+        glColor(b2_colorOrange, m_alpha);
+        ::glDisable(GL_TEXTURE_2D);
+        ::glBegin(GL_LINE_STRIP);
+        for (int i = 0; i <= segments; ++i) {
+            float a = dir * (2.0f * b2_pi * i / segments);
+            ::glVertex2f(c.x + radius * std::cos(a), c.y + radius * std::sin(a));
+        }
+        ::glEnd();
+
+        // arrow head at angle 0 in direction of rotation
+        const float a0 = 0.0f;
+        const b2Vec2 end{ c.x + radius * std::cos(a0), c.y + radius * std::sin(a0) };
+        const float ha = a0 + (dir > 0.0f ? -b2_pi/6.0f : b2_pi/6.0f);
+
+        beginLines(1.5f);
+        ::glVertex2f(end.x, end.y);
+        ::glVertex2f(end.x + 0.2f * std::cos(ha), end.y + 0.2f * std::sin(ha));
+        endPrim();
+    }
+
+
 private:
     // ---- helpers ----
     static inline void glColor(b2HexColor hc, float alpha) {

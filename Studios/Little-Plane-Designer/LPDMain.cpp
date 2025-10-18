@@ -21,32 +21,33 @@ public:
     {
         using namespace Slab;
 
-        const Graphics::PlotStyle Wing{Graphics::White, Graphics::LineLoop};
-
-        const Math::PointSet AirfoilPoints = Airfoil.GetProfileVertices();
-        Math::PointSet Points = AirfoilPoints;
-
         namespace Drawer = Graphics::OpenGL::Legacy;
         fix WinHeight = PlatformWindow.GetHeight();
         fix WinWidth = PlatformWindow.GetWidth();
-
         fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
-
         fix ViewHeight = ViewSize / AspectRatio;
+        Drawer::ResetModelView();
+        Drawer::SetupOrtho({-ViewSize*.5, ViewSize*.5, -.1*ViewHeight, .9*ViewHeight});
 
-        constexpr float timeStep = 1.0f/240.0f;
-        constexpr int subSteps = 10;
-        Foil::ApplyAirfoilForces(Airfoil, WingBody, P);
+        PlatformWindow.Clear(Graphics::LapisLazuli);
+
+        const Graphics::PlotStyle Wing{Graphics::White, Graphics::LineLoop};
+
+        const Math::PointSet AirfoilPoints = Airfoil.GetProfileVertices(8);
+        Math::PointSet Points = AirfoilPoints;
+
+        const auto AirfoilForces = Foil::ComputeAirfoilForces(Airfoil, WingBody, P);
+        // Apply at c/4
+        b2Body_ApplyForce (WingBody, AirfoilForces.GetTotalForce(), AirfoilForces.loc, true);
+        b2Body_ApplyTorque(WingBody, AirfoilForces.torque, true);
+
+        constexpr float timeStep = 1.0f/(2.f*60.0f);
+        constexpr int subSteps = 60;
         b2World_Step(world, timeStep, subSteps);
         const auto [x, y] = b2Body_GetPosition(WingBody);
         const auto [c, s] = b2Body_GetRotation(WingBody);
 
-        Drawer::ResetModelView();
-        Drawer::SetupOrtho({-ViewSize*.5, ViewSize*.5, -.1*ViewHeight, .9*ViewHeight});
-
         if constexpr (false) {
-            PlatformWindow.Clear(Graphics::LapisLazuli);
-
             Drawer::SetColor(Graphics::DarkGrass);
             Drawer::DrawRectangle({Graphics::Point2D{-100, 0}, Graphics::Point2D{100, -5}});
             Drawer::DrawLine({-100, 0}, {100, 0}, Graphics::GrassGreen);
@@ -59,8 +60,7 @@ public:
             }
             Drawer::RenderPointSet(Dummy(Points), Wing);
         } else {
-            PlatformWindow.Clear(Graphics::Black);
-            DebugDraw();
+            DebugDraw(AirfoilForces);
         }
 
         return true;
@@ -77,6 +77,9 @@ public:
 
 protected:
     Foil::Airfoil_NACA2412 Airfoil;
+    const float Chord = 1.0f;
+    const float Thick = 0.10f;
+
     float ViewSize = 10.0;
 
     b2WorldId world;
@@ -85,6 +88,86 @@ protected:
 
     const float BoxHalfWidth = 0.5f;
     const float BoxHalfHeight = 0.06f;
+
+    static void SetBodyCOM(const float xCOM, const b2BodyId Body)
+    {
+        // target COM shift (local body frame)
+
+        // md0.mass, md0.center, md0.I  (I about body origin)
+        auto [mass, center, rotationalInertia] = b2Body_GetMassData(Body);
+
+        const float m  = mass;
+        const auto [x, y] = center;
+
+        // inertia about current COM
+        const float I_com = rotationalInertia - m * (x*x + y*y);
+
+        // new local center
+        const auto c1 = (b2Vec2){ xCOM, y };  // keep y as is (0 for your symmetric hull)
+
+        // inertia about body origin with new COM
+        const float I1 = I_com + m * (c1.x*c1.x + c1.y*c1.y);
+
+        // apply
+        const b2MassData md1 = { .mass = m, .center = c1, .rotationalInertia = I1 };
+        b2Body_SetMassData(Body, md1);
+        b2Body_SetAwake(Body, true);
+    }
+
+    void SetupWing()
+    {
+        // Dynamic box
+        b2BodyDef bodyDef = b2DefaultBodyDef();
+        bodyDef.type = b2_dynamicBody;
+        bodyDef.position = (b2Vec2){ViewSize*.0f, ViewSize*.25f};
+        bodyDef.rotation = b2MakeRot(0.0123f);
+        bodyDef.angularVelocity = 0.8354123f;
+        bodyDef.linearVelocity = (b2Vec2){-1.f, 0.0f};
+        WingBody = b2CreateBody(world, &bodyDef);
+        // Rectangle with c/4 at (0,0):
+        // LE=-0.25c, TE=+0.75c
+
+        // 1) Build hull
+        b2Hull hull;
+        if constexpr (false)
+        {
+            constexpr int N = B2_MAX_POLYGON_VERTICES;
+            const auto AirfoilPoints = Airfoil.GetProfileVertices(N).getPoints();
+            b2Vec2 pts[N];
+            for (int i=0; i<N; ++i) {
+                pts[i].x = AirfoilPoints[i].x;
+                pts[i].y = AirfoilPoints[i].y;
+            }
+            hull = b2ComputeHull(pts, N);
+        }
+        else
+        {
+            b2Vec2 pts[4] = {
+                { -0.5f*Chord, -0.5f*Thick },
+                {  0.5f*Chord, -0.5f*Thick },
+                {  0.5f*Chord,  0.5f*Thick },
+                { -0.5f*Chord,  0.5f*Thick }
+            };
+            hull = b2ComputeHull(pts, 4);
+        }
+
+        // 2) Make convex polygon from hull
+        b2Polygon WingShape = b2MakePolygon(&hull, 0.0f);          // if your API needs radius: b2MakePolygon(&hull, 0.0f)
+
+        // 3) Create fixture
+        b2ShapeDef sdef = b2DefaultShapeDef();
+        sdef.density = 1.0f;
+        sdef.material.friction = 0.5f;
+        b2CreatePolygonShape(WingBody, &sdef, &WingShape);
+
+        // 4) Aero reference consistent with geometry
+        P.ChordLength = Chord;
+        P.span  = 0.10f;
+        P.rho   = 1.225;
+        P.LE_local = (b2Vec2){ -0.25f*Chord, 0.0f };   // LE in local frame
+
+        SetBodyCOM(-0.25f*Chord, WingBody);
+    }
 
     void OnStart() override
     {
@@ -101,47 +184,21 @@ protected:
         b2ShapeDef groundShapeDef = b2DefaultShapeDef();
         b2CreatePolygonShape(ground, &groundShapeDef, &groundBox);
 
-        // Dynamic box
-        b2BodyDef bodyDef = b2DefaultBodyDef();
-        bodyDef.type = b2_dynamicBody;
-        bodyDef.position = (b2Vec2){ViewSize*.0f, ViewSize*.25f};
-        bodyDef.rotation = b2MakeRot(0);
-        bodyDef.linearVelocity = (b2Vec2){-1.f, 0.0f};
-        WingBody = b2CreateBody(world, &bodyDef);
-
-        // Rectangle with c/4 at (0,0): LE=-0.25c, TE=+0.75c
-        constexpr float chord = 1.0f;
-        constexpr float thick = 0.05f;
-
-        b2Vec2 pts[4] = {
-            { -0.25f*chord, -0.5f*thick },
-            {  0.75f*chord, -0.5f*thick },
-            {  0.75f*chord,  0.5f*thick },
-            { -0.25f*chord,  0.5f*thick }
-        };
-
-        // 1) Build hull
-        b2Hull hull = b2ComputeHull(pts, 4);
-
-        // 2) Make convex polygon from hull
-        b2Polygon WingShape = b2MakePolygon(&hull, 0.0f);          // if your API needs radius: b2MakePolygon(&hull, 0.0f)
-
-        // 3) Create fixture
-        b2ShapeDef sdef = b2DefaultShapeDef();
-        sdef.density = 1.0f;
-        sdef.material.friction = 0.5f;
-        b2CreatePolygonShape(WingBody, &sdef, &WingShape);
-
-        // 4) Aero reference consistent with geometry
-        P.chord = chord;
-        P.span  = 0.10f;
-        P.rho   = 1.225;
-        P.le_local = (b2Vec2){ -0.25f*chord, 0.0f };   // LE in local frame
+        SetupWing();
     }
 
-    void DebugDraw() const {
+    void DebugDraw(const Foil::FAirfoilForces &AirfoilForces) const {
         static LegacyGLDebugDraw DebugDraw_LegacyGL;
-        b2World_Draw(world, DebugDraw_LegacyGL.handle());
+        auto &Drawer = *DebugDraw_LegacyGL.handle();
+        // Drawer.drawMass = false;
+        Drawer.drawBounds = false;
+        Drawer.drawIslands = false;
+
+        // b2World_Draw(world, &Drawer);
+
+        // DebugDraw_LegacyGL.DrawForce(AirfoilForces.lift, AirfoilForces.loc, 1.0f, b2_colorCoral);
+        // DebugDraw_LegacyGL.DrawForce(AirfoilForces.drag, AirfoilForces.loc, 1.0f, b2_colorDarkRed);
+        // DebugDraw_LegacyGL.DrawTorque(WingBody, AirfoilForces.torque, 0.05f, 24);
     }
 };
 
