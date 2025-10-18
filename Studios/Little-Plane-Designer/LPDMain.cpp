@@ -16,6 +16,7 @@
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
 
 class LittlePlaneDesigner final : public FApplication {
+    TPointer<LegacyGLDebugDraw> DebugDraw_LegacyGL;
 public:
     bool NotifyRender(const Graphics::FPlatformWindow& PlatformWindow) override
     {
@@ -28,38 +29,46 @@ public:
         fix ViewHeight = ViewSize / AspectRatio;
         Drawer::ResetModelView();
         Drawer::SetupOrtho({-ViewSize*.5, ViewSize*.5, -.1*ViewHeight, .9*ViewHeight});
+        const auto Writer = DebugDraw_LegacyGL->Writer;
+        Writer->Reshape(WinWidth, WinHeight);
+        Writer->SetPenPositionTransform([this, ViewHeight, WinWidth, WinHeight](const Graphics::Point2D& pt) {
+            return Graphics::FromSpaceToViewportCoord(pt,
+                Graphics::RectR{-.5f*ViewSize, +.5f*ViewSize, -.1f*ViewHeight, .9f*ViewHeight },
+                Graphics::RectI{0, WinWidth, 0, WinHeight});
+        });
 
         PlatformWindow.Clear(Graphics::LapisLazuli);
+        // Writer->Write(Str("Hello World!"), {0.1f, 0.1f}, Graphics::White);
 
-        const Graphics::PlotStyle Wing{Graphics::White, Graphics::LineLoop};
-
-        const Math::PointSet AirfoilPoints = Airfoil.GetProfileVertices(8);
-        Math::PointSet Points = AirfoilPoints;
-
-        const auto AirfoilForces = Foil::ComputeAirfoilForces(Airfoil, WingBody, P);
+        const auto AirfoilForces = Foil::ComputeAirfoilForces(Airfoil, WingBody, P, *DebugDraw_LegacyGL);
         // Apply at c/4
         b2Body_ApplyForce (WingBody, AirfoilForces.GetTotalForce(), AirfoilForces.loc, true);
         b2Body_ApplyTorque(WingBody, AirfoilForces.torque, true);
 
-        constexpr float timeStep = 1.0f/(2.f*60.0f);
+        constexpr float timeStep = 1.0f/(8.f*60.0f);
         constexpr int subSteps = 60;
         b2World_Step(world, timeStep, subSteps);
-        const auto [x, y] = b2Body_GetPosition(WingBody);
-        const auto [c, s] = b2Body_GetRotation(WingBody);
 
         if constexpr (false) {
             Drawer::SetColor(Graphics::DarkGrass);
             Drawer::DrawRectangle({Graphics::Point2D{-100, 0}, Graphics::Point2D{100, -5}});
             Drawer::DrawLine({-100, 0}, {100, 0}, Graphics::GrassGreen);
 
-            for (auto &Point : Points.getPoints()) {
-                fix px = Point.x;
-                fix py = Point.y;
-                Point.x = x + px*c - py*s;
-                Point.y = y + px*s + py*c;
+            {
+                const Graphics::PlotStyle Wing{Graphics::White, Graphics::LineLoop};
+                const Math::PointSet AirfoilPoints = Airfoil.GetProfileVertices(8);
+                Math::PointSet Points = AirfoilPoints;
+                const auto [x, y] = b2Body_GetPosition(WingBody);
+                const auto [c, s] = b2Body_GetRotation(WingBody);
+                for (auto &Point : Points.getPoints()) {
+                    fix px = Point.x;
+                    fix py = Point.y;
+                    Point.x = x + px*c - py*s;
+                    Point.y = y + px*s + py*c;
+                }
+                Drawer::RenderPointSet(Dummy(Points), Wing);
             }
-            Drawer::RenderPointSet(Dummy(Points), Wing);
-        } else {
+        } else if (true) {
             DebugDraw(AirfoilForces);
         }
 
@@ -124,6 +133,7 @@ protected:
         bodyDef.angularVelocity = 0.8354123f;
         bodyDef.linearVelocity = (b2Vec2){-1.f, 0.0f};
         WingBody = b2CreateBody(world, &bodyDef);
+        b2Body_SetName(WingBody, "Wing");
         // Rectangle with c/4 at (0,0):
         // LE=-0.25c, TE=+0.75c
 
@@ -171,6 +181,8 @@ protected:
 
     void OnStart() override
     {
+        DebugDraw_LegacyGL = Slab::New<LegacyGLDebugDraw>();
+
         // World
         b2WorldDef worldDef = b2DefaultWorldDef();
         worldDef.gravity = (b2Vec2){0.0f, -10.0f};
@@ -187,9 +199,8 @@ protected:
         SetupWing();
     }
 
-    void DebugDraw(const Foil::FAirfoilForces &AirfoilForces) const {
-        static LegacyGLDebugDraw DebugDraw_LegacyGL;
-        auto &Drawer = *DebugDraw_LegacyGL.handle();
+    void DebugDraw(const Foil::FAirfoilForces &AirfoilForces) {
+        auto &Drawer = *DebugDraw_LegacyGL->handle();
         // Drawer.drawMass = false;
         Drawer.drawBounds = false;
         Drawer.drawIslands = false;

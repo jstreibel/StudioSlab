@@ -114,6 +114,10 @@ namespace Slab::Graphics::OpenGL {
         glUseProgram(Handle);
     }
 
+    void FShader::LegacyGL() {
+        glUseProgram(0);
+    }
+
     void FShader::SetUniform(const Str& Name, GLint Value) const {
         this->Use();
 

@@ -11,6 +11,8 @@
 #include <map>
 #include <regex>
 
+#include "Graphics/Utils.h"
+
 namespace Slab::Graphics::OpenGL {
 
     const Str shaderDir = Core::Resources::ShadersFolder + "rougier/";
@@ -22,8 +24,9 @@ namespace Slab::Graphics::OpenGL {
     } vertex_t;
 
     FWriterOpenGL::FWriterOpenGL(const Str &fontFile, float ptSize, const char *glyphsToPreload)
-            : VertexBuffer("vertex:3f,tex_coord:2f,color:4f"),
-              Program(shaderDir + "v3f-t2f-c4f.vert", shaderDir + "v3f-t2f-c4f.frag") {
+            : VertexBuffer("vertex:3f,tex_coord:2f,color:4f")
+            , Program(shaderDir + "v3f-t2f-c4f.vert", shaderDir + "v3f-t2f-c4f.frag")
+            , m_PenTransform([](const Point2D &p){ return p; }){
 
         auto factor = int(ceil(ptSize/30.));
 
@@ -178,7 +181,9 @@ namespace Slab::Graphics::OpenGL {
     void FWriterOpenGL::Write(const Str &Text, const Point2D PenLocation, const FColor Color, const bool Vertical) {
         if(Text.empty()) return;
 
-        SetBufferText(Text, PenLocation, Color, Vertical);
+        const Point2D Pen = m_PenTransform(PenLocation);
+
+        SetBufferText(Text, Pen, Color, Vertical);
         CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
 
         DrawBuffer();
@@ -202,4 +207,10 @@ namespace Slab::Graphics::OpenGL {
     void FWriterOpenGL::ResetTransforms() {
         mat4_set_identity(&m_View );
     }
+
+    void FWriterOpenGL::SetPenPositionTransform(const FPenTransformFunction& PenTranform) {
+        m_PenTransform = PenTranform;
+    }
+
+
 } // Slab::Graphics::OpenGL

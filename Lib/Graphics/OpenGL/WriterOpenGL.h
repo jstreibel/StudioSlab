@@ -17,6 +17,8 @@
 
 namespace Slab::Graphics::OpenGL {
 
+    using FPenTransformFunction = std::function<Point2D(const Point2D&)>;
+
     class FWriterOpenGL final : public FWriter {
         ftgl::texture_font_t *Font = nullptr;
         ftgl::texture_atlas_t *Atlas = nullptr;
@@ -25,6 +27,8 @@ namespace Slab::Graphics::OpenGL {
         OpenGL::FShader Program;
 
         ftgl::mat4 m_Model{}, m_View{}, m_Projection{};
+
+        FPenTransformFunction m_PenTransform;
 
         void DrawBuffer();
         void SetBufferText(const Str &Text, Point2D PenLocation, FColor Color=White, bool Rotate90Degrees=false);
@@ -44,6 +48,8 @@ namespace Slab::Graphics::OpenGL {
         void Scale(float sx, float sy) override;
         void Translate(float dx, float dy) override;
         void ResetTransforms() override;
+
+        void SetPenPositionTransform(const FPenTransformFunction&);
     };
 
 } // Slab::Graphics::OpenGL

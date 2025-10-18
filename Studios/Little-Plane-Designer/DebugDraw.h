@@ -10,6 +10,11 @@
 #include <box2d/box2d.h>
 #include <GL/glew.h>
 
+#include <Graphics/OpenGL/WriterOpenGL.h>
+
+#include "Core/Tools/Resources.h"
+#include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
+
 // Minimal, dependency-free immediate-mode debug draw for Box2D v3.1.x
 // Usage:
 //   LegacyGLDebugDraw dbg;
@@ -24,7 +29,10 @@ constexpr auto b2_pi = M_PI;
 class LegacyGLDebugDraw {
 public:
     explicit LegacyGLDebugDraw(float alpha = 1.0f, int circleSegments = 24)
-        : m_alpha(alpha), m_circleSegments(circleSegments) {
+    : m_alpha(alpha)
+    , m_circleSegments(circleSegments)
+    , Writer(Slab::New<Slab::Graphics::OpenGL::FWriterOpenGL>(Slab::Core::Resources::GetIndexedFontFileName(3), 40))
+    {
         std::memset(&m_dd, 0, sizeof(m_dd));
         m_dd.context = this;
 
@@ -118,11 +126,21 @@ public:
 
 private:
     // ---- helpers ----
+    static inline Slab::Graphics::FColor ToFColor(b2HexColor hc, float alpha)
+    {
+        const uint32_t rgb = static_cast<uint32_t>(hc);
+        const float r = ((rgb >> 16) & 0xFF) / 255.0f;
+        const float g = ((rgb >>  8) & 0xFF) / 255.0f;
+        const float b = ((rgb      ) & 0xFF) / 255.0f;
+
+        return Slab::Graphics::FColor(r, g, b, alpha);
+    }
     static inline void glColor(b2HexColor hc, float alpha) {
         const uint32_t rgb = static_cast<uint32_t>(hc);
         const float r = ((rgb >> 16) & 0xFF) / 255.0f;
         const float g = ((rgb >>  8) & 0xFF) / 255.0f;
         const float b = ((rgb      ) & 0xFF) / 255.0f;
+
         ::glColor4f(r, g, b, alpha);
     }
 
@@ -287,12 +305,22 @@ private:
         endPrim();
     }
 
-    // Optional (requires GLUT/your own text routine):
-    static void DrawStringThunk(b2Vec2 /*p*/, const char* /*s*/, b2HexColor /*c*/, void* /*ctx*/) {}
+    static void DrawStringThunk(b2Vec2 p, const char* s, b2HexColor c, void* ctx)
+    {
+        auto* self = static_cast<LegacyGLDebugDraw*>(ctx);
+        auto alpha = self->m_alpha;
+        self->Writer->Write(std::string(s), {p.x, p.y}, ToFColor(c, alpha));
+
+        Slab::Graphics::OpenGL::Texture::deactivate();
+        Slab::Graphics::OpenGL::FShader::LegacyGL();
+    }
 
     b2DebugDraw m_dd{};
     float m_alpha{1.0f};
     int   m_circleSegments{24};
+
+public:
+    Slab::TPointer<Slab::Graphics::OpenGL::FWriterOpenGL> Writer;
 };
 
 #endif //STUDIOSLAB_DEBUGDRAW_H

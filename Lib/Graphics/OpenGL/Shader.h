@@ -37,6 +37,7 @@ namespace Slab::Graphics::OpenGL {
         void BindTextures() const;
 
         virtual void Use() const;
+        static void LegacyGL();
 
         auto GetHandle() const -> GLuint {return Handle; };
 

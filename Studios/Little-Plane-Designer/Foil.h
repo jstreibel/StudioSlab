@@ -160,10 +160,12 @@ struct FAirfoilForces {
     static auto Null() { return FAirfoilForces{b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), 0.0f}; }
 };
 
-inline FAirfoilForces ComputeAirfoilForces(const IAirfoil& Airfoil, const b2BodyId& Body, const FAeroParams& P)
+inline FAirfoilForces ComputeAirfoilForces(
+    const IAirfoil& Airfoil,
+    const b2BodyId& Body,
+    const FAeroParams& P,
+    const LegacyGLDebugDraw &DebugDraw_LegacyGL)
 {
-    static LegacyGLDebugDraw DebugDraw_LegacyGL;
-
     // Geometry
     const b2Vec2 c4_local = P.LE_local;
     const b2Vec2 c4_world = b2Body_GetWorldPoint(Body, c4_local);
@@ -174,26 +176,28 @@ inline FAirfoilForces ComputeAirfoilForces(const IAirfoil& Airfoil, const b2Body
     // DebugDraw_LegacyGL.DrawVector(AirfoilForwardWorldVector, c4_world, 1);
 
     // Kinematics at c/4: use WORLD CENTER, not position
-    // TODO: COM and c/4 MUST coincide
+    // TODO: assert that COM and c/4 MUST coincide (not technically, just model-wise)
+    // This means that 'r' bust be zero-length
     const b2Vec2 COM = b2Body_GetWorldCenterOfMass(Body);
     const b2Vec2 LinearSpeed = b2Body_GetLinearVelocity(Body);
-    const float  w    = b2Body_GetAngularVelocity(Body);
-    const b2Vec2 r    = c4_world - COM;
-    const b2Vec2 v_point = LinearSpeed + b2Vec2(-w * r.y, w * r.x);
-    DebugDraw_LegacyGL.handle()->DrawPointFcn(COM, 5.0f, b2_colorWhite, &DebugDraw_LegacyGL);
-    DebugDraw_LegacyGL.DrawVector(LinearSpeed, COM, 1.0f/4.f, b2_colorWhite);
-    DebugDraw_LegacyGL.DrawVector(v_point, COM, 1.0f, b2_colorBurlywood);
+    const float  ω    = b2Body_GetAngularVelocity(Body);
+    const b2Vec2 R    = c4_world - COM;
+    const b2Vec2 v_point = LinearSpeed + b2Vec2(-ω * R.y, ω * R.x);
+    // DebugDraw_LegacyGL.handle()->DrawPointFcn(COM, 5.0f, b2_colorWhite, &DebugDraw_LegacyGL);
+    // DebugDraw_LegacyGL.DrawVector(LinearSpeed, COM, 1.0f/4.f, b2_colorWhite);
+    // DebugDraw_LegacyGL.DrawVector(v_point, COM, 1.0f, b2_colorBurlywood);
 
     // Wind
-    const b2Vec2 wind = -v_point;
-    const float  V    = std::sqrt(wind.x*wind.x + wind.y*wind.y);
-    if (V < 1e-3f) return FAirfoilForces::Null();
-    const b2Vec2 w_hat = (1.0f / V) * wind;
+    const b2Vec2 WindOnPoint = -v_point;
+    const float  WindOnPointLen    = b2Length(WindOnPoint);
+    // if (WindOnPointLen < 1e-3f) return FAirfoilForces::Null();
+    const b2Vec2 WindOnPointUnit = b2Normalize(WindOnPoint); // TODO: could take advantage of already computed length above
+    DebugDraw_LegacyGL.DrawVector(WindOnPoint, c4_world, 0.1f, b2_colorHotPink);
 
     // AoA
     auto chord_hat = perpCCW(AirfoilForwardWorldVector);
-    const double dot = std::clamp<double>(chord_hat.x*w_hat.x + chord_hat.y*w_hat.y, -1.0, 1.0);
-    const double det = (double)chord_hat.x*w_hat.y - (double)chord_hat.y*w_hat.x;
+    const double dot = std::clamp<double>(chord_hat.x*WindOnPointUnit.x + chord_hat.y*WindOnPointUnit.y, -1.0, 1.0);
+    const double det = (double)chord_hat.x*WindOnPointUnit.y - (double)chord_hat.y*WindOnPointUnit.x;
     const double aoa = -std::atan2(det, dot);
 
     // Coeffs
@@ -203,7 +207,7 @@ inline FAirfoilForces ComputeAirfoilForces(const IAirfoil& Airfoil, const b2Body
 
     // Dynamic pressure (keep density sane)
     const double rho = std::clamp(P.rho, 0.1, 5.0);       // guard
-    const double q   = 0.5 * rho * (double)V * (double)V;
+    const double q   = 0.5 * rho * (double)WindOnPointLen * (double)WindOnPointLen;
     const double S   = P.ChordLength * P.span;
 
     // Magnitudes
@@ -213,7 +217,7 @@ inline FAirfoilForces ComputeAirfoilForces(const IAirfoil& Airfoil, const b2Body
 
     // Simple aero angular damping to suppress runaway spin
     const double c_rot = 0.05 * q * S * P.ChordLength;          // tune
-    Tmag -= c_rot * (double)w;
+    Tmag -= c_rot * (double)ω;
 
     // Optional caps for stability
     const double Fcap = 50.0 * S;                         // tune to your mass scale
@@ -223,8 +227,8 @@ inline FAirfoilForces ComputeAirfoilForces(const IAirfoil& Airfoil, const b2Body
     Tmag = std::clamp(Tmag, -Tcap, Tcap);
 
     // Forces
-    const b2Vec2 drag = -(float)(-Dm) * w_hat;
-    const b2Vec2 lift = (float)( Lm) * b2Vec2(-w_hat.y, w_hat.x);
+    const b2Vec2 drag = -(float)(-Dm) * WindOnPointUnit;
+    const b2Vec2 lift = (float)( Lm) * b2Vec2(-WindOnPointUnit.y, WindOnPointUnit.x);
 
     return FAirfoilForces{drag, lift, c4_world, (float)Tmag};}
 
