@@ -43,6 +43,10 @@ namespace Slab {
         return bad;
     }
 
+    void Graphics::OpenGL::SetViewport(RectI rect) {
+        glViewport(rect.xMin, rect.yMin, rect.GetWidth(), rect.GetHeight());
+    }
+
     void Graphics::OpenGL::DrawOrthoNormalized(RectR rect) {
         // TODO ultra-provisório
         glMatrixMode(GL_PROJECTION);

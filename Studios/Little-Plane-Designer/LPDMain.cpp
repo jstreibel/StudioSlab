@@ -14,9 +14,34 @@
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Plot2D/Plotter.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/NativeFunction.h"
+
+constexpr auto PrettyDraw = true;
+constexpr auto DebugDraw = true;
+
+constexpr float TimeScale = 0.1f;
+
+constexpr b2Vec2 x0{4.5f, 5.f};
+constexpr auto α0 = .0f; // 0.3f;
+constexpr auto ω0 = .0f; // 0.8354123f;
+constexpr b2Vec2 v0{-1.f, 0.0f};
+
+
+inline DevFloat DegToRad(const DevFloat ang) { return ang * M_PI / 180.0;};
+inline DevFloat RadToDeg(const DevFloat ang) { return ang * 180.0 / M_PI;};
 
 class LittlePlaneDesigner final : public FApplication {
     TPointer<LegacyGLDebugDraw> DebugDraw_LegacyGL;
+
+    Foil::Airfoil_NACA2412 Airfoil;
+    const float Chord = 1.0f;
+    const float Thick = 0.10f;
+
+    float ViewWidth = 15.0;
+
 public:
     bool NotifyRender(const Graphics::FPlatformWindow& PlatformWindow) override
     {
@@ -26,38 +51,43 @@ public:
         fix WinHeight = PlatformWindow.GetHeight();
         fix WinWidth = PlatformWindow.GetWidth();
         fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
-        fix ViewHeight = ViewSize / AspectRatio;
+        fix ViewHeight = ViewWidth / AspectRatio;
+
+        Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
         Drawer::ResetModelView();
-        Drawer::SetupOrtho({-ViewSize*.5, ViewSize*.5, -.1*ViewHeight, .9*ViewHeight});
+        Drawer::SetupOrtho({-ViewWidth*.5, ViewWidth*.5, -.1*ViewHeight, .9*ViewHeight});
         const auto Writer = DebugDraw_LegacyGL->GetWriter();
         Writer->Reshape(WinWidth, WinHeight);
         Writer->SetPenPositionTransform([this, ViewHeight, WinWidth, WinHeight](const Graphics::Point2D& pt) {
             return Graphics::FromSpaceToViewportCoord(pt,
-                Graphics::RectR{-.5f*ViewSize, +.5f*ViewSize, -.1f*ViewHeight, .9f*ViewHeight },
+                Graphics::RectR{-.5f*ViewWidth, +.5f*ViewWidth, -.1f*ViewHeight, .9f*ViewHeight },
                 Graphics::RectI{0, WinWidth, 0, WinHeight});
         });
 
         PlatformWindow.Clear(Graphics::LapisLazuli);
 
         const auto AirfoilForces = Foil::ComputeAirfoilForces(Airfoil, WingBody, AeroParams, *DebugDraw_LegacyGL);
+        // const auto AirfoilForces = Foil::ComputeAirfoilForces2(Airfoil, WingBody, AeroParams, *DebugDraw_LegacyGL);
+        // const auto AirfoilForces =  Foil::FAirfoilForces::Null();
         // Apply at c/4
         b2Body_ApplyForce (WingBody, AirfoilForces.GetTotalForce(), AirfoilForces.loc, true);
         b2Body_ApplyTorque(WingBody, AirfoilForces.torque, true);
 
-        constexpr float timeStep = 1.0f/(8.f*60.0f);
+        constexpr float timeStep = TimeScale/60.0f;
         constexpr int subSteps = 60;
         b2World_Step(world, timeStep, subSteps);
 
-        if constexpr (true) {
+        if constexpr (PrettyDraw) {
             Drawer::SetColor(Graphics::DarkGrass);
             Drawer::DrawRectangle({Graphics::Point2D{-100, 0}, Graphics::Point2D{100, -5}});
             Drawer::DrawLine({-100, 0}, {100, 0}, Graphics::GrassGreen);
 
             {
-                Graphics::PlotStyle WingStyle{Graphics::White, Graphics::LineLoop};
+                Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
                 WingStyle.thickness = 2.0f;
-                const Math::PointSet AirfoilPoints = Airfoil.GetProfileVertices(200);
-                Math::PointSet Points = AirfoilPoints;
+                WingStyle.lineColor.a = 0.5f;
+                Math::PointSet AirfoilPoints = Airfoil.GetProfileVertices(200);
+                Math::PointSet Points = AirfoilPoints; // Math::PointSet(Math::Point2DVec{{.25f*Chord ,.0f}}) + AirfoilPoints;
                 const auto [x, y] = b2Body_GetPosition(WingBody);
                 const auto [c, s] = b2Body_GetRotation(WingBody);
                 for (auto &Point : Points.getPoints()) {
@@ -70,9 +100,12 @@ public:
                 }
                 Drawer::RenderPointSet(Dummy(Points), WingStyle);
             }
-        } else if constexpr (true) {
-            DebugDraw();
         }
+        if constexpr (DebugDraw) {
+            DoDebugDraw();
+        }
+
+        Monitor(PlatformWindow);
 
         return true;
     }
@@ -87,18 +120,10 @@ public:
     }
 
 protected:
-    Foil::Airfoil_NACA2412 Airfoil;
-    const float Chord = 1.0f;
-    const float Thick = 0.10f;
-
-    float ViewSize = 10.0;
-
     b2WorldId world;
     b2BodyId WingBody;
     Foil::FAeroParams AeroParams;
-
-    const float BoxHalfWidth = 0.5f;
-    const float BoxHalfHeight = 0.06f;
+    TPointer<Graphics::FPlot2DWindow> PlotWindow;
 
     static void SetBodyCOM(const float xCOM, const b2BodyId Body)
     {
@@ -130,10 +155,11 @@ protected:
         // Dynamic box
         b2BodyDef bodyDef = b2DefaultBodyDef();
         bodyDef.type = b2_dynamicBody;
-        bodyDef.position = (b2Vec2){ViewSize*(.5f), ViewSize*.25f};
-        bodyDef.rotation = b2MakeRot(0.0123f);
-        bodyDef.angularVelocity = 0.8354123f;
-        bodyDef.linearVelocity = (b2Vec2){-1.f, 0.0f};
+        // bodyDef.position = (b2Vec2){ViewSize*(.5f), ViewSize*.25f};
+        bodyDef.position = x0;
+        bodyDef.rotation =  b2MakeRot(α0);
+        bodyDef.angularVelocity = ω0;
+        bodyDef.linearVelocity = v0;
         WingBody = b2CreateBody(world, &bodyDef);
         b2Body_SetName(WingBody, "Wing");
         // Rectangle with c/4 at (0,0):
@@ -169,7 +195,7 @@ protected:
         // 3) Create fixture
         b2ShapeDef sdef = b2DefaultShapeDef();
         sdef.density = 1.0f;
-        sdef.material.friction = 0.5f;
+        sdef.material.friction = 0.1f;
         b2CreatePolygonShape(WingBody, &sdef, &WingShape);
 
         // 4) Aero reference consistent with geometry
@@ -199,13 +225,33 @@ protected:
         b2CreatePolygonShape(ground, &groundShapeDef, &groundBox);
 
         SetupWing();
+
+        PlotWindow = New<Graphics::FPlot2DWindow>("Polars");
+        PlotWindow->Set_x(20);
+        PlotWindow->Set_y(20);
+        PlotWindow->SetNoGUI();
+        PlotWindow->SetRegion(Graphics::PlottingRegion2D(Graphics::RectR{DegToRad(-15), DegToRad(15), -1.7, 1.7}));
+        auto Polar = New<Math::RtoR::NativeFunction>([this](DevFloat AoA) {
+            return Airfoil.Cl(AoA);
+        });
+        auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        Style.lineColor = Graphics::White;
+        Graphics::FPlotter::AddRtoRFunction(PlotWindow, Polar, Style, "C_l");
+
+        const auto Theme = Graphics::PlotThemeManager::GetCurrent();
+        const TPointer<Graphics::OpenGL::FWriterOpenGL> Writer = Slab::New<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(3), 24);
+        Theme->graphBackground.a = 0.25f;
+        Theme->LabelsWriter = Writer;
+        Theme->TicksWriter = Writer;
     }
 
-    void DebugDraw() const {
+    void DoDebugDraw() const {
         auto &Drawer = *DebugDraw_LegacyGL->handle();
-        // Drawer.drawMass = false;
+        Drawer.drawMass = false;
         Drawer.drawBounds = false;
         Drawer.drawIslands = false;
+        Drawer.drawBodyNames = false;
+        Drawer.drawShapes = false;
 
         b2World_Draw(world, &Drawer);
 
@@ -213,6 +259,28 @@ protected:
         // DebugDraw_LegacyGL.DrawForce(AirfoilForces.drag, AirfoilForces.loc, 1.0f, b2_colorDarkRed);
         // DebugDraw_LegacyGL.DrawTorque(WingBody, AirfoilForces.torque, 0.05f, 24);
     }
+
+    void Monitor(const Graphics::FPlatformWindow& PlatformWindow) {
+        const auto w = GetPlatform()->GetMainSystemWindow()->GetWidth();
+        const auto h = GetPlatform()->GetMainSystemWindow()->GetHeight();
+
+        PlotWindow->NotifySystemWindowReshape(w, h);
+        PlotWindow->NotifyReshape(600, 400);
+        PlotWindow->NotifyRender(PlatformWindow);
+    }
+public:
+    bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override {
+        if (state == Graphics::EKeyState::Press)
+        {
+            if (key == Graphics::EKeyMap::Key_F4 && modKeys.Mod_Alt) {
+                GetPlatform()->GetMainSystemWindow()->SignalClose();
+                return true;
+            }
+        }
+        return false;
+    };
+
+
 };
 
 int main(const int argc, const char *argv[])

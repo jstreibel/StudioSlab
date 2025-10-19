@@ -9,37 +9,38 @@
 #include "Math/Point.h"
 #include "Utils/Pointer.h"
 
-
 namespace Slab::Math {
 
 
-    class PointSet : public Space {
-        Point2DVec points;
-        Point2D max={.0,.0}, min={.0,.0};
+class PointSet final : public Space {
+    Point2DVec points;
+    Point2D max={.0,.0}, min={.0,.0};
 
-    public:
-        PointSet();
-        explicit
-        PointSet(const Point2DVec& points);
-        PointSet(const PointSet& pointSet);
+public:
+    PointSet();
+    explicit
+    PointSet(const Point2DVec& points);
+    PointSet(const PointSet& pointSet);
 
-        auto getMeasure() const -> const Measure override;
+    auto getMeasure() const -> const Measure override;
 
-        auto getMax() const -> Point2D;
-        auto getMin() const -> Point2D;
+    auto getMax() const -> Point2D;
+    auto getMin() const -> Point2D;
 
-        CountType count() const;
+    CountType count() const;
 
-        void clear();
-        void AddPoint(DevFloat x, DevFloat y);
-        void AddPoint(const Point2D &point);
-        void setPoints(Point2DVec points);
+    void clear();
+    void AddPoint(DevFloat x, DevFloat y);
+    void AddPoint(const Point2D &point);
+    void setPoints(Point2DVec points);
 
-        const Point2DVec& getPoints() const;
-        Point2DVec& getPoints();
-    };
+    const Point2DVec& getPoints() const;
+    Point2DVec& getPoints();
+};
 
-    DefinePointers(PointSet)
+PointSet operator + (const PointSet &a, const PointSet &b);
+
+DefinePointers(PointSet)
 
 }
 

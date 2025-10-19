@@ -9,9 +9,9 @@
 
 namespace Slab::Graphics {
 
-    class BackgroundArtist : public FArtist {
+    class FBackgroundArtist final : public FArtist {
     public:
-        BackgroundArtist();
+        FBackgroundArtist();
 
         bool Draw(const FPlot2DWindow &window) override;
     };

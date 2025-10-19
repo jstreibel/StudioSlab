@@ -41,6 +41,7 @@ namespace Slab::Graphics::OpenGL {
     };
 
 
+    void SetViewport(RectI rect);
 
     void DrawOrthoNormalized(RectR rect);
 

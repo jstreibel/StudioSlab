@@ -10,11 +10,11 @@
 #include "Graphics/Plot2D/PlotThemeManager.h"
 
 namespace Slab::Graphics {
-    BackgroundArtist::BackgroundArtist() : FArtist() {
-        SetLabel("Background");
+    FBackgroundArtist::FBackgroundArtist() : FArtist() {
+        FArtist::SetLabel("Background");
     }
 
-    bool BackgroundArtist::Draw(const FPlot2DWindow &window) {
+    bool FBackgroundArtist::Draw(const FPlot2DWindow &window) {
 
         OpenGL::Legacy::FShaderGuard Guard{};
 

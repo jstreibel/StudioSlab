@@ -54,6 +54,17 @@ namespace Slab::Math {
 
     Point2DVec& PointSet::getPoints() { return points; }
 
+    PointSet operator+(const PointSet& a, const PointSet& b) {
+        auto &pa = a.getPoints();
+        auto &pb = b.getPoints();
+
+        Point2DVec c(pa.size() + pb.size());
+        std::copy(pa.begin(), pa.end(), c.begin());
+        std::copy(pb.begin(), pb.end(), c.begin() + pa.size());
+
+        return PointSet(c);
+    }
+
     // Point2DVec &PointSet::getPoints()       { return points; }
 
     void PointSet::clear() { points.clear(); }

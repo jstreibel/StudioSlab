@@ -88,25 +88,32 @@ namespace Slab::Graphics::OpenGL {
 
     void RenderOtherPrimitives(const Point2DVec& pts, PlotStyle style) noexcept {
 
-        const auto color = style.fillColor;
+        const auto color = style.lineColor;
+
         glColor4f(color.r, color.g, color.b, color.a);
 
         GLenum Primitive;
         switch (style.getPrimitive()) {
-            case LineStrip:
-                Primitive = GL_LINE_STRIP;
-                break;
-            case LineLoop:
-                Primitive = GL_LINE_LOOP;
-                break;
-            case Triangles:
-                Primitive = GL_TRIANGLES;
-                break;
-            case Quads:
-                Primitive = GL_QUADS;
-                break;
-            default:
-                return;
+        case LineStrip:
+            Primitive = GL_LINE_STRIP;
+            break;
+        case LineLoop:
+            Primitive = GL_LINE_LOOP;
+            break;
+        case Triangles:
+            Primitive = GL_TRIANGLES;
+            break;
+        case TriangleStrip:
+            Primitive = GL_TRIANGLE_STRIP;
+            break;
+        case TriangleFan:
+            Primitive = GL_TRIANGLE_FAN;
+            break;
+        case Quads:
+            Primitive = GL_QUADS;
+            break;
+        default:
+            return;
         }
 
         glBegin(Primitive);
@@ -135,10 +142,13 @@ namespace Slab::Graphics::OpenGL {
         case LineStrip:
         case LineLoop:
         case Triangles:
+        case TriangleStrip:
+        case TriangleFan:
         case Quads:
             RenderOtherPrimitives(pts, style);
             break;
         case __COUNT__:
+        default:
             break;
         }
 

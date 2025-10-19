@@ -6,13 +6,13 @@
 
 namespace Slab::Math::RtoR {
 
-    NativeFunction::NativeFunction(DevFloat (*function)(DevFloat))
-    : native(function) {    }
+    NativeFunction::NativeFunction(std::function<DevFloat(DevFloat)> function)
+    : Function(function) {    }
 
-    DevFloat NativeFunction::operator()(DevFloat x) const { return (*native)(x); }
+    DevFloat NativeFunction::operator()(DevFloat x) const { return Function(x); }
 
     TPointer<Base::FunctionT<DevFloat, DevFloat>::Type> NativeFunction::Clone() const {
-        return New<NativeFunction>(this->native);
+        return New<NativeFunction>(this->Function);
     }
 
 

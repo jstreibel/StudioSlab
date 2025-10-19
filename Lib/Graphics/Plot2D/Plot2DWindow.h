@@ -21,6 +21,7 @@
 #include "Graphics/Plot2D/Util/PlottingRegion2D.h"
 #include "Graphics/Plot2D/Artists/BackgroundArtist.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
+#include "Graphics/OpenGL/WriterOpenGL.h"
 
 #define POPUP_ON_MOUSE_CALL false
 
@@ -30,6 +31,7 @@ namespace Slab::Graphics {
         static CountType WindowCount;
         CountType Id;
         static std::map<Str, FPlot2DWindow*> GraphMap;
+        bool b_DrawGUI = true;
 
     protected:
         typedef Int zOrder_t;
@@ -41,6 +43,7 @@ namespace Slab::Graphics {
 
         void ImmediateDraw(const FPlatformWindow&) override;
         auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
+        void SetNoGUI();
 
         void AddArtist(const FArtist_ptr& pArtist, zOrder_t zOrder=0);
         bool RemoveArtist(const FArtist_ptr& pArtist);
@@ -49,13 +52,14 @@ namespace Slab::Graphics {
         FAxisArtist &GetAxisArtist();
 
         auto GetLastXHairPosition() const -> Point2D;
-        virtual Str GetXHairLabel(const Point2D &coords) const;
+        Str GetXHairLabel(const Point2D &coords) const;
 
         void SetAutoReviewGraphRanges(bool);
         void ReviewGraphRanges();
 
         auto GetRegion() const -> const PlottingRegion2D&;
         auto GetRegion() -> PlottingRegion2D&;
+        void SetRegion(const PlottingRegion2D&);
 
         void TieRegion_xMaxMin(const FPlot2DWindow&);
         void TieRegion_yMaxMin(const FPlot2DWindow&);
@@ -82,7 +86,7 @@ namespace Slab::Graphics {
         FAxisArtist AxisArtist;
         XHairArtist ArtistXHair;
         FLabelsArtist LabelsArtist;
-        BackgroundArtist bgArtist;
+        FBackgroundArtist bgArtist;
 
         FPlot2DWindow(
             DevFloat xMin,

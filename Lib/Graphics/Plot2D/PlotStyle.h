@@ -30,6 +30,8 @@ namespace Slab::Graphics {
         LineLoop,
 
         Triangles,
+        TriangleStrip,
+        TriangleFan,
         Quads,
 
         Points,

@@ -14,7 +14,7 @@ namespace Slab {
             xMin = New<DevFloat>(rect.xMin);
             xMax = New<DevFloat>(rect.xMax);
             yMin = New<DevFloat>(rect.yMin);
-            yMax = New<DevFloat>(rect.xMax);
+            yMax = New<DevFloat>(rect.yMax);
         }
 
         RectR PlottingRegion2D::getRect() const {return {*xMin, *xMax, *yMin, *yMax}; }

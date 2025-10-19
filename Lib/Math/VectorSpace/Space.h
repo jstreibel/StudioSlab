@@ -14,6 +14,7 @@ namespace Slab::Math {
         UInt dim;
 
     public:
+        virtual ~Space() = default;
         typedef std::shared_ptr<Space> Ptr;
 
         explicit Space(UInt dim);

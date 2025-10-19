@@ -6,15 +6,6 @@
 
 namespace Slab {
 
-    auto Graphics::FPlot2DWindow::GetRegion() const -> const Graphics::PlottingRegion2D &
-    { return Region; }
-    auto Graphics::FPlot2DWindow::GetRegion() -> Graphics::PlottingRegion2D &
-    { return Region; }
-
-    void Graphics::FPlot2DWindow::SetAnimationTime(const float value) { AnimationTimeSeconds = value; }
-
-    float Graphics::FPlot2DWindow::GetAnimationTime() const { return AnimationTimeSeconds; }
-
     auto Graphics::FPlot2DWindow::GetLastXHairPosition() const -> Point2D {
         auto vpRect = GetViewport();
 
@@ -23,6 +14,19 @@ namespace Slab {
 
         return FromViewportToSpaceCoord(MouseLocal, Region.getRect(), vpRect);
     }
+    auto Graphics::FPlot2DWindow::GetRegion() const -> const Graphics::PlottingRegion2D &
+    { return Region; }
+
+    auto Graphics::FPlot2DWindow::GetRegion() -> Graphics::PlottingRegion2D &
+    { return Region; }
+
+    void Graphics::FPlot2DWindow::SetRegion(const PlottingRegion2D& NewRegion) {
+        this->Region = NewRegion;
+    }
+
+    void Graphics::FPlot2DWindow::SetAnimationTime(const float value) { AnimationTimeSeconds = value; }
+
+    float Graphics::FPlot2DWindow::GetAnimationTime() const { return AnimationTimeSeconds; }
 
 
 }

@@ -137,6 +137,10 @@ namespace Slab::Graphics {
         RegisterGUIDraws();
     }
 
+    void FPlot2DWindow::SetNoGUI() {
+        b_DrawGUI = false;
+    }
+
     void FPlot2DWindow::RegisterGUIDraws() {
         auto DrawCall = [this]
         {
@@ -238,7 +242,7 @@ namespace Slab::Graphics {
             ImGui::End();
         };
 
-        DrawCall();
+        if (b_DrawGUI) DrawCall();
     }
 
     void FPlot2DWindow::SetupOrtho() const {

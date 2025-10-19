@@ -12,9 +12,9 @@
 namespace Slab::Math::RtoR {
 
     class NativeFunction : public RtoR::Function {
-        DevFloat (*native)(DevFloat);
+        std::function<DevFloat(DevFloat)> Function;
     public:
-        NativeFunction(DevFloat (*native)(DevFloat));
+        NativeFunction(std::function<DevFloat(DevFloat)>);
 
         DevFloat operator()(DevFloat x) const override;
 
