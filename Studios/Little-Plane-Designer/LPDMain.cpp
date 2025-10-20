@@ -11,6 +11,7 @@
 #include "Graphics/SFML/Graph.h"
 
 #include "box2d/box2d.h"
+#include "Core/SlabCore.h"
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
@@ -27,7 +28,7 @@ constexpr float TimeScale = 0.1f;
 constexpr b2Vec2 x0{4.5f, 5.f};
 constexpr auto α0 = .0f; // 0.3f;
 constexpr auto ω0 = .0f; // 0.8354123f;
-constexpr b2Vec2 v0{-1.f, 0.0f};
+constexpr b2Vec2 v0{-5.f, 0.0f};
 
 
 inline DevFloat DegToRad(const DevFloat ang) { return ang * M_PI / 180.0;};
@@ -66,16 +67,38 @@ public:
 
         PlatformWindow.Clear(Graphics::LapisLazuli);
 
-        const auto AirfoilForces = Foil::ComputeAirfoilForces(Airfoil, WingBody, AeroParams, *DebugDraw_LegacyGL);
-        // const auto AirfoilForces = Foil::ComputeAirfoilForces2(Airfoil, WingBody, AeroParams, *DebugDraw_LegacyGL);
-        // const auto AirfoilForces =  Foil::FAirfoilForces::Null();
-        // Apply at c/4
-        b2Body_ApplyForce (WingBody, AirfoilForces.GetTotalForce(), AirfoilForces.loc, true);
-        b2Body_ApplyTorque(WingBody, AirfoilForces.torque, true);
+        static int options = 1;
+        GUIContext->AddDrawCall([this] {
+            ImGui::Begin("Wing");
+            ImGui::BeginGroup();
+            ImGui::RadioButton("Simulate", &options, 0);
+            ImGui::RadioButton("Test", &options, 1);
+            ImGui::EndGroup();
 
-        constexpr float timeStep = TimeScale/60.0f;
-        constexpr int subSteps = 60;
-        b2World_Step(world, timeStep, subSteps);
+            if (options == 1) {
+                const auto foil_vel = b2Body_GetLinearVelocity(WingBody);
+                float foil_speed = b2Length(foil_vel);
+                float foil_angle = atan2f(foil_vel.y, foil_vel.x);
+                if (ImGui::SliderFloat("Foil speed", &foil_speed, 0.0f, 10.0f)
+                  | ImGui::SliderAngle("Foil angle", &foil_angle, -180.0f, 180.0f))
+                {
+                    b2Body_SetLinearVelocity(WingBody, {foil_speed*cosf(foil_angle), foil_speed*sinf(foil_angle)});
+                }
+            }
+
+            ImGui::End();
+        });
+
+        const auto AirfoilForces = Foil::ComputeAirfoilForces(Airfoil, WingBody, *DebugDraw_LegacyGL);
+        if (options == 0) {
+            // Apply at c/4
+            b2Body_ApplyForce (WingBody, AirfoilForces.GetTotalForce(), AirfoilForces.loc, true);
+            b2Body_ApplyTorque(WingBody, AirfoilForces.torque, true);
+
+            constexpr float timeStep = TimeScale/60.0f;
+            constexpr int subSteps = 60;
+            b2World_Step(world, timeStep, subSteps);
+        }
 
         if constexpr (PrettyDraw) {
             Drawer::SetColor(Graphics::DarkGrass);
@@ -91,7 +114,7 @@ public:
                 const auto [x, y] = b2Body_GetPosition(WingBody);
                 const auto [c, s] = b2Body_GetRotation(WingBody);
                 for (auto &Point : Points.getPoints()) {
-                    fix chord = AeroParams.ChordLength;
+                    fix chord = Airfoil.Params.ChordLength;
                     fix px = Point.x-chord*.5f;
                     fix py = Point.y;
 
@@ -115,17 +138,17 @@ public:
     , world()
     , WingBody() {    }
 
-    ~LittlePlaneDesigner() override {
-        b2DestroyWorld(world);
-    }
+    ~LittlePlaneDesigner() override { b2DestroyWorld(world); }
 
 protected:
     b2WorldId world;
     b2BodyId WingBody;
-    Foil::FAeroParams AeroParams;
-    TPointer<Graphics::FPlot2DWindow> PlotWindow;
+    TPointer<Graphics::FPlot2DWindow> Plots1;
+    TPointer<Graphics::FPlot2DWindow> Plots2;
 
-    static void SetBodyCOM(const float xCOM, const b2BodyId Body)
+    TPointer<Graphics::FGUIContext> GUIContext;
+
+    static void ShiftBodyCOM(const float xCOM, const b2BodyId Body)
     {
         // target COM shift (local body frame)
 
@@ -198,17 +221,16 @@ protected:
         sdef.material.friction = 0.1f;
         b2CreatePolygonShape(WingBody, &sdef, &WingShape);
 
-        // 4) Aero reference consistent with geometry
-        AeroParams.ChordLength = Chord;
-        AeroParams.span  = 0.10f;
-        AeroParams.rho   = 1.225;
-        AeroParams.LE_local = (b2Vec2){ -0.25f*Chord, 0.0f };   // LE in local frame
-
-        SetBodyCOM(-0.25f*Chord, WingBody);
+        ShiftBodyCOM((-0.5+0.38)*Chord, WingBody); // 38% behind LE (NACA2412 usually sits 35-40% chord length)
     }
 
     void OnStart() override
     {
+        Core::GetModule("ImGui");
+        auto SystemWindow = Graphics::GetGraphicsBackend()->GetMainSystemWindow();
+        SystemWindow->SetupGUIContext();
+        GUIContext = SystemWindow->GetGUIContext();
+
         DebugDraw_LegacyGL = Slab::New<LegacyGLDebugDraw>();
 
         // World
@@ -226,17 +248,36 @@ protected:
 
         SetupWing();
 
-        PlotWindow = New<Graphics::FPlot2DWindow>("Polars");
-        PlotWindow->Set_x(20);
-        PlotWindow->Set_y(20);
-        PlotWindow->SetNoGUI();
-        PlotWindow->SetRegion(Graphics::PlottingRegion2D(Graphics::RectR{DegToRad(-15), DegToRad(15), -1.7, 1.7}));
-        auto Polar = New<Math::RtoR::NativeFunction>([this](DevFloat AoA) {
-            return Airfoil.Cl(AoA);
-        });
+        auto PlotRegion = [](DevFloat xw, DevFloat yw){return Graphics::PlottingRegion2D(Graphics::RectR{DegToRad(-xw), DegToRad(xw), -yw, yw});};
+        Plots1 = New<Graphics::FPlot2DWindow>("Force polars");
+        Plots1->Set_x(20);
+        Plots1->Set_y(20);
+        Plots1->SetNoGUI();
+        Plots1->SetRegion(PlotRegion(15, 1.75));
+
+        auto C_l = New<Math::RtoR::NativeFunction>([this](DevFloat AoA) { return Airfoil.Cl(AoA); });
+        auto C_d = New<Math::RtoR::NativeFunction>([this](DevFloat AoA) { return Airfoil.Cd(AoA); });
+        auto C_mc4 = New<Math::RtoR::NativeFunction>([this](DevFloat AoA) { return Airfoil.Cm_c4(AoA); });
+
         auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         Style.lineColor = Graphics::White;
-        Graphics::FPlotter::AddRtoRFunction(PlotWindow, Polar, Style, "C_l");
+        Graphics::FPlotter::AddRtoRFunction(Plots1, C_l, Style, "C_l");
+
+        Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        Style.lineColor = Graphics::GrassGreen;
+        Graphics::FPlotter::AddRtoRFunction(Plots1, C_d, Style, "C_d");
+
+        Plots2 = New<Graphics::FPlot2DWindow>("Torque polars");
+        Plots2->Set_x(20);
+        Plots2->Set_y(20 + 20 + 400);
+        Plots2->SetNoGUI();
+        Plots2->TieRegion_xMaxMin(*Plots1);
+        Plots2->GetRegion().set_y_limits(-.08, .08);
+
+        Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        Style.lineColor = Graphics::White;
+        Graphics::FPlotter::AddRtoRFunction(Plots2, C_mc4, Style, "C_mc4");
+
 
         const auto Theme = Graphics::PlotThemeManager::GetCurrent();
         const TPointer<Graphics::OpenGL::FWriterOpenGL> Writer = Slab::New<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(3), 24);
@@ -264,9 +305,13 @@ protected:
         const auto w = GetPlatform()->GetMainSystemWindow()->GetWidth();
         const auto h = GetPlatform()->GetMainSystemWindow()->GetHeight();
 
-        PlotWindow->NotifySystemWindowReshape(w, h);
-        PlotWindow->NotifyReshape(600, 400);
-        PlotWindow->NotifyRender(PlatformWindow);
+        Plots1->NotifySystemWindowReshape(w, h);
+        Plots1->NotifyReshape(600, 400);
+        Plots1->NotifyRender(PlatformWindow);
+
+        Plots2->NotifySystemWindowReshape(w, h);
+        Plots2->NotifyReshape(600, 400);
+        Plots2->NotifyRender(PlatformWindow);
     }
 public:
     bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override {

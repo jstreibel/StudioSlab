@@ -66,6 +66,11 @@ public:
     void setAlpha(float a) { m_alpha = a; }
     void setCircleSegments(int n) { m_circleSegments = n > 3 ? n : 3; }
 
+    static void SetupLegacyGL() {
+        Slab::Graphics::OpenGL::Texture::deactivate();
+        Slab::Graphics::OpenGL::FShader::LegacyGL();
+    }
+
     void DrawVector(b2Vec2 f, b2Vec2 p, float scale, b2HexColor color=b2_colorYellow) const
     {
         const float mag = std::sqrt(f.x*f.x + f.y*f.y);
