@@ -5,6 +5,7 @@
 #include "Application.h"
 #include "DebugDraw.h"
 #include "Foil.h"
+#include "NACA2412.h"
 #include "StudioSlab.h"
 #include "Graphics/SlabGraphics.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
@@ -30,14 +31,15 @@ constexpr auto α0 = .0f; // 0.3f;
 constexpr auto ω0 = .0f; // 0.8354123f;
 constexpr b2Vec2 v0{-5.f, 0.0f};
 
+auto DegToRad(const auto ang) { return ang * M_PI / 180.0;}
+auto RadToDeg(const auto ang) { return ang * 180.0 / M_PI;}
 
-inline DevFloat DegToRad(const DevFloat ang) { return ang * M_PI / 180.0;};
-inline DevFloat RadToDeg(const DevFloat ang) { return ang * 180.0 / M_PI;};
+using CAirfoil = Foil::ViternaAirfoil2412;
 
 class LittlePlaneDesigner final : public FApplication {
     TPointer<LegacyGLDebugDraw> DebugDraw_LegacyGL;
 
-    Foil::Airfoil_NACA2412 Airfoil;
+    CAirfoil Airfoil;
     const float Chord = 1.0f;
     const float Thick = 0.10f;
 
@@ -109,12 +111,12 @@ public:
                 Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
                 WingStyle.thickness = 2.0f;
                 WingStyle.lineColor.a = 0.5f;
-                Math::PointSet AirfoilPoints = Airfoil.GetProfileVertices(200);
+                const Math::PointSet AirfoilPoints = Airfoil.GetProfileVertices(200);
                 Math::PointSet Points = AirfoilPoints; // Math::PointSet(Math::Point2DVec{{.25f*Chord ,.0f}}) + AirfoilPoints;
                 const auto [x, y] = b2Body_GetPosition(WingBody);
                 const auto [c, s] = b2Body_GetRotation(WingBody);
                 for (auto &Point : Points.getPoints()) {
-                    fix chord = Airfoil.Params.ChordLength;
+                    constexpr auto chord = 1.0; // ;Airfoil.Params.ChordLength;
                     fix px = Point.x-chord*.5f;
                     fix py = Point.y;
 
@@ -224,6 +226,48 @@ protected:
         ShiftBodyCOM((-0.5+0.38)*Chord, WingBody); // 38% behind LE (NACA2412 usually sits 35-40% chord length)
     }
 
+    void SetupMonitor() {
+        auto PlotRegion = [](const DevFloat xw, const DevFloat yw)
+        {
+            return Graphics::PlottingRegion2D(Graphics::RectR{DegToRad(-xw), DegToRad(xw), -yw, yw});
+        };
+        Plots1 = New<Graphics::FPlot2DWindow>("Force polars");
+        Plots1->Set_x(20);
+        Plots1->Set_y(20 + Graphics::WindowStyle::GlobalMenuHeight);
+        Plots1->SetNoGUI();
+        Plots1->SetRegion(PlotRegion(180, 3.0));
+
+        const auto C_l   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return Airfoil.Cl(AoA); });
+        const auto C_d   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return Airfoil.Cd(AoA); });
+        const auto C_mc4 = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return Airfoil.Cm_c4(AoA); });
+
+        auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        Style.lineColor = Graphics::White;
+        Graphics::FPlotter::AddRtoRFunction(Plots1, C_l, Style, "C_l");
+
+        Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        Style.lineColor = Graphics::GrassGreen;
+        Graphics::FPlotter::AddRtoRFunction(Plots1, C_d, Style, "C_d");
+
+        Plots2 = New<Graphics::FPlot2DWindow>("Torque polars");
+        Plots2->Set_x(20);
+        Plots2->Set_y(2*20 + Graphics::WindowStyle::GlobalMenuHeight + 400);
+        Plots2->SetNoGUI();
+        Plots2->TieRegion_xMaxMin(*Plots1);
+        Plots2->GetRegion().set_y_limits(-.08, .08);
+
+        Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        Style.lineColor = Graphics::White;
+        Graphics::FPlotter::AddRtoRFunction(Plots2, C_mc4, Style, "C_mc4");
+
+
+        const auto Theme = Graphics::PlotThemeManager::GetCurrent();
+        const TPointer<Graphics::OpenGL::FWriterOpenGL> Writer = Slab::New<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(3), 24);
+        Theme->graphBackground.a = 0.25f;
+        Theme->LabelsWriter = Writer;
+        Theme->TicksWriter = Writer;
+    }
+
     void OnStart() override
     {
         Core::GetModule("ImGui");
@@ -248,42 +292,9 @@ protected:
 
         SetupWing();
 
-        auto PlotRegion = [](DevFloat xw, DevFloat yw){return Graphics::PlottingRegion2D(Graphics::RectR{DegToRad(-xw), DegToRad(xw), -yw, yw});};
-        Plots1 = New<Graphics::FPlot2DWindow>("Force polars");
-        Plots1->Set_x(20);
-        Plots1->Set_y(20);
-        Plots1->SetNoGUI();
-        Plots1->SetRegion(PlotRegion(15, 1.75));
-
-        auto C_l = New<Math::RtoR::NativeFunction>([this](DevFloat AoA) { return Airfoil.Cl(AoA); });
-        auto C_d = New<Math::RtoR::NativeFunction>([this](DevFloat AoA) { return Airfoil.Cd(AoA); });
-        auto C_mc4 = New<Math::RtoR::NativeFunction>([this](DevFloat AoA) { return Airfoil.Cm_c4(AoA); });
-
-        auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
-        Style.lineColor = Graphics::White;
-        Graphics::FPlotter::AddRtoRFunction(Plots1, C_l, Style, "C_l");
-
-        Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
-        Style.lineColor = Graphics::GrassGreen;
-        Graphics::FPlotter::AddRtoRFunction(Plots1, C_d, Style, "C_d");
-
-        Plots2 = New<Graphics::FPlot2DWindow>("Torque polars");
-        Plots2->Set_x(20);
-        Plots2->Set_y(20 + 20 + 400);
-        Plots2->SetNoGUI();
-        Plots2->TieRegion_xMaxMin(*Plots1);
-        Plots2->GetRegion().set_y_limits(-.08, .08);
-
-        Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
-        Style.lineColor = Graphics::White;
-        Graphics::FPlotter::AddRtoRFunction(Plots2, C_mc4, Style, "C_mc4");
+        SetupMonitor();
 
 
-        const auto Theme = Graphics::PlotThemeManager::GetCurrent();
-        const TPointer<Graphics::OpenGL::FWriterOpenGL> Writer = Slab::New<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(3), 24);
-        Theme->graphBackground.a = 0.25f;
-        Theme->LabelsWriter = Writer;
-        Theme->TicksWriter = Writer;
     }
 
     void DoDebugDraw() const {

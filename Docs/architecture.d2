@@ -1,0 +1,133 @@
+// C4 Level 1 — System Context
+SystemContext: {
+    direction: right
+
+    Contributor: {
+        label: "Contributor\n(engineer, researcher)"
+        shape: circle
+    }
+
+    StudioSlabRepo: {
+        label: "StudioSlab Repository\nC++/CMake workspace"
+        shape: rectangle
+    }
+
+    ExternalTooling: {
+        label: "Toolchain\nCMake · Conan · Docker"
+        shape: rectangle
+    }
+
+    GPUEnvironment: {
+        label: "Runtime Environment\nGPU drivers · CUDA"
+        shape: rectangle
+    }
+
+    Contributor -> StudioSlabRepo: "Clones, implements, reviews"
+    StudioSlabRepo -> ExternalTooling: "Builds & packages"
+    StudioSlabRepo -> GPUEnvironment: "Targets CUDA-enabled runs"
+}
+
+// C4 Level 2 — Container Diagram
+ContainerDiagram: {
+    direction: right
+
+    Repo: {
+        label: "StudioSlab Repository"
+        shape: rectangle
+    }
+
+    LibContainer: {
+        label: "Lib/\nStatic library \"Slab\""
+        shape: rectangle
+    }
+
+    StudiosContainer: {
+        label: "Studios/\nExecutable studios"
+        shape: rectangle
+    }
+
+    ResourcesContainer: {
+        label: "Resources/\nAssets & shaders"
+        shape: rectangle
+    }
+
+    ScriptsContainer: {
+        label: "Scripts/\nInstall & tooling"
+        shape: rectangle
+    }
+
+    NotebooksContainer: {
+        label: "Notebooks/\nAnalysis experiments"
+        shape: rectangle
+    }
+
+    BuildArtifacts: {
+        label: "Build/\nCompiled outputs"
+        shape: rectangle
+    }
+
+    Repo -> LibContainer: "Primary C++ library"
+    LibContainer -> StudiosContainer: "Linked into studio apps"
+    StudiosContainer -> BuildArtifacts: "Produces binaries"
+    LibContainer -> BuildArtifacts: "Produces static libs"
+    ScriptsContainer -> Repo: "Sets up dependencies"
+    ResourcesContainer -> StudiosContainer: "Runtime assets"
+    NotebooksContainer -> Repo: "Shares research context"
+}
+
+
+// C4 Level 3 — Component Diagram (Lib/)
+LibComponents: {
+    direction: right
+
+    Lib: {
+        label: "Lib/ (Slab library)"
+        shape: rectangle
+    }
+
+    CoreModule: {
+        label: "Core/\nBackends, Controllers,\nLogging, CLI"
+        shape: rectangle
+    }
+
+    GraphicsModule: {
+        label: "Graphics/\nRendering backends"
+        shape: rectangle
+    }
+
+    MathModule: {
+        label: "Math/\nNumerical kernels"
+        shape: rectangle
+    }
+
+    ModelsModule: {
+        label: "Models/\nPhysics domain logic"
+        shape: rectangle
+    }
+
+    UtilsModule: {
+        label: "Utils/\nShared utilities"
+        shape: rectangle
+    }
+
+    TestsModule: {
+        label: "tests/\nCatch2 specs"
+        shape: rectangle
+    }
+
+    Lib -> CoreModule: ""
+    Lib -> GraphicsModule: ""
+    Lib -> MathModule: ""
+    Lib -> ModelsModule: ""
+    Lib -> UtilsModule: ""
+    Lib -> TestsModule: ""
+
+    CoreModule -> GraphicsModule: "Loads backends/modules"
+    CoreModule -> ModelsModule: "Orchestrates modules"
+    CoreModule -> UtilsModule: "Logging, pointers"
+    GraphicsModule -> UtilsModule: "Shared helpers"
+    MathModule -> UtilsModule: "Numerics support"
+    ModelsModule -> MathModule: "Physics calculations"
+    TestsModule -> CoreModule: "Validates services"
+    TestsModule -> UtilsModule: "Covers helpers"
+}
