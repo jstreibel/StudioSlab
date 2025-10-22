@@ -166,7 +166,7 @@ public:
             const double w = 1.0 - (beta - P.alpha_s_pos) * invWidth_;
             return s * P.Cm0 * detail::clamp(w, 0.0, 1.0);
         }
-        
+
         return 0.0; // 90°..180°
     }
 

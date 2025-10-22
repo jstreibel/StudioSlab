@@ -31,7 +31,7 @@ public:
     explicit LegacyGLDebugDraw(float alpha = 1.0f, int circleSegments = 24)
     : m_alpha(alpha)
     , m_circleSegments(circleSegments)
-    , Writer(Slab::New<Slab::Graphics::OpenGL::FWriterOpenGL>(Slab::Core::Resources::GetIndexedFontFileName(3), 40))
+    , Writer(Slab::New<Slab::Graphics::OpenGL::FWriterOpenGL>(Slab::Core::Resources::GetIndexedFontFileName(3), 28))
     {
         std::memset(&m_dd, 0, sizeof(m_dd));
         m_dd.context = this;
@@ -58,8 +58,8 @@ public:
         m_dd.DrawSolidCapsuleFcn  = &LegacyGLDebugDraw::DrawSolidCapsuleThunk;
         m_dd.DrawPointFcn         = &LegacyGLDebugDraw::DrawPointThunk;
         m_dd.DrawTransformFcn     = &LegacyGLDebugDraw::DrawTransformThunk;
-        // Optional:
-        m_dd.DrawStringFcn     = &LegacyGLDebugDraw::DrawStringThunk;
+
+        m_dd.DrawStringFcn        = &LegacyGLDebugDraw::DrawStringThunk;
     }
 
     b2DebugDraw* handle() { return &m_dd; }
@@ -71,7 +71,7 @@ public:
         Slab::Graphics::OpenGL::FShader::LegacyGL();
     }
 
-    void DrawVector(b2Vec2 f, b2Vec2 p, float scale, b2HexColor color=b2_colorYellow) const
+    void DrawVector(b2Vec2 f, b2Vec2 p, float scale=1.f, b2HexColor color=b2_colorYellow) const
     {
         const float mag = std::sqrt(f.x*f.x + f.y*f.y);
         if (mag <= 1e-6f) return;
@@ -99,7 +99,7 @@ public:
         endPrim();
     }
 
-    void DrawPseudoVector(float mag, b2Vec2 c, float scale=1.0f, b2HexColor color=b2_colorOrange, int segments=24) const
+    void DrawPseudoVector(float mag, b2Vec2 c, float scale=1.0f, float alpha0=.0f, b2HexColor color=b2_colorOrange, int segments=200) const
     {
         if (std::fabs(mag) <= 1e-6f) return;
 
@@ -109,22 +109,32 @@ public:
 
         // ring
         glColor(color, m_alpha);
-        ::glDisable(GL_TEXTURE_2D);
-        ::glBegin(GL_LINE_STRIP);
+        glDisable(GL_TEXTURE_2D);
+        glBegin(GL_LINE_STRIP);
         for (int i = 0; i <= segments; ++i) {
             float a = dir * (2.0f * b2_pi * i / segments);
-            ::glVertex2f(c.x + radius * std::cos(a), c.y + radius * std::sin(a));
+            glVertex2f(c.x + radius * std::cos(a), c.y + radius * std::sin(a));
         }
-        ::glEnd();
+        glEnd();
 
-        // arrow head at angle 0 in direction of rotation
-        const float a0 = 0.0f;
-        const b2Vec2 end{ c.x + radius * std::cos(a0), c.y + radius * std::sin(a0) };
-        const float ha = a0 + (dir > 0.0f ? -b2_pi/6.0f : b2_pi/6.0f);
+        // arrow head at angle alpha0 in direction of rotation
+        const b2Vec2 end{ c.x + radius * std::cos(alpha0), c.y + radius * std::sin(alpha0) };
+        constexpr float headLen = 0.12f;
+        const float tangentAngle = alpha0 + dir * (M_PI * 0.5f);
+        const b2Vec2 tangentDir{ std::cos(tangentAngle), std::sin(tangentAngle) };
+        const b2Vec2 tip{ end.x + dir*headLen * tangentDir.x, end.y + dir*headLen * tangentDir.y };
+        const b2Vec2 normal{ -tangentDir.y, tangentDir.x };
+        constexpr float wingSpan = headLen * 0.25f;
+        const b2Vec2 wingA{ end.x + wingSpan * normal.x, end.y + wingSpan * normal.y };
+        const b2Vec2 wingB{ end.x - wingSpan * normal.x, end.y - wingSpan * normal.y };
 
         beginLines(1.5f);
-        ::glVertex2f(end.x, end.y);
-        ::glVertex2f(end.x + 0.2f * std::cos(ha), end.y + 0.2f * std::sin(ha));
+        glVertex2f(end.x, end.y);
+        glVertex2f(tip.x, tip.y);
+        glVertex2f(tip.x, tip.y);
+        glVertex2f(wingA.x, wingA.y);
+        glVertex2f(tip.x, tip.y);
+        glVertex2f(wingB.x, wingB.y);
         endPrim();
     }
 

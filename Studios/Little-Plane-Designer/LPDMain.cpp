@@ -26,7 +26,7 @@ constexpr auto DebugDraw = true;
 
 constexpr float TimeScale = 0.1f;
 
-constexpr b2Vec2 x0{4.5f, 5.f};
+constexpr b2Vec2 x0{2.5f, 1.5f};
 constexpr auto α0 = .0f; // 0.3f;
 constexpr auto ω0 = .0f; // 0.8354123f;
 constexpr b2Vec2 v0{-5.f, 0.0f};
@@ -43,7 +43,9 @@ class LittlePlaneDesigner final : public FApplication {
     const float Chord = 1.0f;
     const float Thick = 0.10f;
 
-    float ViewWidth = 15.0;
+    float ViewWidth = 7.0;
+
+    bool b_IsRunning = false;
 
 public:
     bool NotifyRender(const Graphics::FPlatformWindow& PlatformWindow) override
@@ -69,37 +71,46 @@ public:
 
         PlatformWindow.Clear(Graphics::LapisLazuli);
 
-        static int options = 1;
         GUIContext->AddDrawCall([this] {
             ImGui::Begin("Wing");
-            ImGui::BeginGroup();
-            ImGui::RadioButton("Simulate", &options, 0);
-            ImGui::RadioButton("Test", &options, 1);
-            ImGui::EndGroup();
+            ImGui::Checkbox("Run", &b_IsRunning);
 
-            if (options == 1) {
-                const auto foil_vel = b2Body_GetLinearVelocity(WingBody);
-                float foil_speed = b2Length(foil_vel);
-                float foil_angle = atan2f(foil_vel.y, foil_vel.x);
-                if (ImGui::SliderFloat("Foil speed", &foil_speed, 0.0f, 10.0f)
-                  | ImGui::SliderAngle("Foil angle", &foil_angle, -180.0f, 180.0f))
-                {
-                    b2Body_SetLinearVelocity(WingBody, {foil_speed*cosf(foil_angle), foil_speed*sinf(foil_angle)});
-                }
+            const auto foil_vel = b2Body_GetLinearVelocity(WingBody);
+            float foil_speed = b2Length(foil_vel);
+            float foil_angle = atan2f(foil_vel.y, foil_vel.x);
+            float foil_angular_speed = b2Body_GetAngularVelocity(WingBody);
+            if (ImGui::SliderFloat("COM speed mag", &foil_speed, 0.0f, 10.0f)
+              | ImGui::SliderAngle("Speed angle", &foil_angle, -180.0f, 180.0f))
+            {
+                b2Body_SetLinearVelocity(WingBody, {foil_speed*cosf(foil_angle), foil_speed*sinf(foil_angle)});
+            }
+            if (ImGui::DragFloat("Angular speed", &foil_angular_speed, foil_angular_speed*1.e-2f+1.e-2, -720.0f, 720.0f)) {
+                b2Body_SetAngularVelocity(WingBody, foil_angular_speed);
             }
 
             ImGui::End();
         });
 
-        const auto AirfoilForces = Foil::ComputeAirfoilForces(Airfoil, WingBody, *DebugDraw_LegacyGL);
-        if (options == 0) {
+        const auto CurrentForces = Foil::ComputeAirfoilForces(Airfoil, WingBody, *DebugDraw_LegacyGL);
+        CurrentLiftPolar->clear();
+        CurrentLiftPolar->AddPoint(CurrentForces.AoA, CurrentForces.Cl);
+        CurrentDragPolar->clear();
+        CurrentDragPolar->AddPoint(CurrentForces.AoA, CurrentForces.Cd);
+        CurrentTorquePolar->clear();
+        CurrentTorquePolar->AddPoint(CurrentForces.AoA, CurrentForces.Cm_c4);
+        if (b_IsRunning) {
             // Apply at c/4
-            b2Body_ApplyForce (WingBody, AirfoilForces.GetTotalForce(), AirfoilForces.loc, true);
-            b2Body_ApplyTorque(WingBody, AirfoilForces.torque, true);
+            b2Body_ApplyForce (WingBody, CurrentForces.GetTotalForce(), CurrentForces.loc, true);
+            b2Body_ApplyTorque(WingBody, CurrentForces.torque, true);
 
+            static double time = 0.0;
             constexpr float timeStep = TimeScale/60.0f;
+            time += timeStep;
             constexpr int subSteps = 60;
             b2World_Step(world, timeStep, subSteps);
+
+            auto TotalForcesMag = b2Length(CurrentForces.GetTotalForce());
+            ForcesTimeSeries->AddPoint({time, TotalForcesMag});
         }
 
         if constexpr (PrettyDraw) {
@@ -145,8 +156,6 @@ public:
 protected:
     b2WorldId world;
     b2BodyId WingBody;
-    TPointer<Graphics::FPlot2DWindow> Plots1;
-    TPointer<Graphics::FPlot2DWindow> Plots2;
 
     TPointer<Graphics::FGUIContext> GUIContext;
 
@@ -226,46 +235,83 @@ protected:
         ShiftBodyCOM((-0.5+0.38)*Chord, WingBody); // 38% behind LE (NACA2412 usually sits 35-40% chord length)
     }
 
+    const int PlotsHeight = 400;
+    Vector<TPointer<Graphics::FPlot2DWindow>> Plots;
+    TPointer<Math::PointSet> ForcesTimeSeries;
+    TPointer<Math::PointSet> CurrentLiftPolar;
+    TPointer<Math::PointSet> CurrentDragPolar;
+    TPointer<Math::PointSet> CurrentTorquePolar;
+
     void SetupMonitor() {
+        const auto BaseYPosition = Graphics::WindowStyle::GlobalMenuHeight + 20;
+        const auto YDelta = 20 + PlotsHeight;
+
         auto PlotRegion = [](const DevFloat xw, const DevFloat yw)
         {
             return Graphics::PlottingRegion2D(Graphics::RectR{DegToRad(-xw), DegToRad(xw), -yw, yw});
         };
-        Plots1 = New<Graphics::FPlot2DWindow>("Force polars");
-        Plots1->Set_x(20);
-        Plots1->Set_y(20 + Graphics::WindowStyle::GlobalMenuHeight);
-        Plots1->SetNoGUI();
-        Plots1->SetRegion(PlotRegion(180, 3.0));
+        Plots.emplace_back(New<Graphics::FPlot2DWindow>("Force polars"));
+        Plots[0]->Set_x(20);
+        Plots[0]->Set_y(BaseYPosition);
+        Plots[0]->SetNoGUI();
+        Plots[0]->SetRegion(PlotRegion(180, 3.0));
 
         const auto C_l   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return Airfoil.Cl(AoA); });
         const auto C_d   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return Airfoil.Cd(AoA); });
         const auto C_mc4 = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return Airfoil.Cm_c4(AoA); });
 
+        using Plotter = Graphics::FPlotter;
+
         auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
-        Style.lineColor = Graphics::White;
-        Graphics::FPlotter::AddRtoRFunction(Plots1, C_l, Style, "C_l");
+        Style.lineColor = Graphics::LightGrey;
+        Plotter::AddRtoRFunction(Plots[0], C_l, Style, "C_l");
 
         Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
-        Style.lineColor = Graphics::GrassGreen;
-        Graphics::FPlotter::AddRtoRFunction(Plots1, C_d, Style, "C_d");
+        Style.lineColor = Graphics::DarkGrass;
+        Plotter::AddRtoRFunction(Plots[0], C_d, Style, "C_d");
 
-        Plots2 = New<Graphics::FPlot2DWindow>("Torque polars");
-        Plots2->Set_x(20);
-        Plots2->Set_y(2*20 + Graphics::WindowStyle::GlobalMenuHeight + 400);
-        Plots2->SetNoGUI();
-        Plots2->TieRegion_xMaxMin(*Plots1);
-        Plots2->GetRegion().set_y_limits(-.08, .08);
+        CurrentLiftPolar = New<Math::PointSet>();
+        CurrentDragPolar = New<Math::PointSet>();
+        Style.setPrimitive(Graphics::PlottingVerticalLinesWithCircles);
+        Style.thickness = 2.0f;
+        Style.lineColor = Graphics::White;
+        Plotter::AddPointSet(Plots[0], CurrentLiftPolar, Style, "", false);
+        Style.lineColor = Graphics::GrassGreen;
+        Plotter::AddPointSet(Plots[0], CurrentDragPolar, Style, "", false);
+
+        Plots.emplace_back(New<Graphics::FPlot2DWindow>("Torque polars"));
+        Plots[1]->Set_x(20);
+        Plots[1]->Set_y(YDelta + BaseYPosition);
+        Plots[1]->SetNoGUI();
+        Plots[1]->TieRegion_xMaxMin(*Plots[0]);
+        Plots[1]->GetRegion().set_y_limits(-.08, .08);
 
         Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        Style.lineColor = Graphics::LightGrey;
+        Plotter::AddRtoRFunction(Plots[1], C_mc4, Style, "C_mc4");
+        CurrentTorquePolar = New<Math::PointSet>();
+        Style.setPrimitive(Graphics::PlottingVerticalLinesWithCircles);
+        Style.thickness = 2.0f;
         Style.lineColor = Graphics::White;
-        Graphics::FPlotter::AddRtoRFunction(Plots2, C_mc4, Style, "C_mc4");
-
+        Plotter::AddPointSet(Plots[1], CurrentTorquePolar, Style, "", false);
 
         const auto Theme = Graphics::PlotThemeManager::GetCurrent();
         const TPointer<Graphics::OpenGL::FWriterOpenGL> Writer = Slab::New<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(3), 24);
         Theme->graphBackground.a = 0.25f;
         Theme->LabelsWriter = Writer;
         Theme->TicksWriter = Writer;
+
+        Plots.emplace_back(New<Graphics::FPlot2DWindow>("Telemetry"));
+        Plots[2]->Set_x(20);
+        Plots[2]->Set_y(2*YDelta + BaseYPosition);
+        Plots[2]->SetNoGUI();
+        Plots[2]->SetAutoReviewGraphRanges(true);
+        Plots[2]->GetAxisArtist().setVerticalAxisLabel("|F|");
+        Plots[2]->GetAxisArtist().SetHorizontalAxisLabel("t");
+        ForcesTimeSeries = New<Math::PointSet>();
+        Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[3];
+        Plotter::AddPointSet(Plots[2], ForcesTimeSeries, Style, "Forces");
+
     }
 
     void OnStart() override
@@ -293,17 +339,15 @@ protected:
         SetupWing();
 
         SetupMonitor();
-
-
     }
 
     void DoDebugDraw() const {
         auto &Drawer = *DebugDraw_LegacyGL->handle();
-        Drawer.drawMass = false;
+        Drawer.drawMass = true;
         Drawer.drawBounds = false;
         Drawer.drawIslands = false;
         Drawer.drawBodyNames = false;
-        Drawer.drawShapes = false;
+        Drawer.drawShapes = true;
 
         b2World_Draw(world, &Drawer);
 
@@ -316,13 +360,11 @@ protected:
         const auto w = GetPlatform()->GetMainSystemWindow()->GetWidth();
         const auto h = GetPlatform()->GetMainSystemWindow()->GetHeight();
 
-        Plots1->NotifySystemWindowReshape(w, h);
-        Plots1->NotifyReshape(600, 400);
-        Plots1->NotifyRender(PlatformWindow);
-
-        Plots2->NotifySystemWindowReshape(w, h);
-        Plots2->NotifyReshape(600, 400);
-        Plots2->NotifyRender(PlatformWindow);
+        for (const auto &Plot : Plots) {
+            Plot->NotifySystemWindowReshape(w, h);
+            Plot->NotifyReshape(600, PlotsHeight);
+            Plot->NotifyRender(PlatformWindow);
+        }
     }
 public:
     bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override {
@@ -332,6 +374,8 @@ public:
                 GetPlatform()->GetMainSystemWindow()->SignalClose();
                 return true;
             }
+
+            if (key == Graphics::EKeyMap::Key_SPACE) b_IsRunning = !b_IsRunning;
         }
         return false;
     };

@@ -4,7 +4,7 @@
 
 #include "Foil.h"
 
-Foil::FAirfoilForces Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, const b2BodyId& Body,
+Foil::FAirfoilDynamicData Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, const b2BodyId& Body,
     const LegacyGLDebugDraw& DebugDraw_LegacyGL) {
     // Geometry
     constexpr b2Vec2 LE_local = {-0.25f, 0.0f};
@@ -25,18 +25,14 @@ Foil::FAirfoilForces Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, const b
     // Wind
     const b2Vec2 WindOnPoint = -v_point;
     const float  WindOnPointLen    = b2Length(WindOnPoint);
-    if (WindOnPointLen < 1e-6f) return FAirfoilForces::Null();
+    if (WindOnPointLen < 1e-6f) return FAirfoilDynamicData::Null();
     const b2Vec2 WindOnPointUnit = b2Normalize(WindOnPoint); // TODO: could take advantage of already computed length above
-    DebugDraw_LegacyGL.DrawVector(WindOnPoint, c4_world, 0.1f, b2_colorCadetBlue);
-    DebugDraw_LegacyGL.Write("Wind", c4_world + WindOnPoint*0.1f);
 
     // AoA
     const auto AirfoilNormalUnit = perpCW(AirfoilForwardWorldUnit);
     const double Cos = std::clamp<double>(AirfoilNormalUnit.x*WindOnPointUnit.x + AirfoilNormalUnit.y*WindOnPointUnit.y, -1.0, 1.0);
     const double Sin = static_cast<double>(AirfoilNormalUnit.x)*WindOnPointUnit.y - static_cast<double>(AirfoilNormalUnit.y)*WindOnPointUnit.x;
     const double AoA = std::atan2(Sin, Cos) + M_PI_2;
-    DebugDraw_LegacyGL.DrawVector(AirfoilNormalUnit, c4_world, .1f, b2_colorGold);
-    DebugDraw_LegacyGL.Write(Str("Airfoil normal @ " + ToStr(AoA/M_PI*180.0) + "deg AoA"), c4_world + AirfoilNormalUnit);
 
     // Coeffs
     const double Cl = Airfoil.Cl(AoA);
@@ -65,13 +61,39 @@ Foil::FAirfoilForces Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, const b
     const b2Vec2 drag = -static_cast<float>(-Dmag) * WindOnPointUnit;
     const b2Vec2 lift = +static_cast<float>(+Lmag) * b2Vec2(-WindOnPointUnit.y, WindOnPointUnit.x);
 
-    constexpr auto drag_scale = 10.0f;
-    DebugDraw_LegacyGL.DrawVector(drag, c4_world, drag_scale, b2_colorRed);
-    DebugDraw_LegacyGL.Write("drag x10", c4_world + drag*drag_scale, b2_colorRed);
-    DebugDraw_LegacyGL.DrawVector(lift, c4_world, 1.f, b2_colorAliceBlue);
-    DebugDraw_LegacyGL.Write("lift", c4_world + lift, b2_colorAliceBlue);
-    DebugDraw_LegacyGL.DrawPseudoVector(Tmag, COM);
+    constexpr auto drag_scale = 0.1f;
+    constexpr auto lift_scale = 0.1f;
 
-    return FAirfoilForces{drag, lift, c4_world, static_cast<float>(Tmag)};
+    DebugDraw_LegacyGL.DrawVector(LinearSpeed, COM, .25f, b2_colorCadetBlue);
+    DebugDraw_LegacyGL.Write(Str("Speed @ " + ToStr(AoA/M_PI*180.0) + "deg AoA"), COM + LinearSpeed*.25f, b2_colorCadetBlue);
+
+    DebugDraw_LegacyGL.DrawPseudoVector(ω, COM, .25f, 0.25f*M_PI, b2_colorRed);
+    DebugDraw_LegacyGL.Write("Ang speed", COM+b2Vec2{ω*.26f, .0f}, b2_colorRed);
+
+    DebugDraw_LegacyGL.DrawVector(WindOnPoint, c4_world, 0.1f, b2_colorCadetBlue);
+    DebugDraw_LegacyGL.Write("Wind", c4_world + WindOnPoint*0.1f, b2_colorCadetBlue);
+
+    // DebugDraw_LegacyGL.DrawVector(AirfoilNormalUnit, c4_world, 1.f, b2_colorDarkBlue);
+    // DebugDraw_LegacyGL.Write(Str("Airfoil normal @ " + ToStr(AoA/M_PI*180.0) + "deg AoA"), c4_world + AirfoilNormalUnit, b2_colorDarkBlue);
+
+    DebugDraw_LegacyGL.DrawVector(drag, c4_world, drag_scale, b2_colorRed);
+    DebugDraw_LegacyGL.Write("drag", c4_world + drag*drag_scale, b2_colorRed);
+
+    DebugDraw_LegacyGL.DrawVector(lift, c4_world, lift_scale, b2_colorAliceBlue);
+    DebugDraw_LegacyGL.Write("lift", c4_world + lift*lift_scale, b2_colorAliceBlue);
+
+    DebugDraw_LegacyGL.DrawVector(lift+drag, c4_world, .05f, b2_colorAliceBlue);
+    DebugDraw_LegacyGL.Write("lift+drag ", c4_world + (lift+drag)*.05f, b2_colorAliceBlue);
+
+    DebugDraw_LegacyGL.DrawPseudoVector(Tmag, COM, 1.f, b2_colorBisque);
+    DebugDraw_LegacyGL.Write("Torque@c/4", COM+b2Vec2{static_cast<float>(Tmag), .0f}, b2_colorBisque);
+
+    return FAirfoilDynamicData{
+        drag, lift, c4_world,
+        static_cast<float>(Tmag),
+        static_cast<float>(Cl),
+        static_cast<float>(Cd),
+        static_cast<float>(Cm_c4),
+        static_cast<float>(AoA)};
 
 }

@@ -11,6 +11,9 @@
 
 namespace Slab::Graphics {
     FColor White = {1,1,1,1};
+    FColor Grey = {0.5,0.5,0.5,1};
+    FColor LightGrey = {0.75,0.75,0.75,1};
+    FColor DarkGrey = {0.25,0.25,0.25,1};
     FColor Black = {0,0,0,1};
     FColor Red = {1,0,0,1};
     FColor LapisLazuli = {38./255., 97./255., 156./255., 1};

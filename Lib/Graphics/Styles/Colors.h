@@ -41,6 +41,7 @@ namespace Slab::Graphics {
     };
 
     extern FColor White;
+    extern FColor LightGrey;
     extern FColor Black;
     extern FColor Red;
     extern FColor LapisLazuli;

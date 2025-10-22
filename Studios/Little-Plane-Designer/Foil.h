@@ -55,21 +55,23 @@ static double signedAoA(const b2Vec2& chord_hat, const b2Vec2& wind_hat) {
 // Apply aero forces and moment at quarter-chord using Box2D C API.
 // Requires: IAirfoil { double Cl(double), Cd(double), Cm_c4(double) }.
 // Params: chord in meters, span effective depth, rho density, le_local leading edge in body-local coords.
-struct FAirfoilForces {
-    b2Vec2 drag, lift, loc;
-    float torque;
+struct FAirfoilDynamicData {
+    const b2Vec2 drag, lift, loc;
+    const float torque;
+    const float Cl, Cd, Cm_c4;
+    const float AoA;
     b2Vec2 GetTotalForce() const { return drag+lift; }
-    static auto Null() { return FAirfoilForces{b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), 0.0f}; }
+    static auto Null() { return FAirfoilDynamicData{b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), 0.0f}; }
 };
 
 inline Graphics::Point2D ToPoint2D(const b2Vec2& v) { return Graphics::Point2D{v.x, v.y}; }
 
-FAirfoilForces ComputeAirfoilForces(
+FAirfoilDynamicData ComputeAirfoilForces(
     const IAirfoil& Airfoil,
     const b2BodyId& Body,
     const LegacyGLDebugDraw& DebugDraw_LegacyGL);
 
-inline FAirfoilForces ComputeAirfoilForces2(
+inline FAirfoilDynamicData ComputeAirfoilForces2(
     const IAirfoil& Airfoil,
     const b2BodyId& Body,
     const LegacyGLDebugDraw &DebugDraw_LegacyGL)
@@ -88,7 +90,7 @@ inline FAirfoilForces ComputeAirfoilForces2(
     // Directions
     const b2Vec2 t_world = b2Body_GetWorldVector(Body, b2Vec2(1.0f, 0.0f));
     const float tlen = std::sqrt(t_world.x*t_world.x + t_world.y*t_world.y);
-    if (tlen <= 0.0f) return FAirfoilForces::Null();
+    if (tlen <= 0.0f) return FAirfoilDynamicData::Null();
     const b2Vec2 chord_hat = (1.0f / tlen) * t_world;
 
     // Kinematics at c/4: use WORLD CENTER, not position
@@ -101,7 +103,7 @@ inline FAirfoilForces ComputeAirfoilForces2(
     // Wind
     const b2Vec2 wind = -v_point;
     const float  V    = std::sqrt(wind.x*wind.x + wind.y*wind.y);
-    if (V < 1e-3f) return FAirfoilForces::Null();
+    if (V < 1e-3f) return FAirfoilDynamicData::Null();
     const b2Vec2 w_hat = (1.0f / V) * wind;
     DebugDraw_LegacyGL.DrawVector(wind, c4_world, 0.1f, b2_colorHotPink);
     DebugDraw_LegacyGL.Write("Wind direction", c4_world + wind*0.1f);
@@ -147,7 +149,7 @@ inline FAirfoilForces ComputeAirfoilForces2(
     DebugDraw_LegacyGL.Write("lift", c4_world + lift, b2_colorAliceBlue);
     DebugDraw_LegacyGL.DrawPseudoVector(Tmag, com);
 
-    return FAirfoilForces{drag, lift, c4_world, (float)Tmag};
+    return FAirfoilDynamicData{drag, lift, c4_world, (float)Tmag};
 }
 }
 
