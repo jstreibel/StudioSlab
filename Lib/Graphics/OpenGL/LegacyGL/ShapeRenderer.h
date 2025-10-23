@@ -14,7 +14,11 @@ namespace Slab::Graphics::OpenGL::Legacy {
 
     void DrawRectangle(const RectangleShape &);
 
-    void DrawLine(const Math::Real2D& start, const Math::Real2D& end, const FColor& color=White);
+    void DrawLine(
+        const Math::Real2D& start,
+        const Math::Real2D& end,
+        const FColor& color=White,
+        const DevFloat &thickness=1.0f);
 
 }
 

@@ -73,6 +73,8 @@ public:
 
     void DrawVector(b2Vec2 f, b2Vec2 p, float scale=1.f, b2HexColor color=b2_colorYellow) const
     {
+        SetupLegacyGL();
+
         const float mag = std::sqrt(f.x*f.x + f.y*f.y);
         if (mag <= 1e-6f) return;
 
@@ -101,6 +103,8 @@ public:
 
     void DrawPseudoVector(float mag, b2Vec2 c, float scale=1.0f, float alpha0=.0f, b2HexColor color=b2_colorOrange, int segments=200) const
     {
+        SetupLegacyGL();
+        
         if (std::fabs(mag) <= 1e-6f) return;
 
         // center of mass

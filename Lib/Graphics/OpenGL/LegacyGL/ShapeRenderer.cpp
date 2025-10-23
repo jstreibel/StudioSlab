@@ -27,8 +27,10 @@ namespace Slab::Graphics::OpenGL::Legacy {
         glEnd();
     }
 
-    void DrawLine(const Real2D& start, const Real2D& end, const FColor& color) {
+    void DrawLine(const Real2D& start, const Real2D& end, const FColor& color, const DevFloat &thickness) {
         SetColor(color);
+
+        glLineWidth(thickness);
 
         glBegin(GL_LINES);
         glVertex2d(start.x, start.y);
