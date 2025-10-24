@@ -5,6 +5,7 @@
 #include "LegacyMode.h"
 
 #include "Core/Backend/BackendManager.h"
+#include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/Utils.h"
 
 namespace Slab::Graphics::OpenGL::Legacy {
@@ -40,5 +41,10 @@ namespace Slab::Graphics::OpenGL::Legacy {
         glGetIntegerv(GL_CURRENT_PROGRAM, &CurrentProgram);
 
         return CurrentProgram == 0;
+    }
+
+    void SetupLegacyGL() {
+        Texture::deactivate();
+        FShader::LegacyGL();
     }
 } // Slab::Graphics::OpenGL

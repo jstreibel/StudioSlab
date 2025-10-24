@@ -9,8 +9,6 @@
 Foil::FAirfoilDynamicData Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, const b2BodyId& Body,
                                                      const LegacyGLDebugDraw& DebugDraw_LegacyGL) {
     // Geometry
-    constexpr b2Vec2 LE_local = {-0.25f, 0.0f};
-    constexpr b2Vec2 QuarterChordLocal = LE_local;
     // const b2Vec2 QuarterChordWorld = b2Body_GetWorldPoint(Body, QuarterChordLocal);
 
     // Directions
@@ -18,7 +16,7 @@ Foil::FAirfoilDynamicData Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, co
 
     // Kinematics at c/4: use WORLD CENTER, not position
     const b2Vec2 COM = b2Body_GetWorldCenterOfMass(Body);
-    const b2Vec2 VelC4 = b2Body_GetLocalPointVelocity(Body, QuarterChordLocal);// const float QuarterChordVelocity_Mag = b2Length(QuarterChordVelocity);
+    const b2Vec2 VelC4 = b2Body_GetLinearVelocity(Body);// const float QuarterChordVelocity_Mag = b2Length(QuarterChordVelocity);
     const b2Vec2 VelC4_Unit = b2Normalize(VelC4);
     const float VelC4_Mag = b2Length(VelC4);
     const float AoA_cos = b2Dot(FW_Unit, VelC4_Unit);
@@ -26,14 +24,10 @@ Foil::FAirfoilDynamicData Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, co
     const float AoA = std::atan2(AoA_sin, AoA_cos);
     const float ω = b2Body_GetAngularVelocity(Body);
 
-    ImGui::Begin("Airfoil");
-    ImGui::Text("AoA: %.2f", AoA/M_PI*180);
-    ImGui::End();
-
     // Wind
     const b2Vec2 WindOnPoint = -VelC4;
     const float  WindOnPointLen    = b2Length(WindOnPoint);
-    if (WindOnPointLen < 1e-6f) return FAirfoilDynamicData::Null();
+    if (WindOnPointLen < 1e-4f) return FAirfoilDynamicData::Null();
     const b2Vec2 WindOnPointUnit = b2Normalize(WindOnPoint); // TODO: could take advantage of already computed length above
 
     // AoA
@@ -52,8 +46,8 @@ Foil::FAirfoilDynamicData Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, co
     constexpr auto chord_length = 1.0;
     constexpr auto span = 0.5;
     constexpr struct RotDampParams {
-        float Cmq    = -0.25f;   // nondimensional pitch-rate derivative
-        float Komega = 0.5f;     // extra viscous damping [N·m·s] per unit span
+        float Cmq    = -0.1f;   // nondimensional pitch-rate derivative
+        float Komega = 0.1f;     // extra viscous damping [N·m·s] per unit span
     } P;
 
     // Dynamic pressure (keep density sane)
@@ -78,51 +72,55 @@ Foil::FAirfoilDynamicData Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, co
     const b2Vec2 drag = -static_cast<float>(-Dmag) * WindOnPointUnit;
     const b2Vec2 lift = +static_cast<float>(+Lmag) * b2Vec2(-WindOnPointUnit.y, WindOnPointUnit.x);
 
-    const b2Vec2 QuarterChordWorld = b2Body_GetWorldPoint(Body, QuarterChordLocal);
     {
-        const b2Vec2 COMSpeed = b2Body_GetLinearVelocity(Body);
-
-        DebugDraw_LegacyGL.DrawVector(COMSpeed, COM, .25f, b2_colorCadetBlue);
-        DebugDraw_LegacyGL.Write("COM speed", COM + COMSpeed*.25f, b2_colorCadetBlue);
-
-        DebugDraw_LegacyGL.DrawVector(VelC4_Unit, COM+QuarterChordLocal, .25f, b2_colorAquamarine);
-        DebugDraw_LegacyGL.Write("C/4 speed", VelC4_Unit*.20f + COM+QuarterChordLocal, b2_colorAquamarine);
+        DebugDraw_LegacyGL.DrawVector(VelC4, COM, .25f, b2_colorAquamarine);
+        DebugDraw_LegacyGL.Write("speed", VelC4*.25f + COM, b2_colorAquamarine);
 
         {
-            constexpr auto lift_scale = 0.1f;
-            constexpr auto drag_scale = 0.1f;
+            constexpr auto lift_scale = 1.f;
+            constexpr auto drag_scale = 1.f;
 
-            DebugDraw_LegacyGL.DrawVector(VelC4, QuarterChordWorld, .25f, b2_colorAliceBlue);
-            DebugDraw_LegacyGL.Write(Str("C/4 speed @ " + ToStr(AoA/M_PI*180.0) + "deg AoA"), QuarterChordWorld + VelC4*.225f, b2_colorAliceBlue);
+            // DebugDraw_LegacyGL.DrawVector(VelC4, COM + QuarterChordWorld, .25f, b2_colorAliceBlue);
+            // DebugDraw_LegacyGL.Write(Str("C/4 speed @ " + ToStr(AoA/M_PI*180.0) + "deg AoA"), QuarterChordWorld + VelC4*.225f, b2_colorAliceBlue);
 
             // DebugDraw_LegacyGL.DrawPseudoVector(ω, COM, .25f, 0.25f*M_PI, b2_colorRed);
             // DebugDraw_LegacyGL.Write("Ang speed", COM+b2Vec2{ω*.26f, .0f}, b2_colorRed);
 
-            DebugDraw_LegacyGL.DrawVector(WindOnPoint, QuarterChordWorld, 0.1f, b2_colorCadetBlue);
-            DebugDraw_LegacyGL.Write("Wind", QuarterChordWorld + WindOnPoint*0.1f, b2_colorCadetBlue);
+            // DebugDraw_LegacyGL.DrawVector(WindOnPoint, COM, 0.1f, b2_colorCadetBlue);
+            // DebugDraw_LegacyGL.Write("Wind", COM + WindOnPoint*0.1f, b2_colorCadetBlue);
 
             // DebugDraw_LegacyGL.DrawVector(AirfoilNormalUnit, c4_world, 1.f, b2_colorDarkBlue);
             // DebugDraw_LegacyGL.Write(Str("Airfoil normal @ " + ToStr(AoA/M_PI*180.0) + "deg AoA"), c4_world + AirfoilNormalUnit, b2_colorDarkBlue);
 
-            DebugDraw_LegacyGL.DrawVector(FW_Unit, QuarterChordWorld, 1.f, b2_colorDarkBlue);
-            DebugDraw_LegacyGL.Write("Forward", QuarterChordWorld + FW_Unit, b2_colorDarkBlue);
+            // DebugDraw_LegacyGL.DrawVector(FW_Unit, QuarterChordWorld, 1.f, b2_colorDarkBlue);
+            // DebugDraw_LegacyGL.Write("Forward", QuarterChordWorld + FW_Unit, b2_colorDarkBlue);
 
-            DebugDraw_LegacyGL.DrawVector(drag, QuarterChordWorld, drag_scale, b2_colorRed);
-            DebugDraw_LegacyGL.Write("drag", QuarterChordWorld + drag*drag_scale, b2_colorRed);
+            DebugDraw_LegacyGL.DrawVector(drag, COM, drag_scale, b2_colorRed);
+            DebugDraw_LegacyGL.Write("drag", COM + drag*drag_scale, b2_colorRed);
 
-            DebugDraw_LegacyGL.DrawVector(lift, QuarterChordWorld, lift_scale, b2_colorAliceBlue);
-            DebugDraw_LegacyGL.Write("lift", QuarterChordWorld + lift*lift_scale, b2_colorAliceBlue);
+            DebugDraw_LegacyGL.DrawVector(lift, COM, lift_scale, b2_colorAliceBlue);
+            DebugDraw_LegacyGL.Write("lift", COM + lift*lift_scale, b2_colorAliceBlue);
 
-            DebugDraw_LegacyGL.DrawVector(lift+drag, QuarterChordWorld, .05f, b2_colorAliceBlue);
-            DebugDraw_LegacyGL.Write("lift+drag ", QuarterChordWorld + (lift+drag)*.05f, b2_colorAliceBlue);
+            // DebugDraw_LegacyGL.DrawVector(lift+drag, COM, .05f, b2_colorAliceBlue);
+            // DebugDraw_LegacyGL.Write("lift+drag ", COM + (lift+drag)*.05f, b2_colorAliceBlue);
 
-            DebugDraw_LegacyGL.DrawPseudoVector(τ, COM, 1.f, b2_colorBisque);
-            DebugDraw_LegacyGL.Write("Torque@c/4", COM+b2Vec2{static_cast<float>(τ_mag), .0f}, b2_colorBisque);
+            DebugDraw_LegacyGL.DrawPseudoVector(ω, COM, 1.f, .0f, b2_colorAqua);
+            DebugDraw_LegacyGL.Write("omega", COM+b2Vec2{static_cast<float>(ω), .0f}, b2_colorAqua);
+
+            DebugDraw_LegacyGL.DrawPseudoVector(τ_mag, COM, 1.f, .0f, b2_colorBisque);
+            DebugDraw_LegacyGL.Write("Torque Cm", COM+b2Vec2{static_cast<float>(τ_mag), .0f}, b2_colorBisque);
+
+            DebugDraw_LegacyGL.DrawPseudoVector(τ_aero, COM, 1.f, .0f, b2_colorDarkCyan);
+            DebugDraw_LegacyGL.Write("Torque (aero)", COM+b2Vec2{static_cast<float>(τ_aero), .0f}, b2_colorDarkCyan);
+
+            DebugDraw_LegacyGL.DrawPseudoVector(τ_visc, COM, 1.f, .0f, b2_colorBox2DBlue);
+            DebugDraw_LegacyGL.Write("Torque (visc)", COM+b2Vec2{static_cast<float>(τ_visc), .0f}, b2_colorBox2DBlue);
+
         }
     }
 
     return FAirfoilDynamicData{
-        drag, lift, QuarterChordWorld,
+        drag, lift, COM,
         static_cast<float>(τ),
         static_cast<float>(Cl),
         static_cast<float>(Cd),

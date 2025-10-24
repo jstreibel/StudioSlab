@@ -26,7 +26,7 @@
 constexpr auto PrettyDraw = true;
 constexpr auto DebugDraw = true;
 
-constexpr float TimeScale = 0.1f;
+constexpr float TimeScale = 0.5;
 
 constexpr b2Vec2 x0{2.5f, 1.5f};
 constexpr auto α0 = .0f; // 0.3f;
@@ -133,6 +133,7 @@ public:
         }
 
         if constexpr (PrettyDraw) {
+            Drawer::SetupLegacyGL();
             Drawer::SetColor(Graphics::DarkGrass);
             Drawer::DrawRectangle({Graphics::Point2D{-100, 0}, Graphics::Point2D{100, -5}});
             Drawer::DrawLine({-100, 0}, {100, 0}, Graphics::GrassGreen, 3.f);
@@ -393,11 +394,11 @@ protected:
 
     void DoDebugDraw() const {
         auto &Drawer = *DebugDraw_LegacyGL->handle();
-        Drawer.drawMass = true;
+        Drawer.drawMass = false;
         Drawer.drawBounds = false;
         Drawer.drawIslands = false;
         Drawer.drawBodyNames = false;
-        Drawer.drawShapes = true;
+        Drawer.drawShapes = false;
 
         b2World_Draw(world, &Drawer);
 

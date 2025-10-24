@@ -22,6 +22,8 @@ namespace Slab::Graphics::OpenGL::Legacy {
         static bool IsInLegacyMode();
     };
 
+    void SetupLegacyGL();
+
 } // Slab::Graphics::OpenGL
 
 #endif //LEGACYMODE_H
