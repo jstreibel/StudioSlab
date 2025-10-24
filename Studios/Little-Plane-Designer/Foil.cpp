@@ -20,9 +20,11 @@ Foil::FAirfoilDynamicData Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, co
     const b2Vec2 COM = b2Body_GetWorldCenterOfMass(Body);
     const b2Vec2 VelC4 = b2Body_GetLocalPointVelocity(Body, QuarterChordLocal);// const float QuarterChordVelocity_Mag = b2Length(QuarterChordVelocity);
     const b2Vec2 VelC4_Unit = b2Normalize(VelC4);
+    const float VelC4_Mag = b2Length(VelC4);
     const float AoA_cos = b2Dot(FW_Unit, VelC4_Unit);
     const float AoA_sin = b2Cross(FW_Unit, VelC4_Unit);
     const float AoA = std::atan2(AoA_sin, AoA_cos);
+    const float ω = b2Body_GetAngularVelocity(Body);
 
     ImGui::Begin("Airfoil");
     ImGui::Text("AoA: %.2f", AoA/M_PI*180);
@@ -49,15 +51,24 @@ Foil::FAirfoilDynamicData Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, co
     constexpr auto rho = 1.250;
     constexpr auto chord_length = 1.0;
     constexpr auto span = 0.5;
+    constexpr struct RotDampParams {
+        float Cmq    = -0.25f;   // nondimensional pitch-rate derivative
+        float Komega = 0.5f;     // extra viscous damping [N·m·s] per unit span
+    } P;
 
     // Dynamic pressure (keep density sane)
     const double q   = 0.5 * rho * static_cast<double>(WindOnPointLen) * static_cast<double>(WindOnPointLen);
-    const double S   = chord_length * span;
+    constexpr double S   = chord_length * span;
 
     // Magnitudes
     const double Lmag = q * S * Cl;
     const double Dmag = q * S * Cd;
-    double Tmag = q * span * chord_length * chord_length * Cm_c4;
+    const double τ_mag = 0.5 * q * span * chord_length * chord_length * Cm_c4;
+    const double τ_aero = 0.25 * rho * VelC4_Mag * chord_length * chord_length* chord_length * P.Cmq * ω;
+    const double τ_visc = -P.Komega * ω;
+    const double τ = τ_mag + τ_aero + τ_visc;
+
+    // Aero damping term (vanishes as V->0)
 
     // Simple aero angular damping to suppress runaway spin
     // const double c_rot = 0.05 * q * S * P.ChordLength;          // tune
@@ -105,14 +116,14 @@ Foil::FAirfoilDynamicData Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, co
             DebugDraw_LegacyGL.DrawVector(lift+drag, QuarterChordWorld, .05f, b2_colorAliceBlue);
             DebugDraw_LegacyGL.Write("lift+drag ", QuarterChordWorld + (lift+drag)*.05f, b2_colorAliceBlue);
 
-            DebugDraw_LegacyGL.DrawPseudoVector(Tmag, COM, 1.f, b2_colorBisque);
-            DebugDraw_LegacyGL.Write("Torque@c/4", COM+b2Vec2{static_cast<float>(Tmag), .0f}, b2_colorBisque);
+            DebugDraw_LegacyGL.DrawPseudoVector(τ, COM, 1.f, b2_colorBisque);
+            DebugDraw_LegacyGL.Write("Torque@c/4", COM+b2Vec2{static_cast<float>(τ_mag), .0f}, b2_colorBisque);
         }
     }
 
     return FAirfoilDynamicData{
         drag, lift, QuarterChordWorld,
-        static_cast<float>(Tmag),
+        static_cast<float>(τ),
         static_cast<float>(Cl),
         static_cast<float>(Cd),
         static_cast<float>(Cm_c4),
