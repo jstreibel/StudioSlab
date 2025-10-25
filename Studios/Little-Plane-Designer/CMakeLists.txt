@@ -12,11 +12,13 @@ message(STATUS "***************************************************")
 
 add_executable( LittlePlaneDesigner
         LPDMain.cpp
-        Foil.cpp
-        Foil.h
+        Foils/Foil.cpp
+        Foils/Foil.h
         DebugDraw.h
-        NACA2412.cpp
-        NACA2412.h
+        Foils/NACA2412.cpp
+        Foils/NACA2412.h
+        App.cpp
+        App.h
 )
 target_include_directories(LittlePlaneDesigner PRIVATE ${box2d_SOURCE_DIR}/include)
 # target_link_libraries( LittlePlaneDesigner Slab box2D)

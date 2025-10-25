@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_FOIL_H
 #define STUDIOSLAB_FOIL_H
 
-#include "DebugDraw.h"
+#include "../DebugDraw.h"
 #include "box2d/box2d.h"
 #include "Math/VectorSpace/Impl/PointSet.h"
 #include "Utils/String.h"

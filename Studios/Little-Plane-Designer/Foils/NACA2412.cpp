@@ -2,7 +2,7 @@
 // Created by joao on 10/20/25.
 //
 
-#include "NACA2412.h"
+#include "../NACA2412.h"
 
 static Math::PointSet GetNACA2412ProfileVertices(int N = 200){
     if (N < 2) N = 2;

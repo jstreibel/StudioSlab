@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_NACA2412_H
 #define STUDIOSLAB_NACA2412_H
 
-#include "Foil.h"
+#include "../Foil.h"
 
 namespace Foil {
 

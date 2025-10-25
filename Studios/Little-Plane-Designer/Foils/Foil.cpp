@@ -8,9 +8,6 @@
 
 Foil::FAirfoilDynamicData Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, const b2BodyId& Body,
                                                      const LegacyGLDebugDraw& DebugDraw_LegacyGL) {
-    // Geometry
-    // const b2Vec2 QuarterChordWorld = b2Body_GetWorldPoint(Body, QuarterChordLocal);
-
     // Directions
     const b2Vec2 FW_Unit = b2Body_GetWorldVector(Body, b2Vec2(-1.0f, 0.0f));
 
@@ -30,13 +27,7 @@ Foil::FAirfoilDynamicData Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, co
     if (WindOnPointLen < 1e-4f) return FAirfoilDynamicData::Null();
     const b2Vec2 WindOnPointUnit = b2Normalize(WindOnPoint); // TODO: could take advantage of already computed length above
 
-    // AoA
-    // const auto AirfoilNormalUnit = perpCW(AirfoilForwardWorldUnit);
-    // const double Cos = std::clamp<double>(AirfoilNormalUnit.x*WindOnPointUnit.x + AirfoilNormalUnit.y*WindOnPointUnit.y, -1.0, 1.0);
-    // const double Sin = static_cast<double>(AirfoilNormalUnit.x)*WindOnPointUnit.y - static_cast<double>(AirfoilNormalUnit.y)*WindOnPointUnit.x;
-    // const double AoA = std::atan2(Sin, Cos) + M_PI_2;
-
-    // Coeffs
+    // Coefficients
     const double Cl = Airfoil.Cl(AoA);
     const double Cd = Airfoil.Cd(AoA);
     const double Cm_c4 = Airfoil.Cm_c4(AoA);
@@ -62,19 +53,14 @@ Foil::FAirfoilDynamicData Foil::ComputeAirfoilForces(const IAirfoil& Airfoil, co
     const double τ_visc = -P.Komega * ω;
     const double τ = τ_mag + τ_aero + τ_visc;
 
-    // Aero damping term (vanishes as V->0)
-
-    // Simple aero angular damping to suppress runaway spin
-    // const double c_rot = 0.05 * q * S * P.ChordLength;          // tune
-    // Tmag -= c_rot * static_cast<double>(ω);
-
     // Forces
     const b2Vec2 drag = -static_cast<float>(-Dmag) * WindOnPointUnit;
     const b2Vec2 lift = +static_cast<float>(+Lmag) * b2Vec2(-WindOnPointUnit.y, WindOnPointUnit.x);
 
+    if constexpr (false)
     {
-        DebugDraw_LegacyGL.DrawVector(VelC4, COM, .25f, b2_colorAquamarine);
-        DebugDraw_LegacyGL.Write("speed", VelC4*.25f + COM, b2_colorAquamarine);
+        DebugDraw_LegacyGL.DrawVector(VelC4, COM, 1.f, b2_colorAquamarine);
+        DebugDraw_LegacyGL.Write("speed", VelC4 + COM, b2_colorAquamarine);
 
         {
             constexpr auto lift_scale = 1.f;
