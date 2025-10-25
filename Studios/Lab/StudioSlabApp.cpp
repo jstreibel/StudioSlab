@@ -8,18 +8,18 @@
 #include "Core/SlabCore.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 
-LittlePlaneDesigner::LittlePlaneDesigner(int argc, const char* argv[]) : FApplication("Studio Slab", argc, argv)
+FLittlePlaneDesignerApp::FLittlePlaneDesignerApp(int argc, const char* argv[]) : FApplication("Studio Slab", argc, argv)
 {
 
 }
 
-Slab::TPointer<Slab::Graphics::GraphicBackend> LittlePlaneDesigner::CreatePlatform()
+Slab::TPointer<Slab::Graphics::GraphicBackend> FLittlePlaneDesignerApp::CreatePlatform()
 {
     // return Slab::DynamicPointerCast<Slab::Graphics::GraphicBackend>(Slab::CreatePlatform("SFML"));
     return Slab::DynamicPointerCast<Slab::Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
 }
 
-void LittlePlaneDesigner::OnStart()
+void FLittlePlaneDesignerApp::OnStart()
 {
     FApplication::OnStart();
 

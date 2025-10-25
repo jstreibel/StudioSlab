@@ -8,6 +8,7 @@
 #include "../DebugDraw.h"
 #include "box2d/box2d.h"
 #include "Math/VectorSpace/Impl/PointSet.h"
+#include "Utils/RandUtils.h"
 #include "Utils/String.h"
 
 using namespace Slab;
@@ -15,10 +16,22 @@ using namespace Slab;
 namespace Foil
 {
 
-class IAirfoil
+struct FAirfoilParams {
+    const Str Name = ToStr(RandUtils::RandomUniformUInt());
+
+    const float ChordLength = 1.0f;
+    const float Thickness  = 0.1f;
+    const float Span  = 0.5f;
+    const float rho   = 1.225f;
+    const float LE_local = -0.25f; // from COM
+    const b2Vec2 COM = b2Vec2{-.25f, -0.01f}; // from geometric center, in units of chord_length and thickness, respectively
+    const b2Vec2 C4 = b2Vec2{0.0f, 0.0f}; // from COM
+};
+
+class IAirfoilPolars
 {
     public:
-    virtual ~IAirfoil() = default;
+    virtual ~IAirfoilPolars() = default;
 
     virtual Str GetName() const = 0;
 
@@ -66,13 +79,8 @@ struct FAirfoilDynamicData {
 
 inline Graphics::Point2D ToPoint2D(const b2Vec2& v) { return Graphics::Point2D{v.x, v.y}; }
 
-FAirfoilDynamicData ComputeAirfoilForces(
-    const IAirfoil& Airfoil,
-    const b2BodyId& Body,
-    const LegacyGLDebugDraw& DebugDraw_LegacyGL);
-
 inline FAirfoilDynamicData ComputeAirfoilForces2(
-    const IAirfoil& Airfoil,
+    const IAirfoilPolars& Airfoil,
     const b2BodyId& Body,
     const LegacyGLDebugDraw &DebugDraw_LegacyGL)
 {

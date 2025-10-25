@@ -5,11 +5,11 @@
 #ifndef STUDIOSLAB_NACA2412_H
 #define STUDIOSLAB_NACA2412_H
 
-#include "../Foil.h"
+#include "Foil.h"
 
 namespace Foil {
 
-class Airfoil_NACA2412 final : public IAirfoil
+class Airfoil_NACA2412 final : public IAirfoilPolars
 {
 public:
     // ---- Polars ----
@@ -86,7 +86,7 @@ struct ViternaParams {
     double Cm0  = -0.05;
 };
 
-class ViternaAirfoil2412 final : public IAirfoil {
+class ViternaAirfoil2412 final : public IAirfoilPolars {
 public:
 
     explicit ViternaAirfoil2412(const ViternaParams& p = ViternaParams()) : P(p) {
