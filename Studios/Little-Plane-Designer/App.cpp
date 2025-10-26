@@ -11,6 +11,7 @@
 #include "Graphics/Plot2D/Plotter.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NativeFunction.h"
+#include "Foils/NACA2412.h"
 
 using CAirfoil = Foil::ViternaAirfoil2412;
 
@@ -25,6 +26,21 @@ constexpr float TimeScale = 1.0;
 constexpr float timeStep = TimeScale/60.0f;
 constexpr int subSteps = 1;
 constexpr int manualSubSteps = 10;
+
+void FLittlePlaneDesignerApp::ComputeAndApplyForces() const {
+    for (auto &Wing : LittlePlane->Wings) {
+        const auto &WingBody = Wing.BodyId;
+        const auto CurrentForces = FLittlePlane::ComputeForces(Wing, DebugDraw_LegacyGL);
+        b2Body_ApplyForce (WingBody, CurrentForces.GetTotalForce(), CurrentForces.loc, true);
+        b2Body_ApplyTorque(WingBody, CurrentForces.torque, true);
+    }
+}
+
+void FLittlePlaneDesignerApp::StepSimulation() const {
+    constexpr float splitTimeStep = timeStep/manualSubSteps;
+    for (int i = 0; i < manualSubSteps; ++i)
+        b2World_Step(World, splitTimeStep, subSteps);
+}
 
 bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& PlatformWindow) {
     using namespace Slab;
@@ -42,8 +58,8 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     Writer->Reshape(WinWidth, WinHeight);
     Writer->SetPenPositionTransform([this, ViewHeight, WinWidth, WinHeight](const Graphics::Point2D& pt) {
         return Graphics::FromSpaceToViewportCoord(pt,
-                                                  Graphics::RectR{-.5f*ViewWidth, +.5f*ViewWidth, -.1f*ViewHeight, .9f*ViewHeight },
-                                                  Graphics::RectI{0, WinWidth, 0, WinHeight});
+            Graphics::RectR{-.5f*ViewWidth, +.5f*ViewWidth, -.1f*ViewHeight, .9f*ViewHeight },
+            Graphics::RectI{0, WinWidth, 0, WinHeight});
     });
 
     PlatformWindow.Clear(Graphics::LapisLazuli);
@@ -90,16 +106,12 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     CurrentTorquePolar->clear();
     CurrentTorquePolar->AddPoint(CurrentForces.AoA, CurrentForces.Cm_c4);
     if (b_IsRunning) {
-        // Apply at c/4
-        b2Body_ApplyForce (WingBody, CurrentForces.GetTotalForce(), CurrentForces.loc, true);
-        b2Body_ApplyTorque(WingBody, CurrentForces.torque, true);
+        ComputeAndApplyForces();
+
+        StepSimulation();
 
         static double time = 0.0;
         time += timeStep;
-
-        constexpr float splitTimeStep = timeStep/manualSubSteps;
-        for (int i = 0; i < manualSubSteps; ++i)
-            b2World_Step(World, splitTimeStep, subSteps);
 
         auto TotalForcesMag = b2Length(CurrentForces.GetTotalForce());
         ForcesTimeSeries->AddPoint({time, TotalForcesMag});
@@ -283,11 +295,11 @@ void FLittlePlaneDesignerApp::OnStart() {
     FWingDescriptor WingDescriptor{
         .Airfoil = New<Foil::ViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
-        .Name = "Wing"},
+            .Name = "Wing"
+        },
         .RelativeLocation = {5.0f, 5.0f},
         .Angle = 0.234237846f
     };
-
 
     LittlePlane = Factory.AddWing(WingDescriptor).BuildPlane(World);
 

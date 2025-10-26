@@ -9,7 +9,6 @@
 #include "Application.h"
 #include "DebugDraw.h"
 #include "FLittlePlane.h"
-#include "Foils/NACA2412.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 #include "Graphics/SFML/Graph.h"
 
@@ -31,6 +30,8 @@ class FLittlePlaneDesignerApp final : public FApplication {
 
     TPointer<FLittlePlane> LittlePlane;
 public:
+    void ComputeAndApplyForces() const;
+    void StepSimulation() const;
     bool NotifyRender(const Graphics::FPlatformWindow& PlatformWindow) override;
 
 protected:

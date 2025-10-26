@@ -17,10 +17,11 @@ FPlaneFactory& FPlaneFactory::SetPosition(const b2Vec2 Pos) {
     return *this;
 }
 
-TPointer<FLittlePlane> FPlaneFactory::BuildPlane(b2WorldId World) {
+TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
     Wings.clear();
-    Wings.emplace_back(BuildWing(Descriptors[0], World));
-    if (Wings.size() > 1) throw std::runtime_error("Only one wing currently supported");
+    for (auto &Descriptor : Descriptors)
+        Wings.emplace_back(BuildWing(Descriptor, World));
+
     return New<FLittlePlane>(Wings);
 }
 
