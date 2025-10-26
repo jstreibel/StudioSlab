@@ -9,45 +9,27 @@
 #include "Application.h"
 #include "DebugDraw.h"
 #include "FLittlePlane.h"
-#include "Foils/Foil.h"
 #include "Foils/NACA2412.h"
-#include "Graphics/SlabGraphics.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 #include "Graphics/SFML/Graph.h"
 
 #include "box2d/box2d.h"
-#include "Core/SlabCore.h"
 #include "Core/Tools/Log.h"
-#include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
-#include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
-#include "Graphics/Plot2D/Plotter.h"
-#include "Math/Function/RtoR/Model/FunctionsCollection/NativeFunction.h"
 
 #define DeclarePointset(Name) TPointer<Math::PointSet> Name = New<Math::PointSet>();
-
-constexpr auto PrettyDraw = true;
-constexpr auto DebugDraw = false;
-
-constexpr float TimeScale = 1.0;
 
 auto DegToRad(const auto ang) { return ang * M_PI / 180.0;}
 auto RadToDeg(const auto ang) { return ang * 180.0 / M_PI;}
 
-using CAirfoil = Foil::ViternaAirfoil2412;
-
 class FLittlePlaneDesignerApp final : public FApplication {
     TPointer<LegacyGLDebugDraw> DebugDraw_LegacyGL;
-
-    CAirfoil Airfoil;
-    const float Chord = 1.0f;
-    const float Thick = 0.10f;
 
     float ViewWidth = 12.0;
 
     bool b_IsRunning = false;
 
-    FLittlePlane LittlePlane;
+    TPointer<FLittlePlane> LittlePlane;
 public:
     bool NotifyRender(const Graphics::FPlatformWindow& PlatformWindow) override;
 

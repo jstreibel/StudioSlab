@@ -24,6 +24,7 @@ struct FAirfoilParams {
     const float Span  = 0.5f;
     const float rho   = 1.225f;
     const float LE_local = -0.25f; // from COM
+    // COM hint: 38% behind LE (NACA2412 usually sits 35-40% chord length)
     const b2Vec2 COM = b2Vec2{-.25f, -0.01f}; // from geometric center, in units of chord_length and thickness, respectively
     const b2Vec2 C4 = b2Vec2{0.0f, 0.0f}; // from COM
 };

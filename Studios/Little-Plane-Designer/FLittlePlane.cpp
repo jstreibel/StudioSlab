@@ -8,80 +8,6 @@
 
 #include "Foils/Foil.h"
 
-constexpr b2Vec2 x0{2.5f, 1.5f};
-constexpr auto α0 = .0f; // 0.3f;
-constexpr auto ω0 = .0f; // 0.8354123f;
-constexpr b2Vec2 v0{-5.f, 0.0f};
-
-FLittlePlane::FLittlePlane() {
-    void SetupWing();
-}
-
-void FLittlePlane::SetupWing(
-    const b2WorldId World,
-    const TPointer<Foil::IAirfoilPolars>& Airfoil,
-    const Foil::FAirfoilParams& Params) {
-    // Dynamic box
-    b2BodyDef bodyDef = b2DefaultBodyDef();
-    bodyDef.type = b2_dynamicBody;
-    // bodyDef.position = (b2Vec2){ViewSize*(.5f), ViewSize*.25f};
-    bodyDef.position = x0;
-    bodyDef.rotation =  b2MakeRot(α0);
-    bodyDef.angularVelocity = ω0;
-    bodyDef.linearVelocity = v0;
-
-    auto WingBody = b2CreateBody(World, &bodyDef);
-    b2Body_SetName(WingBody, Params.Name.c_str());
-    FWing Wing = {
-        .BodyId = WingBody,
-        .Airfoil = Airfoil,
-        .Params = Params
-    };
-    Wings.emplace_back(WingBody, Airfoil, Params);
-
-    // Rectangle with c/4 at (0,0):
-    // LE=-0.25c, TE=+0.75c
-
-    fix Chord = Params.ChordLength;
-    fix Thick = Params.Thickness;
-
-    // 1) Build hull
-    b2Hull hull;
-    if constexpr (false)
-    {
-        constexpr int N = B2_MAX_POLYGON_VERTICES;
-        const auto AirfoilPoints = Airfoil->GetProfileVertices(N).getPoints();
-        b2Vec2 pts[N];
-        for (int i=0; i<N; ++i) {
-            pts[i].x = AirfoilPoints[i].x;
-            pts[i].y = AirfoilPoints[i].y;
-        }
-        hull = b2ComputeHull(pts, N);
-    }
-    else
-    {
-        const b2Vec2 pts[4] = {
-            { -0.5f*Chord, -0.5f*Thick },
-            {  0.5f*Chord, -0.5f*Thick },
-            {  0.5f*Chord,  0.5f*Thick },
-            { -0.5f*Chord,  0.5f*Thick }
-        };
-        hull = b2ComputeHull(pts, 4);
-    }
-
-    // 2) Make convex polygon from hull
-    const b2Polygon WingShape = b2MakePolygon(&hull, 0.0f);          // if your API needs radius: b2MakePolygon(&hull, 0.0f)
-
-    // 3) Create a fixture
-    b2ShapeDef sdef = b2DefaultShapeDef();
-    sdef.density = 1.0f;
-    sdef.material.friction = 0.1f;
-    b2CreatePolygonShape(WingBody, &sdef, &WingShape);
-
-    auto COM = Params.COM;
-    ShiftBodyCOM(COM.x*Chord, COM.y*Thick, WingBody); // 38% behind LE (NACA2412 usually sits 35-40% chord length)
-}
-
 Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
     const FWing& Wing,
     const TPointer<LegacyGLDebugDraw>& DebugDraw)
@@ -192,29 +118,5 @@ Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
         static_cast<float>(Cd),
         static_cast<float>(Cm_c4),
         static_cast<float>(AoA)};
-}
-
-void FLittlePlane::ShiftBodyCOM(const float Δx, const float Δy, const b2BodyId Body) {
-    // target COM shift (local body frame)
-
-    // md0.mass, md0.center, md0.I (I about body origin)
-    auto [mass, center, rotationalInertia] = b2Body_GetMassData(Body);
-
-    const float m  = mass;
-    const auto [x, y] = center;
-
-    // inertia about current COM
-    const float I_com = rotationalInertia - m * (x*x + y*y);
-
-    // new local center
-    const auto c1 = (b2Vec2){ Δx, Δy };
-
-    // inertia about body origin with new COM
-    const float I1 = I_com + m * (c1.x*c1.x + c1.y*c1.y);
-
-    // apply
-    const b2MassData md1 = { .mass = m, .center = c1, .rotationalInertia = I1 };
-    b2Body_SetMassData(Body, md1);
-    b2Body_SetAwake(Body, true);
 }
 

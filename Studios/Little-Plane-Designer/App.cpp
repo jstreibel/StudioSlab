@@ -4,7 +4,27 @@
 
 #include "App.h"
 
+#include "FPlaneFactory.h"
+#include "Core/SlabCore.h"
+#include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
+#include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
+#include "Graphics/Plot2D/Plotter.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/NativeFunction.h"
+
+using CAirfoil = Foil::ViternaAirfoil2412;
+
+constexpr b2Vec2 x0{2.5f, 1.5f};
+constexpr b2Vec2 v0{-5.f, 0.0f};
+
+constexpr auto PrettyDraw = false;
+constexpr auto DebugDraw = true;
+
+constexpr float TimeScale = 1.0;
+
+constexpr float timeStep = TimeScale/60.0f;
+constexpr int subSteps = 1;
+constexpr int manualSubSteps = 10;
 
 bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& PlatformWindow) {
     using namespace Slab;
@@ -29,10 +49,15 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     PlatformWindow.Clear(Graphics::LapisLazuli);
 
     GUIContext->AddDrawCall([this] {
-        ImGui::Begin("Wing");
+        ImGui::Begin("Wings");
         ImGui::Checkbox("Run", &b_IsRunning);
 
-        for (const auto &Wing : LittlePlane.Wings) {
+        if (LittlePlane == nullptr)
+            ImGui::TextColored({1,0,0,1}, "No plane");
+        else for (const auto &Wing : LittlePlane->Wings) {
+
+            ImGui::SeparatorText(Str(Wing.Params.Name).c_str());
+
             const auto WingBody = Wing.BodyId;
 
             const auto foil_vel = b2Body_GetLinearVelocity(WingBody);
@@ -53,7 +78,7 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
         ImGui::End();
     });
 
-    const auto &Wing = LittlePlane.Wings[0];
+    const auto &Wing = LittlePlane->Wings[0];
     const auto &WingBody = Wing.BodyId;
 
     // const auto WingBody = LittlePlane.WingBody;
@@ -70,10 +95,11 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
         b2Body_ApplyTorque(WingBody, CurrentForces.torque, true);
 
         static double time = 0.0;
-        constexpr float timeStep = TimeScale/60.0f;
         time += timeStep;
-        constexpr int subSteps = 4;
-        b2World_Step(World, timeStep, subSteps);
+
+        constexpr float splitTimeStep = timeStep/manualSubSteps;
+        for (int i = 0; i < manualSubSteps; ++i)
+            b2World_Step(World, splitTimeStep, subSteps);
 
         auto TotalForcesMag = b2Length(CurrentForces.GetTotalForce());
         ForcesTimeSeries->AddPoint({time, TotalForcesMag});
@@ -105,7 +131,7 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
             Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
             WingStyle.thickness = 2.0f;
             WingStyle.lineColor.a = 0.5f;
-            const Math::PointSet AirfoilPoints = Airfoil.GetProfileVertices(200);
+            const Math::PointSet AirfoilPoints = LittlePlane->Wings[0].Airfoil->GetProfileVertices(200);
             Math::PointSet Points = AirfoilPoints; // Math::PointSet(Math::Point2DVec{{.25f*Chord ,.0f}}) + AirfoilPoints;
             const auto [x, y] = b2Body_GetPosition(WingBody);
             const auto [c, s] = b2Body_GetRotation(WingBody);
@@ -140,9 +166,9 @@ void FLittlePlaneDesignerApp::SetupMonitors() {
 
     using Plotter = Graphics::FPlotter;
 
-    const auto C_l   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return Airfoil.Cl(AoA); });
-    const auto C_d   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return Airfoil.Cd(AoA); });
-    const auto C_mc4 = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return Airfoil.Cm_c4(AoA); });
+    const auto C_l   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->Wings[0].Airfoil->Cl(AoA); });
+    const auto C_d   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->Wings[0].Airfoil->Cd(AoA); });
+    const auto C_mc4 = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->Wings[0].Airfoil->Cm_c4(AoA); });
 
     {
         fix n = Plots.size();
@@ -253,7 +279,17 @@ void FLittlePlaneDesignerApp::OnStart() {
     b2ShapeDef groundShapeDef = b2DefaultShapeDef();
     b2CreatePolygonShape(ground, &groundShapeDef, &groundBox);
 
-    LittlePlane.SetupWing(World, New<Foil::ViternaAirfoil2412>(), Foil::FAirfoilParams{});
+    FPlaneFactory Factory{};
+    FWingDescriptor WingDescriptor{
+        .Airfoil = New<Foil::ViternaAirfoil2412>(),
+        .Params = Foil::FAirfoilParams{
+        .Name = "Wing"},
+        .RelativeLocation = {5.0f, 5.0f},
+        .Angle = 0.234237846f
+    };
+
+
+    LittlePlane = Factory.AddWing(WingDescriptor).BuildPlane(World);
 
     SetupMonitors();
 }
@@ -263,9 +299,10 @@ void FLittlePlaneDesignerApp::DoDebugDraw() const {
     Drawer.drawMass = false;
     Drawer.drawBounds = false;
     Drawer.drawIslands = false;
-    Drawer.drawBodyNames = false;
-    Drawer.drawShapes = false;
+    Drawer.drawBodyNames = true;
+    Drawer.drawShapes = true;
 
+    DebugDraw_LegacyGL->SetupLegacyGL();
     b2World_Draw(World, &Drawer);
 
     // DebugDraw_LegacyGL.DrawForce(AirfoilForces.lift, AirfoilForces.loc, 1.0f, b2_colorCoral);

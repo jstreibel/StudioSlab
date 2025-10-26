@@ -21,6 +21,8 @@ add_executable( LittlePlaneDesigner
         App.h
         FLittlePlane.cpp
         FLittlePlane.h
+        FPlaneFactory.cpp
+        FPlaneFactory.h
 )
 target_include_directories(LittlePlaneDesigner PRIVATE ${box2d_SOURCE_DIR}/include)
 # target_link_libraries( LittlePlaneDesigner Slab box2D)

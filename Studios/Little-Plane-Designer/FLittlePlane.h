@@ -16,16 +16,14 @@ struct FWing {
 
 class FLittlePlane
 {
-    public:
-    FLittlePlane();
-
-    void SetupWing(b2WorldId World, const TPointer<Foil::IAirfoilPolars>& Airfoil, const Foil::FAirfoilParams& Params);
-
+public:
+    explicit FLittlePlane(const Vector<FWing>& Wings) : Wings(Wings) {};
     static Foil::FAirfoilDynamicData ComputeForces(const FWing& Wing, const TPointer<LegacyGLDebugDraw>& DebugDraw=nullptr);
 
     Vector<FWing> Wings;
+
 private:
-    static void ShiftBodyCOM(float Δx, float Δy, b2BodyId Body);
+    FLittlePlane() = default;
 };
 
 #endif //STUDIOSLAB_FLITTLEPLANE_H
