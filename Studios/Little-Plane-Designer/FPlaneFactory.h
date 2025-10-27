@@ -11,7 +11,9 @@ struct FWingDescriptor {
     TPointer<Foil::IAirfoilPolars> Airfoil;
     Foil::FAirfoilParams Params;
     b2Vec2 RelativeLocation = b2Vec2{0.0f, 0.0f};
-    float Angle = 0.0f;
+    float BaseAngle = 0.0f;
+    float MaxAngle = 0.0f;
+    float MinAngle = 0.0f;
 
     TPointer<FWing> Wing;
 };
@@ -32,7 +34,7 @@ class FPlaneFactory
 private:
     Vector<FWingDescriptor> Descriptors;
 
-    b2Vec2 Position = b2Vec2{5.0f, 5.0f};
+    b2Vec2 Position = b2Vec2{0.0f, 0.0f};
     float  Angle    = 0.0f;
 
     TPointer<FWing> BuildWing(const FWingDescriptor &Descriptor, b2WorldId World) const;

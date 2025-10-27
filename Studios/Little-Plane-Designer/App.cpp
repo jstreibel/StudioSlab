@@ -4,6 +4,8 @@
 
 #include "App.h"
 
+#include <SFML/Graphics/View.hpp>
+
 #include "FPlaneFactory.h"
 #include "Core/SlabCore.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
@@ -12,11 +14,9 @@
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NativeFunction.h"
 #include "Foils/NACA2412.h"
+#include "Graphics/Modules/Animator/Animator.h"
 
 using CAirfoil = Foil::ViternaAirfoil2412;
-
-constexpr b2Vec2 x0{2.5f, 1.5f};
-constexpr b2Vec2 v0{-5.f, 0.0f};
 
 constexpr auto PrettyDraw = true;
 constexpr auto DebugDraw = true;
@@ -159,9 +159,7 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
             Drawer::RenderPointSet(Dummy(Points), WingStyle);
         }
     }
-    if constexpr (DebugDraw) {
-        DoDebugDraw();
-    }
+    if constexpr (DebugDraw) { DoDebugDraw(); }
 
     Monitor(PlatformWindow);
 
@@ -301,16 +299,20 @@ void FLittlePlaneDesignerApp::OnStart() {
         .Params = Foil::FAirfoilParams{
             .Name = "Wing"
         },
-        .RelativeLocation = {-0.5f, 0.0f},
-        .Angle = 0.234237846f})
+        .RelativeLocation = {-1, 0.0f},
+        .BaseAngle = static_cast<float>(DegToRad(2.5)),
+        .MaxAngle = +static_cast<float>(DegToRad(15)),
+        .MinAngle = -static_cast<float>(DegToRad(-15))
+    })
     .AddWing(FWingDescriptor{
         .Airfoil = New<Foil::ViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
             .Name = "Winglet"
         },
         .RelativeLocation = {+0.5, 0.1f},
-        .Angle = 0.1356435612f
+        .BaseAngle = 0.f
     })
+    .SetPosition({12.0f, 12.0f})
     .BuildPlane(World);
 
     SetupMonitors();
@@ -353,6 +355,12 @@ bool FLittlePlaneDesignerApp::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EK
         }
 
         if (key == Graphics::EKeyMap::Key_SPACE) b_IsRunning = !b_IsRunning;
+
+        if (key == Graphics::EKeyMap::Key_MINUS) {
+            Graphics::Animator::Set(ViewWidth, ViewWidth*1.2, 0.1);
+        } else if (key == Graphics::EKeyMap::Key_EQUAL) {
+            Graphics::Animator::Set(ViewWidth, ViewWidth/1.2, 0.1);
+        }
     }
     return false;
 }

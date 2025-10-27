@@ -18,13 +18,13 @@
 
 #define DeclarePointset(Name) TPointer<Math::PointSet> Name = New<Math::PointSet>();
 
-auto DegToRad(const auto ang) { return ang * M_PI / 180.0;}
-auto RadToDeg(const auto ang) { return ang * 180.0 / M_PI;}
+inline double DegToRad(const double ang) { return ang * M_PI / 180.0;}
+inline double RadToDeg(const double ang) { return ang * 180.0 / M_PI;}
 
 class FLittlePlaneDesignerApp final : public FApplication {
     TPointer<LegacyGLDebugDraw> DebugDraw_LegacyGL;
 
-    float ViewWidth = 12.0;
+    double ViewWidth = 25.0*1.2f;
 
     bool b_IsRunning = false;
 

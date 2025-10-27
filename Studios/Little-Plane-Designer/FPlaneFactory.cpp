@@ -34,9 +34,14 @@ TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
         Joint.bodyIdB = WingDesc.Wing->BodyId;
         Joint.collideConnected = false;
         Joint.localAnchorA = WingDesc.RelativeLocation;
-        Joint.localAnchorB = b2Vec2_zero;
+        Joint.localAnchorB = WingDesc.Params.COM;
 
-        b2CreateRevoluteJoint(World, &Joint);
+        Joint.enableLimit = true;
+        Joint.lowerAngle  = WingDesc.MinAngle;
+        Joint.upperAngle  = WingDesc.MaxAngle;
+
+        fix RevJoint = b2CreateRevoluteJoint(World, &Joint);
+        b2RevoluteJoint_EnableMotor(RevJoint, true);
     }
 
     return New<FLittlePlane>(Wings);
@@ -52,7 +57,7 @@ b2BodyId FPlaneFactory::BuildBody(const b2WorldId World) const {
 
     b2ShapeDef ShapeDef = b2DefaultShapeDef();
     ShapeDef.density = 0.01f;
-    ShapeDef.material.friction = 0.1f;
+    ShapeDef.material.friction = 1.2f;
     const auto Box = b2MakeBox(1.25f, 0.2f);
     b2CreatePolygonShape(Body, &ShapeDef, &Box);
 
@@ -68,8 +73,11 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
 
     bodyDef.type = b2_dynamicBody;
     // bodyDef.position = (b2Vec2){ViewSize*(.5f), ViewSize*.25f};
-    bodyDef.position = {Position.x + Descriptor.RelativeLocation.x, Position.y + Descriptor.RelativeLocation.y};
-    bodyDef.rotation = b2MakeRot(Descriptor.Angle);
+    bodyDef.position = {
+        Position.x + Descriptor.RelativeLocation.x - Params.COM.x,
+        Position.y + Descriptor.RelativeLocation.y - Params.COM.y
+    };
+    bodyDef.rotation = b2MakeRot(Descriptor.BaseAngle);
     // bodyDef.angularVelocity = ω0;
     // bodyDef.linearVelocity = v0;
 
@@ -109,8 +117,7 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
     return New<FWing>(FWing{
         .BodyId = WingBody,
         .Airfoil = Airfoil,
-        .Params = Params
-        });
+        .Params = Params});
 }
 
 void FPlaneFactory::ShiftBodyCOM(const float Δx, const float Δy, const b2BodyId Body) {
