@@ -18,7 +18,7 @@ using CAirfoil = Foil::ViternaAirfoil2412;
 constexpr b2Vec2 x0{2.5f, 1.5f};
 constexpr b2Vec2 v0{-5.f, 0.0f};
 
-constexpr auto PrettyDraw = false;
+constexpr auto PrettyDraw = true;
 constexpr auto DebugDraw = true;
 
 constexpr float TimeScale = 1.0;
@@ -29,8 +29,9 @@ constexpr int manualSubSteps = 10;
 
 void FLittlePlaneDesignerApp::ComputeAndApplyForces() const {
     for (auto &Wing : LittlePlane->Wings) {
-        const auto &WingBody = Wing.BodyId;
-        const auto CurrentForces = FLittlePlane::ComputeForces(Wing, DebugDraw_LegacyGL);
+        const auto &WingBody = Wing->BodyId;
+
+        const auto CurrentForces = FLittlePlane::ComputeForces(*Wing/*, DebugDraw_LegacyGL*/);
         b2Body_ApplyForce (WingBody, CurrentForces.GetTotalForce(), CurrentForces.loc, true);
         b2Body_ApplyTorque(WingBody, CurrentForces.torque, true);
     }
@@ -72,9 +73,9 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
             ImGui::TextColored({1,0,0,1}, "No plane");
         else for (const auto &Wing : LittlePlane->Wings) {
 
-            ImGui::SeparatorText(Str(Wing.Params.Name).c_str());
+            ImGui::SeparatorText(Str(Wing->Params.Name).c_str());
 
-            const auto WingBody = Wing.BodyId;
+            const auto WingBody = Wing->BodyId;
 
             const auto foil_vel = b2Body_GetLinearVelocity(WingBody);
             float foil_speed = b2Length(foil_vel);
@@ -95,10 +96,10 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     });
 
     const auto &Wing = LittlePlane->Wings[0];
-    const auto &WingBody = Wing.BodyId;
+    const auto &WingBody = Wing->BodyId;
 
     // const auto WingBody = LittlePlane.WingBody;
-    const auto CurrentForces = FLittlePlane::ComputeForces(Wing, DebugDraw_LegacyGL);
+    const auto CurrentForces = FLittlePlane::ComputeForces(*Wing);
     CurrentLiftPolar->clear();
     CurrentLiftPolar->AddPoint(CurrentForces.AoA, CurrentForces.Cl);
     CurrentDragPolar->clear();
@@ -143,7 +144,7 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
             Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
             WingStyle.thickness = 2.0f;
             WingStyle.lineColor.a = 0.5f;
-            const Math::PointSet AirfoilPoints = LittlePlane->Wings[0].Airfoil->GetProfileVertices(200);
+            const Math::PointSet AirfoilPoints = LittlePlane->Wings[0]->Airfoil->GetProfileVertices(200);
             Math::PointSet Points = AirfoilPoints; // Math::PointSet(Math::Point2DVec{{.25f*Chord ,.0f}}) + AirfoilPoints;
             const auto [x, y] = b2Body_GetPosition(WingBody);
             const auto [c, s] = b2Body_GetRotation(WingBody);
@@ -178,9 +179,9 @@ void FLittlePlaneDesignerApp::SetupMonitors() {
 
     using Plotter = Graphics::FPlotter;
 
-    const auto C_l   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->Wings[0].Airfoil->Cl(AoA); });
-    const auto C_d   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->Wings[0].Airfoil->Cd(AoA); });
-    const auto C_mc4 = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->Wings[0].Airfoil->Cm_c4(AoA); });
+    const auto C_l   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->Wings[0]->Airfoil->Cl(AoA); });
+    const auto C_d   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->Wings[0]->Airfoil->Cd(AoA); });
+    const auto C_mc4 = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->Wings[0]->Airfoil->Cm_c4(AoA); });
 
     {
         fix n = Plots.size();
@@ -292,16 +293,25 @@ void FLittlePlaneDesignerApp::OnStart() {
     b2CreatePolygonShape(ground, &groundShapeDef, &groundBox);
 
     FPlaneFactory Factory{};
-    FWingDescriptor WingDescriptor{
+
+
+    LittlePlane = Factory
+    .AddWing(FWingDescriptor{
         .Airfoil = New<Foil::ViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
             .Name = "Wing"
         },
-        .RelativeLocation = {5.0f, 5.0f},
-        .Angle = 0.234237846f
-    };
-
-    LittlePlane = Factory.AddWing(WingDescriptor).BuildPlane(World);
+        .RelativeLocation = {-0.5f, 0.0f},
+        .Angle = 0.234237846f})
+    .AddWing(FWingDescriptor{
+        .Airfoil = New<Foil::ViternaAirfoil2412>(),
+        .Params = Foil::FAirfoilParams{
+            .Name = "Winglet"
+        },
+        .RelativeLocation = {+0.5, 0.1f},
+        .Angle = 0.1356435612f
+    })
+    .BuildPlane(World);
 
     SetupMonitors();
 }

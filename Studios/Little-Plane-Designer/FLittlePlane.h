@@ -17,10 +17,10 @@ struct FWing {
 class FLittlePlane
 {
 public:
-    explicit FLittlePlane(const Vector<FWing>& Wings) : Wings(Wings) {};
+    explicit FLittlePlane(const Vector<TPointer<FWing>>& Wings) : Wings(Wings) {};
     static Foil::FAirfoilDynamicData ComputeForces(const FWing& Wing, const TPointer<LegacyGLDebugDraw>& DebugDraw=nullptr);
 
-    Vector<FWing> Wings;
+    Vector<TPointer<FWing>> Wings;
 
 private:
     FLittlePlane() = default;

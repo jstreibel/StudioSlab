@@ -12,6 +12,8 @@ struct FWingDescriptor {
     Foil::FAirfoilParams Params;
     b2Vec2 RelativeLocation = b2Vec2{0.0f, 0.0f};
     float Angle = 0.0f;
+
+    TPointer<FWing> Wing;
 };
 
 class FPlaneFactory
@@ -25,15 +27,15 @@ class FPlaneFactory
     FPlaneFactory& SetPosition(b2Vec2);
 
     TPointer<FLittlePlane> BuildPlane(b2WorldId World);
+    b2BodyId BuildBody(b2WorldId World) const;
 
 private:
     Vector<FWingDescriptor> Descriptors;
 
-    b2Vec2 Position = b2Vec2{0.0f, 0.0f};
+    b2Vec2 Position = b2Vec2{5.0f, 5.0f};
     float  Angle    = 0.0f;
-    Vector<FWing> Wings;
 
-    static FWing BuildWing(const FWingDescriptor &Descriptor, b2WorldId World);
+    TPointer<FWing> BuildWing(const FWingDescriptor &Descriptor, b2WorldId World) const;
     static void ShiftBodyCOM(float Δx, float Δy, b2BodyId Body);
 };
 

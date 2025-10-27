@@ -4,6 +4,8 @@
 
 #include "FPlaneFactory.h"
 
+#include "graphic/graphic_basic.h"
+
 
 FPlaneFactory& FPlaneFactory::AddWing(const FWingDescriptor &Descriptor)
 {
@@ -18,14 +20,46 @@ FPlaneFactory& FPlaneFactory::SetPosition(const b2Vec2 Pos) {
 }
 
 TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
-    Wings.clear();
-    for (auto &Descriptor : Descriptors)
-        Wings.emplace_back(BuildWing(Descriptor, World));
+    Vector<TPointer<FWing>> Wings;
+    for (auto &Descriptor : Descriptors) {
+        Descriptor.Wing = BuildWing(Descriptor, World);
+        Wings.emplace_back(Descriptor.Wing);
+    }
+
+    const auto PlaneHull = BuildBody(World);
+
+    for (const auto &WingDesc : Descriptors) {
+        auto Joint = b2DefaultRevoluteJointDef();
+        Joint.bodyIdA = PlaneHull;
+        Joint.bodyIdB = WingDesc.Wing->BodyId;
+        Joint.collideConnected = false;
+        Joint.localAnchorA = WingDesc.RelativeLocation;
+        Joint.localAnchorB = b2Vec2_zero;
+
+        b2CreateRevoluteJoint(World, &Joint);
+    }
 
     return New<FLittlePlane>(Wings);
 }
 
-FWing FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, b2WorldId World) {
+b2BodyId FPlaneFactory::BuildBody(const b2WorldId World) const {
+    b2BodyDef bodyDef = b2DefaultBodyDef();
+    bodyDef.type = b2_dynamicBody;
+    bodyDef.position = Position;
+    bodyDef.rotation = b2MakeRot(Angle);
+    const b2BodyId Body = b2CreateBody(World, &bodyDef);
+    b2Body_SetName(Body, "Plane Body");
+
+    b2ShapeDef ShapeDef = b2DefaultShapeDef();
+    ShapeDef.density = 0.01f;
+    ShapeDef.material.friction = 0.1f;
+    const auto Box = b2MakeBox(1.25f, 0.2f);
+    b2CreatePolygonShape(Body, &ShapeDef, &Box);
+
+    return Body;
+}
+
+TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, const b2WorldId World) const {
     const auto Params = Descriptor.Params;
     const auto Airfoil = Descriptor.Airfoil;
 
@@ -34,8 +68,8 @@ FWing FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, b2WorldId Worl
 
     bodyDef.type = b2_dynamicBody;
     // bodyDef.position = (b2Vec2){ViewSize*(.5f), ViewSize*.25f};
-    bodyDef.position = Descriptor.RelativeLocation;
-    bodyDef.rotation =  b2MakeRot(Descriptor.Angle);
+    bodyDef.position = {Position.x + Descriptor.RelativeLocation.x, Position.y + Descriptor.RelativeLocation.y};
+    bodyDef.rotation = b2MakeRot(Descriptor.Angle);
     // bodyDef.angularVelocity = ω0;
     // bodyDef.linearVelocity = v0;
 
@@ -72,11 +106,11 @@ FWing FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, b2WorldId Worl
     auto [COM_x, COM_y] = Params.COM;
     ShiftBodyCOM(COM_x*Chord, COM_y*Thick, WingBody);
 
-    return FWing{
+    return New<FWing>(FWing{
         .BodyId = WingBody,
         .Airfoil = Airfoil,
         .Params = Params
-    };
+        });
 }
 
 void FPlaneFactory::ShiftBodyCOM(const float Δx, const float Δy, const b2BodyId Body) {
