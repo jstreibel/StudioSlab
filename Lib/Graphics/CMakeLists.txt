@@ -323,6 +323,7 @@ add_library(${LIB_GRAPHICS} STATIC
 		Window/SingleWindowManager.h
 		OpenGL/LegacyGL/LegacyMode.cpp
 		OpenGL/LegacyGL/LegacyMode.h
+		Backend/Events/KeyboardState.cpp
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

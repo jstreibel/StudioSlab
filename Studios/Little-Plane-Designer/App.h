@@ -24,8 +24,6 @@ inline double RadToDeg(const double ang) { return ang * 180.0 / M_PI;}
 class FLittlePlaneDesignerApp final : public FApplication {
     TPointer<LegacyGLDebugDraw> DebugDraw_LegacyGL;
 
-    double ViewWidth = 25.0*1.2f;
-
     bool b_IsRunning = false;
 
     TPointer<FLittlePlane> LittlePlane;

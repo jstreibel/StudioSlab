@@ -42,6 +42,7 @@ TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
 
         fix RevJoint = b2CreateRevoluteJoint(World, &Joint);
         b2RevoluteJoint_EnableMotor(RevJoint, true);
+        b2RevoluteJoint_SetTargetAngle(RevJoint, WingDesc.BaseAngle);
     }
 
     return New<FLittlePlane>(Wings);

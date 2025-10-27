@@ -18,11 +18,13 @@ namespace Slab::Graphics {
     FPlatformWindow::FPlatformWindow(void *window_ptr, TPointer<FEventTranslator> EventTranslator)
     : EventTranslator(std::move(EventTranslator))
     , r_Window(window_ptr)
-    , MouseState(New<FMouseState>()) {
+    , MouseState(New<FMouseState>())
+    , KeyboardState(New<FKeyboardState>()) {
         // Add event listener manually because FPlatformWindow::AddEventListener calls the pure abstract
         // methods FPlatformWindow::GetWidth and FPlatformWindow::GetHeight, yielding an exception upon being
         // called (even implicitly) by the constructor.
         this->EventTranslator->AddGUIEventListener(MouseState);
+        this->EventTranslator->AddGUIEventListener(KeyboardState);
         // AddEventListener(MouseState);
     }
 
@@ -68,9 +70,9 @@ namespace Slab::Graphics {
         << Core::Log::Flush;
     }
 
-    bool FPlatformWindow::ProvideSelfReference(const TVolatile<FPlatformWindow>& SelfReference)
+    bool FPlatformWindow::ProvideSelfReference(const TVolatile<FPlatformWindow>& _SelfReference)
     {
-        if (IN SelfReferencePtr = SelfReference.lock())
+        if (IN SelfReferencePtr = _SelfReference.lock())
         {
             if (SelfReferencePtr.get() != this)
             {
@@ -79,7 +81,7 @@ namespace Slab::Graphics {
             }
         }
 
-        this->SelfReference = SelfReference;
+        this->SelfReference = _SelfReference;
 
         return true;
     }
@@ -96,6 +98,10 @@ namespace Slab::Graphics {
 
     auto FPlatformWindow::GetMouseState() const -> TPointer<const FMouseState> {
         return MouseState;
+    }
+
+    auto FPlatformWindow::GetKeyboardState() const -> TPointer<const class FKeyboardState> {
+        return KeyboardState;
     }
 
     TPointer<FGUIContext> FPlatformWindow::GetGUIContext() const

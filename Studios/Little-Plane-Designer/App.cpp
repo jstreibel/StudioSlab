@@ -50,16 +50,49 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     fix WinHeight = PlatformWindow.GetHeight();
     fix WinWidth = PlatformWindow.GetWidth();
     fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
-    fix ViewHeight = ViewWidth / AspectRatio;
+    constexpr auto InitialViewWidth = 25.0*1.2f;
+    fix InitialViewHeight = InitialViewWidth / AspectRatio;
+
+    static Graphics::RectR View {
+        -InitialViewWidth*.5f, InitialViewWidth*.5f, -.1f*InitialViewHeight, .9f*InitialViewHeight};
+
+    fix KeyboardState = PlatformWindow.GetKeyboardState();
+    if (KeyboardState->IsPressed(Graphics::Key_MINUS)) {
+        const auto ViewWidth = View.GetWidth() * 1.01f;
+        const auto ViewHeight = View.GetWidth() / AspectRatio;
+
+        auto xCenter = View.xCenter();
+        View.xMin = xCenter - ViewWidth*.5f;
+        View.xMax = xCenter + ViewWidth*.5f;
+        View.yMin = - ViewHeight*.1f;
+        View.yMax = + ViewHeight*.9f;
+    } if (KeyboardState->IsPressed(Graphics::Key_EQUAL)) {
+        const auto ViewWidth = View.GetWidth() / 1.01f;
+        const auto ViewHeight = View.GetWidth() / AspectRatio;
+
+        auto xCenter = View.xCenter();
+        View.xMin = xCenter - ViewWidth*.5f;
+        View.xMax = xCenter + ViewWidth*.5f;
+        View.yMin = - ViewHeight*.1f;
+        View.yMax = + ViewHeight*.9f;
+    }
+    if (KeyboardState->IsPressed(Graphics::Key_LEFT)) {
+        View.xMin -= 0.1f;
+        View.xMax -= 0.1f;
+    }
+    if (KeyboardState->IsPressed(Graphics::Key_RIGHT)) {
+        View.xMin += 0.1f;
+        View.xMax += 0.1f;
+    }
 
     Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
     Drawer::ResetModelView();
-    Drawer::SetupOrtho({-ViewWidth*.5, ViewWidth*.5, -.1*ViewHeight, .9*ViewHeight});
+    Drawer::SetupOrtho({View.xMin, View.xMax, View.yMin, View.yMax});
     const auto Writer = DebugDraw_LegacyGL->GetWriter();
     Writer->Reshape(WinWidth, WinHeight);
-    Writer->SetPenPositionTransform([this, ViewHeight, WinWidth, WinHeight](const Graphics::Point2D& pt) {
+    Writer->SetPenPositionTransform([WinWidth, WinHeight](const Graphics::Point2D& pt) {
         return Graphics::FromSpaceToViewportCoord(pt,
-            Graphics::RectR{-.5f*ViewWidth, +.5f*ViewWidth, -.1f*ViewHeight, .9f*ViewHeight },
+            Graphics::RectR{View.xMin, View.xMax, View.yMin, View.yMax},
             Graphics::RectI{0, WinWidth, 0, WinHeight});
     });
 
@@ -306,7 +339,7 @@ void FLittlePlaneDesignerApp::OnStart() {
             .Name = "Wing"
         },
         .RelativeLocation = {-1, 0.0f},
-        .BaseAngle = static_cast<float>(DegToRad(2.5)),
+        .BaseAngle = static_cast<float>(DegToRad(0.0)),
         .MaxAngle = +static_cast<float>(DegToRad(15)),
         .MinAngle = -static_cast<float>(DegToRad(-15))
     })
@@ -316,7 +349,9 @@ void FLittlePlaneDesignerApp::OnStart() {
             .Name = "Winglet"
         },
         .RelativeLocation = {+0.5, 0.1f},
-        .BaseAngle = 0.f
+        .BaseAngle = 0.f,
+        .MaxAngle = +static_cast<float>(DegToRad(15)),
+        .MinAngle = -static_cast<float>(DegToRad(-15))
     })
     .SetPosition({12.0f, 12.0f})
     .BuildPlane(World);
@@ -363,9 +398,9 @@ bool FLittlePlaneDesignerApp::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EK
         if (key == Graphics::EKeyMap::Key_SPACE) b_IsRunning = !b_IsRunning;
 
         if (key == Graphics::EKeyMap::Key_MINUS) {
-            Graphics::Animator::Set(ViewWidth, ViewWidth*1.2, 0.1);
+            // Graphics::Animator::Set(ViewWidth, ViewWidth*1.2, 0.1);
         } else if (key == Graphics::EKeyMap::Key_EQUAL) {
-            Graphics::Animator::Set(ViewWidth, ViewWidth/1.2, 0.1);
+            // Graphics::Animator::Set(ViewWidth, ViewWidth/1.2, 0.1);
         }
     }
     return false;

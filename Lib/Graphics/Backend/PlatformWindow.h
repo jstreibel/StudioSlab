@@ -10,6 +10,7 @@
 #include "Utils/Arrays.h"
 
 #include "Graphics/Backend/Events/SystemWindowEventListener.h"
+#include "Graphics/Backend/Events/KeyboardState.h"
 #include "Graphics/Backend/Events/MouseState.h"
 #include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
 #include "Graphics/Modules/GUIModule/GUIContext.h"
@@ -36,6 +37,7 @@ namespace Slab::Graphics {
         virtual void ClearListeners();
 
         TPointer<FMouseState> MouseState = nullptr;
+        TPointer<FKeyboardState> KeyboardState = nullptr;
 
         virtual void Tick() = 0;
         virtual void Flush() = 0;
@@ -60,6 +62,7 @@ namespace Slab::Graphics {
         auto AddAndOwnEventListener(const TPointer<FPlatformWindowEventListener> &Listener) -> void;
 
         [[nodiscard]] auto GetMouseState() const -> TPointer<const FMouseState>;
+        [[nodiscard]] auto GetKeyboardState() const -> TPointer<const FKeyboardState>;
         virtual void SetMouseCursor(FMouseCursor);
 
         virtual
