@@ -31,7 +31,7 @@ void FLittlePlaneDesignerApp::ComputeAndApplyForces() const {
     for (auto &Wing : LittlePlane->Wings) {
         const auto &WingBody = Wing->BodyId;
 
-        const auto CurrentForces = FLittlePlane::ComputeForces(*Wing/*, DebugDraw_LegacyGL*/);
+        const auto CurrentForces = FLittlePlane::ComputeForces(*Wing, DebugDraw ? DebugDraw_LegacyGL : nullptr);
         b2Body_ApplyForce (WingBody, CurrentForces.GetTotalForce(), CurrentForces.loc, true);
         b2Body_ApplyTorque(WingBody, CurrentForces.torque, true);
     }
@@ -95,43 +95,44 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
         ImGui::End();
     });
 
-    const auto &Wing = LittlePlane->Wings[0];
-    const auto &WingBody = Wing->BodyId;
+    {
+        const auto &Wing = LittlePlane->Wings[0];
 
-    // const auto WingBody = LittlePlane.WingBody;
-    const auto CurrentForces = FLittlePlane::ComputeForces(*Wing);
-    CurrentLiftPolar->clear();
-    CurrentLiftPolar->AddPoint(CurrentForces.AoA, CurrentForces.Cl);
-    CurrentDragPolar->clear();
-    CurrentDragPolar->AddPoint(CurrentForces.AoA, CurrentForces.Cd);
-    CurrentTorquePolar->clear();
-    CurrentTorquePolar->AddPoint(CurrentForces.AoA, CurrentForces.Cm_c4);
-    if (b_IsRunning) {
-        ComputeAndApplyForces();
+        const auto CurrentForces = FLittlePlane::ComputeForces(*Wing);
+        CurrentLiftPolar->clear();
+        CurrentLiftPolar->AddPoint(CurrentForces.AoA, CurrentForces.Cl);
+        CurrentDragPolar->clear();
+        CurrentDragPolar->AddPoint(CurrentForces.AoA, CurrentForces.Cd);
+        CurrentTorquePolar->clear();
+        CurrentTorquePolar->AddPoint(CurrentForces.AoA, CurrentForces.Cm_c4);
+        if (b_IsRunning) {
+            ComputeAndApplyForces();
 
-        StepSimulation();
+            StepSimulation();
 
-        static double time = 0.0;
-        time += timeStep;
+            static double time = 0.0;
+            time += timeStep;
 
-        auto TotalForcesMag = b2Length(CurrentForces.GetTotalForce());
-        ForcesTimeSeries->AddPoint({time, TotalForcesMag});
+            auto TotalForcesMag = b2Length(CurrentForces.GetTotalForce());
+            ForcesTimeSeries->AddPoint({time, TotalForcesMag});
 
-        fix v = b2Length(b2Body_GetLinearVelocity(WingBody));
-        fix w = b2Body_GetAngularVelocity(WingBody);
-        fix h = b2Body_GetPosition(WingBody).y;
-        fix m = b2Body_GetMass(WingBody);
-        fix I = b2Body_GetRotationalInertia(WingBody);
-        fix g = b2Length(b2World_GetGravity(World));
-        fix K_l = .5f*m*v*v;
-        fix K_a = .5f*I*w*w;
-        fix U = m*g*h;
-        fix E = U + K_l + K_a;
+            const auto &WingBody = Wing->BodyId;
+            fix v = b2Length(b2Body_GetLinearVelocity(WingBody));
+            fix w = b2Body_GetAngularVelocity(WingBody);
+            fix h = b2Body_GetPosition(WingBody).y;
+            fix m = b2Body_GetMass(WingBody);
+            fix I = b2Body_GetRotationalInertia(WingBody);
+            fix g = b2Length(b2World_GetGravity(World));
+            fix K_l = .5f*m*v*v;
+            fix K_a = .5f*I*w*w;
+            fix U = m*g*h;
+            fix E = U + K_l + K_a;
 
-        EnergyTotalTimeSeries           ->AddPoint({time, E});
-        EnergyPotentialTimeSeries       ->AddPoint({time, U});
-        EnergyKineticLinearTimeSeries   ->AddPoint({time, K_l});
-        EnergyKineticAngularTimeSeries  ->AddPoint({time, K_a});
+            EnergyTotalTimeSeries           ->AddPoint({time, E});
+            EnergyPotentialTimeSeries       ->AddPoint({time, U});
+            EnergyKineticLinearTimeSeries   ->AddPoint({time, K_l});
+            EnergyKineticAngularTimeSeries  ->AddPoint({time, K_a});
+        }
     }
 
     if constexpr (PrettyDraw) {
@@ -143,20 +144,25 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
         {
             Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
             WingStyle.thickness = 2.0f;
-            WingStyle.lineColor.a = 0.5f;
-            const Math::PointSet AirfoilPoints = LittlePlane->Wings[0]->Airfoil->GetProfileVertices(200);
-            Math::PointSet Points = AirfoilPoints; // Math::PointSet(Math::Point2DVec{{.25f*Chord ,.0f}}) + AirfoilPoints;
-            const auto [x, y] = b2Body_GetPosition(WingBody);
-            const auto [c, s] = b2Body_GetRotation(WingBody);
-            for (auto &Point : Points.getPoints()) {
-                constexpr auto chord = 1.0; // ;Airfoil.Params.ChordLength;
-                fix px = Point.x-chord*.5f;
-                fix py = Point.y;
+            WingStyle.lineColor.a = 1.0f;
 
-                Point.x = x + px*c - py*s;
-                Point.y = y + px*s + py*c;
+            for (const auto &Wing : LittlePlane->Wings) {
+                const Math::PointSet AirfoilPoints = LittlePlane->Wings[0]->Airfoil->GetProfileVertices(200);
+                Math::PointSet Points = AirfoilPoints; // Math::PointSet(Math::Point2DVec{{.25f*Chord ,.0f}}) + AirfoilPoints;
+
+                const auto Body = Wing->BodyId;
+                const auto [x, y] = b2Body_GetPosition(Body);
+                const auto [c, s] = b2Body_GetRotation(Body);
+                for (auto &Point : Points.getPoints()) {
+                    const auto chord = Wing->Params.ChordLength;
+                    fix px = Point.x-chord*.5f;
+                    fix py = Point.y;
+
+                    Point.x = x + px*c - py*s;
+                    Point.y = y + px*s + py*c;
+                }
+                Drawer::RenderPointSet(Dummy(Points), WingStyle);
             }
-            Drawer::RenderPointSet(Dummy(Points), WingStyle);
         }
     }
     if constexpr (DebugDraw) { DoDebugDraw(); }
@@ -320,7 +326,7 @@ void FLittlePlaneDesignerApp::OnStart() {
 
 void FLittlePlaneDesignerApp::DoDebugDraw() const {
     auto &Drawer = *DebugDraw_LegacyGL->handle();
-    Drawer.drawMass = false;
+    Drawer.drawMass = true;
     Drawer.drawBounds = false;
     Drawer.drawIslands = false;
     Drawer.drawBodyNames = true;
