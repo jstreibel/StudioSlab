@@ -1,0 +1,16 @@
+Checks: '-*,readability-identifier-naming'
+CheckOptions:
+  - key: readability-identifier-naming.ClassCase
+    value: PascalCase
+  - key: readability-identifier-naming.StructCase
+    value: PascalCase
+  - key: readability-identifier-naming.FunctionCase
+    value: PascalCase
+  - key: readability-identifier-naming.MethodCase
+    value: PascalCase
+  - key: readability-identifier-naming.NamespaceCase
+    value: PascalCase
+  - key: readability-identifier-naming.FunctionIgnoredRegexp
+    value: '^(main)$'
+  - key: readability-identifier-naming.IgnoreFailedSplit
+    value: '1'
