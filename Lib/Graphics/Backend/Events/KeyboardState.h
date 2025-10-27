@@ -29,10 +29,13 @@ namespace Slab::Graphics {
         [[nodiscard]] bool IsPressed(EKeyMap key) const;
         [[nodiscard]] EKeyState GetState(EKeyMap key) const;
         [[nodiscard]] const FKeyRecord& GetKeyRecord(EKeyMap key) const;
+        [[nodiscard]] bool AnyPressed() const;
 
-        EModKeys ModKeys{};
+        void Reset();
 
-        EKeyMap LastKey = Key_UNKNOWN;
+        EModKeys mod_keys{};
+
+        EKeyMap LastKey = EKeyMap::Key_UNKNOWN;
         FTimer SinceLastKeyEvent;
 
         UInt LastCodepoint = 0;

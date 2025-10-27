@@ -9,7 +9,7 @@ namespace Slab::Graphics {
     const FKeyboardState::FKeyRecord FKeyboardState::DefaultKeyRecord{};
 
     bool FKeyboardState::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
-        ModKeys = modKeys;
+        mod_keys = modKeys;
         LastKey = key;
         SinceLastKeyEvent.reset();
 
@@ -47,6 +47,22 @@ namespace Slab::Graphics {
             return it->second;
         }
         return DefaultKeyRecord;
+    }
+
+    bool FKeyboardState::AnyPressed() const {
+        for (const auto& Entry : KeyStates) {
+            if (Entry.second.State != Release) return true;
+        }
+        return false;
+    }
+
+    void FKeyboardState::Reset() {
+        KeyStates.clear();
+        mod_keys = {};
+        LastKey = EKeyMap::Key_UNKNOWN;
+        SinceLastKeyEvent.reset();
+        LastCodepoint = 0;
+        SinceLastCharacterEvent.reset();
     }
 
 }
