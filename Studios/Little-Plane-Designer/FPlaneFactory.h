@@ -23,6 +23,7 @@ class FPlaneFactory
     public:
     explicit FPlaneFactory() = default;
 
+    FPlaneFactory& Reset();
 
     FPlaneFactory& AddWing(const FWingDescriptor &Descriptor);
 

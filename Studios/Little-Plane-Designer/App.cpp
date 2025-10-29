@@ -30,6 +30,7 @@ constexpr int manualSubSteps = 10;
 void FLittlePlaneDesignerApp::ComputeAndApplyForces() const {
     for (auto &Wing : LittlePlane->Wings) {
         const auto &WingBody = Wing->BodyId;
+        if (!b2Body_IsAwake(WingBody)) continue;
 
         const auto CurrentForces = FLittlePlane::ComputeForces(*Wing, DebugDraw ? DebugDraw_LegacyGL : nullptr);
         b2Body_ApplyForce (WingBody, CurrentForces.GetTotalForce(), CurrentForces.loc, true);
@@ -77,12 +78,35 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
         View.yMax = + ViewHeight*.9f;
     }
     if (KeyboardState->IsPressed(Graphics::Key_LEFT)) {
-        View.xMin -= 0.1f;
-        View.xMax -= 0.1f;
+        if (KeyboardState->IsPressed(Graphics::Key_LEFT_SHIFT)) {
+            fix dWidth = View.GetWidth()*.005f;
+            View.xMin -= dWidth;
+            View.xMax -= dWidth;
+        } else {
+            auto Wing = LittlePlane->Wings[1];
+            fix RevJoint = Wing->RevJoint;
+            fix WingBody = Wing->BodyId;
+            fix PlaneBody = b2Joint_GetBodyA(RevJoint);
+
+            b2Body_ApplyTorque(WingBody, 1.f, true);
+            b2Body_ApplyTorque(PlaneBody, -1.f, true);
+        }
     }
     if (KeyboardState->IsPressed(Graphics::Key_RIGHT)) {
-        View.xMin += 0.1f;
-        View.xMax += 0.1f;
+        if (KeyboardState->IsPressed(Graphics::Key_LEFT_SHIFT)) {
+            fix dWidth = View.GetWidth()*.005f;
+            View.xMin += dWidth;
+            View.xMax += dWidth;
+        } else {
+            auto Wing = LittlePlane->Wings[1];
+            fix RevJoint = Wing->RevJoint;
+            fix WingBody = Wing->BodyId;
+            fix PlaneBody = b2Joint_GetBodyA(RevJoint);
+
+            b2Body_ApplyTorque(WingBody, -1.f, true);
+            b2Body_ApplyTorque(PlaneBody, 1.f, true);
+        }
+
     }
 
     Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
@@ -324,9 +348,9 @@ void FLittlePlaneDesignerApp::OnStart() {
     // Ground body
     b2BodyDef groundDef = b2DefaultBodyDef();                 // static by default
     groundDef.position = (b2Vec2){0.0f, -10.0f};
-    b2BodyId ground = b2CreateBody(World, &groundDef);
-    b2Polygon groundBox = b2MakeBox(50.0f, 10.0f);
-    b2ShapeDef groundShapeDef = b2DefaultShapeDef();
+    const b2BodyId ground = b2CreateBody(World, &groundDef);
+    const b2Polygon groundBox = b2MakeBox(50.0f, 10.0f);
+    const b2ShapeDef groundShapeDef = b2DefaultShapeDef();
     b2CreatePolygonShape(ground, &groundShapeDef, &groundBox);
 
     FPlaneFactory Factory{};
@@ -339,9 +363,9 @@ void FLittlePlaneDesignerApp::OnStart() {
             .Name = "Wing"
         },
         .RelativeLocation = {-1, 0.0f},
-        .BaseAngle = static_cast<float>(DegToRad(0.0)),
-        .MaxAngle = +static_cast<float>(DegToRad(15)),
-        .MinAngle = -static_cast<float>(DegToRad(-15))
+        .BaseAngle = static_cast<float>(DegToRad(12.0)),
+        .MaxAngle  = static_cast<float>(DegToRad(15)),
+        .MinAngle  = static_cast<float>(DegToRad(-15))
     })
     .AddWing(FWingDescriptor{
         .Airfoil = New<Foil::ViternaAirfoil2412>(),
@@ -349,11 +373,12 @@ void FLittlePlaneDesignerApp::OnStart() {
             .Name = "Winglet"
         },
         .RelativeLocation = {+0.5, 0.1f},
-        .BaseAngle = 0.f,
-        .MaxAngle = +static_cast<float>(DegToRad(15)),
-        .MinAngle = -static_cast<float>(DegToRad(-15))
+        .BaseAngle = static_cast<float>(DegToRad(12.0)),
+        .MaxAngle  = static_cast<float>(DegToRad(15)),
+        .MinAngle  = static_cast<float>(DegToRad(-15))
     })
-    .SetPosition({12.0f, 12.0f})
+    .SetPosition({12.0f, 12.f})
+    // .SetPosition({0.f, 0.21f})
     .BuildPlane(World);
 
     SetupMonitors();

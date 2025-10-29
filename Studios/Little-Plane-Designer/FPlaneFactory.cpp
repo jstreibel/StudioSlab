@@ -7,6 +7,11 @@
 #include "graphic/graphic_basic.h"
 
 
+FPlaneFactory& FPlaneFactory::Reset()
+{
+    return *this = FPlaneFactory();
+}
+
 FPlaneFactory& FPlaneFactory::AddWing(const FWingDescriptor &Descriptor)
 {
     Descriptors.emplace_back(Descriptor);
@@ -20,15 +25,14 @@ FPlaneFactory& FPlaneFactory::SetPosition(const b2Vec2 Pos) {
 }
 
 TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
-    Vector<TPointer<FWing>> Wings;
-    for (auto &Descriptor : Descriptors) {
-        Descriptor.Wing = BuildWing(Descriptor, World);
-        Wings.emplace_back(Descriptor.Wing);
-    }
 
     const auto PlaneHull = BuildBody(World);
 
-    for (const auto &WingDesc : Descriptors) {
+    Vector<TPointer<FWing>> Wings;
+    for (auto &WingDesc : Descriptors) {
+        WingDesc.Wing = BuildWing(WingDesc, World);
+        Wings.emplace_back(WingDesc.Wing);
+
         auto Joint = b2DefaultRevoluteJointDef();
         Joint.bodyIdA = PlaneHull;
         Joint.bodyIdB = WingDesc.Wing->BodyId;
@@ -43,6 +47,8 @@ TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
         fix RevJoint = b2CreateRevoluteJoint(World, &Joint);
         b2RevoluteJoint_EnableMotor(RevJoint, true);
         b2RevoluteJoint_SetTargetAngle(RevJoint, WingDesc.BaseAngle);
+
+        WingDesc.Wing->RevJoint = RevJoint;
     }
 
     return New<FLittlePlane>(Wings);
@@ -73,14 +79,11 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
     b2BodyDef bodyDef = b2DefaultBodyDef();
 
     bodyDef.type = b2_dynamicBody;
-    // bodyDef.position = (b2Vec2){ViewSize*(.5f), ViewSize*.25f};
     bodyDef.position = {
         Position.x + Descriptor.RelativeLocation.x - Params.COM.x,
         Position.y + Descriptor.RelativeLocation.y - Params.COM.y
     };
     bodyDef.rotation = b2MakeRot(Descriptor.BaseAngle);
-    // bodyDef.angularVelocity = ω0;
-    // bodyDef.linearVelocity = v0;
 
     const auto WingBody = b2CreateBody(World, &bodyDef);
     b2Body_SetName(WingBody, Params.Name.c_str());

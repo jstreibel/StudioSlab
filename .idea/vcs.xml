@@ -7,5 +7,11 @@
     <mapping directory="$PROJECT_DIR$/Lib/3rdParty/imgui" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Lib/3rdParty/imgui-node-editor" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Notebooks" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug-clang-no-gpu/_deps/box2d-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug-clang/_deps/box2d-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/box2d-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-release-clang-no-gpu/_deps/box2d-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-release-clang/_deps/box2d-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/cmake-build-release/_deps/box2d-src" vcs="Git" />
   </component>
 </project>

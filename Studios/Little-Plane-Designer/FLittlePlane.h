@@ -10,6 +10,7 @@
 
 struct FWing {
     b2BodyId BodyId;
+    b2JointId RevJoint;
     TPointer<Foil::IAirfoilPolars> Airfoil;
     Foil::FAirfoilParams Params;
 };

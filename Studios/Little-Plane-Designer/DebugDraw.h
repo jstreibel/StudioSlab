@@ -28,7 +28,7 @@ constexpr auto b2_pi = M_PI;
 
 class LegacyGLDebugDraw {
 public:
-    explicit LegacyGLDebugDraw(float alpha = 1.0f, int circleSegments = 24)
+    explicit LegacyGLDebugDraw(float alpha = 1.0f, int circleSegments = 128)
     : m_alpha(alpha)
     , m_circleSegments(circleSegments)
     , Writer(Slab::New<Slab::Graphics::OpenGL::FWriterOpenGL>(Slab::Core::Resources::GetIndexedFontFileName(3), 28))
@@ -342,7 +342,7 @@ private:
 
     b2DebugDraw m_dd{};
     float m_alpha{1.0f};
-    int   m_circleSegments{24};
+    int   m_circleSegments{128};
     Slab::TPointer<Slab::Graphics::OpenGL::FWriterOpenGL> Writer;
 };
 
