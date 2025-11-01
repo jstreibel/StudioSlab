@@ -24,6 +24,11 @@ FPlaneFactory& FPlaneFactory::SetPosition(const b2Vec2 Pos) {
     return *this;
 }
 
+FPlaneFactory& FPlaneFactory::SetRotation(const float InitialAngle) {
+    this->Angle = InitialAngle;
+    return *this;
+}
+
 TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
 
     const auto PlaneHull = BuildBody(World);
@@ -43,10 +48,16 @@ TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
         Joint.enableLimit = true;
         Joint.lowerAngle  = WingDesc.MinAngle;
         Joint.upperAngle  = WingDesc.MaxAngle;
+        Joint.referenceAngle = WingDesc.BaseAngle;
+
+        Joint.enableMotor = false;
+        Joint.enableSpring = true;
+        Joint.hertz = WingDesc.OscFreq;
+        Joint.dampingRatio = WingDesc.DampRatio;
 
         fix RevJoint = b2CreateRevoluteJoint(World, &Joint);
-        b2RevoluteJoint_EnableMotor(RevJoint, true);
         b2RevoluteJoint_SetTargetAngle(RevJoint, WingDesc.BaseAngle);
+        b2RevoluteJoint_EnableSpring(RevJoint, true);
 
         WingDesc.Wing->RevJoint = RevJoint;
     }
@@ -121,7 +132,10 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
     return New<FWing>(FWing{
         .BodyId = WingBody,
         .Airfoil = Airfoil,
-        .Params = Params});
+        .Params = Params,
+        .BaseAngle = Descriptor.BaseAngle,
+        .MaxAngle = Descriptor.MaxAngle,
+        .MinAngle = Descriptor.MinAngle});
 }
 
 void FPlaneFactory::ShiftBodyCOM(const float Δx, const float Δy, const b2BodyId Body) {

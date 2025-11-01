@@ -13,6 +13,10 @@ struct FWing {
     b2JointId RevJoint;
     TPointer<Foil::IAirfoilPolars> Airfoil;
     Foil::FAirfoilParams Params;
+    const float BaseAngle = 0.0f;
+    const float MaxAngle  = 0.0f;
+    const float MinAngle  = 0.0f;
+
 };
 
 class FLittlePlane

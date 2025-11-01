@@ -28,7 +28,7 @@ namespace Slab::Graphics::OpenGL {
             , Program(shaderDir + "v3f-t2f-c4f.vert", shaderDir + "v3f-t2f-c4f.frag")
             , m_PenTransform([](const Point2D &p){ return p; }){
 
-        auto factor = int(ceil(ptSize/30.));
+        const auto factor = static_cast<int>(ceil(ptSize / 30.));
 
         Atlas = texture_atlas_new(factor*512, factor*512, 1);
         Font = texture_font_new_from_file(Atlas, ptSize, fontFile.c_str());
@@ -56,7 +56,7 @@ namespace Slab::Graphics::OpenGL {
 
         // "delete vertexBuffer;"
 
-        Str name = Font->filename;
+        const Str name = Font->filename;
         try {
             Core::Log::Warning() << "TODO: fix problematic font deletion. Font '" << name << "' was not deleted." << Core::Log::Flush;
             //texture_font_delete(font); // TODO: problematik
@@ -75,20 +75,22 @@ namespace Slab::Graphics::OpenGL {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, (GLsizei) Atlas->width, (GLsizei) Atlas->height,
-                     0, GL_RED, GL_UNSIGNED_BYTE, Atlas->data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED,
+            static_cast<GLsizei>(Atlas->width),
+            static_cast<GLsizei>(Atlas->height),
+            0, GL_RED, GL_UNSIGNED_BYTE, Atlas->data);
 
         Font->atlas_dirty = 0;
     }
 
-    void FWriterOpenGL::SetBufferText(const Str &textStr, Point2D pen, FColor Color, bool Rotate90Degrees) {
+    void FWriterOpenGL::SetBufferText(const Str &Text, Point2D PenLocation, const FColor Color, const bool Rotate90Degrees) {
         CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
 
         VertexBuffer.clear();
 
         size_t i;
         float r = Color.r, g = Color.g, b = Color.b, a = Color.a;
-        auto text = textStr.c_str();
+        auto text = Text.c_str();
         for (i = 0; i < strlen(text); i += utf8_characterByteSize(text + i)) {
             auto code_point = text + i;
 
@@ -105,10 +107,10 @@ namespace Slab::Graphics::OpenGL {
                     kerning = texture_glyph_get_kerning(glyph, text + i - 1);
 
                 if(Rotate90Degrees){
-                    pen.y += kerning;
+                    PenLocation.y += kerning;
 
-                    const int x0 = (int) (pen.x - glyph->offset_y);
-                    const int y0 = (int) (pen.y + glyph->offset_x + glyph->width);
+                    const int x0 = (int) (PenLocation.x - glyph->offset_y);
+                    const int y0 = (int) (PenLocation.y + glyph->offset_x + glyph->width);
                     const int x1 = (int) (x0 + glyph->height);
                     const int y1 = (int) (y0 - glyph->width);
                     const float s0 = glyph->s0;
@@ -124,13 +126,13 @@ namespace Slab::Graphics::OpenGL {
 
                     VertexBuffer.PushBack(vertices, 4, indices, 6);
 
-                    pen.y += glyph->advance_x;
+                    PenLocation.y += glyph->advance_x;
                 }
                 else {
-                    pen.x += kerning;
+                    PenLocation.x += kerning;
 
-                    const int x0 = (int) (pen.x + glyph->offset_x);
-                    const int y0 = (int) (pen.y + glyph->offset_y);
+                    const int x0 = (int) (PenLocation.x + glyph->offset_x);
+                    const int y0 = (int) (PenLocation.y + glyph->offset_y);
                     const int x1 = (int) (x0 + glyph->width);
                     const int y1 = (int) (y0 - glyph->height);
                     const float s0 = glyph->s0;
@@ -146,7 +148,7 @@ namespace Slab::Graphics::OpenGL {
 
                     VertexBuffer.PushBack(vertices, 4, indices, 6);
 
-                    pen.x += glyph->advance_x;
+                    PenLocation.x += glyph->advance_x;
                 }
             }
         }
@@ -186,7 +188,6 @@ namespace Slab::Graphics::OpenGL {
         SetBufferText(Text, Pen, Color, Vertical);
         CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
 
-        DrawBuffer();
         CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
     }
 

@@ -21,11 +21,15 @@ using CAirfoil = Foil::ViternaAirfoil2412;
 constexpr auto PrettyDraw = true;
 constexpr auto DebugDraw = true;
 
-constexpr float TimeScale = 1.0;
+constexpr float TimeScale = 1;
+
+constexpr auto InitialViewWidth = 3.2f*1.2f;
 
 constexpr float timeStep = TimeScale/60.0f;
 constexpr int subSteps = 1;
 constexpr int manualSubSteps = 10;
+
+constexpr auto StartRunning = true;
 
 void FLittlePlaneDesignerApp::ComputeAndApplyForces() const {
     for (auto &Wing : LittlePlane->Wings) {
@@ -44,21 +48,10 @@ void FLittlePlaneDesignerApp::StepSimulation() const {
         b2World_Step(World, splitTimeStep, subSteps);
 }
 
-bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& PlatformWindow) {
-    using namespace Slab;
+void FLittlePlaneDesignerApp::HandleInputs(const Graphics::FKeyboardState& KeyboardState) {
+    const auto AspectRatio = static_cast<float>(WinWidth) / WinHeight;
 
-    namespace Drawer = Graphics::OpenGL::Legacy;
-    fix WinHeight = PlatformWindow.GetHeight();
-    fix WinWidth = PlatformWindow.GetWidth();
-    fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
-    constexpr auto InitialViewWidth = 25.0*1.2f;
-    fix InitialViewHeight = InitialViewWidth / AspectRatio;
-
-    static Graphics::RectR View {
-        -InitialViewWidth*.5f, InitialViewWidth*.5f, -.1f*InitialViewHeight, .9f*InitialViewHeight};
-
-    fix KeyboardState = PlatformWindow.GetKeyboardState();
-    if (KeyboardState->IsPressed(Graphics::Key_MINUS)) {
+    if (KeyboardState.IsPressed(Graphics::Key_MINUS)) {
         const auto ViewWidth = View.GetWidth() * 1.01f;
         const auto ViewHeight = View.GetWidth() / AspectRatio;
 
@@ -67,7 +60,7 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
         View.xMax = xCenter + ViewWidth*.5f;
         View.yMin = - ViewHeight*.1f;
         View.yMax = + ViewHeight*.9f;
-    } if (KeyboardState->IsPressed(Graphics::Key_EQUAL)) {
+    } if (KeyboardState.IsPressed(Graphics::Key_EQUAL)) {
         const auto ViewWidth = View.GetWidth() / 1.01f;
         const auto ViewHeight = View.GetWidth() / AspectRatio;
 
@@ -77,44 +70,63 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
         View.yMin = - ViewHeight*.1f;
         View.yMax = + ViewHeight*.9f;
     }
-    if (KeyboardState->IsPressed(Graphics::Key_LEFT)) {
-        if (KeyboardState->IsPressed(Graphics::Key_LEFT_SHIFT)) {
+
+    bool Flaps = false;
+    if (KeyboardState.IsPressed(Graphics::Key_LEFT)) {
+        if (KeyboardState.IsPressed(Graphics::Key_LEFT_SHIFT)) {
             fix dWidth = View.GetWidth()*.005f;
             View.xMin -= dWidth;
             View.xMax -= dWidth;
         } else {
-            auto Wing = LittlePlane->Wings[1];
+            const auto Wing = LittlePlane->Wings[1];
             fix RevJoint = Wing->RevJoint;
             fix WingBody = Wing->BodyId;
-            fix PlaneBody = b2Joint_GetBodyA(RevJoint);
 
-            b2Body_ApplyTorque(WingBody, 1.f, true);
-            b2Body_ApplyTorque(PlaneBody, -1.f, true);
+            b2RevoluteJoint_SetTargetAngle(RevJoint, Wing->MinAngle);
+            b2Body_SetAwake(WingBody, true);
+            Flaps = true;
         }
     }
-    if (KeyboardState->IsPressed(Graphics::Key_RIGHT)) {
-        if (KeyboardState->IsPressed(Graphics::Key_LEFT_SHIFT)) {
+    if (KeyboardState.IsPressed(Graphics::Key_RIGHT)) {
+        if (KeyboardState.IsPressed(Graphics::Key_LEFT_SHIFT)) {
             fix dWidth = View.GetWidth()*.005f;
             View.xMin += dWidth;
             View.xMax += dWidth;
         } else {
-            auto Wing = LittlePlane->Wings[1];
+            const auto Wing = LittlePlane->Wings[1];
             fix RevJoint = Wing->RevJoint;
             fix WingBody = Wing->BodyId;
-            fix PlaneBody = b2Joint_GetBodyA(RevJoint);
 
-            b2Body_ApplyTorque(WingBody, -1.f, true);
-            b2Body_ApplyTorque(PlaneBody, 1.f, true);
+            b2RevoluteJoint_SetTargetAngle(RevJoint, Wing->MaxAngle);
+            b2Body_SetAwake(WingBody, true);
+            Flaps = true;
         }
-
     }
+    if (!Flaps) {
+        const auto Wing = LittlePlane->Wings[1];
+        fix RevJoint = Wing->RevJoint;
+
+        b2RevoluteJoint_SetTargetAngle(RevJoint, Wing->BaseAngle);
+    }
+
+}
+
+bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& PlatformWindow) {
+    using namespace Slab;
+
+    namespace Drawer = Graphics::OpenGL::Legacy;
+    WinHeight = PlatformWindow.GetHeight();
+    WinWidth = PlatformWindow.GetWidth();
+
+    fix KeyboardState = PlatformWindow.GetKeyboardState();
+    HandleInputs(*KeyboardState);
 
     Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
     Drawer::ResetModelView();
     Drawer::SetupOrtho({View.xMin, View.xMax, View.yMin, View.yMax});
     const auto Writer = DebugDraw_LegacyGL->GetWriter();
     Writer->Reshape(WinWidth, WinHeight);
-    Writer->SetPenPositionTransform([WinWidth, WinHeight](const Graphics::Point2D& pt) {
+    Writer->SetPenPositionTransform([this](const Graphics::Point2D& pt) {
         return Graphics::FromSpaceToViewportCoord(pt,
             Graphics::RectR{View.xMin, View.xMax, View.yMin, View.yMax},
             Graphics::RectI{0, WinWidth, 0, WinHeight});
@@ -340,9 +352,18 @@ void FLittlePlaneDesignerApp::OnStart() {
 
     DebugDraw_LegacyGL = Slab::New<LegacyGLDebugDraw>();
 
+    WinWidth = SystemWindow->GetWidth();
+    WinHeight = SystemWindow->GetHeight();
+    fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
+    fix InitialViewHeight = InitialViewWidth / AspectRatio;
+    View = {
+        -InitialViewWidth*.5f, InitialViewWidth*.5f, -.1f*InitialViewHeight, .9f*InitialViewHeight};
+
+    b_IsRunning = StartRunning;
+
     // World
     b2WorldDef worldDef = b2DefaultWorldDef();
-    worldDef.gravity = (b2Vec2){0.0f, -10.0f};
+    worldDef.gravity = (b2Vec2){0.0f, -9.8f};
     World = b2CreateWorld(&worldDef);
 
     // Ground body
@@ -363,9 +384,9 @@ void FLittlePlaneDesignerApp::OnStart() {
             .Name = "Wing"
         },
         .RelativeLocation = {-1, 0.0f},
-        .BaseAngle = static_cast<float>(DegToRad(12.0)),
-        .MaxAngle  = static_cast<float>(DegToRad(15)),
-        .MinAngle  = static_cast<float>(DegToRad(-15))
+        .BaseAngle = static_cast<float>(DegToRad(0.0)),
+        .MaxAngle  = static_cast<float>(DegToRad(0)),
+        .MinAngle  = static_cast<float>(DegToRad(0))
     })
     .AddWing(FWingDescriptor{
         .Airfoil = New<Foil::ViternaAirfoil2412>(),
@@ -373,12 +394,13 @@ void FLittlePlaneDesignerApp::OnStart() {
             .Name = "Winglet"
         },
         .RelativeLocation = {+0.5, 0.1f},
-        .BaseAngle = static_cast<float>(DegToRad(12.0)),
+        .BaseAngle = static_cast<float>(DegToRad(2.0)),
         .MaxAngle  = static_cast<float>(DegToRad(15)),
         .MinAngle  = static_cast<float>(DegToRad(-15))
     })
-    .SetPosition({12.0f, 12.f})
-    // .SetPosition({0.f, 0.21f})
+    // .SetPosition({12.0f, 12.f})
+    .SetPosition({0.f, 0.21f})
+    .SetRotation(DegToRad(0.0f))
     .BuildPlane(World);
 
     SetupMonitors();

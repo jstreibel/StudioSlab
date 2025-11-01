@@ -14,6 +14,8 @@ struct FWingDescriptor {
     float BaseAngle = 0.0f;
     float MaxAngle = 0.0f;
     float MinAngle = 0.0f;
+    float OscFreq = 5.0f;
+    float DampRatio = 0.7f;
 
     TPointer<FWing> Wing;
 };
@@ -29,8 +31,11 @@ class FPlaneFactory
 
     FPlaneFactory& SetPosition(b2Vec2);
 
+    FPlaneFactory& SetRotation(float);
+
     TPointer<FLittlePlane> BuildPlane(b2WorldId World);
     b2BodyId BuildBody(b2WorldId World) const;
+
 
 private:
     Vector<FWingDescriptor> Descriptors;

@@ -22,23 +22,37 @@ inline double DegToRad(const double ang) { return ang * M_PI / 180.0;}
 inline double RadToDeg(const double ang) { return ang * 180.0 / M_PI;}
 
 class FLittlePlaneDesignerApp final : public FApplication {
-    TPointer<LegacyGLDebugDraw> DebugDraw_LegacyGL;
-
-    bool b_IsRunning = false;
-
-    TPointer<FLittlePlane> LittlePlane;
 public:
-    void ComputeAndApplyForces() const;
-    void StepSimulation() const;
+    bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override;
+
+    FLittlePlaneDesignerApp(int argc, const char* argv[]);
+
+    ~FLittlePlaneDesignerApp() override;
+
     bool NotifyRender(const Graphics::FPlatformWindow& PlatformWindow) override;
 
-protected:
+private:
     b2WorldId World;
 
     TPointer<Graphics::FGUIContext> GUIContext;
 
     const int PlotsHeight = 400;
     Vector<TPointer<Graphics::FPlot2DWindow>> Plots;
+
+    void SetupMonitors();
+
+    void OnStart() override;
+
+    void DoDebugDraw() const;
+
+    void Monitor(const Graphics::FPlatformWindow& PlatformWindow);
+
+    void ComputeAndApplyForces() const;
+    void StepSimulation() const;
+    void HandleInputs(const Graphics::FKeyboardState& KeyboardState);
+
+    Graphics::RectR View;
+    Int WinHeight, WinWidth;
 
     DeclarePointset(ForcesTimeSeries)
 
@@ -51,21 +65,9 @@ protected:
     DeclarePointset(CurrentDragPolar)
     DeclarePointset(CurrentTorquePolar)
 
-    void SetupMonitors();
-
-    void OnStart() override;
-
-    void DoDebugDraw() const;
-
-    void Monitor(const Graphics::FPlatformWindow& PlatformWindow);
-
-public:
-    bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override;
-
-    FLittlePlaneDesignerApp(const int argc, const char* argv[]);
-
-    ~FLittlePlaneDesignerApp() override;
-
+    TPointer<LegacyGLDebugDraw> DebugDraw_LegacyGL;
+    bool b_IsRunning;
+    TPointer<FLittlePlane> LittlePlane;
 
 };
 
