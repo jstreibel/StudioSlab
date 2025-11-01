@@ -38,12 +38,16 @@ TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
         WingDesc.Wing = BuildWing(WingDesc, World);
         Wings.emplace_back(WingDesc.Wing);
 
+        const auto [xCom, yCom] = WingDesc.Params.COM;
+        const auto [xAnchorLocal, yAnchorLocal] = WingDesc.Params.LocalAnchor;
+        const auto Chord = WingDesc.Params.ChordLength;
+        const auto Thick = WingDesc.Params.Thickness;
         auto Joint = b2DefaultRevoluteJointDef();
         Joint.bodyIdA = PlaneHull;
         Joint.bodyIdB = WingDesc.Wing->BodyId;
         Joint.collideConnected = false;
         Joint.localAnchorA = WingDesc.RelativeLocation;
-        Joint.localAnchorB = WingDesc.Params.COM;
+        Joint.localAnchorB = {xCom * Chord + xAnchorLocal, yCom * Thick + yAnchorLocal};
 
         Joint.enableLimit = true;
         Joint.lowerAngle  = WingDesc.MinAngle;

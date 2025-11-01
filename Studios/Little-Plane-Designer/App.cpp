@@ -24,6 +24,7 @@ constexpr auto DebugDraw = true;
 constexpr float TimeScale = 1;
 
 constexpr auto InitialViewWidth = 3.2f*1.2f;
+// constexpr auto InitialViewWidth = 30*1.2f;
 
 constexpr float timeStep = TimeScale/60.0f;
 constexpr int subSteps = 1;
@@ -99,7 +100,7 @@ void FLittlePlaneDesignerApp::HandleInputs(const Graphics::FKeyboardState& Keybo
 
             b2RevoluteJoint_SetTargetAngle(RevJoint, Wing->MaxAngle);
             b2Body_SetAwake(WingBody, true);
-            Flaps = true;
+            Flaps = !Flaps; // little trick, figure why
         }
     }
     if (!Flaps) {
@@ -216,7 +217,7 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
             WingStyle.lineColor.a = 1.0f;
 
             for (const auto &Wing : LittlePlane->Wings) {
-                const Math::PointSet AirfoilPoints = LittlePlane->Wings[0]->Airfoil->GetProfileVertices(200);
+                const Math::PointSet AirfoilPoints = LittlePlane->Wings[0]->Airfoil->GetProfileVertices(200, Wing->Params.ChordLength, Wing->Params.Thickness);
                 Math::PointSet Points = AirfoilPoints; // Math::PointSet(Math::Point2DVec{{.25f*Chord ,.0f}}) + AirfoilPoints;
 
                 const auto Body = Wing->BodyId;
@@ -224,7 +225,7 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
                 const auto [c, s] = b2Body_GetRotation(Body);
                 for (auto &Point : Points.getPoints()) {
                     const auto chord = Wing->Params.ChordLength;
-                    fix px = Point.x-chord*.5f;
+                    fix px = Point.x -chord*.5f;
                     fix py = Point.y;
 
                     Point.x = x + px*c - py*s;
@@ -391,12 +392,13 @@ void FLittlePlaneDesignerApp::OnStart() {
     .AddWing(FWingDescriptor{
         .Airfoil = New<Foil::ViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
-            .Name = "Winglet"
+            .Name = "Winglet",
         },
         .RelativeLocation = {+0.5, 0.1f},
         .BaseAngle = static_cast<float>(DegToRad(2.0)),
         .MaxAngle  = static_cast<float>(DegToRad(15)),
-        .MinAngle  = static_cast<float>(DegToRad(-15))
+        .MinAngle  = static_cast<float>(DegToRad(-15)),
+        .DampRatio = 0.96f
     })
     // .SetPosition({12.0f, 12.f})
     .SetPosition({0.f, 0.21f})

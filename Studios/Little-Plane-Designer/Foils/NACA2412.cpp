@@ -4,7 +4,7 @@
 
 #include "NACA2412.h"
 
-static Math::PointSet GetNACA2412ProfileVertices(int N = 200){
+static Math::PointSet GetNACA2412ProfileVertices(int N, float chord_length, float thickness){
     if (N < 2) N = 2;
     Math::Point2DVec v;
     v.reserve(2 * (N + 1));
@@ -12,11 +12,11 @@ static Math::PointSet GetNACA2412ProfileVertices(int N = 200){
     // NACA m=camber, p=camber pos, t=thickness (unit chord)
     constexpr double m = 0.02;     // 2412
     constexpr double p = 0.40;
-    constexpr double t = 0.12;
+    const double t = thickness/chord_length;
 
     // ---- Geometry helpers ----
     // NACA 4-digit formulas on x∈[0,1]
-    auto yt = [](const double x) {
+    auto yt = [t = thickness](const double x) {
         const double rt = std::sqrt(std::max(0.0, x));
         return 5.0 * t * (0.2969 * rt - 0.1260 * x - 0.3516 * x * x
                           + 0.2843 * x * x * x - 0.1015 * x * x * x * x);
@@ -38,7 +38,7 @@ static Math::PointSet GetNACA2412ProfileVertices(int N = 200){
         const double yc_ = yc(x);
         double xl = x + yt_ * std::sin(th);
         double yl = yc_ - yt_ * std::cos(th);
-        v.push_back({xl, yl});
+        v.push_back({xl*chord_length, yl});
     }
     // Upper surface from LE->TE
     for (int i = 0; i <= N; ++i) {
@@ -48,15 +48,15 @@ static Math::PointSet GetNACA2412ProfileVertices(int N = 200){
         const double yc_ = yc(x);
         double xu = x - yt_ * std::sin(th);
         double yu = yc_ + yt_ * std::cos(th);
-        v.push_back({xu, yu});
+        v.push_back({xu*chord_length, yu});
     }
     return Math::PointSet(v);
 }
 
-Math::PointSet Foil::Airfoil_NACA2412::GetProfileVertices(int N) const {
-    return GetNACA2412ProfileVertices(N);
+Math::PointSet Foil::Airfoil_NACA2412::GetProfileVertices(int N, float chord_length, float thickness) const {
+    return GetNACA2412ProfileVertices(N, chord_length, thickness);
 }
 
-Math::PointSet Foil::ViternaAirfoil2412::GetProfileVertices(int N) const {
-    return GetNACA2412ProfileVertices(N);
+Math::PointSet Foil::ViternaAirfoil2412::GetProfileVertices(int N, float chord_length, float thickness) const {
+    return GetNACA2412ProfileVertices(N, chord_length, thickness);
 }
