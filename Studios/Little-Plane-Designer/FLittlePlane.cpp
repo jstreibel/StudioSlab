@@ -6,10 +6,12 @@
 
 #include <SFML/Window/Keyboard.hpp>
 
+#include "FAtmosphericCondition.h"
 #include "Foils/Foil.h"
 
 Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
     const FWing& Wing,
+    const FAtmosphericCondition &Atmosphere,
     const TPointer<LegacyGLDebugDraw>& DebugDraw)
 {
     // Directions
@@ -17,7 +19,8 @@ Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
 
     // Kinematics at c/4: use WORLD CENTER, not position
     const b2Vec2 COM = b2Body_GetWorldCenterOfMass(Wing.BodyId);
-    const b2Vec2 VelC4 = b2Body_GetLinearVelocity(Wing.BodyId);// const float QuarterChordVelocity_Mag = b2Length(QuarterChordVelocity);
+    const b2Vec2 VelC4 = b2Body_GetLinearVelocity(Wing.BodyId);
+    // const float VelC4_Mag = b2Length(VelC4);
     const b2Vec2 VelC4_Unit = b2Normalize(VelC4);
     const float VelC4_Mag = b2Length(VelC4);
     const float AoA_cos = b2Dot(FW_Unit, VelC4_Unit);
@@ -37,7 +40,7 @@ Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
     const double Cm_c4 = Wing.Airfoil->Cm_c4(AoA);
 
     // Params:
-    const auto rho = Wing.Params.rho;
+    const auto rho = Atmosphere.rho;
     const auto chord_length = Wing.Params.ChordLength;
     const auto span = Wing.Params.Span;
 
@@ -47,13 +50,13 @@ Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
     } P;
 
     // Dynamic pressure (keep density sane)
-    const double q   = 0.5 * rho * static_cast<double>(WindOnPointLen) * static_cast<double>(WindOnPointLen);
-    const double S   = chord_length * span;
+    const double DynamicPressure   = 0.5 * rho * static_cast<double>(WindOnPointLen) * static_cast<double>(WindOnPointLen);
+    const double SurfaceArea   = chord_length * span;
 
     // Magnitudes
-    const double Lmag = q * S * Cl;
-    const double Dmag = q * S * Cd;
-    const double τ_mag = 0.5 * q * span * chord_length * chord_length * Cm_c4;
+    const double Lmag = DynamicPressure * SurfaceArea * Cl;
+    const double Dmag = DynamicPressure * SurfaceArea * Cd;
+    const double τ_mag = 0.5 * DynamicPressure * span * chord_length * chord_length * Cm_c4;
     const double τ_aero = 0.25 * rho * VelC4_Mag * chord_length * chord_length* chord_length * P.Cmq * ω;
     const double τ_visc = -P.Komega * ω;
     const double τ = τ_mag + τ_aero + τ_visc;

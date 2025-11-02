@@ -5,6 +5,7 @@
 #ifndef STUDIOSLAB_FLITTLEPLANE_H
 #define STUDIOSLAB_FLITTLEPLANE_H
 
+#include "FAtmosphericCondition.h"
 #include "box2d/box2d.h"
 #include "Foils/Foil.h"
 
@@ -23,7 +24,10 @@ class FLittlePlane
 {
 public:
     explicit FLittlePlane(const Vector<TPointer<FWing>>& Wings) : Wings(Wings) {};
-    static Foil::FAirfoilDynamicData ComputeForces(const FWing& Wing, const TPointer<LegacyGLDebugDraw>& DebugDraw=nullptr);
+    static Foil::FAirfoilDynamicData ComputeForces(
+        const FWing& Wing,
+        const FAtmosphericCondition &Atmosphere={},
+        const TPointer<LegacyGLDebugDraw>& DebugDraw=nullptr);
 
     Vector<TPointer<FWing>> Wings;
 

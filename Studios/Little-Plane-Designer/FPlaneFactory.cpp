@@ -74,16 +74,22 @@ b2BodyId FPlaneFactory::BuildBody(const b2WorldId World) const {
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = Position;
     bodyDef.rotation = b2MakeRot(Angle);
+    bodyDef.linearDamping = 0.0f;
     const b2BodyId Body = b2CreateBody(World, &bodyDef);
     b2Body_SetName(Body, "Plane Body");
 
     b2ShapeDef ShapeDef = b2DefaultShapeDef();
-    ShapeDef.density = 0.01f;
-    ShapeDef.material.friction = 1.2f;
+    ShapeDef.density = Density;
+    ShapeDef.material.friction = 0.01f;
     const auto Box = b2MakeBox(1.25f, 0.2f);
     b2CreatePolygonShape(Body, &ShapeDef, &Box);
 
     return Body;
+}
+
+FPlaneFactory& FPlaneFactory::SetBodyDensity(const float NewDensity) {
+    this->Density = NewDensity;
+    return *this;
 }
 
 TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, const b2WorldId World) const {

@@ -35,12 +35,13 @@ class FPlaneFactory
 
     TPointer<FLittlePlane> BuildPlane(b2WorldId World);
     b2BodyId BuildBody(b2WorldId World) const;
-
+    FPlaneFactory& SetBodyDensity(float);
 
 private:
     Vector<FWingDescriptor> Descriptors;
 
     b2Vec2 Position = b2Vec2{0.0f, 0.0f};
+    float  Density  = 0.1f;
     float  Angle    = 0.0f;
 
     TPointer<FWing> BuildWing(const FWingDescriptor &Descriptor, b2WorldId World) const;
