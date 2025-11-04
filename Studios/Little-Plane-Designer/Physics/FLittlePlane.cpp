@@ -8,6 +8,8 @@
 
 #include "FAtmosphericCondition.h"
 #include "Foils/Foil.h"
+#include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
+#include "Graphics/Plot2D/PlotStyle.h"
 
 Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
     const FWing& Wing,
@@ -121,5 +123,32 @@ Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
         static_cast<float>(Cd),
         static_cast<float>(Cm_c4),
         static_cast<float>(AoA)};
+}
+
+void FLittlePlane::Draw() {
+    namespace Drawer = Graphics::OpenGL::Legacy;
+
+    Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
+    WingStyle.thickness = 2.0f;
+    WingStyle.lineColor.a = 1.0f;
+
+    for (const auto &Wing : Wings) {
+        const Math::FPointSet AirfoilPoints = Wing->Airfoil->GetProfileVertices(200, Wing->Params.ChordLength, Wing->Params.Thickness);
+        Math::FPointSet Points = AirfoilPoints;
+
+        const auto Body = Wing->BodyId;
+        const auto [x, y] = b2Body_GetPosition(Body);
+        const auto [c, s] = b2Body_GetRotation(Body);
+        for (auto &Point : Points.getPoints()) {
+            const auto chord = Wing->Params.ChordLength;
+            fix px = Point.x -chord*.5f;
+            fix py = Point.y;
+
+            Point.x = x + px*c - py*s;
+            Point.y = y + px*s + py*c;
+        }
+
+        Drawer::RenderPointSet(Dummy(Points), WingStyle);
+    }
 }
 

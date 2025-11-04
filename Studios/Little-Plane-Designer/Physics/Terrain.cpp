@@ -39,7 +39,7 @@ void FTerrain::Setup(const b2WorldId World, const FTerrainDescriptor& Descriptor
     b2BodyDef BodyDef = b2DefaultBodyDef();
     BodyDef.type = b2_staticBody;
     BodyDef.position = (b2Vec2){0.0f, 0.0f};
-    b2BodyId BodyId = b2CreateBody(World, &BodyDef);
+    const b2BodyId BodyId = b2CreateBody(World, &BodyDef);
 
     ChainId = b2CreateChain(BodyId, &ChainDef);
 
@@ -65,7 +65,8 @@ void FTerrain::Setup(const b2WorldId World, const FTerrainDescriptor& Descriptor
             MeshTris[i+5] = {x1, k_GroundHeight};
 
         }
-        SurfLine[Descriptor.Count-1] = {Descriptor.GetPoints()[Descriptor.Count-1].x, Descriptor.GetPoints()[Descriptor.Count-1].y};
+        const auto [xf, yf] = Descriptor.GetPoints()[Descriptor.Count-1];
+        SurfLine[Descriptor.Count-1] = {xf, yf};
         MeshPoints = Slab::New<Slab::Math::FPointSet>(MeshTris);
         SurfPoints = Slab::New<Slab::Math::FPointSet>(SurfLine);
     }

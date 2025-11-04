@@ -8,6 +8,7 @@
 #include "FAtmosphericCondition.h"
 #include "box2d/box2d.h"
 #include "Foils/Foil.h"
+#include "Graphics/IDrawable.h"
 
 struct FWing {
     b2BodyId BodyId;
@@ -20,7 +21,7 @@ struct FWing {
 
 };
 
-class FLittlePlane
+class FLittlePlane final : public Graphics::IDrawable
 {
 public:
     explicit FLittlePlane(const Vector<TPointer<FWing>>& Wings) : Wings(Wings) {};
@@ -30,6 +31,8 @@ public:
         const TPointer<LegacyGLDebugDraw>& DebugDraw=nullptr);
 
     Vector<TPointer<FWing>> Wings;
+
+    void Draw() override;
 
 private:
     FLittlePlane() = default;

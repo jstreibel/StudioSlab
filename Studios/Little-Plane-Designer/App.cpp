@@ -213,29 +213,7 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
 
         Terrain->Draw();
 
-        {
-            Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
-            WingStyle.thickness = 2.0f;
-            WingStyle.lineColor.a = 1.0f;
-
-            for (const auto &Wing : LittlePlane->Wings) {
-                const Math::FPointSet AirfoilPoints = LittlePlane->Wings[0]->Airfoil->GetProfileVertices(200, Wing->Params.ChordLength, Wing->Params.Thickness);
-                Math::FPointSet Points = AirfoilPoints; // Math::PointSet(Math::Point2DVec{{.25f*Chord ,.0f}}) + AirfoilPoints;
-
-                const auto Body = Wing->BodyId;
-                const auto [x, y] = b2Body_GetPosition(Body);
-                const auto [c, s] = b2Body_GetRotation(Body);
-                for (auto &Point : Points.getPoints()) {
-                    const auto chord = Wing->Params.ChordLength;
-                    fix px = Point.x -chord*.5f;
-                    fix py = Point.y;
-
-                    Point.x = x + px*c - py*s;
-                    Point.y = y + px*s + py*c;
-                }
-                Drawer::RenderPointSet(Dummy(Points), WingStyle);
-            }
-        }
+        LittlePlane->Draw();
     }
     if constexpr (DebugDraw) { DoDebugDraw(); }
 
