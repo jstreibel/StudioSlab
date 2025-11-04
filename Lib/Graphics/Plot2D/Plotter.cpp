@@ -11,7 +11,7 @@ namespace Slab::Graphics {
 
     }
 
-    PointSetArtist_ptr FPlotter::addPointSet(const Math::PointSet_ptr &data, PlotStyle style, Str name, bool affectsGraphRanges, int zOrder) {
+    PointSetArtist_ptr FPlotter::addPointSet(const Math::FPointSet_ptr &data, PlotStyle style, Str name, bool affectsGraphRanges, int zOrder) {
         return FPlotter::AddPointSet(plottingWindow, data, style, std::move(name), affectsGraphRanges, zOrder);
     }
 
@@ -41,7 +41,7 @@ namespace Slab::Graphics {
     }
 
     PointSetArtist_ptr
-    FPlotter::AddPointSet(const TPointer<FPlot2DWindow>& graph, const Math::PointSet_ptr &pointSet, PlotStyle plotStyle, Str label, bool affectsGraphRanges, int zOrder) {
+    FPlotter::AddPointSet(const TPointer<FPlot2DWindow>& graph, const Math::FPointSet_ptr &pointSet, PlotStyle plotStyle, Str label, bool affectsGraphRanges, int zOrder) {
         auto artist = Slab::New<PointSetArtist>(pointSet, plotStyle);
         artist->SetLabel(std::move(label));
 

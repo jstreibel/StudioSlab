@@ -42,15 +42,15 @@ namespace Slab::Models::KGRtoR {
         DevFloat tau_indirect=.0;
         DevFloat tau_avg=.0;
 
-        Math::PointSet temperature1HistoryData;
-        Math::PointSet temperature2HistoryData;
-        Math::PointSet temperature3HistoryData;
-        Math::PointSet temperature4HistoryData;
+        Math::FPointSet temperature1HistoryData;
+        Math::FPointSet temperature2HistoryData;
+        Math::FPointSet temperature3HistoryData;
+        Math::FPointSet temperature4HistoryData;
 
-        Math::PointSet histogramKData;
-        Math::PointSet histogramGradData;
-        Math::PointSet histogramVData;
-        Math::PointSet histogramEData;
+        Math::FPointSet histogramKData;
+        Math::FPointSet histogramGradData;
+        Math::FPointSet histogramVData;
+        Math::FPointSet histogramEData;
 
         void drawGUI();
 

@@ -15,10 +15,10 @@ namespace Slab::Models::KGRtoR {
     using PlotWindow = Slab::Graphics::FPlot2DWindow;
 
     class HistogramsViewer_KG : public KGViewer {
-        Slab::Math::PointSet histogram_data_energy;
-        Slab::Math::PointSet histogram_data_kinetic;
-        Slab::Math::PointSet histogram_data_gradient;
-        Slab::Math::PointSet histogram_data_potential;
+        Slab::Math::FPointSet histogram_data_energy;
+        Slab::Math::FPointSet histogram_data_kinetic;
+        Slab::Math::FPointSet histogram_data_gradient;
+        Slab::Math::FPointSet histogram_data_potential;
 
         using Func = Slab::Math::R2toR::FNumericFunction;
         using FuncPointer = Slab::TPointer<Func>;

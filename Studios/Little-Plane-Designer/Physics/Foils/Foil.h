@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_FOIL_H
 #define STUDIOSLAB_FOIL_H
 
-#include "../DebugDraw.h"
+#include "../../DebugDraw.h"
 #include "box2d/box2d.h"
 #include "Math/VectorSpace/Impl/PointSet.h"
 #include "Utils/RandUtils.h"
@@ -20,7 +20,7 @@ struct FAirfoilParams {
     const Str Name = ToStr(RandUtils::RandomUniformUInt());
 
     const float ChordLength = 1.0f;
-    const float Thickness  = 0.1f;
+    const float Thickness  = 0.1f; // units of chord
     const float Span  = 2.0f;
     const float LE_local = -0.25f; // from COM
     // COM from geometric center, in units of chord_length and thickness, respectively
@@ -37,7 +37,7 @@ class IAirfoilPolars
 
     virtual Str GetName() const = 0;
 
-    virtual Math::PointSet GetProfileVertices(int N, float chord_length, float thickness) const = 0;
+    virtual Math::FPointSet GetProfileVertices(int N, float chord_length, float thickness) const = 0;
 
     virtual double Cl(double AlphaRad) const = 0;
     virtual double Cd(double AlphaRad) const = 0;

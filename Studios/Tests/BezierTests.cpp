@@ -49,8 +49,8 @@ namespace Tests {
         Graphics::FPlotter::AddRtoRFunction(Naked(Graph), Naked(s_function), style, "Bezier");
 
         Fix Lim = 1.e3;
-        static Math::PointSet vertLine1{{{0.0, -Lim}, {0.0, Lim}}};
-        static Math::PointSet vertLine2{{{1.0, -Lim}, {1.0, Lim}}};
+        static Math::FPointSet vertLine1{{{0.0, -Lim}, {0.0, Lim}}};
+        static Math::FPointSet vertLine2{{{1.0, -Lim}, {1.0, Lim}}};
         style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         Graphics::FPlotter::AddPointSet(Naked(Graph), Naked(vertLine1), style, "Vertical Line 1", false);
         Graphics::FPlotter::AddPointSet(Naked(Graph), Naked(vertLine2), style, "Vertical Line 2", false);

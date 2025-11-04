@@ -40,10 +40,10 @@ namespace Slab::Graphics {
     };
 
     class PlotStyle {
-        LinePrimitive primitive;
+        LinePrimitive primitive = PlottingSolid;
 
-        GLint stippleFactor;
-        GLshort stipplePattern;
+        GLint stippleFactor = 1;
+        GLshort stipplePattern = 0xffff;
 
     public:
         auto getPrimitive() const -> LinePrimitive;
@@ -65,10 +65,10 @@ namespace Slab::Graphics {
         
         PlotStyle permuteColors(bool odd=false) const;
 
-        bool filled;
-        FColor lineColor;
-        FColor fillColor;
-        float thickness;
+        bool filled = true;
+        FColor lineColor = White;
+        FColor fillColor = Nil;
+        float thickness = 1.3f;
 
 
     };

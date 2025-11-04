@@ -13,7 +13,7 @@
 
 namespace Slab::Math::RtoR {
 
-    typedef Math::PointSet_ptr DFTModes;
+    typedef Math::FPointSet_ptr DFTModes;
     typedef CountType NumberOfModes;
 
     struct DFTResult {
@@ -28,7 +28,7 @@ namespace Slab::Math::RtoR {
 
             fix N = R.size();
 
-            auto amps = Slab::New<Math::PointSet>();
+            auto amps = Slab::New<Math::FPointSet>();
             for(int i=0; i<N; ++i){
                 fix Re_A = R[i].y;
                 fix Im_A = I[i].y;
@@ -52,7 +52,7 @@ namespace Slab::Math::RtoR {
             return n;
         }
 
-        explicit DFTResult(bool functionIsReal=false, DFTModes re=Slab::New<Math::PointSet>(), DFTModes im=Slab::New<Math::PointSet>())
+        explicit DFTResult(bool functionIsReal=false, DFTModes re=Slab::New<Math::FPointSet>(), DFTModes im=Slab::New<Math::FPointSet>())
         : re(std::move(re)), im(std::move(im)), inverseIsReal(functionIsReal)
         {
 

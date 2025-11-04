@@ -86,12 +86,8 @@ namespace Slab::Graphics::OpenGL {
         }
     }
 
-    void RenderOtherPrimitives(const Point2DVec& pts, PlotStyle style) noexcept {
-
-        const auto color = style.lineColor;
-
-        glColor4f(color.r, color.g, color.b, color.a);
-
+    void RenderOtherPrimitives(const Point2DVec& pts, PlotStyle style) noexcept
+    {
         GLenum Primitive;
         switch (style.getPrimitive()) {
         case LineStrip:
@@ -116,12 +112,24 @@ namespace Slab::Graphics::OpenGL {
             return;
         }
 
-        glBegin(Primitive);
-        for (const auto p: pts) glVertex2d(p.x, p.y);
-        glEnd();
+        glLineWidth(style.thickness);
+
+        auto Draw = [&](const auto& Points, const auto& Color, const auto& Prim) {
+            glColor4f(Color.r, Color.g, Color.b, Color.a);
+
+            glBegin(Prim);
+            for (const auto p: Points) glVertex2d(p.x, p.y);
+            glEnd();
+        };
+
+        Draw(pts, style.lineColor, Primitive);
+
+        if (!style.filled) return;
+
+        Draw(pts, style.fillColor, GL_LINES);
     }
 
-    bool Legacy::RenderPointSet(const PointSet_constptr& pSet, const PlotStyle& style) noexcept {
+    bool Legacy::RenderPointSet(const FPointSet_constptr& pSet, const PlotStyle& style) noexcept {
         if(pSet== nullptr) return true;
 
         IN pts = pSet->getPoints();

@@ -27,7 +27,7 @@ public:
 
     // Return a single polyline: start at TE on lower surface,
     // go to LE, then back to TE on upper surface. N+1 points per side.
-    Math::PointSet GetProfileVertices(int N, float chord_length, float thickness) const override;
+    Math::FPointSet GetProfileVertices(int N, float chord_length, float thickness) const override;
 
     Str GetName() const override { return "NACA2412"; }
 
@@ -104,7 +104,7 @@ public:
         invWidth_ = 1.0 / (M_PI_2 - P.alpha_s_pos); // for Cm blending
     }
 
-    Math::PointSet GetProfileVertices(int N, float chord_length, float thickness) const override;
+    Math::FPointSet GetProfileVertices(int N, float chord_length, float thickness) const override;
 
     // --- IAirfoil ---
     double Cl(double AlphaRad) const override {

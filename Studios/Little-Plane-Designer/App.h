@@ -8,15 +8,16 @@
 
 #include "Application.h"
 #include "DebugDraw.h"
-#include "FLittlePlane.h"
+#include "Physics/FLittlePlane.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 #include "Graphics/SFML/Graph.h"
 
 #include "box2d/box2d.h"
 #include "Core/Tools/Log.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Physics/Terrain.h"
 
-#define DeclarePointset(Name) TPointer<Math::PointSet> Name = New<Math::PointSet>();
+#define DeclarePointset(Name) TPointer<Math::FPointSet> Name = New<Math::FPointSet>();
 
 inline double DegToRad(const double ang) { return ang * M_PI / 180.0;}
 inline double RadToDeg(const double ang) { return ang * 180.0 / M_PI;}
@@ -68,6 +69,7 @@ private:
     TPointer<LegacyGLDebugDraw> DebugDraw_LegacyGL;
     bool b_IsRunning;
     TPointer<FLittlePlane> LittlePlane;
+    TPointer<FTerrain> Terrain;
 
 };
 

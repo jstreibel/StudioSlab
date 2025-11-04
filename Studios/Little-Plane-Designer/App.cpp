@@ -6,20 +6,20 @@
 
 #include <SFML/Graphics/View.hpp>
 
-#include "FPlaneFactory.h"
+#include "Physics/FPlaneFactory.h"
 #include "Core/SlabCore.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
 #include "Graphics/Plot2D/Plotter.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NativeFunction.h"
-#include "Foils/NACA2412.h"
+#include "Physics/Foils/NACA2412.h"
 #include "Graphics/Modules/Animator/Animator.h"
 
 using CAirfoil = Foil::ViternaAirfoil2412;
 
 constexpr auto PrettyDraw = true;
-constexpr auto DebugDraw = true;
+constexpr auto DebugDraw = false;
 
 constexpr float TimeScale = 1;
 
@@ -109,7 +109,7 @@ void FLittlePlaneDesignerApp::HandleInputs(const Graphics::FKeyboardState& Keybo
 
 }
 
-bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& PlatformWindow) {
+bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& PlatformWindow)  {
     using namespace Slab;
 
     namespace Drawer = Graphics::OpenGL::Legacy;
@@ -204,9 +204,14 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
 
     if constexpr (PrettyDraw) {
         Drawer::SetupLegacyGL();
+
+        /*
         Drawer::SetColor(Graphics::DarkGrass);
         Drawer::DrawRectangle({Graphics::Point2D{-100, 0}, Graphics::Point2D{100, -5}});
         Drawer::DrawLine({-100, 0}, {100, 0}, Graphics::GrassGreen, 3.f);
+        */
+
+        Terrain->Draw();
 
         {
             Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
@@ -214,8 +219,8 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
             WingStyle.lineColor.a = 1.0f;
 
             for (const auto &Wing : LittlePlane->Wings) {
-                const Math::PointSet AirfoilPoints = LittlePlane->Wings[0]->Airfoil->GetProfileVertices(200, Wing->Params.ChordLength, Wing->Params.Thickness);
-                Math::PointSet Points = AirfoilPoints; // Math::PointSet(Math::Point2DVec{{.25f*Chord ,.0f}}) + AirfoilPoints;
+                const Math::FPointSet AirfoilPoints = LittlePlane->Wings[0]->Airfoil->GetProfileVertices(200, Wing->Params.ChordLength, Wing->Params.Thickness);
+                Math::FPointSet Points = AirfoilPoints; // Math::PointSet(Math::Point2DVec{{.25f*Chord ,.0f}}) + AirfoilPoints;
 
                 const auto Body = Wing->BodyId;
                 const auto [x, y] = b2Body_GetPosition(Body);
@@ -355,7 +360,10 @@ void FLittlePlaneDesignerApp::OnStart() {
     fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
     fix InitialViewHeight = InitialViewWidth / AspectRatio;
     View = {
-        -InitialViewWidth*.5f, InitialViewWidth*.5f, -.1f*InitialViewHeight, .9f*InitialViewHeight};
+        -InitialViewWidth*.5f,
+         InitialViewWidth*.5f,
+        -.1f*InitialViewHeight,
+         .9f*InitialViewHeight};
 
     b_IsRunning = StartRunning;
 
@@ -373,24 +381,44 @@ void FLittlePlaneDesignerApp::OnStart() {
     b2CreatePolygonShape(ground, &groundShapeDef, &groundBox);
 
     // Ramp
-    b2BodyDef RampDef = b2DefaultBodyDef();
-    RampDef.position = {8.0f, 4.0f};
-    RampDef.fixedRotation = true;
-    RampDef.rotation = b2MakeRot(DegToRad(15.0f));
-    const b2BodyId Ramp = b2CreateBody(World, &RampDef);
-    const b2Polygon RampBox = b2MakeBox(10.0f, 0.25f);
-    const b2ShapeDef BoxShape = b2DefaultShapeDef();
-    b2CreatePolygonShape(Ramp, &BoxShape, &RampBox);
+    if constexpr (false) {
+        b2BodyDef RampDef = b2DefaultBodyDef();
+        RampDef.position = {8.0f, 4.0f};
+        RampDef.fixedRotation = true;
+        RampDef.rotation = b2MakeRot(DegToRad(15.0f));
+        const b2BodyId Ramp = b2CreateBody(World, &RampDef);
+        const b2Polygon RampBox = b2MakeBox(10.0f, 0.25f);
+        const b2ShapeDef BoxShape = b2DefaultShapeDef();
+        b2CreatePolygonShape(Ramp, &BoxShape, &RampBox);
+    }
+
+    // Terrain
+    Terrain = Slab::New<FTerrain>();
+    Terrain->Setup(World, FTerrainDescriptor{
+        .H = [](const float x) {
+            if (x < 0.0f) return 0.0f;
+
+            return 0.25f*x;
+        },
+        .tMin = -50.0f,
+        .tMax = 50.0f,
+        .Count = 100,
+    });
 
     // Plane
     FPlaneFactory Factory{};
 
     LittlePlane = Factory
+    .SetPosition({12.0f, 7.f})
+    // .SetPosition({0.f, 0.21f})
+    .SetRotation(DegToRad(0.0f))
+    .SetBodyDensity(0.01f)
     .AddWing(FWingDescriptor{
         .Airfoil = New<Foil::ViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
             .Name = "Wing",
-            .Span = 6.0f
+            // .Span = 6.0f
+            .ChordLength = 1.0f
         },
         .RelativeLocation = {-1, 0.0f},
         .BaseAngle = static_cast<float>(DegToRad(0.0)),
@@ -401,7 +429,8 @@ void FLittlePlaneDesignerApp::OnStart() {
         .Airfoil = New<Foil::ViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
             .Name = "Winglet",
-            .Span = 2.f
+            // .Span = 2.f
+            .ChordLength = 0.4f
         },
         .RelativeLocation = {+0.5, 0.1f},
         .BaseAngle = static_cast<float>(DegToRad(2.0)),
@@ -410,10 +439,6 @@ void FLittlePlaneDesignerApp::OnStart() {
         .OscFreq = 10.0f,
         .DampRatio = 1.0f,
     })
-    .SetPosition({12.0f, 6.f})
-    // .SetPosition({0.f, 0.21f})
-    .SetRotation(DegToRad(0.0f))
-    .SetBodyDensity(5.0f)
     .BuildPlane(World);
 
     SetupMonitors();

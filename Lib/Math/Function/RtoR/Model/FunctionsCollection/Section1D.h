@@ -21,7 +21,7 @@ namespace Slab::Math::RtoR {
 
         DevFloat operator()(DevFloat x) const override;
 
-        TPointer<Math::PointSet> renderToPointSet(RenderingOptions options) override;
+        TPointer<Math::FPointSet> renderToPointSet(RenderingOptions options) override;
     };
 
     DefinePointers(Section1D)

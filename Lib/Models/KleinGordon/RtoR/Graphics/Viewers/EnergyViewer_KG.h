@@ -33,10 +33,10 @@ namespace Slab::Models::KGRtoR {
         Graphics::PointSetArtist_ptr GradHistoryArtist{};
         Graphics::PointSetArtist_ptr PotentialHistoryArtist{};
 
-        TPointer<PointSet> EnergyHistory    = New<PointSet>();
-        TPointer<PointSet> KineticHistory   = New<PointSet>();
-        TPointer<PointSet> GradHistory      = New<PointSet>();
-        TPointer<PointSet> PotentialHistory = New<PointSet>();
+        TPointer<FPointSet> EnergyHistory    = New<FPointSet>();
+        TPointer<FPointSet> KineticHistory   = New<FPointSet>();
+        TPointer<FPointSet> GradHistory      = New<FPointSet>();
+        TPointer<FPointSet> PotentialHistory = New<FPointSet>();
 
     public:
         explicit EnergyViewer_KG(const TPointer<Graphics::FGUIWindow> &pointer);

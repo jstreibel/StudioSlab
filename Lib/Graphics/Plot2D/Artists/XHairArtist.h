@@ -11,7 +11,7 @@
 namespace Slab::Graphics {
 
     class XHairArtist : public FArtist {
-        Math::PointSet XHair;
+        Math::FPointSet XHair;
     public:
         bool Draw(const FPlot2DWindow &window) override;
     };

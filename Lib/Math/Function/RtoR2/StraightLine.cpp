@@ -38,11 +38,11 @@ namespace Slab::Math::RtoR2 {
         return std::make_shared<RtoR2::StraightLine>(x0, xf);
     }
 
-    Math::PointSet_ptr
+    Math::FPointSet_ptr
     RtoR2::StraightLine::renderToPointSet(RenderingOptions options) {
-        auto set = Math::PointSet({x0, x0 + r});
+        auto set = Math::FPointSet({x0, x0 + r});
 
-        return Slab::New<Math::PointSet>(set);
+        return Slab::New<Math::FPointSet>(set);
     }
 
 

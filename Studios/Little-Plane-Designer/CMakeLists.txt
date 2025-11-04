@@ -12,19 +12,21 @@ message(STATUS "***************************************************")
 
 add_executable( LittlePlaneDesigner
         LPDMain.cpp
-        Foils/Foil.cpp
-        Foils/Foil.h
+        Physics/Foils/Foil.cpp
+        Physics/Foils/Foil.h
         DebugDraw.h
-        Foils/NACA2412.cpp
-        Foils/NACA2412.h
+        Physics/Foils/NACA2412.cpp
+        Physics/Foils/NACA2412.h
         App.cpp
         App.h
-        FLittlePlane.cpp
-        FLittlePlane.h
-        FPlaneFactory.cpp
-        FPlaneFactory.h
-        FAtmosphericCondition.cpp
-        FAtmosphericCondition.h
+        Physics/FLittlePlane.cpp
+        Physics/FLittlePlane.h
+        Physics/FPlaneFactory.cpp
+        Physics/FPlaneFactory.h
+        Physics/FAtmosphericCondition.cpp
+        Physics/FAtmosphericCondition.h
+        Physics/Terrain.cpp
+        Physics/Terrain.h
 )
 target_include_directories(LittlePlaneDesigner PRIVATE ${box2d_SOURCE_DIR}/include)
 # target_link_libraries( LittlePlaneDesigner Slab box2D)

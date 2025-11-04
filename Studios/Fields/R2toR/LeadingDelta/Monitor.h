@@ -18,14 +18,14 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
         TPointer<R2toR::Function> drivingFunction;
 
-        TPointer<PointSet> totalEnergyData;
+        TPointer<FPointSet> totalEnergyData;
         Graphics::FPlot2DWindow mTotalEnergyGraph;
 
-        TPointer<PointSet> numericEnergyData;
-        TPointer<PointSet> analyticEnergyData;
+        TPointer<FPointSet> numericEnergyData;
+        TPointer<FPointSet> analyticEnergyData;
         Graphics::FPlot2DWindow mEnergyGraph;
 
-        TPointer<PointSet> energyRatioData;
+        TPointer<FPointSet> energyRatioData;
         Graphics::FPlot2DWindow mEnergyRatioGraph;
 
         Graphics::FPlot2DWindow mSpeedsGraph;

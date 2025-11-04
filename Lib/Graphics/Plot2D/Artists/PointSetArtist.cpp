@@ -15,7 +15,7 @@
 
 namespace Slab::Graphics {
 
-    PointSetArtist::PointSetArtist(Math::PointSet_ptr pointSet, PlotStyle style)
+    PointSetArtist::PointSetArtist(Math::FPointSet_ptr pointSet, PlotStyle style)
     : pointSet(std::move(pointSet)), plotStyle(style) {
 
     }
@@ -46,7 +46,7 @@ namespace Slab::Graphics {
         return FArtist::GetRegion();
     }
 
-    auto PointSetArtist::setPointSet(Math::PointSet_ptr newPointSet) -> void {
+    auto PointSetArtist::setPointSet(Math::FPointSet_ptr newPointSet) -> void {
         pointSet = std::move(newPointSet);
     }
 

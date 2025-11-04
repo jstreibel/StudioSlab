@@ -31,14 +31,14 @@ namespace Modes::DatabaseViewer {
 
         Graphics::FPlot2DWindow massesGraph;
 
-        Math::PointSet maxValuesPointSet;
-        Math::PointSet massesReal_pointSet;
-        Math::PointSet massesImag_pointSet;
-        Math::PointSet underXHair;
+        Math::FPointSet maxValuesPointSet;
+        Math::FPointSet massesReal_pointSet;
+        Math::FPointSet massesImag_pointSet;
+        Math::FPointSet underXHair;
         Graphics::PointSetArtist_ptr mainModesArtist;
 
-        TPointer<Math::PointSet> KGRelation;
-        TPointer<Math::PointSet> KGRelation_high_k;
+        TPointer<Math::FPointSet> KGRelation;
+        TPointer<Math::FPointSet> KGRelation_high_k;
         Graphics::PointSetArtist_ptr KGRelation_artist;
         Graphics::PointSetArtist_ptr KGRelation_high_k_artist;
 

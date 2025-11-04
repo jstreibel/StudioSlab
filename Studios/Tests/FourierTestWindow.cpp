@@ -228,7 +228,7 @@ namespace Tests {
 
             mFuncGraph.GetRegion().set_x_limits(-0.1 * L, 1.1 * L);
 
-            static Math::PointSet L_loc1, L_loc2;
+            static Math::FPointSet L_loc1, L_loc2;
             static bool initd = false;
             if (!initd) {
                 L_loc1.setPoints({{0.0, -2},

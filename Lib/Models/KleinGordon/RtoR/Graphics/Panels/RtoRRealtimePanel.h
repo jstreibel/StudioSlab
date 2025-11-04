@@ -44,10 +44,10 @@ namespace Slab::Models::KGRtoR {
         FArtist_ptr wArtist;
         FArtist_ptr uArtist;
 
-        PointSet UHistoryData;
-        PointSet KHistoryData;
-        PointSet WHistoryData;
-        PointSet VHistoryData;
+        FPointSet UHistoryData;
+        FPointSet KHistoryData;
+        FPointSet WHistoryData;
+        FPointSet VHistoryData;
 
         const PlotStyle U_style = PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         const PlotStyle K_style = PlotThemeManager::GetCurrent()->FuncPlotStyles[1];

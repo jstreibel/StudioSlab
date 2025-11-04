@@ -124,7 +124,7 @@ namespace Slab::Math::Base {
             InputCategory xMin, xMax;
         };
 
-        virtual TPointer<PointSet>
+        virtual TPointer<FPointSet>
         renderToPointSet(RenderingOptions options = RenderingOptions()) {
             throw Str("Function '") + generalName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
         };

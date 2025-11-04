@@ -21,7 +21,7 @@ namespace Slab::Math {
         return func(c(x));
     }
 
-    TPointer<Math::PointSet> RtoR::Section1D::renderToPointSet(FunctionT<DevFloat, DevFloat>::RenderingOptions options) {
+    TPointer<Math::FPointSet> RtoR::Section1D::renderToPointSet(FunctionT<DevFloat, DevFloat>::RenderingOptions options) {
         if (curve == nullptr || function == nullptr) return {};
 
         return RtoR::FunctionRenderer::ToPointSet(*this, options.xMin, options.xMax, options.n);

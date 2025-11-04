@@ -8,7 +8,7 @@
 namespace Slab::Math {
 
     auto RtoR::FunctionRenderer::ToPointSet(const RtoR::Function &func, DevFloat xMin, DevFloat xMax, UInt resolution,
-                                            DevFloat scale) -> Math::PointSet_ptr {
+                                            DevFloat scale) -> Math::FPointSet_ptr {
         fix Δx = xMax - xMin;
         fix dx = Δx / (DevFloat) resolution;
 
@@ -19,7 +19,7 @@ namespace Slab::Math {
             pts[i] = {x, func(x)};
         }
 
-        return Slab::New<Math::PointSet>(pts);
+        return Slab::New<Math::FPointSet>(pts);
     }
 
 

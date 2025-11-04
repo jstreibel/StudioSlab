@@ -74,7 +74,7 @@ namespace Slab::Models::KGRtoR {
                 auto Tstyle = (*style++).permuteColors();
                 Tstyle.filled = false;
                 Graphics::FPlotter::AddPointSet(mTemperaturesGraph,
-                                               Slab::New<Math::PointSet>(pts), Tstyle, "T (nominal)");
+                                               Slab::New<Math::FPointSet>(pts), Tstyle, "T (nominal)");
             }
         }
 

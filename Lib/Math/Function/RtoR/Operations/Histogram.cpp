@@ -64,13 +64,13 @@ namespace Slab::Math::RtoR {
         return func;
     }
 
-    auto Histogram::asPDFPointSet(bool beautiful) const -> PointSet_ptr {
-        PointSet_ptr pointSet;
+    auto Histogram::asPDFPointSet(bool beautiful) const -> FPointSet_ptr {
+        FPointSet_ptr pointSet;
         return renderPDFToPointSet(pointSet, beautiful);
     }
 
-    auto Histogram::renderPDFToPointSet(PointSet_ptr pointSet, bool beautiful) const -> PointSet_ptr {
-        if(pointSet == nullptr) pointSet = Slab::New<PointSet>();
+    auto Histogram::renderPDFToPointSet(FPointSet_ptr pointSet, bool beautiful) const -> FPointSet_ptr {
+        if(pointSet == nullptr) pointSet = Slab::New<FPointSet>();
 
         const auto N = DevFloat(count);
         const auto w = binWidth;

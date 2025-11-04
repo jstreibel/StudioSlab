@@ -33,7 +33,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     , mSpeedsGraph      ("Time-derivatives")
     , mEnergyDensityGraph("Energy-densities")
     {
-        energyRatioData = New<PointSet>();
+        energyRatioData = New<FPointSet>();
 
         auto theme = Graphics::PlotThemeManager::GetCurrent();
         using Plotter = Graphics::FPlotter;
@@ -42,15 +42,15 @@ namespace Studios::Fields::R2toRLeadingDelta {
                                        theme->FuncPlotStyles[0], "Numeric/analytic energy");
         addWindowToColumn(Dummy(mEnergyRatioGraph), 0);
 
-        numericEnergyData  = New<PointSet>();
-        analyticEnergyData = New<PointSet>();
+        numericEnergyData  = New<FPointSet>();
+        analyticEnergyData = New<FPointSet>();
 
         Plotter::AddPointSet(Dummy(mEnergyGraph), numericEnergyData, theme->FuncPlotStyles[0], "Numeric energy");
         Plotter::AddPointSet(Dummy(mEnergyGraph), analyticEnergyData,theme->FuncPlotStyles[1], "Analytic energy");
         addWindowToColumn(Dummy(mEnergyGraph), 0);
 
 
-        totalEnergyData = New<PointSet>();
+        totalEnergyData = New<FPointSet>();
         Plotter::AddPointSet(Dummy(mTotalEnergyGraph), totalEnergyData, theme->FuncPlotStyles[0], "Total analytic energy");
         addWindowToColumn(Dummy(mTotalEnergyGraph), 0);
 

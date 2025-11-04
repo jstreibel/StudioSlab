@@ -12,15 +12,15 @@
 namespace Slab::Math {
 
 
-class PointSet final : public Space {
+class FPointSet final : public Space {
     Point2DVec points;
     Point2D max={.0,.0}, min={.0,.0};
 
 public:
-    PointSet();
+    FPointSet();
     explicit
-    PointSet(const Point2DVec& points);
-    PointSet(const PointSet& pointSet);
+    FPointSet(const Point2DVec& points);
+    FPointSet(const FPointSet& pointSet);
 
     auto getMeasure() const -> const Measure override;
 
@@ -38,9 +38,9 @@ public:
     Point2DVec& getPoints();
 };
 
-PointSet operator + (const PointSet &a, const PointSet &b);
+FPointSet operator + (const FPointSet &a, const FPointSet &b);
 
-DefinePointers(PointSet)
+DefinePointers(FPointSet)
 
 }
 

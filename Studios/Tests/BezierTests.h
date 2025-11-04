@@ -19,7 +19,7 @@ namespace Tests {
         Graphics::FGUIWindow Stats;
         Graphics::FPlot2DWindow Graph;
 
-        Math::PointSet CurrentPoint;
+        Math::FPointSet CurrentPoint;
 
     public:
         explicit FBezierTests();

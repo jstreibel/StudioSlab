@@ -20,9 +20,9 @@ namespace Slab::Math::RtoR {
 
         TPointer<RtoR::Function> asPDFFunction() const;
 
-        auto asPDFPointSet(bool beautiful = true) const -> PointSet_ptr;
+        auto asPDFPointSet(bool beautiful = true) const -> FPointSet_ptr;
 
-        auto renderPDFToPointSet(PointSet_ptr out, bool beautiful = true) const -> PointSet_ptr;
+        auto renderPDFToPointSet(FPointSet_ptr out, bool beautiful = true) const -> FPointSet_ptr;
 
         auto integrate() const -> DevFloat;
 

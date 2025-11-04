@@ -21,7 +21,7 @@ namespace Slab::Math::RtoR2 {
         StraightLine(const StraightLine& line);
 
 
-        Math::PointSet_ptr renderToPointSet(RenderingOptions options) override;
+        Math::FPointSet_ptr renderToPointSet(RenderingOptions options) override;
 
         static Ptr New(Real2D x0, Real2D xf);
 
