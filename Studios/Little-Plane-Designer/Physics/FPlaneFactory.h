@@ -20,6 +20,21 @@ struct FWingDescriptor {
     TPointer<FWing> Wing;
 };
 
+struct FBodyPartDescriptor {
+    float Density = 0.1f;
+    float Friction = 0.01f;
+    float Restitution = 0.0f;
+
+    float Width = 0.2f;
+    float Height = 0.2f;
+
+    float xOffset = 0.0f;
+    float yOffset = 0.0f;
+
+    float AngleRad = 0.0f;
+
+};
+
 class FPlaneFactory
 {
     public:
@@ -29,19 +44,20 @@ class FPlaneFactory
 
     FPlaneFactory& AddWing(const FWingDescriptor &Descriptor);
 
+    FPlaneFactory& AddBodyPart(const FBodyPartDescriptor &Descriptor);
+
     FPlaneFactory& SetPosition(b2Vec2);
 
     FPlaneFactory& SetRotation(float);
 
     TPointer<FLittlePlane> BuildPlane(b2WorldId World);
     b2BodyId BuildBody(b2WorldId World) const;
-    FPlaneFactory& SetBodyDensity(float);
 
 private:
-    Vector<FWingDescriptor> Descriptors;
+    Vector<FWingDescriptor> WingDescriptors;
+    Vector<FBodyPartDescriptor> BodyPartDescriptors;
 
     b2Vec2 Position = b2Vec2{0.0f, 0.0f};
-    float  Density  = 0.1f;
     float  Angle    = 0.0f;
 
     TPointer<FWing> BuildWing(const FWingDescriptor &Descriptor, b2WorldId World) const;

@@ -14,8 +14,13 @@ FPlaneFactory& FPlaneFactory::Reset()
 
 FPlaneFactory& FPlaneFactory::AddWing(const FWingDescriptor &Descriptor)
 {
-    Descriptors.emplace_back(Descriptor);
+    WingDescriptors.emplace_back(Descriptor);
 
+    return *this;
+}
+
+FPlaneFactory& FPlaneFactory::AddBodyPart(const FBodyPartDescriptor& Descriptor) {
+    BodyPartDescriptors.emplace_back(Descriptor);
     return *this;
 }
 
@@ -34,7 +39,7 @@ TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
     const auto PlaneHull = BuildBody(World);
 
     Vector<TPointer<FWing>> Wings;
-    for (auto &WingDesc : Descriptors) {
+    for (auto &WingDesc : WingDescriptors) {
         WingDesc.Wing = BuildWing(WingDesc, World);
         Wings.emplace_back(WingDesc.Wing);
 
@@ -79,17 +84,19 @@ b2BodyId FPlaneFactory::BuildBody(const b2WorldId World) const {
     b2Body_SetName(Body, "Plane Body");
 
     b2ShapeDef ShapeDef = b2DefaultShapeDef();
-    ShapeDef.density = Density;
-    ShapeDef.material.friction = 0.01f;
-    const auto Box = b2MakeBox(1.25f, 0.2f);
-    b2CreatePolygonShape(Body, &ShapeDef, &Box);
+    for (const auto & [Density, Friction, Restitution, Width, Height, xOffset, yOffset, AngleRad] : BodyPartDescriptors) {
+        ShapeDef.density = Density;
+        ShapeDef.material.friction = Friction;
+        ShapeDef.material.restitution = Restitution;
+
+        const auto Box = b2MakeOffsetBox(
+            Width*.5f, Height*.5f,
+            {xOffset, yOffset},
+            b2MakeRot(AngleRad));
+        b2CreatePolygonShape(Body, &ShapeDef, &Box);
+    }
 
     return Body;
-}
-
-FPlaneFactory& FPlaneFactory::SetBodyDensity(const float NewDensity) {
-    this->Density = NewDensity;
-    return *this;
 }
 
 TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, const b2WorldId World) const {

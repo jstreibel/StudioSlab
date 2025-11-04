@@ -23,14 +23,15 @@ inline double DegToRad(const double ang) { return ang * M_PI / 180.0;}
 inline double RadToDeg(const double ang) { return ang * 180.0 / M_PI;}
 
 class FLittlePlaneDesignerApp final : public FApplication {
-public:
-    bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override;
 
+public:
     FLittlePlaneDesignerApp(int argc, const char* argv[]);
 
     ~FLittlePlaneDesignerApp() override;
 
     bool NotifyRender(const Graphics::FPlatformWindow& PlatformWindow) override;
+
+    bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override;
 
 private:
     b2WorldId World;
@@ -42,15 +43,19 @@ private:
 
     void SetupMonitors();
 
+    void SetupPlane();
+    void SetupTerrain();
     void OnStart() override;
 
-    void DoDebugDraw() const;
-
-    void Monitor(const Graphics::FPlatformWindow& PlatformWindow);
+    void HandleInputs(const Graphics::FKeyboardState& KeyboardState);
 
     void ComputeAndApplyForces() const;
+
+    void UpdateGraphs() const;
+    void DoDebugDraw() const;
+    void RenderSimData(const Graphics::FPlatformWindow& PlatformWindow);
+
     void StepSimulation() const;
-    void HandleInputs(const Graphics::FKeyboardState& KeyboardState);
 
     Graphics::RectR View;
     Int WinHeight, WinWidth;
