@@ -74,8 +74,7 @@ Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
         DebugDraw_LegacyGL.Write("speed", VelC4 + COM, b2_colorAquamarine);
 
         {
-            constexpr auto lift_scale = 1.f;
-            constexpr auto drag_scale = 1.f;
+            constexpr auto Scale = .025f;
 
             // DebugDraw_LegacyGL.DrawVector(VelC4, COM + QuarterChordWorld, .25f, b2_colorAliceBlue);
             // DebugDraw_LegacyGL.Write(Str("C/4 speed @ " + ToStr(AoA/M_PI*180.0) + "deg AoA"), QuarterChordWorld + VelC4*.225f, b2_colorAliceBlue);
@@ -92,27 +91,35 @@ Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
             // DebugDraw_LegacyGL.DrawVector(FW_Unit, QuarterChordWorld, 1.f, b2_colorDarkBlue);
             // DebugDraw_LegacyGL.Write("Forward", QuarterChordWorld + FW_Unit, b2_colorDarkBlue);
 
-            DebugDraw_LegacyGL.DrawVector(drag, COM, drag_scale, b2_colorRed);
-            DebugDraw_LegacyGL.Write("drag", COM + drag*drag_scale, b2_colorRed);
+            const auto Total = (drag + lift)*Scale;
+            DebugDraw_LegacyGL.DrawVector(Total, COM, 1.0f, b2_colorRed);
+            DebugDraw_LegacyGL.Write("Total", COM + Total, b2_colorRed);
 
-            DebugDraw_LegacyGL.DrawVector(lift, COM, lift_scale, b2_colorAliceBlue);
-            DebugDraw_LegacyGL.Write("lift", COM + lift*lift_scale, b2_colorAliceBlue);
+            DebugDraw_LegacyGL.DrawVector(drag, COM, Scale, b2_colorRed);
+            DebugDraw_LegacyGL.Write("drag", COM + drag*Scale, b2_colorRed);
+
+            DebugDraw_LegacyGL.DrawVector(lift, COM, Scale, b2_colorAliceBlue);
+            DebugDraw_LegacyGL.Write("lift", COM + lift*Scale, b2_colorAliceBlue);
+
+
 
             // DebugDraw_LegacyGL.DrawVector(lift+drag, COM, .05f, b2_colorAliceBlue);
             // DebugDraw_LegacyGL.Write("lift+drag ", COM + (lift+drag)*.05f, b2_colorAliceBlue);
 
-            DebugDraw_LegacyGL.DrawPseudoVector(ω, COM, 1.f, .0f, b2_colorAqua);
-            DebugDraw_LegacyGL.Write("omega", COM+b2Vec2{static_cast<float>(ω), .0f}, b2_colorAqua);
+            if constexpr (false)
+            {
+                DebugDraw_LegacyGL.DrawPseudoVector(ω, COM, 1.f, .0f, b2_colorAqua);
+                DebugDraw_LegacyGL.Write("omega", COM+b2Vec2{static_cast<float>(ω), .0f}, b2_colorAqua);
 
-            DebugDraw_LegacyGL.DrawPseudoVector(τ_mag, COM, 1.f, .0f, b2_colorBisque);
-            DebugDraw_LegacyGL.Write("Torque Cm", COM+b2Vec2{static_cast<float>(τ_mag), .0f}, b2_colorBisque);
+                DebugDraw_LegacyGL.DrawPseudoVector(τ_mag, COM, 1.f, .0f, b2_colorBisque);
+                DebugDraw_LegacyGL.Write("Torque Cm", COM+b2Vec2{static_cast<float>(τ_mag), .0f}, b2_colorBisque);
 
-            DebugDraw_LegacyGL.DrawPseudoVector(τ_aero, COM, 1.f, .0f, b2_colorDarkCyan);
-            DebugDraw_LegacyGL.Write("Torque (aero)", COM+b2Vec2{static_cast<float>(τ_aero), .0f}, b2_colorDarkCyan);
+                DebugDraw_LegacyGL.DrawPseudoVector(τ_aero, COM, 1.f, .0f, b2_colorDarkCyan);
+                DebugDraw_LegacyGL.Write("Torque (aero)", COM+b2Vec2{static_cast<float>(τ_aero), .0f}, b2_colorDarkCyan);
 
-            DebugDraw_LegacyGL.DrawPseudoVector(τ_visc, COM, 1.f, .0f, b2_colorBox2DBlue);
-            DebugDraw_LegacyGL.Write("Torque (visc)", COM+b2Vec2{static_cast<float>(τ_visc), .0f}, b2_colorBox2DBlue);
-
+                DebugDraw_LegacyGL.DrawPseudoVector(τ_visc, COM, 1.f, .0f, b2_colorBox2DBlue);
+                DebugDraw_LegacyGL.Write("Torque (visc)", COM+b2Vec2{static_cast<float>(τ_visc), .0f}, b2_colorBox2DBlue);
+            }
         }
     }
 
@@ -123,6 +130,45 @@ Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
         static_cast<float>(Cd),
         static_cast<float>(Cm_c4),
         static_cast<float>(AoA)};
+}
+
+void FLittlePlane::ComputeAndApplyForces(const TPointer<LegacyGLDebugDraw> DebugDraw) {
+    for (auto &Wing : Wings) {
+        const auto &WingBody = Wing->BodyId;
+        if (!b2Body_IsAwake(WingBody)) continue;
+
+        const auto CurrentForces = ComputeForces(*Wing, {}, DebugDraw);
+        b2Body_ApplyForce (WingBody, CurrentForces.GetTotalForce(), CurrentForces.loc, true);
+        b2Body_ApplyTorque(WingBody, CurrentForces.torque, true);
+    }
+}
+
+float FLittlePlane::GetTotalMass() const {
+    float Mass = 0.0f;
+    for (const auto &Wing : Wings) {
+        Mass += b2Body_GetMass(Wing->BodyId);
+    }
+
+    Mass += b2Body_GetMass(HullBody);
+
+    return Mass;
+}
+
+b2Vec2 FLittlePlane::GetCenterOfMass_Global() const {
+    fix HullCOM = b2Body_GetWorldCenterOfMass(HullBody);
+    fix HullMass = b2Body_GetMass(HullBody);
+
+    auto TotalMass = HullMass;
+
+    b2Vec2 COM_Accumulator = HullMass * HullCOM;
+    for (const auto &Wing : Wings) {
+        fix WingCOM = b2Body_GetWorldCenterOfMass(Wing->BodyId);
+        fix WingMass = b2Body_GetMass(Wing->BodyId);
+
+        COM_Accumulator += WingMass * WingCOM;
+    }
+
+    return b2Body_GetWorldCenterOfMass(HullBody);
 }
 
 void FLittlePlane::Draw() {

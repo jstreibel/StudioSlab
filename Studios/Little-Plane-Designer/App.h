@@ -49,8 +49,6 @@ private:
 
     void HandleInputs(const Graphics::FKeyboardState& KeyboardState);
 
-    void ComputeAndApplyForces() const;
-
     void UpdateGraphs() const;
     void DoDebugDraw() const;
     void RenderSimData(const Graphics::FPlatformWindow& PlatformWindow);

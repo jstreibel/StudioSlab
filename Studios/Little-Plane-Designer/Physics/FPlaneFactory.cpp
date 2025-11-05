@@ -36,7 +36,7 @@ FPlaneFactory& FPlaneFactory::SetRotation(const float InitialAngle) {
 
 TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
 
-    const auto PlaneHull = BuildBody(World);
+    const auto HullBody = BuildBody(World);
 
     Vector<TPointer<FWing>> Wings;
     for (auto &WingDesc : WingDescriptors) {
@@ -48,7 +48,7 @@ TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
         const auto Chord = WingDesc.Params.ChordLength;
         const auto Thick = WingDesc.Params.Thickness;
         auto Joint = b2DefaultRevoluteJointDef();
-        Joint.bodyIdA = PlaneHull;
+        Joint.bodyIdA = HullBody;
         Joint.bodyIdB = WingDesc.Wing->BodyId;
         Joint.collideConnected = false;
         Joint.localAnchorA = WingDesc.RelativeLocation;
@@ -71,7 +71,7 @@ TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
         WingDesc.Wing->RevJoint = RevJoint;
     }
 
-    return New<FLittlePlane>(Wings);
+    return TPointer<FLittlePlane>(new FLittlePlane(Wings, HullBody));
 }
 
 b2BodyId FPlaneFactory::BuildBody(const b2WorldId World) const {
@@ -139,8 +139,9 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
 
     // 3) Create a fixture
     b2ShapeDef sdef = b2DefaultShapeDef();
-    sdef.density = 1.0f;
-    sdef.material.friction = 0.1f;
+    sdef.density = Descriptor.Density;
+    sdef.material.friction = Descriptor.Friction;
+    sdef.material.restitution = Descriptor.Restitution;
     b2CreatePolygonShape(WingBody, &sdef, &WingShape);
 
     auto [COM_x, COM_y] = Params.COM;

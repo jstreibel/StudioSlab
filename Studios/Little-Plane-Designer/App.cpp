@@ -18,13 +18,14 @@
 
 using CAirfoil = Foil::ViternaAirfoil2412;
 
-constexpr auto PrettyDraw = false;
-constexpr auto DebugDraw = !PrettyDraw;
+constexpr auto PrettyDraw = true;
+constexpr auto DebugDraw = true;
 
-constexpr float TimeScale = 0.25;
+constexpr float TimeScale = 1.0f;
 
 // constexpr auto InitialViewWidth = 3.2f*1.2f;
 constexpr auto InitialViewWidth = 30*1.2f;
+constexpr auto x0 = 25.0;
 
 constexpr float timeStep = TimeScale/60.0f;
 constexpr int subSteps = 1;
@@ -66,30 +67,6 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     if constexpr (false) GUIContext->AddDrawCall([this] {
         ImGui::Begin("Wings");
         ImGui::Checkbox("Run", &b_IsRunning);
-
-        if (LittlePlane == nullptr)
-            ImGui::TextColored({1,0,0,1}, "No plane");
-        else for (const auto &Wing : LittlePlane->Wings) {
-
-            ImGui::SeparatorText(Str(Wing->Params.Name).c_str());
-
-            const auto WingBody = Wing->BodyId;
-
-            const auto foil_vel = b2Body_GetLinearVelocity(WingBody);
-            float foil_speed = b2Length(foil_vel);
-            float foil_angle = atan2f(foil_vel.y, -foil_vel.x);
-            float foil_angular_speed = b2Body_GetAngularVelocity(WingBody);
-            if (ImGui::SliderFloat("COM speed mag", &foil_speed, 0.0f, 10.0f)
-                | ImGui::SliderAngle("Speed angle", &foil_angle, -180.0f, 180.0f))
-            {
-
-                b2Body_SetLinearVelocity(WingBody, {-foil_speed*cosf(foil_angle), foil_speed*sinf(foil_angle)});
-            }
-            if (ImGui::DragFloat("Angular speed", &foil_angular_speed, fabs(foil_angular_speed)*1.e-2f+1.e-2, -720.0f, 720.0f)) {
-                b2Body_SetAngularVelocity(WingBody, foil_angular_speed);
-            }
-        }
-
         ImGui::End();
     });
 
@@ -140,9 +117,9 @@ void FLittlePlaneDesignerApp::SetupMonitors() {
 
     using Plotter = Graphics::FPlotter;
 
-    const auto C_l   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->Wings[0]->Airfoil->Cl(AoA); });
-    const auto C_d   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->Wings[0]->Airfoil->Cd(AoA); });
-    const auto C_mc4 = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->Wings[0]->Airfoil->Cm_c4(AoA); });
+    const auto C_l   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->GetWing(0).Airfoil->Cl(AoA); });
+    const auto C_d   = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->GetWing(0).Airfoil->Cd(AoA); });
+    const auto C_mc4 = New<Math::RtoR::NativeFunction>([this](const DevFloat AoA) { return LittlePlane->GetWing(0).Airfoil->Cm_c4(AoA); });
 
     {
         fix n = Plots.size();
@@ -235,15 +212,13 @@ void FLittlePlaneDesignerApp::SetupMonitors() {
 void FLittlePlaneDesignerApp::SetupPlane() {
     // Plane
     LittlePlane = FPlaneFactory{}
-                  .SetPosition({15.0f, 7.f})
+                  .SetPosition({35.0f, 18.f})
                   .SetRotation(DegToRad(0.0f))
                   .AddBodyPart({
-                      .Density = 0.05,
                       .Width = 4.0f,
                       .Height = 0.5,
                   })
                   .AddBodyPart({
-                      .Density = 0.8,
                       .Width = 1,
                       .Height = 0.25,
                       .xOffset = -1.5,
@@ -305,8 +280,8 @@ void FLittlePlaneDesignerApp::OnStart() {
     fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
     fix InitialViewHeight = InitialViewWidth / AspectRatio;
     View = {
-        -InitialViewWidth*.5f,
-        InitialViewWidth*.5f,
+        x0 - InitialViewWidth*.5f,
+        x0 + InitialViewWidth*.5f,
         -.1f*InitialViewHeight,
         .9f*InitialViewHeight};
 
@@ -348,17 +323,17 @@ void FLittlePlaneDesignerApp::HandleInputs(const Graphics::FKeyboardState& Keybo
     }
 
     bool Flaps = false;
-    const auto Wing = LittlePlane->Wings[0];
+    const auto Wing = LittlePlane->GetWing(0);
     if (KeyboardState.IsPressed(Graphics::Key_LEFT)) {
         if (KeyboardState.IsPressed(Graphics::Key_LEFT_SHIFT)) {
             fix dWidth = View.GetWidth()*.005f;
             View.xMin -= dWidth;
             View.xMax -= dWidth;
         } else {
-            fix RevJoint = Wing->RevJoint;
-            fix WingBody = Wing->BodyId;
+            fix RevJoint = Wing.RevJoint;
+            fix WingBody = Wing.BodyId;
 
-            b2RevoluteJoint_SetTargetAngle(RevJoint, Wing->MinAngle);
+            b2RevoluteJoint_SetTargetAngle(RevJoint, Wing.MinAngle);
             b2Body_SetAwake(WingBody, true);
             Flaps = true;
         }
@@ -369,36 +344,25 @@ void FLittlePlaneDesignerApp::HandleInputs(const Graphics::FKeyboardState& Keybo
             View.xMin += dWidth;
             View.xMax += dWidth;
         } else {
-            fix RevJoint = Wing->RevJoint;
-            fix WingBody = Wing->BodyId;
+            fix RevJoint = Wing.RevJoint;
+            fix WingBody = Wing.BodyId;
 
-            b2RevoluteJoint_SetTargetAngle(RevJoint, Wing->MaxAngle);
+            b2RevoluteJoint_SetTargetAngle(RevJoint, Wing.MaxAngle);
             b2Body_SetAwake(WingBody, true);
             Flaps = !Flaps; // little trick, figure why
         }
     }
     if (!Flaps) {
-        fix RevJoint = Wing->RevJoint;
-        b2RevoluteJoint_SetTargetAngle(RevJoint, Wing->BaseAngle);
+        fix RevJoint = Wing.RevJoint;
+        b2RevoluteJoint_SetTargetAngle(RevJoint, Wing.BaseAngle);
     }
 
-}
-
-void FLittlePlaneDesignerApp::ComputeAndApplyForces() const {
-    for (auto &Wing : LittlePlane->Wings) {
-        const auto &WingBody = Wing->BodyId;
-        if (!b2Body_IsAwake(WingBody)) continue;
-
-        const auto CurrentForces = FLittlePlane::ComputeForces(*Wing, {}, DebugDraw ? DebugDraw_LegacyGL : nullptr);
-        b2Body_ApplyForce (WingBody, CurrentForces.GetTotalForce(), CurrentForces.loc, true);
-        b2Body_ApplyTorque(WingBody, CurrentForces.torque, true);
-    }
 }
 
 void FLittlePlaneDesignerApp::UpdateGraphs() const {
-    const auto &Wing = LittlePlane->Wings[0];
+    const auto &Wing = LittlePlane->GetWing(0);
 
-    const auto CurrentForces = FLittlePlane::ComputeForces(*Wing);
+    const auto CurrentForces = FLittlePlane::ComputeForces(Wing);
     CurrentLiftPolar->clear();
     CurrentLiftPolar->AddPoint(CurrentForces.AoA, CurrentForces.Cl);
     CurrentDragPolar->clear();
@@ -406,7 +370,7 @@ void FLittlePlaneDesignerApp::UpdateGraphs() const {
     CurrentTorquePolar->clear();
     CurrentTorquePolar->AddPoint(CurrentForces.AoA, CurrentForces.Cm_c4);
     if (b_IsRunning) {
-        ComputeAndApplyForces();
+        LittlePlane->ComputeAndApplyForces(DebugDraw ? DebugDraw_LegacyGL : nullptr);
 
         StepSimulation();
 
@@ -416,7 +380,7 @@ void FLittlePlaneDesignerApp::UpdateGraphs() const {
         auto TotalForcesMag = b2Length(CurrentForces.GetTotalForce());
         ForcesTimeSeries->AddPoint({time, TotalForcesMag});
 
-        const auto &WingBody = Wing->BodyId;
+        const auto &WingBody = Wing.BodyId;
         fix v = b2Length(b2Body_GetLinearVelocity(WingBody));
         fix w = b2Body_GetAngularVelocity(WingBody);
         fix h = b2Body_GetPosition(WingBody).y;
@@ -442,6 +406,7 @@ void FLittlePlaneDesignerApp::DoDebugDraw() const {
     Drawer.drawIslands = false;
     Drawer.drawBodyNames = true;
     Drawer.drawShapes = true;
+    Drawer.drawJoints = true;
 
     DebugDraw_LegacyGL->SetupLegacyGL();
     b2World_Draw(World, &Drawer);

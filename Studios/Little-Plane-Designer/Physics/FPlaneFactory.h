@@ -7,7 +7,15 @@
 
 #include "FLittlePlane.h"
 
+constexpr float ExpandedPolystyreneDensity = 11.0f;
+constexpr float ExpandedPolystyreneFriction = 0.01f;
+constexpr float ExpandedPolystyreneRestitution = 0.0f;
+
 struct FWingDescriptor {
+    float Density = ExpandedPolystyreneDensity;
+    float Friction = ExpandedPolystyreneFriction;
+    float Restitution = ExpandedPolystyreneRestitution;
+
     TPointer<Foil::IAirfoilPolars> Airfoil;
     Foil::FAirfoilParams Params;
     b2Vec2 RelativeLocation = b2Vec2{0.0f, 0.0f};
@@ -21,9 +29,10 @@ struct FWingDescriptor {
 };
 
 struct FBodyPartDescriptor {
-    float Density = 0.1f;
-    float Friction = 0.01f;
-    float Restitution = 0.0f;
+
+    float Density = ExpandedPolystyreneDensity;
+    float Friction = ExpandedPolystyreneFriction;
+    float Restitution = ExpandedPolystyreneRestitution;
 
     float Width = 0.2f;
     float Height = 0.2f;

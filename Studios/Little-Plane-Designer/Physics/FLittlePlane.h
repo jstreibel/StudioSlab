@@ -6,6 +6,7 @@
 #define STUDIOSLAB_FLITTLEPLANE_H
 
 #include "FAtmosphericCondition.h"
+#include "IDynamicEntity.h"
 #include "box2d/box2d.h"
 #include "Foils/Foil.h"
 #include "Graphics/IDrawable.h"
@@ -21,21 +22,29 @@ struct FWing {
 
 };
 
-class FLittlePlane final : public Graphics::IDrawable
+class FLittlePlane final : public Graphics::IDrawable, public IDynamicEntity
 {
 public:
-    explicit FLittlePlane(const Vector<TPointer<FWing>>& Wings) : Wings(Wings) {};
     static Foil::FAirfoilDynamicData ComputeForces(
         const FWing& Wing,
         const FAtmosphericCondition &Atmosphere={},
         const TPointer<LegacyGLDebugDraw>& DebugDraw=nullptr);
 
-    Vector<TPointer<FWing>> Wings;
+    void ComputeAndApplyForces(TPointer<LegacyGLDebugDraw>) override;
+    float GetTotalMass() const override;
+    b2Vec2 GetCenterOfMass_Global() const override;
 
     void Draw() override;
+    const FWing& GetWing(int i) const { return *Wings[i]; }
 
 private:
+    friend class FPlaneFactory;
+
+    explicit FLittlePlane(const Vector<TPointer<FWing>>& Wings, const b2BodyId HullBody)
+    : Wings(Wings), HullBody(HullBody) {}
     FLittlePlane() = default;
+    Vector<TPointer<FWing>> Wings;
+    b2BodyId HullBody;
 };
 
 #endif //STUDIOSLAB_FLITTLEPLANE_H
