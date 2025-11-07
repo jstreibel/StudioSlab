@@ -13,16 +13,21 @@
 - [ ] Foil interactivity
   - [X] Spring response
   - [ ] Fixed response 
-- [ ] Camera tracking
+- [X] Camera tracking
 - [ ] Good (ish) looking plane hull
 - [ ] A big hill to launch planes from
 - [ ] Size and position reference (human, cat, yellow ruler, etc.)
 - [ ] Some background and sky features: house, trees, bushes, lake, clouds etc.
+- [ ] Add stats (speed, attitude, etc.)
 
 ### Future sprints
+- [ ] Custom plane design
+  - [ ] Custom plane hull
+  - [ ] Custom foil placement
+  - [ ] Custom foil adjustments (spring and responseness)
 - [ ] Move to separate project
 - [ ] More foil types
-- [ ] Custon foil design
+- [ ] Custom foil design
   - [ ] Wind tunnel polars data computation
 - [ ] More terrain types
   - [ ] Flat
@@ -38,3 +43,26 @@
   - [ ] Snow
   - [ ] Rain
   - [ ] Fog
+- [ ] Smoother camera movement
+- [ ] Buoyancy model
+- [ ] Water model
+- [ ] More materials
+  - [ ] Metal
+  - [ ] Wood
+  - [ ] Concrete
+  - [ ] Glass
+  - [ ] Aluminium
+  - [ ] Steel
+  - [ ] Plastic
+  - [ ] Rubber
+  - [ ] Leather
+- [ ] More plane hulls
+  - [ ] Flying saucer
+  - [ ] Airplane
+  - [ ] Helicopter
+  - [ ] Car
+  - [ ] Boat
+  - [ ] Ship
+  - [ ] Spacecraft
+  - [ ] Rocket
+  - [ ] Space shuttle]

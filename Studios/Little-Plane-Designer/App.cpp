@@ -47,6 +47,9 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     WinHeight = PlatformWindow.GetHeight();
     WinWidth = PlatformWindow.GetWidth();
 
+    const auto [x, y] = LittlePlane->GetPosition();
+    Camera.SetCenter({x-7.0f, y});
+
     fix KeyboardState = PlatformWindow.GetKeyboardState();
     HandleInputs(*KeyboardState);
 
@@ -277,14 +280,6 @@ void FLittlePlaneDesignerApp::OnStart() {
 
     DebugDraw_LegacyGL = Slab::New<LegacyGLDebugDraw>();
 
-    WinWidth = SystemWindow->GetWidth();
-    WinHeight = SystemWindow->GetHeight();
-    fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
-    fix InitialViewHeight = InitialViewWidth / AspectRatio;
-    Camera.SetParams_Width(InitialViewWidth);
-    Camera.SetParams_Ratio(AspectRatio);
-    Camera.SetCenter({x0, InitialViewHeight*(.5f - .1f)});
-
     b_IsRunning = StartRunning;
 
     // World
@@ -297,6 +292,14 @@ void FLittlePlaneDesignerApp::OnStart() {
     SetupPlane();
 
     SetupMonitors();
+
+    WinWidth = SystemWindow->GetWidth();
+    WinHeight = SystemWindow->GetHeight();
+    fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
+    Camera.SetParams_Width(InitialViewWidth);
+    Camera.SetParams_Ratio(AspectRatio);
+    const auto [x, y] = LittlePlane->GetPosition();
+    Camera.SetCenter({x-7.0f, y});
 }
 
 void FLittlePlaneDesignerApp::HandleInputs(const Graphics::FKeyboardState& KeyboardState) {
@@ -398,10 +401,6 @@ void FLittlePlaneDesignerApp::DoDebugDraw() const {
 
     const auto Grav = b2World_GetGravity(World);
     DebugDraw_LegacyGL->DrawVector(Mass * Grav, COM, .025f);
-
-    // DebugDraw_LegacyGL.DrawForce(AirfoilForces.lift, AirfoilForces.loc, 1.0f, b2_colorCoral);
-    // DebugDraw_LegacyGL.DrawForce(AirfoilForces.drag, AirfoilForces.loc, 1.0f, b2_colorDarkRed);
-    // DebugDraw_LegacyGL.DrawTorque(WingBody, AirfoilForces.torque, 0.05f, 24);
 }
 
 void FLittlePlaneDesignerApp::RenderSimData(const Graphics::FPlatformWindow& PlatformWindow) {
