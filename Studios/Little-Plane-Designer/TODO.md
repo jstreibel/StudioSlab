@@ -10,15 +10,17 @@
   - [X] Multiple foils
   - [X] Plane hull composition
 - [X] Arbitrary ground heights (terrain)
+- [ ] Simplified and useful forces diagram
 - [ ] Foil interactivity
   - [X] Spring response
-  - [ ] Fixed response 
+  - [ ] Fixed response (change aileron angle) 
 - [X] Camera tracking
 - [ ] Good (ish) looking plane hull
 - [ ] A big hill to launch planes from
 - [ ] Size and position reference (human, cat, yellow ruler, etc.)
 - [ ] Some background and sky features: house, trees, bushes, lake, clouds etc.
-- [ ] Add stats (speed, attitude, etc.)
+- [ ] Add stats (speed, altidude, attitude, etc.)
+- [ ] BUGFIX: FWriterOpenGL not working ...
 
 ### Future sprints
 - [ ] Custom plane design

@@ -174,6 +174,10 @@ b2Vec2 FLittlePlane::GetCenterOfMass_Global() const {
 
 b2Vec2 FLittlePlane::GetPosition() const { return b2Body_GetPosition(HullBody); }
 
+b2Vec2 FLittlePlane::GetVelocity() const {
+    return b2Body_GetLinearVelocity(HullBody);
+}
+
 void FLittlePlane::Draw() {
     namespace Drawer = Graphics::OpenGL::Legacy;
 

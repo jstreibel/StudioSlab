@@ -18,14 +18,13 @@
 
 using CAirfoil = Foil::ViternaAirfoil2412;
 
-constexpr auto PrettyDraw = true;
+constexpr auto PrettyDraw = false;
 constexpr auto DebugDraw = true;
 
 constexpr float TimeScale = 1.0f;
 
 // constexpr auto InitialViewWidth = 3.2f*1.2f;
 constexpr auto InitialViewWidth = 30*1.2f;
-constexpr auto x0 = 25.0;
 
 constexpr float timeStep = TimeScale/60.0f;
 constexpr int subSteps = 1;
@@ -48,23 +47,27 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     WinWidth = PlatformWindow.GetWidth();
 
     const auto [x, y] = LittlePlane->GetPosition();
+
     Camera.SetCenter({x-7.0f, y});
 
     fix KeyboardState = PlatformWindow.GetKeyboardState();
     HandleInputs(*KeyboardState);
 
-    Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
-    Drawer::ResetModelView();
-    IN View = Camera.GetView();
-    Drawer::SetupOrtho({View.xMin, View.xMax, View.yMin, View.yMax});
     const auto Writer = DebugDraw_LegacyGL->GetWriter();
     Writer->Reshape(WinWidth, WinHeight);
     Writer->SetPenPositionTransform([this](const Graphics::Point2D& pt) {
         IN View = Camera.GetView();
+        fix W = this->WinWidth;
+        fix H = this->WinHeight;
         return Graphics::FromSpaceToViewportCoord(pt,
                                                   Graphics::RectR{View.xMin, View.xMax, View.yMin, View.yMax},
-                                                  Graphics::RectI{0, WinWidth, 0, WinHeight});
+                                                  Graphics::RectI{0, W, 0, H});
     });
+
+    Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
+    Drawer::ResetModelView();
+    IN View = Camera.GetView();
+    Drawer::SetupOrtho({View.xMin, View.xMax, View.yMin, View.yMax});
 
     if      constexpr (PrettyDraw) PlatformWindow.Clear(Graphics::LapisLazuli);
     else if constexpr (DebugDraw)  PlatformWindow.Clear(Graphics::Black);
@@ -215,21 +218,27 @@ void FLittlePlaneDesignerApp::SetupMonitors() {
 }
 
 void FLittlePlaneDesignerApp::SetupPlane() {
+    constexpr auto LightMaterialDensity = 1.0f;
+    constexpr auto HeavyMaterialDensity = 12.0f;
+
     // Plane
     LittlePlane = FPlaneFactory{}
                   .SetPosition({35.0f, 18.f})
                   .SetRotation(DegToRad(0.0f))
                   .AddBodyPart({
+                      .Density = LightMaterialDensity,
                       .Width = 4.0f,
                       .Height = 0.5,
                   })
                   .AddBodyPart({
+                      .Density = HeavyMaterialDensity,
                       .Width = 1,
                       .Height = 0.25,
                       .xOffset = -1.5,
 
                   })
                   .AddWing(FWingDescriptor{
+                      .Density = LightMaterialDensity,
                       .Airfoil = New<Foil::ViternaAirfoil2412>(),
                       .Params = Foil::FAirfoilParams{
                           .Name = "Wing",
@@ -239,9 +248,10 @@ void FLittlePlaneDesignerApp::SetupPlane() {
                       .RelativeLocation = {-1, 0.0f},
                       .BaseAngle = static_cast<float>(DegToRad(0.0)),
                       .MaxAngle  = static_cast<float>(DegToRad(15)),
-                      .MinAngle  = static_cast<float>(DegToRad(-15))
+                      .MinAngle  = static_cast<float>(DegToRad(-15)),
                   })
                   .AddWing(FWingDescriptor{
+                      .Density = LightMaterialDensity,
                       .Airfoil = New<Foil::ViternaAirfoil2412>(),
                       .Params = Foil::FAirfoilParams{
                           .Name = "Winglet",
@@ -391,7 +401,7 @@ void FLittlePlaneDesignerApp::DoDebugDraw() const {
     Drawer.drawIslands = false;
     Drawer.drawBodyNames = true;
     Drawer.drawShapes = true;
-    Drawer.drawJoints = true;
+    Drawer.drawJoints = false;
 
     DebugDraw_LegacyGL->SetupLegacyGL();
     b2World_Draw(World, &Drawer);

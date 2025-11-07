@@ -4,6 +4,8 @@
 
 #include "Camera.h"
 
+#include "Interfaces.h"
+
 void FCamera::SetParams_Ratio(float Ratio) {
     const auto Width = View.GetWidth();
     const auto Height = Width / Ratio;
@@ -23,6 +25,10 @@ void FCamera::SetParams_Width(const float Width) {
     const auto Height = Width / AspectRatio;
     View.yMin = y - Height*.5f;
     View.yMax = y + Height*.5f;
+}
+
+void FCamera::TrackObject(const Slab::TPointer<IMovingEntity>& Object) {
+    TrackedObject = Object;
 }
 
 auto FCamera::SetCenter(const Slab::Math::Point2D& Center) -> void {

@@ -7,6 +7,7 @@
 
 #include "Graphics/Types2D.h"
 #include "Math/Point.h"
+#include "Interfaces.h"
 
 
 struct FCamera
@@ -18,6 +19,8 @@ struct FCamera
     void SetParams_Ratio(float Ratio);
     void SetParams_Width(float Width);
 
+    void TrackObject(const Slab::TPointer<IMovingEntity>& Object);
+
     auto SetCenter(const Slab::Math::Point2D& Center) -> void;
 
     void Zoom(float ZoomFactor);
@@ -28,6 +31,7 @@ struct FCamera
 private:
     Slab::Graphics::RectR View = Slab::Graphics::RectR(-10.f, 10.f, -10.f, 10.f);
     float AspectRatio = 1.0f;
+    Slab::TPointer<IMovingEntity> TrackedObject;
 };
 
 

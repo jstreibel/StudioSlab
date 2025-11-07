@@ -6,7 +6,7 @@
 #define STUDIOSLAB_FLITTLEPLANE_H
 
 #include "FAtmosphericCondition.h"
-#include "IDynamicEntity.h"
+#include "../Interfaces.h"
 #include "box2d/box2d.h"
 #include "Foils/Foil.h"
 #include "Graphics/IDrawable.h"
@@ -34,6 +34,7 @@ public:
     float GetTotalMass() const override;
     b2Vec2 GetCenterOfMass_Global() const override;
     b2Vec2 GetPosition() const override;
+    b2Vec2 GetVelocity() const override;
 
     void Draw() override;
     const FWing& GetWing(int i) const { return *Wings[i]; }
@@ -44,6 +45,7 @@ private:
     explicit FLittlePlane(const Vector<TPointer<FWing>>& Wings, const b2BodyId HullBody)
     : Wings(Wings), HullBody(HullBody) {}
     FLittlePlane() = default;
+
     Vector<TPointer<FWing>> Wings;
     b2BodyId HullBody;
 };
