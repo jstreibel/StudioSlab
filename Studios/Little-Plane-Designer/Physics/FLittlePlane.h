@@ -33,6 +33,7 @@ public:
     void ComputeAndApplyForces(TPointer<LegacyGLDebugDraw>) override;
     float GetTotalMass() const override;
     b2Vec2 GetCenterOfMass_Global() const override;
+    b2Vec2 GetPosition() const override;
 
     void Draw() override;
     const FWing& GetWing(int i) const { return *Wings[i]; }

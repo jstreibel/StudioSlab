@@ -28,6 +28,8 @@ add_executable( LittlePlaneDesigner
         Physics/Terrain.cpp
         Physics/Terrain.h
         Physics/IDynamicEntity.h
+        Camera.cpp
+        Camera.h
 )
 target_include_directories(LittlePlaneDesigner PRIVATE ${box2d_SOURCE_DIR}/include)
 # target_link_libraries( LittlePlaneDesigner Slab box2D)

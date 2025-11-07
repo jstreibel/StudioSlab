@@ -158,18 +158,21 @@ b2Vec2 FLittlePlane::GetCenterOfMass_Global() const {
     fix HullCOM = b2Body_GetWorldCenterOfMass(HullBody);
     fix HullMass = b2Body_GetMass(HullBody);
 
+    b2Vec2 COM_Accumulator = HullMass * HullCOM;
     auto TotalMass = HullMass;
 
-    b2Vec2 COM_Accumulator = HullMass * HullCOM;
     for (const auto &Wing : Wings) {
         fix WingCOM = b2Body_GetWorldCenterOfMass(Wing->BodyId);
         fix WingMass = b2Body_GetMass(Wing->BodyId);
 
         COM_Accumulator += WingMass * WingCOM;
+        TotalMass += WingMass;
     }
 
-    return b2Body_GetWorldCenterOfMass(HullBody);
+    return COM_Accumulator * (1.f/TotalMass);
 }
+
+b2Vec2 FLittlePlane::GetPosition() const { return b2Body_GetPosition(HullBody); }
 
 void FLittlePlane::Draw() {
     namespace Drawer = Graphics::OpenGL::Legacy;

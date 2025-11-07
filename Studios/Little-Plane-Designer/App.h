@@ -7,6 +7,7 @@
 
 
 #include "Application.h"
+#include "Camera.h"
 #include "DebugDraw.h"
 #include "Physics/FLittlePlane.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
@@ -55,7 +56,7 @@ private:
 
     void StepSimulation() const;
 
-    Graphics::RectR View;
+    FCamera Camera;
     Int WinHeight, WinWidth;
 
     DeclarePointset(ForcesTimeSeries)

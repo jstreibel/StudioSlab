@@ -14,6 +14,8 @@ public:
     virtual void ComputeAndApplyForces(Slab::TPointer<LegacyGLDebugDraw>) = 0;
     virtual float GetTotalMass() const = 0;
     virtual b2Vec2 GetCenterOfMass_Global() const = 0;
+    /* Technically the same as GetCenterOfMass_Global, but not necessarily */
+    virtual b2Vec2 GetPosition() const = 0;
 };
 
 #endif //STUDIOSLAB_IDYNAMICENTITY_H
