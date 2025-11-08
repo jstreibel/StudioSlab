@@ -114,12 +114,6 @@ bool FLittlePlaneDesignerApp::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EK
         }
 
         if (key == Graphics::EKeyMap::Key_SPACE) b_IsRunning = !b_IsRunning;
-
-        if (key == Graphics::EKeyMap::Key_MINUS) {
-            // Graphics::Animator::Set(ViewWidth, ViewWidth*1.2, 0.1);
-        } else if (key == Graphics::EKeyMap::Key_EQUAL) {
-            // Graphics::Animator::Set(ViewWidth, ViewWidth/1.2, 0.1);
-        }
     }
     return false;
 }
@@ -342,6 +336,13 @@ void FLittlePlaneDesignerApp::HandleInputs(const Graphics::FKeyboardState& Keybo
     else {
         bool Flaps = false;
         const auto Wing = LittlePlane->GetWing(0);
+        const auto Δα = DegToRad(0.25f);
+        if (KeyboardState.IsPressed(Graphics::Key_UP)) {
+            LittlePlane->AdjustWingAngle(0, Δα);
+        }
+        if (KeyboardState.IsPressed(Graphics::Key_DOWN)) {
+            LittlePlane->AdjustWingAngle(0, -Δα);
+        }
         if (KeyboardState.IsPressed(Graphics::Key_LEFT)) {
             fix RevJoint = Wing.RevJoint;
             fix WingBody = Wing.BodyId;

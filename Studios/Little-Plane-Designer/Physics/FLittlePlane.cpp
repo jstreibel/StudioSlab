@@ -181,3 +181,11 @@ void FLittlePlane::Draw(const Graphics::FPlatformWindow&) {
     }
 }
 
+void FLittlePlane::AdjustWingAngle(int WingId, double Delta) const {
+    if (WingId >= Wings.size()) return;
+
+    const auto &Wing = Wings[WingId];
+
+    Wing->SetBaseAngle(Delta);
+}
+

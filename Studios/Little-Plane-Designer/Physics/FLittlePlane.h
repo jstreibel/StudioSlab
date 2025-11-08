@@ -16,10 +16,18 @@ struct FWing {
     b2JointId RevJoint;
     TPointer<Foil::IAirfoilPolars> Airfoil;
     Foil::FAirfoilParams Params;
-    const float BaseAngle = 0.0f;
+    float BaseAngle = 0.0f;
     const float MaxAngle  = 0.0f;
     const float MinAngle  = 0.0f;
 
+    void SetBaseAngle(const double Delta) {
+        fix CurrentAngle = b2RevoluteJoint_GetTargetAngle(RevJoint);
+        fix NewAngle = CurrentAngle + Delta;
+
+        if (NewAngle < MinAngle || NewAngle > MaxAngle) return;
+        BaseAngle = NewAngle;
+        b2RevoluteJoint_SetTargetAngle(RevJoint, NewAngle);
+    };
 };
 
 class FLittlePlane final : public Graphics::IDrawable, public IDynamicEntity
@@ -39,6 +47,7 @@ public:
     void Draw(const Graphics::FPlatformWindow&) override;
     const FWing& GetWing(int i) const { return *Wings[i]; }
     int GetWingCount() const { return static_cast<int>(Wings.size()); }
+    void AdjustWingAngle(int WingId, double Delta) const;
 
 private:
     friend class FPlaneFactory;
