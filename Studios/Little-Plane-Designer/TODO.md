@@ -11,17 +11,18 @@
   - [X] Plane hull composition
 - [X] Arbitrary ground heights (terrain)
 - [X] Correct forces diagram
-- [ ] Simplified and useful forces diagram
+  - [ ] Simplified and useful forces diagram
 - [X] Foil interactivity
   - [X] Spring response
   - [X] Fixed response (change aileron angle) 
 - [X] Camera tracking
 - [ ] Good (ish) looking plane hull
 - [ ] A big hill to launch planes from
-- [ ] Endless (ish) terrain
+- [X] Endless (ish) terrain
 - [ ] Size and position reference (human, cat, yellow ruler, etc.)
 - [ ] Some background and sky features: house, trees, bushes, lake, clouds etc.
 - [X] Add stats (speed, altidude, attitude, etc.)
+  - [ ] Clean-up stats
 - [X] BUGFIX: FWriterOpenGL not working ...
 
 ### Future sprints

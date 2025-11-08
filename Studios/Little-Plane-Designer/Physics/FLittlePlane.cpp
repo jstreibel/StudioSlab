@@ -73,10 +73,6 @@ Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
 
         const auto Scale = DebugDraw_LegacyGL.GetBaseScale();
 
-        const auto Total = drag + lift;
-        DebugDraw_LegacyGL.DrawVector(Total, COM, 1.0f, b2_colorRed);
-        DebugDraw_LegacyGL.Write("Total", COM + Total*Scale, b2_colorRed);
-
         DebugDraw_LegacyGL.DrawVector(drag, COM, 1.0f, b2_colorRed);
         DebugDraw_LegacyGL.Write("drag", COM + drag*Scale, b2_colorRed);
 

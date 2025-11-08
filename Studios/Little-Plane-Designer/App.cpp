@@ -441,7 +441,7 @@ void FLittlePlaneDesignerApp::DoDebugDraw() const {
     Drawer.drawMass = true;
     Drawer.drawBounds = false;
     Drawer.drawIslands = false;
-    Drawer.drawBodyNames = true;
+    Drawer.drawBodyNames = false;
     Drawer.drawShapes = true;
     Drawer.drawJoints = false;
 
