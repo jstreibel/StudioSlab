@@ -36,7 +36,7 @@ public:
     b2Vec2 GetPosition() const override;
     b2Vec2 GetVelocity() const override;
 
-    void Draw() override;
+    void Draw(const Graphics::FPlatformWindow&) override;
     const FWing& GetWing(int i) const { return *Wings[i]; }
 
 private:

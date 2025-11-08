@@ -5,12 +5,14 @@
 #ifndef STUDIOSLAB_IDRAWABLE_H
 #define STUDIOSLAB_IDRAWABLE_H
 
+#include "Backend/PlatformWindow.h"
+
 namespace Slab::Graphics {
 class IDrawable
 {
 public:
     virtual ~IDrawable() = default;
-    virtual void Draw() = 0;
+    virtual void Draw(const FPlatformWindow&) = 0;
 };
 }
 

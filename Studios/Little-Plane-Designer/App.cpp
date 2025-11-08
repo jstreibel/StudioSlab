@@ -15,6 +15,7 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/NativeFunction.h"
 #include "Physics/Foils/NACA2412.h"
 #include "Graphics/Modules/Animator/Animator.h"
+#include "Render/PlaneStats.h"
 
 using CAirfoil = Foil::ViternaAirfoil2412;
 
@@ -53,16 +54,18 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     fix KeyboardState = PlatformWindow.GetKeyboardState();
     HandleInputs(*KeyboardState);
 
-    const auto Writer = DebugDraw_LegacyGL->GetWriter();
-    Writer->Reshape(WinWidth, WinHeight);
-    Writer->SetPenPositionTransform([this](const Graphics::Point2D& pt) {
-        IN View = Camera.GetView();
-        fix W = this->WinWidth;
-        fix H = this->WinHeight;
-        return Graphics::FromSpaceToViewportCoord(pt,
-                                                  Graphics::RectR{View.xMin, View.xMax, View.yMin, View.yMax},
-                                                  Graphics::RectI{0, W, 0, H});
-    });
+    // Update writers
+    {
+        const auto Writer = DebugDraw_LegacyGL->GetWriter();
+        Writer->Reshape(WinWidth, WinHeight);
+        Writer->SetPenPositionTransform([this](const Graphics::Point2D& PenPosition) {
+            IN View = Camera.GetView();
+            return Graphics::FromSpaceToViewportCoord(
+                PenPosition,
+                Graphics::RectR{View.xMin, View.xMax, View.yMin, View.yMax},
+                Graphics::RectI{0, WinWidth, 0, WinHeight});
+        });
+    }
 
     Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
     Drawer::ResetModelView();
@@ -80,12 +83,14 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
 
     UpdateGraphs();
 
+    PlaneStats->Draw(PlatformWindow);
+
     if constexpr (PrettyDraw) {
         Drawer::SetupLegacyGL();
 
-        Terrain->Draw();
+        Terrain->Draw(PlatformWindow);
 
-        LittlePlane->Draw();
+        LittlePlane->Draw(PlatformWindow);
     }
     if constexpr (DebugDraw) { DoDebugDraw(); }
 
@@ -302,6 +307,12 @@ void FLittlePlaneDesignerApp::OnStart() {
     SetupPlane();
 
     SetupMonitors();
+
+    // Setup stats
+    {
+        PlaneStats = New<FPlaneStats>(LittlePlane);
+    }
+
 
     WinWidth = SystemWindow->GetWidth();
     WinHeight = SystemWindow->GetHeight();

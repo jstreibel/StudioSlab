@@ -138,6 +138,28 @@ namespace Slab {
         return ToStr(a_value, RealToStringDecimalPlaces, UseScientificNotation);
     }
 
+    Str ToStr(const char* fmt, ...) {
+        va_list args;
+        va_start(args, fmt);
+
+        va_list args_copy;
+        va_copy(args_copy, args);
+        const int needed = std::vsnprintf(nullptr, 0, fmt, args_copy);
+        va_end(args_copy);
+
+        Str out;
+        if (needed > 0) {
+            // allocate room for the formatted string (plus NUL during write)
+            out.resize(static_cast<size_t>(needed) + 1);
+            std::vsnprintf(&out[0], static_cast<size_t>(needed) + 1, fmt, args);
+            // trim off the NUL terminator to keep size == length
+            out.resize(static_cast<size_t>(needed));
+        }
+
+        va_end(args);
+        return out;
+    }
+
     Str ToStr(bool value) { return value ? "True" : "False"; }
 
     Str ToStr(const Str &str) {

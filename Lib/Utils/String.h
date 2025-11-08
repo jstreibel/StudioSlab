@@ -5,6 +5,7 @@
 #ifndef STUDIOSLAB_STRING_H
 #define STUDIOSLAB_STRING_H
 
+#include <cstdarg>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -41,6 +42,9 @@ namespace Slab {
 
     template<typename T>
     Str ToStr(const T &a_value) { return std::to_string(a_value); }
+
+    // printf-style formatter that returns a std::string (Slab::Str)
+    Str ToStr(const char* fmt, ...);
 
     Str ToStr(bool value);
 

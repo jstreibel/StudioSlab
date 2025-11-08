@@ -29,7 +29,7 @@ class FTerrain final : public Slab::Graphics::IDrawable
 
     void Setup(b2WorldId, const FTerrainDescriptor& Descriptor);
 
-    void Draw() override;
+    void Draw(const Slab::Graphics::FPlatformWindow&) override;
 
 private:
     bool b_IsInitialized = false;

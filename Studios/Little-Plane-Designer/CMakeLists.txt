@@ -27,10 +27,11 @@ add_executable( LittlePlaneDesigner
         Physics/FAtmosphericCondition.h
         Physics/Terrain.cpp
         Physics/Terrain.h
-        Physics/IDynamicEntity.h
         Camera.cpp
         Camera.h
         Interfaces.h
+        Render/PlaneStats.cpp
+        Render/PlaneStats.h
 )
 target_include_directories(LittlePlaneDesigner PRIVATE ${box2d_SOURCE_DIR}/include)
 # target_link_libraries( LittlePlaneDesigner Slab box2D)

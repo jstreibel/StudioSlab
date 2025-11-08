@@ -188,6 +188,7 @@ namespace Slab::Graphics::OpenGL {
         SetBufferText(Text, Pen, Color, Vertical);
         CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
 
+        DrawBuffer();
         CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
     }
 

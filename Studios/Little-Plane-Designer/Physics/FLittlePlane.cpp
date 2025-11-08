@@ -178,7 +178,7 @@ b2Vec2 FLittlePlane::GetVelocity() const {
     return b2Body_GetLinearVelocity(HullBody);
 }
 
-void FLittlePlane::Draw() {
+void FLittlePlane::Draw(const Graphics::FPlatformWindow&) {
     namespace Drawer = Graphics::OpenGL::Legacy;
 
     Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
