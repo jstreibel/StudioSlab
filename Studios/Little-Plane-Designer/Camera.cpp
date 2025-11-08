@@ -63,3 +63,12 @@ void FCamera::Pan(Slab::Math::Point2D Delta) {
     View.yMin += dHeight;
     View.yMax += dHeight;
 }
+
+void FCamera::Update(float ElapsedTimeMsec) {
+    if (TrackedObject == nullptr) return;
+
+    fix w = View.GetWidth();
+
+    auto [x, y] = TrackedObject->GetPosition();
+    SetCenter({x-w*.25f, y});
+}

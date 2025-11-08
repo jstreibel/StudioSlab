@@ -10,7 +10,7 @@
 #include "Interfaces.h"
 
 
-struct FCamera
+struct FCamera : IUpdateable
 {
     /**
      * Set camera ratio.
@@ -27,6 +27,8 @@ struct FCamera
     void Pan(Slab::Math::Point2D Delta);
 
     const Slab::Graphics::RectR& GetView() const { return View; }
+
+    void Update(float ElapsedTimeMsec) override;
 
 private:
     Slab::Graphics::RectR View = Slab::Graphics::RectR(-10.f, 10.f, -10.f, 10.f);

@@ -27,7 +27,8 @@ struct FWing {
         if (NewAngle < MinAngle || NewAngle > MaxAngle) return;
         BaseAngle = NewAngle;
         b2RevoluteJoint_SetTargetAngle(RevJoint, NewAngle);
-    };
+        b2Joint_WakeBodies(RevJoint);
+    }
 };
 
 class FLittlePlane final : public Graphics::IDrawable, public IDynamicEntity

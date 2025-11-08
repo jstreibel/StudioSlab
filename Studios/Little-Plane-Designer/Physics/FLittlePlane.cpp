@@ -117,9 +117,8 @@ void FLittlePlane::ComputeAndApplyForces(const TPointer<LegacyGLDebugDraw> Debug
 
 float FLittlePlane::GetTotalMass() const {
     float Mass = 0.0f;
-    for (const auto &Wing : Wings) {
+    for (const auto &Wing : Wings)
         Mass += b2Body_GetMass(Wing->BodyId);
-    }
 
     Mass += b2Body_GetMass(HullBody);
 

@@ -54,7 +54,7 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
 
     const auto [x, y] = LittlePlane->GetPosition();
 
-    Camera.SetCenter({x-7.0f, y});
+    Camera.Update(1.f/60.f);
 
     fix KeyboardState = PlatformWindow.GetKeyboardState();
     HandleInputs(*KeyboardState);
@@ -311,6 +311,8 @@ void FLittlePlaneDesignerApp::SetupTerrain() {
                        .tMax = 50.0f,
                        .Count = 550,
                    });
+
+    b2
 }
 
 void FLittlePlaneDesignerApp::OnStart() {
@@ -335,9 +337,7 @@ void FLittlePlaneDesignerApp::OnStart() {
     SetupMonitors();
 
     // Setup stats
-    {
-        PlaneStats = New<FPlaneStats>(LittlePlane, World);
-    }
+    PlaneStats = New<FPlaneStats>(LittlePlane, World);
 
 
     WinWidth = SystemWindow->GetWidth();
@@ -345,6 +345,7 @@ void FLittlePlaneDesignerApp::OnStart() {
     fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
     Camera.SetParams_Width(InitialViewWidth);
     Camera.SetParams_Ratio(AspectRatio);
+    Camera.TrackObject(LittlePlane);
     const auto [x, y] = LittlePlane->GetPosition();
     Camera.SetCenter({x-7.0f, y});
 }
@@ -438,7 +439,7 @@ void FLittlePlaneDesignerApp::UpdateGraphs() const {
 
 void FLittlePlaneDesignerApp::DoDebugDraw() const {
     auto &Drawer = *DebugDraw_LegacyGL->handle();
-    Drawer.drawMass = true;
+    Drawer.drawMass = false;
     Drawer.drawBounds = false;
     Drawer.drawIslands = false;
     Drawer.drawBodyNames = false;

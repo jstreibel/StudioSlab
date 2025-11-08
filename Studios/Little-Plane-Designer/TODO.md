@@ -1,6 +1,5 @@
-# Little Plane Designer
-## Little to-do list
-### Sprint 1
+# Little Plane Designer - little to-do list
+## Sprint 1
 - [X] Working foil (NACA2412)
 - [X] Drag+lift model
   - [X] Polar functions
@@ -25,7 +24,7 @@
   - [ ] Clean-up stats
 - [X] BUGFIX: FWriterOpenGL not working ...
 
-### Future sprints
+## Future sprints
 - [ ] Custom plane design
   - [ ] Custom plane hull
   - [ ] Custom foil placement
