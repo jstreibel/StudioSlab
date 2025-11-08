@@ -38,6 +38,7 @@ public:
 
     void Draw(const Graphics::FPlatformWindow&) override;
     const FWing& GetWing(int i) const { return *Wings[i]; }
+    int GetWingCount() const { return static_cast<int>(Wings.size()); }
 
 private:
     friend class FPlaneFactory;

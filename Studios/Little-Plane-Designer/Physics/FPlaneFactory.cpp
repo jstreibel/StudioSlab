@@ -84,8 +84,9 @@ b2BodyId FPlaneFactory::BuildBody(const b2WorldId World) const {
     b2Body_SetName(Body, "Plane Body");
 
     b2ShapeDef ShapeDef = b2DefaultShapeDef();
-    for (const auto & [Density, Friction, Restitution, Width, Height, xOffset, yOffset, AngleRad] : BodyPartDescriptors) {
-        ShapeDef.density = Density;
+    for (const auto & [Density, Friction, Restitution, Width, Height, xOffset, yOffset, Depth, AngleRad] : BodyPartDescriptors) {
+        // Convert 3D density (kg/m^3) -> 2D density (kg/m^2) via effective depth
+        ShapeDef.density = Density * Depth;
         ShapeDef.material.friction = Friction;
         ShapeDef.material.restitution = Restitution;
 
@@ -120,7 +121,7 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
     // LE=-0.25c, TE=+0.75c
 
     fix Chord = Params.ChordLength;
-    fix Thick = Params.Thickness;
+    fix Thick = Params.Thickness * Params.ChordLength;
 
     // 1) Build hull
     b2Hull hull;
@@ -139,7 +140,8 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
 
     // 3) Create a fixture
     b2ShapeDef sdef = b2DefaultShapeDef();
-    sdef.density = Descriptor.Density;
+    // Convert 3D density (kg/m^3) -> 2D density (kg/m^2) using span as out-of-plane depth
+    sdef.density = Descriptor.Density * Params.Span;
     sdef.material.friction = Descriptor.Friction;
     sdef.material.restitution = Descriptor.Restitution;
     b2CreatePolygonShape(WingBody, &sdef, &WingShape);

@@ -28,8 +28,9 @@ constexpr auto b2_pi = M_PI;
 
 class LegacyGLDebugDraw {
 public:
-    explicit LegacyGLDebugDraw(float alpha = 1.0f, int circleSegments = 128)
-    : m_alpha(alpha)
+    explicit LegacyGLDebugDraw(float base_scale, float alpha = 1.0f, int circleSegments = 128)
+    : m_base_scale(base_scale)
+    , m_alpha(alpha)
     , m_circleSegments(circleSegments)
     , Writer(Slab::New<Slab::Graphics::OpenGL::FWriterOpenGL>(Slab::Core::Resources::GetIndexedFontFileName(3), 28))
     {
@@ -70,6 +71,8 @@ public:
 
     void DrawVector(b2Vec2 f, b2Vec2 p, float scale=1.f, b2HexColor color=b2_colorYellow) const
     {
+        scale *= m_base_scale;
+
         SetupLegacyGL();
 
         const float mag = std::sqrt(f.x*f.x + f.y*f.y);
@@ -100,6 +103,8 @@ public:
 
     void DrawPseudoVector(float mag, b2Vec2 c, float scale=1.0f, float alpha0=.0f, b2HexColor color=b2_colorOrange, int segments=200) const
     {
+        scale *= m_base_scale;
+
         SetupLegacyGL();
         
         if (std::fabs(mag) <= 1e-6f) return;
@@ -150,6 +155,8 @@ public:
     Slab::TPointer<Slab::Graphics::OpenGL::FWriterOpenGL> GetWriter() const {
         return Writer;
     }
+
+    float GetBaseScale() const { return m_base_scale; }
 
 private:
     // ---- helpers ----
@@ -341,9 +348,11 @@ private:
     }
 
     b2DebugDraw m_dd{};
+    float m_base_scale{1.0f};
     float m_alpha{1.0f};
     int   m_circleSegments{128};
     Slab::TPointer<Slab::Graphics::OpenGL::FWriterOpenGL> Writer;
+
 };
 
 #endif //STUDIOSLAB_DEBUGDRAW_H

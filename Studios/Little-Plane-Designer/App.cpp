@@ -19,10 +19,15 @@
 
 using CAirfoil = Foil::ViternaAirfoil2412;
 
-constexpr auto PrettyDraw = false;
+constexpr auto PrettyDraw = true;
 constexpr auto DebugDraw = true;
 
 constexpr float TimeScale = 1.0f;
+
+constexpr float VectorScale = .00875f;
+
+constexpr auto LightMaterialDensity = 12.0f;
+constexpr auto HeavyMaterialDensity = 30.0f;
 
 // constexpr auto InitialViewWidth = 3.2f*1.2f;
 constexpr auto InitialViewWidth = 30*1.2f;
@@ -223,9 +228,6 @@ void FLittlePlaneDesignerApp::SetupMonitors() {
 }
 
 void FLittlePlaneDesignerApp::SetupPlane() {
-    constexpr auto LightMaterialDensity = 1.0f;
-    constexpr auto HeavyMaterialDensity = 12.0f;
-
     // Plane
     LittlePlane = FPlaneFactory{}
                   .SetPosition({35.0f, 18.f})
@@ -293,7 +295,7 @@ void FLittlePlaneDesignerApp::OnStart() {
     SystemWindow->SetupGUIContext();
     GUIContext = SystemWindow->GetGUIContext();
 
-    DebugDraw_LegacyGL = Slab::New<LegacyGLDebugDraw>();
+    DebugDraw_LegacyGL = Slab::New<LegacyGLDebugDraw>(VectorScale);
 
     b_IsRunning = StartRunning;
 
@@ -310,7 +312,7 @@ void FLittlePlaneDesignerApp::OnStart() {
 
     // Setup stats
     {
-        PlaneStats = New<FPlaneStats>(LittlePlane);
+        PlaneStats = New<FPlaneStats>(LittlePlane, World);
     }
 
 
@@ -376,8 +378,6 @@ void FLittlePlaneDesignerApp::UpdateGraphs() const {
     CurrentTorquePolar->clear();
     CurrentTorquePolar->AddPoint(CurrentForces.AoA, CurrentForces.Cm_c4);
     if (b_IsRunning) {
-        LittlePlane->ComputeAndApplyForces(DebugDraw ? DebugDraw_LegacyGL : nullptr);
-
         StepSimulation();
 
         static double time = 0.0;
@@ -421,7 +421,7 @@ void FLittlePlaneDesignerApp::DoDebugDraw() const {
     const auto COM = LittlePlane->GetCenterOfMass_Global();
 
     const auto Grav = b2World_GetGravity(World);
-    DebugDraw_LegacyGL->DrawVector(Mass * Grav, COM, .025f);
+    DebugDraw_LegacyGL->DrawVector(Mass * Grav, COM, 1.0f, b2_colorForestGreen);
 }
 
 void FLittlePlaneDesignerApp::RenderSimData(const Graphics::FPlatformWindow& PlatformWindow) {
@@ -437,6 +437,8 @@ void FLittlePlaneDesignerApp::RenderSimData(const Graphics::FPlatformWindow& Pla
 
 void FLittlePlaneDesignerApp::StepSimulation() const {
     constexpr float splitTimeStep = timeStep/manualSubSteps;
-    for (int i = 0; i < manualSubSteps; ++i)
+    for (int i = 0; i < manualSubSteps; ++i) {
+        LittlePlane->ComputeAndApplyForces(DebugDraw&&i==0 ? DebugDraw_LegacyGL : nullptr);
         b2World_Step(World, splitTimeStep, subSteps);
+    }
 }

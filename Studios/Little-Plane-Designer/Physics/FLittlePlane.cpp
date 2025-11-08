@@ -70,56 +70,32 @@ Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
     if (DebugDraw != nullptr)
     {
         const auto &DebugDraw_LegacyGL = *DebugDraw;
-        DebugDraw_LegacyGL.DrawVector(VelC4, COM, 1.f, b2_colorAquamarine);
-        DebugDraw_LegacyGL.Write("speed", VelC4 + COM, b2_colorAquamarine);
 
+        const auto Scale = DebugDraw_LegacyGL.GetBaseScale();
+
+        const auto Total = drag + lift;
+        DebugDraw_LegacyGL.DrawVector(Total, COM, 1.0f, b2_colorRed);
+        DebugDraw_LegacyGL.Write("Total", COM + Total*Scale, b2_colorRed);
+
+        DebugDraw_LegacyGL.DrawVector(drag, COM, 1.0f, b2_colorRed);
+        DebugDraw_LegacyGL.Write("drag", COM + drag*Scale, b2_colorRed);
+
+        DebugDraw_LegacyGL.DrawVector(lift, COM, 1.0f, b2_colorAliceBlue);
+        DebugDraw_LegacyGL.Write("lift", COM + lift*Scale, b2_colorAliceBlue);
+
+        if constexpr (false)
         {
-            constexpr auto Scale = .025f;
+            DebugDraw_LegacyGL.DrawPseudoVector(ω, COM, 1.f, .0f, b2_colorAqua);
+            DebugDraw_LegacyGL.Write("omega", COM+b2Vec2{static_cast<float>(ω), .0f}, b2_colorAqua);
 
-            // DebugDraw_LegacyGL.DrawVector(VelC4, COM + QuarterChordWorld, .25f, b2_colorAliceBlue);
-            // DebugDraw_LegacyGL.Write(Str("C/4 speed @ " + ToStr(AoA/M_PI*180.0) + "deg AoA"), QuarterChordWorld + VelC4*.225f, b2_colorAliceBlue);
+            DebugDraw_LegacyGL.DrawPseudoVector(τ_mag, COM, 1.f, .0f, b2_colorBisque);
+            DebugDraw_LegacyGL.Write("Torque Cm", COM+b2Vec2{static_cast<float>(τ_mag), .0f}, b2_colorBisque);
 
-            // DebugDraw_LegacyGL.DrawPseudoVector(ω, COM, .25f, 0.25f*M_PI, b2_colorRed);
-            // DebugDraw_LegacyGL.Write("Ang speed", COM+b2Vec2{ω*.26f, .0f}, b2_colorRed);
+            DebugDraw_LegacyGL.DrawPseudoVector(τ_aero, COM, 1.f, .0f, b2_colorDarkCyan);
+            DebugDraw_LegacyGL.Write("Torque (aero)", COM+b2Vec2{static_cast<float>(τ_aero), .0f}, b2_colorDarkCyan);
 
-            // DebugDraw_LegacyGL.DrawVector(WindOnPoint, COM, 0.1f, b2_colorCadetBlue);
-            // DebugDraw_LegacyGL.Write("Wind", COM + WindOnPoint*0.1f, b2_colorCadetBlue);
-
-            // DebugDraw_LegacyGL.DrawVector(AirfoilNormalUnit, c4_world, 1.f, b2_colorDarkBlue);
-            // DebugDraw_LegacyGL.Write(Str("Airfoil normal @ " + ToStr(AoA/M_PI*180.0) + "deg AoA"), c4_world + AirfoilNormalUnit, b2_colorDarkBlue);
-
-            // DebugDraw_LegacyGL.DrawVector(FW_Unit, QuarterChordWorld, 1.f, b2_colorDarkBlue);
-            // DebugDraw_LegacyGL.Write("Forward", QuarterChordWorld + FW_Unit, b2_colorDarkBlue);
-
-            const auto Total = (drag + lift)*Scale;
-            DebugDraw_LegacyGL.DrawVector(Total, COM, 1.0f, b2_colorRed);
-            DebugDraw_LegacyGL.Write("Total", COM + Total, b2_colorRed);
-
-            DebugDraw_LegacyGL.DrawVector(drag, COM, Scale, b2_colorRed);
-            DebugDraw_LegacyGL.Write("drag", COM + drag*Scale, b2_colorRed);
-
-            DebugDraw_LegacyGL.DrawVector(lift, COM, Scale, b2_colorAliceBlue);
-            DebugDraw_LegacyGL.Write("lift", COM + lift*Scale, b2_colorAliceBlue);
-
-
-
-            // DebugDraw_LegacyGL.DrawVector(lift+drag, COM, .05f, b2_colorAliceBlue);
-            // DebugDraw_LegacyGL.Write("lift+drag ", COM + (lift+drag)*.05f, b2_colorAliceBlue);
-
-            if constexpr (false)
-            {
-                DebugDraw_LegacyGL.DrawPseudoVector(ω, COM, 1.f, .0f, b2_colorAqua);
-                DebugDraw_LegacyGL.Write("omega", COM+b2Vec2{static_cast<float>(ω), .0f}, b2_colorAqua);
-
-                DebugDraw_LegacyGL.DrawPseudoVector(τ_mag, COM, 1.f, .0f, b2_colorBisque);
-                DebugDraw_LegacyGL.Write("Torque Cm", COM+b2Vec2{static_cast<float>(τ_mag), .0f}, b2_colorBisque);
-
-                DebugDraw_LegacyGL.DrawPseudoVector(τ_aero, COM, 1.f, .0f, b2_colorDarkCyan);
-                DebugDraw_LegacyGL.Write("Torque (aero)", COM+b2Vec2{static_cast<float>(τ_aero), .0f}, b2_colorDarkCyan);
-
-                DebugDraw_LegacyGL.DrawPseudoVector(τ_visc, COM, 1.f, .0f, b2_colorBox2DBlue);
-                DebugDraw_LegacyGL.Write("Torque (visc)", COM+b2Vec2{static_cast<float>(τ_visc), .0f}, b2_colorBox2DBlue);
-            }
+            DebugDraw_LegacyGL.DrawPseudoVector(τ_visc, COM, 1.f, .0f, b2_colorBox2DBlue);
+            DebugDraw_LegacyGL.Write("Torque (visc)", COM+b2Vec2{static_cast<float>(τ_visc), .0f}, b2_colorBox2DBlue);
         }
     }
 

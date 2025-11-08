@@ -11,13 +11,15 @@
 
 struct FPlaneStats final : Graphics::IDrawable {
 
-    explicit FPlaneStats(const TPointer<FLittlePlane>& Plane)
+    explicit FPlaneStats(const TPointer<FLittlePlane>& Plane, b2WorldId world)
     : Plane(Plane)
-    , Writer(New<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(3), 36)) { }
+    , World(world)
+    , Writer(New<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::BuiltinFonts::JuliaMono_Regular(), 36)) { }
     void Draw(const Graphics::FPlatformWindow&) override;
 
 private:
     TPointer<FLittlePlane> Plane;
+    b2WorldId World{};
     TPointer<Graphics::FWriter> Writer;
 };
 

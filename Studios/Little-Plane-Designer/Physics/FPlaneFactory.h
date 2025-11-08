@@ -40,6 +40,10 @@ struct FBodyPartDescriptor {
     float xOffset = 0.0f;
     float yOffset = 0.0f;
 
+    // Out-of-plane thickness/depth [m] to convert 3D density (kg/m^3)
+    // to Box2D's 2D density (kg/m^2): density_2d = Density * Depth
+    float Depth = 0.30f;
+
     float AngleRad = 0.0f;
 
 };
