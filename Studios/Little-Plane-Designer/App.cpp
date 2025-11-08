@@ -19,8 +19,8 @@
 
 using CAirfoil = Foil::ViternaAirfoil2412;
 
-constexpr auto PrettyDraw = true;
-constexpr auto DebugDraw = true;
+auto PrettyDraw = true;
+auto DebugDraw = true;
 
 constexpr float TimeScale = 1.0f;
 
@@ -77,8 +77,8 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     IN View = Camera.GetView();
     Drawer::SetupOrtho({View.xMin, View.xMax, View.yMin, View.yMax});
 
-    if      constexpr (PrettyDraw) PlatformWindow.Clear(Graphics::LapisLazuli);
-    else if constexpr (DebugDraw)  PlatformWindow.Clear(Graphics::Black);
+    if      (PrettyDraw) PlatformWindow.Clear(Graphics::LapisLazuli);
+    else if (DebugDraw)  PlatformWindow.Clear(Graphics::Black);
 
     if constexpr (false) GUIContext->AddDrawCall([this] {
         ImGui::Begin("Wings");
@@ -90,14 +90,14 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
 
     PlaneStats->Draw(PlatformWindow);
 
-    if constexpr (PrettyDraw) {
+    if (PrettyDraw) {
         Drawer::SetupLegacyGL();
 
         Terrain->Draw(PlatformWindow);
 
         LittlePlane->Draw(PlatformWindow);
     }
-    if constexpr (DebugDraw) { DoDebugDraw(); }
+    if (DebugDraw) { DoDebugDraw(); }
 
     RenderSimData(PlatformWindow);
 
@@ -108,8 +108,20 @@ bool FLittlePlaneDesignerApp::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EK
                                              Graphics::EModKeys modKeys) {
     if (state == Graphics::EKeyState::Press)
     {
-        if (key == Graphics::EKeyMap::Key_F4 && modKeys.Mod_Alt) {
-            GetPlatform()->GetMainSystemWindow()->SignalClose();
+        if (modKeys.Mod_Alt) {
+            if (key == Graphics::EKeyMap::Key_F4) {
+                GetPlatform()->GetMainSystemWindow()->SignalClose();
+                return true;
+            }
+        }
+
+        if (key == Graphics::EKeyMap::Key_F5) {
+            PrettyDraw = !PrettyDraw;
+            return true;
+        }
+
+        if (key == Graphics::EKeyMap::Key_F6) {
+            DebugDraw = !DebugDraw;
             return true;
         }
 
@@ -272,14 +284,32 @@ void FLittlePlaneDesignerApp::SetupPlane() {
 void FLittlePlaneDesignerApp::SetupTerrain() {
     Terrain = Slab::New<FTerrain>();
     Terrain->Setup(World, FTerrainDescriptor{
-                       .H = [](const float x) {
-                           if (x < 0.0f) return 0.0f;
+                       .H = [](const float t) {
+                           const Vector<double> A = {0.75, 0.25, 0.1};
+                           constexpr auto BaseFreq = 0.1*M_PI;
 
-                           return 0.25f*x;
+                           if (t < 0.0f) {
+                               auto Value = 0.0f;
+                               int n=0;
+                               for (fix a : A)
+                                   Value += a*sinf(n++*BaseFreq*t);
+
+                               return Value;
+
+                           }
+
+                           return 0.25f*t;
                        },
-                       .tMin = -50.0f,
+                       .x = [](const float t) {
+                           if (t < 0.0f) {
+                               return 2.0f * t;
+                           }
+
+                           return t;
+                       },
+                       .tMin = -500.0f,
                        .tMax = 50.0f,
-                       .Count = 100,
+                       .Count = 550,
                    });
 }
 
