@@ -11,19 +11,23 @@
 
 #include "Graphics/OpenGL/OpenGL.h"
 #include "Graphics/Styles/Colors.h"
+#include "Graphics/Utils/ImageLoad.h"
 
 namespace Slab::Graphics::OpenGL {
 
-    class Texture2D_Color : public Texture2D {
+    class FTexture2D_Color final : public FTexture2D {
         ByteData_raw data = nullptr;
 
     public:
 
-        Texture2D_Color(GLsizei width, GLsizei height);
+        FTexture2D_Color(GLsizei width, GLsizei height);
 
-        bool setColor(int i, int j, FColor color);
+        static TPointer<FTexture2D_Color> FromStbiImage(Image::StbiImageInfo);
+        static TPointer<FTexture2D_Color> FromImageFile(const Str& FileName);
 
-        bool upload(UInt row=0, CountType nRows=0);
+        bool SetColor(int i, int j, FColor color) const;
+
+        bool Upload(UInt row=0, CountType nRows=0);
     };
 
 } // OpenGL

@@ -296,8 +296,8 @@ add_library(${LIB_GRAPHICS} STATIC
         Plot2D/Artists/BackgroundArtist.h
 		Backend/GLFW/GLFWPlatformWindow.cpp
 		Backend/GLFW/GLFWPlatformWindow.h
-		OpenGL/Images.cpp
-		OpenGL/Images.h
+		OpenGL/RawTextures.cpp
+		OpenGL/RawTextures.h
         Utils/ImageLoad.cpp
         Utils/ImageLoad.h
 		Backend/SFML/SFMLSystemWindow.cpp

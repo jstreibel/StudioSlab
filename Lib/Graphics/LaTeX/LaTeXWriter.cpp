@@ -32,9 +32,9 @@ namespace Slab::Graphics::LaTeX {
 
         graphics2D = New<tex::Graphics2D_cairo>(cairo_context);
 
-        texture = New<OpenGL::Texture2D_Color>(base_w, base_h);
-        texture->setSWrap(OpenGL::ClampToBorder);
-        texture->setTWrap(OpenGL::ClampToBorder);
+        texture = New<OpenGL::FTexture2D_Color>(base_w, base_h);
+        texture->SetSWrap(OpenGL::ClampToBorder);
+        texture->SetTWrap(OpenGL::ClampToBorder);
 
         const float L = 1;
 
@@ -101,11 +101,11 @@ namespace Slab::Graphics::LaTeX {
                 auto r = color[2];
                 auto a = color[3];
 
-                texture->setColor(i, j, FColor(a/255.0f, 0, 0, 0));
+                texture->SetColor(i, j, FColor(a/255.0f, 0, 0, 0));
             }
         }
 
-        texture->upload();
+        texture->Upload();
     }
 
     void LaTeXWriter::draw() {
@@ -116,7 +116,7 @@ namespace Slab::Graphics::LaTeX {
         texture->Bind();
 
         program.Use();
-        program.SetUniform("texture", (GLint) texture->getGLtextureUnit() - GL_TEXTURE0);
+        program.SetUniform("texture", (GLint) texture->GetGLtextureUnit() - GL_TEXTURE0);
         program.SetUniform4x4("model", model.data);
         program.SetUniform4x4("view", view.data);
         program.SetUniform4x4("projection", projection.data);

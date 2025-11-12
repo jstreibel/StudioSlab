@@ -10,7 +10,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    TPointer<Texture2D>
+    TPointer<FTexture2D>
     BuildTexture2DFromCairoSurface(Cairo::RefPtr<const Cairo::ImageSurface>);
 
 }

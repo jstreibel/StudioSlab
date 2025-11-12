@@ -13,7 +13,7 @@
 #include "StudioSlab.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "Graphics/SlabGraphics.h"
-#include "Graphics/OpenGL/Images.h"
+#include "Graphics/OpenGL/RawTextures.h"
 
 
 namespace Lab::Blueprints {
@@ -68,11 +68,11 @@ namespace Lab::Blueprints {
         Editor::SetCurrentEditor(m_Editor);
 
         auto location = Core::Resources::Folder + "Blueprints/";
-        m_HeaderBackground = Graphics::LoadTexture(location + "BlueprintBackground.png");
-        m_SaveIcon         = Graphics::LoadTexture(location + "ic_save_white_24dp.png");
-        m_RestoreIcon      = Graphics::LoadTexture(location + "ic_restore_white_24dp.png");
+        m_HeaderBackground = Graphics::SlabTexture::LoadTextureFromImage(location + "BlueprintBackground.png");
+        m_SaveIcon         = Graphics::SlabTexture::LoadTextureFromImage(location + "ic_save_white_24dp.png");
+        m_RestoreIcon      = Graphics::SlabTexture::LoadTextureFromImage(location + "ic_restore_white_24dp.png");
 
-        Builder = EditorUtil::BlueprintNodeBuilder(m_HeaderBackground, Graphics::GetTextureWidth(m_HeaderBackground), Graphics::GetTextureHeight(m_HeaderBackground));
+        Builder = EditorUtil::BlueprintNodeBuilder(m_HeaderBackground, Graphics::SlabTexture::GetTextureWidth(m_HeaderBackground), Graphics::SlabTexture::GetTextureHeight(m_HeaderBackground));
     }
 
     void FBlueprintRenderer::TouchNode(const Editor::NodeId id) { m_NodeTouchTime[id] = m_TouchTime; }
@@ -444,10 +444,10 @@ namespace Lab::Blueprints {
         selectedNodes.resize(nodeCount);
         selectedLinks.resize(linkCount);
 
-        int saveIconWidth     = Slab::Graphics::GetTextureWidth(m_SaveIcon);
-        int saveIconHeight    = Slab::Graphics::GetTextureWidth(m_SaveIcon);
-        int restoreIconWidth  = Slab::Graphics::GetTextureWidth(m_RestoreIcon);
-        int restoreIconHeight = Slab::Graphics::GetTextureWidth(m_RestoreIcon);
+        int saveIconWidth     = Graphics::SlabTexture::GetTextureWidth(m_SaveIcon);
+        int saveIconHeight    = Graphics::SlabTexture::GetTextureWidth(m_SaveIcon);
+        int restoreIconWidth  = Graphics::SlabTexture::GetTextureWidth(m_RestoreIcon);
+        int restoreIconHeight = Graphics::SlabTexture::GetTextureWidth(m_RestoreIcon);
 
         ImGui::GetWindowDrawList()->AddRectFilled(
                 ImGui::GetCursorScreenPos(),

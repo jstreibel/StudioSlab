@@ -2,24 +2,26 @@
 // Created by joao on 11/1/24.
 //
 
-#include "3rdParty/stb_image.h"
 #include "ImageLoad.h"
+#include "3rdParty/stb_image.h"
+#include "Core/Tools/Log.h"
+#include "Graphics/OpenGL/RawTextures.h"
 
 namespace Slab::Graphics::Image {
 
-    TPointer<OpenGL::Texture2D_Color> LoadTexture(const Str &path) {
-        NOT_IMPLEMENTED
-
-        int width = 0, height = 0, component = 0;
-        if (auto data = stbi_load(path.c_str(), &width, &height, &component, 4))
+    StbiImageInfo LoadImageFile(const Str& image_file) {
+        int width = 0, height = 0, channels_in_file = 0;
+        if (const auto data = stbi_load(image_file.c_str(), &width, &height, &channels_in_file, 4))
         {
-            // auto texture = CreateTexture(data, width, height);
-            // stbi_image_free(data);
-            // return texture;
+            Core::Log::Info() << "Loaded image " << image_file;
+            return StbiImageInfo {
+                .data = std::shared_ptr<StbiImage>(data, [](StbiImage* image) { stbi_image_free(image); }),
+                .width = width,
+                .height = height,
+                .channels = channels_in_file
+            };;
         }
-        else
-            return nullptr;
 
-        return Slab::TPointer<OpenGL::Texture2D_Color>();
+        return StbiImageInfo{};
     }
 }

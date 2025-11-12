@@ -28,6 +28,8 @@ constexpr float VectorScale = .00875f;
 
 constexpr auto LightMaterialDensity = 12.0f;
 constexpr auto HeavyMaterialDensity = 30.0f;
+constexpr auto LightRockDensity = 1600.0f;
+constexpr auto HeavyRockDensity = 3500.0f;
 
 // constexpr auto InitialViewWidth = 3.2f*1.2f;
 constexpr auto InitialViewWidth = 30*1.2f;
@@ -236,7 +238,7 @@ void FLittlePlaneDesignerApp::SetupMonitors() {
 void FLittlePlaneDesignerApp::SetupPlane() {
     // Plane
     LittlePlane = FPlaneFactory{}
-                  .SetPosition({35.0f, 18.f})
+                  .SetPosition({160.0f, 41.f})
                   .SetRotation(DegToRad(0.0f))
                   .AddBodyPart({
                       .Density = LightMaterialDensity,
@@ -283,36 +285,42 @@ void FLittlePlaneDesignerApp::SetupPlane() {
 
 void FLittlePlaneDesignerApp::SetupTerrain() {
     Terrain = Slab::New<FTerrain>();
-    Terrain->Setup(World, FTerrainDescriptor{
-                       .H = [](const float t) {
-                           const Vector<double> A = {0.75, 0.25, 0.1};
-                           constexpr auto BaseFreq = 0.1*M_PI;
+    Terrain->Setup(World, FTerrainDescriptor
+        {
+            .H = [](const float t) {
+                constexpr auto BaseFreq =  0.1f*static_cast<float>(M_PI);
 
-                           if (t < 0.0f) {
-                               auto Value = 0.0f;
-                               int n=0;
-                               for (fix a : A)
-                                   Value += a*sinf(n++*BaseFreq*t);
+                struct AOhm { float A; float ohm; };
+                auto MultiplyNoise = [](const float Freq) {
+                    // return static_cast<float>(Freq * RandUtils::RandomUniformReal(1.005, 0.995));
+                    return static_cast<float>(Freq);
+                };
 
-                               return Value;
+                int n=1;
+                const auto A = Vector<AOhm>{
+                    {0.75f, MultiplyNoise(BaseFreq*n++)},
+                    {0.25f, MultiplyNoise(BaseFreq*n++)},
+                    {0.10f, MultiplyNoise(BaseFreq*n++)}};
 
-                           }
+                auto Value = 0.0f;
+                for (fix [a, ohm] : A)
+                    Value += a*sinf(ohm*t);
 
-                           return 0.25f*t;
-                       },
-                       .x = [](const float t) {
-                           if (t < 0.0f) {
-                               return 2.0f * t;
-                           }
+                constexpr auto Hilltop = 160.0f;
 
-                           return t;
-                       },
-                       .tMin = -500.0f,
-                       .tMax = 50.0f,
-                       .Count = 550,
-                   });
+                if (t<0) return Value;
+                if (t>Hilltop) return 0.25f*Value + 0.25f*Hilltop;
 
-    b2
+                return 0.25f*Value + 0.25f*t;
+            },
+            .x = [](const float t) {
+                if (t < 0.0f) return 2.0f * t;
+                return t;
+            },
+            .tMin = -500.0f,
+            .tMax = 250.0f,
+            .Count = 550,
+        });
 }
 
 void FLittlePlaneDesignerApp::OnStart() {

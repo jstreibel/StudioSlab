@@ -22,7 +22,7 @@ namespace Tests {
     class ModernGLTests : public Graphics::FWindowRow {
         Graphics::OpenGL::FShader program;
         Graphics::OpenGL::FVertexBuffer buffer;
-        Graphics::OpenGL::Texture2D_Color texture;
+        Graphics::OpenGL::FTexture2D_Color texture;
         Graphics::OpenGL::Texture2D_Real realTexture;
         Writer writer;
 

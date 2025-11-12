@@ -47,12 +47,12 @@ namespace Tests {
                 fix y = j/(float)texDim;
                 fix r = sqrt(x*x + y*y);
                 fix color = Graphics::FColor(.5f + .5f*sinf(2*M_PI*r), .5f + .5f*cosf(2*M_PI*r), 1);
-                texture.setColor(i, j, color);
+                texture.SetColor(i, j, color);
                 realTexture.setValue(i, j, .5f+.5f*cosf(8*M_PI*r));
             }
         }
 
-        texture.upload();
+        texture.Upload();
         realTexture.upload();
 
         program.SetUniform("transformMatrix", {1,0,0,

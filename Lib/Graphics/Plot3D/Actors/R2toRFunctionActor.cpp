@@ -54,11 +54,11 @@ namespace Slab::Graphics {
 
         rebuildTextureData();
 
-        texture.setAntiAliasOff();
-        texture.setSWrap(OpenGL::ClampToEdge);
-        texture.setTWrap(OpenGL::ClampToEdge);
+        texture.SetAntiAliasOff();
+        texture.SetSWrap(OpenGL::ClampToEdge);
+        texture.SetTWrap(OpenGL::ClampToEdge);
 
-        program.SetUniform("field", texture.getTextureUnit());
+        program.SetUniform("field", texture.GetTextureUnit());
 
         program.SetUniform("light1_position", light1.pos());
         program.SetUniform("light2_position", light2.pos());

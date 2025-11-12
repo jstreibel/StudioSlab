@@ -14,8 +14,8 @@ namespace Slab::Graphics::OpenGL {
 
     using Log = Core::Log;
 
-    Texture2D::Texture2D(GLsizei w, GLsizei h, InternalFormat format, GLenum textureUnit)
-    : Texture(Texture_2D, format, textureUnit)
+    FTexture2D::FTexture2D(GLsizei w, GLsizei h, InternalFormat format, GLenum textureUnit)
+    : FTexture(Texture_2D, format, textureUnit)
     , w(w)
     , h(h)
     {
@@ -36,71 +36,71 @@ namespace Slab::Graphics::OpenGL {
         // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml
         glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, UspecifiedFormat, UnspecifiedType, nullptr);
 
-        setAntiAliasOn();
+        SetAntiAliasOn();
 
         if(CheckGLErrors("reserve " + ToStr(w) + "x" + ToStr(h) + " GPU texture pixels"))
             Log::Error() << "OpenGL::Texture failed reserving " << w << "x" << h << " GPU texture pixels." << Log::Flush;
     }
 
-    GLsizei Texture2D::getWidth() const { return w; }
+    GLsizei FTexture2D::GetWidth() const { return w; }
 
-    GLsizei Texture2D::getHeight() const { return h; }
+    GLsizei FTexture2D::GetHeight() const { return h; }
 
-    void Texture2D::setAntiAlias(bool val) {
-        if(val) setAntiAliasOn();
-        else setAntiAliasOff();
+    void FTexture2D::SetAntiAlias(bool val) {
+        if(val) SetAntiAliasOn();
+        else SetAntiAliasOff();
     }
 
-    void Texture2D::setAntiAliasOn() {
+    void FTexture2D::SetAntiAliasOn() {
         Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        antiAlias = true;
+        b_AntiAlias = true;
     }
 
-    void Texture2D::setAntiAliasOff() {
+    void FTexture2D::SetAntiAliasOff() {
         Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        antiAlias = false;
+        b_AntiAlias = false;
     }
 
-    bool Texture2D::getAntiAlias() const {
-        return antiAlias;
+    bool FTexture2D::GetAntiAlias() const {
+        return b_AntiAlias;
     }
 
-    void Texture2D::set_sPeriodicOn() {
+    void FTexture2D::Set_sPeriodicOn() {
         Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, WrapMode::Repeat);
     }
 
-    void Texture2D::setSWrap(WrapMode wrapMode) {
+    void FTexture2D::SetSWrap(WrapMode wrapMode) {
         Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
     }
 
-    void Texture2D::set_tPeriodicOn() {
+    void FTexture2D::Set_tPeriodicOn() {
         Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, WrapMode::Repeat);
     }
 
-    void Texture2D::setTWrap(WrapMode wrapMode) {
+    void FTexture2D::SetTWrap(WrapMode wrapMode) {
         Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
     }
 
-    bool Texture2D::uploadData(UInt row0, CountType nRows, PixelDataFormat dataFormat,
+    bool FTexture2D::UploadData(UInt row0, CountType nRows, PixelDataFormat dataFormat,
                                PixelDataType dataType, const void *dataBegin) {
-        assert(row0<getHeight());
-        assert(getTarget() == GL_TEXTURE_2D);
+        assert(row0<GetHeight());
+        assert(GetTarget() == GL_TEXTURE_2D);
         assert(!((nRows==0) && (row0!=0)));
 
         if(nRows==0) nRows = h;
@@ -110,30 +110,30 @@ namespace Slab::Graphics::OpenGL {
 
         CheckGLErrors(__PRETTY_FUNCTION__);
 
-        fix internalFormat = getInternalFormat();
+        fix internalFormat = GetInternalFormat();
 
         Bind();
 
         if(row0==0 && nRows==w)
-            glTexImage2D(getTarget(), level, internalFormat,
+            glTexImage2D(GetTarget(), level, internalFormat,
                          nCols, (GLsizei)nRows, 0,
                          dataFormat, dataType, dataBegin);
         else
-            glTexSubImage2D(getTarget(), level,
+            glTexSubImage2D(GetTarget(), level,
                             (GLint)   column0, (GLint)   row0,
                             (GLsizei) nCols,   (GLsizei) nRows,
                             dataFormat, dataType, dataBegin);
 
         if(CheckGLErrors(__PRETTY_FUNCTION__, false)) {
             Log::Error() << "OpenGL::Texture failed to upload " << w << "x" << h
-                         << " data to target " << TargetToString(getTarget())
-                         << " with internal format " << InternalFormatToString(getInternalFormat())
-                         << " @ unit " << getTextureUnit() << " (" << TextureUnitToString(getGLtextureUnit()) << ")."
+                         << " data to target " << TargetToString(GetTarget())
+                         << " with internal format " << InternalFormatToString(GetInternalFormat())
+                         << " @ unit " << GetTextureUnit() << " (" << TextureUnitToString(GetGLtextureUnit()) << ")."
                          << " The input pixel format was " << PixelData::PixelDataFormatToString(dataFormat)
                          << " and data type " << PixelData::PixelDataTypeToString(dataType)
                          << Log::Flush;
 
-            Texture::diagnose();
+            FTexture::Diagnose();
 
             return false;
         }
@@ -141,7 +141,7 @@ namespace Slab::Graphics::OpenGL {
         return true;
     }
 
-    GLint Texture2D::GetMaxTextureSize() {
+    GLint FTexture2D::GetMaxTextureSize() {
         GLint maxTextureSize;
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
         return maxTextureSize;

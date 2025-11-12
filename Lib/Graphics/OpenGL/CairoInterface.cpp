@@ -7,7 +7,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    TPointer<Texture2D>
+    TPointer<FTexture2D>
     BuildTexture2DFromCairoSurface(Cairo::RefPtr<const Cairo::ImageSurface> surface) {
         if(surface->get_format() != Cairo::FORMAT_ARGB32) NOT_IMPLEMENTED;
 
@@ -15,7 +15,7 @@ namespace Slab::Graphics::OpenGL {
         auto h = surface->get_height();
         auto data = surface->get_data();
 
-        auto texture = New<Texture2D_Color>(w, h);
+        auto texture = New<FTexture2D_Color>(w, h);
         constexpr auto size = sizeof(int);
 
         for(int i=0; i<w; ++i) {
@@ -28,11 +28,11 @@ namespace Slab::Graphics::OpenGL {
                 auto g = float(color[2])/255.0f;
                 auto b = float(color[3])/255.0f;
 
-                texture->setColor(i, j, FColor(r, g, b, a));
+                texture->SetColor(i, j, FColor(r, g, b, a));
             }
         }
 
-        texture->upload();
+        texture->Upload();
 
         return texture;
     }

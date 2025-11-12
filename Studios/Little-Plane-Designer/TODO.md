@@ -21,7 +21,7 @@
 - [ ] Size and position reference (human, cat, yellow ruler, etc.)
 - [ ] Some background and sky features: house, trees, bushes, lake, clouds etc.
 - [X] Add stats (speed, altidude, attitude, etc.)
-  - [ ] Clean-up stats
+  - [X] Clean-up stats
 - [X] BUGFIX: FWriterOpenGL not working ...
 
 ## Future sprints

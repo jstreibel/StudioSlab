@@ -5,10 +5,22 @@
 #ifndef STUDIOSLAB_IMAGELOAD_H
 #define STUDIOSLAB_IMAGELOAD_H
 
-#include "Graphics/OpenGL/Texture2D_Color.h"
+#include "Utils/Pointer.h"
+#include "Utils/String.h"
 
 namespace Slab::Graphics::Image {
-    TPointer<OpenGL::Texture2D_Color> LoadTexture(const Str &image_file);
+
+    // The following should be equal to stbi_uc defined in stb_image.h
+    using StbiImage = unsigned char;
+
+    struct StbiImageInfo {
+        const TPointer<StbiImage> data = nullptr;
+        const int width, height, channels;
+
+        bool IsValid() const { return data != nullptr; }
+    };
+
+    StbiImageInfo LoadImageFile(const Str& image_file);
 }
 
 #endif //STUDIOSLAB_IMAGELOAD_H

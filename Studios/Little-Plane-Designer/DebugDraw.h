@@ -148,7 +148,7 @@ public:
 
         Writer->Write(std::string(s), {p.x, p.y}, ToFColor(c, m_alpha));
 
-        Slab::Graphics::OpenGL::Texture::deactivate();
+        Slab::Graphics::OpenGL::FTexture::Deactivate();
         Slab::Graphics::OpenGL::FShader::LegacyGL();
     }
 

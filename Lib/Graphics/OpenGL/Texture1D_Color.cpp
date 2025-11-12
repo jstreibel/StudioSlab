@@ -16,7 +16,7 @@ namespace Slab::Graphics::OpenGL {
     using Log = Core::Log;
 
     Texture1D_Color::Texture1D_Color(GLsizei size, GLenum textureUnit)
-    : Texture(Texture_1D, RGBA, textureUnit)
+    : FTexture(Texture_1D, RGBA, textureUnit)
     , size(size)
     {
         GLint maxTextureSize;
@@ -60,7 +60,7 @@ namespace Slab::Graphics::OpenGL {
         Bind();
 
         if(start==0 && n==0) {
-            glTexImage1D(getTarget(), 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glTexImage1D(GetTarget(), 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             auto error = glGetError();
             if(error != GL_NO_ERROR)
                 Log::Error() << "OpenGL::Texture failed to upload " << size << " data to GL_TEXTURE_2D." << Log::Flush;
@@ -106,7 +106,7 @@ namespace Slab::Graphics::OpenGL {
     void Texture1D_Color::setWrap(OpenGL::WrapMode mode) const {
         Bind();
 
-        glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, mode);
+        glTexParameteri(GetTarget(), GL_TEXTURE_WRAP_S, mode);
     }
 
 

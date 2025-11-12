@@ -25,7 +25,7 @@ namespace Slab::Graphics::OpenGL {
 
     class FShader {
         GLuint Handle;
-        std::map<GLuint, std::shared_ptr<Texture>> TextureUnits;
+        std::map<GLuint, std::shared_ptr<FTexture>> TextureUnits;
         Str VertFileName;
         Str FragFileName;
 
@@ -48,7 +48,7 @@ namespace Slab::Graphics::OpenGL {
         void SetUniform(const Str& Name, const glm::vec4& Vec4) const;
         void SetUniform(const Str& Name, const glm::mat3& Mat3) const;
         void SetUniform(const Str& Name, const glm::mat4& Mat4) const;
-        void SetUniform(const Str& Name, Texture& texture);
+        void SetUniform(const Str& Name, FTexture& texture);
 
         void SetUniform(const Str& Name, std::array<float, 3> Vec3) const;
         void SetUniform(const Str& Name, std::array<float, 4> Vec4) const;

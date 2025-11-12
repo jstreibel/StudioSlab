@@ -62,7 +62,6 @@ void FPlaneStats::Draw(const Graphics::FPlatformWindow& Win) {
         const float AoAdeg = data.AoA * static_cast<float>(180.0 / M_PI);
         infos.push_back(WingInfo{wingMass, data.Cl, data.Cd, Fy, AoAdeg});
     }
-    const float hullMass = m - sumWingMass;
 
     const auto x = W - 1200.0f;
     const auto baseY = H - 100.0f;
@@ -70,20 +69,13 @@ void FPlaneStats::Draw(const Graphics::FPlatformWindow& Win) {
 
     Writer->Write(Print("Speed %.2f m/s  |  %.2f km/h  |  %.2f mph", speed, speedKmh, speedMph), {x, baseY - static_cast<float>(n++)*dy});
     Writer->Write(Print("Height %.2f m", planeHeight),                                                 {x, baseY - static_cast<float>(n++)*dy});
-    Writer->Write(Print("mg = %.2f N", mg),                                                             {x, baseY - static_cast<float>(n++)*dy});
-    Writer->Write(Print("ΣF_aero,y = %.2f N", sumFy),                                                   {x, baseY - static_cast<float>(n++)*dy});
-    Writer->Write(Print("Δ = %.2f N (ΣF_y - mg)", sumFy - mg),                                          {x, baseY - static_cast<float>(n++)*dy});
 
     // Mass breakdown
-    Writer->Write(Print("m_total = %.2f kg", m),                                                         {x, baseY - static_cast<float>(n++)*dy});
-    Writer->Write(Print("m_hull  = %.2f kg", hullMass),                                                  {x, baseY - static_cast<float>(n++)*dy});
-    for (int i = 0; i < nWings; ++i) {
-        Writer->Write(Print("m_wing[%d] = %.2f kg", i, infos[i].mass),                                   {x, baseY - static_cast<float>(n++)*dy});
-    }
+    Writer->Write(Print("mₜₒₜₐₗ = %.2f kg", m),                                                         {x, baseY - static_cast<float>(n++)*dy});
 
     // Per-wing aero breakdown
     for (int i = 0; i < nWings; ++i) {
-        Writer->Write(Print("wing[%d]: Cl=%.2f Cd=%.3f AoA=%.1f° Fy=%.2f N", i, infos[i].Cl, infos[i].Cd, infos[i].AoAdeg, infos[i].Fy),
+        Writer->Write(Print("wing[%d]: AoA=%.1f°", i, infos[i].Cl, infos[i].Cd, infos[i].AoAdeg, infos[i].Fy),
                       {x, baseY - static_cast<float>(n++)*dy});
     }
 }

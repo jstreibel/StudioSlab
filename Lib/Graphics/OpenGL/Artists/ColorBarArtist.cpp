@@ -135,7 +135,7 @@ namespace Slab::Graphics::OpenGL {
 
         texture->Bind();
 
-        shader.SetUniform("colormap", texture->getTextureUnit());
+        shader.SetUniform("colormap", texture->GetTextureUnit());
         shader.SetUniform("vpWidth", vp.GetWidth());
         shader.SetUniform("vpHeight", vp.GetHeight());
 

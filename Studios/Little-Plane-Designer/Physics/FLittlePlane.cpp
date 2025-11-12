@@ -8,8 +8,11 @@
 
 #include "FAtmosphericCondition.h"
 #include "Foils/Foil.h"
+#include "Graphics/OpenGL/Texture2D.h"
+#include "Graphics/OpenGL/Texture2D_Color.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 #include "Graphics/Plot2D/PlotStyle.h"
+#include "Graphics/SFML/Graph.h"
 
 Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
     const FWing& Wing,
@@ -150,6 +153,57 @@ b2Vec2 FLittlePlane::GetVelocity() const {
 }
 
 void FLittlePlane::Draw(const Graphics::FPlatformWindow&) {
+
+    // Draw a 2x2 textured rectangle centered at the hull body using HullTexture
+    const auto [xBody, yBody] = b2Body_GetPosition(HullBody);
+    const auto [c, s] = b2Body_GetRotation(HullBody);
+
+    if (HullTexture != nullptr)
+    {
+        // World-space half-size (2x2 square)
+        constexpr float HalfWidth = 2.298f;
+        constexpr float HalfHeight = HalfWidth;
+        constexpr float dx = -0.05f;
+        constexpr float dy = 0.0f;
+
+        auto xform = [&](const float lx, const float ly) -> std::pair<double,double> {
+            // Apply body rotation and translation
+            const auto x = lx + dx;
+            const auto y = ly + dy;
+            const double X = xBody + x*c - y*s;
+            const double Y = yBody + x*s + y*c;
+            return {X, Y};
+        };
+
+        // Local corners (counter-clockwise): bottom-left, bottom-right, top-right, top-left
+        const auto [blx, bly] = xform(-HalfWidth, -HalfHeight);
+        const auto [brx, bry] = xform( +HalfWidth, -HalfHeight);
+        const auto [trx, try_] = xform( +HalfWidth,  +HalfHeight);
+        const auto [tlx, tly] = xform(-HalfWidth,  +HalfHeight);
+
+        // Bind texture and render immediate-mode quad
+        Graphics::OpenGL::FTexture::EnableTextures();
+        HullTexture->Activate();
+        HullTexture->Bind();
+
+        // White modulation to preserve original texture colors
+        glColor4f(1.f, 1.f, 1.f, 1.f);
+
+        glBegin(GL_QUADS);
+        {
+            // Use flipped V to compensate for typical top-left image origin
+            glTexCoord2f(0.f, 1.f); glVertex2d(blx, bly);
+            glTexCoord2f(1.f, 1.f); glVertex2d(brx, bry);
+            glTexCoord2f(1.f, 0.f); glVertex2d(trx, try_);
+            glTexCoord2f(0.f, 0.f); glVertex2d(tlx, tly);
+        }
+        glEnd();
+
+        // Cleanup state
+        Graphics::OpenGL::FTexture::Deactivate();
+        Graphics::OpenGL::FTexture::DisableTextures();
+    }
+
     namespace Drawer = Graphics::OpenGL::Legacy;
 
     Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
@@ -174,6 +228,32 @@ void FLittlePlane::Draw(const Graphics::FPlatformWindow&) {
 
         Drawer::RenderPointSet(Dummy(Points), WingStyle);
     }
+
+    if constexpr (false) {
+        Graphics::PlotStyle HullStyle{Graphics::LightGrey, Graphics::LineLoop};
+        
+        WingStyle.thickness = 2.0f;
+        WingStyle.lineColor.a = 1.0f;
+        fix ShapeCount = b2Body_GetShapeCount(HullBody);
+        Vector<b2ShapeId> Shapes(ShapeCount);
+        b2Body_GetShapes(HullBody, &Shapes[0], ShapeCount);
+        for (const auto &Shape : Shapes) {
+            const b2ShapeType Type = b2Shape_GetType(Shape);
+            if (Type == b2_polygonShape) {
+                const b2Polygon Poly = b2Shape_GetPolygon(Shape);
+
+                Math::FPointSet Points;
+
+                for (int i=0; i<Poly.count; ++i) {
+                    fix &[x,y] = Poly.vertices[i];
+                    Points.AddPoint({xBody + x*c - y*s,
+                                     yBody + x*s + y*c });
+                }
+
+                Drawer::RenderPointSet(Dummy(Points), HullStyle);
+            }
+        }
+    }
 }
 
 void FLittlePlane::AdjustWingAngle(int WingId, double Delta) const {
@@ -184,3 +264,7 @@ void FLittlePlane::AdjustWingAngle(int WingId, double Delta) const {
     Wing->SetBaseAngle(Delta);
 }
 
+FLittlePlane::FLittlePlane(const Vector<TPointer<FWing>>& Wings, const b2BodyId HullBody): Wings(Wings), HullBody(HullBody) {
+    fix Loc = Core::Resources::GetResourcesPath() + "/LittlePlaneDesigner/Extra300S.png";
+    HullTexture = Graphics::OpenGL::FTexture2D_Color::FromImageFile(Loc);
+}

@@ -16,5 +16,5 @@ namespace Slab::Core {
         return FontsFolder + ExportedFonts[Index];
     }
 
-
+    Str Resources::GetResourcesPath() { return Folder; }
 }

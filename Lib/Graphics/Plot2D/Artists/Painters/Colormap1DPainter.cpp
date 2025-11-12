@@ -104,7 +104,7 @@ namespace Slab::Graphics {
 
     void Colormap1DPainter::setColormapTexture(TPointer<OpenGL::Texture1D_Color> texture) {
         cmap_texture = std::move(texture);
-        SetUniform("colormap", cmap_texture->getTextureUnit());
+        SetUniform("colormap", cmap_texture->GetTextureUnit());
     }
 
     void Colormap1DPainter::Use() const {

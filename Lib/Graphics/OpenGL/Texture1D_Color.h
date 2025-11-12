@@ -15,7 +15,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    class Texture1D_Color : public Texture {
+    class Texture1D_Color : public FTexture {
         ByteData_raw data;
 
         GLsizei size;

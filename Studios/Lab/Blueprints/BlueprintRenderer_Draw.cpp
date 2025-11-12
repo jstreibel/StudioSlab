@@ -6,7 +6,7 @@
 
 #include "3rdParty/ImGui.h"
 #include "Core/Tools/Resources.h"
-#include "Graphics/OpenGL/Images.h"
+#include "Graphics/OpenGL/RawTextures.h"
 
 namespace Lab::Blueprints {
     static ImRect ImGui_GetItemRect()

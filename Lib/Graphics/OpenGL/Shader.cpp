@@ -195,16 +195,16 @@ namespace Slab::Graphics::OpenGL {
         CHECK_UNIFORM_ERRORS
     }
 
-    void FShader::SetUniform(const Str &Name, Texture& texture) {
+    void FShader::SetUniform(const Str &Name, FTexture& texture) {
         this->Use();
 
         fix loc = glGetUniformLocation(Handle, Name.c_str());
 
         CHECK_UNIFORM_EXISTS
 
-        glUniform1i(loc, texture.getTextureUnit());
+        glUniform1i(loc, texture.GetTextureUnit());
 
-        TextureUnits[texture.getTextureUnit()] = Slab::Naked(texture);
+        TextureUnits[texture.GetTextureUnit()] = Slab::Naked(texture);
 
         CHECK_UNIFORM_ERRORS
     }

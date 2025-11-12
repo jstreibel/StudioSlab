@@ -12,42 +12,44 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    class Texture {
-        GLuint handle=0;
-        Target target;
-        GLenum textureUnit;
+    class FTexture {
+        GLuint m_Handle=0;
+        Target m_Target;
+        GLenum m_TextureUnit;
 
-        const InternalFormat format;
+        const InternalFormat m_Internalformat;
 
-        std::shared_ptr<PixelData> pixelData;
+        std::shared_ptr<PixelData> p_PixelData;
 
     protected:
-        GLuint getHandle() const;
+        GLuint GetHandle() const;
 
 
     public:
-        explicit Texture(Target target,
+        explicit FTexture(Target target,
                          InternalFormat format,
                          GLenum textureUnit = GL_TEXTURE0);
 
-        virtual ~Texture();
+        virtual ~FTexture();
 
-        void activate() const;
-        static void deactivate() ;
+        static void EnableTextures();
+        static void DisableTextures();
+        void Activate() const;
+        static void Deactivate() ;
         void Bind() const;
 
-        auto getTarget() const -> Target;
-        auto getInternalFormat() const -> InternalFormat;
+        auto GetTarget() const -> Target;
+        auto GetInternalFormat() const -> InternalFormat;
 
-        void setData(const PixelData &data);
-        auto getData() const -> const PixelData&;
+        void SetData(const PixelData &data);
+        auto GetData() const -> const PixelData&;
 
-        void setBorderColor(FColor color) const;
+        void SetBorderColor(FColor color) const;
 
-        int getTextureUnit() const;
-        GLuint getGLtextureUnit() const;
+        int GetTextureUnit() const;
+        GLuint GetGLtextureUnit() const;
 
-        void diagnose() const;
+        void Diagnose() const;
     };
 
 } // OpenGL

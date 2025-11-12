@@ -47,7 +47,7 @@ namespace Slab::Graphics {
     void R2toRPainter::setFieldDataTexture(TPointer<OpenGL::Texture2D_Real> data) {
         field_data = std::move(data);
         field_data->Bind();
-        SetUniform("field_data", field_data->getTextureUnit());
+        SetUniform("field_data", field_data->GetTextureUnit());
     }
 
     void R2toRPainter::setTransform(glm::mat3x3 transf) {

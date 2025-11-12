@@ -75,6 +75,8 @@ namespace Slab::Core::Resources {
 
     Str GetIndexedFontFileName(int Index);
 
+    Str GetResourcesPath();;
+
 }
 
 #endif //STUDIOSLAB_RESOURCES_H

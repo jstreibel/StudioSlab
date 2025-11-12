@@ -10,6 +10,7 @@
 #include "box2d/box2d.h"
 #include "Foils/Foil.h"
 #include "Graphics/IDrawable.h"
+#include "Graphics/OpenGL/Texture2D_Color.h"
 
 struct FWing {
     b2BodyId BodyId;
@@ -53,12 +54,13 @@ public:
 private:
     friend class FPlaneFactory;
 
-    explicit FLittlePlane(const Vector<TPointer<FWing>>& Wings, const b2BodyId HullBody)
-    : Wings(Wings), HullBody(HullBody) {}
+    explicit FLittlePlane(const Vector<TPointer<FWing>>& Wings, const b2BodyId HullBody);
     FLittlePlane() = default;
 
     Vector<TPointer<FWing>> Wings;
     b2BodyId HullBody;
+
+    TPointer<Graphics::OpenGL::FTexture2D_Color> HullTexture;
 };
 
 #endif //STUDIOSLAB_FLITTLEPLANE_H

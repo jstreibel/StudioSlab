@@ -13,8 +13,8 @@ namespace Slab::Graphics {
 
     FieldTextureThingy::FieldTextureThingy(int x_res, int y_res, RectR sub_region) {
         texture = Slab::New<OpenGL::Texture2D_Real>((int) x_res, (int) y_res);
-        texture->setSWrap(OpenGL::ClampToEdge);
-        texture->setAntiAliasOff();
+        texture->SetSWrap(OpenGL::ClampToEdge);
+        texture->SetAntiAliasOff();
 
         auto hPixelSizeInTexCoord = 1. / x_res;
         auto vPixelSizeInTexCoord = 1. / y_res;
@@ -54,7 +54,7 @@ namespace Slab::Graphics {
     : xres(full_xres)
     , yres(full_yres)
     {
-        fix max_res = OpenGL::Texture2D::GetMaxTextureSize();
+        fix max_res = OpenGL::FTexture2D::GetMaxTextureSize();
 
         n = full_xres / max_res + 1;
         m = full_yres / max_res + 1;
@@ -123,7 +123,7 @@ namespace Slab::Graphics {
     }
 
     void FieldTextureKontraption::setValue(int i, int j, DevFloat value) {
-        fix max_res = OpenGL::Texture2D::GetMaxTextureSize();
+        fix max_res = OpenGL::FTexture2D::GetMaxTextureSize();
 
         fix i_block = i/max_res;
         fix j_block = j/max_res;
@@ -135,7 +135,7 @@ namespace Slab::Graphics {
     }
 
     bool FieldTextureKontraption::upload(Index j_begin, CountType row_count) {
-        fix max_res = OpenGL::Texture2D::GetMaxTextureSize();
+        fix max_res = OpenGL::FTexture2D::GetMaxTextureSize();
 
         auto j_end = j_begin+row_count;
 

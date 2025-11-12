@@ -53,7 +53,7 @@ namespace Slab::Graphics {
 
         discreteFunc.getSpace().syncHost();
 
-        fix max_size = OpenGL::Texture2D::GetMaxTextureSize();
+        fix max_size = OpenGL::FTexture2D::GetMaxTextureSize();
 
         fix cols = textureKontraptions->n;
         fix rows = textureKontraptions->m;
@@ -65,8 +65,8 @@ namespace Slab::Graphics {
                 auto current_image = textureKontraptions->getBlock(col, row);
                 auto texture_data = current_image->texture;
 
-                fix tex_xres = texture_data->getWidth();
-                fix tex_yres = texture_data->getHeight();
+                fix tex_xres = texture_data->GetWidth();
+                fix tex_yres = texture_data->GetHeight();
 
                 for (int tex_i=0;tex_i<tex_xres;++tex_i) for (int tex_j=0;tex_j<tex_yres;++tex_j) {
                     fix i = x_offset + tex_i;
@@ -110,7 +110,7 @@ namespace Slab::Graphics {
             if (ImGui::Button("Anti-alias toggle##")) {
                 anti_alias = !anti_alias;
                 for (auto &thingy: textureKontraptions->blocks)
-                    thingy->texture->setAntiAlias(anti_alias);
+                    thingy->texture->SetAntiAlias(anti_alias);
             }
         }
 
@@ -163,7 +163,7 @@ namespace Slab::Graphics {
 
     void R2toRFunctionArtist::set_xPeriodicOn() const {
         for(const auto &block : textureKontraptions->blocks)
-            block->texture->set_sPeriodicOn();
+            block->texture->Set_sPeriodicOn();
     }
 
     void R2toRFunctionArtist::SetLabel(const Str label) {

@@ -15,39 +15,64 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    Texture2D_Color::Texture2D_Color(GLsizei w, GLsizei h)
-    : Texture2D(w, h, InternalFormat::RGBA)
-    , data((ByteData_raw)malloc(w*h*4))
+    FTexture2D_Color::FTexture2D_Color(GLsizei w, GLsizei h)
+    : FTexture2D(w, h, RGBA)
+    , data(static_cast<ByteData_raw>(malloc(w * h * 4)))
     {
 
     }
 
-    bool Texture2D_Color::setColor(int i, int j, FColor color) {
+    TPointer<FTexture2D_Color> FTexture2D_Color::FromStbiImage(Image::StbiImageInfo Image) {
+        if (Image.channels !=4) return nullptr;
+
+        constexpr int Channels = 4;
+
+        auto Texture = New<FTexture2D_Color>(Image.width, Image.height);
+
+        const auto w = Texture->GetWidth();
+        const auto h = Texture->GetHeight();
+
+        memcpy(Texture->data, Image.data.get(), w*h*Channels);
+
+        Texture->Upload();
+
+        return Texture;
+    }
+
+    TPointer<FTexture2D_Color> FTexture2D_Color::FromImageFile(const Str& FileName) {
+        if(const auto Data = Image::LoadImageFile(FileName); Data.IsValid()) {
+            return FromStbiImage(Data);
+        }
+
+        return nullptr;
+    }
+
+    bool FTexture2D_Color::SetColor(int i, int j, FColor color) const {
         if(data == nullptr) return false;
 
-        assert(i>=0 && i<getWidth());
-        assert(j>=0 && j<getHeight());
+        assert(i>=0 && i<GetWidth());
+        assert(j>=0 && j<GetHeight());
 
-        fix index = i*4 + j*getWidth()*4;
-        ByteData_raw texel = &data[index];
+        fix index = i*4 + j*GetWidth()*4;
+        const ByteData_raw texel = &data[index];
 
-        texel[R] = (Byte)(255*color.r);
-        texel[G] = (Byte)(255*color.g);
-        texel[B] = (Byte)(255*color.b);
-        texel[A] = (Byte)(255*color.a);
+        texel[R] = static_cast<Byte>(255 * color.r);
+        texel[G] = static_cast<Byte>(255 * color.g);
+        texel[B] = static_cast<Byte>(255 * color.b);
+        texel[A] = static_cast<Byte>(255 * color.a);
 
         return true;
     }
 
-    bool Texture2D_Color::upload(UInt row0, CountType nRows) {
+    bool FTexture2D_Color::Upload(UInt row0, CountType nRows) {
         if(data == nullptr) return false;
 
-        assert(getInternalFormat() == GL_RGBA);
+        assert(GetInternalFormat() == GL_RGBA);
 
-        fix dataFormat = PixelDataFormat::DataFormat_RGBA;
-        fix dataType = PixelDataType::DataType_UByte;
+        constexpr auto dataFormat = DataFormat_RGBA;
+        constexpr auto dataType = DataType_UByte;
 
-        return Texture2D::uploadData(row0, nRows, dataFormat, dataType, &data[row0 * getWidth() * 4]);
+        return UploadData(row0, nRows, dataFormat, dataType, &data[row0 * GetWidth() * 4]);
     }
 
 } // OpenGL

@@ -11,7 +11,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    class Texture2D_Real : public Texture2D {
+    class Texture2D_Real : public FTexture2D {
         RealData data = nullptr;
 
     public:

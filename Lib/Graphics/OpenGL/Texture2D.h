@@ -9,31 +9,31 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    class Texture2D : public Texture {
+    class FTexture2D : public FTexture {
         GLsizei w, h;
 
-        bool antiAlias = true;
+        bool b_AntiAlias = true;
 
     public:
-        Texture2D(GLsizei w, GLsizei h, InternalFormat format, GLenum textureUnit = GL_TEXTURE0);
+        FTexture2D(GLsizei w, GLsizei h, InternalFormat format, GLenum textureUnit = GL_TEXTURE0);
 
         static GLint GetMaxTextureSize();
 
-        GLsizei getWidth() const;
-        GLsizei getHeight() const;
+        GLsizei GetWidth() const;
+        GLsizei GetHeight() const;
 
-        bool getAntiAlias() const;
-        void setAntiAlias(bool val);
-        void setAntiAliasOn();
-        void setAntiAliasOff();
+        bool GetAntiAlias() const;
+        void SetAntiAlias(bool val);
+        void SetAntiAliasOn();
+        void SetAntiAliasOff();
 
-        bool uploadData(UInt row0, CountType nRows, PixelDataFormat format, PixelDataType type, const void *dataBegin);
+        bool UploadData(UInt row0, CountType nRows, PixelDataFormat format, PixelDataType type, const void *dataBegin);
 
-        void set_sPeriodicOn();
-        void setSWrap(WrapMode wrapMode);
+        void Set_sPeriodicOn();
+        void SetSWrap(WrapMode wrapMode);
 
-        void set_tPeriodicOn();
-        void setTWrap(WrapMode wrapMode);
+        void Set_tPeriodicOn();
+        void SetTWrap(WrapMode wrapMode);
     };
 
 } // OpenGL

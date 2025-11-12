@@ -44,7 +44,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
     }
 
     void SetupLegacyGL() {
-        Texture::deactivate();
+        FTexture::Deactivate();
         FShader::LegacyGL();
     }
 } // Slab::Graphics::OpenGL

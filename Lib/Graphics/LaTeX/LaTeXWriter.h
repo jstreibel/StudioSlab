@@ -24,7 +24,7 @@ namespace Slab::Graphics::LaTeX {
 
         OpenGL::FVertexBuffer vertexBuffer;
         OpenGL::FShader program;
-        TPointer<OpenGL::Texture2D_Color> texture;
+        TPointer<OpenGL::FTexture2D_Color> texture;
 
         Cairo::RefPtr<Cairo::ImageSurface> cairo_surface;
         Cairo::RefPtr<Cairo::Context> cairo_context;

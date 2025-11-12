@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <boost/fusion/algorithm/query/count.hpp>
 
+#include "../../../cmake-build-debug-clang/_deps/box2d-src/src/constants.h"
 #include "Graphics/OpenGL/WriterOpenGL.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 #include "Math/Function/R2toR/Model/Operators/Integral.h"
@@ -47,7 +48,7 @@ void FTerrain::Setup(const b2WorldId World, const FTerrainDescriptor& Descriptor
         Slab::Math::Point2DVec MeshTris(Descriptor.Count*6);
         Slab::Math::Point2DVec SurfLine(Descriptor.Count);
         for (int k = 0; k < Descriptor.Count-1; ++k) {
-            constexpr float k_GroundHeight = -10.0f;
+            constexpr float k_GroundHeight = -30.0f;
 
             const int i = k * 6;
 
