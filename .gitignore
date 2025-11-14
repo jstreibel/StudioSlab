@@ -85,3 +85,5 @@ Studios/.DEPR_UNTRACKED_MEMORABLE_SOURCES
 Build/
 cmake-build-debug-no-gpu/
 cmake-build-release-no-gpu/
+
+.zed
