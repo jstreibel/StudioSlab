@@ -216,14 +216,14 @@ void FLittlePlane::Draw(const Graphics::FPlatformWindow&) {
 
         const auto Body = Wing->BodyId;
         const auto [x, y] = b2Body_GetPosition(Body);
-        const auto [c, s] = b2Body_GetRotation(Body);
+        const auto [cosWing, sinWing] = b2Body_GetRotation(Body);
         for (auto &Point : Points.getPoints()) {
             const auto chord = Wing->Params.ChordLength;
             fix px = Point.x -chord*.5f;
             fix py = Point.y;
 
-            Point.x = x + px*c - py*s;
-            Point.y = y + px*s + py*c;
+            Point.x = x + px*cosWing - py*sinWing;
+            Point.y = y + px*sinWing + py*cosWing;
         }
 
         Drawer::RenderPointSet(Dummy(Points), WingStyle);
@@ -231,7 +231,7 @@ void FLittlePlane::Draw(const Graphics::FPlatformWindow&) {
 
     if constexpr (false) {
         Graphics::PlotStyle HullStyle{Graphics::LightGrey, Graphics::LineLoop};
-        
+
         WingStyle.thickness = 2.0f;
         WingStyle.lineColor.a = 1.0f;
         fix ShapeCount = b2Body_GetShapeCount(HullBody);

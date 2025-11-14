@@ -20,7 +20,7 @@
 using CAirfoil = Foil::ViternaAirfoil2412;
 
 auto PrettyDraw = true;
-auto DebugDraw = true;
+auto DebugDraw = false;
 
 constexpr float TimeScale = 1.0f;
 
@@ -238,49 +238,55 @@ void FLittlePlaneDesignerApp::SetupMonitors() {
 void FLittlePlaneDesignerApp::SetupPlane() {
     // Plane
     LittlePlane = FPlaneFactory{}
-                  .SetPosition({160.0f, 41.f})
-                  .SetRotation(DegToRad(0.0f))
-                  .AddBodyPart({
-                      .Density = LightMaterialDensity,
-                      .Width = 4.0f,
-                      .Height = 0.5,
-                  })
-                  .AddBodyPart({
-                      .Density = HeavyMaterialDensity,
-                      .Width = 1,
-                      .Height = 0.25,
-                      .xOffset = -1.5,
-
-                  })
-                  .AddWing(FWingDescriptor{
-                      .Density = LightMaterialDensity,
-                      .Airfoil = New<Foil::ViternaAirfoil2412>(),
-                      .Params = Foil::FAirfoilParams{
-                          .Name = "Wing",
-                          .ChordLength = 1.0f,
-                          .Span = 6.0f,
-                      },
-                      .RelativeLocation = {-1, 0.0f},
-                      .BaseAngle = static_cast<float>(DegToRad(0.0)),
-                      .MaxAngle  = static_cast<float>(DegToRad(15)),
-                      .MinAngle  = static_cast<float>(DegToRad(-15)),
-                  })
-                  .AddWing(FWingDescriptor{
-                      .Density = LightMaterialDensity,
-                      .Airfoil = New<Foil::ViternaAirfoil2412>(),
-                      .Params = Foil::FAirfoilParams{
-                          .Name = "Winglet",
-                          .ChordLength = 0.6f,
-                          .Span = 2.f,
-                      },
-                      .RelativeLocation = {+1.75, 0.1f},
-                      .BaseAngle = static_cast<float>(DegToRad(0.0)),
-                      .MaxAngle  = static_cast<float>(DegToRad(15)),
-                      .MinAngle  = static_cast<float>(DegToRad(-15)),
-                      .OscFreq = 10.0f,
-                      .DampRatio = 1.0f,
-                  })
-                  .BuildPlane(World);
+    .SetPosition({160.0f, 41.f})
+    .SetRotation(DegToRad(0.0f))
+    .AddBodyPart({
+        .Density = LightMaterialDensity,
+        .Width = 4.0f,
+        .Height = 0.5,
+    })
+    .AddBodyPart({
+        .Density = HeavyMaterialDensity,
+        .Width = 1,
+        .Height = 0.25,
+        .xOffset = -1.5,
+    })
+    .AddBodyPart({
+        .Density = LightMaterialDensity,
+        .Width = 0.4,
+        .Height = 0.4,
+        .xOffset = -1.0,
+        .yOffset = -0.5,
+    })
+    .AddWing(FWingDescriptor{
+        .Density = LightMaterialDensity,
+        .Airfoil = New<Foil::ViternaAirfoil2412>(),
+        .Params = Foil::FAirfoilParams{
+            .Name = "Wing",
+            .ChordLength = 1.0f,
+            .Span = 6.0f,
+        },
+        .RelativeLocation = {-.8f, 0.0f},
+        .BaseAngle = static_cast<float>(DegToRad(0.0)),
+        .MaxAngle  = static_cast<float>(DegToRad(15)),
+        .MinAngle  = static_cast<float>(DegToRad(-15)),
+    })
+    .AddWing(FWingDescriptor{
+        .Density = LightMaterialDensity,
+        .Airfoil = New<Foil::ViternaAirfoil2412>(),
+        .Params = Foil::FAirfoilParams{
+            .Name = "Winglet",
+            .ChordLength = 0.6f,
+            .Span = 2.f,
+        },
+        .RelativeLocation = {+1.5, 0.1f},
+        .BaseAngle = static_cast<float>(DegToRad(0.0)),
+        .MaxAngle  = static_cast<float>(DegToRad(15)),
+        .MinAngle  = static_cast<float>(DegToRad(-15)),
+        .OscFreq = 10.0f,
+        .DampRatio = 1.0f,
+    })
+    .BuildPlane(World);
 }
 
 void FLittlePlaneDesignerApp::SetupTerrain() {
