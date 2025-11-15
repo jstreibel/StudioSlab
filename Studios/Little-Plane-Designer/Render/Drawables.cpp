@@ -8,6 +8,7 @@
 #include "Graphics/OpenGL/Texture.h"
 #include "Graphics/OpenGL/Texture2D_Color.h"
 #include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
+#include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
 
 static Slab::TPointer<Slab::Graphics::OpenGL::FTexture> GuyTexture = nullptr;
@@ -18,7 +19,7 @@ inline auto GetTexture(const Slab::Str& FileName) {
     return Slab::Graphics::OpenGL::FTexture2D_Color::FromImageFile(Loc);
 }
 
-void FGuy::Draw(const Slab::Graphics::FPlatformWindow&) {
+void FGuy::Draw(const Slab::Graphics::IDrawProviders&) {
     if (!GuyTexture)
         GuyTexture = GetTexture("Guy.png");
 
@@ -31,7 +32,7 @@ void FGuy::Draw(const Slab::Graphics::FPlatformWindow&) {
     Slab::Graphics::OpenGL::Legacy::DrawRectangleWithTexture(Rect, *GuyTexture);
 }
 
-void FCat::Draw(const Slab::Graphics::FPlatformWindow&) {
+void FCat::Draw(const Slab::Graphics::IDrawProviders&) {
     if (!CatTexture)
         CatTexture = GetTexture("Cat.png");
 
@@ -46,7 +47,7 @@ void FCat::Draw(const Slab::Graphics::FPlatformWindow&) {
 
 FRuler::FRuler(const Slab::Graphics::Point2D &Loc, const float &Unit): Loc(Loc), Unit(Unit) {}
 
-void FRuler::Draw(const Slab::Graphics::FPlatformWindow&) {
+void FRuler::Draw(const Slab::Graphics::IDrawProviders&) {
     const Slab::Graphics::FColor SafeYellow = Slab::Graphics::FColor::FromHex("#FFC000");
 
     glColor4f(SafeYellow.r, SafeYellow.g, SafeYellow.b, SafeYellow.a);
@@ -83,4 +84,39 @@ void FRuler::Draw(const Slab::Graphics::FPlatformWindow&) {
         glVertex2f(Loc.x+.5*HalfWidth, y);
     }
     glEnd();
+}
+
+void FSky::Draw(const Slab::Graphics::IDrawProviders& ResProvider) {
+
+    constexpr float horizonY = .0f;
+    namespace LegacyGL = Slab::Graphics::OpenGL::Legacy;
+
+    LegacyGL::SetupLegacyGL();
+    LegacyGL::PushLegacyMode();
+
+    LegacyGL::PushScene();
+    LegacyGL::ResetModelView();
+    LegacyGL::SetupOrthoI({0, 1, 0, 1});
+
+    glBegin(GL_TRIANGLE_STRIP);
+
+    // bottom-left (near horizon): light, a bit warmer
+    glColor3f(0.65f, 0.80f, 0.95f);
+    glVertex2f(0.0f, horizonY);
+
+    // top-left: darker, more saturated
+    glColor3f(0.10f, 0.30f, 0.55f);
+    glVertex2f(0.0f, 1.0f);
+
+    // bottom-right
+    glColor3f(0.65f, 0.80f, 0.95f);
+    glVertex2f(1.0f, horizonY);
+
+    // top-right
+    glColor3f(0.10f, 0.30f, 0.55f);
+    glVertex2f(1.0f, 1.0f);
+
+    glEnd();
+
+    LegacyGL::PopScene();
 }

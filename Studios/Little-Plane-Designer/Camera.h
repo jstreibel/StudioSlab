@@ -8,9 +8,10 @@
 #include "Graphics/Types2D.h"
 #include "Math/Point.h"
 #include "Interfaces.h"
+#include "Graphics/Interfaces/IRectProvider.h"
 
 
-struct FCamera : IUpdateable
+struct FCamera final : IUpdateable, Slab::Graphics::IRectRProvider
 {
     /**
      * Set camera ratio.
@@ -29,6 +30,7 @@ struct FCamera : IUpdateable
     const Slab::Graphics::RectR& GetView() const { return View; }
 
     void Update(float ElapsedTimeMsec) override;
+    Slab::Graphics::RectR GetRect() const override;
 
 private:
     Slab::Graphics::RectR View = Slab::Graphics::RectR(-10.f, 10.f, -10.f, 10.f);

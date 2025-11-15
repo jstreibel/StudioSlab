@@ -9,7 +9,7 @@
 #include "../Interfaces.h"
 #include "box2d/box2d.h"
 #include "Foils/Foil.h"
-#include "Graphics/IDrawable.h"
+#include "../../../Lib/Graphics/Interfaces/IDrawable.h"
 #include "Graphics/OpenGL/Texture2D_Color.h"
 
 struct FWing {
@@ -46,7 +46,7 @@ public:
     b2Vec2 GetPosition() const override;
     b2Vec2 GetVelocity() const override;
 
-    void Draw(const Graphics::FPlatformWindow&) override;
+    void Draw(const Graphics::IDrawProviders&) override;
     const FWing& GetWing(int i) const { return *Wings[i]; }
     int GetWingCount() const { return static_cast<int>(Wings.size()); }
     void AdjustWingAngle(int WingId, double Delta) const;

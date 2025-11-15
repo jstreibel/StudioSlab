@@ -8,7 +8,7 @@
 #include <functional>
 
 #include "box2d/box2d.h"
-#include "Graphics/IDrawable.h"
+#include "../../../Lib/Graphics/Interfaces/IDrawable.h"
 #include "Math/VectorSpace/Impl/PointSet.h"
 #include "Utils/Arrays.h"
 
@@ -29,7 +29,7 @@ class FTerrain final : public Slab::Graphics::IDrawable
 
     void Setup(b2WorldId, const FTerrainDescriptor& Descriptor);
 
-    void Draw(const Slab::Graphics::FPlatformWindow&) override;
+    void Draw(const Slab::Graphics::IDrawProviders&) override;
 
 private:
     bool b_IsInitialized = false;

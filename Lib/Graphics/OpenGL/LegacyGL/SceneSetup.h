@@ -9,11 +9,11 @@
 
 namespace Slab::Graphics::OpenGL::Legacy {
 
-    // void PushLegacyMode();
+    void PushLegacyMode();
 
-    // void RestoreFromLegacyMode();
+    void RestoreFromLegacyMode();
 
-    // bool IsInLegacyMode();
+    bool IsInLegacyMode();
 
     void PushScene();
 

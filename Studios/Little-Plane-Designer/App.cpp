@@ -92,15 +92,16 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
         ImGui::End();
     });
 
-    if (b_IsRunning) StepSimulation();
+    const Graphics::IDrawProviders DrawProviders = {PlatformWindow, Camera};
+    PlaneStats->Draw(DrawProviders);
 
-    PlaneStats->Draw(PlatformWindow);
+    if (b_IsRunning) StepSimulation();
 
     if (PrettyDraw) {
         Drawer::SetupLegacyGL();
 
         for (const auto& Drawable : Drawables) {
-            Drawable->Draw(PlatformWindow);
+            Drawable->Draw(DrawProviders);
         }
     }
 
@@ -293,12 +294,11 @@ void FLittlePlaneDesignerApp::SetupPlane() {
         .DampRatio = 1.0f,
     })
     .BuildPlane(World);
-
-    Drawables.emplace_back(LittlePlane);
 }
 
 void FLittlePlaneDesignerApp::SetupTerrain() {
     constexpr auto Hilltop_x = 160.0f;
+    const auto Hilltop = Graphics::Point2D{Hilltop_x, 0.25*Hilltop_x};
 
     Terrain = Slab::New<FTerrain>();
     Terrain->Setup(World, FTerrainDescriptor
@@ -336,10 +336,9 @@ void FLittlePlaneDesignerApp::SetupTerrain() {
             .Count = 550,
        });
 
+    Drawables.emplace_back(Slab::New<FSky>());
     Drawables.emplace_back(Terrain);
-
-    const auto Hilltop = Graphics::Point2D{Hilltop_x, 0.25*Hilltop_x};
-
+    Drawables.emplace_back(LittlePlane);
     Drawables.emplace_back(Slab::New<FCat>(Hilltop));
     Drawables.emplace_back(Slab::New<FRuler>(Hilltop.WithTranslation(-.5, .0), HeightOfADomesticCat));
     Drawables.emplace_back(Slab::New<FRuler>(Hilltop.WithTranslation(-2.0, -.8), HeightOfAHuman));

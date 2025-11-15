@@ -152,7 +152,7 @@ b2Vec2 FLittlePlane::GetVelocity() const {
     return b2Body_GetLinearVelocity(HullBody);
 }
 
-void FLittlePlane::Draw(const Graphics::FPlatformWindow&) {
+void FLittlePlane::Draw(const Graphics::IDrawProviders&) {
 
     // Draw a 2x2 textured rectangle centered at the hull body using HullTexture
     const auto [xBody, yBody] = b2Body_GetPosition(HullBody);

@@ -72,3 +72,7 @@ void FCamera::Update(float ElapsedTimeMsec) {
     auto [x, y] = TrackedObject->GetPosition();
     SetCenter({x-w*.25f, y});
 }
+
+Slab::Graphics::RectR FCamera::GetRect() const {
+    return View;
+}

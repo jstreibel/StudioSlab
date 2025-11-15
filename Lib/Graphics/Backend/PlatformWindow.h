@@ -13,6 +13,7 @@
 #include "Graphics/Backend/Events/KeyboardState.h"
 #include "Graphics/Backend/Events/MouseState.h"
 #include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
+#include "Graphics/Interfaces/IResolutionProvider.h"
 #include "Graphics/Modules/GUIModule/GUIContext.h"
 #include "Graphics/Styles/Colors.h"
 
@@ -20,7 +21,7 @@ namespace Slab::Graphics {
 
     using FPlatformWindow_RawPointer = void*;
 
-    class FPlatformWindow {
+    class FPlatformWindow : public IResolutionProvider {
         friend class GraphicBackend;
 
         Vector<TPointer<FPlatformWindowEventListener>> Stash;
@@ -45,13 +46,10 @@ namespace Slab::Graphics {
         FPlatformWindow() = delete;
         explicit FPlatformWindow(void *window_ptr, TPointer<FEventTranslator>);
 
-        virtual ~FPlatformWindow() = default;
+        ~FPlatformWindow() override = default;
 
         void Render();
         virtual void Clear(const FColor&) const = 0;
-
-        [[nodiscard]] virtual Int GetHeight() const = 0;
-        [[nodiscard]] virtual Int GetWidth() const = 0;
 
         virtual void SignalClose() = 0;
         [[nodiscard]] virtual bool ShouldClose() const = 0;

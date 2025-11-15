@@ -25,9 +25,9 @@ static Str Print(const char* fmt, ...) {
     return out;
 }
 
-void FPlaneStats::Draw(const Graphics::FPlatformWindow& Win) {
-    fix W = Win.GetWidth();
-    fix H = Win.GetHeight();
+void FPlaneStats::Draw(const Graphics::IDrawProviders& Providers) {
+    fix W = Providers.ResolutionProvider.GetWidth();
+    fix H = Providers.ResolutionProvider.GetHeight();
     Writer->Reshape(W, H);
 
     const float fontH = Writer->GetFontHeightInPixels();

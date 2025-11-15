@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_PLANESTATS_H
 #define STUDIOSLAB_PLANESTATS_H
 
-#include "Graphics/IDrawable.h"
+#include "../../../Lib/Graphics/Interfaces/IDrawable.h"
 #include "Utils/Pointer.h"
 #include "../Physics/FLittlePlane.h"
 
@@ -15,7 +15,7 @@ struct FPlaneStats final : Graphics::IDrawable {
     : Plane(Plane)
     , World(world)
     , Writer(New<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::BuiltinFonts::JuliaMono_Regular(), 36)) { }
-    void Draw(const Graphics::FPlatformWindow&) override;
+    void Draw(const Graphics::IDrawProviders&) override;
 
 private:
     TPointer<FLittlePlane> Plane;

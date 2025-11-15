@@ -124,6 +124,7 @@ set ( NANOTEX_SRC
 		OpenGL/CairoInterface.h
 		OpenGL/WriterOpenGL.cpp
 		OpenGL/WriterOpenGL.h
+		Interfaces/IResolutionProvider.h
 )
 
 # *********** END NANOTEX ***************
@@ -324,8 +325,6 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/LegacyGL/LegacyMode.cpp
 		OpenGL/LegacyGL/LegacyMode.h
 		Backend/Events/KeyboardState.cpp
-		IDrawable.cpp
-		IDrawable.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

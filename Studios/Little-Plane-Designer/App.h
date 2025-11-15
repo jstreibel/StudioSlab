@@ -17,7 +17,7 @@
 #include "Core/Tools/Log.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Physics/Terrain.h"
-#include "Graphics/IDrawable.h"
+#include "../../Lib/Graphics/Interfaces/IDrawable.h"
 
 #define DeclarePointset(Name) TPointer<Math::FPointSet> Name = New<Math::FPointSet>();
 
