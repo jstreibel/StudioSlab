@@ -128,11 +128,11 @@ namespace Slab::Graphics {
             auto Action = [this](const Str& Item){
                 if(Item == "Close")        SignalClose();
                 else
-                if(Item == "Show metrics") ShowMetrics = true;
+                if(Item == "Show Dear ImGui debug metrics") ShowMetrics = true;
             };
 
             GuiContext->AddMainMenuItem(MainMenuItem{MainMenuLocation{"Window"},
-                                                     {MainMenuLeafEntry{"Show metrics", "", ShowMetrics},
+                                                     {MainMenuLeafEntry{"Show Dear ImGui debug metrics", "", ShowMetrics},
                                                       MainMenuLeafEntry{"Close", "Alt+F4"}
                                                       },
                                                      Action});

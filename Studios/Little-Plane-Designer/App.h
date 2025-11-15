@@ -52,7 +52,7 @@ private:
     void HandleInputs(const Graphics::FKeyboardState& KeyboardState);
 
     void UpdateGraphs() const;
-    void DoDebugDraw() const;
+    void DoPhysicsDraw() const;
     void RenderSimData(const Graphics::FPlatformWindow& PlatformWindow);
 
     void StepSimulation() const;
@@ -76,6 +76,8 @@ private:
     TPointer<FLittlePlane> LittlePlane;
     TPointer<FTerrain> Terrain;
     TPointer<Graphics::IDrawable> PlaneStats;
+
+    Vector<TPointer<Graphics::IDrawable>> Drawables;
 
 };
 

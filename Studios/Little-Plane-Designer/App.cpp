@@ -15,6 +15,7 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/NativeFunction.h"
 #include "Physics/Foils/NACA2412.h"
 #include "Graphics/Modules/Animator/Animator.h"
+#include "Render/Drawables.h"
 #include "Render/PlaneStats.h"
 
 using CAirfoil = Foil::ViternaAirfoil2412;
@@ -31,8 +32,11 @@ constexpr auto HeavyMaterialDensity = 30.0f;
 constexpr auto LightRockDensity = 1600.0f;
 constexpr auto HeavyRockDensity = 3500.0f;
 
+constexpr auto HeightOfADomesticCat = 0.25f;
+constexpr auto HeightOfAHuman = 1.80f;
+
 // constexpr auto InitialViewWidth = 3.2f*1.2f;
-constexpr auto InitialViewWidth = 30*1.2f;
+constexpr auto InitialViewWidth = 18*1.2f;
 
 constexpr float timeStep = TimeScale/60.0f;
 constexpr int subSteps = 1;
@@ -88,26 +92,28 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
         ImGui::End();
     });
 
-    UpdateGraphs();
+    if (b_IsRunning) StepSimulation();
 
     PlaneStats->Draw(PlatformWindow);
 
     if (PrettyDraw) {
         Drawer::SetupLegacyGL();
 
-        Terrain->Draw(PlatformWindow);
-
-        LittlePlane->Draw(PlatformWindow);
+        for (const auto& Drawable : Drawables) {
+            Drawable->Draw(PlatformWindow);
+        }
     }
-    if (DebugDraw) { DoDebugDraw(); }
+
+    UpdateGraphs();
+    if (DebugDraw) { DoPhysicsDraw(); }
 
     RenderSimData(PlatformWindow);
 
     return true;
 }
 
-bool FLittlePlaneDesignerApp::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state,
-                                             Graphics::EModKeys modKeys) {
+bool FLittlePlaneDesignerApp::NotifyKeyboard(const Graphics::EKeyMap key, const Graphics::EKeyState state,
+                                             const Graphics::EModKeys modKeys) {
     if (state == Graphics::EKeyState::Press)
     {
         if (modKeys.Mod_Alt) {
@@ -238,7 +244,7 @@ void FLittlePlaneDesignerApp::SetupMonitors() {
 void FLittlePlaneDesignerApp::SetupPlane() {
     // Plane
     LittlePlane = FPlaneFactory{}
-    .SetPosition({160.0f, 41.f})
+    .SetPosition({161.5f, 41.f})
     .SetRotation(DegToRad(0.0f))
     .AddBodyPart({
         .Density = LightMaterialDensity,
@@ -287,9 +293,13 @@ void FLittlePlaneDesignerApp::SetupPlane() {
         .DampRatio = 1.0f,
     })
     .BuildPlane(World);
+
+    Drawables.emplace_back(LittlePlane);
 }
 
 void FLittlePlaneDesignerApp::SetupTerrain() {
+    constexpr auto Hilltop_x = 160.0f;
+
     Terrain = Slab::New<FTerrain>();
     Terrain->Setup(World, FTerrainDescriptor
         {
@@ -312,10 +322,8 @@ void FLittlePlaneDesignerApp::SetupTerrain() {
                 for (fix [a, ohm] : A)
                     Value += a*sinf(ohm*t);
 
-                constexpr auto Hilltop = 160.0f;
-
                 if (t<0) return Value;
-                if (t>Hilltop) return 0.25f*Value + 0.25f*Hilltop;
+                if (t>Hilltop_x) return 0.25f*Value + 0.25f*Hilltop_x;
 
                 return 0.25f*Value + 0.25f*t;
             },
@@ -326,7 +334,16 @@ void FLittlePlaneDesignerApp::SetupTerrain() {
             .tMin = -500.0f,
             .tMax = 250.0f,
             .Count = 550,
-        });
+       });
+
+    Drawables.emplace_back(Terrain);
+
+    const auto Hilltop = Graphics::Point2D{Hilltop_x, 0.25*Hilltop_x};
+
+    Drawables.emplace_back(Slab::New<FCat>(Hilltop));
+    Drawables.emplace_back(Slab::New<FRuler>(Hilltop.WithTranslation(-.5, .0), HeightOfADomesticCat));
+    Drawables.emplace_back(Slab::New<FRuler>(Hilltop.WithTranslation(-2.0, -.8), HeightOfAHuman));
+    Drawables.emplace_back(Slab::New<FGuy>(Hilltop.WithTranslation(-0.5, 0.9-.8)));
 }
 
 void FLittlePlaneDesignerApp::OnStart() {
@@ -344,9 +361,9 @@ void FLittlePlaneDesignerApp::OnStart() {
     worldDef.gravity = (b2Vec2){0.0f, -9.8f};
     World = b2CreateWorld(&worldDef);
 
-    SetupTerrain();
-
     SetupPlane();
+
+    SetupTerrain();
 
     SetupMonitors();
 
@@ -423,9 +440,8 @@ void FLittlePlaneDesignerApp::UpdateGraphs() const {
     CurrentDragPolar->AddPoint(CurrentForces.AoA, CurrentForces.Cd);
     CurrentTorquePolar->clear();
     CurrentTorquePolar->AddPoint(CurrentForces.AoA, CurrentForces.Cm_c4);
-    if (b_IsRunning) {
-        StepSimulation();
 
+    if (b_IsRunning) {
         static double time = 0.0;
         time += timeStep;
 
@@ -451,7 +467,7 @@ void FLittlePlaneDesignerApp::UpdateGraphs() const {
     }
 }
 
-void FLittlePlaneDesignerApp::DoDebugDraw() const {
+void FLittlePlaneDesignerApp::DoPhysicsDraw() const {
     auto &Drawer = *DebugDraw_LegacyGL->handle();
     Drawer.drawMass = false;
     Drawer.drawBounds = false;

@@ -34,10 +34,10 @@ namespace Slab::Models::MolecularDynamics {
 
         Graphics::Point2D resultForce = {.0, .0};
         for (auto r: points) {
-            normSqr = r.lengthSqr();
+            normSqr = r.LengthSqr();
 
             if (normSqr < SIGMA_SQR) {
-                const DevFloat norm = r.length();
+                const DevFloat norm = r.Length();
                 const DoubleAccess arg = {1.0 - norm / σ};
                 const DevFloat mag = ε / σ * pow(arg.val, ALPHA - 1.0) * arg.isPositive();
 
@@ -70,7 +70,7 @@ namespace Slab::Models::MolecularDynamics {
         };
 
         for (auto r: points) {
-            normSqr = r.lengthSqr();
+            normSqr = r.LengthSqr();
             if (normSqr < SIGMA_SQR) {
                 const DevFloat norm = sqrt(normSqr);
                 const DoubleAccess arg = {1 - norm / σ};

@@ -32,6 +32,8 @@ add_executable( LittlePlaneDesigner
         Interfaces.h
         Render/PlaneStats.cpp
         Render/PlaneStats.h
+        Render/Drawables.cpp
+        Render/Drawables.h
 )
 target_include_directories(LittlePlaneDesigner PRIVATE ${box2d_SOURCE_DIR}/include)
 # target_link_libraries( LittlePlaneDesigner Slab box2D)

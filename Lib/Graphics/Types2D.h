@@ -56,9 +56,10 @@ namespace Slab::Graphics {
 
         void    operator *= (const DevFloat &a) { x*=a; y*=a; }
 
+        Point2D WithTranslation(const DevFloat dx, const DevFloat dy) const { return {x+dx, y+dy}; }
 
-        inline DevFloat lengthSqr() const { return x * x + y * y;}
-        inline DevFloat length( ) const { return sqrt(lengthSqr());}
+        DevFloat LengthSqr() const { return x * x + y * y;}
+        DevFloat Length( ) const { return sqrt(LengthSqr());}
 
         DevFloat x, y;
     };

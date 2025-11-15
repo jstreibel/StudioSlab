@@ -35,7 +35,7 @@ namespace Slab::Models::MolecularDynamics {
 
         Graphics::Point2D resultForce = {.0, .0};
         for (auto r: points) {
-            distSqr = r.lengthSqr();
+            distSqr = r.LengthSqr();
 
             if (distSqr < 4 * sqrCutoffRadius) {
                 const auto r_abs = sqrt(distSqr);
@@ -78,7 +78,7 @@ namespace Slab::Models::MolecularDynamics {
         };
 
         for (auto r: points) {
-            distSqr = r.lengthSqr();
+            distSqr = r.LengthSqr();
             if (distSqr < SIGMA_SQR) {
                 const DevFloat dist = sqrt(distSqr);
                 const DoubleAccess arg = {1 - dist / σ};

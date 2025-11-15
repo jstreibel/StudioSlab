@@ -27,6 +27,8 @@ namespace Slab::Graphics {
     fix FONT_INDEX_FOR_IMGUI = 10; //6;
 #define FONT_SIZE_PIXELS Slab::Graphics::WindowStyle::font_size
 
+    constexpr auto SHOW_DEAR_IMGUI_DEBUG_METRICS = false;
+
     void BuildFonts()
     {
         static const ImWchar WideCharacterRanges[] =
@@ -220,22 +222,24 @@ namespace Slab::Graphics {
     }
 
     bool FImGuiContext::NotifyRender(const FPlatformWindow &Window) {
-        AddMainMenuItem(MainMenuItem{
-            MainMenuLocation{"System"},
-            {
-                MainMenuLeafEntry{"Show metrics", "Alt+m", false},
-            },
-            [&Window, this](const Str& Item)
-            {
-                if (Item == "Close") const_cast<FPlatformWindow*>(&Window)->SignalClose();
-                else if (Item == "GUI metrics") bShowMetricsWindow = !bShowMetricsWindow;
-            }
-        });
+        if constexpr (SHOW_DEAR_IMGUI_DEBUG_METRICS) {
+            AddMainMenuItem(MainMenuItem{
+                MainMenuLocation{"System"},
+                {
+                    MainMenuLeafEntry{"Show Dear ImGui debug metrics", "Alt+m", false},
+                },
+                [&Window, this](const Str& Item)
+                {
+                    if (Item == "Close") const_cast<FPlatformWindow*>(&Window)->SignalClose();
+                    else if (Item == "Show Dear ImGui debug metrics") bShowMetricsWindow = !bShowMetricsWindow;
+                }
+            });
 
-        if (bShowMetricsWindow) AddDrawCall([this]
-        {
-            ImGui::ShowMetricsWindow(&bShowMetricsWindow);
-        });
+            if (bShowMetricsWindow) AddDrawCall([this]
+            {
+                ImGui::ShowMetricsWindow(&bShowMetricsWindow);
+            });
+        }
 
         if (!bManualRender)
         {

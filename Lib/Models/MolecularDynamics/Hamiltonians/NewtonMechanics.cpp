@@ -89,7 +89,7 @@ namespace Slab::Models::MolecularDynamics {
     DevFloat NewtonMechanics::computeEnergy(const Graphics::PointContainer &v_q, Graphics::PointContainer &v_p) {
         DevFloat K = .0;
         for (auto &p : v_p)
-            K += p.lengthSqr();
+            K += p.LengthSqr();
         K *= .5;
 
         const size_t N = v_q.size();
