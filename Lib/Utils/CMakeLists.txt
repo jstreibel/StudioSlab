@@ -17,6 +17,7 @@ set ( UTIL_SOURCES
 		String.h			String.cpp
 		StringFormatting.h  StringFormatting.cpp
 		Numbers.h
+		Result.h
 		Arrays.h			Arrays.cpp
 		Files.h				Files.cpp
 
