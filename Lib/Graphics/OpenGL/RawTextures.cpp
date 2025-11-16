@@ -8,6 +8,7 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "3rdParty/stb_image.h"
+#include "Core/Tools/Log.h"
 #include "Graphics/Utils/ImageLoad.h"
 
 
@@ -41,9 +42,18 @@ namespace Slab::Graphics{
     }
 
     SlabTextureID SlabTexture::LoadTextureFromImage(const Str& path) {
+        const auto DataResult = Image::LoadImageFile(path);
 
-        if (const auto data = Image::LoadImageFile(path); data.IsValid())
-            return CreateTexture(data);
+        if (DataResult.IsFailure()) {
+            Core::Log::Error("Failed to load texture: " + path + ": ") << DataResult.ToString()
+            << Core::Log::Flush;
+
+            return nullptr;
+        }
+
+            return CreateTexture(DataResult.Value());
+
+
 
         return nullptr;
     }

@@ -12,7 +12,7 @@ namespace Slab::Graphics {
 
 struct IDrawProviders {
     const IResolutionProvider& ResolutionProvider;
-    const IRectRProvider& RectProvider;
+    const IViewProvider& RectProvider;
 };
 
 struct IDrawable

@@ -11,13 +11,14 @@
 #include "Graphics/Interfaces/IRectProvider.h"
 
 
-struct FCamera final : IUpdateable, Slab::Graphics::IRectRProvider
+struct FCamera final : IUpdateable, Slab::Graphics::IViewProvider
 {
     /**
      * Set camera ratio.
      * @param Ratio camera ratio = width / height
      */
     void SetParams_Ratio(float Ratio);
+    void SetParams_BaseWidth(float Width);
     void SetParams_Width(float Width);
 
     void TrackObject(const Slab::TPointer<IMovingEntity>& Object);
@@ -27,13 +28,12 @@ struct FCamera final : IUpdateable, Slab::Graphics::IRectRProvider
     void Zoom(float ZoomFactor);
     void Pan(Slab::Math::Point2D Delta);
 
-    const Slab::Graphics::RectR& GetView() const { return View; }
-
     void Update(float ElapsedTimeMsec) override;
-    Slab::Graphics::RectR GetRect() const override;
+    Slab::Graphics::RectR GetView() const override;
 
 private:
-    Slab::Graphics::RectR View = Slab::Graphics::RectR(-10.f, 10.f, -10.f, 10.f);
+    float BaseWidth = 20.0f;
+    Slab::Graphics::RectR View = Slab::Graphics::RectR(-BaseWidth*.5f, BaseWidth*.5f, -BaseWidth*.5f, BaseWidth*.5f);
     float AspectRatio = 1.0f;
     Slab::TPointer<IMovingEntity> TrackedObject;
 };

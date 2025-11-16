@@ -7,6 +7,7 @@
 #include <SFML/Window/Keyboard.hpp>
 
 #include "FAtmosphericCondition.h"
+#include "Core/Tools/Log.h"
 #include "Foils/Foil.h"
 #include "Graphics/OpenGL/Texture2D.h"
 #include "Graphics/OpenGL/Texture2D_Color.h"
@@ -265,6 +266,12 @@ void FLittlePlane::AdjustWingAngle(int WingId, double Delta) const {
 }
 
 FLittlePlane::FLittlePlane(const Vector<TPointer<FWing>>& Wings, const b2BodyId HullBody): Wings(Wings), HullBody(HullBody) {
-    fix Loc = Core::Resources::GetResourcesPath() + "/LittlePlaneDesigner/Extra300S.png";
-    HullTexture = Graphics::OpenGL::FTexture2D_Color::FromImageFile(Loc);
+    fix Loc = Core::Resources::GetResourcesPath() + "/LittlePlaneDesigner/Extra300S_Color02.png";
+    auto HullTextureResult = Graphics::OpenGL::FTexture2D_Color::FromImageFile(Loc);
+    if (HullTextureResult.IsFailure()) {
+        Core::Log::Error("Failed to load texture: " + Loc) << HullTextureResult.ToString() << Core::Log::Flush;
+        throw std::runtime_error("Failed to load texture: " + Loc);
+    }
+
+    HullTexture = HullTextureResult.Value();
 }

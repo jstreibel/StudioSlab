@@ -4,6 +4,7 @@
 
 #include "Drawables.h"
 
+#include "Core/Tools/Log.h"
 #include "Core/Tools/Resources.h"
 #include "Graphics/OpenGL/Texture.h"
 #include "Graphics/OpenGL/Texture2D_Color.h"
@@ -16,33 +17,34 @@ static Slab::TPointer<Slab::Graphics::OpenGL::FTexture> CatTexture = nullptr;
 
 inline auto GetTexture(const Slab::Str& FileName) {
     fix Loc = Slab::Core::Resources::GetResourcesPath() + "/LittlePlaneDesigner/" + FileName;
-    return Slab::Graphics::OpenGL::FTexture2D_Color::FromImageFile(Loc);
+
+    fix TextureResult = Slab::Graphics::OpenGL::FTexture2D_Color::FromImageFile(Loc);
+
+    if (TextureResult.IsFailure()) {
+        Slab::Core::Log::Error("Failed to load texture: " + FileName) << TextureResult.ToString() << Slab::Core::Log::Flush;
+        throw std::runtime_error("Failed to load texture: " + FileName);
+    }
+
+    return TextureResult.Value();
 }
 
-void FGuy::Draw(const Slab::Graphics::IDrawProviders&) {
-    if (!GuyTexture)
-        GuyTexture = GetTexture("Guy.png");
+FDecal::FDecal(
+    const Slab::Str& LittlePlaneDesigner_FileName,
+    const Slab::Graphics::Point2D Position,
+    const Slab::Graphics::Point2D Size)
+: Position(Position)
+, Size(Size)
+, Texture(GetTexture(LittlePlaneDesigner_FileName)){ }
+
+void FDecal::Draw(const Slab::Graphics::IDrawProviders&) {
 
     fix Rect = Slab::Graphics::FRectangleShapeBuilder{}
-    .WithWidth(2.0)
-    .WithHeight(2.0)
+    .WithWidth(Size.x)
+    .WithHeight(Size.y)
     .At(Position)
     .Build();
 
-    Slab::Graphics::OpenGL::Legacy::DrawRectangleWithTexture(Rect, *GuyTexture);
-}
-
-void FCat::Draw(const Slab::Graphics::IDrawProviders&) {
-    if (!CatTexture)
-        CatTexture = GetTexture("Cat.png");
-
-    fix Rect = Slab::Graphics::FRectangleShapeBuilder{}
-    .WithWidth(.32)
-    .WithHeight(.32)
-    .At(Position)
-    .Build();
-
-    Slab::Graphics::OpenGL::Legacy::DrawRectangleWithTexture(Rect, *CatTexture);
+    Slab::Graphics::OpenGL::Legacy::DrawRectangleWithTexture(Rect, *Texture);
 }
 
 FRuler::FRuler(const Slab::Graphics::Point2D &Loc, const float &Unit): Loc(Loc), Unit(Unit) {}

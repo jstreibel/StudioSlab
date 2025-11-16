@@ -27,8 +27,8 @@ constexpr float TimeScale = 1.0f;
 
 constexpr float VectorScale = .00875f;
 
-constexpr auto LightMaterialDensity = 12.0f;
-constexpr auto HeavyMaterialDensity = 30.0f;
+constexpr auto LightMaterialDensity = 100.0f;
+constexpr auto HeavyMaterialDensity = 230.0f;
 constexpr auto LightRockDensity = 1600.0f;
 constexpr auto HeavyRockDensity = 3500.0f;
 
@@ -58,8 +58,6 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     WinHeight = PlatformWindow.GetHeight();
     WinWidth = PlatformWindow.GetWidth();
 
-    const auto [x, y] = LittlePlane->GetPosition();
-
     Camera.Update(1.f/60.f);
 
     fix KeyboardState = PlatformWindow.GetKeyboardState();
@@ -80,8 +78,7 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
 
     Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
     Drawer::ResetModelView();
-    IN View = Camera.GetView();
-    Drawer::SetupOrtho({View.xMin, View.xMax, View.yMin, View.yMax});
+    Drawer::SetupOrtho(Camera.GetView());
 
     if      (PrettyDraw) PlatformWindow.Clear(Graphics::LapisLazuli);
     else if (DebugDraw)  PlatformWindow.Clear(Graphics::Black);
@@ -93,7 +90,6 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     });
 
     const Graphics::IDrawProviders DrawProviders = {PlatformWindow, Camera};
-    PlaneStats->Draw(DrawProviders);
 
     if (b_IsRunning) StepSimulation();
 
@@ -109,6 +105,8 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     if (DebugDraw) { DoPhysicsDraw(); }
 
     RenderSimData(PlatformWindow);
+
+    PlaneStats->Draw(DrawProviders);
 
     return true;
 }
@@ -343,6 +341,7 @@ void FLittlePlaneDesignerApp::SetupTerrain() {
     Drawables.emplace_back(Slab::New<FRuler>(Hilltop.WithTranslation(-.5, .0), HeightOfADomesticCat));
     Drawables.emplace_back(Slab::New<FRuler>(Hilltop.WithTranslation(-2.0, -.8), HeightOfAHuman));
     Drawables.emplace_back(Slab::New<FGuy>(Hilltop.WithTranslation(-0.5, 0.9-.8)));
+    Drawables.emplace_back(Slab::New<FTree01>(Graphics::Point2D{-5.0, 0.0}));
 }
 
 void FLittlePlaneDesignerApp::OnStart() {
@@ -369,11 +368,10 @@ void FLittlePlaneDesignerApp::OnStart() {
     // Setup stats
     PlaneStats = New<FPlaneStats>(LittlePlane, World);
 
-
     WinWidth = SystemWindow->GetWidth();
     WinHeight = SystemWindow->GetHeight();
     fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
-    Camera.SetParams_Width(InitialViewWidth);
+    Camera.SetParams_BaseWidth(InitialViewWidth);
     Camera.SetParams_Ratio(AspectRatio);
     Camera.TrackObject(LittlePlane);
     const auto [x, y] = LittlePlane->GetPosition();

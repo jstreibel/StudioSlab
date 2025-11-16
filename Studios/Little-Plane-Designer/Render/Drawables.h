@@ -7,22 +7,39 @@
 
 #include "../../../Lib/Graphics/Interfaces/IDrawable.h"
 #include "Graphics/Types2D.h"
+#include "Graphics/OpenGL/Texture.h"
 
-struct FGuy final : Slab::Graphics::IDrawable {
-    Slab::Graphics::Point2D Position={0,0};
-
-    explicit FGuy(const Slab::Graphics::Point2D Position = {0,0}) : Position(Position) { };
+struct FDecal : Slab::Graphics::IDrawable {
+    FDecal() = delete;
+    explicit FDecal(
+        const Slab::Str& LittlePlaneDesigner_FileName,
+        Slab::Graphics::Point2D Position = {0,0},
+        Slab::Graphics::Point2D Size = {1,1});
 
     void Draw(const Slab::Graphics::IDrawProviders&) override;
+
+    Slab::Graphics::Point2D Position={0,0};
+    Slab::Graphics::Point2D Size={1,1};
+
+private:
+    const Slab::TPointer<Slab::Graphics::OpenGL::FTexture> Texture;
 };
 
-struct FCat final : Slab::Graphics::IDrawable
+struct FGuy final : FDecal {
+    explicit FGuy(const Slab::Graphics::Point2D Position = {0,0})
+    : FDecal("Guy.png", Position, {2.f,2.f}) { };
+};
+
+struct FCat final : FDecal
 {
-    Slab::Graphics::Point2D Position;
+    explicit FCat(const Slab::Graphics::Point2D Position = {0,0})
+    : FDecal("Cat.png", Position, {0.32f,0.32f}) { };
+};
 
-    explicit FCat(const Slab::Graphics::Point2D Position = {0,0}) : Position(Position) { };
-
-    void Draw(const Slab::Graphics::IDrawProviders&) override;
+struct FTree01 final : FDecal
+{
+    explicit FTree01(const Slab::Graphics::Point2D Position = {0,0})
+    : FDecal("Tree01.png", Position, {4.0f,4.0f}) { };
 };
 
 struct FRuler final : Slab::Graphics::IDrawable {

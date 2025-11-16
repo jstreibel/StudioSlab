@@ -15,7 +15,13 @@ void FCamera::SetParams_Ratio(float Ratio) {
     View.yMax = y + Height*.5f;
 }
 
-void FCamera::SetParams_Width(const float Width) {
+void FCamera::SetParams_BaseWidth(const float Width) {
+    BaseWidth = Width;
+
+    SetParams_Width(BaseWidth);
+}
+
+void FCamera::SetParams_Width(float Width) {
     const auto x = View.xCenter();
     const auto y = View.yCenter();
 
@@ -67,12 +73,16 @@ void FCamera::Pan(Slab::Math::Point2D Delta) {
 void FCamera::Update(float ElapsedTimeMsec) {
     if (TrackedObject == nullptr) return;
 
+    // if (fix Vel = b2Length(TrackedObject->GetVelocity()) > 5.0f) {
+    //      SetParams_Width(BaseWidth * Vel/5.0f);
+    // } else SetParams_Width(BaseWidth);
+
     fix w = View.GetWidth();
 
     auto [x, y] = TrackedObject->GetPosition();
     SetCenter({x-w*.25f, y});
 }
 
-Slab::Graphics::RectR FCamera::GetRect() const {
+Slab::Graphics::RectR FCamera::GetView() const {
     return View;
 }

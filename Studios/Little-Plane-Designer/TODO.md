@@ -1,5 +1,5 @@
 # Little Plane Designer - little to-do list
-## Sprint 1
+## Sprint 1 => Public release
 - [X] Working foil (NACA2412)
 - [X] Drag+lift model
   - [X] Polar functions
@@ -15,11 +15,11 @@
   - [X] Spring response
   - [X] Fixed response (change aileron angle) 
 - [X] Camera tracking
-- [ ] Good (ish) looking plane hull
-- [ ] A big hill to launch planes from
+- [X] Good looking plane hull
+- [X] A big hill to launch planes from
 - [X] Endless (ish) terrain
-- [ ] Size and position reference (human, cat, yellow ruler, etc.)
-- [ ] Some background and sky features: house, trees, bushes, lake, clouds etc.
+- [X] Size and position reference (human, cat, yellow ruler, etc.)
+- [X] Some background and sky features: house, trees, bushes, lake, clouds etc.
 - [X] Add stats (speed, altidude, attitude, etc.)
   - [X] Clean-up stats
 - [X] BUGFIX: FWriterOpenGL not working ...

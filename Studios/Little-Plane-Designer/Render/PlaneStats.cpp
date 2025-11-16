@@ -30,6 +30,10 @@ void FPlaneStats::Draw(const Graphics::IDrawProviders& Providers) {
     fix H = Providers.ResolutionProvider.GetHeight();
     Writer->Reshape(W, H);
 
+    Graphics::OpenGL::SetViewport(Graphics::RectI{
+        .xMin = 0, .xMax = W, .yMin = 0, .yMax = H
+    });
+
     const float fontH = Writer->GetFontHeightInPixels();
     int n = 0;
 
@@ -44,11 +48,17 @@ void FPlaneStats::Draw(const Graphics::IDrawProviders& Providers) {
     // Weight vs aero vertical force
     const float m  = Plane->GetTotalMass();
     const float g  = b2Length(b2World_GetGravity(World));
-    const float mg = m * g;
 
     float sumFy = 0.0f;
     float sumWingMass = 0.0f;
-    struct WingInfo { float mass; float Cl; float Cd; float Fy; float AoAdeg; };
+    struct WingInfo {
+        const char *name;
+        float mass;
+        float Cl;
+        float Cd;
+        float Fy;
+        float AoAdeg;
+    };
     Vector<WingInfo> infos;
     const int nWings = Plane->GetWingCount();
     infos.reserve(nWings);
@@ -60,7 +70,7 @@ void FPlaneStats::Draw(const Graphics::IDrawProviders& Providers) {
         const float Fy = data.GetTotalForce().y;
         sumFy += Fy;
         const float AoAdeg = data.AoA * static_cast<float>(180.0 / M_PI);
-        infos.push_back(WingInfo{wingMass, data.Cl, data.Cd, Fy, AoAdeg});
+        infos.push_back(WingInfo{wing.Params.Name.c_str(), wingMass, data.Cl, data.Cd, Fy, AoAdeg});
     }
 
     const auto x = W - 1200.0f;
@@ -75,7 +85,7 @@ void FPlaneStats::Draw(const Graphics::IDrawProviders& Providers) {
 
     // Per-wing aero breakdown
     for (int i = 0; i < nWings; ++i) {
-        Writer->Write(Print("wing[%d]: AoA=%.1f°", i, infos[i].Cl, infos[i].Cd, infos[i].AoAdeg, infos[i].Fy),
+        Writer->Write(Print("%s: AoA=%.1f°", infos[i].name, infos[i].Cl, infos[i].Cd, infos[i].AoAdeg, infos[i].Fy),
                       {x, baseY - static_cast<float>(n++)*dy});
     }
 }

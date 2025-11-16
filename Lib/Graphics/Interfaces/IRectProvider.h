@@ -8,9 +8,9 @@
 #include "Graphics/Types2D.h"
 
 namespace Slab::Graphics {
-struct IRectRProvider {
-    virtual ~IRectRProvider() = default;
-    virtual RectR GetRect() const = 0;
+struct IViewProvider {
+    virtual ~IViewProvider() = default;
+    virtual RectR GetView() const = 0;
 };
 }
 

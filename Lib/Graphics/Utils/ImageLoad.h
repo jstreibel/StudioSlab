@@ -6,6 +6,7 @@
 #define STUDIOSLAB_IMAGELOAD_H
 
 #include "Utils/Pointer.h"
+#include "Utils/Result.h"
 #include "Utils/String.h"
 
 namespace Slab::Graphics::Image {
@@ -18,9 +19,11 @@ namespace Slab::Graphics::Image {
         const int width, height, channels;
 
         bool IsValid() const { return data != nullptr; }
+        StbiImageInfo(const TPointer<StbiImage>& d, int w, int h, int c)
+            : data(d), width(w), height(h), channels(c) {}
     };
 
-    StbiImageInfo LoadImageFile(const Str& image_file);
+    TResult<StbiImageInfo> LoadImageFile(const Str& image_file);
 }
 
 #endif //STUDIOSLAB_IMAGELOAD_H

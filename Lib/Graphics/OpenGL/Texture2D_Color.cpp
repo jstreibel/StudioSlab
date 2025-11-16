@@ -22,12 +22,13 @@ namespace Slab::Graphics::OpenGL {
 
     }
 
-    TPointer<FTexture2D_Color> FTexture2D_Color::FromStbiImage(Image::StbiImageInfo Image) {
-        if (Image.channels !=4) return nullptr;
+    FTexture2D_Color::Result FTexture2D_Color::FromStbiImage(Image::StbiImageInfo Image) {
+        if (Image.channels !=4)
+            Result::Fail("Image must have 4 channels");
 
         constexpr int Channels = 4;
 
-        auto Texture = New<FTexture2D_Color>(Image.width, Image.height);
+        const auto Texture = New<FTexture2D_Color>(Image.width, Image.height);
 
         const auto w = Texture->GetWidth();
         const auto h = Texture->GetHeight();
@@ -36,15 +37,16 @@ namespace Slab::Graphics::OpenGL {
 
         Texture->Upload();
 
-        return Texture;
+        return Result::Ok(Texture);
     }
 
-    TPointer<FTexture2D_Color> FTexture2D_Color::FromImageFile(const Str& FileName) {
-        if(const auto Data = Image::LoadImageFile(FileName); Data.IsValid()) {
-            return FromStbiImage(Data);
+    TResult<TPointer<FTexture2D_Color>> FTexture2D_Color::FromImageFile(const Str& FileName) {
+        const auto data = Image::LoadImageFile(FileName);
+        if (data.IsSuccess()) {
+            return FromStbiImage(data.Value());
         }
 
-        return nullptr;
+        return TResult<TPointer<FTexture2D_Color>>::Fail("Failed to load image: " + FileName);
     }
 
     bool FTexture2D_Color::SetColor(int i, int j, FColor color) const {

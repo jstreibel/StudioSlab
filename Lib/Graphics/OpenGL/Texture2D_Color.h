@@ -12,6 +12,7 @@
 #include "Graphics/OpenGL/OpenGL.h"
 #include "Graphics/Styles/Colors.h"
 #include "Graphics/Utils/ImageLoad.h"
+#include "Utils/Result.h"
 
 namespace Slab::Graphics::OpenGL {
 
@@ -22,8 +23,9 @@ namespace Slab::Graphics::OpenGL {
 
         FTexture2D_Color(GLsizei width, GLsizei height);
 
-        static TPointer<FTexture2D_Color> FromStbiImage(Image::StbiImageInfo);
-        static TPointer<FTexture2D_Color> FromImageFile(const Str& FileName);
+        using Result = TResult<TPointer<FTexture2D_Color>>;
+        static Result FromStbiImage(Image::StbiImageInfo);
+        static Result FromImageFile(const Str& FileName);
 
         bool SetColor(int i, int j, FColor color) const;
 
