@@ -247,7 +247,7 @@ void FLittlePlane::AdjustWingAngle(int WingId, double Delta) const {
 }
 
 FLittlePlane::FLittlePlane(const Vector<TPointer<FWing>>& Wings, const b2BodyId HullBody): Wings(Wings), HullBody(HullBody) {
-    fix Loc = Core::Resources::GetResourcesPath() + "/LittlePlaneDesigner/Extra300S_Color03.png";
+    fix Loc = Core::Resources::GetResourcesPath() + "/LittlePlaneDesigner/Extra300S_03.png";
     auto HullTextureResult = Graphics::OpenGL::FTexture2D_Color::FromImageFile(Loc);
     if (HullTextureResult.IsFailure()) {
         Core::Log::Error("Failed to load texture: " + Loc) << HullTextureResult.ToString() << Core::Log::Flush;

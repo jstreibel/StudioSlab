@@ -341,6 +341,7 @@ void FLittlePlaneDesignerApp::SetupTerrain() {
     Drawables.emplace_back(Slab::New<FRuler>(Hilltop.WithTranslation(-.5, .0), HeightOfADomesticCat));
     Drawables.emplace_back(Slab::New<FRuler>(Hilltop.WithTranslation(-2.0, -.8), HeightOfAHuman));
     Drawables.emplace_back(Slab::New<FGuy>(Hilltop.WithTranslation(-0.5, 0.9-.8)));
+    Drawables.emplace_back(Slab::New<FTree01>(Hilltop.WithTranslation(+3.0, 1.5)));
     Drawables.emplace_back(Slab::New<FTree01>(Graphics::Point2D{-5.0, 0.0}));
 }
 
@@ -474,7 +475,8 @@ void FLittlePlaneDesignerApp::DoPhysicsDraw() const {
     Drawer.drawJoints = false;
 
     DebugDraw_LegacyGL->SetupLegacyGL();
-    b2World_Draw(World, &Drawer);
+
+    if constexpr (false) b2World_Draw(World, &Drawer);
 
     constexpr auto Scale = VectorScale;
 
