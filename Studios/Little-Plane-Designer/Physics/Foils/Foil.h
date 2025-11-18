@@ -71,10 +71,10 @@ static double signedAoA(const b2Vec2& chord_hat, const b2Vec2& wind_hat) {
 // Requires: IAirfoil { double Cl(double), Cd(double), Cm_c4(double) }.
 // Params: chord in meters, span effective depth, rho density, le_local leading edge in body-local coords.
 struct FAirfoilDynamicData {
-    const b2Vec2 drag, lift, loc;
-    const float torque;
-    const float Cl, Cd, Cm_c4;
-    const float AoA;
+    b2Vec2 drag, lift, loc;
+    float torque;
+    float Cl, Cd, Cm_c4;
+    float AoA;
     b2Vec2 GetTotalForce() const { return drag+lift; }
     static auto Null() { return FAirfoilDynamicData{b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), 0.0f}; }
 };

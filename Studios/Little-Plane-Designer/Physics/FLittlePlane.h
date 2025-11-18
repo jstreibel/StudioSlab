@@ -37,10 +37,11 @@ class FLittlePlane final : public Graphics::IDrawable, public IDynamicEntity
 public:
     static Foil::FAirfoilDynamicData ComputeForces(
         const FWing& Wing,
-        const FAtmosphericCondition &Atmosphere={},
-        const TPointer<LegacyGLDebugDraw>& DebugDraw=nullptr);
+        const FAtmosphericCondition &Atmosphere={});
 
-    void ComputeAndApplyForces(TPointer<LegacyGLDebugDraw>) override;
+    const Vector<Foil::FAirfoilDynamicData>& GetLastAirfoilDynamicData() const { return LastAirfoilDynamicData; }
+
+    void ComputeAndApplyForces() override;
     float GetTotalMass() const override;
     b2Vec2 GetCenterOfMass_Global() const override;
     b2Vec2 GetPosition() const override;
@@ -53,6 +54,8 @@ public:
 
 private:
     friend class FPlaneFactory;
+
+    Vector<Foil::FAirfoilDynamicData> LastAirfoilDynamicData;
 
     explicit FLittlePlane(const Vector<TPointer<FWing>>& Wings, const b2BodyId HullBody);
     FLittlePlane() = default;

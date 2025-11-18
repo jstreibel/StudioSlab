@@ -17,8 +17,7 @@
 
 Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
     const FWing& Wing,
-    const FAtmosphericCondition &Atmosphere,
-    const TPointer<LegacyGLDebugDraw>& DebugDraw)
+    const FAtmosphericCondition &Atmosphere)
 {
     // Directions
     const b2Vec2 FW_Unit = b2Body_GetWorldVector(Wing.BodyId, b2Vec2(-1.0f, 0.0f));
@@ -71,51 +70,30 @@ Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
     const b2Vec2 drag = -static_cast<float>(-Dmag) * WindOnPointUnit;
     const b2Vec2 lift = +static_cast<float>(+Lmag) * b2Vec2(-WindOnPointUnit.y, WindOnPointUnit.x);
 
-    if (DebugDraw != nullptr)
-    {
-        const auto &DebugDraw_LegacyGL = *DebugDraw;
-
-        const auto Scale = DebugDraw_LegacyGL.GetBaseScale();
-
-        DebugDraw_LegacyGL.DrawVector(drag, COM, 1.0f, b2_colorRed);
-        DebugDraw_LegacyGL.Write("drag", COM + drag*Scale, b2_colorRed);
-
-        DebugDraw_LegacyGL.DrawVector(lift, COM, 1.0f, b2_colorAliceBlue);
-        DebugDraw_LegacyGL.Write("lift", COM + lift*Scale, b2_colorAliceBlue);
-
-        if constexpr (false)
-        {
-            DebugDraw_LegacyGL.DrawPseudoVector(ω, COM, 1.f, .0f, b2_colorAqua);
-            DebugDraw_LegacyGL.Write("omega", COM+b2Vec2{static_cast<float>(ω), .0f}, b2_colorAqua);
-
-            DebugDraw_LegacyGL.DrawPseudoVector(τ_mag, COM, 1.f, .0f, b2_colorBisque);
-            DebugDraw_LegacyGL.Write("Torque Cm", COM+b2Vec2{static_cast<float>(τ_mag), .0f}, b2_colorBisque);
-
-            DebugDraw_LegacyGL.DrawPseudoVector(τ_aero, COM, 1.f, .0f, b2_colorDarkCyan);
-            DebugDraw_LegacyGL.Write("Torque (aero)", COM+b2Vec2{static_cast<float>(τ_aero), .0f}, b2_colorDarkCyan);
-
-            DebugDraw_LegacyGL.DrawPseudoVector(τ_visc, COM, 1.f, .0f, b2_colorBox2DBlue);
-            DebugDraw_LegacyGL.Write("Torque (visc)", COM+b2Vec2{static_cast<float>(τ_visc), .0f}, b2_colorBox2DBlue);
-        }
-    }
-
     return Foil::FAirfoilDynamicData{
-        drag, lift, COM,
-        static_cast<float>(τ),
-        static_cast<float>(Cl),
-        static_cast<float>(Cd),
-        static_cast<float>(Cm_c4),
-        static_cast<float>(AoA)};
+        .drag = drag,
+        .lift = lift,
+        .loc = COM,
+        .torque = static_cast<float>(τ),
+        .Cl = static_cast<float>(Cl),
+        .Cd = static_cast<float>(Cd),
+        .Cm_c4 = static_cast<float>(Cm_c4),
+        .AoA = AoA
+        };
 }
 
-void FLittlePlane::ComputeAndApplyForces(const TPointer<LegacyGLDebugDraw> DebugDraw) {
+void FLittlePlane::ComputeAndApplyForces() {
+    LastAirfoilDynamicData.clear();
+
     for (auto &Wing : Wings) {
         const auto &WingBody = Wing->BodyId;
         if (!b2Body_IsAwake(WingBody)) continue;
 
-        const auto CurrentForces = ComputeForces(*Wing, {}, DebugDraw);
-        b2Body_ApplyForce (WingBody, CurrentForces.GetTotalForce(), CurrentForces.loc, true);
-        b2Body_ApplyTorque(WingBody, CurrentForces.torque, true);
+        auto ForcesData = ComputeForces(*Wing, {});
+        LastAirfoilDynamicData.emplace_back(ForcesData);
+
+        b2Body_ApplyForce (WingBody, ForcesData.GetTotalForce(), ForcesData.loc, true);
+        b2Body_ApplyTorque(WingBody, ForcesData.torque, true);
     }
 }
 
@@ -209,10 +187,13 @@ void FLittlePlane::Draw(const Graphics::IDrawProviders&) {
 
     Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
     WingStyle.thickness = 2.0f;
-    WingStyle.lineColor.a = 1.0f;
+    WingStyle.lineColor = Graphics::FColor::FromBytes(250, 116, 42)*1.5;
+    WingStyle.fillColor = Graphics::FColor::FromBytes(250, 116, 42, 128);
 
     for (const auto &Wing : Wings) {
-        const Math::FPointSet AirfoilPoints = Wing->Airfoil->GetProfileVertices(200, Wing->Params.ChordLength, Wing->Params.Thickness);
+        constexpr int NumSegments = 8;
+        const Math::FPointSet AirfoilPoints
+        = Wing->Airfoil->GetProfileVertices(NumSegments, Wing->Params.ChordLength, Wing->Params.Thickness);
         Math::FPointSet Points = AirfoilPoints;
 
         const auto Body = Wing->BodyId;
@@ -266,7 +247,7 @@ void FLittlePlane::AdjustWingAngle(int WingId, double Delta) const {
 }
 
 FLittlePlane::FLittlePlane(const Vector<TPointer<FWing>>& Wings, const b2BodyId HullBody): Wings(Wings), HullBody(HullBody) {
-    fix Loc = Core::Resources::GetResourcesPath() + "/LittlePlaneDesigner/Extra300S_Color02.png";
+    fix Loc = Core::Resources::GetResourcesPath() + "/LittlePlaneDesigner/Extra300S_Color03.png";
     auto HullTextureResult = Graphics::OpenGL::FTexture2D_Color::FromImageFile(Loc);
     if (HullTextureResult.IsFailure()) {
         Core::Log::Error("Failed to load texture: " + Loc) << HullTextureResult.ToString() << Core::Log::Flush;

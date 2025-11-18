@@ -25,7 +25,7 @@ auto DebugDraw = false;
 
 constexpr float TimeScale = 1.0f;
 
-constexpr float VectorScale = .00875f;
+constexpr float VectorScale = 0.005f;
 
 constexpr auto LightMaterialDensity = 100.0f;
 constexpr auto HeavyMaterialDensity = 230.0f;
@@ -40,7 +40,7 @@ constexpr auto InitialViewWidth = 18*1.2f;
 
 constexpr float timeStep = TimeScale/60.0f;
 constexpr int subSteps = 1;
-constexpr int manualSubSteps = 10;
+constexpr int ManualSubSteps = 10;
 
 constexpr auto StartRunning = true;
 
@@ -254,7 +254,7 @@ void FLittlePlaneDesignerApp::SetupPlane() {
         .Density = HeavyMaterialDensity,
         .Width = 1,
         .Height = 0.25,
-        .xOffset = -1.5,
+        .xOffset = -1.2,
     })
     .AddBodyPart({
         .Density = LightMaterialDensity,
@@ -268,10 +268,10 @@ void FLittlePlaneDesignerApp::SetupPlane() {
         .Airfoil = New<Foil::ViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
             .Name = "Wing",
-            .ChordLength = 1.0f,
+            .ChordLength = 1.15f,
             .Span = 6.0f,
         },
-        .RelativeLocation = {-.8f, 0.0f},
+        .RelativeLocation = {-.6f, -0.1f},
         .BaseAngle = static_cast<float>(DegToRad(0.0)),
         .MaxAngle  = static_cast<float>(DegToRad(15)),
         .MinAngle  = static_cast<float>(DegToRad(-15)),
@@ -284,7 +284,7 @@ void FLittlePlaneDesignerApp::SetupPlane() {
             .ChordLength = 0.6f,
             .Span = 2.f,
         },
-        .RelativeLocation = {+1.5, 0.1f},
+        .RelativeLocation = {+1.4, 0.0f},
         .BaseAngle = static_cast<float>(DegToRad(0.0)),
         .MaxAngle  = static_cast<float>(DegToRad(15)),
         .MinAngle  = static_cast<float>(DegToRad(-15)),
@@ -350,7 +350,7 @@ void FLittlePlaneDesignerApp::OnStart() {
     SystemWindow->SetupGUIContext();
     GUIContext = SystemWindow->GetGUIContext();
 
-    DebugDraw_LegacyGL = Slab::New<LegacyGLDebugDraw>(VectorScale);
+    DebugDraw_LegacyGL = Slab::New<LegacyGLDebugDraw>();
 
     b_IsRunning = StartRunning;
 
@@ -476,11 +476,31 @@ void FLittlePlaneDesignerApp::DoPhysicsDraw() const {
     DebugDraw_LegacyGL->SetupLegacyGL();
     b2World_Draw(World, &Drawer);
 
+    constexpr auto Scale = VectorScale;
+
     const auto Mass = LittlePlane->GetTotalMass();
     const auto COM = LittlePlane->GetCenterOfMass_Global();
 
     const auto Grav = b2World_GetGravity(World);
-    DebugDraw_LegacyGL->DrawVector(Mass * Grav, COM, 1.0f, b2_colorForestGreen);
+    DebugDraw_LegacyGL->DrawVector(Mass * Grav, COM, Scale, b2_colorForestGreen);
+
+    {
+        for (const auto ForcesData : LittlePlane->GetLastAirfoilDynamicData()) {
+            const auto drag = ForcesData.drag;
+            const auto lift = ForcesData.lift;
+            const auto loc = ForcesData.loc;
+            const auto τ = ForcesData.torque;
+
+            DebugDraw_LegacyGL->DrawVector(drag, loc, Scale, b2_colorRed);
+            DebugDraw_LegacyGL->Write("drag", loc + drag*Scale, b2_colorRed);
+
+            DebugDraw_LegacyGL->DrawVector(lift, loc, Scale, b2_colorAliceBlue);
+            DebugDraw_LegacyGL->Write("lift", loc + lift*Scale, b2_colorAliceBlue);
+
+            DebugDraw_LegacyGL->DrawPseudoVector(τ, loc, Scale, .0f, b2_colorDarkCyan);
+            DebugDraw_LegacyGL->Write("Torque (aero)", loc + b2Vec2{static_cast<float>(τ)*Scale, .0f}, b2_colorDarkCyan);
+        }
+    }
 }
 
 void FLittlePlaneDesignerApp::RenderSimData(const Graphics::FPlatformWindow& PlatformWindow) {
@@ -495,9 +515,9 @@ void FLittlePlaneDesignerApp::RenderSimData(const Graphics::FPlatformWindow& Pla
 }
 
 void FLittlePlaneDesignerApp::StepSimulation() const {
-    constexpr float splitTimeStep = timeStep/manualSubSteps;
-    for (int i = 0; i < manualSubSteps; ++i) {
-        LittlePlane->ComputeAndApplyForces(DebugDraw&&i==0 ? DebugDraw_LegacyGL : nullptr);
+    constexpr float splitTimeStep = timeStep/ManualSubSteps;
+    for (int i = 0; i < ManualSubSteps; ++i) {
+        LittlePlane->ComputeAndApplyForces();
         b2World_Step(World, splitTimeStep, subSteps);
     }
 }

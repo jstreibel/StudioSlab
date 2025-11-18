@@ -21,7 +21,7 @@ public:
 
 class IDynamicEntity : public IMovingEntity {
 public:
-    virtual void ComputeAndApplyForces(Slab::TPointer<LegacyGLDebugDraw>) = 0;
+    virtual void ComputeAndApplyForces() = 0;
     virtual float GetTotalMass() const = 0;
     virtual b2Vec2 GetCenterOfMass_Global() const = 0;
 };
