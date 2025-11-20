@@ -191,7 +191,7 @@ void FLittlePlane::Draw(const Graphics::IDrawProviders&) {
     WingStyle.fillColor = Graphics::FColor::FromBytes(250, 116, 42, 128);
 
     for (const auto &Wing : Wings) {
-        constexpr int NumSegments = 8;
+        constexpr int NumSegments = 30;
         const Math::FPointSet AirfoilPoints
         = Wing->Airfoil->GetProfileVertices(NumSegments, Wing->Params.ChordLength, Wing->Params.Thickness);
         Math::FPointSet Points = AirfoilPoints;

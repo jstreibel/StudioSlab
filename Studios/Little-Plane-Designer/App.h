@@ -77,7 +77,7 @@ private:
     TPointer<FTerrain> Terrain;
     TPointer<Graphics::IDrawable> PlaneStats;
 
-    Vector<TPointer<Graphics::IDrawable>> Drawables;
+    TList<TPointer<Graphics::IDrawable>> Drawables;
 
 };
 

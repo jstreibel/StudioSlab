@@ -25,6 +25,7 @@
 // Requires a fixed-function GL context (e.g., glMatrixMode, glBegin/glEnd).
 
 constexpr auto b2_pi = M_PI;
+constexpr auto ArrowThickness = 4.f;
 
 class LegacyGLDebugDraw {
 public:
@@ -79,7 +80,7 @@ public:
 
         // shaft
         glColor(color, m_alpha);
-        beginLines(1.5f);
+        beginLines(ArrowThickness);
         ::glVertex2f(p.x,   p.y);
         ::glVertex2f(tip.x, tip.y);
         endPrim();
@@ -90,7 +91,7 @@ public:
         const float a1 = ang + 2.61799388f; // +150 deg
         const float a2 = ang - 2.61799388f; // -150 deg
 
-        beginLines(1.5f);
+        beginLines(ArrowThickness);
         ::glVertex2f(tip.x, tip.y);
         ::glVertex2f(tip.x + headLen * std::cos(a1), tip.y + headLen * std::sin(a1));
         ::glVertex2f(tip.x, tip.y);
@@ -129,7 +130,7 @@ public:
         const b2Vec2 wingA{ end.x + wingSpan * normal.x, end.y + wingSpan * normal.y };
         const b2Vec2 wingB{ end.x - wingSpan * normal.x, end.y - wingSpan * normal.y };
 
-        beginLines(1.5f);
+        beginLines(ArrowThickness);
         glVertex2f(end.x, end.y);
         glVertex2f(tip.x, tip.y);
         glVertex2f(tip.x, tip.y);
@@ -183,7 +184,7 @@ private:
 
     static inline void drawPolyLine(const b2Vec2* v, int n, b2HexColor c, float a) {
         glColor(c, a);
-        beginLines();
+        beginLines(ArrowThickness);
         for (int i = 0; i < n; ++i) {
             const b2Vec2 p1 = v[i];
             const b2Vec2 p2 = v[(i + 1) % n];
@@ -197,7 +198,7 @@ private:
     static void DrawSegmentThunk(b2Vec2 p1, b2Vec2 p2, b2HexColor color, void* ctx) {
         auto* self = static_cast<LegacyGLDebugDraw*>(ctx);
         glColor(color, self->m_alpha);
-        beginLines();
+        beginLines(ArrowThickness);
         ::glVertex2f(p1.x, p1.y);
         ::glVertex2f(p2.x, p2.y);
         endPrim();
@@ -322,12 +323,12 @@ private:
 
         // X axis in red
         glColor(b2_colorRed, self->m_alpha);
-        beginLines(2.0f);
+        beginLines(ArrowThickness);
         ::glVertex2f(p.x,  p.y); ::glVertex2f(px.x, px.y);
         endPrim();
         // Y axis in green
         glColor(b2_colorLime, self->m_alpha);
-        beginLines(2.0f);
+        beginLines(ArrowThickness);
         ::glVertex2f(p.x,  p.y); ::glVertex2f(py.x, py.y);
         endPrim();
     }

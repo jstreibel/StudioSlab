@@ -42,6 +42,8 @@ constexpr float timeStep = TimeScale/60.0f;
 constexpr int subSteps = 1;
 constexpr int ManualSubSteps = 10;
 
+constexpr auto PlotRegionWidth = 15.0f;
+
 constexpr auto StartRunning = true;
 
 FLittlePlaneDesignerApp::FLittlePlaneDesignerApp(const int argc, const char* argv[])
@@ -158,7 +160,7 @@ void FLittlePlaneDesignerApp::SetupMonitors() {
         Ref->Set_x(20);
         Ref->Set_y(n*YDelta + BaseYPosition);
         Ref->SetNoGUI();
-        Ref->SetRegion(PlotRegion(180, 3.0));
+        Ref->SetRegion(PlotRegion(PlotRegionWidth, 3.0));
 
         auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         Style.lineColor = Graphics::LightGrey;
@@ -503,6 +505,11 @@ void FLittlePlaneDesignerApp::DoPhysicsDraw() const {
             DebugDraw_LegacyGL->Write("Torque (aero)", loc + b2Vec2{static_cast<float>(τ)*Scale, .0f}, b2_colorDarkCyan);
         }
     }
+
+    const auto [vx, vy] = LittlePlane->GetVelocity();
+    fix VertSpeed = b2Vec2{0, vy};
+    DebugDraw_LegacyGL->DrawVector(VertSpeed, COM, 1.0f, b2_colorWhite);
+    DebugDraw_LegacyGL->Write("Vert speed", COM + VertSpeed);
 }
 
 void FLittlePlaneDesignerApp::RenderSimData(const Graphics::FPlatformWindow& PlatformWindow) {
