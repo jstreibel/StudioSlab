@@ -7,12 +7,14 @@
 #include "GLFWPlatformWindow.h"
 #include "Utils/ReferenceIterator.h"
 #include "Core/Tools/Log.h"
+#include "Graphics/OpenGL/Utils.h"
+#include "Graphics/OpenGL/WriterOpenGL.h"
 #include "Graphics/Window/WindowStyles.h"
 
 namespace Slab::Graphics {
     using namespace Core;
 
-    const auto FullScreen = false;
+    constexpr auto FullScreen = false;
 
     void FGLFWPlatformWindow::window_focus_callback(GLFWwindow *window, int focused) {
         if (!focused) {
@@ -29,7 +31,7 @@ namespace Slab::Graphics {
         //     toggle_window_fullscreen(window);
 
         IterateReferences(me.GLFWListeners,
-                          Func(KeyboardEvent, window, key, scancode, action, mods),
+                          SLAB_FUNC(KeyboardEvent, window, key, scancode, action, mods),
                           StopOnFirstResponder);
     }
 
@@ -37,7 +39,7 @@ namespace Slab::Graphics {
         auto &me = *static_cast<FGLFWPlatformWindow*>(glfwGetWindowUserPointer(window));
 
         IterateReferences(me.GLFWListeners,
-                          Func(CharEvent, window, value),
+                          SLAB_FUNC(CharEvent, window, value),
                           StopOnFirstResponder);
     }
 
@@ -45,7 +47,7 @@ namespace Slab::Graphics {
         auto &me = *static_cast<FGLFWPlatformWindow*>(glfwGetWindowUserPointer(window));
 
         IterateReferences(me.GLFWListeners,
-                          Func(MouseMotion, window, xpos, ypos),
+                          SLAB_FUNC(MouseMotion, window, xpos, ypos),
                           StopOnFirstResponder);
     }
 
@@ -53,7 +55,7 @@ namespace Slab::Graphics {
         auto &me = *static_cast<FGLFWPlatformWindow*>(glfwGetWindowUserPointer(window));
 
         IterateReferences(me.GLFWListeners,
-                          FuncRun(CursorEnter, window, entered),
+                          SLAB_FUNC_RUNTHROUGH(CursorEnter, window, entered),
                           IterateAll);
     }
 
@@ -63,7 +65,7 @@ namespace Slab::Graphics {
         auto iteration_policy = action==GLFW_RELEASE ? IterateAll : StopOnFirstResponder;
 
         IterateReferences(me.GLFWListeners,
-                          Func(MouseButton, window, button, action, mods),
+                          SLAB_FUNC(MouseButton, window, button, action, mods),
                           iteration_policy);
     }
 
@@ -71,7 +73,7 @@ namespace Slab::Graphics {
         auto &Me = *static_cast<FGLFWPlatformWindow*>(glfwGetWindowUserPointer(window));
 
         IterateReferences(Me.GLFWListeners,
-                          Func(MouseWheel, window, xoffset, yoffset),
+                          SLAB_FUNC(MouseWheel, window, xoffset, yoffset),
                           StopOnFirstResponder);
     }
 
@@ -89,14 +91,14 @@ namespace Slab::Graphics {
 
         auto &Me = *static_cast<FGLFWPlatformWindow*>(glfwGetWindowUserPointer(window));
 
-        IterateReferences(Me.GLFWListeners, Func(DroppedFiles, window, count, paths), IterateAll);
+        IterateReferences(Me.GLFWListeners, SLAB_FUNC(DroppedFiles, window, count, paths), IterateAll);
     }
 
     void FGLFWPlatformWindow::window_size_callback(GLFWwindow *window, int width, int height)
     {
         auto &Me = *static_cast<FGLFWPlatformWindow*>(glfwGetWindowUserPointer(window));
 
-        IterateReferences(Me.GLFWListeners, FuncRun(ScreenReshape, window, width, height), IterateAll);
+        IterateReferences(Me.GLFWListeners, SLAB_FUNC_RUNTHROUGH(ScreenReshape, window, width, height), IterateAll);
     }
 
     GLFWwindow *NewGLFWWindow() {
@@ -104,6 +106,7 @@ namespace Slab::Graphics {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+        glfwWindowHint(GLFW_DEPTH_BITS, 24);
 
         GLFWwindow *window = nullptr;
 
@@ -217,13 +220,14 @@ namespace Slab::Graphics {
 
         glfwPollEvents();
 
-        static auto Render = FuncRun(Render, PlatformWindow);
+        static auto Render = SLAB_FUNC_RUNTHROUGH(Render, PlatformWindow);
 
         IterateReferences(GLFWListeners, Render, IterateAll);
     }
 
     void FGLFWPlatformWindow::Clear(const FColor& ClearColor) const {
         // auto clear_color = WindowStyle::PlatformWindow_BackgroundColor;
+        // OpenGL::Clear(ClearColor);
         glClearColor(ClearColor.r, ClearColor.g, ClearColor.b, ClearColor.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }

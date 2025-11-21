@@ -15,7 +15,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
 
     void DrawRectangle(const FRectangleShape &);
 
-    void DrawRectangleWithTexture(const FRectangleShape &, const FTexture&);
+    void DrawRectangleWithTexture(const FRectangleShape &, const FTexture&, const DevFloat ZIndex=.0);
 
     void DrawLine(
         const Math::Real2D& start,

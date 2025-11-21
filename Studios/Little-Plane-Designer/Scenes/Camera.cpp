@@ -4,9 +4,9 @@
 
 #include "Camera.h"
 
-#include "Interfaces.h"
+#include "../Interfaces.h"
 
-void FCamera::SetParams_Ratio(float Ratio) {
+void FTrackerCamera::SetParams_Ratio(float Ratio) {
     const auto Width = View.GetWidth();
     const auto Height = Width / Ratio;
     const auto y = View.yCenter();
@@ -15,13 +15,13 @@ void FCamera::SetParams_Ratio(float Ratio) {
     View.yMax = y + Height*.5f;
 }
 
-void FCamera::SetParams_BaseWidth(const float Width) {
+void FTrackerCamera::SetParams_BaseWidth(const float Width) {
     BaseWidth = Width;
 
     SetParams_Width(BaseWidth);
 }
 
-void FCamera::SetParams_Width(float Width) {
+void FTrackerCamera::SetParams_Width(float Width) {
     const auto x = View.xCenter();
     const auto y = View.yCenter();
 
@@ -31,13 +31,14 @@ void FCamera::SetParams_Width(float Width) {
     const auto Height = Width / AspectRatio;
     View.yMin = y - Height*.5f;
     View.yMax = y + Height*.5f;
+
 }
 
-void FCamera::TrackObject(const Slab::TPointer<IMovingEntity>& Object) {
+void FTrackerCamera::TrackObject(const Slab::TPointer<IMovingEntity>& Object) {
     TrackedObject = Object;
 }
 
-auto FCamera::SetCenter(const Slab::Math::Point2D& Center) -> void {
+auto FTrackerCamera::SetCenter(const Slab::Math::Point2D& Center) -> void {
     const auto w = View.GetWidth();
     const auto h = View.GetHeight();
 
@@ -47,7 +48,7 @@ auto FCamera::SetCenter(const Slab::Math::Point2D& Center) -> void {
     View.yMax = Center.y + h*.5f;
 }
 
-void FCamera::Zoom(const float ZoomFactor) {
+void FTrackerCamera::Zoom(const float ZoomFactor) {
     const auto NewViewWidth = View.GetWidth() * ZoomFactor;
     const auto NewViewHeight = View.GetHeight() * ZoomFactor;
 
@@ -59,7 +60,7 @@ void FCamera::Zoom(const float ZoomFactor) {
     View.yMax = yCenter + NewViewHeight*.5f;
 }
 
-void FCamera::Pan(Slab::Math::Point2D Delta) {
+void FTrackerCamera::Pan(const Slab::Math::Point2D& Delta) {
     fix dWidth = Delta.x;
     fix dHeight = Delta.y;
 
@@ -68,9 +69,10 @@ void FCamera::Pan(Slab::Math::Point2D Delta) {
 
     View.yMin += dHeight;
     View.yMax += dHeight;
+
 }
 
-void FCamera::Update(float ElapsedTimeMsec) {
+void FTrackerCamera::Tick(Miliseconds ElapsedTime) {
     if (TrackedObject == nullptr) return;
 
     // if (fix Vel = b2Length(TrackedObject->GetVelocity()) > 5.0f) {
@@ -83,6 +85,12 @@ void FCamera::Update(float ElapsedTimeMsec) {
     SetCenter({x-w*.25f, y});
 }
 
-Slab::Graphics::RectR FCamera::GetView() const {
+void FTrackerCamera::TogglePause() { }
+
+float FTrackerCamera::GetWidth() const {
+    return View.GetWidth();
+}
+
+Slab::Graphics::RectR FTrackerCamera::GetView() const {
     return View;
 }

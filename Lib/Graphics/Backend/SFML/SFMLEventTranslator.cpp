@@ -42,7 +42,7 @@ namespace Slab::Graphics {
                 Release,
                 Release};
 
-            IterateReferences(SysWinListeners, Func(NotifyKeyboard, key, state, modKeys));
+            IterateReferences(SysWinListeners, SLAB_FUNC(NotifyKeyboard, key, state, modKeys));
         }
 
         else if(isMouseButton) {
@@ -64,7 +64,7 @@ namespace Slab::Graphics {
                 (sf::Keyboard::isKeyPressed(sf::Keyboard::LSystem) | sf::Keyboard::isKeyPressed(sf::Keyboard::RSystem))   ? Press : Release,
                 Release, Release);
 
-            IterateReferences(SysWinListeners, Func(NotifyMouseButton, button, state, modKeys), StopOnFirstResponder);
+            IterateReferences(SysWinListeners, SLAB_FUNC(NotifyMouseButton, button, state, modKeys), StopOnFirstResponder);
         }
 
         else if(isMouseMovement) {
@@ -78,19 +78,19 @@ namespace Slab::Graphics {
             last_x = x;
             last_y = y;
 
-            IterateReferences(SysWinListeners, Func(NotifyMouseMotion, x, y, dx, dy));
+            IterateReferences(SysWinListeners, SLAB_FUNC(NotifyMouseMotion, x, y, dx, dy));
         }
 
         else if(isMouseWheel){
             fix x = event.mouseWheelScroll.x;
             fix y = event.mouseWheelScroll.y;
-            IterateReferences(SysWinListeners, Func(NotifyMouseWheel, x, y));
+            IterateReferences(SysWinListeners, SLAB_FUNC(NotifyMouseWheel, x, y));
         }
 
         else if(isResize) {
             fix w = event.size.width;
             fix h = event.size.height;
-            IterateReferences(SysWinListeners, Func(NotifySystemWindowReshape, w, h));
+            IterateReferences(SysWinListeners, SLAB_FUNC(NotifySystemWindowReshape, w, h));
         }
     }
 

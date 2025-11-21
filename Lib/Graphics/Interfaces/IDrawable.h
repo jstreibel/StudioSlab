@@ -6,19 +6,19 @@
 #define STUDIOSLAB_IDRAWABLE_H
 
 #include "IRectProvider.h"
-#include "IResolutionProvider.h"
+#include "Graphics/Backend/PlatformWindow.h"
 
 namespace Slab::Graphics {
 
-struct IDrawProviders {
-    const IResolutionProvider& ResolutionProvider;
-    const IViewProvider& RectProvider;
+struct FDraw2DParams {
+    const int ScreenWidth, ScreenHeight;
+    const RectR Region;
 };
 
-struct IDrawable
+struct IDrawable2D
 {
-    virtual ~IDrawable() = default;
-    virtual void Draw(const IDrawProviders&) = 0;
+    virtual ~IDrawable2D() = default;
+    virtual void Draw(const FDraw2DParams&) = 0;
 };
 }
 

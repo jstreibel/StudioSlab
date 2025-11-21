@@ -22,14 +22,14 @@ struct FTerrainDescriptor {
     Slab::Vector<b2Vec2> GetPoints() const;
 };
 
-class FTerrain final : public Slab::Graphics::IDrawable
+class FTerrain final : public Slab::Graphics::IDrawable2D
 {
     public:
     FTerrain();
 
     void Setup(b2WorldId, const FTerrainDescriptor& Descriptor);
 
-    void Draw(const Slab::Graphics::IDrawProviders&) override;
+    void Draw(const Slab::Graphics::FDraw2DParams&) override;
 
 private:
     bool b_IsInitialized = false;

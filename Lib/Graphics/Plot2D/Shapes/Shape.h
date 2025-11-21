@@ -36,6 +36,7 @@ struct FRectangleShapeBuilder {
     FRectangleShapeBuilder WithHeight(double h) const;
     FRectangleShapeBuilder At(double x, double y) const;
     FRectangleShapeBuilder At(Point2D Loc) const;
+
     FRectangleShape Build() const;
 
     DevFloat w, h, x, y;

@@ -40,7 +40,7 @@ Int SFMLSystemWindow::GetHeight() const {
 
 void SFMLSystemWindow::Tick() {
     auto win = sfml_native_window;
-    IterateReferences(sfml_listeners, FuncRun(render, win));
+    IterateReferences(sfml_listeners, SLAB_FUNC_RUNTHROUGH(render, win));
 }
 
 void SFMLSystemWindow::Flush() {
@@ -65,7 +65,7 @@ void SFMLSystemWindow::PollEvents() {
             // if (key == sf::Keyboard::Escape);
         }
 
-        IterateReferences(sfml_listeners, FuncRun(event, event));
+        IterateReferences(sfml_listeners, SLAB_FUNC_RUNTHROUGH(event, event));
     }
     off_sync.unlock();
 }

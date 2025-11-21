@@ -54,15 +54,15 @@ namespace Slab::Graphics {
     }
 
     void FPlatformWindowEventListener::CursorEntered(bool entered) {
-        IterateReferences(DelegateResponders, FuncRun(CursorEntered, entered));
+        IterateReferences(DelegateResponders, SLAB_FUNC_RUNTHROUGH(CursorEntered, entered));
     }
 
     bool FPlatformWindowEventListener::NotifyMouseMotion(int x, int y, int dx, int dy) {
-        return IterateReferences(DelegateResponders, Func(NotifyMouseMotion, x, y, dx, dy));
+        return IterateReferences(DelegateResponders, SLAB_FUNC(NotifyMouseMotion, x, y, dx, dy));
     }
 
     bool FPlatformWindowEventListener::NotifySystemWindowReshape(int w, int h) {
-        return IterateReferences(DelegateResponders, Func(NotifySystemWindowReshape, w, h));
+        return IterateReferences(DelegateResponders, SLAB_FUNC(NotifySystemWindowReshape, w, h));
     }
 
     bool FPlatformWindowEventListener::NotifyRender(const FPlatformWindow& PlatformWindow){
@@ -76,28 +76,28 @@ namespace Slab::Graphics {
     bool FPlatformWindowEventListener::NotifyKeyboard(EKeyMap key,
                                                    EKeyState state,
                                                    EModKeys modKeys){
-        return IterateReferences(DelegateResponders, Func(NotifyKeyboard, key, state, modKeys));
+        return IterateReferences(DelegateResponders, SLAB_FUNC(NotifyKeyboard, key, state, modKeys));
     }
 
     bool FPlatformWindowEventListener::NotifyCharacter(UInt codepoint) {
-        return IterateReferences(DelegateResponders, Func(NotifyCharacter, codepoint));
+        return IterateReferences(DelegateResponders, SLAB_FUNC(NotifyCharacter, codepoint));
     }
 
     bool FPlatformWindowEventListener::
     NotifyMouseButton(EMouseButton button,
                       EKeyState state,
                       EModKeys mods) {
-        return IterateReferences(DelegateResponders, Func(NotifyMouseButton, button, state, mods));
+        return IterateReferences(DelegateResponders, SLAB_FUNC(NotifyMouseButton, button, state, mods));
     }
 
 
     bool FPlatformWindowEventListener::
     NotifyMouseWheel(double dx, double dy) {
-        return IterateReferences(DelegateResponders, Func(NotifyMouseWheel, dx, dy));
+        return IterateReferences(DelegateResponders, SLAB_FUNC(NotifyMouseWheel, dx, dy));
     }
 
     bool FPlatformWindowEventListener::
     NotifyFilesDropped(StrVector paths) {
-        return IterateReferences(DelegateResponders, Func(NotifyFilesDropped, paths));
+        return IterateReferences(DelegateResponders, SLAB_FUNC(NotifyFilesDropped, paths));
     }
 }

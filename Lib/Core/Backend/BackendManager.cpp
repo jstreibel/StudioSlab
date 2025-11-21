@@ -84,7 +84,16 @@ namespace Slab::Core {
         }
 
         bad:
+        Log::Warning() << "Module '" << Log::FGBlue << requested_module_name << Log::ResetFormatting << "' not found." << Log::Flush;
+        Log::Info() << "Available modules:" << Log::Flush;
+        for(const auto& pair : AvailableModules) Log::Info() << "\t" << pair.first << Log::Flush;
         throw Exception("Unknown module '" + requested_module_name + "'");
+    }
+
+    StrVector BackendManager::GetAvailableModules() {
+        StrVector modules;
+        for(const auto& pair : AvailableModules) modules.push_back(pair.first);
+        return modules;
     }
 
     TPointer<SlabModule> BackendManager::GetModule(const FModuleIdentifier& module_name) {

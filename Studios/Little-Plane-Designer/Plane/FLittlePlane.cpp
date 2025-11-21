@@ -4,11 +4,9 @@
 
 #include "FLittlePlane.h"
 
-#include <SFML/Window/Keyboard.hpp>
-
-#include "FAtmosphericCondition.h"
+#include "../Physics/FAtmosphericCondition.h"
 #include "Core/Tools/Log.h"
-#include "Foils/Foil.h"
+#include "../Physics/Foils/Foil.h"
 #include "Graphics/OpenGL/Texture2D.h"
 #include "Graphics/OpenGL/Texture2D_Color.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
@@ -131,7 +129,7 @@ b2Vec2 FLittlePlane::GetVelocity() const {
     return b2Body_GetLinearVelocity(HullBody);
 }
 
-void FLittlePlane::Draw(const Graphics::IDrawProviders&) {
+void FLittlePlane::Draw(const Graphics::FDraw2DParams&) {
 
     // Draw a 2x2 textured rectangle centered at the hull body using HullTexture
     const auto [xBody, yBody] = b2Body_GetPosition(HullBody);
@@ -161,9 +159,11 @@ void FLittlePlane::Draw(const Graphics::IDrawProviders&) {
         const auto [tlx, tly] = xform(-HalfWidth,  +HalfHeight);
 
         // Bind texture and render immediate-mode quad
+        Graphics::OpenGL::Legacy::SetupLegacyGL();
         Graphics::OpenGL::FTexture::EnableTextures();
         HullTexture->Activate();
         HullTexture->Bind();
+
 
         // White modulation to preserve original texture colors
         glColor4f(1.f, 1.f, 1.f, 1.f);
@@ -171,10 +171,11 @@ void FLittlePlane::Draw(const Graphics::IDrawProviders&) {
         glBegin(GL_QUADS);
         {
             // Use flipped V to compensate for typical top-left image origin
-            glTexCoord2f(0.f, 1.f); glVertex2d(blx, bly);
-            glTexCoord2f(1.f, 1.f); glVertex2d(brx, bry);
-            glTexCoord2f(1.f, 0.f); glVertex2d(trx, try_);
-            glTexCoord2f(0.f, 0.f); glVertex2d(tlx, tly);
+            constexpr auto z_coord = -0.1;
+            glTexCoord2f(0.f, 1.f); glVertex3d(blx, bly, z_coord);
+            glTexCoord2f(1.f, 1.f); glVertex3d(brx, bry, z_coord);
+            glTexCoord2f(1.f, 0.f); glVertex3d(trx, try_, z_coord);
+            glTexCoord2f(0.f, 0.f); glVertex3d(tlx, tly, z_coord);
         }
         glEnd();
 

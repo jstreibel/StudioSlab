@@ -5,32 +5,42 @@
 #ifndef STUDIOSLAB_INTERFACES_H
 #define STUDIOSLAB_INTERFACES_H
 
+#include "Graphics/Backend/Events/KeyboardState.h"
 #include "Utils/Pointer.h"
-#include "DebugDraw.h"
+#include "Render/DebugDraw.h"
 
-class ILocatableEntity {
-public:
+using Miliseconds = long long;
+
+struct ILocatableEntity {
     virtual ~ILocatableEntity() = default;
     virtual b2Vec2 GetPosition() const = 0;
 };
 
-class IMovingEntity : public ILocatableEntity {
-public:
+struct IMovingEntity : ILocatableEntity {
     virtual b2Vec2 GetVelocity() const = 0;
 };
 
-class IDynamicEntity : public IMovingEntity {
-public:
+struct IDynamicEntity : IMovingEntity {
     virtual void ComputeAndApplyForces() = 0;
     virtual float GetTotalMass() const = 0;
     virtual b2Vec2 GetCenterOfMass_Global() const = 0;
 };
 
-class IUpdateable {
-public:
-    virtual ~IUpdateable() = default;
-    virtual void Update(float ElapsedTimeMsec) = 0;
+struct FInputState {
+    const Slab::Graphics::FKeyboardState& KeyboardState;
+    const Slab::Graphics::FMouseState& MouseState;
+};
 
+struct IInputStateReader {
+    virtual ~IInputStateReader() = default;
+
+    virtual void HandleInputState(FInputState) = 0;
+};
+
+struct IUpdateable {
+    virtual ~IUpdateable() = default;
+    virtual void Tick(Miliseconds ElapsedTime) = 0;
+    virtual void TogglePause() = 0;
 };
 
 #endif //STUDIOSLAB_INTERFACES_H

@@ -10,7 +10,9 @@
 #include "Texture.h"
 
 #include "OpenGL.h"
-#include <glm/detail/type_mat4x4.hpp>
+
+#include <glm/glm.hpp>
+// #include <glm/detail/type_mat4x4.hpp>
 
 #include <map>
 

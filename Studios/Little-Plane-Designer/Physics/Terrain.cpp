@@ -75,7 +75,7 @@ void FTerrain::Setup(const b2WorldId World, const FTerrainDescriptor& Descriptor
     b_IsInitialized = true;
 }
 
-void FTerrain::Draw(const Slab::Graphics::IDrawProviders&) {
+void FTerrain::Draw(const Slab::Graphics::FDraw2DParams&) {
     if (!b_IsInitialized) return;
 
     using namespace Slab;

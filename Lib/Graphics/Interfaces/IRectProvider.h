@@ -12,6 +12,7 @@ struct IViewProvider {
     virtual ~IViewProvider() = default;
     virtual RectR GetView() const = 0;
 };
+
 }
 
 

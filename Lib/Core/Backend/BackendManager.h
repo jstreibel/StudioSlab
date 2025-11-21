@@ -41,6 +41,8 @@ namespace Slab::Core {
             RegisterAvailableModule(Name, [](){ return new ModuleClass(); });
         };
 
+        static StrVector GetAvailableModules();
+
         static TPointer<SlabModule> GetModule(const FModuleIdentifier&);
         static bool IsModuleAvailable(const FModuleIdentifier&);
         static bool IsModuleLoaded(const FModuleIdentifier&);

@@ -8,17 +8,19 @@
 #include "../../../Lib/Graphics/Interfaces/IDrawable.h"
 #include "Graphics/Types2D.h"
 #include "Graphics/OpenGL/Texture.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 
-struct FDecal : Slab::Graphics::IDrawable {
+struct FDecal : Slab::Graphics::IDrawable2D {
     FDecal() = delete;
     explicit FDecal(
         const Slab::Str& LittlePlaneDesigner_FileName,
         Slab::Graphics::Point2D Position = {0,0},
-        Slab::Graphics::Point2D Size = {1,1});
+        Slab::Graphics::Point2D Size = {1,1}, Slab::DevFloat ZIndex = 0.0f);
 
-    void Draw(const Slab::Graphics::IDrawProviders&) override;
+    void Draw(const Slab::Graphics::FDraw2DParams&) override;
 
     Slab::Graphics::Point2D Position={0,0};
+    Slab::DevFloat ZIndex = 0.0f;
     Slab::Graphics::Point2D Size={1,1};
 
 private:
@@ -26,34 +28,44 @@ private:
 };
 
 struct FGuy final : FDecal {
-    explicit FGuy(const Slab::Graphics::Point2D Position = {0,0})
-    : FDecal("Guy01.png", Position, {2.f,2.f}) { };
+    explicit FGuy(
+        const Slab::Graphics::Point2D Position = {0,0},
+        const Slab::DevFloat ZIndex=0.0f)
+    : FDecal("Guy01.png", Position, {2.f,2.f}, ZIndex) { };
 };
 
 struct FCat final : FDecal
 {
-    explicit FCat(const Slab::Graphics::Point2D Position = {0,0})
-    : FDecal("Cat02.png", Position, {0.32f,0.32f}) { };
+    explicit FCat(
+    const Slab::Graphics::Point2D Position = {0,0},
+    const Slab::DevFloat ZIndex=0.0f)
+    : FDecal("Cat02.png", Position, {0.32f,0.32f}, ZIndex) { };
 };
 
 struct FTree01 final : FDecal
 {
-    explicit FTree01(const Slab::Graphics::Point2D Position = {0,0})
-    : FDecal("Tree01.png", Position, {4.0f,4.0f}) { };
+    explicit FTree01(
+    const Slab::Graphics::Point2D Position = {0,0},
+    const Slab::DevFloat ZIndex=0.0f)
+    : FDecal("Tree01.png", Position, {4.0f,4.0f}, ZIndex) { };
 };
 
-struct FRuler final : Slab::Graphics::IDrawable {
+struct FRuler final : Slab::Graphics::IDrawable2D {
     Slab::Graphics::Point2D Loc = {0.0f, 0.0f};
     float Unit = 1.0f;
     float RulerWidth = .05;
+    floatt ZIndex = 0.0f;
 
-    explicit FRuler(const Slab::Graphics::Point2D &Loc={.0f,.0f}, const float &Unit=1.0f);
+    explicit FRuler(
+        const Slab::Graphics::Point2D &Loc={.0f,.0f},
+        const float &Unit=1.0f,
+        Slab::DevFloat ZIndex=0.0f);
 
-    void Draw(const Slab::Graphics::IDrawProviders&) override;
+    void Draw(const Slab::Graphics::FDraw2DParams&) override;
 };
 
-struct FSky final : Slab::Graphics::IDrawable {
-    void Draw(const Slab::Graphics::IDrawProviders&) override;
+struct FSky final : Slab::Graphics::IDrawable2D {
+    void Draw(const Slab::Graphics::FDraw2DParams&) override;
 };
 
 #endif //STUDIOSLAB_DRAWABLES_H

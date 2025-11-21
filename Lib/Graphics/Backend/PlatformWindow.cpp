@@ -100,7 +100,7 @@ namespace Slab::Graphics {
         return MouseState;
     }
 
-    auto FPlatformWindow::GetKeyboardState() const -> TPointer<const class FKeyboardState> {
+    auto FPlatformWindow::GetKeyboardState() const -> TPointer<const FKeyboardState> {
         return KeyboardState;
     }
 

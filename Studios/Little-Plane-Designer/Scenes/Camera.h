@@ -7,11 +7,11 @@
 
 #include "Graphics/Types2D.h"
 #include "Math/Point.h"
-#include "Interfaces.h"
+#include "../Interfaces.h"
 #include "Graphics/Interfaces/IRectProvider.h"
 
 
-struct FCamera final : IUpdateable, Slab::Graphics::IViewProvider
+struct FTrackerCamera final : IUpdateable, Slab::Graphics::IViewProvider
 {
     /**
      * Set camera ratio.
@@ -26,16 +26,21 @@ struct FCamera final : IUpdateable, Slab::Graphics::IViewProvider
     auto SetCenter(const Slab::Math::Point2D& Center) -> void;
 
     void Zoom(float ZoomFactor);
-    void Pan(Slab::Math::Point2D Delta);
+    void Pan(const Slab::Math::Point2D& Delta);
 
-    void Update(float ElapsedTimeMsec) override;
+    void Tick(Miliseconds ElapsedTime) override;
+
+    void TogglePause() override;
+    float GetWidth() const;
+
     Slab::Graphics::RectR GetView() const override;
 
 private:
-    float BaseWidth = 20.0f;
-    Slab::Graphics::RectR View = Slab::Graphics::RectR(-BaseWidth*.5f, BaseWidth*.5f, -BaseWidth*.5f, BaseWidth*.5f);
-    float AspectRatio = 1.0f;
+    Slab::Graphics::RectR View {-10.,10.,-10.,10.};
+
     Slab::TPointer<IMovingEntity> TrackedObject;
+    float BaseWidth = 20.0f;
+    float AspectRatio = 1.0f;
 };
 
 

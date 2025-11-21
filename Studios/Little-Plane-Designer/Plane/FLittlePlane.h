@@ -5,10 +5,10 @@
 #ifndef STUDIOSLAB_FLITTLEPLANE_H
 #define STUDIOSLAB_FLITTLEPLANE_H
 
-#include "FAtmosphericCondition.h"
+#include "../Physics/FAtmosphericCondition.h"
 #include "../Interfaces.h"
 #include "box2d/box2d.h"
-#include "Foils/Foil.h"
+#include "../Physics/Foils/Foil.h"
 #include "../../../Lib/Graphics/Interfaces/IDrawable.h"
 #include "Graphics/OpenGL/Texture2D_Color.h"
 
@@ -32,7 +32,7 @@ struct FWing {
     }
 };
 
-class FLittlePlane final : public Graphics::IDrawable, public IDynamicEntity
+class FLittlePlane final : public Graphics::IDrawable2D, public IDynamicEntity
 {
 public:
     static Foil::FAirfoilDynamicData ComputeForces(
@@ -47,7 +47,7 @@ public:
     b2Vec2 GetPosition() const override;
     b2Vec2 GetVelocity() const override;
 
-    void Draw(const Graphics::IDrawProviders&) override;
+    void Draw(const Graphics::FDraw2DParams&) override;
     const FWing& GetWing(int i) const { return *Wings[i]; }
     int GetWingCount() const { return static_cast<int>(Wings.size()); }
     void AdjustWingAngle(int WingId, double Delta) const;

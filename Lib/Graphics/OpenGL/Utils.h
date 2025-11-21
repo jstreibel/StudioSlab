@@ -8,6 +8,7 @@
 #include "Graphics/Types2D.h"
 #include "Graphics/Window/SlabWindow.h"
 #include "Graphics/OpenGL/OpenGL.h"
+#include "Graphics/Styles/Colors.h"
 
 
 namespace Slab::Graphics::OpenGL {
@@ -40,6 +41,10 @@ namespace Slab::Graphics::OpenGL {
         const void *getPixelData() const { return &pixels[0]; };
     };
 
+    void Clear(const FColor &color = Black);
+
+    void SetDepthCheck(bool Enabled, GLclampd DefaultClearDepth=1.0);
+    bool IsDepthEnabled();
 
     void SetViewport(RectI rect);
 

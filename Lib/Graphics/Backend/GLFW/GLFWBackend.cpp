@@ -61,7 +61,7 @@ namespace Slab::Graphics {
 
         // static auto BeginEvents = FuncRun(beginEvents);
         // static auto EndEvents   = FuncRun(endEvents);
-        static auto Update   = FuncRun(Update);
+        static auto Update   = SLAB_FUNC_RUNTHROUGH(Update);
 
         while(!SystemWindows.empty()) {
             IterateReferences(GraphicModules, Update);

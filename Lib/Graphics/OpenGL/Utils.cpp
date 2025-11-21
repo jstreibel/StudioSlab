@@ -28,6 +28,8 @@ namespace Slab {
 
     using Log = Core::Log;
 
+static bool DepthCheckEnabled = false;
+
     bool Graphics::OpenGL::CheckGLErrors(const Str &hint, bool raiseException) {
         bool bad = false;
 
@@ -41,6 +43,29 @@ namespace Slab {
         if (bad && raiseException) throw Exception("OpenGL error");
 
         return bad;
+    }
+
+    void Graphics::OpenGL::Clear(const FColor& Color) {
+        auto ClearBits = GL_COLOR_BUFFER_BIT;
+        if (DepthCheckEnabled) ClearBits |= GL_DEPTH_BUFFER_BIT;
+        glClearColor(Color.r, Color.g, Color.b, Color.a);
+        glClear(ClearBits);
+    }
+
+    void Graphics::OpenGL::SetDepthCheck(const bool Enabled, GLclampd DefaultClearDepth) {
+        DepthCheckEnabled = Enabled;
+
+        if (Enabled) {
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LESS);            // default is GL_LESS; choose GL_LEQUAL for skyboxes
+            glClearDepth(DefaultClearDepth); // default depth clear value
+        } else {
+            glDisable(GL_DEPTH_TEST);
+        }
+    }
+
+    bool Graphics::OpenGL::IsDepthEnabled() {
+        return glIsEnabled(GL_DEPTH_TEST);
     }
 
     void Graphics::OpenGL::SetViewport(RectI rect) {

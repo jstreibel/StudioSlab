@@ -31,12 +31,13 @@ inline auto GetTexture(const Slab::Str& FileName) {
 FDecal::FDecal(
     const Slab::Str& LittlePlaneDesigner_FileName,
     const Slab::Graphics::Point2D Position,
-    const Slab::Graphics::Point2D Size)
+    const Slab::Graphics::Point2D Size, Slab::DevFloat ZIndex)
 : Position(Position)
+, ZIndex(ZIndex)
 , Size(Size)
 , Texture(GetTexture(LittlePlaneDesigner_FileName)){ }
 
-void FDecal::Draw(const Slab::Graphics::IDrawProviders&) {
+void FDecal::Draw(const Slab::Graphics::FDraw2DParams&) {
 
     fix Rect = Slab::Graphics::FRectangleShapeBuilder{}
     .WithWidth(Size.x)
@@ -44,12 +45,15 @@ void FDecal::Draw(const Slab::Graphics::IDrawProviders&) {
     .At(Position)
     .Build();
 
-    Slab::Graphics::OpenGL::Legacy::DrawRectangleWithTexture(Rect, *Texture);
+    Slab::Graphics::OpenGL::Legacy::DrawRectangleWithTexture(Rect, *Texture, ZIndex);
 }
 
-FRuler::FRuler(const Slab::Graphics::Point2D &Loc, const float &Unit): Loc(Loc), Unit(Unit) {}
+FRuler::FRuler(
+    const Slab::Graphics::Point2D &Loc,
+    const float &Unit,
+    const Slab::DevFloat ZIndex): Loc(Loc), Unit(Unit), ZIndex(ZIndex) {}
 
-void FRuler::Draw(const Slab::Graphics::IDrawProviders&) {
+void FRuler::Draw(const Slab::Graphics::FDraw2DParams&) {
     const Slab::Graphics::FColor SafeYellow = Slab::Graphics::FColor::FromHex("#FFC000");
 
     glColor4f(SafeYellow.r, SafeYellow.g, SafeYellow.b, SafeYellow.a);
@@ -88,7 +92,7 @@ void FRuler::Draw(const Slab::Graphics::IDrawProviders&) {
     glEnd();
 }
 
-void FSky::Draw(const Slab::Graphics::IDrawProviders& ResProvider) {
+void FSky::Draw(const Slab::Graphics::FDraw2DParams& ResProvider) {
 
     constexpr float horizonY = .0f;
     namespace LegacyGL = Slab::Graphics::OpenGL::Legacy;
@@ -102,21 +106,23 @@ void FSky::Draw(const Slab::Graphics::IDrawProviders& ResProvider) {
 
     glBegin(GL_TRIANGLE_STRIP);
 
+    constexpr float Infinity = -0.9f;
+
     // bottom-left (near horizon): light, a bit warmer
     glColor3f(0.65f, 0.80f, 0.95f);
-    glVertex2f(0.0f, horizonY);
+    glVertex3f(0.0f, horizonY, Infinity);
 
     // top-left: darker, more saturated
     glColor3f(0.10f, 0.30f, 0.55f);
-    glVertex2f(0.0f, 1.0f);
+    glVertex3f(0.0f, 1.0f, Infinity);
 
     // bottom-right
     glColor3f(0.65f, 0.80f, 0.95f);
-    glVertex2f(1.0f, horizonY);
+    glVertex3f(1.0f, horizonY, Infinity);
 
     // top-right
     glColor3f(0.10f, 0.30f, 0.55f);
-    glVertex2f(1.0f, 1.0f);
+    glVertex3f(1.0f, 1.0f, Infinity);
 
     glEnd();
 

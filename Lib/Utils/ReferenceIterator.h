@@ -12,10 +12,10 @@
 
 namespace Slab {
 
-    #define Func(method, ...) [__VA_ARGS__] (const auto &obj) { \
+    #define SLAB_FUNC(method, ...) [__VA_ARGS__] (const auto &obj) { \
         return obj->method(__VA_ARGS__); }
 
-    #define FuncRun(method, ...) [__VA_ARGS__] (const auto &obj) { \
+    #define SLAB_FUNC_RUNTHROUGH(method, ...) [__VA_ARGS__] (const auto &obj) { \
         obj->method(__VA_ARGS__); return false; }
 
     enum ReferenceIterationPolicy {

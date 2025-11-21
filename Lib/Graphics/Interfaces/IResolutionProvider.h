@@ -10,8 +10,8 @@ namespace Slab::Graphics {
 struct IResolutionProvider {
     virtual ~IResolutionProvider() = default;
 
-    [[nodiscard]] virtual Slab::Int GetHeight() const = 0;
-    [[nodiscard]] virtual Slab::Int GetWidth() const = 0;
+    [[nodiscard]] virtual Int GetHeight() const = 0;
+    [[nodiscard]] virtual Int GetWidth() const = 0;
 };
 }
 

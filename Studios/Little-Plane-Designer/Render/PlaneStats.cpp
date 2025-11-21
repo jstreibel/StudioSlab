@@ -25,9 +25,9 @@ static Str Print(const char* fmt, ...) {
     return out;
 }
 
-void FPlaneStats::Draw(const Graphics::IDrawProviders& Providers) {
-    fix W = Providers.ResolutionProvider.GetWidth();
-    fix H = Providers.ResolutionProvider.GetHeight();
+void FPlaneStats::Draw(const Graphics::FDraw2DParams& Params) {
+    fix W = Params.ScreenWidth;
+    fix H = Params.ScreenHeight;
     Writer->Reshape(W, H);
 
     Graphics::OpenGL::SetViewport(Graphics::RectI{
@@ -47,7 +47,7 @@ void FPlaneStats::Draw(const Graphics::IDrawProviders& Providers) {
 
     // Weight vs aero vertical force
     const float m  = Plane->GetTotalMass();
-    const float g  = b2Length(b2World_GetGravity(World));
+    // const float g  = b2Length(b2World_GetGravity(World));
 
     float sumFy = 0.0f;
     float sumWingMass = 0.0f;
