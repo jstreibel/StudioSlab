@@ -45,8 +45,17 @@ namespace Slab::Graphics {
     extern FColor Grey;
     extern FColor DarkGrey;
     extern FColor Black;
-    extern FColor Red;
+
+    const FColor Red {1,0,0,1};
+
+    extern FColor BlueprintLight;
+    extern FColor Blueprint;
+    extern FColor BlueprintDark;
+    const FColor GreyBlue = FColor::FromHex("#92C9D9");
+    const FColor FlatBlue = FColor::FromHex("#417DB8");
+    const FColor WhiteBlueprintStroke = FColor::FromHex("#d4f9ff");
     extern FColor LapisLazuli;
+
     extern FColor GrassGreen;
     extern FColor DarkGrass;
     const FColor Nil = FColor(-1, -1, -1, -1);
