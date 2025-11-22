@@ -15,7 +15,7 @@ struct FLittlePlaneDesignerPhysicsEngine : IUpdateable
 {
     FLittlePlaneDesignerPhysicsEngine();
 
-    void Tick(Miliseconds ElapsedTime) override;
+    void Tick(Seconds ElapsedTime) override;
     void TogglePause() override;
 
     void SetPlane(const TPointer<FLittlePlane>& NewPlane) { this->Plane = NewPlane; }

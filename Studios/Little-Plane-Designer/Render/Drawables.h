@@ -31,7 +31,7 @@ struct FGuy final : FDecal {
     explicit FGuy(
         const Slab::Graphics::Point2D Position = {0,0},
         const Slab::DevFloat ZIndex=0.0f)
-    : FDecal("Guy01.png", Position, {2.f,2.f}, ZIndex) { };
+    : FDecal("Guy01.png", Position, {2.f,2.f}, ZIndex) { }
 };
 
 struct FCat final : FDecal
@@ -39,7 +39,15 @@ struct FCat final : FDecal
     explicit FCat(
     const Slab::Graphics::Point2D Position = {0,0},
     const Slab::DevFloat ZIndex=0.0f)
-    : FDecal("Cat02.png", Position, {0.32f,0.32f}, ZIndex) { };
+    : FDecal("Cat02.png", Position, {0.32f,0.32f}, ZIndex) { }
+};
+
+struct FGarage final : FDecal
+{
+    explicit FGarage(
+    const Slab::Graphics::Point2D Position = {0,0},
+    const Slab::DevFloat ZIndex=0.0f)
+    : FDecal("Garage01.png", Position, {3.0f,3.0f}, ZIndex) {}
 };
 
 struct FTree01 final : FDecal

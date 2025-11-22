@@ -6,10 +6,9 @@
 #define STUDIOSLAB_INTERFACES_H
 
 #include "Graphics/Backend/Events/KeyboardState.h"
-#include "Utils/Pointer.h"
 #include "Render/DebugDraw.h"
 
-using Miliseconds = long long;
+using Seconds = float;
 
 struct ILocatableEntity {
     virtual ~ILocatableEntity() = default;
@@ -39,7 +38,7 @@ struct IInputStateReader {
 
 struct IUpdateable {
     virtual ~IUpdateable() = default;
-    virtual void Tick(Miliseconds ElapsedTime) = 0;
+    virtual void Tick(Seconds ElapsedTime) = 0;
     virtual void TogglePause() = 0;
 };
 

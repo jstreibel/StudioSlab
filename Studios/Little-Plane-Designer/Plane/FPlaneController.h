@@ -8,7 +8,7 @@
 #include "../Interfaces.h"
 
 
-class FPlaneController : public IInputStateReader
+class FPlaneController final : public IInputStateReader
 {
 public:
     explicit FPlaneController(TPointer<FLittlePlane> Plane);

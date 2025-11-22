@@ -4,6 +4,7 @@
 
 #include "BigHill.h"
 #include "../Physics/Foils/NACA2412.h"
+#include "../Plane/FPlaneController.h"
 #include "Graphics/Plot2D/Plotter.h"
 
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
@@ -17,8 +18,6 @@ using CAirfoil = Foil::ViternaAirfoil2412;
 auto PrettyDraw = true;
 auto DebugDraw = false;
 
-constexpr float TimeScale = 1.0f;
-
 constexpr float VectorScale = 0.005f;
 
 constexpr auto HeightOfADomesticCat = 0.25f;
@@ -30,28 +29,48 @@ constexpr auto PlotRegionWidth = 15.0f;
 
 constexpr auto StartRunning = true;
 
+
+FBigHill::FBigHill(FPlaneFactory PlaneFactory) {
+    fix World = PhysicsEngine->GetWorld();
+    Plane = PlaneFactory.BuildPlane(World);
+    PhysicsEngine->SetPlane(Plane);
+
+    Camera->TrackObject(Plane);
+    Controller = Slab::New<FPlaneController>(Plane);
+
+    Updateables.emplace_back(Camera);
+    Updateables.emplace_back(PhysicsEngine);
+}
+
 void FBigHill::Startup(const Graphics::FPlatformWindow &SystemWindow) {
     GUIContext = SystemWindow.GetGUIContext();
 
     SetupScenario();
+
+    const auto WinWidth = SystemWindow.GetWidth();
+    const auto WinHeight = SystemWindow.GetHeight();
+    Camera->SetParams_BaseWidth(20.0f);
+    fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
+    Camera->SetParams_Ratio(AspectRatio);
+    Camera->TrackObject(Plane);
+    const auto [x, y] = Plane->GetPosition();
+    Camera->SetCenter({x-7.0f, y});
+    Camera->TrackObject(Plane);
 
     // DebugDraw_LegacyGL = Slab::New<LegacyGLDebugDraw>();
     // SetupMonitors();
     // PlaneStats = New<FPlaneStats>(LittlePlane, World);
 }
 
-void FBigHill::Tick(Miliseconds ElapsedTime) {
-    Camera.Tick(1.f/60.f);
+void FBigHill::Tick(const Seconds ElapsedTime) {
+    for (const auto& Updateable : Updateables) Updateable->Tick(ElapsedTime);
 }
 
-void FBigHill::Draw(const Graphics::FDraw2DParams& Providers) {
+void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
     namespace Drawer = Graphics::OpenGL::Legacy;
-    // const auto &PlatformWindow = Providers.ResolutionProvider;
 
-    fix WinHeight = Providers.ScreenHeight;
-    fix WinWidth = Providers.ScreenWidth;
-
-
+    fix WinHeight = DrawInput.Window.GetHeight();
+    fix WinWidth = DrawInput.Window.GetWidth();
 
     // fix KeyboardState = PlatformWindow.GetKeyboardState();
     // HandleInputs(*KeyboardState);
@@ -71,7 +90,7 @@ void FBigHill::Draw(const Graphics::FDraw2DParams& Providers) {
 
     Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
     Drawer::ResetModelView();
-    Drawer::SetupOrtho(Providers.Region);
+    Drawer::SetupOrtho(Camera->GetView());
 
     if constexpr (false) GUIContext->AddDrawCall([this] {
         ImGui::Begin("Wings");
@@ -82,8 +101,9 @@ void FBigHill::Draw(const Graphics::FDraw2DParams& Providers) {
     if (PrettyDraw) {
         Drawer::SetupLegacyGL();
 
+        const Graphics::FDraw2DParams Params = {WinWidth, WinHeight, Camera->GetView()};
         for (const auto& Drawable : Drawables) {
-            Drawable->Draw(Providers);
+            Drawable->Draw(Params);
         }
     }
 
@@ -104,9 +124,11 @@ void FBigHill::Draw(const Graphics::FDraw2DParams& Providers) {
     // PlaneStats->Draw(Providers);
 }
 
-void FBigHill::TogglePause() {
-    b_IsRunning = !b_IsRunning;
+void FBigHill::HandleInputState(FInputState InputState) {
+    Controller->HandleInputState(InputState);
 }
+
+void FBigHill::TogglePause() { b_IsRunning = !b_IsRunning; }
 
 /*
 void FBigHill::SetupMonitors() {
@@ -218,6 +240,8 @@ void FBigHill::SetupScenario() {
     constexpr auto Hilltop_x = 160.0f;
     const auto Hilltop = Graphics::Point2D{Hilltop_x, 0.25*Hilltop_x};
 
+    fix World = PhysicsEngine->GetWorld();
+
     Terrain = Slab::New<FTerrain>();
     Terrain->Setup(World, FTerrainDescriptor
         {
@@ -256,13 +280,17 @@ void FBigHill::SetupScenario() {
 
     constexpr auto ZIndexFront = 0.9f;
 
+    Drawables.emplace_back(Slab::New<FSky>());
     Drawables.emplace_back(Terrain);
+    // Drawables.emplace_back(Slab::New<FGarage>(Hilltop.WithTranslation(4.5, 1)));
+    Drawables.emplace_back(Plane);
     Drawables.emplace_back(Slab::New<FCat>(Hilltop, ZIndexFront));
     Drawables.emplace_back(Slab::New<FRuler>(Hilltop.WithTranslation(-.5, .0), HeightOfADomesticCat, ZIndexFront));
     Drawables.emplace_back(Slab::New<FRuler>(Hilltop.WithTranslation(-2.0, -.8), HeightOfAHuman, ZIndexFront));
     Drawables.emplace_back(Slab::New<FGuy>(Hilltop.WithTranslation(-0.5, 0.9-.8), ZIndexFront));
     Drawables.emplace_back(Slab::New<FTree01>(Hilltop.WithTranslation(+3.0, 1.5), ZIndexFront));
     Drawables.emplace_back(Slab::New<FTree01>(Graphics::Point2D{-5.0, 0.0}, ZIndexFront));
+
 }
 
 /*

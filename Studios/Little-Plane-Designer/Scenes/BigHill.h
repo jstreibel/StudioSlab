@@ -8,6 +8,8 @@
 #include "Scene.h"
 #include "Camera.h"
 #include "../Physics/Terrain.h"
+#include "../Plane/FPlaneFactory.h"
+#include "../Physics/FLPDPhysicsEngine.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Utils/List.h"
 
@@ -15,32 +17,38 @@ using namespace Slab;
 
 #define DeclarePointset(Name) TPointer<Math::FPointSet> Name = New<Math::FPointSet>();
 
-class FBigHill final : public IScene {
+class FBigHill final : public IScene, public IInputStateReader {
 public:
-    explicit FBigHill(const b2WorldId World) : World(World) {}
+    explicit FBigHill(FPlaneFactory PlaneFactory);
 
     void Startup(const Graphics::FPlatformWindow&) override;
-    void Tick(Miliseconds ElapsedTime) override;
-    void Draw(const Graphics::FDraw2DParams&) override;
+    void Tick(Seconds ElapsedTime) override;
+
+    void Draw(const Graphics::FDrawInput&) override;
+
+    void HandleInputState(FInputState) override;
+
 
     void TogglePause() override;
 
 private:
     void SetupScenario();
 
-    TPointer<Graphics::FGUIContext> GUIContext;
+    TPointer<FTrackerCamera> Camera = New<FTrackerCamera>();
+    TPointer<IInputStateReader> Controller;
 
-    const int PlotsHeight = 400;
-    Vector<TPointer<Graphics::FPlot2DWindow>> Plots;
+    TPointer<FLittlePlaneDesignerPhysicsEngine> PhysicsEngine = New<FLittlePlaneDesignerPhysicsEngine>();
 
-    b2WorldId World;
-
-    FTrackerCamera Camera;
-
-    bool b_IsRunning = false;
+    TPointer<FLittlePlane> Plane;
     TPointer<FTerrain> Terrain;
 
-    TList<TPointer<IDrawable2D>> Drawables;
+    TList<TPointer<IUpdateable>> Updateables;
+    TList<TPointer<Graphics::IDrawable2D>> Drawables;
+
+    bool b_IsRunning = false;
+    const int PlotsHeight = 400;
+    Vector<TPointer<Graphics::FPlot2DWindow>> Plots;
+    TPointer<Graphics::FGUIContext> GUIContext;
 
 
     /*

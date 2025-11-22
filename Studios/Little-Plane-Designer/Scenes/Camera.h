@@ -28,7 +28,7 @@ struct FTrackerCamera final : IUpdateable, Slab::Graphics::IViewProvider
     void Zoom(float ZoomFactor);
     void Pan(const Slab::Math::Point2D& Delta);
 
-    void Tick(Miliseconds ElapsedTime) override;
+    void Tick(Seconds ElapsedTime) override;
 
     void TogglePause() override;
     float GetWidth() const;

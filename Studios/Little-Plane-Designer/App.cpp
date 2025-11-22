@@ -33,18 +33,8 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
 
     Controller->HandleInputState({KeyboardState, MouseState});
 
-    constexpr auto TimeStepMilisseconds = 1000.0f / 60.0f;
-    Camera.Tick(TimeStepMilisseconds);
-    PhysicsEngine.Tick(TimeStepMilisseconds);
-    CurrentScene->Tick(TimeStepMilisseconds);
-
-    const auto Params = Graphics::FDraw2DParams {
-        .ScreenWidth = PlatformWindow.GetWidth(),
-        .ScreenHeight = PlatformWindow.GetHeight(),
-        .Region = Camera.GetView()
-    };
-
-    for (auto &Drawable : Drawables) Drawable->Draw(Params);
+    CurrentScene->Tick(1.f/60.f);
+    CurrentScene->Draw({PlatformWindow});
 
     return true;
 }
@@ -75,39 +65,18 @@ void FLittlePlaneDesignerApp::OnStart() {
 
     const auto SystemWindow = Graphics::GetGraphicsBackend()->GetMainSystemWindow();
     SystemWindow->SetupGUIContext();
-    const auto WinWidth = SystemWindow->GetWidth();
-    const auto WinHeight = SystemWindow->GetHeight();
 
-    PhysicsEngine = FLittlePlaneDesignerPhysicsEngine{};
+    auto Plane = SetupPlane();
+    const auto BigHill = Slab::New<FBigHill>(Plane);
 
-    auto World = PhysicsEngine.GetWorld();
-
-    const auto BigHill = Slab::New<FBigHill>(World);
-
+    Controller = BigHill;
     CurrentScene = BigHill;
+
     CurrentScene->Startup(*SystemWindow);
-
-    Plane = SetupPlane(World);
-    PhysicsEngine.SetPlane(Plane);
-
-    Camera.SetParams_BaseWidth(20.0f);
-    fix AspectRatio = static_cast<float>(WinWidth) / WinHeight;
-    Camera.SetParams_Ratio(AspectRatio);
-    Camera.TrackObject(Plane);
-    const auto [x, y] = Plane->GetPosition();
-    Camera.SetCenter({x-7.0f, y});
-    Camera.TrackObject(Plane);
-
-    Controller = Slab::New<FPlaneController>(Plane);
-
-    Drawables.emplace_back(Slab::New<FSky>());
-    Drawables.emplace_back(Plane);
-    Drawables.emplace_back(BigHill);
 }
 
-TPointer<FLittlePlane> FLittlePlaneDesignerApp::SetupPlane(const b2WorldId World) {
-
-    auto PlaneFactory = FPlaneFactory{}
+FPlaneFactory FLittlePlaneDesignerApp::SetupPlane() {
+    return FPlaneFactory{}
     .SetPosition({161.5f, 41.f})
     .SetRotation(DegToRad(0.0f))
     .AddBodyPart({
@@ -156,6 +125,4 @@ TPointer<FLittlePlane> FLittlePlaneDesignerApp::SetupPlane(const b2WorldId World
         .OscFreq = 10.0f,
         .DampRatio = 1.0f,
     });
-
-    return PlaneFactory.BuildPlane(World);
 }

@@ -72,7 +72,7 @@ void FTrackerCamera::Pan(const Slab::Math::Point2D& Delta) {
 
 }
 
-void FTrackerCamera::Tick(Miliseconds ElapsedTime) {
+void FTrackerCamera::Tick(Seconds ElapsedTime) {
     if (TrackedObject == nullptr) return;
 
     // if (fix Vel = b2Length(TrackedObject->GetVelocity()) > 5.0f) {

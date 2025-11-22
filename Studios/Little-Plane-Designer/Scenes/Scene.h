@@ -9,7 +9,7 @@
 
 using namespace Slab;
 
-struct IScene : Graphics::IDrawable2D, IUpdateable {
+struct IScene : Graphics::IDrawable, IUpdateable {
     virtual void Startup(const Graphics::FPlatformWindow&) = 0;
 };
 

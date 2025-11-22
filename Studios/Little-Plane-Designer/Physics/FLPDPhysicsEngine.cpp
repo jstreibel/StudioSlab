@@ -13,12 +13,10 @@ FLittlePlaneDesignerPhysicsEngine::FLittlePlaneDesignerPhysicsEngine() {
     World = b2CreateWorld(&worldDef);
 }
 
-void FLittlePlaneDesignerPhysicsEngine::Tick(const Miliseconds ElapsedTime) {
+void FLittlePlaneDesignerPhysicsEngine::Tick(const Seconds ElapsedTime) {
     if (!b_IsRunning) return;
 
-    const auto TimeStepSeconds = ElapsedTime/1000.;
-
-    const auto SplitTimeStep = TimeStepSeconds/ManualSubSteps;
+    const auto SplitTimeStep = ElapsedTime/ManualSubSteps;
     for (int i = 0; i < ManualSubSteps; ++i) {
         if (Plane) Plane->ComputeAndApplyForces();
         b2World_Step(World, SplitTimeStep, SubSteps);
