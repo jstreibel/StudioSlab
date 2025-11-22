@@ -9,7 +9,9 @@
 #include "Application.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Plane/FPlaneFactory.h"
+#include "Scenes/BigHill.h"
 #include "Scenes/Camera.h"
+#include "Scenes/FLittlePlaneBlueprint.h"
 #include "Scenes/Scene.h"
 
 using namespace Slab;
@@ -27,7 +29,14 @@ private:
     void OnStart() override;
     static FPlaneFactory SetupPlane();
 
+    void SetSceneBigHill();
+    void SetSceneBlueprint();
+
     TPointer<IInputStateReader> Controller;
+
+    TPointer<FBigHill> BigHill;
+    TPointer<FLittlePlaneBlueprint> BlueprintScene;
+
     TPointer<IScene> CurrentScene;
 
     TPointer<Graphics::FGUIContext> GUIContext;

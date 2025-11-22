@@ -53,6 +53,9 @@ bool FLittlePlaneDesignerApp::NotifyKeyboard(
             }
         }
 
+        if (key == Graphics::EKeyMap::Key_F5) SetSceneBigHill();
+        if (key == Graphics::EKeyMap::Key_F6) SetSceneBlueprint();
+
         if (key == Graphics::EKeyMap::Key_SPACE) CurrentScene->TogglePause();
     }
     return false;
@@ -66,8 +69,11 @@ void FLittlePlaneDesignerApp::OnStart() {
     const auto SystemWindow = Graphics::GetGraphicsBackend()->GetMainSystemWindow();
     SystemWindow->SetupGUIContext();
 
-    auto Plane = SetupPlane();
-    const auto BigHill = Slab::New<FBigHill>(Plane);
+    BlueprintScene = Slab::New<FLittlePlaneBlueprint>();
+    auto PlaneFactory = BlueprintScene->GetPlaneFactory();
+    BigHill = Slab::New<FBigHill>(PlaneFactory);
+
+
 
     Controller = BigHill;
     CurrentScene = BigHill;
@@ -75,54 +81,12 @@ void FLittlePlaneDesignerApp::OnStart() {
     CurrentScene->Startup(*SystemWindow);
 }
 
-FPlaneFactory FLittlePlaneDesignerApp::SetupPlane() {
-    return FPlaneFactory{}
-    .SetPosition({161.5f, 41.f})
-    .SetRotation(DegToRad(0.0f))
-    .AddBodyPart({
-        .Density = LightMaterialDensity,
-        .Width = 4.0f,
-        .Height = 0.5,
-    })
-    .AddBodyPart({
-        .Density = HeavyMaterialDensity,
-        .Width = 1,
-        .Height = 0.25,
-        .xOffset = -1.2,
-    })
-    .AddBodyPart({
-        .Density = LightMaterialDensity,
-        .Width = 0.4,
-        .Height = 0.4,
-        .xOffset = -1.0,
-        .yOffset = -0.5,
-    })
-    .AddWing(FWingDescriptor{
-        .Density = LightMaterialDensity,
-        .Airfoil = New<Foil::ViternaAirfoil2412>(),
-        .Params = Foil::FAirfoilParams{
-            .Name = "Wing",
-            .ChordLength = 1.15f,
-            .Span = 6.0f,
-        },
-        .RelativeLocation = {-.6f, -0.1f},
-        .BaseAngle = static_cast<float>(DegToRad(0.0)),
-        .MaxAngle  = static_cast<float>(DegToRad(15)),
-        .MinAngle  = static_cast<float>(DegToRad(-15)),
-    })
-    .AddWing(FWingDescriptor{
-        .Density = LightMaterialDensity,
-        .Airfoil = New<Foil::ViternaAirfoil2412>(),
-        .Params = Foil::FAirfoilParams{
-            .Name = "Winglet",
-            .ChordLength = 0.6f,
-            .Span = 2.f,
-        },
-        .RelativeLocation = {+1.4, 0.0f},
-        .BaseAngle = static_cast<float>(DegToRad(0.0)),
-        .MaxAngle  = static_cast<float>(DegToRad(15)),
-        .MinAngle  = static_cast<float>(DegToRad(-15)),
-        .OscFreq = 10.0f,
-        .DampRatio = 1.0f,
-    });
+void FLittlePlaneDesignerApp::SetSceneBigHill() {
+    CurrentScene = BigHill;
+    Controller = BigHill;
+}
+
+void FLittlePlaneDesignerApp::SetSceneBlueprint() {
+    CurrentScene = BlueprintScene;
+    Controller = BlueprintScene;
 }

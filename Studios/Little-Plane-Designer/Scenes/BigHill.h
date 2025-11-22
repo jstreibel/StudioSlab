@@ -19,7 +19,7 @@ using namespace Slab;
 
 class FBigHill final : public IScene, public IInputStateReader {
 public:
-    explicit FBigHill(FPlaneFactory PlaneFactory);
+    explicit FBigHill(const TPointer<FPlaneFactory>& PlaneFactory);
 
     void Startup(const Graphics::FPlatformWindow&) override;
     void Tick(Seconds ElapsedTime) override;

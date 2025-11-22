@@ -30,9 +30,9 @@ constexpr auto PlotRegionWidth = 15.0f;
 constexpr auto StartRunning = true;
 
 
-FBigHill::FBigHill(FPlaneFactory PlaneFactory) {
+FBigHill::FBigHill(const TPointer<FPlaneFactory>& PlaneFactory) {
     fix World = PhysicsEngine->GetWorld();
-    Plane = PlaneFactory.BuildPlane(World);
+    Plane = PlaneFactory->BuildPlane(World);
     PhysicsEngine->SetPlane(Plane);
 
     Camera->TrackObject(Plane);
@@ -124,7 +124,7 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
     // PlaneStats->Draw(Providers);
 }
 
-void FBigHill::HandleInputState(FInputState InputState) {
+void FBigHill::HandleInputState(const FInputState InputState) {
     Controller->HandleInputState(InputState);
 }
 
