@@ -8,7 +8,9 @@
 #include <cmath>
 #include <string>
 #include <iostream>
+#include <SFML/Window/Keyboard.hpp>
 
+#include "imgui_node_editor.h"
 #include "3rdParty/NanoTeX/src/utils/nums.h"
 
 
@@ -201,13 +203,13 @@ bool IsValid(const FPointSet& PerhapsIntersecting) {
 }
 
 FPointSet FCircle::GetPoints() const {
-    constexpr int N = 100;
+    constexpr int MaxN = 100;
 
     std::vector<Point2D> Points;
-    Points.reserve(N);
+    Points.reserve(MaxN);
 
-    for (int i = 0; i <= N; ++i) {
-        const double Angle = 2.0 * M_PI * i / N;
+    constexpr Real64 da = 2*M_PI / MaxN;
+    for (Real64 Angle=BeginAngle; Angle <= EndAngle+EPS; Angle+=da) {
         Points.emplace_back(Center.x + Radius * std::cos(Angle), Center.y + Radius * std::sin(Angle));
     }
 

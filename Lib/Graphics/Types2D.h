@@ -67,6 +67,7 @@ namespace Slab::Graphics {
     // Point2D operator + (const Point2D &a, const Point2D &b);
     Point2D operator - (const Point2D &a, const Point2D &b);
     Point2D operator * (const DevFloat &a, const Point2D &p);
+    Point2D operator * (const Point2D &p, const DevFloat &a);
 
     typedef Vector<Point2D> PointContainer;
 

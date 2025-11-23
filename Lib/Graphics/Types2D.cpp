@@ -12,4 +12,8 @@ namespace Slab::Graphics {
 
     Point2D operator*(const DevFloat &a, const Point2D &p) { return {p.x * a, p.y * a}; }
 
+    Point2D operator*(const Point2D& p, const DevFloat& a) {
+        return a * p;
+    }
+
 }

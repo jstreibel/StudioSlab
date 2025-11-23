@@ -29,7 +29,7 @@ namespace Slab::Math {
         return min;
     }
 
-    void FPointSet::AddPoint(const Point2D &point) {
+    FPointSet& FPointSet::AddPoint(const Point2D &point) {
         if (m_Points.empty()) {
             min = point;
             max = point;
@@ -43,6 +43,8 @@ namespace Slab::Math {
 
         auto p = point;
         m_Points.emplace_back(p);
+
+        return *this;
     }
 
     void FPointSet::SetPoints(Point2DVec newPoints) {
@@ -67,6 +69,15 @@ namespace Slab::Math {
     Point2DVec &FPointSet::GetPoints() const { return m_Points; }
 
     Point2DVec& FPointSet::GetPoints() { return m_Points; }
+
+    FPointSet operator+(const Real2D& a, const FPointSet& b) {
+        FPointSet Result{};
+
+        Result.AddPoint(a);
+        for (fix& Pt : b.GetPoints()) Result.AddPoint(Pt);
+
+        return Result;
+    }
 
     FPointSet operator+(const FPointSet& a, const FPointSet& b) {
         auto &pa = a.GetPoints();

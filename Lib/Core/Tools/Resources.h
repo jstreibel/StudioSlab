@@ -40,7 +40,12 @@ namespace Slab::Core::Resources {
         inline auto DejaVuSans() { return FontsFolder + "DejaVu/DejaVuSans.ttf"; }                    // 17 (math symbols confirmed)
         inline auto NewComputerModern10_Regular() { return FontsFolder + "NewComputerModern/NewCM10-Regular.otf"; }   // 18 (math symbols confirmed) }
         inline auto NewComputerModern10_Italic() { return FontsFolder + "NewComputerModern/NewCM10-Italic.otf"; }    // 19 (math symbols confirmed) }
-    };
+
+        inline auto ConstructionLines() { return FontsFolder + "/LittlePlaneDesigner/construction-lines.otf"; }
+        inline auto EngineerHand() { return FontsFolder + "/LittlePlaneDesigner/engineer-hand-font/EngineerHand-l780.ttf"; }
+        inline auto BluprintDemo() { return FontsFolder + "/LittlePlaneDesigner/bluprint-font/Bluprintdemo-YOMv.otf"; }
+        inline auto TypoDraftDemo() { return FontsFolder + "/LittlePlaneDesigner/bluprint-font/TypoDraftDemo-BWWo5.ttf"; }
+    }
 
     const StrVector ExportedFonts = {
                               "imgui/Cousine-Regular.ttf"                //  0
@@ -75,7 +80,7 @@ namespace Slab::Core::Resources {
 
     Str GetIndexedFontFileName(int Index);
 
-    Str GetResourcesPath();;
+    Str GetResourcesPath();
 
 }
 

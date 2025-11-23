@@ -18,6 +18,11 @@ constexpr auto PaperHeight = ArchD_height/2;
 constexpr auto PaperWidth = PaperHeight * 16 / 9.;
 constexpr auto ViewportHeight_2 = PaperHeight * 1.2 / 2.0;
 
+const auto OuterX = floorf(100*PaperWidth/2)/100;
+const auto OuterY = floorf(100*PaperHeight/2)/100;
+const auto InnerX = OuterX - 0.01;
+const auto InnerY = OuterY - 0.005;
+
 constexpr auto Width_StrongStroke = 2.5;
 constexpr auto Width_RegularStroke = 1.5;
 constexpr auto Width_WeakStroke = 0.8;
@@ -34,6 +39,12 @@ Graphics::PlotStyle WeakStrokeStyle{StrokeColor, Graphics::LineLoop, false, Grap
 
 namespace Draw = Graphics::OpenGL::Legacy;
 
+
+FLittlePlaneBlueprint::FLittlePlaneBlueprint() {
+    auto FontFile = Core::Resources::BuiltinFonts::EngineerHand();
+
+    Writer = Slab::New<Graphics::OpenGL::FWriterOpenGL>(FontFile, 36);
+}
 
 void FLittlePlaneBlueprint::Tick(Seconds ElapsedTime) {
 
@@ -53,9 +64,18 @@ void FLittlePlaneBlueprint::Draw(const Graphics::FDrawInput& Input) {
     const auto ViewportWidth_2 = ViewportHeight_2 * AspectRatio;
     Draw::SetupOrtho({-ViewportWidth_2, ViewportWidth_2, -ViewportHeight_2, ViewportHeight_2});
 
+    Writer->Reshape(WinWidth, WinHeight);
+    Writer->SetPenPositionTransform([&](const Graphics::Point2D Pt) {
+        return Graphics::FromSpaceToViewportCoord(Pt, Graphics::RectR{-ViewportWidth_2, ViewportWidth_2, -ViewportHeight_2, ViewportHeight_2}, Graphics::RectI{0, WinWidth, 0, WinHeight});
+    });
+
+    Graphics::OpenGL::Legacy::PushLegacyMode();
     DrawBlueprint();
 
     DrawPlane();
+    Graphics::OpenGL::Legacy::RestoreFromLegacyMode();
+
+    Writer->Write(ToStr("1:%i", Proportion), {InnerX-0.01, -InnerY+0.0025});
 }
 
 void FLittlePlaneBlueprint::Startup(const Graphics::FPlatformWindow&) {
@@ -84,11 +104,6 @@ void FLittlePlaneBlueprint::DrawBlueprint() {
 
     Draw::SetColor(BlueprintColor);
     Draw::DrawRectangle(Paper);
-
-    const auto OuterX = floorf(100*PaperWidth/2)/100;
-    const auto OuterY = floorf(100*PaperHeight/2)/100;
-    const auto InnerX = OuterX - 0.01;
-    const auto InnerY = OuterY - 0.005;
 
     constexpr auto TickSize = 0.00125;
 
@@ -147,15 +162,29 @@ void FLittlePlaneBlueprint::DrawBlueprint() {
     Draw::DrawLine({0, InnerY}, {0, -InnerY}, LineColor, 2.5);
 }
 
-void RenderCOM(Math::Point2D COM) {
+void RenderCOM(const Math::Point2D COM) {
 
-    constexpr auto Radius = PaperHeight / 35.;
-    auto Points = Math::Geometry::FCircle{COM, Radius}.GetPoints();
+    constexpr auto Radius = PaperHeight / 45.;
+    auto Circle = Math::Geometry::FCircle{COM, Radius};
+    auto FullCirclePoints = Circle.GetPoints();
+    Circle.EndAngle = M_PI/2.;
+    auto FirstQuarter = COM + Circle.GetPoints();
+    Circle.BeginAngle = M_PI;
+    Circle.EndAngle = 3.*M_PI/2.;
+    auto LastQuarter = COM + Circle.GetPoints();
 
-    Draw::RenderPointSet(Dummy(Points), WeakStrokeStyle);
+    Draw::RenderPointSet(Dummy(FullCirclePoints), WeakStrokeStyle);
+    auto FilledStroke = WeakStrokeStyle;
+    FilledStroke.setPrimitive(Graphics::TriangleFan);
+    FilledStroke.fillColor = WeakStrokeStyle.lineColor;
+    FilledStroke.lineColor.a = 0.5;
+    FilledStroke.filled = true;
 
-    Draw::DrawLine({COM.x - Radius, COM.y}, {COM.x + Radius, COM.y}, StrokeColor, Width_WeakStroke);
-    Draw::DrawLine({COM.x, COM.y - Radius}, {COM.x, COM.y + Radius}, StrokeColor, Width_WeakStroke);
+    Draw::RenderPointSet(Dummy(FirstQuarter), FilledStroke);
+    Draw::RenderPointSet(Dummy(LastQuarter), FilledStroke);
+
+    // Draw::DrawLine({COM.x - Radius, COM.y}, {COM.x + Radius, COM.y}, StrokeColor, Width_WeakStroke);
+    // Draw::DrawLine({COM.x, COM.y - Radius}, {COM.x, COM.y + Radius}, StrokeColor, Width_WeakStroke);
 
 }
 
@@ -171,7 +200,7 @@ void FLittlePlaneBlueprint::DrawPlane() {
         auto COMResult = Math::Geometry::ComputeCentroid(Points);
         if (COMResult.IsFailure()) continue;
 
-        auto Area = Math::Geometry::ComputeArea(Points);
+        const auto Area = Math::Geometry::ComputeArea(Points);
 
         fix MyCOM = COMResult.Value();
         fix MyMass = Area * Part.Density;
@@ -182,11 +211,20 @@ void FLittlePlaneBlueprint::DrawPlane() {
         Draw::RenderPointSet(Dummy(Points*=Scale), StrongStrokeStyle);
     }
 
-    RenderCOM(COM * Scale / Mass);
-
     for (const auto &Wing : GetPlaneFactory()->WingDescriptors) {
         const auto& [x, y] = Wing.RelativeLocation;
         auto ProfileVertices = Wing.Airfoil->GetProfileVertices(100, Wing.Params.ChordLength, Wing.Params.Thickness);
+
+        auto COMResult = Math::Geometry::ComputeCentroid(ProfileVertices);
+        if (COMResult.IsFailure()) continue;
+
+        const auto Area = Math::Geometry::ComputeArea(ProfileVertices);
+
+        fix MyCOM = COMResult.Value();
+        fix MyMass = Area * Wing.Density;
+
+        COM += MyCOM * MyMass;
+        Mass += MyMass;
 
         for (auto &Point : ProfileVertices.GetPoints()) {
             Point.x = (Point.x+x) * Scale;
@@ -195,6 +233,8 @@ void FLittlePlaneBlueprint::DrawPlane() {
 
         Draw::RenderPointSet(Dummy(ProfileVertices), StrongStrokeStyle);
     }
+
+    RenderCOM(COM * Scale / Mass);
 }
 
 TPointer<FPlaneFactory> SetupDefaultPlane() {
@@ -212,7 +252,7 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
                .Density = HeavyMaterialDensity,
                .Width = 1,
                .Height = 0.25,
-               .xOffset = -1.2,
+               .xOffset = -1.0,
            })
            .AddBodyPart({
                .Density = LightMaterialDensity,

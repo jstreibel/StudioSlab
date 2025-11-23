@@ -12,6 +12,8 @@
 class FLittlePlaneBlueprint final : public IScene, public IInputStateReader
 {
 public:
+    explicit FLittlePlaneBlueprint();
+
     void Tick(Seconds ElapsedTime) override;
     void TogglePause() override;
     void Draw(const Graphics::FDrawInput&) override;
@@ -22,6 +24,7 @@ public:
 
 private:
     TPointer<FPlaneFactory> PlaneFactory;
+    TPointer<Graphics::OpenGL::FWriterOpenGL> Writer;
 
     int Proportion = 25; // Scale is 1:Proportion
 

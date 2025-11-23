@@ -31,7 +31,7 @@ public:
 
     void Clear();
     void AddPoint(DevFloat x, DevFloat y);
-    void AddPoint(const Point2D &point);
+    FPointSet& AddPoint(const Point2D &point);
     void SetPoints(Point2DVec points);
 
     FPointSet operator*(Real64 a) const;
@@ -41,6 +41,7 @@ public:
     Point2DVec& GetPoints();
 };
 
+FPointSet operator + (const Real2D &a, const FPointSet &b);
 FPointSet operator + (const FPointSet &a, const FPointSet &b);
 
 DefinePointers(FPointSet)

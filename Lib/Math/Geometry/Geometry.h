@@ -39,9 +39,14 @@ struct FCircle final : IGeometricObject {
     Point2D Center;
     Real64 Radius;
 
-    FCircle(const Point2D& Center, const Real64 Radius)
+    Real64 BeginAngle = 0;
+    Real64 EndAngle = 2 * M_PI;
+
+    FCircle(const Point2D& Center, const Real64 Radius, const Real64 BeginAngle=0., const Real64 EndAngle=2*M_PI)
     : Center(Center)
-    , Radius(Radius) {    }
+    , Radius(Radius)
+    , BeginAngle(BeginAngle)
+    , EndAngle(EndAngle) {    }
 
     FPointSet GetPoints() const override;
 };
