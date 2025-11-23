@@ -19,33 +19,38 @@ namespace Slab::Core::Resources {
 
     const auto SystemFolder = "/usr/share/fonts/";
 
-    namespace BuiltinFonts {
-        inline auto CousineRegular() { return FontsFolder + "imgui/Cousine-Regular.ttf"; }
-        inline auto DroidSans() { return FontsFolder + "imgui/DroidSans.ttf"; }
-        inline auto KarlaRegular() { return FontsFolder + "imgui/Karla-Regular.ttf"; }
-        inline auto ProggyClean() { return FontsFolder + "imgui/ProggyClean.ttf"; }
-        inline auto ProggyTiny() { return FontsFolder + "imgui/ProggyTiny.ttf"; }
-        inline auto RobotoMedium() { return FontsFolder + "imgui/Roboto-Medium.ttf"; }
-        inline auto LatinModernMath() { return FontsFolder + "LatinModern/latinmodern-math.otf"; }        //  6 (math symbols confirmed)
-        inline auto LatinModern10_Regular() { return FontsFolder + "LatinModern/lmroman10-regular.otf"; }
-        inline auto LatinModernCaps10_Regular() { return FontsFolder + "LatinModern/lmromancaps10-regular.otf"; }
-        inline auto LucidaSans() { return FontsFolder + "Lucida/LSANS.TTF"; }
-        inline auto JuliaMono_Regular() { return FontsFolder + "JuliaMono/JuliaMono-Regular.ttf"; }       // 10 (math symbols confirmed)
-        inline auto EBGaramond_VariableFontWeight() { return FontsFolder + "EBGaramond-VariableFont_wght.ttf"; }
-        inline auto FontAwesome_Solid() { return FontsFolder + "FontAwesome-Solid.ttf"; }
-        inline auto Inconsolata_Regular() { return FontsFolder + "Inconsolata-Regular.ttf"; }
-        inline auto RobotoRegular() {  return FontsFolder + "Roboto-Regular.ttf"; }
-        inline auto TimesNewRoman14() { return FontsFolder + "times-new-roman-14.ttf"; }
-        inline auto Simplex() { return FontsFolder +  "Simplex.ttf"; }
-        inline auto DejaVuSans() { return FontsFolder + "DejaVu/DejaVuSans.ttf"; }                    // 17 (math symbols confirmed)
-        inline auto NewComputerModern10_Regular() { return FontsFolder + "NewComputerModern/NewCM10-Regular.otf"; }   // 18 (math symbols confirmed) }
-        inline auto NewComputerModern10_Italic() { return FontsFolder + "NewComputerModern/NewCM10-Italic.otf"; }    // 19 (math symbols confirmed) }
+namespace BuiltinFonts {
+inline auto CousineRegular() { return FontsFolder + "imgui/Cousine-Regular.ttf"; }
+inline auto DroidSans() { return FontsFolder + "imgui/DroidSans.ttf"; }
+inline auto KarlaRegular() { return FontsFolder + "imgui/Karla-Regular.ttf"; }
+inline auto ProggyClean() { return FontsFolder + "imgui/ProggyClean.ttf"; }
+inline auto ProggyTiny() { return FontsFolder + "imgui/ProggyTiny.ttf"; }
+inline auto RobotoMedium() { return FontsFolder + "imgui/Roboto-Medium.ttf"; }
+inline auto LatinModernMath() { return FontsFolder + "LatinModern/latinmodern-math.otf"; }        //  6 (math symbols confirmed)
+inline auto LatinModern10_Regular() { return FontsFolder + "LatinModern/lmroman10-regular.otf"; }
+inline auto LatinModernCaps10_Regular() { return FontsFolder + "LatinModern/lmromancaps10-regular.otf"; }
+inline auto LucidaSans() { return FontsFolder + "Lucida/LSANS.TTF"; }
+inline auto JuliaMono_Regular() { return FontsFolder + "JuliaMono/JuliaMono-Regular.ttf"; }       // 10 (math symbols confirmed)
+inline auto EBGaramond_VariableFontWeight() { return FontsFolder + "EBGaramond-VariableFont_wght.ttf"; }
+inline auto FontAwesome_Solid() { return FontsFolder + "FontAwesome-Solid.ttf"; }
+inline auto Inconsolata_Regular() { return FontsFolder + "Inconsolata-Regular.ttf"; }
+inline auto RobotoRegular() {  return FontsFolder + "Roboto-Regular.ttf"; }
+inline auto TimesNewRoman14() { return FontsFolder + "times-new-roman-14.ttf"; }
+inline auto Simplex() { return FontsFolder +  "Simplex.ttf"; }
+inline auto DejaVuSans() { return FontsFolder + "DejaVu/DejaVuSans.ttf"; }                    // 17 (math symbols confirmed)
+inline auto NewComputerModern10_Regular() { return FontsFolder + "NewComputerModern/NewCM10-Regular.otf"; }   // 18 (math symbols confirmed) }
+inline auto NewComputerModern10_Italic() { return FontsFolder + "NewComputerModern/NewCM10-Italic.otf"; }    // 19 (math symbols confirmed) }
 
-        inline auto ConstructionLines() { return FontsFolder + "/LittlePlaneDesigner/construction-lines.otf"; }
-        inline auto EngineerHand() { return FontsFolder + "/LittlePlaneDesigner/engineer-hand-font/EngineerHand-l780.ttf"; }
-        inline auto BluprintDemo() { return FontsFolder + "/LittlePlaneDesigner/bluprint-font/Bluprintdemo-YOMv.otf"; }
-        inline auto TypoDraftDemo() { return FontsFolder + "/LittlePlaneDesigner/bluprint-font/TypoDraftDemo-BWWo5.ttf"; }
-    }
+inline auto ConstructionLines() { return FontsFolder + "/LittlePlaneDesigner/construction-lines.otf"; }
+inline auto EngineerHand() { return FontsFolder + "/LittlePlaneDesigner/engineer-hand-font/EngineerHand-l780.ttf"; }
+inline auto BluprintDemo() { return FontsFolder + "/LittlePlaneDesigner/bluprint-font/Bluprintdemo-YOMv.otf"; }
+inline auto TypoDraftDemo() { return FontsFolder + "/LittlePlaneDesigner/bluprint-font/TypoDraftDemo-BWWo5.ttf"; }
+
+inline auto Y145m2009() { return FontsFolder + "/LittlePlaneDesigner/y145m-2009-font/Y145m2009-127e.ttf"; }
+inline auto Y145m() { return FontsFolder + "/LittlePlaneDesigner/y145m-font/Y145m-BGvd.ttf"; }
+inline auto EngineerinPlots() { return FontsFolder + "/LittlePlaneDesigner/engineering-plot-cufonfonts/Engplot.TTF"; }
+
+}
 
     const StrVector ExportedFonts = {
                               "imgui/Cousine-Regular.ttf"                //  0
