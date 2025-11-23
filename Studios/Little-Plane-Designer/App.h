@@ -10,7 +10,6 @@
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Plane/FPlaneFactory.h"
 #include "Scenes/BigHill.h"
-#include "Scenes/Camera.h"
 #include "Scenes/FLittlePlaneBlueprint.h"
 #include "Scenes/Scene.h"
 
@@ -27,7 +26,6 @@ public:
 
 private:
     void OnStart() override;
-    static FPlaneFactory SetupPlane();
 
     void SetSceneBigHill();
     void SetSceneBlueprint();

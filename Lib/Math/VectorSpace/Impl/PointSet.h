@@ -22,6 +22,8 @@ public:
     FPointSet(const Point2DVec& points);
     FPointSet(const FPointSet& pointSet);
 
+    FPointSet Clone() const;
+
     auto GetMeasure() const -> const Measure override;
 
     auto GetMax() const -> Point2D;
@@ -33,6 +35,9 @@ public:
     void AddPoint(DevFloat x, DevFloat y);
     FPointSet& AddPoint(const Point2D &point);
     void SetPoints(Point2DVec points);
+
+    FPointSet TranslateConst(const Point2D &p) const;
+    FPointSet& Translate(const Point2D &p);
 
     FPointSet operator*(Real64 a) const;
     FPointSet& operator*=(Real64 a);

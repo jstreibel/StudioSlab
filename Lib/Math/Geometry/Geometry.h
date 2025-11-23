@@ -51,6 +51,19 @@ struct FCircle final : IGeometricObject {
     FPointSet GetPoints() const override;
 };
 
+struct FAABox final : IGeometricObject {
+    Point2D Min, Max;
+    FAABox(const Point2D& Min, const Point2D& Max) : Min(Min), Max(Max) {}
+
+    Real2D GetSize() const { return Max - Min; }
+    Real64 GetWidth() const { return Max.x - Min.x; }
+    Real64 GetHeight() const { return Max.y - Min.y; }
+    Point2D GetCenter() const { return (Min + Max) / 2; }
+    Real64 GetArea() const { return GetWidth() * GetHeight(); }
+
+    FPointSet GetPoints() const override;
+};
+
 }
 
 #endif //STUDIOSLAB_GEOMETRY_H

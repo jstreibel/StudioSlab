@@ -51,6 +51,20 @@ namespace Slab::Math {
         *this = FPointSet(newPoints);
     }
 
+    FPointSet FPointSet::TranslateConst(const Point2D& p) const {
+        FPointSet Result;
+
+        for (const auto &pt: m_Points) Result.AddPoint(pt + p);
+
+        return Result;
+    }
+
+    FPointSet& FPointSet::Translate(const Point2D& p) {
+        for (auto &pt: m_Points) pt+=p;
+
+        return *this;
+    }
+
     FPointSet FPointSet::operator*(const Real64 a) const {
         FPointSet Result;
 

@@ -9,16 +9,13 @@
 #include "Graphics/Plot2D/Plotter.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/Modules/Animator/Animator.h"
-#include "Physics/Materials.h"
 #include "Physics/Foils/NACA2412.h"
 #include "Plane/FPlaneController.h"
-#include "Plane/FPlaneFactory.h"
 #include "Render/Drawables.h"
 #include "Render/PlaneStats.h"
 #include "Scenes/BigHill.h"
 
 #include  "Scenes/Scene.h"
-#include "Utils/Angles.h"
 
 FLittlePlaneDesignerApp::FLittlePlaneDesignerApp(const int argc, const char* argv[])
 : FApplication("Little Plane Designer", argc, argv) { }
@@ -53,12 +50,13 @@ bool FLittlePlaneDesignerApp::NotifyKeyboard(
             }
         }
 
-        if (key == Graphics::EKeyMap::Key_F5) SetSceneBigHill();
-        if (key == Graphics::EKeyMap::Key_F6) SetSceneBlueprint();
+        if (key == Graphics::EKeyMap::Key_F5) { SetSceneBigHill(); return true; }
+        if (key == Graphics::EKeyMap::Key_F6) { SetSceneBlueprint(); return true; }
 
-        if (key == Graphics::EKeyMap::Key_SPACE) CurrentScene->TogglePause();
+        if (key == Graphics::EKeyMap::Key_SPACE) { CurrentScene->TogglePause(); return true; }
     }
-    return false;
+
+    return Controller->NotifyKeyboard(key, state, modKeys);
 }
 
 

@@ -7,21 +7,65 @@
 #include "graphic/graphic_basic.h"
 
 
-auto FBodyPartGeometry::GetPoints() const -> Math::FPointSet {
+auto FWingDescriptorRenderer::GetLeftView() const -> Math::FPointSet {
+    const auto &Wing = *Descriptor.Wing;
+
+    auto Vertices = Descriptor.Airfoil->GetProfileVertices(100, Wing.Params.ChordLength, Wing.Params.Thickness);
+    const auto COM = Wing.Params.COM;
+    const auto Anchor = COM + Wing.Params.LocalAnchor;
+
+    return Vertices.Translate(Descriptor.RelativeLocation + Anchor);
+}
+
+auto FWingDescriptorRenderer::GetTopView() const -> Math::FPointSet {
+    fix ChordLength = Descriptor.Params.ChordLength;
+    fix WingSpan = Descriptor.Params.Span;
+    fix COMX = Descriptor.Params.COM.x;
+    fix AnchorX = COMX + Descriptor.Params.LocalAnchor.x + ChordLength/2;
+    fix RelativeLocationX = Descriptor.RelativeLocation.x;
+
+
+    Math::FPointSet Points{};
+
+    fix xMin = -ChordLength*.5f;
+    fix yMin = -WingSpan*.5f;
+    fix xMax = ChordLength*.5f;
+    fix yMax = WingSpan*.5f;
+
+    return Math::Geometry::FAABox{{xMin, yMin}, {xMax, yMax}}.GetPoints().Translate({RelativeLocationX+AnchorX, 0.0});
+}
+
+auto FBodyPartRenderer::GetLeftView() const -> Math::FPointSet {
     Math::Point2DVec Points;
 
     fix c = cos(Descriptor.AngleRad);
     fix s = sin(Descriptor.AngleRad);
 
-    fix xMin = -Descriptor.Width*.5f;
+    fix xMin = -Descriptor.Length*.5f;
     fix yMin = -Descriptor.Height*.5f;
-    fix xMax = Descriptor.Width*.5f;
+    fix xMax = Descriptor.Length*.5f;
     fix yMax = Descriptor.Height*.5f;
 
     Points.emplace_back(xMin*c - yMin*s + Descriptor.xOffset, xMin*s + yMin*c + Descriptor.yOffset);
     Points.emplace_back(xMax*c - yMin*s + Descriptor.xOffset, xMax*s + yMin*c + Descriptor.yOffset);
     Points.emplace_back(xMax*c - yMax*s + Descriptor.xOffset, xMax*s + yMax*c + Descriptor.yOffset);
     Points.emplace_back(xMin*c - yMax*s + Descriptor.xOffset, xMin*s + yMax*c + Descriptor.yOffset);
+
+    return Math::FPointSet(Points);
+}
+
+auto FBodyPartRenderer::GetTopView() const -> Math::FPointSet {
+    Math::Point2DVec Points;
+
+    fix xMin = -Descriptor.Length*.5f;
+    fix yMin = -Descriptor.Depth*.5f;
+    fix xMax = Descriptor.Length*.5f;
+    fix yMax = Descriptor.Depth*.5f;
+
+    Points.emplace_back(xMin + Descriptor.xOffset, yMin);
+    Points.emplace_back(xMax + Descriptor.xOffset, yMin);
+    Points.emplace_back(xMax + Descriptor.xOffset, yMax);
+    Points.emplace_back(xMin + Descriptor.xOffset, yMax);
 
     return Math::FPointSet(Points);
 }
@@ -70,8 +114,8 @@ TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
         Joint.bodyIdA = HullBody;
         Joint.bodyIdB = WingDesc.Wing->BodyId;
         Joint.collideConnected = false;
-        Joint.localAnchorA = WingDesc.RelativeLocation;
-        Joint.localAnchorB = {xCom * Chord + xAnchorLocal, yCom * Thick + yAnchorLocal};
+        Joint.localAnchorA = {(float)WingDesc.RelativeLocation.x, (float)WingDesc.RelativeLocation.y};
+        Joint.localAnchorB = {float(xCom * Chord + xAnchorLocal), float(yCom * Thick + yAnchorLocal)};
 
         Joint.enableLimit = true;
         Joint.lowerAngle  = WingDesc.MinAngle;
@@ -103,16 +147,16 @@ b2BodyId FPlaneFactory::BuildBody(const b2WorldId World) const {
     b2Body_SetName(Body, "Plane Body");
 
     b2ShapeDef ShapeDef = b2DefaultShapeDef();
-    for (const auto & [Density, Friction, Restitution, Width, Height, xOffset, yOffset, Depth, AngleRad] : BodyPartDescriptors) {
+    for (const auto & Desc : BodyPartDescriptors) {
         // Convert 3D density (kg/m^3) -> 2D density (kg/m^2) via effective depth
-        ShapeDef.density = Density * Depth;
-        ShapeDef.material.friction = Friction;
-        ShapeDef.material.restitution = Restitution;
+        ShapeDef.density = Desc.Density * Desc.Depth;
+        ShapeDef.material.friction = Desc.Friction;
+        ShapeDef.material.restitution = Desc.Restitution;
 
         const auto Box = b2MakeOffsetBox(
-            Width*.5f, Height*.5f,
-            {xOffset, yOffset},
-            b2MakeRot(AngleRad));
+            Desc.Length*.5f, Desc.Height*.5f,
+            {Desc.xOffset, Desc.yOffset},
+            b2MakeRot(Desc.AngleRad));
         b2CreatePolygonShape(Body, &ShapeDef, &Box);
     }
 
@@ -128,8 +172,8 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
 
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = {
-        Position.x + Descriptor.RelativeLocation.x - Params.COM.x,
-        Position.y + Descriptor.RelativeLocation.y - Params.COM.y
+        float(Position.x + Descriptor.RelativeLocation.x - Params.COM.x),
+        float(Position.y + Descriptor.RelativeLocation.y - Params.COM.y)
     };
     bodyDef.rotation = b2MakeRot(Descriptor.BaseAngle);
 

@@ -10,6 +10,11 @@
 
 namespace Slab::Graphics::OpenGL::Legacy {
     bool RenderPointSet(const Math::FPointSet_constptr& pSet, const PlotStyle& style) noexcept;
+    inline bool RenderPointSet(const Math::FPointSet& pSet, const PlotStyle& style) noexcept {
+        // TODO: superbad below
+        return RenderPointSet(Dummy(pSet), style);
+    }
+
 }
 
 #endif //STUDIOSLAB_POINTSETRENDERER_H

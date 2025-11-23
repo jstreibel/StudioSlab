@@ -60,3 +60,7 @@ void FPlaneController::HandleInputState(FInputState InputState) {
 
     }
 }
+
+bool FPlaneController::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) {
+    return false;
+}

@@ -18,18 +18,22 @@ public:
     void TogglePause() override;
     void Draw(const Graphics::FDrawInput&) override;
     void Startup(const Graphics::FPlatformWindow&) override;
-    void HandleInputState(FInputState) override;
     auto BuildPlane(b2WorldId) -> TPointer<FLittlePlane>;
     auto GetPlaneFactory() -> TPointer<FPlaneFactory>;
+
+    void HandleInputState(FInputState) override;
+    bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state,
+        Graphics::EModKeys modKeys) override;
 
 private:
     TPointer<FPlaneFactory> PlaneFactory;
     TPointer<Graphics::OpenGL::FWriterOpenGL> Writer;
 
-    int Proportion = 25; // Scale is 1:Proportion
+    int Proportion = 40; // Scale is 1:Proportion
 
     static void DrawBlueprint();
     void DrawPlane();
+
 };
 
 

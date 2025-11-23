@@ -24,6 +24,10 @@ namespace Slab::Math {
         exit(0);
     }
 
+    Real2D Real2D::operator-() const {
+        return {-x, -y};
+    }
+
     OStream &operator<<(OStream &stream, const Real2D &x) {
         return stream << "(" << x.x << "," << x.y << ")";
     }

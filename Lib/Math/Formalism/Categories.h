@@ -75,6 +75,8 @@ namespace Slab::Math {
         Real2D operator/(const Real64 mass) const {
             return {x / mass, y / mass};
         }
+
+        Real2D operator-() const;
     };
 
     OStream &operator<<(OStream &stream, const Real2D &x);

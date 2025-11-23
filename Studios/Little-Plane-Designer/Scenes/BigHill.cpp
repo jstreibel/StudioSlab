@@ -46,6 +46,7 @@ void FBigHill::Startup(const Graphics::FPlatformWindow &SystemWindow) {
     GUIContext = SystemWindow.GetGUIContext();
 
     SetupScenario();
+    Drawables.emplace_back(PhysicsEngine);
 
     const auto WinWidth = SystemWindow.GetWidth();
     const auto WinHeight = SystemWindow.GetHeight();
@@ -126,6 +127,16 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
 
 void FBigHill::HandleInputState(const FInputState InputState) {
     Controller->HandleInputState(InputState);
+}
+
+bool FBigHill::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) {
+    if (state == Graphics::Press) {
+        if (key == Graphics::Key_F7) {
+            PhysicsEngine->ToggleDraw();
+        }
+    }
+
+    return false;
 }
 
 void FBigHill::TogglePause() { b_IsRunning = !b_IsRunning; }

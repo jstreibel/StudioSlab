@@ -33,7 +33,10 @@ struct FInputState {
 struct IInputStateReader {
     virtual ~IInputStateReader() = default;
 
-    virtual void HandleInputState(FInputState) = 0;
+    virtual void HandleInputState(FInputState) {};
+
+    virtual bool NotifyKeyboard(Slab::Graphics::EKeyMap, Slab::Graphics::EKeyState, Slab::Graphics::EModKeys)
+    { return false; }
 };
 
 struct IUpdateable {

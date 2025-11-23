@@ -46,6 +46,8 @@ namespace Slab {
         return TPointer<T>(&instance, [](T*){});
     }
 
+    // TODO: Both Dummy and Naked should never exist.
+
     /**
      * Same as Naked.
      * @tparam T

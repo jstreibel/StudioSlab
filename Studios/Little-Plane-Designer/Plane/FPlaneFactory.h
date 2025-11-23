@@ -12,6 +12,13 @@ constexpr float ExpandedPolystyreneDensity = 11.0f;
 constexpr float ExpandedPolystyreneFriction = 0.01f;
 constexpr float ExpandedPolystyreneRestitution = 0.0f;
 
+struct IBodyPartBlueprintRenderer {
+    virtual ~IBodyPartBlueprintRenderer() = default;
+
+    virtual auto GetLeftView() const -> Math::FPointSet = 0;
+    virtual auto GetTopView() const -> Math::FPointSet = 0;
+};
+
 struct FWingDescriptor {
     float Density = ExpandedPolystyreneDensity;
     float Friction = ExpandedPolystyreneFriction;
@@ -19,7 +26,7 @@ struct FWingDescriptor {
 
     TPointer<Foil::IAirfoilPolars> Airfoil;
     Foil::FAirfoilParams Params;
-    b2Vec2 RelativeLocation = b2Vec2{0.0f, 0.0f};
+    Math::Real2D RelativeLocation = Math::Real2D{0.0f, 0.0f};
     float BaseAngle = 0.0f;
     float MaxAngle = 0.0f;
     float MinAngle = 0.0f;
@@ -29,30 +36,41 @@ struct FWingDescriptor {
     TPointer<FWing> Wing;
 };
 
+struct FWingDescriptorRenderer final : IBodyPartBlueprintRenderer {
+    auto GetLeftView() const -> Math::FPointSet override;
+    auto GetTopView() const -> Math::FPointSet override;
+
+    FWingDescriptorRenderer() = delete;
+    explicit FWingDescriptorRenderer(const FWingDescriptor &Descriptor) : Descriptor(Descriptor) {}
+
+    FWingDescriptor Descriptor;
+};
+
 struct FBodyPartDescriptor final {
     float Density = ExpandedPolystyreneDensity;
     float Friction = ExpandedPolystyreneFriction;
     float Restitution = ExpandedPolystyreneRestitution;
 
-    float Width = 0.2f;
+    float Length = 0.2f;
     float Height = 0.2f;
-
-    float xOffset = 0.0f;
-    float yOffset = 0.0f;
-
     // Out-of-plane thickness/depth [m] to convert 3D density (kg/m^3)
     // to Box2D's 2D density (kg/m^2): density_2d = Density * Depth
     float Depth = 0.30f;
 
+    float xOffset = 0.0f;
+    float yOffset = 0.0f;
+
     float AngleRad = 0.0f;
 };
 
-struct FBodyPartGeometry final : Math::Geometry::IGeometricObject {
+struct FBodyPartRenderer final : IBodyPartBlueprintRenderer {
     FBodyPartDescriptor Descriptor;
 
-    auto GetPoints() const -> Math::FPointSet override;
-    FBodyPartGeometry() = default;
-    explicit FBodyPartGeometry(const FBodyPartDescriptor& Descriptor) : Descriptor(Descriptor) {}
+    auto GetLeftView() const -> Math::FPointSet override;
+    auto GetTopView() const -> Math::FPointSet override;
+
+    FBodyPartRenderer() = delete;
+    explicit FBodyPartRenderer(const FBodyPartDescriptor& Descriptor) : Descriptor(Descriptor) {}
 };
 
 class FPlaneFactory

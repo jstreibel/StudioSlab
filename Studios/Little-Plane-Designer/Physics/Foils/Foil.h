@@ -25,9 +25,9 @@ struct FAirfoilParams {
     const float LE_local = -0.25f; // from COM
     // COM from geometric center, in units of chord_length and thickness, respectively
     // Hint: 38% behind LE (NACA2412 usually sits 35-40% chord length)
-    const b2Vec2 COM = b2Vec2{-.25f, -0.01f};
+    const Math::Real2D COM = {-.25, -0.01};
     // Local revolute joint anchor, relative to COM
-    const b2Vec2 LocalAnchor = {.0f, .0f};
+    const Math::Real2D LocalAnchor = {.0, .0};
 };
 
 class IAirfoilPolars

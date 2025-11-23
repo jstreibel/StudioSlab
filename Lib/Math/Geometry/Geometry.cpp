@@ -215,4 +215,11 @@ FPointSet FCircle::GetPoints() const {
 
     return FPointSet(Points);
 }
+
+FPointSet FAABox::GetPoints() const {
+    FPointSet Points;
+    Points.AddPoint(Min);
+    fix dx = Real2D{GetWidth(), 0};
+    return FPointSet({Min, Min+dx, Max, Max-dx});
+}
 }

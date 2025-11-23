@@ -14,6 +14,8 @@ public:
     explicit FPlaneController(TPointer<FLittlePlane> Plane);
 
     void HandleInputState(FInputState) override;
+    bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state,
+        Graphics::EModKeys modKeys) override;
 
 private:
     TPointer<FLittlePlane> Plane;

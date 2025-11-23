@@ -11,21 +11,26 @@
 #include "../Plane/FLittlePlane.h"
 
 
-struct FLittlePlaneDesignerPhysicsEngine : IUpdateable
+struct FLittlePlaneDesignerPhysicsEngine final : IUpdateable, Graphics::IDrawable2D
 {
     FLittlePlaneDesignerPhysicsEngine();
 
     void Tick(Seconds ElapsedTime) override;
     void TogglePause() override;
+    void ToggleDraw();
 
     void SetPlane(const TPointer<FLittlePlane>& NewPlane) { this->Plane = NewPlane; }
 
     b2WorldId GetWorld() const { return World; }
 
+    void Draw(const Graphics::FDraw2DParams&) override;
+
 private:
+    LegacyGLDebugDraw DebugDraw;
     TPointer<FLittlePlane> Plane;
     b2WorldId World;
     bool b_IsRunning = true;
+    bool b_DrawPhysics = false;
 
 };
 

@@ -27,7 +27,7 @@ public:
     void Draw(const Graphics::FDrawInput&) override;
 
     void HandleInputState(FInputState) override;
-
+    bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override;
 
     void TogglePause() override;
 

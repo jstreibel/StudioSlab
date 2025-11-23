@@ -41,7 +41,8 @@ namespace Draw = Graphics::OpenGL::Legacy;
 
 
 FLittlePlaneBlueprint::FLittlePlaneBlueprint() {
-    auto FontFile = Core::Resources::BuiltinFonts::EngineerHand();
+    // auto FontFile = Core::Resources::BuiltinFonts::EngineerHand();
+    auto FontFile = Core::Resources::BuiltinFonts::Y145m2009();
 
     Writer = Slab::New<Graphics::OpenGL::FWriterOpenGL>(FontFile, 36);
 }
@@ -83,6 +84,11 @@ void FLittlePlaneBlueprint::Startup(const Graphics::FPlatformWindow&) {
 
 void FLittlePlaneBlueprint::HandleInputState(FInputState) {
 
+}
+
+bool FLittlePlaneBlueprint::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state,
+    Graphics::EModKeys modKeys) {
+    return false;
 }
 
 TPointer<FPlaneFactory> SetupDefaultPlane();
@@ -194,13 +200,17 @@ void FLittlePlaneBlueprint::DrawPlane() {
     Math::Point2D COM = {0,0};
     Real64 Mass = 0;
 
-    for (const auto &Part : GetPlaneFactory()->BodyPartDescriptors) {
-        auto Points = FBodyPartGeometry{Part}.GetPoints();
+    const Math::Real2D SideViewOrigin = {0, -3*InnerY/4};
+    const Math::Real2D TopViewOrigin = {0,  +1*InnerY/4};
 
-        auto COMResult = Math::Geometry::ComputeCentroid(Points);
+    for (const auto &Part : GetPlaneFactory()->BodyPartDescriptors) {
+        auto LeftViewPoints = FBodyPartRenderer{Part}.GetLeftView();
+        auto TopViewPoints = FBodyPartRenderer{Part}.GetTopView();
+
+        auto COMResult = Math::Geometry::ComputeCentroid(LeftViewPoints);
         if (COMResult.IsFailure()) continue;
 
-        const auto Area = Math::Geometry::ComputeArea(Points);
+        const auto Area = Math::Geometry::ComputeArea(LeftViewPoints);
 
         fix MyCOM = COMResult.Value();
         fix MyMass = Area * Part.Density;
@@ -208,17 +218,18 @@ void FLittlePlaneBlueprint::DrawPlane() {
         COM += MyCOM * MyMass;
         Mass += MyMass;
 
-        Draw::RenderPointSet(Dummy(Points*=Scale), StrongStrokeStyle);
+        Draw::RenderPointSet(Dummy((LeftViewPoints*=Scale).Translate(SideViewOrigin)), StrongStrokeStyle);
+        Draw::RenderPointSet(Dummy((TopViewPoints*=Scale).Translate(TopViewOrigin)), StrongStrokeStyle);
     }
 
     for (const auto &Wing : GetPlaneFactory()->WingDescriptors) {
-        const auto& [x, y] = Wing.RelativeLocation;
-        auto ProfileVertices = Wing.Airfoil->GetProfileVertices(100, Wing.Params.ChordLength, Wing.Params.Thickness);
+        auto SideViewPoints = FWingDescriptorRenderer {Wing}. GetLeftView();
+        auto TopViewPoints  = FWingDescriptorRenderer {Wing}. GetTopView();
 
-        auto COMResult = Math::Geometry::ComputeCentroid(ProfileVertices);
+        auto COMResult = Math::Geometry::ComputeCentroid(SideViewPoints);
         if (COMResult.IsFailure()) continue;
 
-        const auto Area = Math::Geometry::ComputeArea(ProfileVertices);
+        const auto Area = Math::Geometry::ComputeArea(SideViewPoints);
 
         fix MyCOM = COMResult.Value();
         fix MyMass = Area * Wing.Density;
@@ -226,69 +237,67 @@ void FLittlePlaneBlueprint::DrawPlane() {
         COM += MyCOM * MyMass;
         Mass += MyMass;
 
-        for (auto &Point : ProfileVertices.GetPoints()) {
-            Point.x = (Point.x+x) * Scale;
-            Point.y = (Point.y+y) * Scale;
-        }
-
-        Draw::RenderPointSet(Dummy(ProfileVertices), StrongStrokeStyle);
+        Draw::RenderPointSet((SideViewPoints * Scale).Translate(SideViewOrigin), StrongStrokeStyle);
+        Draw::RenderPointSet((TopViewPoints * Scale).Translate(TopViewOrigin), StrongStrokeStyle);
     }
 
-    RenderCOM(COM * Scale / Mass);
+    RenderCOM(COM * Scale / Mass + SideViewOrigin);
+    RenderCOM(Math::Real2D{COM.x, 0.0} * Scale / Mass + TopViewOrigin);
 }
 
 TPointer<FPlaneFactory> SetupDefaultPlane() {
     auto Factory = New<FPlaneFactory>();
 
     Factory.get()
-           ->SetPosition({161.5f, 41.f})
-           .SetRotation(DegToRad(0.0f))
-           .AddBodyPart({
-               .Density = LightMaterialDensity,
-               .Width = 4.0f,
-               .Height = 0.5,
-           })
-           .AddBodyPart({
-               .Density = HeavyMaterialDensity,
-               .Width = 1,
-               .Height = 0.25,
-               .xOffset = -1.0,
-           })
-           .AddBodyPart({
-               .Density = LightMaterialDensity,
-               .Width = 0.4,
-               .Height = 0.4,
-               .xOffset = -1.0,
-               .yOffset = -0.5,
-           })
-           .AddWing(FWingDescriptor{
-               .Density = LightMaterialDensity,
-               .Airfoil = New<Foil::ViternaAirfoil2412>(),
-               .Params = Foil::FAirfoilParams{
-                   .Name = "Wing",
-                   .ChordLength = 1.15f,
-                   .Span = 6.0f,
-               },
-               .RelativeLocation = {-.6f, -0.1f},
-               .BaseAngle = static_cast<float>(DegToRad(0.0)),
-               .MaxAngle  = static_cast<float>(DegToRad(15)),
-               .MinAngle  = static_cast<float>(DegToRad(-15)),
-           })
-           .AddWing(FWingDescriptor{
-               .Density = LightMaterialDensity,
-               .Airfoil = New<Foil::ViternaAirfoil2412>(),
-               .Params = Foil::FAirfoilParams{
-                   .Name = "Winglet",
-                   .ChordLength = 0.6f,
-                   .Span = 2.f,
-               },
-               .RelativeLocation = {+1.4, 0.0f},
-               .BaseAngle = static_cast<float>(DegToRad(0.0)),
-               .MaxAngle  = static_cast<float>(DegToRad(15)),
-               .MinAngle  = static_cast<float>(DegToRad(-15)),
-               .OscFreq = 10.0f,
-               .DampRatio = 1.0f,
-           });
+    ->SetPosition({161.5f, 41.f})
+    .SetRotation(DegToRad(0.0f))
+    .AddBodyPart({
+        .Density = LightMaterialDensity,
+        .Length = 4.0f,
+        .Height = 0.5,
+        .Depth = 0.8f,
+    })
+    .AddBodyPart({
+        .Density = HeavyMaterialDensity,
+        .Length = 1,
+        .Height = 0.25,
+        .xOffset = -1.0
+    })
+    .AddBodyPart({
+        .Density = LightMaterialDensity,
+        .Length = 0.4,
+        .Height = 0.4,
+        .xOffset = -1.0,
+        .yOffset = -0.5,
+    })
+    .AddWing(FWingDescriptor{
+        .Density = LightMaterialDensity,
+        .Airfoil = New<Foil::ViternaAirfoil2412>(),
+        .Params = Foil::FAirfoilParams{
+            .Name = "Wing",
+            .ChordLength = 1.15f,
+            .Span = 6.0f,
+        },
+        .RelativeLocation = {-.6f, -0.1f},
+        .BaseAngle = static_cast<float>(DegToRad(0.0)),
+        .MaxAngle  = static_cast<float>(DegToRad(15)),
+        .MinAngle  = static_cast<float>(DegToRad(-15)),
+    })
+    .AddWing(FWingDescriptor{
+        .Density = LightMaterialDensity,
+        .Airfoil = New<Foil::ViternaAirfoil2412>(),
+        .Params = Foil::FAirfoilParams{
+            .Name = "Winglet",
+            .ChordLength = 0.6f,
+            .Span = 2.f,
+        },
+            .RelativeLocation = {+1.4, 0.0f},
+            .BaseAngle = static_cast<float>(DegToRad(0.0)),
+            .MaxAngle  = static_cast<float>(DegToRad(15)),
+            .MinAngle  = static_cast<float>(DegToRad(-15)),
+            .OscFreq = 10.0f,
+            .DampRatio = 1.0f,
+        });
 
     return Factory;
 }
