@@ -163,10 +163,10 @@ namespace Slab::Models::KGRtoR {
 
         auto xMax = t;
 
-        auto yMin = min(UHistoryData.getMin().y,
-                        min(KHistoryData.getMin().y, min(WHistoryData.getMin().y, VHistoryData.getMin().y)));
-        auto yMax = max(UHistoryData.getMax().y,
-                        min(KHistoryData.getMax().y, min(WHistoryData.getMax().y, VHistoryData.getMax().y)));
+        auto yMin = min(UHistoryData.GetMin().y,
+                        min(KHistoryData.GetMin().y, min(WHistoryData.GetMin().y, VHistoryData.GetMin().y)));
+        auto yMax = max(UHistoryData.GetMax().y,
+                        min(KHistoryData.GetMax().y, min(WHistoryData.GetMax().y, VHistoryData.GetMax().y)));
 
         EnergyGraph.GetRegion().animate_yMax(yMax);
         EnergyGraph.GetRegion().animate_yMin(yMin);

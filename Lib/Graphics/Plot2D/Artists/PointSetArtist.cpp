@@ -35,10 +35,10 @@ namespace Slab::Graphics {
     }
 
     auto PointSetArtist::GetRegion() -> const RectR & {
-        if(pointSet== nullptr || pointSet->getPoints().empty()) region = {-1,1,-1,1};
+        if(pointSet== nullptr || pointSet->GetPoints().empty()) region = {-1,1,-1,1};
         else {
-            auto ptMax = pointSet->getMax();
-            auto ptMin = pointSet->getMin();
+            auto ptMax = pointSet->GetMax();
+            auto ptMin = pointSet->GetMin();
 
             region = {ptMin.x, ptMax.x, ptMin.y, ptMax.y};
         }

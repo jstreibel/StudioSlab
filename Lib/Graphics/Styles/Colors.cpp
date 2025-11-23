@@ -17,10 +17,6 @@ FColor LightGrey = {0.75,0.75,0.75,1};
 FColor DarkGrey = {0.25,0.25,0.25,1};
 FColor Black = {0,0,0,1};
 
-FColor BlueprintLight = FColor::FromHex("#0072B2");
-FColor Blueprint = FColor::FromHex("#0056B2");
-FColor BlueprintDark = FColor::FromHex("#003978");
-
 FColor LapisLazuli = {38./255., 97./255., 156./255., 1};
 
 FColor GrassGreen = {63./255., 155./255., 11./255., 1.};

@@ -132,7 +132,7 @@ namespace Slab::Graphics::OpenGL {
     bool Legacy::RenderPointSet(const FPointSet_constptr& pSet, const PlotStyle& style) noexcept {
         if(pSet== nullptr) return true;
 
-        IN pts = pSet->getPoints();
+        IN pts = pSet->GetPoints();
 
         if(pts.empty()) return true;
 

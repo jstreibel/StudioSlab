@@ -6,8 +6,6 @@
 #define STUDIOSLAB_POINT_H
 
 
-#include "Utils/NativeTypes.h"
-
 #include "Math/Formalism/Categories.h"
 
 namespace Slab::Math {

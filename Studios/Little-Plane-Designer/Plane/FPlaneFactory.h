@@ -6,6 +6,7 @@
 #define STUDIOSLAB_FPLANEFACTORY_H
 
 #include "FLittlePlane.h"
+#include "Math/Geometry/Geometry.h"
 
 constexpr float ExpandedPolystyreneDensity = 11.0f;
 constexpr float ExpandedPolystyreneFriction = 0.01f;
@@ -28,8 +29,7 @@ struct FWingDescriptor {
     TPointer<FWing> Wing;
 };
 
-struct FBodyPartDescriptor {
-
+struct FBodyPartDescriptor final {
     float Density = ExpandedPolystyreneDensity;
     float Friction = ExpandedPolystyreneFriction;
     float Restitution = ExpandedPolystyreneRestitution;
@@ -45,12 +45,19 @@ struct FBodyPartDescriptor {
     float Depth = 0.30f;
 
     float AngleRad = 0.0f;
+};
 
+struct FBodyPartGeometry final : Math::Geometry::IGeometricObject {
+    FBodyPartDescriptor Descriptor;
+
+    auto GetPoints() const -> Math::FPointSet override;
+    FBodyPartGeometry() = default;
+    explicit FBodyPartGeometry(const FBodyPartDescriptor& Descriptor) : Descriptor(Descriptor) {}
 };
 
 class FPlaneFactory
 {
-    public:
+public:
     explicit FPlaneFactory() = default;
 
     FPlaneFactory& Reset();
@@ -66,7 +73,6 @@ class FPlaneFactory
     TPointer<FLittlePlane> BuildPlane(b2WorldId World);
     b2BodyId BuildBody(b2WorldId World) const;
 
-private:
     Vector<FWingDescriptor> WingDescriptors;
     Vector<FBodyPartDescriptor> BodyPartDescriptors;
 
@@ -75,6 +81,7 @@ private:
 
     TPointer<FWing> BuildWing(const FWingDescriptor &Descriptor, b2WorldId World) const;
     static void ShiftBodyCOM(float Δx, float Δy, b2BodyId Body);
+
 };
 
 

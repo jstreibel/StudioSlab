@@ -139,7 +139,7 @@ namespace Tests {
 
             ωₚₑₐₖ[Re] = 0.0;
             DevFloat A_max = 0.0;
-            for (const auto &pt: modes.re->getPoints()) {
+            for (const auto &pt: modes.re->GetPoints()) {
                 fix Aₖ = abs(pt.y);
                 if (A_max < Aₖ) {
                     A_max = Aₖ;
@@ -147,7 +147,7 @@ namespace Tests {
                 }
             }
             ωₚₑₐₖ[Im] = 0.0;
-            for (const auto &pt: modes.im->getPoints()) {
+            for (const auto &pt: modes.im->GetPoints()) {
                 fix Aₖ = abs(pt.y);
                 if (A_max < Aₖ) {
                     A_max = Aₖ;
@@ -180,8 +180,8 @@ namespace Tests {
             if (true) {
                 mDFTGraph.GetRegion().set_x_limits(-2 * π, 2*ωₘₐₓ);
             } else {
-                auto min = modes.re->getMin();
-                auto max = modes.re->getMax();
+                auto min = modes.re->GetMin();
+                auto max = modes.re->GetMax();
                 auto Δx = max.x - min.x;
 
                 mDFTGraph.GetRegion().set_x_limits(min.x - Δx * 0.15, max.x + Δx * 0.15);
@@ -190,13 +190,13 @@ namespace Tests {
             if (true) {
                 mDFTGraph.GetRegion().set_y_limits(1.25, -1.25);
             } else {
-                auto min_Re = modes.re->getMin();
-                auto max_Re = modes.re->getMax();
+                auto min_Re = modes.re->GetMin();
+                auto max_Re = modes.re->GetMax();
                 auto Δy_Re = max_Re.y - min_Re.y;
                 fix range_Re = std::max(abs(max_Re.y), abs(min_Re.y));
 
-                auto min_Im = modes.im->getMin();
-                auto max_Im = modes.im->getMax();
+                auto min_Im = modes.im->GetMin();
+                auto max_Im = modes.im->GetMax();
                 auto Δy_Im = max_Im.y - min_Im.y;
                 fix range_Im = std::max(abs(max_Im.y), abs(min_Im.y));
 
@@ -231,7 +231,7 @@ namespace Tests {
             static Math::FPointSet L_loc1, L_loc2;
             static bool initd = false;
             if (!initd) {
-                L_loc1.setPoints({{0.0, -2},
+                L_loc1.SetPoints({{0.0, -2},
                                   {0.0, +2}});
 
                 loc1Artist.setPointSet(Dummy(L_loc1));
@@ -240,7 +240,7 @@ namespace Tests {
                 initd = true;
             }
 
-            L_loc2.setPoints({{L, -2},
+            L_loc2.SetPoints({{L, -2},
                               {L, +2}});
         }
     }

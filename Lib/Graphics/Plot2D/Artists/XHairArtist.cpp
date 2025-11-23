@@ -33,7 +33,7 @@ namespace Slab::Graphics {
                 h - MouseLocal.y + 20
             }, currStyle->graphNumbersColor);
 
-        XHair.clear();
+        XHair.Clear();
         XHair.AddPoint({region_rect.xMin, XHairLocation.y});
         XHair.AddPoint({region_rect.xMax, XHairLocation.y});
         XHair.AddPoint({XHairLocation.x, region_rect.yMin});

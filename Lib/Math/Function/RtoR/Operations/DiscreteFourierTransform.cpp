@@ -96,7 +96,7 @@ namespace Slab::Math::RtoR {
     }
 
     TPointer<RtoR::NumericFunction> DFT::Magnitudes(const DFTResult &dftResult) {
-        auto mags = dftResult.getMagnitudes()->getPoints();
+        auto mags = dftResult.getMagnitudes()->GetPoints();
 
         auto Δk = mags.back().x;
         Core::Log::Debug() << "Computing magnitudes for dft result with Δk=" << Δk << Core::Log::Flush;

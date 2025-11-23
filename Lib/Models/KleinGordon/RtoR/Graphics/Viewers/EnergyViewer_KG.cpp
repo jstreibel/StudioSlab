@@ -78,10 +78,10 @@ namespace Slab::Models {
 
         auto momentum_flow_func  = DynamicPointerCast<R2toR::FNumericFunction>(f->Clone());
 
-        EnergyHistory->clear();
-        KineticHistory->clear();
-        GradHistory->clear();
-        PotentialHistory->clear();
+        EnergyHistory->Clear();
+        KineticHistory->Clear();
+        GradHistory->Clear();
+        PotentialHistory->Clear();
 
         auto Slice = Slab::Math::RtoR::FromR2toR;
 

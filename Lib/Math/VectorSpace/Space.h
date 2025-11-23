@@ -21,7 +21,7 @@ namespace Slab::Math {
 
         Space(const Space &);
 
-        virtual auto getMeasure() const -> const Measure = 0;
+        virtual auto GetMeasure() const -> const Measure = 0;
 
         virtual auto getDim() const -> UInt;
 

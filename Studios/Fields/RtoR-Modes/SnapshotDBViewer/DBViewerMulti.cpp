@@ -180,9 +180,9 @@ namespace Modes::DatabaseViewer {
 
     void DBViewerMulti::computeMasses() {
         maxValues.clear();
-        maxValuesPointSet.clear();
-        massesImag_pointSet.clear();
-        massesReal_pointSet.clear();
+        maxValuesPointSet.Clear();
+        massesImag_pointSet.Clear();
+        massesReal_pointSet.Clear();
 
         for(auto &dbParser : dbParsers) {
 

@@ -20,7 +20,7 @@ namespace Slab::Math {
 
         ~AAHyperCube();
 
-        [[nodiscard]] auto getMeasure() const -> const Measure override;
+        [[nodiscard]] auto GetMeasure() const -> const Measure override;
 
         auto getSide() const -> const DevFloat;
 

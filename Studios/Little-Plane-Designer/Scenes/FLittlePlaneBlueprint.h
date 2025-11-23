@@ -22,6 +22,11 @@ public:
 
 private:
     TPointer<FPlaneFactory> PlaneFactory;
+
+    int Proportion = 25; // Scale is 1:Proportion
+
+    static void DrawBlueprint();
+    void DrawPlane();
 };
 
 

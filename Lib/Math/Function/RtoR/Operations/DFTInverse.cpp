@@ -53,8 +53,8 @@ namespace Slab::Math::RtoR {
         in =  (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * N);
         out = (double*) fftw_malloc(sizeof(double) * N);
 
-        auto &re = dftResult.re->getPoints();
-        auto &im = dftResult.im->getPoints();
+        auto &re = dftResult.re->GetPoints();
+        auto &im = dftResult.im->GetPoints();
 
 
         // Populate N-n=n-2 modes of input array with complex conjugates

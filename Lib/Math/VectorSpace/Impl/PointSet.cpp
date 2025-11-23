@@ -15,22 +15,22 @@ namespace Slab::Math {
     }
 
     FPointSet::FPointSet(const FPointSet &pointSet)
-            : Space(2), points(pointSet.points), max(pointSet.max), min(pointSet.min) {}
+            : Space(2), m_Points(pointSet.m_Points), max(pointSet.max), min(pointSet.min) {}
 
-    auto FPointSet::getMeasure() const -> const Measure {
+    auto FPointSet::GetMeasure() const -> const Measure {
         return {{max.x - min.x, max.y - min.y}};
     }
 
-    auto FPointSet::getMax() const -> Point2D {
+    auto FPointSet::GetMax() const -> Point2D {
         return max;
     }
 
-    auto FPointSet::getMin() const -> Point2D {
+    auto FPointSet::GetMin() const -> Point2D {
         return min;
     }
 
     void FPointSet::AddPoint(const Point2D &point) {
-        if (points.empty()) {
+        if (m_Points.empty()) {
             min = point;
             max = point;
         }
@@ -42,21 +42,35 @@ namespace Slab::Math {
         else if (point.y < min.y) min.y = point.y;
 
         auto p = point;
-        points.emplace_back(p);
+        m_Points.emplace_back(p);
     }
 
-    void FPointSet::setPoints(Point2DVec newPoints) {
+    void FPointSet::SetPoints(Point2DVec newPoints) {
         *this = FPointSet(newPoints);
     }
 
-    const
-    Point2DVec &FPointSet::getPoints() const { return points; }
+    FPointSet FPointSet::operator*(const Real64 a) const {
+        FPointSet Result;
 
-    Point2DVec& FPointSet::getPoints() { return points; }
+        for (const auto &p: m_Points) Result.AddPoint(p * a);
+
+        return Result;
+    }
+
+    FPointSet& FPointSet::operator*=(Real64 a) {
+        for (auto &p: m_Points) p*=a;
+
+        return *this;
+    }
+
+    const
+    Point2DVec &FPointSet::GetPoints() const { return m_Points; }
+
+    Point2DVec& FPointSet::GetPoints() { return m_Points; }
 
     FPointSet operator+(const FPointSet& a, const FPointSet& b) {
-        auto &pa = a.getPoints();
-        auto &pb = b.getPoints();
+        auto &pa = a.GetPoints();
+        auto &pb = b.GetPoints();
 
         Point2DVec c(pa.size() + pb.size());
         std::copy(pa.begin(), pa.end(), c.begin());
@@ -67,9 +81,9 @@ namespace Slab::Math {
 
     // Point2DVec &PointSet::getPoints()       { return points; }
 
-    void FPointSet::clear() { points.clear(); }
+    void FPointSet::Clear() { m_Points.clear(); }
 
-    CountType FPointSet::count() const { return points.size(); }
+    CountType FPointSet::Count() const { return m_Points.size(); }
 
     void FPointSet::AddPoint(DevFloat x, DevFloat y) {
         AddPoint({x, y});

@@ -78,7 +78,7 @@ namespace Slab::Math::RtoR {
 
         // auto &points = pointSet->getPoints();
         // points.clear();
-        pointSet->clear();
+        pointSet->Clear();
 
         if (beautiful) pointSet->AddPoint({vMin, 0});
 

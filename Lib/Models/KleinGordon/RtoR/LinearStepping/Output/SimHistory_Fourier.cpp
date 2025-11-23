@@ -24,7 +24,7 @@ namespace Slab::Models::KGRtoR {
         auto result = DFTInstantResult{Input.GetSteps()*dt, DftNewData};
         DFTDataHistory.emplace_back(result);
 
-        fix pts = DftNewData.getMagnitudes()->getPoints();
+        fix pts = DftNewData.getMagnitudes()->GetPoints();
         assert(N_x == pts.size());
 
         for (auto i = 0; i < N_x; ++i)

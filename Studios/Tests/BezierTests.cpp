@@ -67,7 +67,7 @@ namespace Tests {
     }
 
     void FBezierTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
-        CurrentPoint.clear();
+        CurrentPoint.Clear();
         const auto &GraphRegion = Graph.GetRegion();
         if(Graphics::Animator::Contains(*GraphRegion.getReference_xMin())){
             auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_xMin());

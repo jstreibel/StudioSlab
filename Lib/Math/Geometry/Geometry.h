@@ -1,0 +1,51 @@
+//
+// Created by joao on 11/22/25.
+//
+
+#ifndef STUDIOSLAB_GEOMETRY_H
+#define STUDIOSLAB_GEOMETRY_H
+#include "Math/Point.h"
+#include "Math/VectorSpace/Impl/PointSet.h"
+#include "Utils/Result.h"
+
+namespace Slab::Math::Geometry {
+
+TResult<Point2D> ComputeCentroid(const FPointSet& NonIntersecting, bool ForceNoValidation = true);
+
+Real64 ComputeArea(const FPointSet& NonIntersecting);
+
+bool IsValid(const FPointSet& PerhapsIntersecting);
+
+struct RectR {
+    Real64 left, right, bottom, top;
+
+    Real64 Width() const { return right - left; }
+    Real64 Height() const { return top - bottom; }
+};
+
+struct IGeometricObject {
+    IGeometricObject() = default;
+    virtual ~IGeometricObject() = default;
+
+    virtual FPointSet GetPoints() const = 0;
+
+    // virtual auto GetArea() const -> Real64 = 0;
+    // virtual auto GetCentroid() const -> Point2D = 0;
+    // virtual auto IsValid() const -> bool = 0;
+    // virtual auto GetBoundingBox() const -> RectR;
+};
+
+struct FCircle final : IGeometricObject {
+    Point2D Center;
+    Real64 Radius;
+
+    FCircle(const Point2D& Center, const Real64 Radius)
+    : Center(Center)
+    , Radius(Radius) {    }
+
+    FPointSet GetPoints() const override;
+};
+
+}
+
+#endif //STUDIOSLAB_GEOMETRY_H

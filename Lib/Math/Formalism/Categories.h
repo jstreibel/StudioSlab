@@ -16,6 +16,7 @@ namespace Slab::Math {
 // NaN: uncomment one of the following 3 methods of defining a global NaN
 // you can test by verifying that (NaN != NaN) is true
     static const DevFloat NaN = std::numeric_limits<DevFloat>::quiet_NaN();
+    static const DevFloat EPS = 1e-12;
 //Uint proto_nan[2]={0xffffffff, 0x7fffffff};
 //double NaN = *( double* )proto_nan;
 //Doub NaN = sqrt(-1.);
@@ -27,13 +28,13 @@ namespace Slab::Math {
         DevFloat x;
     };
 
-    class Real2D : public Category {
+    class Real2D final /* : public Category <-- deriving adds 8bytes to size. Don`t change, as it breaks AB */ {
     public:
+        DevFloat x, y;
+
         Real2D() = default;
 
         Real2D(DevFloat x, DevFloat y) : x(x), y(y) {}
-
-        DevFloat x, y;
 
         Real2D operator-(const Real2D &p) const {
             return {x - p.x, y - p.y};
@@ -42,6 +43,20 @@ namespace Slab::Math {
         Real2D &operator-(const Real2D &p) {
             x -= p.x;
             y -= p.y;
+            return *this;
+        }
+
+        Real2D &operator*=(const Real64 &a) {
+            x *= a;
+            y *= a;
+
+            return *this;
+        }
+
+        Real2D &operator+=(const Real2D &p) {
+            x += p.x;
+            y += p.y;
+
             return *this;
         }
 
@@ -55,6 +70,10 @@ namespace Slab::Math {
 
         [[nodiscard]] DevFloat norm() const {
             return sqrt(x * x + y * y);
+        }
+
+        Real2D operator/(const Real64 mass) const {
+            return {x / mass, y / mass};
         }
     };
 

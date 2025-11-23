@@ -7,6 +7,25 @@
 #include "graphic/graphic_basic.h"
 
 
+auto FBodyPartGeometry::GetPoints() const -> Math::FPointSet {
+    Math::Point2DVec Points;
+
+    fix c = cos(Descriptor.AngleRad);
+    fix s = sin(Descriptor.AngleRad);
+
+    fix xMin = -Descriptor.Width*.5f;
+    fix yMin = -Descriptor.Height*.5f;
+    fix xMax = Descriptor.Width*.5f;
+    fix yMax = Descriptor.Height*.5f;
+
+    Points.emplace_back(xMin*c - yMin*s + Descriptor.xOffset, xMin*s + yMin*c + Descriptor.yOffset);
+    Points.emplace_back(xMax*c - yMin*s + Descriptor.xOffset, xMax*s + yMin*c + Descriptor.yOffset);
+    Points.emplace_back(xMax*c - yMax*s + Descriptor.xOffset, xMax*s + yMax*c + Descriptor.yOffset);
+    Points.emplace_back(xMin*c - yMax*s + Descriptor.xOffset, xMin*s + yMax*c + Descriptor.yOffset);
+
+    return Math::FPointSet(Points);
+}
+
 FPlaneFactory& FPlaneFactory::Reset()
 {
     return *this = FPlaneFactory();

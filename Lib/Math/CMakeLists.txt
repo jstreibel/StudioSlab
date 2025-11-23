@@ -146,6 +146,8 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		Numerics/ODE/Steppers/Euler.h
 		Numerics/ODE/Output/Sockets/DummyOutput.cpp
 		Numerics/ODE/Output/Sockets/DummyOutput.h
+		Geometry/Geometry.cpp
+		Geometry/Geometry.h
 )
 
 

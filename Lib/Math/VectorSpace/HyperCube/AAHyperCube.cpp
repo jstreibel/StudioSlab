@@ -14,7 +14,7 @@ namespace Slab::Math {
         delete measure;
     }
 
-    const Measure AAHyperCube::getMeasure() const {
+    const Measure AAHyperCube::GetMeasure() const {
         return *measure;
     }
 

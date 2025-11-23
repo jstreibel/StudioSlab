@@ -200,7 +200,7 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams&) {
         const auto Body = Wing->BodyId;
         const auto [x, y] = b2Body_GetPosition(Body);
         const auto [cosWing, sinWing] = b2Body_GetRotation(Body);
-        for (auto &Point : Points.getPoints()) {
+        for (auto &Point : Points.GetPoints()) {
             const auto chord = Wing->Params.ChordLength;
             fix px = Point.x -chord*.5f;
             fix py = Point.y;

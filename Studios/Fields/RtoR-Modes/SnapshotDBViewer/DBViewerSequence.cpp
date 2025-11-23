@@ -186,9 +186,9 @@ namespace Modes::DatabaseViewer {
         assert(dbParsers.size() == allMashups.size());
 
         maxValues.clear();
-        maxValuesPointSet.clear();
-        massesImag_pointSet.clear();
-        massesReal_pointSet.clear();
+        maxValuesPointSet.Clear();
+        massesImag_pointSet.Clear();
+        massesReal_pointSet.Clear();
 
         const auto dbParser = dbParsers[current_database];
         fix db_type = dbParser->evaluateDatabaseType();

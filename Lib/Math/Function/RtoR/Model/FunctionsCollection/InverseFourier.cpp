@@ -6,10 +6,10 @@
 
 namespace Slab::Math::RtoR {
     DevFloat InverseFourier::operator()(DevFloat x) const {
-        auto N = modes.re->getPoints().size();
+        auto N = modes.re->GetPoints().size();
 
-        IN re = modes.re->getPoints();
-        IN im = modes.im->getPoints();
+        IN re = modes.re->GetPoints();
+        IN im = modes.im->GetPoints();
 
         DevFloat val = 0.0;
 

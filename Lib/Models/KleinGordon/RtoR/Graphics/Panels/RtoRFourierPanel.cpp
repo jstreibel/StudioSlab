@@ -240,10 +240,10 @@ namespace Slab::Models::KGRtoR {
 
             auto dftMagnitudes = RtoR::DFT::Compute(tempSpace).getMagnitudes();
 
-            assert(dftMagnitudes->count()==m);
+            assert(dftMagnitudes->Count()==m);
 
             for(auto k=0; k<m; ++k) {
-                fix &pt = dftMagnitudes->getPoints()[k];
+                fix &pt = dftMagnitudes->GetPoints()[k];
                 fix A = pt.y;
                 fix ω = pt.x;
 

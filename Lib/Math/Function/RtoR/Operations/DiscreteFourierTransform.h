@@ -21,8 +21,8 @@ namespace Slab::Math::RtoR {
         DFTModes im;
 
         DFTModes getMagnitudes() const {
-            IN R = re->getPoints();
-            IN I = im->getPoints();
+            IN R = re->GetPoints();
+            IN I = im->GetPoints();
 
             assert(I.size() == R.size());
 
@@ -43,9 +43,9 @@ namespace Slab::Math::RtoR {
         }
 
         CountType modeCount() const {
-            assert(re->count() == im->count());
+            assert(re->Count() == im->Count());
 
-            fix n = re->count();
+            fix n = re->Count();
 
             if(inverseIsReal) return (n-1)*2;
 
