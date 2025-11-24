@@ -16,7 +16,7 @@ constexpr auto ArchD_height = 0.457; //m
 constexpr auto ArchD_width = 0.610; // m
 constexpr auto PaperHeight = ArchD_height/2;
 constexpr auto PaperWidth = PaperHeight * 16 / 9.;
-constexpr auto ViewportHeight_2 = PaperHeight * 1.2 / 2.0;
+constexpr auto RegionHeight_2 = PaperHeight * 1.2 / 2.0;
 
 const auto OuterX = floorf(100*PaperWidth/2)/100;
 const auto OuterY = floorf(100*PaperHeight/2)/100;
@@ -25,12 +25,12 @@ const auto InnerY = OuterY - 0.005;
 
 constexpr auto Width_StrongStroke = 2.5;
 constexpr auto Width_RegularStroke = 1.5;
-constexpr auto Width_WeakStroke = 0.8;
+constexpr auto Width_WeakStroke = 1.;
 
 const auto BackgroundColor = Graphics::WoodLight;
 const auto BorderColor = Graphics::WhiteBlueprintStroke;
 const auto LineColor = Graphics::GreyBlue*0.75;
-const auto StrokeColor = BorderColor;
+const auto StrokeColor = Graphics::White;
 const auto BlueprintColor = Graphics::BlueprintLight;
 
 Graphics::PlotStyle StrongStrokeStyle{StrokeColor, Graphics::LineLoop, false, Graphics::Nil, Width_StrongStroke};
@@ -55,20 +55,29 @@ void FLittlePlaneBlueprint::TogglePause() {
 
 }
 
+void FLittlePlaneBlueprint::SetupAnnotations() {
+    NumAnnotations = 0;
+}
+
 void FLittlePlaneBlueprint::Draw(const Graphics::FDrawInput& Input) {
+    SetupAnnotations();
+
     Input.Window.Clear(BackgroundColor);
 
     fix WinHeight = Input.Window.GetHeight();
     fix WinWidth = Input.Window.GetWidth();
     fix AspectRatio = static_cast<double>(WinWidth)/WinHeight;
 
-    const auto ViewportWidth_2 = ViewportHeight_2 * AspectRatio;
-    Draw::SetupOrtho({-ViewportWidth_2, ViewportWidth_2, -ViewportHeight_2, ViewportHeight_2});
+    const auto RegionWidth_2 = RegionHeight_2 * AspectRatio;
+    Draw::SetupOrtho({-RegionWidth_2, RegionWidth_2, -RegionHeight_2, RegionHeight_2});
 
     Writer->Reshape(WinWidth, WinHeight);
+    fix Region = Graphics::RectR{-RegionWidth_2, RegionWidth_2, -RegionHeight_2, RegionHeight_2};
+    fix VP = Graphics::RectI{0, WinWidth, 0, WinHeight};
     Writer->SetPenPositionTransform([&](const Graphics::Point2D Pt) {
-        return Graphics::FromSpaceToViewportCoord(Pt, Graphics::RectR{-ViewportWidth_2, ViewportWidth_2, -ViewportHeight_2, ViewportHeight_2}, Graphics::RectI{0, WinWidth, 0, WinHeight});
+        return Graphics::FromSpaceToViewportCoord(Pt, Region, VP);
     });
+    GlyphHeight = .5/Proportion * Graphics::FromViewportToSpaceCoord({0., Writer->GetFontHeightInPixels()}, Region, VP).y;
 
     Graphics::OpenGL::Legacy::PushLegacyMode();
     DrawBlueprint();
@@ -86,9 +95,29 @@ void FLittlePlaneBlueprint::HandleInputState(FInputState) {
 
 }
 
-bool FLittlePlaneBlueprint::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state,
-    Graphics::EModKeys modKeys) {
+bool FLittlePlaneBlueprint::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) {
     return false;
+}
+
+void FLittlePlaneBlueprint::AddPartAnnotation(const Str& Annotation, Math::Real2D ItemLocation) {
+    const int Sx = +(2*(NumAnnotations%2) - 1);
+    const int Sy = -(2*(NumAnnotations/2) - 1);
+
+    const Graphics::Point2D AnnotationLocation = {Sx*InnerX/2, Sy*InnerY/2};
+
+    fix d = GlyphHeight;
+    Writer->Write(Annotation, AnnotationLocation+Graphics::Point2D{d, -d});
+
+    Draw::SetupLegacyGL();
+    Draw::SetColor(Graphics::White);
+
+    Draw::DrawLine(ItemLocation, AnnotationLocation.ToReal2D(), StrokeColor, .5);
+
+    ++NumAnnotations;
+}
+
+void FLittlePlaneBlueprint::AddGlobalCharacteristicAnnotation(const Str& Annotation) const {
+    Writer->Write(Annotation, {InnerX - 40*GlyphHeight, -InnerY + 10*GlyphHeight});
 }
 
 TPointer<FPlaneFactory> SetupDefaultPlane();
@@ -183,14 +212,15 @@ void RenderCOM(const Math::Point2D COM) {
     auto FilledStroke = WeakStrokeStyle;
     FilledStroke.setPrimitive(Graphics::TriangleFan);
     FilledStroke.fillColor = WeakStrokeStyle.lineColor;
-    FilledStroke.lineColor.a = 0.5;
+    FilledStroke.lineColor.a = 0.25;
     FilledStroke.filled = true;
 
     Draw::RenderPointSet(Dummy(FirstQuarter), FilledStroke);
     Draw::RenderPointSet(Dummy(LastQuarter), FilledStroke);
 
-    // Draw::DrawLine({COM.x - Radius, COM.y}, {COM.x + Radius, COM.y}, StrokeColor, Width_WeakStroke);
-    // Draw::DrawLine({COM.x, COM.y - Radius}, {COM.x, COM.y + Radius}, StrokeColor, Width_WeakStroke);
+    constexpr auto XTrap = Radius*1.25;
+    Draw::DrawLine({COM.x - XTrap, COM.y}, {COM.x + XTrap, COM.y}, StrokeColor, Width_WeakStroke);
+    Draw::DrawLine({COM.x, COM.y - XTrap}, {COM.x, COM.y + XTrap}, StrokeColor, Width_WeakStroke);
 
 }
 
@@ -210,10 +240,10 @@ void FLittlePlaneBlueprint::DrawPlane() {
         auto COMResult = Math::Geometry::ComputeCentroid(LeftViewPoints);
         if (COMResult.IsFailure()) continue;
 
-        const auto Area = Math::Geometry::ComputeArea(LeftViewPoints);
+        const auto Volume = Math::Geometry::ComputeArea(LeftViewPoints) * Part.Depth;
 
         fix MyCOM = COMResult.Value();
-        fix MyMass = Area * Part.Density;
+        fix MyMass = Volume * Part.Density;
 
         COM += MyCOM * MyMass;
         Mass += MyMass;
@@ -229,20 +259,24 @@ void FLittlePlaneBlueprint::DrawPlane() {
         auto COMResult = Math::Geometry::ComputeCentroid(SideViewPoints);
         if (COMResult.IsFailure()) continue;
 
-        const auto Area = Math::Geometry::ComputeArea(SideViewPoints);
+        const auto Volume = Math::Geometry::ComputeArea(SideViewPoints) * Wing.Params.Span;
 
         fix MyCOM = COMResult.Value();
-        fix MyMass = Area * Wing.Density;
+        fix MyMass = Volume * Wing.Density;
 
         COM += MyCOM * MyMass;
         Mass += MyMass;
 
         Draw::RenderPointSet((SideViewPoints * Scale).Translate(SideViewOrigin), StrongStrokeStyle);
         Draw::RenderPointSet((TopViewPoints * Scale).Translate(TopViewOrigin), StrongStrokeStyle);
+
+        AddPartAnnotation(Wing.Airfoil->GetName(), MyCOM*Scale + SideViewOrigin);
     }
 
     RenderCOM(COM * Scale / Mass + SideViewOrigin);
     RenderCOM(Math::Real2D{COM.x, 0.0} * Scale / Mass + TopViewOrigin);
+
+    AddGlobalCharacteristicAnnotation(ToStr("Total mass: %.2fkg", Mass));
 }
 
 TPointer<FPlaneFactory> SetupDefaultPlane() {
@@ -258,10 +292,11 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
         .Depth = 0.8f,
     })
     .AddBodyPart({
-        .Density = HeavyMaterialDensity,
-        .Length = 1,
-        .Height = 0.25,
-        .xOffset = -1.0
+        .Density = HeavyRockDensity,
+        .Length = 0.4,
+        .Height = 0.15,
+        .Depth = 0.25,
+        .xOffset = -1.85
     })
     .AddBodyPart({
         .Density = LightMaterialDensity,

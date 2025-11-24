@@ -40,28 +40,29 @@ namespace Slab::Graphics {
         bool operator==(const FColor &rhs) const;
     };
 
-    extern FColor White;
-    extern FColor LightGrey;
-    extern FColor Grey;
-    extern FColor DarkGrey;
-    extern FColor Black;
 
-    const FColor Red {1,0,0,1};
+const FColor White = {1,1,1,1};
+const FColor Grey = {0.5,0.5,0.5,1};
+const FColor LightGrey = {0.75,0.75,0.75,1};
+const FColor DarkGrey = {0.25,0.25,0.25,1};
+const FColor Black = {0,0,0,1};
 
-    const FColor BlueprintLight = FColor::FromHex("#0072B2");
-    const FColor Blueprint = FColor::FromHex("#0056B2");
-    const FColor BlueprintDark = FColor::FromHex("#003978");
+const FColor Red {1,0,0,1};
 
-    const FColor GreyBlue = FColor::FromHex("#92C9D9");
-    const FColor FlatBlue = FColor::FromHex("#417DB8");
-    const FColor WhiteBlueprintStroke = FColor::FromHex("#d4f9ff");
-    extern FColor LapisLazuli;
+const FColor GrassGreen = {63./255., 155./255., 11./255., 1.};
+const FColor DarkGrass = FColor::FromHex("#1b4b02");
 
-    const FColor WoodLight = FColor::FromHex("#cdaa7d");
+const FColor LapisLazuli = {38./255., 97./255., 156./255., 1};
+const FColor BlueprintLight = FColor::FromHex("#0072B2");
+const FColor Blueprint = FColor::FromHex("#0056B2");
+const FColor BlueprintDark = FColor::FromHex("#003978");
+const FColor GreyBlue = FColor::FromHex("#92C9D9");
+const FColor FlatBlue = FColor::FromHex("#417DB8");
+const FColor WhiteBlueprintStroke = FColor::FromHex("#d4f9ff");
 
-    extern FColor GrassGreen;
-    extern FColor DarkGrass;
-    const FColor Nil = FColor(-1, -1, -1, -1);
+const FColor WoodLight = FColor::FromHex("#cdaa7d");
+
+const FColor Nil {-1, -1, -1, -1};
 
     using rgb = struct {
         DevFloat r;       // a fraction between 0 and 1

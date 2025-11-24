@@ -31,6 +31,7 @@ constexpr auto StartRunning = true;
 
 
 FBigHill::FBigHill(const TPointer<FPlaneFactory>& PlaneFactory) {
+
     fix World = PhysicsEngine->GetWorld();
     Plane = PlaneFactory->BuildPlane(World);
     PhysicsEngine->SetPlane(Plane);
@@ -126,6 +127,19 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
 }
 
 void FBigHill::HandleInputState(const FInputState InputState) {
+    fix &KeyboardState = InputState.KeyboardState;
+
+    constexpr auto ZoomFactor = 1.0075;
+
+    if (KeyboardState.IsPressed(Graphics::Key_PLUS) || KeyboardState.IsPressed(Graphics::Key_EQUAL) ) {
+        Camera->Zoom(ZoomFactor);
+        return;
+    }
+    if (KeyboardState.IsPressed(Graphics::Key_MINUS)) {
+        Camera->Zoom(1./ZoomFactor);
+        return;
+    }
+
     Controller->HandleInputState(InputState);
 }
 
@@ -139,7 +153,7 @@ bool FBigHill::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, 
     return false;
 }
 
-void FBigHill::TogglePause() { b_IsRunning = !b_IsRunning; }
+void FBigHill::TogglePause() { PhysicsEngine->TogglePause(); }
 
 /*
 void FBigHill::SetupMonitors() {

@@ -49,8 +49,8 @@ auto FTrackerCamera::SetCenter(const Slab::Math::Point2D& Center) -> void {
 }
 
 void FTrackerCamera::Zoom(const float ZoomFactor) {
-    const auto NewViewWidth = View.GetWidth() * ZoomFactor;
-    const auto NewViewHeight = View.GetHeight() * ZoomFactor;
+    const auto NewViewWidth = View.GetWidth() / ZoomFactor;
+    const auto NewViewHeight = View.GetHeight() / ZoomFactor;
 
     const auto xCenter = View.xCenter();
     const auto yCenter = View.yCenter();

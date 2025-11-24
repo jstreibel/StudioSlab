@@ -71,8 +71,6 @@ void FLittlePlaneDesignerApp::OnStart() {
     auto PlaneFactory = BlueprintScene->GetPlaneFactory();
     BigHill = Slab::New<FBigHill>(PlaneFactory);
 
-
-
     Controller = BigHill;
     CurrentScene = BigHill;
 

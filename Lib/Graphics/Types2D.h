@@ -5,6 +5,7 @@
 #ifndef STUDIOSLAB_GRAPHICS_TYPES_H
 #define STUDIOSLAB_GRAPHICS_TYPES_H
 
+#include "Math/Formalism/Categories.h"
 #include "Utils/Types.h"
 #include "Utils/Numbers.h"
 
@@ -49,7 +50,7 @@ namespace Slab::Graphics {
         Point2D(const Int x, const Int y) : x(static_cast<DevFloat>(x)), y(static_cast<DevFloat>(y)) {}
         Point2D(const Point2D& p) = default;
 
-        Point2D operator +  (const Point2D &p) const {return {x+p.x, y+p.y}; };
+        Point2D operator +  (const Point2D &p) const {return {x+p.x, y+p.y}; }
 
         void    operator += (const Point2D &p) { x+=p.x; y+=p.y; }
         void    operator -= (const Point2D &p) { x-=p.x; y-=p.y; }
@@ -57,6 +58,8 @@ namespace Slab::Graphics {
         void    operator *= (const DevFloat &a) { x*=a; y*=a; }
 
         Point2D WithTranslation(const DevFloat dx, const DevFloat dy) const { return {x+dx, y+dy}; }
+
+        Math::Real2D ToReal2D() const { return {x, y}; }
 
         DevFloat LengthSqr() const { return x * x + y * y;}
         DevFloat Length( ) const { return sqrt(LengthSqr());}

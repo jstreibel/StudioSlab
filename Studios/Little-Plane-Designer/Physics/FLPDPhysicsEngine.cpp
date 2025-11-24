@@ -9,11 +9,27 @@
 constexpr int SubSteps = 1;
 constexpr int ManualSubSteps = 10;
 constexpr float VectorScale = 1.e-3f;
+constexpr float PseudoVectorScale = 1.e-2f;
 
 FLittlePlaneDesignerPhysicsEngine::FLittlePlaneDesignerPhysicsEngine() {
     auto worldDef = b2DefaultWorldDef();
     worldDef.gravity = (b2Vec2){0.0f, -9.8f};
     World = b2CreateWorld(&worldDef);
+
+    const auto SystemWindow = Graphics::GetGraphicsBackend()->GetMainSystemWindow();
+
+    auto &Drawer = *DebugDraw.handle();
+    Drawer.drawMass = false;
+    Drawer.drawShapes = true;
+    Drawer.drawJoints = false;
+    Drawer.drawIslands = false;
+    Drawer.drawBounds = false;
+    Drawer.drawBodyNames = false;
+    Drawer.drawContacts = false;
+    Drawer.drawContactNormals = false;
+    Drawer.drawContactImpulses = false;
+    Drawer.drawContactFeatures = false;
+    Drawer.drawFrictionImpulses = false;
 }
 
 void FLittlePlaneDesignerPhysicsEngine::Tick(const Seconds ElapsedTime) {
@@ -40,26 +56,35 @@ void FLittlePlaneDesignerPhysicsEngine::Draw(const Graphics::FDraw2DParams & Par
         return FromSpaceToViewportCoord(Pt, Params.Region, Graphics::RectI{0, Params.ScreenWidth, 0, Params.ScreenHeight});
     });
 
+    const auto Mass = Plane->GetTotalMass();
+    const auto COM =  Plane->GetCenterOfMass_Global();
+
     auto &Drawer = *DebugDraw.handle();
-    Drawer.drawMass = true;
-    Drawer.drawBounds = false;
-    Drawer.drawIslands = false;
-    Drawer.drawBodyNames = false;
-    Drawer.drawShapes = true;
-    Drawer.drawJoints = false;
+
+    ImGui::Begin("Physics Scheme", nullptr, ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::SeparatorText("Draw");
+    ImGui::Checkbox("Mass", &Drawer.drawMass);
+    ImGui::Checkbox("Shapes", &Drawer.drawShapes);
+    ImGui::Checkbox("Joints", &Drawer.drawJoints);
+    ImGui::Checkbox("Islands", &Drawer.drawIslands);
+    ImGui::Checkbox("Bounds", &Drawer.drawBounds);
+    ImGui::Checkbox("Body names", &Drawer.drawBodyNames);
+    ImGui::Checkbox("Contacts", &Drawer.drawContacts);
+    ImGui::Checkbox("Contact normals", &Drawer.drawContactNormals);
+    ImGui::Checkbox("Contact impulses", &Drawer.drawContactImpulses);
+    ImGui::Checkbox("Contact features", &Drawer.drawContactFeatures);
+    ImGui::Checkbox("Friction impulses", &Drawer.drawFrictionImpulses);
+    ImGui::SeparatorText("Other");
+    ImGui::Checkbox("Pause", &b_IsRunning);
+    ImGui::Text("Mass: %.2fkg", Mass);
+    ImGui::End();
 
     DebugDraw.SetupLegacyGL();
 
     b2World_Draw(World, &Drawer);
 
-    constexpr auto Scale = VectorScale;
-
-    const auto Mass = Plane->GetTotalMass();
-    const auto COM =  Plane->GetCenterOfMass_Global();
-
     const auto Grav = b2World_GetGravity(World);
-    DebugDraw.DrawVector(Mass * Grav, COM, Scale, b2_colorForestGreen);
-
+    DebugDraw.DrawVector(Mass * Grav, COM, VectorScale, b2_colorForestGreen);
     {
         for (const auto ForcesData : Plane->GetLastAirfoilDynamicData()) {
             const auto drag = ForcesData.drag;
@@ -67,14 +92,14 @@ void FLittlePlaneDesignerPhysicsEngine::Draw(const Graphics::FDraw2DParams & Par
             const auto loc = ForcesData.loc;
             const auto τ = ForcesData.torque;
 
-            DebugDraw.DrawVector(drag, loc, Scale, b2_colorRed);
-            DebugDraw.Write("drag", loc + drag*Scale, b2_colorRed);
+            DebugDraw.DrawVector(drag, loc, VectorScale, b2_colorRed);
+            DebugDraw.Write("drag", loc + drag*VectorScale, b2_colorRed);
 
-            DebugDraw.DrawVector(lift, loc, Scale, b2_colorAliceBlue);
-            DebugDraw.Write("lift", loc + lift*Scale, b2_colorAliceBlue);
+            DebugDraw.DrawVector(lift, loc, VectorScale, b2_colorAliceBlue);
+            DebugDraw.Write("lift", loc + lift*VectorScale, b2_colorAliceBlue);
 
-            DebugDraw.DrawPseudoVector(τ, loc, Scale, .0f, b2_colorDarkCyan);
-            DebugDraw.Write("Torque (aero)", loc + b2Vec2{static_cast<float>(τ)*Scale, .0f}, b2_colorDarkCyan);
+            DebugDraw.DrawPseudoVector(τ, loc, PseudoVectorScale, .0f, b2_colorDarkCyan);
+            DebugDraw.Write("Torque (aero)", loc + b2Vec2{static_cast<float>(τ)*PseudoVectorScale, .0f}, b2_colorDarkCyan);
         }
     }
 

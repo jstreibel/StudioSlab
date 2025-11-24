@@ -172,8 +172,8 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
 
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = {
-        float(Position.x + Descriptor.RelativeLocation.x - Params.COM.x),
-        float(Position.y + Descriptor.RelativeLocation.y - Params.COM.y)
+        static_cast<float>(Position.x + Descriptor.RelativeLocation.x - Params.COM.x),
+        static_cast<float>(Position.y + Descriptor.RelativeLocation.y - Params.COM.y)
     };
     bodyDef.rotation = b2MakeRot(Descriptor.BaseAngle);
 
@@ -189,11 +189,13 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
     // 1) Build hull
     b2Hull hull;
     {
+        fix xCOM = -static_cast<float>(Params.COM.x);
+        fix yCOM = -static_cast<float>(Params.COM.y);
         const b2Vec2 pts[4] = {
-            { -0.5f*Chord, -0.5f*Thick },
-            {  0.5f*Chord, -0.5f*Thick },
-            {  0.5f*Chord,  0.5f*Thick },
-            { -0.5f*Chord,  0.5f*Thick }
+            { -0.5f*Chord-xCOM, -0.5f*Thick-yCOM },
+            {  0.5f*Chord-xCOM, -0.5f*Thick-yCOM },
+            {  0.5f*Chord-xCOM,  0.5f*Thick-yCOM },
+            { -0.5f*Chord-xCOM,  0.5f*Thick-yCOM }
         }; // in COM reference frame
         hull = b2ComputeHull(pts, 4);
     }
@@ -209,8 +211,8 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
     sdef.material.restitution = Descriptor.Restitution;
     b2CreatePolygonShape(WingBody, &sdef, &WingShape);
 
-    auto [COM_x, COM_y] = Params.COM;
-    ShiftBodyCOM(COM_x*Chord, COM_y*Thick, WingBody);
+    // auto [COM_x, COM_y] = Params.COM;
+    // ShiftBodyCOM(COM_x*Chord, COM_y*Thick, WingBody);
 
     return New<FWing>(FWing{
         .BodyId = WingBody,

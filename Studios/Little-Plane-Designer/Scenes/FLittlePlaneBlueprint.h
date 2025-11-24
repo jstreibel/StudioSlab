@@ -25,10 +25,17 @@ public:
     bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state,
         Graphics::EModKeys modKeys) override;
 
+    void AddPartAnnotation(const Str& Annotation, Math::Real2D ItemLocation);
+    void AddGlobalCharacteristicAnnotation(const Str& Annotation) const;
+
 private:
     TPointer<FPlaneFactory> PlaneFactory;
     TPointer<Graphics::OpenGL::FWriterOpenGL> Writer;
 
+    void SetupAnnotations();
+
+    Real64 GlyphHeight;
+    int NumAnnotations = 0;
     int Proportion = 40; // Scale is 1:Proportion
 
     static void DrawBlueprint();

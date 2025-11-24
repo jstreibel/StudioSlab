@@ -9,11 +9,12 @@
 #include "Utils/Pointer.h"
 
 #include "../Plane/FLittlePlane.h"
+#include "Graphics/Modules/ImGui/ImGuiContext.h"
 
 
 struct FLittlePlaneDesignerPhysicsEngine final : IUpdateable, Graphics::IDrawable2D
 {
-    FLittlePlaneDesignerPhysicsEngine();
+    explicit FLittlePlaneDesignerPhysicsEngine();
 
     void Tick(Seconds ElapsedTime) override;
     void TogglePause() override;
@@ -26,6 +27,8 @@ struct FLittlePlaneDesignerPhysicsEngine final : IUpdateable, Graphics::IDrawabl
     void Draw(const Graphics::FDraw2DParams&) override;
 
 private:
+    // TPointer<Graphics::FImGuiContext> ImGuiContext;
+
     LegacyGLDebugDraw DebugDraw;
     TPointer<FLittlePlane> Plane;
     b2WorldId World;

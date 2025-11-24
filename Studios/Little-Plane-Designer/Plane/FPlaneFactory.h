@@ -6,11 +6,8 @@
 #define STUDIOSLAB_FPLANEFACTORY_H
 
 #include "FLittlePlane.h"
+#include "../Physics/Materials.h"
 #include "Math/Geometry/Geometry.h"
-
-constexpr float ExpandedPolystyreneDensity = 11.0f;
-constexpr float ExpandedPolystyreneFriction = 0.01f;
-constexpr float ExpandedPolystyreneRestitution = 0.0f;
 
 struct IBodyPartBlueprintRenderer {
     virtual ~IBodyPartBlueprintRenderer() = default;
@@ -20,9 +17,9 @@ struct IBodyPartBlueprintRenderer {
 };
 
 struct FWingDescriptor {
-    float Density = ExpandedPolystyreneDensity;
-    float Friction = ExpandedPolystyreneFriction;
-    float Restitution = ExpandedPolystyreneRestitution;
+    float Density = ExpandedPolystyrene.Density;
+    float Friction = ExpandedPolystyrene.Friction;
+    float Restitution = ExpandedPolystyrene.Restitution;
 
     TPointer<Foil::IAirfoilPolars> Airfoil;
     Foil::FAirfoilParams Params;
