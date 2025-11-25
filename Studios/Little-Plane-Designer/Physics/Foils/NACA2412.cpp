@@ -4,7 +4,7 @@
 
 #include "NACA2412.h"
 
-static Math::FPointSet GetNACA2412ProfileVertices(int N, const float chord_length, float thickness){
+static Math::FPointSet GetNACA2412ProfileVertices(int N, const float chord_length, float thickness_in_units_of_chord_length){
     if (N < 2) N = 2;
     Math::Point2DVec v;
     v.reserve(2 * (N + 1));
@@ -12,13 +12,13 @@ static Math::FPointSet GetNACA2412ProfileVertices(int N, const float chord_lengt
     // NACA m=camber, p=camber pos, t=thickness (unit chord)
     constexpr double m = 0.02;     // 2412
     constexpr double p = 0.40;
-    const double t = thickness*chord_length;
+    const double thickness = thickness_in_units_of_chord_length*chord_length;
 
     // ---- Geometry helpers ----
     // NACA 4-digit formulas on x∈[0,1]
-    auto yt = [t](const double x) {
+    auto yt = [thickness](const double x) {
         const double rt = std::sqrt(std::max(0.0, x));
-        return 5.0 * t * (0.2969 * rt - 0.1260 * x - 0.3516 * x * x
+        return 5.0 * thickness * (0.2969 * rt - 0.1260 * x - 0.3516 * x * x
                           + 0.2843 * x * x * x - 0.1015 * x * x * x * x);
     };
     auto yc = [](const double x) {
@@ -53,10 +53,10 @@ static Math::FPointSet GetNACA2412ProfileVertices(int N, const float chord_lengt
     return Math::FPointSet(v);
 }
 
-Math::FPointSet Foil::Airfoil_NACA2412::GetProfileVertices(int N, float chord_length, float thickness) const {
-    return GetNACA2412ProfileVertices(N, chord_length, thickness);
+Math::FPointSet Foil::Airfoil_NACA2412::GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const {
+    return GetNACA2412ProfileVertices(N, chord_length, thickness_in_units_of_chord);
 }
 
-Math::FPointSet Foil::ViternaAirfoil2412::GetProfileVertices(int N, float chord_length, float thickness) const {
-    return GetNACA2412ProfileVertices(N, chord_length, thickness);
+Math::FPointSet Foil::ViternaAirfoil2412::GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const {
+    return GetNACA2412ProfileVertices(N, chord_length, thickness_in_units_of_chord);
 }

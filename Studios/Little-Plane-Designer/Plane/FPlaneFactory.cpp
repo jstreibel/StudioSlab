@@ -10,9 +10,19 @@
 auto FWingDescriptorRenderer::GetLeftView() const -> Math::FPointSet {
     const auto &Wing = *Descriptor.Wing;
 
-    auto Vertices = Descriptor.Airfoil->GetProfileVertices(100, Wing.Params.ChordLength, Wing.Params.Thickness);
-    const auto COM = Wing.Params.COM;
-    const auto Anchor = COM + Wing.Params.LocalAnchor;
+    /*
+    auto Vertices = Descriptor.Airfoil->GetProfileVertices(B2_MAX_POLYGON_VERTICES, Wing.Params.ChordLength, Wing.Params.Thickness);
+    */
+    fix Chord = Wing.Params.ChordLength;
+    fix Thick = Wing.Params.ThicknessInUnitsOfChortLength * Chord;
+    const Math::Point2DVec Points = {
+        {-Chord/2, -Thick/2},
+        {-Chord/2, +Thick/2},
+        {+Chord/2, +Thick/2},
+        {+Chord/2, -Thick/2}
+    };
+    Math::FPointSet Vertices(Points);
+    const auto Anchor = Wing.Params.LocalAnchor;
 
     return Vertices.Translate(Descriptor.RelativeLocation + Anchor);
 }
@@ -20,10 +30,8 @@ auto FWingDescriptorRenderer::GetLeftView() const -> Math::FPointSet {
 auto FWingDescriptorRenderer::GetTopView() const -> Math::FPointSet {
     fix ChordLength = Descriptor.Params.ChordLength;
     fix WingSpan = Descriptor.Params.Span;
-    fix COMX = Descriptor.Params.COM.x;
-    fix AnchorX = COMX + Descriptor.Params.LocalAnchor.x + ChordLength/2;
+    fix AnchorX = Descriptor.Params.LocalAnchor.x + ChordLength/2;
     fix RelativeLocationX = Descriptor.RelativeLocation.x;
-
 
     Math::FPointSet Points{};
 
@@ -106,16 +114,23 @@ TPointer<FLittlePlane> FPlaneFactory::BuildPlane(const b2WorldId World) {
         WingDesc.Wing = BuildWing(WingDesc, World);
         Wings.emplace_back(WingDesc.Wing);
 
-        const auto [xCom, yCom] = WingDesc.Params.COM;
-        const auto [xAnchorLocal, yAnchorLocal] = WingDesc.Params.LocalAnchor;
-        const auto Chord = WingDesc.Params.ChordLength;
-        const auto Thick = WingDesc.Params.Thickness;
+        const auto [xWingAnchorLocal, yWingAnchorLocal] = WingDesc.Params.LocalAnchor;
+        // const auto Chord = WingDesc.Params.ChordLength;
+        // const auto Thick = WingDesc.Params.Thickness;
         auto Joint = b2DefaultRevoluteJointDef();
         Joint.bodyIdA = HullBody;
         Joint.bodyIdB = WingDesc.Wing->BodyId;
         Joint.collideConnected = false;
-        Joint.localAnchorA = {(float)WingDesc.RelativeLocation.x, (float)WingDesc.RelativeLocation.y};
-        Joint.localAnchorB = {float(xCom * Chord + xAnchorLocal), float(yCom * Thick + yAnchorLocal)};
+        auto &HullAnchor = Joint.localAnchorA;
+        auto &WingAnchor = Joint.localAnchorB;
+        HullAnchor = {
+            .x = static_cast<float>(WingDesc.RelativeLocation.x),
+            .y = static_cast<float>(WingDesc.RelativeLocation.y)
+        };
+        WingAnchor = {
+            .x = static_cast<float>(xWingAnchorLocal),
+            .y = static_cast<float>(yWingAnchorLocal)
+        };
 
         Joint.enableLimit = true;
         Joint.lowerAngle  = WingDesc.MinAngle;
@@ -143,6 +158,7 @@ b2BodyId FPlaneFactory::BuildBody(const b2WorldId World) const {
     bodyDef.position = Position;
     bodyDef.rotation = b2MakeRot(Angle);
     bodyDef.linearDamping = 0.0f;
+
     const b2BodyId Body = b2CreateBody(World, &bodyDef);
     b2Body_SetName(Body, "Plane Body");
 
@@ -172,8 +188,10 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
 
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = {
-        static_cast<float>(Position.x + Descriptor.RelativeLocation.x - Params.COM.x),
-        static_cast<float>(Position.y + Descriptor.RelativeLocation.y - Params.COM.y)
+        // static_cast<float>(Position.x + Descriptor.RelativeLocation.x - Params.COM.x),
+        // static_cast<float>(Position.y + Descriptor.RelativeLocation.y - Params.COM.y)
+        static_cast<float>(Position.x + Descriptor.RelativeLocation.x),
+        static_cast<float>(Position.y + Descriptor.RelativeLocation.y)
     };
     bodyDef.rotation = b2MakeRot(Descriptor.BaseAngle);
 
@@ -184,24 +202,24 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
     // LE=-0.25c, TE=+0.75c
 
     fix Chord = Params.ChordLength;
-    fix Thick = Params.Thickness * Params.ChordLength;
+    fix Thick = Params.ThicknessInUnitsOfChortLength * Params.ChordLength;
 
     // 1) Build hull
     b2Hull hull;
     {
-        fix xCOM = -static_cast<float>(Params.COM.x);
-        fix yCOM = -static_cast<float>(Params.COM.y);
-        const b2Vec2 pts[4] = {
-            { -0.5f*Chord-xCOM, -0.5f*Thick-yCOM },
-            {  0.5f*Chord-xCOM, -0.5f*Thick-yCOM },
-            {  0.5f*Chord-xCOM,  0.5f*Thick-yCOM },
-            { -0.5f*Chord-xCOM,  0.5f*Thick-yCOM }
-        }; // in COM reference frame
-        hull = b2ComputeHull(pts, 4);
+        constexpr auto NumPoints = B2_MAX_POLYGON_VERTICES;
+        fix Vertices = Airfoil->GetProfileVertices(NumPoints, Chord, Thick);
+        fix &Points = Vertices.GetPoints();
+        b2Vec2 PointsB2[NumPoints];
+        for (int i = 0; i < NumPoints; ++i) {
+            PointsB2[i] = {static_cast<float>(Points[i].x), static_cast<float>(Points[i].y)};
+        }
+        hull = b2ComputeHull(PointsB2, NumPoints);
     }
 
     // 2) Make convex polygon from hull
-    const b2Polygon WingShape = b2MakePolygon(&hull, 0.0f);
+    // const b2Polygon WingShape = b2MakePolygon(&hull, 0.0f);
+    const b2Polygon WingShape = b2MakeBox(Chord*.5f, Thick*.5);
 
     // 3) Create a fixture
     b2ShapeDef sdef = b2DefaultShapeDef();

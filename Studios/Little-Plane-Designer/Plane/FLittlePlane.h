@@ -43,6 +43,8 @@ public:
 
     void ComputeAndApplyForces() override;
     float GetTotalMass() const override;
+    float ComputeHullMass() const;
+    float ComputeWingsMass() const;
     b2Vec2 GetCenterOfMass_Global() const override;
     b2Vec2 GetPosition() const override;
     b2Vec2 GetVelocity() const override;

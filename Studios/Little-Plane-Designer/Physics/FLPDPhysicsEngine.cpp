@@ -56,13 +56,26 @@ void FLittlePlaneDesignerPhysicsEngine::Draw(const Graphics::FDraw2DParams & Par
         return FromSpaceToViewportCoord(Pt, Params.Region, Graphics::RectI{0, Params.ScreenWidth, 0, Params.ScreenHeight});
     });
 
-    const auto Mass = Plane->GetTotalMass();
+    const auto HullMass = Plane->ComputeHullMass();
+    const auto WingsMass = Plane->ComputeWingsMass();
+    const auto TotalMass = HullMass + WingsMass;
     const auto COM =  Plane->GetCenterOfMass_Global();
 
     auto &Drawer = *DebugDraw.handle();
 
     ImGui::Begin("Physics Scheme", nullptr, ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_AlwaysAutoResize);
-    ImGui::SeparatorText("Draw");
+
+    static bool b_ShowTorques = true;
+    static bool b_ShowAerodynamicForces = true;
+    static bool b_ShowGravity = true;
+    static bool b_ShowVerticalSpeed = true;
+
+    ImGui::SeparatorText("Aerodynamics");
+    ImGui::Checkbox("Torques", &b_ShowTorques);
+    ImGui::Checkbox("Aerodynamic forces", &b_ShowAerodynamicForces);
+    ImGui::Checkbox("Vertical speed", &b_ShowVerticalSpeed);
+    ImGui::SeparatorText("Other physics diagrams");
+    ImGui::Checkbox("Gravity", &b_ShowGravity);
     ImGui::Checkbox("Mass", &Drawer.drawMass);
     ImGui::Checkbox("Shapes", &Drawer.drawShapes);
     ImGui::Checkbox("Joints", &Drawer.drawJoints);
@@ -76,15 +89,20 @@ void FLittlePlaneDesignerPhysicsEngine::Draw(const Graphics::FDraw2DParams & Par
     ImGui::Checkbox("Friction impulses", &Drawer.drawFrictionImpulses);
     ImGui::SeparatorText("Other");
     ImGui::Checkbox("Pause", &b_IsRunning);
-    ImGui::Text("Mass: %.2fkg", Mass);
+    ImGui::Text("Total mass: %.2fkg", TotalMass);
+    ImGui::Text("Hull mass: %.2fkg", HullMass);
+    ImGui::Text("Wings mass: %.2fkg", WingsMass);
     ImGui::End();
 
     DebugDraw.SetupLegacyGL();
 
     b2World_Draw(World, &Drawer);
 
-    const auto Grav = b2World_GetGravity(World);
-    DebugDraw.DrawVector(Mass * Grav, COM, VectorScale, b2_colorForestGreen);
+    if (b_ShowGravity) {
+        const auto Grav = b2World_GetGravity(World);
+        DebugDraw.DrawVector(TotalMass * Grav, COM, VectorScale, b2_colorForestGreen);
+    }
+    if (b_ShowTorques || b_ShowAerodynamicForces)
     {
         for (const auto ForcesData : Plane->GetLastAirfoilDynamicData()) {
             const auto drag = ForcesData.drag;
@@ -92,20 +110,25 @@ void FLittlePlaneDesignerPhysicsEngine::Draw(const Graphics::FDraw2DParams & Par
             const auto loc = ForcesData.loc;
             const auto τ = ForcesData.torque;
 
-            DebugDraw.DrawVector(drag, loc, VectorScale, b2_colorRed);
-            DebugDraw.Write("drag", loc + drag*VectorScale, b2_colorRed);
+            if (b_ShowAerodynamicForces) {
+                DebugDraw.DrawVector(drag, loc, VectorScale, b2_colorRed);
+                DebugDraw.Write("drag", loc + drag*VectorScale, b2_colorRed);
 
-            DebugDraw.DrawVector(lift, loc, VectorScale, b2_colorAliceBlue);
-            DebugDraw.Write("lift", loc + lift*VectorScale, b2_colorAliceBlue);
+                DebugDraw.DrawVector(lift, loc, VectorScale, b2_colorAliceBlue);
+                DebugDraw.Write("lift", loc + lift*VectorScale, b2_colorAliceBlue);
+            }
 
-            DebugDraw.DrawPseudoVector(τ, loc, PseudoVectorScale, .0f, b2_colorDarkCyan);
-            DebugDraw.Write("Torque (aero)", loc + b2Vec2{static_cast<float>(τ)*PseudoVectorScale, .0f}, b2_colorDarkCyan);
+            if (b_ShowTorques) {
+                DebugDraw.DrawPseudoVector(τ, loc, PseudoVectorScale, .0f, b2_colorDarkCyan);
+                DebugDraw.Write("Torque (aero)", loc + b2Vec2{static_cast<float>(τ)*PseudoVectorScale, .0f}, b2_colorDarkCyan);
+            }
         }
     }
 
-    const auto [vx, vy] = Plane->GetVelocity();
-    fix VertSpeed = b2Vec2{0, vy};
-    DebugDraw.DrawVector(VertSpeed, COM, 1.0f, b2_colorWhite);
-    DebugDraw.Write("Vert speed", COM + VertSpeed);
+    if (b_ShowVerticalSpeed) {
+        const auto [vx, vy] = Plane->GetVelocity();
+        fix VertSpeed = b2Vec2{0, vy};
+        DebugDraw.DrawVector(VertSpeed, COM, 1.0f, b2_colorWhite);
+        DebugDraw.Write("Vert speed", COM + VertSpeed);
+    }
 }
-

@@ -12,6 +12,8 @@ namespace Slab::Math::Geometry {
 
 TResult<Point2D> ComputeCentroid(const FPointSet& NonIntersecting, bool ForceNoValidation = true);
 
+Real64 ComputeSignedArea(const FPointSet& NonIntersecting);
+
 Real64 ComputeArea(const FPointSet& NonIntersecting);
 
 bool IsValid(const FPointSet& PerhapsIntersecting);

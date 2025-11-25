@@ -26,7 +26,7 @@ public:
         Graphics::EModKeys modKeys) override;
 
     void AddPartAnnotation(const Str& Annotation, Math::Real2D ItemLocation);
-    void AddGlobalCharacteristicAnnotation(const Str& Annotation) const;
+    void AddGlobalCharacteristicAnnotation(const Str& Annotation);
 
 private:
     TPointer<FPlaneFactory> PlaneFactory;
@@ -36,6 +36,7 @@ private:
 
     Real64 GlyphHeight;
     int NumAnnotations = 0;
+    int NumGlobalAnnotations = 0;
     int Proportion = 40; // Scale is 1:Proportion
 
     static void DrawBlueprint();

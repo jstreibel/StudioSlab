@@ -96,11 +96,18 @@ void FLittlePlane::ComputeAndApplyForces() {
 }
 
 float FLittlePlane::GetTotalMass() const {
+    return ComputeHullMass() + ComputeWingsMass();
+}
+
+float FLittlePlane::ComputeHullMass() const {
+    return b2Body_GetMass(HullBody);
+}
+
+float FLittlePlane::ComputeWingsMass() const {
     float Mass = 0.0f;
+
     for (const auto &Wing : Wings)
         Mass += b2Body_GetMass(Wing->BodyId);
-
-    Mass += b2Body_GetMass(HullBody);
 
     return Mass;
 }
@@ -192,10 +199,9 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams&) {
     WingStyle.fillColor = Graphics::FColor::FromBytes(250, 116, 42, 128);
 
     for (const auto &Wing : Wings) {
-        constexpr int NumSegments = 30;
-        const Math::FPointSet AirfoilPoints
-        = Wing->Airfoil->GetProfileVertices(NumSegments, Wing->Params.ChordLength, Wing->Params.Thickness);
-        Math::FPointSet Points = AirfoilPoints;
+        constexpr int NumSegments = B2_MAX_POLYGON_VERTICES;
+        Math::FPointSet Points
+        = Wing->Airfoil->GetProfileVertices(NumSegments, Wing->Params.ChordLength, Wing->Params.ThicknessInUnitsOfChortLength);
 
         const auto Body = Wing->BodyId;
         const auto [x, y] = b2Body_GetPosition(Body);

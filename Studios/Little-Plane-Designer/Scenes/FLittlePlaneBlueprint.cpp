@@ -57,6 +57,7 @@ void FLittlePlaneBlueprint::TogglePause() {
 
 void FLittlePlaneBlueprint::SetupAnnotations() {
     NumAnnotations = 0;
+    NumGlobalAnnotations = 0;
 }
 
 void FLittlePlaneBlueprint::Draw(const Graphics::FDrawInput& Input) {
@@ -116,8 +117,10 @@ void FLittlePlaneBlueprint::AddPartAnnotation(const Str& Annotation, Math::Real2
     ++NumAnnotations;
 }
 
-void FLittlePlaneBlueprint::AddGlobalCharacteristicAnnotation(const Str& Annotation) const {
-    Writer->Write(Annotation, {InnerX - 40*GlyphHeight, -InnerY + 10*GlyphHeight});
+void FLittlePlaneBlueprint::AddGlobalCharacteristicAnnotation(const Str& Annotation) {
+    constexpr auto MaxLines = 3;
+    Writer->Write(Annotation, {InnerX - 40*GlyphHeight, -InnerY + 4*(MaxLines-NumGlobalAnnotations)*GlyphHeight});
+    ++NumGlobalAnnotations;
 }
 
 TPointer<FPlaneFactory> SetupDefaultPlane();
@@ -229,6 +232,8 @@ void FLittlePlaneBlueprint::DrawPlane() {
 
     Math::Point2D COM = {0,0};
     Real64 Mass = 0;
+    Real64 HullMass = 0;
+    Real64 WingMass = 0;
 
     const Math::Real2D SideViewOrigin = {0, -3*InnerY/4};
     const Math::Real2D TopViewOrigin = {0,  +1*InnerY/4};
@@ -247,6 +252,7 @@ void FLittlePlaneBlueprint::DrawPlane() {
 
         COM += MyCOM * MyMass;
         Mass += MyMass;
+        HullMass += MyMass;
 
         Draw::RenderPointSet(Dummy((LeftViewPoints*=Scale).Translate(SideViewOrigin)), StrongStrokeStyle);
         Draw::RenderPointSet(Dummy((TopViewPoints*=Scale).Translate(TopViewOrigin)), StrongStrokeStyle);
@@ -266,6 +272,7 @@ void FLittlePlaneBlueprint::DrawPlane() {
 
         COM += MyCOM * MyMass;
         Mass += MyMass;
+        WingMass += MyMass;
 
         Draw::RenderPointSet((SideViewPoints * Scale).Translate(SideViewOrigin), StrongStrokeStyle);
         Draw::RenderPointSet((TopViewPoints * Scale).Translate(TopViewOrigin), StrongStrokeStyle);
@@ -276,7 +283,10 @@ void FLittlePlaneBlueprint::DrawPlane() {
     RenderCOM(COM * Scale / Mass + SideViewOrigin);
     RenderCOM(Math::Real2D{COM.x, 0.0} * Scale / Mass + TopViewOrigin);
 
+
     AddGlobalCharacteristicAnnotation(ToStr("Total mass: %.2fkg", Mass));
+    AddGlobalCharacteristicAnnotation(ToStr("Hull mass: %.2fkg", HullMass));
+    AddGlobalCharacteristicAnnotation(ToStr("Wings mass: %.2fkg", WingMass));
 }
 
 TPointer<FPlaneFactory> SetupDefaultPlane() {
@@ -326,13 +336,13 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
             .ChordLength = 0.6f,
             .Span = 2.f,
         },
-            .RelativeLocation = {+1.4, 0.0f},
-            .BaseAngle = static_cast<float>(DegToRad(0.0)),
-            .MaxAngle  = static_cast<float>(DegToRad(15)),
-            .MinAngle  = static_cast<float>(DegToRad(-15)),
-            .OscFreq = 10.0f,
-            .DampRatio = 1.0f,
-        });
+        .RelativeLocation = {+1.4, 0.0f},
+        .BaseAngle = static_cast<float>(DegToRad(0.0)),
+        .MaxAngle  = static_cast<float>(DegToRad(15)),
+        .MinAngle  = static_cast<float>(DegToRad(-15)),
+        .OscFreq = 10.0f,
+        .DampRatio = 1.0f,
+    });
 
     return Factory;
 }

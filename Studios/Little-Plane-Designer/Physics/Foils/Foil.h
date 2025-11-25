@@ -20,14 +20,15 @@ struct FAirfoilParams {
     const Str Name = ToStr(RandUtils::RandomUniformUInt());
 
     const float ChordLength = 1.0f;
-    const float Thickness  = 0.1f; // units of chord
+    const float ThicknessInUnitsOfChortLength  = 0.1f; // units of chord
     const float Span  = 2.0f;
     // Relative to COM
     const float LE_local = -0.25f;
     // COM from geometric center, in units of chord_length and thickness, respectively
     // Hint: 38% behind LE (NACA2412 usually sits 35-40% chord length)
-    const Math::Real2D COM = {-.25, -0.01};
-    // Local revolute joint anchor, relative to COM
+    // const Math::Real2D COM = {-.25, -0.01};
+
+    // Local revolute joint anchor, relative to body local origin
     const Math::Real2D LocalAnchor = {.0, .0};
 };
 
@@ -38,7 +39,7 @@ class IAirfoilPolars
 
     virtual Str GetName() const = 0;
 
-    virtual Math::FPointSet GetProfileVertices(int N, float chord_length, float thickness) const = 0;
+    virtual Math::FPointSet GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const = 0;
 
     virtual double Cl(double AlphaRad) const = 0;
     virtual double Cd(double AlphaRad) const = 0;

@@ -194,8 +194,13 @@ TResult<Point2D> ComputeCentroid(const FPointSet& NonIntersecting, const bool Fo
     return TResult<Point2D>::Ok(Point2D{cx, cy});
 }
 
-Real64 ComputeArea(const FPointSet& NonIntersecting) {
+Real64 ComputeSignedArea(const FPointSet& NonIntersecting) {
     return polygon_signed_area(NonIntersecting.GetPoints());
+}
+
+
+Real64 ComputeArea(const FPointSet& NonIntersecting) {
+    return fabs(ComputeSignedArea(NonIntersecting));
 }
 
 bool IsValid(const FPointSet& PerhapsIntersecting) {
