@@ -4,7 +4,9 @@
 
 #include "FLittlePlaneBlueprint.h"
 #include "../Physics/Materials.h"
+#include "../Physics/PolygonMassProperties.h"
 #include "../Physics/Foils/NACA2412.h"
+#include "Core/Tools/Log.h"
 #include "Utils/Angles.h"
 
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
@@ -262,13 +264,14 @@ void FLittlePlaneBlueprint::DrawPlane() {
         auto SideViewPoints = FWingDescriptorRenderer {Wing}. GetLeftView();
         auto TopViewPoints  = FWingDescriptorRenderer {Wing}. GetTopView();
 
-        auto COMResult = Math::Geometry::ComputeCentroid(SideViewPoints);
-        if (COMResult.IsFailure()) continue;
+        if (auto PolygonValidationResult = Math::Geometry::ValidatePolygon(SideViewPoints); !PolygonValidationResult) {
+            Core::Log::Error(ToStr("Bad airfoil profile: \"%s\"", PolygonValidationResult.ToString().c_str()));
+            continue;
+        }
+        fix WingMassProperties = ComputePolygonMassProperties(SideViewPoints, Wing.Density*Wing.Params.Span);
 
-        const auto Volume = Math::Geometry::ComputeArea(SideViewPoints) * Wing.Params.Span;
-
-        fix MyCOM = COMResult.Value();
-        fix MyMass = Volume * Wing.Density;
+        fix MyCOM = WingMassProperties.Centroid;
+        fix MyMass = WingMassProperties.Mass;
 
         COM += MyCOM * MyMass;
         Mass += MyMass;

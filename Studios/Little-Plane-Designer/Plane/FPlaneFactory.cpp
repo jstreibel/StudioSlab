@@ -4,24 +4,16 @@
 
 #include "FPlaneFactory.h"
 
+#include "../Physics/PolygonMassProperties.h"
+#include "Core/Tools/Log.h"
 #include "graphic/graphic_basic.h"
-
+#include "../Defaults.h"
 
 auto FWingDescriptorRenderer::GetLeftView() const -> Math::FPointSet {
     const auto &Wing = *Descriptor.Wing;
 
-    /*
-    auto Vertices = Descriptor.Airfoil->GetProfileVertices(B2_MAX_POLYGON_VERTICES, Wing.Params.ChordLength, Wing.Params.Thickness);
-    */
-    fix Chord = Wing.Params.ChordLength;
-    fix Thick = Wing.Params.ThicknessInUnitsOfChortLength * Chord;
-    const Math::Point2DVec Points = {
-        {-Chord/2, -Thick/2},
-        {-Chord/2, +Thick/2},
-        {+Chord/2, +Thick/2},
-        {+Chord/2, -Thick/2}
-    };
-    Math::FPointSet Vertices(Points);
+    auto Vertices = Descriptor.Airfoil->GetProfileVertices(DefaultAirfoilProfileNumSegments, Wing.Params.ChordLength, Wing.Params.ThicknessInUnitsOfChortLength);
+
     const auto Anchor = Wing.Params.LocalAnchor;
 
     return Vertices.Translate(Descriptor.RelativeLocation + Anchor);
@@ -78,10 +70,7 @@ auto FBodyPartRenderer::GetTopView() const -> Math::FPointSet {
     return Math::FPointSet(Points);
 }
 
-FPlaneFactory& FPlaneFactory::Reset()
-{
-    return *this = FPlaneFactory();
-}
+FPlaneFactory& FPlaneFactory::Reset() { return *this = FPlaneFactory(); }
 
 FPlaneFactory& FPlaneFactory::AddWing(const FWingDescriptor &Descriptor)
 {
@@ -183,13 +172,10 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
     const auto Params = Descriptor.Params;
     const auto Airfoil = Descriptor.Airfoil;
 
-    // Dynamic box
     b2BodyDef bodyDef = b2DefaultBodyDef();
 
     bodyDef.type = b2_dynamicBody;
     bodyDef.position = {
-        // static_cast<float>(Position.x + Descriptor.RelativeLocation.x - Params.COM.x),
-        // static_cast<float>(Position.y + Descriptor.RelativeLocation.y - Params.COM.y)
         static_cast<float>(Position.x + Descriptor.RelativeLocation.x),
         static_cast<float>(Position.y + Descriptor.RelativeLocation.y)
     };
@@ -204,24 +190,8 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
     fix Chord = Params.ChordLength;
     fix Thick = Params.ThicknessInUnitsOfChortLength * Params.ChordLength;
 
-    // 1) Build hull
-    b2Hull hull;
-    {
-        constexpr auto NumPoints = B2_MAX_POLYGON_VERTICES;
-        fix Vertices = Airfoil->GetProfileVertices(NumPoints, Chord, Thick);
-        fix &Points = Vertices.GetPoints();
-        b2Vec2 PointsB2[NumPoints];
-        for (int i = 0; i < NumPoints; ++i) {
-            PointsB2[i] = {static_cast<float>(Points[i].x), static_cast<float>(Points[i].y)};
-        }
-        hull = b2ComputeHull(PointsB2, NumPoints);
-    }
-
-    // 2) Make convex polygon from hull
-    // const b2Polygon WingShape = b2MakePolygon(&hull, 0.0f);
     const b2Polygon WingShape = b2MakeBox(Chord*.5f, Thick*.5);
 
-    // 3) Create a fixture
     b2ShapeDef sdef = b2DefaultShapeDef();
     // Convert 3D density (kg/m^3) -> 2D density (kg/m^2) using span as out-of-plane depth
     sdef.density = Descriptor.Density * Params.Span;
@@ -231,6 +201,21 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
 
     // auto [COM_x, COM_y] = Params.COM;
     // ShiftBodyCOM(COM_x*Chord, COM_y*Thick, WingBody);
+
+    {
+        fix Vertices = Airfoil->GetProfileVertices(DefaultAirfoilProfileNumSegments, Chord, Thick);
+        if (const auto PolyValidation = Math::Geometry::ValidatePolygon(Vertices); !PolyValidation)
+            throw std::runtime_error("Invalid airfoil profile: " + PolyValidation.ToString() + ".");
+
+        fix WingMassProperties = ComputePolygonMassProperties(Vertices, Descriptor.Density*Params.Span);
+        b2MassData MassData = {
+            .mass = static_cast<float>(WingMassProperties.Mass),
+            .center = {static_cast<float>(WingMassProperties.Centroid.x), static_cast<float>(WingMassProperties.Centroid.y)},
+            .rotationalInertia = static_cast<float>(WingMassProperties.InertiaOrigin)
+        };
+
+        b2Body_SetMassData(WingBody, MassData);
+    }
 
     return New<FWing>(FWing{
         .BodyId = WingBody,

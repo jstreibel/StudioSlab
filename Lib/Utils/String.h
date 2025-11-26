@@ -52,6 +52,7 @@ namespace Slab {
 
     Str ToStr(const StrVector &strVector);
 
+    Str operator + (const Str&, float);
 }
 
 #endif //STUDIOSLAB_STRING_H

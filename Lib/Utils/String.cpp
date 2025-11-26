@@ -175,5 +175,9 @@ namespace Slab {
         return val;
     }
 
+    Str operator+(const Str& basic_string, const float x) {
+        return basic_string + ToStr(x);
+    }
+
 
 }

@@ -9,6 +9,9 @@
 
 namespace Foil {
 
+// COM from geometric center, in units of chord_length and thickness, respectively
+// Hint: 38% behind LE (NACA2412 usually sits 35-40% chord length)
+
 class Airfoil_NACA2412 final : public IAirfoilPolars
 {
 public:

@@ -12,6 +12,7 @@
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 #include "Graphics/Plot2D/PlotStyle.h"
 #include "Graphics/SFML/Graph.h"
+#include "../Defaults.h"
 
 Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
     const FWing& Wing,
@@ -199,16 +200,15 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams&) {
     WingStyle.fillColor = Graphics::FColor::FromBytes(250, 116, 42, 128);
 
     for (const auto &Wing : Wings) {
-        constexpr int NumSegments = B2_MAX_POLYGON_VERTICES;
+
         Math::FPointSet Points
-        = Wing->Airfoil->GetProfileVertices(NumSegments, Wing->Params.ChordLength, Wing->Params.ThicknessInUnitsOfChortLength);
+        = Wing->Airfoil->GetProfileVertices(DefaultAirfoilProfileNumSegments, Wing->Params.ChordLength, Wing->Params.ThicknessInUnitsOfChortLength);
 
         const auto Body = Wing->BodyId;
         const auto [x, y] = b2Body_GetPosition(Body);
         const auto [cosWing, sinWing] = b2Body_GetRotation(Body);
         for (auto &Point : Points.GetPoints()) {
-            const auto chord = Wing->Params.ChordLength;
-            fix px = Point.x -chord*.5f;
+            fix px = Point.x;
             fix py = Point.y;
 
             Point.x = x + px*cosWing - py*sinWing;

@@ -16,7 +16,31 @@ Real64 ComputeSignedArea(const FPointSet& NonIntersecting);
 
 Real64 ComputeArea(const FPointSet& NonIntersecting);
 
-bool IsValid(const FPointSet& PerhapsIntersecting);
+struct FPolygonValidationResult {
+    enum EResult {
+        Ok = 0,
+        TooFewPoints,
+        ZeroLengthEdge,
+        SelfIntersecting,
+        Degenerate,
+    } Result;
+
+    bool operator!() const { return Result != Ok; }
+
+    Str ToString() const {
+        switch (Result) {
+            case Ok: return "Ok";
+            case TooFewPoints: return "too few vertices (< 3)";
+            case ZeroLengthEdge: return "zero-length edge (repeated vertex)";
+            case SelfIntersecting: return "self-intersecting polygon";
+            case Degenerate: return "degenerate polygon (zero area, all points collinear?)";
+        }
+
+        return "unknown result";
+    }
+};
+
+FPolygonValidationResult ValidatePolygon(const FPointSet& PerhapsIntersecting);
 
 struct RectR {
     Real64 left, right, bottom, top;

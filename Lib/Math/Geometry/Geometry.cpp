@@ -8,10 +8,9 @@
 #include <cmath>
 #include <string>
 #include <iostream>
-#include <SFML/Window/Keyboard.hpp>
+#include <catch2/internal/catch_clara.hpp>
 
 #include "imgui_node_editor.h"
-#include "3rdParty/NanoTeX/src/utils/nums.h"
 
 
 namespace Slab::Math::Geometry {
@@ -118,40 +117,31 @@ std::vector<Point2D> normalize_open_ring(const std::vector<Point2D>& pts) {
 }
 
 // ----- public API -----
-// Returns true if polygon is a simple (non self-intersecting) polygon with nonzero area
-bool polygon_is_valid(const std::vector<Point2D>& raw_pts, std::string* reason = nullptr) {
+
+FPolygonValidationResult validate_polygon(const std::vector<Point2D>& raw_pts) {
     std::vector<Point2D> pts = normalize_open_ring(raw_pts);
     const int n = static_cast<int>(pts.size());
 
-    if (n < 3) {
-        if (reason) *reason = "Too few vertices (< 3).";
-        return false;
-    }
+    if (n < 3) return {FPolygonValidationResult::TooFewPoints};
 
     // Check for consecutive duplicate vertices (zero-length edges)
     for (int i = 0; i < n; ++i) {
         const Point2D& a = pts[i];
         const Point2D& b = pts[(i + 1) % n];
-        if (points_equal(a, b)) {
-            if (reason) *reason = "Zero-length edge (repeated vertex).";
-            return false;
-        }
+        if (points_equal(a, b))
+            return {FPolygonValidationResult::ZeroLengthEdge};
     }
 
     // Self-intersections
-    if (polygon_self_intersects(pts)) {
-        if (reason) *reason = "Self-intersecting polygon.";
-        return false;
-    }
+    if (polygon_self_intersects(pts))
+        return {FPolygonValidationResult::SelfIntersecting};
 
     // Nonzero area
     double A = polygon_signed_area(pts);
-    if (std::fabs(A) <= EPS) {
-        if (reason) *reason = "Degenerate polygon (zero area, all points collinear?).";
-        return false;
-    }
+    if (std::fabs(A) <= EPS)
+        return {FPolygonValidationResult::Degenerate};
 
-    return true;
+    return {FPolygonValidationResult::Ok};
 }
 
 // Compute centroid (center of mass for constant density).
@@ -184,7 +174,7 @@ bool polygon_centroid(const std::vector<Point2D>& raw_pts, double& cx, double& c
 }
 
 TResult<Point2D> ComputeCentroid(const FPointSet& NonIntersecting, const bool ForceNoValidation) {
-    if (!ForceNoValidation && !IsValid(NonIntersecting)) TResult<Point2D>::Fail("Invalid geometry: either intersecting or degenerate.");
+    if (!ForceNoValidation && !ValidatePolygon(NonIntersecting)) TResult<Point2D>::Fail("Invalid geometry: either intersecting or degenerate.");
 
     double cx, cy;
     if (!polygon_centroid(NonIntersecting.GetPoints(), cx, cy)) {
@@ -203,8 +193,8 @@ Real64 ComputeArea(const FPointSet& NonIntersecting) {
     return fabs(ComputeSignedArea(NonIntersecting));
 }
 
-bool IsValid(const FPointSet& PerhapsIntersecting) {
-    return polygon_is_valid(PerhapsIntersecting.GetPoints());
+FPolygonValidationResult ValidatePolygon(const FPointSet& PerhapsIntersecting) {
+    return validate_polygon(PerhapsIntersecting.GetPoints());
 }
 
 FPointSet FCircle::GetPoints() const {

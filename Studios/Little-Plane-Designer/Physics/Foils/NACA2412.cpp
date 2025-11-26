@@ -31,14 +31,14 @@ static Math::FPointSet GetNACA2412ProfileVertices(int N, const float chord_lengt
     };
 
     // Lower surface from TE->LE
-    for (int i = 0; i <= N; ++i) {
+    for (int i = 0; i <= N-1; ++i) {
         const double x = 1.0 - static_cast<double>(i) / N; // 1..0
         const double th = std::atan(dyc_dx(x));
         const double yt_ = yt(x);
         const double yc_ = yc(x);
         double xl = x + yt_ * std::sin(th);
         double yl = yc_ - yt_ * std::cos(th);
-        v.push_back({xl*chord_length, yl});
+        v.push_back({(xl-.5)*chord_length, yl});
     }
     // Upper surface from LE->TE
     for (int i = 0; i <= N; ++i) {
@@ -48,7 +48,7 @@ static Math::FPointSet GetNACA2412ProfileVertices(int N, const float chord_lengt
         const double yc_ = yc(x);
         double xu = x - yt_ * std::sin(th);
         double yu = yc_ + yt_ * std::cos(th);
-        v.push_back({xu*chord_length, yu});
+        v.push_back({(xu-.5)*chord_length, yu});
     }
     return Math::FPointSet(v);
 }
