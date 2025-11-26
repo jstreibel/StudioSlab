@@ -4,7 +4,6 @@
 
 #include "FLittlePlaneBlueprint.h"
 #include "../Physics/Materials.h"
-#include "../Physics/PolygonMassProperties.h"
 #include "../Physics/Foils/NACA2412.h"
 #include "Core/Tools/Log.h"
 #include "Utils/Angles.h"
@@ -263,14 +262,16 @@ void FLittlePlaneBlueprint::DrawPlane() {
 
     static bool FirstRun = true;
     for (const auto &Wing : GetPlaneFactory()->WingDescriptors) {
-        auto SideViewPoints = FWingDescriptorRenderer {Wing}. GetLeftView();
-        auto TopViewPoints  = FWingDescriptorRenderer {Wing}. GetTopView();
+        fix WingUtils = FWingDescriptorUtils {Wing};
+
+        auto SideViewPoints = WingUtils.GetLeftView();
+        auto TopViewPoints  = WingUtils.GetTopView();
 
         if (auto PolygonValidationResult = Math::Geometry::ValidatePolygon(SideViewPoints); !PolygonValidationResult) {
             Core::Log::Error(ToStr("Bad airfoil profile: \"%s\"", PolygonValidationResult.ToString().c_str()));
             continue;
         }
-        fix WingMassProperties = Wing.ComputeMassProperties();
+        fix WingMassProperties = WingUtils.ComputeMassProperties();
 
         fix MyCOM = WingMassProperties.Centroid;
         fix MyMass = WingMassProperties.Mass;
@@ -306,7 +307,7 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
     ->SetPosition({161.5f, 41.f})
     .SetRotation(DegToRad(0.0f))
     .AddBodyPart({
-        .Density = LightMaterialDensity,
+        .Density = LightPlaneDensity,
         .Length = 4.0f,
         .Height = 0.5,
         .Depth = 0.8f,
@@ -316,17 +317,17 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
         .Length = 0.4,
         .Height = 0.15,
         .Depth = 0.25,
-        .xOffset = -1.85
+        .xOffset = -1.5
     })
     .AddBodyPart({
-        .Density = LightMaterialDensity,
+        .Density = LightPlaneDensity,
         .Length = 0.4,
         .Height = 0.4,
         .xOffset = -1.0,
         .yOffset = -0.5,
     })
-    .AddWing(FWingDescriptor{
-        .Density = LightMaterialDensity,
+    .AddWing({
+        .Density = LightPlaneDensity,
         .Airfoil = New<Foil::ViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
             .Name = "Wing",
@@ -338,8 +339,8 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
         .MaxAngle  = static_cast<float>(DegToRad(15)),
         .MinAngle  = static_cast<float>(DegToRad(-15)),
     })
-    .AddWing(FWingDescriptor{
-        .Density = LightMaterialDensity,
+    .AddWing({
+        .Density = LightPlaneDensity,
         .Airfoil = New<Foil::ViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
             .Name = "Winglet",

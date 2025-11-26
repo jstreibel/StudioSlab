@@ -5,14 +5,15 @@
 #ifndef STUDIOSLAB_MATERIALS_H
 #define STUDIOSLAB_MATERIALS_H
 
-constexpr auto LightMaterialDensity = 100.0f;
-constexpr auto HeavyMaterialDensity = 230.0f;
-constexpr auto LightRockDensity = 1600.0f;
-constexpr auto HeavyRockDensity = 3500.0f;
+constexpr auto LightPlaneDensity = 100.0;
+constexpr auto HeavyPlaneDensity = 230.0;
 
-constexpr float ExpandedPolystyreneDensity = 11.0f;
-constexpr float ExpandedPolystyreneFriction = 0.01f;
-constexpr float ExpandedPolystyreneRestitution = 0.0f;
+constexpr auto LightRockDensity = 1600.0;
+constexpr auto HeavyRockDensity = 3500.0;
+
+constexpr auto ExpandedPolystyreneDensity = 11.0;
+constexpr auto ExpandedPolystyreneFriction = 0.01;
+constexpr auto ExpandedPolystyreneRestitution = 0.0;
 
 struct FMaterial {
     const Real64 Density;

@@ -4,7 +4,7 @@
 
 #include "NACA2412.h"
 
-static Math::FPointSet GetNACA2412ProfileVertices(int N, const float chord_length, float thickness_in_units_of_chord_length){
+static Math::Geometry::FPolygon GetNACA2412ProfileVertices(int N, const float chord_length, float thickness_in_units_of_chord_length){
     if (N < 2) N = 2;
     Math::Point2DVec v;
     v.reserve(2 * (N + 1));
@@ -50,13 +50,13 @@ static Math::FPointSet GetNACA2412ProfileVertices(int N, const float chord_lengt
         double yu = yc_ + yt_ * std::cos(th);
         v.push_back({(xu-.5)*chord_length, yu});
     }
-    return Math::FPointSet(v);
+    return Math::Geometry::FPolygon(v);
 }
 
-Math::FPointSet Foil::Airfoil_NACA2412::GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const {
+Math::Geometry::FPolygon Foil::Airfoil_NACA2412::GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const {
     return GetNACA2412ProfileVertices(N, chord_length, thickness_in_units_of_chord);
 }
 
-Math::FPointSet Foil::ViternaAirfoil2412::GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const {
+Math::Geometry::FPolygon Foil::ViternaAirfoil2412::GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const {
     return GetNACA2412ProfileVertices(N, chord_length, thickness_in_units_of_chord);
 }

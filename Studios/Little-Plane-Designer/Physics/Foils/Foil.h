@@ -7,6 +7,7 @@
 
 #include "../../Render/DebugDraw.h"
 #include "box2d/box2d.h"
+#include "Math/Geometry/Polygon.h"
 #include "Math/VectorSpace/Impl/PointSet.h"
 #include "Utils/RandUtils.h"
 #include "Utils/String.h"
@@ -34,7 +35,7 @@ class IAirfoilPolars
 
     virtual Str GetName() const = 0;
 
-    virtual Math::FPointSet GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const = 0;
+    virtual Math::Geometry::FPolygon GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const = 0;
 
     virtual double Cl(double AlphaRad) const = 0;
     virtual double Cd(double AlphaRad) const = 0;

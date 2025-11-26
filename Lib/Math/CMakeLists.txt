@@ -148,6 +148,8 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		Numerics/ODE/Output/Sockets/DummyOutput.h
 		Geometry/Geometry.cpp
 		Geometry/Geometry.h
+		Geometry/Polygon.cpp
+		Geometry/Polygon.h
 )
 
 

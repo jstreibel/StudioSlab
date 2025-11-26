@@ -4,36 +4,31 @@
 
 #include "FPlaneFactory.h"
 
-#include "../Physics/PolygonMassProperties.h"
 #include "Core/Tools/Log.h"
 #include "graphic/graphic_basic.h"
 #include "../Defaults.h"
 #include "Math/Geometry/Geometry.h"
 
-FPolygonMassProperties FWingDescriptor::ComputeMassProperties() const {
-    const auto Vertices = Airfoil->GetProfileVertices(DefaultAirfoilProfileNumSegments, Params.ChordLength, Params.ThicknessInUnitsOfChortLength);
-    if (const auto PolyValidation = Math::Geometry::ValidatePolygon(Vertices); !PolyValidation) {
-        throw std::runtime_error("Invalid airfoil profile: " + PolyValidation.ToString() + ".");
-    }
+auto FWingDescriptorUtils::GetLeftView() const -> Math::FPointSet {
+    fix &Airfoil = Descriptor.Airfoil;
+    fix &Params = Descriptor.Params;
+    fix &RelativeLocation = Descriptor.RelativeLocation;
 
-    return ComputePolygonMassProperties(Vertices, Density*Params.Span);
+    auto Vertices = Airfoil->GetProfileVertices(DefaultAirfoilProfileNumSegments, Params.ChordLength, Params.ThicknessInUnitsOfChortLength);
+
+    const auto Anchor = Params.LocalAnchor;
+
+    return Vertices.Translate(RelativeLocation + Anchor);
 }
 
-auto FWingDescriptorRenderer::GetLeftView() const -> Math::FPointSet {
-    const auto &Wing = *Descriptor.Wing;
+auto FWingDescriptorUtils::GetTopView() const -> Math::FPointSet {
+    fix &Params = Descriptor.Params;
+    fix &RelativeLocation = Descriptor.RelativeLocation;
 
-    auto Vertices = Descriptor.Airfoil->GetProfileVertices(DefaultAirfoilProfileNumSegments, Wing.Params.ChordLength, Wing.Params.ThicknessInUnitsOfChortLength);
-
-    const auto Anchor = Wing.Params.LocalAnchor;
-
-    return Vertices.Translate(Descriptor.RelativeLocation + Anchor);
-}
-
-auto FWingDescriptorRenderer::GetTopView() const -> Math::FPointSet {
-    fix ChordLength = Descriptor.Params.ChordLength;
-    fix WingSpan = Descriptor.Params.Span;
-    fix AnchorX = Descriptor.Params.LocalAnchor.x + ChordLength/2;
-    fix RelativeLocationX = Descriptor.RelativeLocation.x;
+    fix ChordLength = Params.ChordLength;
+    fix WingSpan = Params.Span;
+    fix AnchorX = Params.LocalAnchor.x + ChordLength/2;
+    fix RelativeLocationX = RelativeLocation.x;
 
     Math::FPointSet Points{};
 
@@ -43,6 +38,21 @@ auto FWingDescriptorRenderer::GetTopView() const -> Math::FPointSet {
     fix yMax = WingSpan*.5f;
 
     return Math::Geometry::FAABox{{xMin, yMin}, {xMax, yMax}}.GetPoints().Translate({RelativeLocationX+AnchorX, 0.0});
+}
+
+auto FWingDescriptorUtils::GetFrontView() const -> Math::FPointSet {
+    NOT_IMPLEMENTED_CLASS_METHOD
+
+}
+
+auto FWingDescriptorUtils::ComputeMassProperties() const -> Math::Geometry::FMass2DProperties {
+    fix &Airfoil = Descriptor.Airfoil;
+    fix &Params = Descriptor.Params;
+    fix Density = Descriptor.Density;
+
+    const auto Vertices = Airfoil->GetProfileVertices(DefaultAirfoilProfileNumSegments, Params.ChordLength, Params.ThicknessInUnitsOfChortLength);
+
+    return Vertices.ComputeMassProperties(Density*Params.Span);
 }
 
 auto FBodyPartRenderer::GetLeftView() const -> Math::FPointSet {
@@ -78,6 +88,10 @@ auto FBodyPartRenderer::GetTopView() const -> Math::FPointSet {
     Points.emplace_back(xMin + Descriptor.xOffset, yMax);
 
     return Math::FPointSet(Points);
+}
+
+auto FBodyPartRenderer::GetFrontView() const -> Math::FPointSet {
+    NOT_IMPLEMENTED_CLASS_METHOD
 }
 
 FPlaneFactory& FPlaneFactory::Reset() { return *this = FPlaneFactory(); }
@@ -170,7 +184,7 @@ b2BodyId FPlaneFactory::BuildBody(const b2WorldId World) const {
 
         const auto Box = b2MakeOffsetBox(
             Desc.Length*.5f, Desc.Height*.5f,
-            {Desc.xOffset, Desc.yOffset},
+            {(float)Desc.xOffset, (float)Desc.yOffset},
             b2MakeRot(Desc.AngleRad));
         b2CreatePolygonShape(Body, &ShapeDef, &Box);
     }
@@ -213,7 +227,7 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
     // ShiftBodyCOM(COM_x*Chord, COM_y*Thick, WingBody);
 
     {
-        fix WingMassProperties = Descriptor.ComputeMassProperties();
+        fix WingMassProperties = FWingDescriptorUtils{Descriptor}.ComputeMassProperties();
         b2MassData MassData = {
             .mass = static_cast<float>(WingMassProperties.Mass),
             .center = {static_cast<float>(WingMassProperties.Centroid.x), static_cast<float>(WingMassProperties.Centroid.y)},

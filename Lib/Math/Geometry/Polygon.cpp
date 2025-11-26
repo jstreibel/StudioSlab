@@ -2,9 +2,12 @@
 // Created by joao on 11/25/25.
 //
 
-#include "PolygonMassProperties.h"
+#include "Polygon.h"
 
-FPolygonMassProperties ComputePolygonMassProperties(const Math::FPointSet& Polygon, Real64 Density) {
+#include "Geometry.h"
+
+namespace Slab::Math::Geometry {
+FMass2DProperties ComputePolygonMassProperties(const FPointSet& Polygon, Real64 Density) {
     fix &Vertices = Polygon.GetPoints();
     const int Count = (int)Vertices.size();
     assert(Count >= 3);
@@ -63,4 +66,28 @@ FPolygonMassProperties ComputePolygonMassProperties(const Math::FPointSet& Polyg
         .InertiaOrigin = static_cast<float>(InertiaOrigin),
         .InertiaCentroid = static_cast<float>(InertiaCentroid)
     };
+}
+
+
+FPolygon::FPolygon(const FPointSet& PointSet) : FPointSet(PointSet) {
+    ValidateWithException();
+}
+
+FPolygon::FPolygon(const Point2DVec& Points) : FPointSet(Points) {
+    ValidateWithException();
+}
+
+void FPolygon::ValidateWithException() const {
+    if (const auto Validation = Validate(); !Validation)
+        throw Exception(ToStr("Invalid Polygon: %s", Validation.ToString().c_str()));
+}
+
+FPolygonValidationResult FPolygon::Validate() const {
+    return ValidatePolygon(*this);
+
+}
+
+auto FPolygon::ComputeMassProperties(const Real64 &Density) const -> FMass2DProperties {
+    return ComputePolygonMassProperties(*this, Density);
+}
 }

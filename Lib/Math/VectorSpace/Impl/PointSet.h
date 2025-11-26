@@ -12,7 +12,7 @@
 namespace Slab::Math {
 
 
-class FPointSet final : public Space {
+class FPointSet : public Space {
     Point2DVec m_Points;
     Point2D max={.0,.0}, min={.0,.0};
 
