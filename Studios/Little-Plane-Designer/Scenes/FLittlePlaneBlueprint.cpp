@@ -13,6 +13,7 @@
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/SFML/Graph.h"
+#include "Math/Geometry/Geometry.h"
 
 constexpr auto ArchD_height = 0.457; //m
 constexpr auto ArchD_width = 0.610; // m
@@ -260,6 +261,7 @@ void FLittlePlaneBlueprint::DrawPlane() {
         Draw::RenderPointSet(Dummy((TopViewPoints*=Scale).Translate(TopViewOrigin)), StrongStrokeStyle);
     }
 
+    static bool FirstRun = true;
     for (const auto &Wing : GetPlaneFactory()->WingDescriptors) {
         auto SideViewPoints = FWingDescriptorRenderer {Wing}. GetLeftView();
         auto TopViewPoints  = FWingDescriptorRenderer {Wing}. GetTopView();
@@ -268,7 +270,7 @@ void FLittlePlaneBlueprint::DrawPlane() {
             Core::Log::Error(ToStr("Bad airfoil profile: \"%s\"", PolygonValidationResult.ToString().c_str()));
             continue;
         }
-        fix WingMassProperties = ComputePolygonMassProperties(SideViewPoints, Wing.Density*Wing.Params.Span);
+        fix WingMassProperties = Wing.ComputeMassProperties();
 
         fix MyCOM = WingMassProperties.Centroid;
         fix MyMass = WingMassProperties.Mass;
@@ -277,11 +279,16 @@ void FLittlePlaneBlueprint::DrawPlane() {
         Mass += MyMass;
         WingMass += MyMass;
 
+        if (FirstRun) {
+            Core::Log::Info(ToStr("Wing mass: %.2fkg", MyMass));
+        }
+
         Draw::RenderPointSet((SideViewPoints * Scale).Translate(SideViewOrigin), StrongStrokeStyle);
         Draw::RenderPointSet((TopViewPoints * Scale).Translate(TopViewOrigin), StrongStrokeStyle);
 
         AddPartAnnotation(Wing.Airfoil->GetName(), MyCOM*Scale + SideViewOrigin);
     }
+    FirstRun = false;
 
     RenderCOM(COM * Scale / Mass + SideViewOrigin);
     RenderCOM(Math::Real2D{COM.x, 0.0} * Scale / Mass + TopViewOrigin);

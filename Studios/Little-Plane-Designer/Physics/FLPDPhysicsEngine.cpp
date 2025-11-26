@@ -5,6 +5,7 @@
 #include "FLPDPhysicsEngine.h"
 
 #include "Graphics/Utils.h"
+#include "Utils/OnFirstRun.h"
 
 constexpr int SubSteps = 1;
 constexpr int ManualSubSteps = 10;
@@ -88,7 +89,7 @@ void FLittlePlaneDesignerPhysicsEngine::Draw(const Graphics::FDraw2DParams & Par
     ImGui::Checkbox("Contact features", &Drawer.drawContactFeatures);
     ImGui::Checkbox("Friction impulses", &Drawer.drawFrictionImpulses);
     ImGui::SeparatorText("Other");
-    ImGui::Checkbox("Pause", &b_IsRunning);
+    ImGui::Checkbox("Running", &b_IsRunning);
     ImGui::Text("Total mass: %.2fkg", TotalMass);
     ImGui::Text("Hull mass: %.2fkg", HullMass);
     ImGui::Text("Wings mass: %.2fkg", WingsMass);

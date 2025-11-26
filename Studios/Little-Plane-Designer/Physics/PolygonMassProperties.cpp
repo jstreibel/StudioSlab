@@ -4,7 +4,7 @@
 
 #include "PolygonMassProperties.h"
 
-PolygonMassProps ComputePolygonMassProperties(const Math::FPointSet& Polygon, Real64 Density) {
+FPolygonMassProperties ComputePolygonMassProperties(const Math::FPointSet& Polygon, Real64 Density) {
     fix &Vertices = Polygon.GetPoints();
     const int Count = (int)Vertices.size();
     assert(Count >= 3);
@@ -57,11 +57,10 @@ PolygonMassProps ComputePolygonMassProperties(const Math::FPointSet& Polygon, Re
     const double r2 = cx * cx + cy * cy;
     const double InertiaCentroid = InertiaOrigin - Mass * r2;
 
-    PolygonMassProps Props;
-    Props.Mass = static_cast<float>(Mass);
-    Props.Centroid = { static_cast<float>(cx), static_cast<float>(cy) };
-    Props.InertiaOrigin = static_cast<float>(InertiaOrigin);
-    Props.InertiaCentroid = static_cast<float>(InertiaCentroid);
-
-    return Props;
+    return {
+        .Mass = static_cast<float>(Mass),
+        .Centroid = { static_cast<float>(cx), static_cast<float>(cy) },
+        .InertiaOrigin = static_cast<float>(InertiaOrigin),
+        .InertiaCentroid = static_cast<float>(InertiaCentroid)
+    };
 }

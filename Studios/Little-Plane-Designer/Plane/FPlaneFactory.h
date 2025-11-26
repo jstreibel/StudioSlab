@@ -7,7 +7,7 @@
 
 #include "FLittlePlane.h"
 #include "../Physics/Materials.h"
-#include "Math/Geometry/Geometry.h"
+#include "../Physics/PolygonMassProperties.h"
 
 struct IBodyPartBlueprintRenderer {
     virtual ~IBodyPartBlueprintRenderer() = default;
@@ -29,6 +29,8 @@ struct FWingDescriptor {
     float MinAngle = 0.0f;
     float OscFreq = 5.0f;
     float DampRatio = 0.7f;
+
+    FPolygonMassProperties ComputeMassProperties() const;
 
     TPointer<FWing> Wing;
 };

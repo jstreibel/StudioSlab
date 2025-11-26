@@ -107,8 +107,16 @@ float FLittlePlane::ComputeHullMass() const {
 float FLittlePlane::ComputeWingsMass() const {
     float Mass = 0.0f;
 
-    for (const auto &Wing : Wings)
-        Mass += b2Body_GetMass(Wing->BodyId);
+    static bool FirstTime = true;
+
+    for (const auto &Wing : Wings) {
+        fix WingMass = b2Body_GetMass(Wing->BodyId);
+        Mass += WingMass;
+
+        if (FirstTime) Core::Log::Info(ToStr("Wing mass: %f", WingMass));
+    }
+
+    FirstTime = false;
 
     return Mass;
 }

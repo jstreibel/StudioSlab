@@ -8,6 +8,16 @@
 #include "Core/Tools/Log.h"
 #include "graphic/graphic_basic.h"
 #include "../Defaults.h"
+#include "Math/Geometry/Geometry.h"
+
+FPolygonMassProperties FWingDescriptor::ComputeMassProperties() const {
+    const auto Vertices = Airfoil->GetProfileVertices(DefaultAirfoilProfileNumSegments, Params.ChordLength, Params.ThicknessInUnitsOfChortLength);
+    if (const auto PolyValidation = Math::Geometry::ValidatePolygon(Vertices); !PolyValidation) {
+        throw std::runtime_error("Invalid airfoil profile: " + PolyValidation.ToString() + ".");
+    }
+
+    return ComputePolygonMassProperties(Vertices, Density*Params.Span);
+}
 
 auto FWingDescriptorRenderer::GetLeftView() const -> Math::FPointSet {
     const auto &Wing = *Descriptor.Wing;
@@ -203,11 +213,7 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
     // ShiftBodyCOM(COM_x*Chord, COM_y*Thick, WingBody);
 
     {
-        fix Vertices = Airfoil->GetProfileVertices(DefaultAirfoilProfileNumSegments, Chord, Thick);
-        if (const auto PolyValidation = Math::Geometry::ValidatePolygon(Vertices); !PolyValidation)
-            throw std::runtime_error("Invalid airfoil profile: " + PolyValidation.ToString() + ".");
-
-        fix WingMassProperties = ComputePolygonMassProperties(Vertices, Descriptor.Density*Params.Span);
+        fix WingMassProperties = Descriptor.ComputeMassProperties();
         b2MassData MassData = {
             .mass = static_cast<float>(WingMassProperties.Mass),
             .center = {static_cast<float>(WingMassProperties.Centroid.x), static_cast<float>(WingMassProperties.Centroid.y)},
@@ -215,6 +221,11 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
         };
 
         b2Body_SetMassData(WingBody, MassData);
+
+        auto Mass = b2Body_GetMass(WingBody);
+        auto I = b2Body_GetRotationalInertia(WingBody);
+        Core::Log::Info(ToStr("Mass (expected, found): (%f, %f)", WingMassProperties.Mass, Mass));
+        Core::Log::Info(ToStr("Inertia (expected, found): (%f, %f)", WingMassProperties.InertiaOrigin, I));
     }
 
     return New<FWing>(FWing{
