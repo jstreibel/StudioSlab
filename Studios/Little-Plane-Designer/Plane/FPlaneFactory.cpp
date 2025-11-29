@@ -9,7 +9,7 @@
 #include "../Defaults.h"
 #include "Math/Geometry/Geometry.h"
 
-auto FWingDescriptorUtils::GetLeftView() const -> Math::FPointSet {
+auto FWingDescriptorUtils::GetLeftView() const -> Math::Geometry::FPolygon {
     fix &Airfoil = Descriptor.Airfoil;
     fix &Params = Descriptor.Params;
     fix &RelativeLocation = Descriptor.RelativeLocation;
@@ -18,10 +18,10 @@ auto FWingDescriptorUtils::GetLeftView() const -> Math::FPointSet {
 
     const auto Anchor = Params.LocalAnchor;
 
-    return Vertices.Translate(RelativeLocation + Anchor);
+    return Math::Geometry::FPolygon{Vertices.Translate(RelativeLocation + Anchor)};
 }
 
-auto FWingDescriptorUtils::GetTopView() const -> Math::FPointSet {
+auto FWingDescriptorUtils::GetTopView() const -> Math::Geometry::FPolygon {
     fix &Params = Descriptor.Params;
     fix &RelativeLocation = Descriptor.RelativeLocation;
 
@@ -37,10 +37,10 @@ auto FWingDescriptorUtils::GetTopView() const -> Math::FPointSet {
     fix xMax = ChordLength*.5f;
     fix yMax = WingSpan*.5f;
 
-    return Math::Geometry::FAABox{{xMin, yMin}, {xMax, yMax}}.GetPoints().Translate({RelativeLocationX+AnchorX, 0.0});
+    return Math::Geometry::FPolygon{Math::Geometry::FAABox{{xMin, yMin}, {xMax, yMax}}.GetPoints().Translate({RelativeLocationX+AnchorX, 0.0})};
 }
 
-auto FWingDescriptorUtils::GetFrontView() const -> Math::FPointSet {
+auto FWingDescriptorUtils::GetFrontView() const -> Math::Geometry::FPolygon {
     NOT_IMPLEMENTED_CLASS_METHOD
 
 }
@@ -55,42 +55,27 @@ auto FWingDescriptorUtils::ComputeMassProperties() const -> Math::Geometry::FMas
     return Vertices.ComputeMassProperties(Density*Params.Span);
 }
 
-auto FBodyPartRenderer::GetLeftView() const -> Math::FPointSet {
-    Math::Point2DVec Points;
-
-    fix c = cos(Descriptor.AngleRad);
-    fix s = sin(Descriptor.AngleRad);
-
-    fix xMin = -Descriptor.Length*.5f;
-    fix yMin = -Descriptor.Height*.5f;
-    fix xMax = Descriptor.Length*.5f;
-    fix yMax = Descriptor.Height*.5f;
-
-    Points.emplace_back(xMin*c - yMin*s + Descriptor.xOffset, xMin*s + yMin*c + Descriptor.yOffset);
-    Points.emplace_back(xMax*c - yMin*s + Descriptor.xOffset, xMax*s + yMin*c + Descriptor.yOffset);
-    Points.emplace_back(xMax*c - yMax*s + Descriptor.xOffset, xMax*s + yMax*c + Descriptor.yOffset);
-    Points.emplace_back(xMin*c - yMax*s + Descriptor.xOffset, xMin*s + yMax*c + Descriptor.yOffset);
-
-    return Math::FPointSet(Points);
+auto FBodyPartRenderer::GetLeftView() const -> Math::Geometry::FPolygon {
+    return Descriptor.Section;
 }
 
-auto FBodyPartRenderer::GetTopView() const -> Math::FPointSet {
+auto FBodyPartRenderer::GetTopView() const -> Math::Geometry::FPolygon {
     Math::Point2DVec Points;
 
-    fix xMin = -Descriptor.Length*.5f;
+    fix xMin = Descriptor.Section.GetMin().x;
     fix yMin = -Descriptor.Depth*.5f;
-    fix xMax = Descriptor.Length*.5f;
+    fix xMax = Descriptor.Section.GetMax().x;
     fix yMax = Descriptor.Depth*.5f;
 
-    Points.emplace_back(xMin + Descriptor.xOffset, yMin);
-    Points.emplace_back(xMax + Descriptor.xOffset, yMin);
-    Points.emplace_back(xMax + Descriptor.xOffset, yMax);
-    Points.emplace_back(xMin + Descriptor.xOffset, yMax);
+    Points.emplace_back(xMin, yMin);
+    Points.emplace_back(xMax, yMin);
+    Points.emplace_back(xMax, yMax);
+    Points.emplace_back(xMin, yMax);
 
-    return Math::FPointSet(Points);
+    return Math::Geometry::FPolygon(Points);
 }
 
-auto FBodyPartRenderer::GetFrontView() const -> Math::FPointSet {
+auto FBodyPartRenderer::GetFrontView() const -> Math::Geometry::FPolygon {
     NOT_IMPLEMENTED_CLASS_METHOD
 }
 
@@ -182,11 +167,28 @@ b2BodyId FPlaneFactory::BuildBody(const b2WorldId World) const {
         ShapeDef.material.friction = Desc.Friction;
         ShapeDef.material.restitution = Desc.Restitution;
 
-        const auto Box = b2MakeOffsetBox(
-            Desc.Length*.5f, Desc.Height*.5f,
-            {(float)Desc.xOffset, (float)Desc.yOffset},
-            b2MakeRot(Desc.AngleRad));
-        b2CreatePolygonShape(Body, &ShapeDef, &Box);
+        const auto &Pts = Desc.Section.GetPoints();
+        if (Pts.size() < 3) {
+            Core::Log::Error("Body part polygon has fewer than 3 points; skipping");
+            continue;
+        }
+
+        // Convert to b2Vec2 array
+        Vector<b2Vec2> verts;
+        verts.reserve(Pts.size());
+        for (const auto &p : Pts) {
+            verts.push_back({static_cast<float>(p.x), static_cast<float>(p.y)});
+        }
+
+        // Compute convex hull and create a Box2D polygon
+        b2Hull hull = b2ComputeHull(verts.data(), static_cast<int>(verts.size()));
+        if (hull.count < 3) {
+            Core::Log::Error("Box2D hull generation failed for body part; skipping");
+            continue;
+        }
+
+        const b2Polygon poly = b2MakePolygon(&hull, 0.0f);
+        b2CreatePolygonShape(Body, &ShapeDef, &poly);
     }
 
     return Body;

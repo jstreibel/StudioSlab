@@ -11,9 +11,9 @@
 struct IBodyPartBlueprintRenderer {
     virtual ~IBodyPartBlueprintRenderer() = default;
 
-    virtual auto GetLeftView() const -> Math::FPointSet = 0;
-    virtual auto GetTopView() const -> Math::FPointSet = 0;
-    virtual auto GetFrontView() const -> Math::FPointSet = 0;
+    virtual auto GetLeftView() const -> Math::Geometry::FPolygon = 0;
+    virtual auto GetTopView() const -> Math::Geometry::FPolygon = 0;
+    virtual auto GetFrontView() const -> Math::Geometry::FPolygon = 0;
 };
 
 struct FWingDescriptor {
@@ -34,9 +34,9 @@ struct FWingDescriptor {
 };
 
 struct FWingDescriptorUtils final : IBodyPartBlueprintRenderer {
-    auto GetLeftView() const -> Math::FPointSet override;
-    auto GetTopView() const -> Math::FPointSet override;
-    auto GetFrontView() const -> Math::FPointSet override;
+    auto GetLeftView() const -> Math::Geometry::FPolygon override;
+    auto GetTopView() const -> Math::Geometry::FPolygon override;
+    auto GetFrontView() const -> Math::Geometry::FPolygon override;
 
     auto ComputeMassProperties() const -> Math::Geometry::FMass2DProperties;
 
@@ -51,24 +51,20 @@ struct FBodyPartDescriptor final {
     Real64 Friction = ExpandedPolystyreneFriction;
     Real64 Restitution = ExpandedPolystyreneRestitution;
 
-    Real64 Length = 0.2;
-    Real64 Height = 0.2;
+    Math::Geometry::FPolygon Section = Math::Geometry::FPolygon::MakeBox(.2, .2, {0,0}, 0);
+
     // Out-of-plane thickness/depth [m] to convert 3D density (kg/m^3)
     // to Box2D's 2D density (kg/m^2): density_2d = Density * Depth
+
     Real64 Depth = 0.30;
-
-    Real64 xOffset = 0.0;
-    Real64 yOffset = 0.0;
-
-    Real64 AngleRad = 0.0;
 };
 
 struct FBodyPartRenderer final : IBodyPartBlueprintRenderer {
     FBodyPartDescriptor Descriptor;
 
-    auto GetLeftView() const -> Math::FPointSet override;
-    auto GetTopView() const -> Math::FPointSet override;
-    auto GetFrontView() const -> Math::FPointSet override;
+    auto GetLeftView() const -> Math::Geometry::FPolygon override;
+    auto GetTopView() const -> Math::Geometry::FPolygon override;
+    auto GetFrontView() const -> Math::Geometry::FPolygon override;
 
     FBodyPartRenderer() = delete;
     explicit FBodyPartRenderer(const FBodyPartDescriptor& Descriptor) : Descriptor(Descriptor) {}

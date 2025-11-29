@@ -308,23 +308,17 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
     .SetRotation(DegToRad(0.0f))
     .AddBodyPart({
         .Density = LightPlaneDensity,
-        .Length = 4.0f,
-        .Height = 0.5,
-        .Depth = 0.8f,
+        .Section = Math::Geometry::FPolygon::MakeBox(4, .5),
+        .Depth = 0.8f
     })
-    .AddBodyPart({
+    .AddBodyPart( {
         .Density = HeavyRockDensity,
-        .Length = 0.4,
-        .Height = 0.15,
-        .Depth = 0.25,
-        .xOffset = -1.5
+        .Section = Math::Geometry::FPolygon::MakeBox(.4, .15, {-1.5, 0}),
+        .Depth = 0.25
     })
     .AddBodyPart({
         .Density = LightPlaneDensity,
-        .Length = 0.4,
-        .Height = 0.4,
-        .xOffset = -1.0,
-        .yOffset = -0.5,
+        .Section = Math::Geometry::FPolygon::MakeBox(.4, .4, {-1, -.5}),
     })
     .AddWing({
         .Density = LightPlaneDensity,

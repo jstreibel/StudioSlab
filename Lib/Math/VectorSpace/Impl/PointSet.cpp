@@ -65,6 +65,19 @@ namespace Slab::Math {
         return *this;
     }
 
+    FPointSet& FPointSet::Rotate(const Real64& AngleRad) {
+        fix c = cos(AngleRad);
+        fix s = sin(AngleRad);
+
+        for (auto &pt: m_Points) {
+            fix x = pt.x;
+            pt.x = c * x - s * pt.y;
+            pt.y = s * x + c * pt.y;
+        }
+
+        return *this;
+    }
+
     FPointSet FPointSet::operator*(const Real64 a) const {
         FPointSet Result;
 

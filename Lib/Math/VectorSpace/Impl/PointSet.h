@@ -38,6 +38,7 @@ public:
 
     FPointSet TranslateConst(const Point2D &p) const;
     FPointSet& Translate(const Point2D &p);
+    FPointSet& Rotate(const Real64 &AngleRad);
 
     FPointSet operator*(Real64 a) const;
     FPointSet& operator*=(Real64 a);

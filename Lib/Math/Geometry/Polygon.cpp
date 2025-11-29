@@ -90,4 +90,24 @@ FPolygonValidationResult FPolygon::Validate() const {
 auto FPolygon::ComputeMassProperties(const Real64 &Density) const -> FMass2DProperties {
     return ComputePolygonMassProperties(*this, Density);
 }
+
+auto FPolygon::GetBoundingBox() const -> RectR {
+    fix Max = GetMax();
+    fix Min = GetMin();
+    return RectR{Min.x, Max.x, Min.y, Max.y};
+}
+
+FPolygon FPolygon::MakeBox(const Real64 Length, const Real64 Height, const Real2D Location, const Real64 Rotation) {
+    fix hw = Length * .5f;
+    fix hh = Height * .5f;
+
+    FPointSet Points;
+    Points.AddPoint(Location + Point2D{-hw, -hh});
+    Points.AddPoint(Location + Point2D{+hw, -hh});
+    Points.AddPoint(Location + Point2D{+hw, +hh});
+    Points.AddPoint(Location + Point2D{-hw, +hh});
+
+    return FPolygon{Points.Rotate(Rotation)};
+}
+
 }

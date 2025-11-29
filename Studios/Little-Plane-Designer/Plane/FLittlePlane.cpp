@@ -209,13 +209,13 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams&) {
 
     for (const auto &Wing : Wings) {
 
-        Math::FPointSet Points
+        auto ProfileVertices
         = Wing->Airfoil->GetProfileVertices(DefaultAirfoilProfileNumSegments, Wing->Params.ChordLength, Wing->Params.ThicknessInUnitsOfChortLength);
 
         const auto Body = Wing->BodyId;
         const auto [x, y] = b2Body_GetPosition(Body);
         const auto [cosWing, sinWing] = b2Body_GetRotation(Body);
-        for (auto &Point : Points.GetPoints()) {
+        for (auto &Point : ProfileVertices.GetPoints()) {
             fix px = Point.x;
             fix py = Point.y;
 
@@ -223,7 +223,7 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams&) {
             Point.y = y + px*sinWing + py*cosWing;
         }
 
-        Drawer::RenderPointSet(Dummy(Points), WingStyle);
+        Drawer::RenderPointSet(Dummy(ProfileVertices), WingStyle);
     }
 
     if constexpr (false) {

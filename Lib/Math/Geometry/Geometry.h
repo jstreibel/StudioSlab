@@ -47,6 +47,15 @@ struct RectR {
 
     Real64 Width() const { return right - left; }
     Real64 Height() const { return top - bottom; }
+
+    Real64 Area() const { return Width() * Height(); }
+    Point2D Center() const { return {left + Width() / 2, bottom + Height() / 2}; }
+
+    bool Contains(const Point2D& p) const { return left <= p.x && p.x <= right && bottom <= p.y && p.y <= top; }
+    bool Intersects(const RectR& other) const { return !(right <= other.left || left >= other.right || top <= other.bottom || bottom >= other.top); }
+
+    bool IsEmpty() const { return Width() <= 0 || Height() <= 0; }
+    bool IsFinite() const { return std::isfinite(left) && std::isfinite(right) && std::isfinite(bottom) && std::isfinite(top); }
 };
 
 struct IGeometricObject {
