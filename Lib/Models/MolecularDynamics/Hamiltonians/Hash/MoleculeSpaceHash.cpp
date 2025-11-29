@@ -14,7 +14,7 @@ namespace Slab::Models::MolecularDynamics {
         for (auto &c: hashSpace) c.reset();
 
         for (auto k = 0; k < v_q.size(); ++k) {
-            const Graphics::Point2D &q = v_q[k];
+            const Graphics::FPoint2D &q = v_q[k];
 
             double x = q.x - L * floor(q.x / L + .5) + .5 * L,
                     y = q.y - L * floor(q.y / L + .5) + .5 * L;

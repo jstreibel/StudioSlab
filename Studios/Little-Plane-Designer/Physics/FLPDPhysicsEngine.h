@@ -26,6 +26,8 @@ struct FLittlePlaneDesignerPhysicsEngine final : IUpdateable, Graphics::IDrawabl
 
     void Draw(const Graphics::FDraw2DParams&) override;
 
+    TPointer<const FLittlePlane> GetPlane() const;
+
 private:
     // TPointer<Graphics::FImGuiContext> ImGuiContext;
 

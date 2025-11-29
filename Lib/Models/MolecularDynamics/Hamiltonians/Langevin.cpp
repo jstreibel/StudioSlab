@@ -9,14 +9,14 @@ namespace Slab::Models::MolecularDynamics {
     Langevin::Langevin(TPointer<Config> config, DevFloat T)
     : NewtonMechanics(config), T(T) {    }
 
-    Graphics::Point2D Langevin::xi() {
+    Graphics::FPoint2D Langevin::xi() {
         const DevFloat z = FRANDOM, theta = 2.0 * M_PI * FRANDOM;
         const DevFloat r = sqrt(-2.0 * log(1.0 - z));
 
         return {r * cos(theta), r * sin(theta)};
     }
 
-    Graphics::Point2D Langevin::F_nh(DevFloat) {
+    Graphics::FPoint2D Langevin::F_nh(DevFloat) {
         fix dt = numeric_config->Get_dt();
 
         fix alpha = sqrt(2 * T / dt);

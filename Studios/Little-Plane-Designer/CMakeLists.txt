@@ -45,6 +45,8 @@ add_executable( LittlePlaneDesigner
         Scenes/FLittlePlaneBlueprint.cpp
         Scenes/FLittlePlaneBlueprint.h
         Render/DebugDraw.cpp
+        Utils.cpp
+        Utils.h
 
 )
 target_include_directories(LittlePlaneDesigner PRIVATE ${box2d_SOURCE_DIR}/include)

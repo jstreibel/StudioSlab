@@ -75,9 +75,9 @@ void FLittlePlaneBlueprint::Draw(const Graphics::FDrawInput& Input) {
     Draw::SetupOrtho({-RegionWidth_2, RegionWidth_2, -RegionHeight_2, RegionHeight_2});
 
     Writer->Reshape(WinWidth, WinHeight);
-    fix Region = Graphics::RectR{-RegionWidth_2, RegionWidth_2, -RegionHeight_2, RegionHeight_2};
+    Region = Graphics::RectR{-RegionWidth_2, RegionWidth_2, -RegionHeight_2, RegionHeight_2};
     fix VP = Graphics::RectI{0, WinWidth, 0, WinHeight};
-    Writer->SetPenPositionTransform([&](const Graphics::Point2D Pt) {
+    Writer->SetPenPositionTransform([&](const Graphics::FPoint2D Pt) {
         return Graphics::FromSpaceToViewportCoord(Pt, Region, VP);
     });
     GlyphHeight = .5/Proportion * Graphics::FromViewportToSpaceCoord({0., Writer->GetFontHeightInPixels()}, Region, VP).y;
@@ -102,14 +102,18 @@ bool FLittlePlaneBlueprint::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKey
     return false;
 }
 
+Graphics::RectR FLittlePlaneBlueprint::GetCurrentView() const {
+    return Region;
+}
+
 void FLittlePlaneBlueprint::AddPartAnnotation(const Str& Annotation, Math::Real2D ItemLocation) {
     const int Sx = +(2*(NumAnnotations%2) - 1);
     const int Sy = -(2*(NumAnnotations/2) - 1);
 
-    const Graphics::Point2D AnnotationLocation = {Sx*InnerX/2, Sy*InnerY/2};
+    const Graphics::FPoint2D AnnotationLocation = {Sx*InnerX/2, Sy*InnerY/2};
 
     fix d = GlyphHeight;
-    Writer->Write(Annotation, AnnotationLocation+Graphics::Point2D{d, -d});
+    Writer->Write(Annotation, AnnotationLocation+Graphics::FPoint2D{d, -d});
 
     Draw::SetupLegacyGL();
     Draw::SetColor(Graphics::White);
@@ -310,6 +314,14 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
         .Density = LightPlaneDensity,
         .Section = Math::Geometry::FPolygon::MakeBox(4, .5),
         .Depth = 0.8f
+    })
+    .AddBodyPart( {
+        .Density = LightPlaneDensity,
+        .Section = Math::Geometry::FPolygon{Math::FPoint2DVec{
+            {
+                {-1.7, .32+0.03}, {-1.2, .37+0.015}, {-1.2, -.37+0.015+0.1}, {-1.7, -.32+0.25},
+            }}},
+        .Depth = 0.25
     })
     .AddBodyPart( {
         .Density = HeavyRockDensity,

@@ -6,7 +6,7 @@
 
 namespace Slab {
 
-    auto Graphics::FPlot2DWindow::GetLastXHairPosition() const -> Point2D {
+    auto Graphics::FPlot2DWindow::GetLastXHairPosition() const -> FPoint2D {
         auto vpRect = GetViewport();
 
         auto Mouse = GetMouseState();

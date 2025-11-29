@@ -14,26 +14,26 @@ namespace Slab::Models::MolecularDynamics {
     LennardJones::LennardJones(const TPointer<Config>& config, const DevFloat T)
             : Langevin(config, T) {}
 
-    inline Graphics::Point2D LennardJones::dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
+    inline Graphics::FPoint2D LennardJones::dUdr(const Graphics::FPoint2D &q1, const Graphics::FPoint2D &q2) {
         DevFloat sqrCutoffRadius = CUTOFF_RADIUS * CUTOFF_RADIUS;
         DevFloat distSqr;
 
         fix L = numeric_config->GetL();
 
-        const Graphics::Point2D points[] = {
+        const Graphics::FPoint2D points[] = {
                 q2 - q1,
-                Graphics::Point2D(q2.x - L, q2.y) - q1,
-                Graphics::Point2D(q2.x + L, q2.y) - q1,
-                Graphics::Point2D(q2.x, q2.y - L) - q1,
-                Graphics::Point2D(q2.x, q2.y + L) - q1,
+                Graphics::FPoint2D(q2.x - L, q2.y) - q1,
+                Graphics::FPoint2D(q2.x + L, q2.y) - q1,
+                Graphics::FPoint2D(q2.x, q2.y - L) - q1,
+                Graphics::FPoint2D(q2.x, q2.y + L) - q1,
 
-                Graphics::Point2D(q2.x - L, q2.y - L) - q1,
-                Graphics::Point2D(q2.x - L, q2.y + L) - q1,
-                Graphics::Point2D(q2.x + L, q2.y - L) - q1,
-                Graphics::Point2D(q2.x + L, q2.y + L) - q1
+                Graphics::FPoint2D(q2.x - L, q2.y - L) - q1,
+                Graphics::FPoint2D(q2.x - L, q2.y + L) - q1,
+                Graphics::FPoint2D(q2.x + L, q2.y - L) - q1,
+                Graphics::FPoint2D(q2.x + L, q2.y + L) - q1
         };
 
-        Graphics::Point2D resultForce = {.0, .0};
+        Graphics::FPoint2D resultForce = {.0, .0};
         for (auto r: points) {
             distSqr = r.LengthSqr();
 
@@ -43,7 +43,7 @@ namespace Slab::Models::MolecularDynamics {
 
                 const auto F = 24 * ε / σ * (2 * POW13(inv_n) - POW7(inv_n));
 
-                const Graphics::Point2D force = -F / r_abs * r;
+                const Graphics::FPoint2D force = -F / r_abs * r;
 
                 resultForce = resultForce + force;
             }
@@ -57,24 +57,24 @@ namespace Slab::Models::MolecularDynamics {
         return 4. * ε * (POW12(inv_n) - POW6(inv_n));
     }
 
-    DevFloat LennardJones::U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
+    DevFloat LennardJones::U(const Graphics::FPoint2D &q1, const Graphics::FPoint2D &q2) {
         const DevFloat SIGMA_SQR = σ * σ;
         DevFloat distSqr;
 
         fix L = numeric_config->GetL();
 
-        const Graphics::Point2D points[] = {
+        const Graphics::FPoint2D points[] = {
                 q2 - q1,
 
-                Graphics::Point2D(q2.x - L, q2.y) - q1,
-                Graphics::Point2D(q2.x + L, q2.y) - q1,
-                Graphics::Point2D(q2.x, q2.y - L) - q1,
-                Graphics::Point2D(q2.x, q2.y + L) - q1,
+                Graphics::FPoint2D(q2.x - L, q2.y) - q1,
+                Graphics::FPoint2D(q2.x + L, q2.y) - q1,
+                Graphics::FPoint2D(q2.x, q2.y - L) - q1,
+                Graphics::FPoint2D(q2.x, q2.y + L) - q1,
 
-                Graphics::Point2D(q2.x - L, q2.y - L) - q1,
-                Graphics::Point2D(q2.x - L, q2.y + L) - q1,
-                Graphics::Point2D(q2.x + L, q2.y - L) - q1,
-                Graphics::Point2D(q2.x + L, q2.y + L) - q1
+                Graphics::FPoint2D(q2.x - L, q2.y - L) - q1,
+                Graphics::FPoint2D(q2.x - L, q2.y + L) - q1,
+                Graphics::FPoint2D(q2.x + L, q2.y - L) - q1,
+                Graphics::FPoint2D(q2.x + L, q2.y + L) - q1
         };
 
         for (auto r: points) {

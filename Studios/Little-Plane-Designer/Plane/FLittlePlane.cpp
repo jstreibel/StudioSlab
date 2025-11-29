@@ -13,6 +13,7 @@
 #include "Graphics/Plot2D/PlotStyle.h"
 #include "Graphics/SFML/Graph.h"
 #include "../Defaults.h"
+#include "../Utils.h"
 
 Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
     const FWing& Wing,
@@ -121,31 +122,31 @@ float FLittlePlane::ComputeWingsMass() const {
     return Mass;
 }
 
-b2Vec2 FLittlePlane::GetCenterOfMass_Global() const {
+Math::Point2D FLittlePlane::GetCenterOfMass_Global() const {
     fix HullCOM = b2Body_GetWorldCenterOfMass(HullBody);
     fix HullMass = b2Body_GetMass(HullBody);
 
-    b2Vec2 COM_Accumulator = HullMass * HullCOM;
+    Math::Point2D COM_Accumulator = Point2D_Fromb2Vec2(HullMass * HullCOM);
     auto TotalMass = HullMass;
 
     for (const auto &Wing : Wings) {
         fix WingCOM = b2Body_GetWorldCenterOfMass(Wing->BodyId);
         fix WingMass = b2Body_GetMass(Wing->BodyId);
 
-        COM_Accumulator += WingMass * WingCOM;
+        COM_Accumulator += Point2D_Fromb2Vec2(WingMass * WingCOM);
         TotalMass += WingMass;
     }
 
     return COM_Accumulator * (1.f/TotalMass);
 }
 
-b2Vec2 FLittlePlane::GetPosition() const { return b2Body_GetPosition(HullBody); }
+Math::Point2D FLittlePlane::GetPosition() const { return Point2D_Fromb2Vec2(b2Body_GetPosition(HullBody)); }
 
-b2Vec2 FLittlePlane::GetVelocity() const {
-    return b2Body_GetLinearVelocity(HullBody);
+Math::Point2D FLittlePlane::GetVelocity() const {
+    return Point2D_Fromb2Vec2(b2Body_GetLinearVelocity(HullBody));
 }
 
-void FLittlePlane::Draw(const Graphics::FDraw2DParams&) {
+void FLittlePlane::Draw(const Graphics::FDraw2DParams& DrawParams) {
 
     // Draw a 2x2 textured rectangle centered at the hull body using HullTexture
     const auto [xBody, yBody] = b2Body_GetPosition(HullBody);
@@ -224,6 +225,7 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams&) {
         }
 
         Drawer::RenderPointSet(Dummy(ProfileVertices), WingStyle);
+
     }
 
     if constexpr (false) {

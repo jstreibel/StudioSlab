@@ -6,7 +6,7 @@
 
 static Math::Geometry::FPolygon GetNACA2412ProfileVertices(int N, const float chord_length, float thickness_in_units_of_chord_length){
     if (N < 2) N = 2;
-    Math::Point2DVec v;
+    Math::FPoint2DVec v;
     v.reserve(2 * (N + 1));
 
     // NACA m=camber, p=camber pos, t=thickness (unit chord)

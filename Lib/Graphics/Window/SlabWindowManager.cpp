@@ -125,20 +125,20 @@ namespace Slab::Graphics {
                 SetFocus(*First);
 
                 if (Decorator.IsMouseOverTitlebar(*CurrentlyFocused->Window, MouseState->x, MouseState->y)) {
-                    Grabbed = {Point2D(MouseState->x - CurrentlyFocused->Window->Get_x(), MouseState->y - CurrentlyFocused->Window->Get_y()),
+                    Grabbed = {FPoint2D(MouseState->x - CurrentlyFocused->Window->Get_x(), MouseState->y - CurrentlyFocused->Window->Get_y()),
                                Grabbed::Titlebar,
                                CurrentlyFocused->Window};
                 } else if(Decorator.IsMouseOverGrabRegion(*CurrentlyFocused->Window, MouseState->x, MouseState->y)
                       && !CurrentlyFocused->Window->WantsFullscreen()) {
-                    Grabbed = {Point2D(CurrentlyFocused->Window->GetWidth() + CurrentlyFocused->Window->Get_x() - MouseState->x,
+                    Grabbed = {FPoint2D(CurrentlyFocused->Window->GetWidth() + CurrentlyFocused->Window->Get_x() - MouseState->x,
                                        CurrentlyFocused->Window->GetHeight() + CurrentlyFocused->Window->Get_y() - MouseState->y),
                                Grabbed::Corner,
                                CurrentlyFocused->Window};
                 } else {
-                    Grabbed = {Point2D(), Grabbed::None, nullptr};
+                    Grabbed = {FPoint2D(), Grabbed::None, nullptr};
                 }
             }
-        } else if(state==Release) Grabbed = {Point2D(), Grabbed::None, nullptr};
+        } else if(state==Release) Grabbed = {FPoint2D(), Grabbed::None, nullptr};
 
         if(CurrentlyFocused == nullptr) return false;
         return CurrentlyFocused->Window->NotifyMouseButton(button, state, keys);

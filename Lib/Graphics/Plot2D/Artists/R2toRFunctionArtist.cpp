@@ -172,7 +172,7 @@ namespace Slab::Graphics {
         FArtist::SetLabel(label);
     }
 
-    Str R2toRFunctionArtist::GetXHairInfo(const Point2D &coords) const {
+    Str R2toRFunctionArtist::GetXHairInfo(const FPoint2D &coords) const {
         if(func == nullptr) return {};
 
         fix r = Real2D{coords.x, coords.y};

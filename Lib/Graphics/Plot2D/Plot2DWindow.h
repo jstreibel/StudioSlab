@@ -51,8 +51,8 @@ namespace Slab::Graphics {
 
         FAxisArtist &GetAxisArtist();
 
-        auto GetLastXHairPosition() const -> Point2D;
-        Str GetXHairLabel(const Point2D &coords) const;
+        auto GetLastXHairPosition() const -> FPoint2D;
+        Str GetXHairLabel(const FPoint2D &coords) const;
 
         void SetAutoReviewGraphRanges(bool);
         void ReviewGraphRanges();

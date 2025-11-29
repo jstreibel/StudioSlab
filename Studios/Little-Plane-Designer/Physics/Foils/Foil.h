@@ -77,7 +77,7 @@ struct FAirfoilDynamicData {
     static auto Null() { return FAirfoilDynamicData{b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), b2Vec2(0.0f, 0.0f), 0.0f}; }
 };
 
-inline Graphics::Point2D ToPoint2D(const b2Vec2& v) { return Graphics::Point2D{v.x, v.y}; }
+inline Graphics::FPoint2D ToPoint2D(const b2Vec2& v) { return Graphics::FPoint2D{v.x, v.y}; }
 
 }
 

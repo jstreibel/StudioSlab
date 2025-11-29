@@ -13,26 +13,26 @@ namespace Slab::Models::MolecularDynamics {
 
     }
 
-    inline Graphics::Point2D SoftDisk::dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
+    inline Graphics::FPoint2D SoftDisk::dUdr(const Graphics::FPoint2D &q1, const Graphics::FPoint2D &q2) {
         const DevFloat SIGMA_SQR = σ * σ;
         DevFloat normSqr;
 
         fix L = numeric_config->GetL();
 
-        const Graphics::Point2D points[] = {
+        const Graphics::FPoint2D points[] = {
                 q2 - q1,
-                Graphics::Point2D(q2.x - L, q2.y) - q1,
-                Graphics::Point2D(q2.x + L, q2.y) - q1,
-                Graphics::Point2D(q2.x, q2.y - L) - q1,
-                Graphics::Point2D(q2.x, q2.y + L) - q1,
+                Graphics::FPoint2D(q2.x - L, q2.y) - q1,
+                Graphics::FPoint2D(q2.x + L, q2.y) - q1,
+                Graphics::FPoint2D(q2.x, q2.y - L) - q1,
+                Graphics::FPoint2D(q2.x, q2.y + L) - q1,
 
-                Graphics::Point2D(q2.x - L, q2.y - L) - q1,
-                Graphics::Point2D(q2.x - L, q2.y + L) - q1,
-                Graphics::Point2D(q2.x + L, q2.y - L) - q1,
-                Graphics::Point2D(q2.x + L, q2.y + L) - q1
+                Graphics::FPoint2D(q2.x - L, q2.y - L) - q1,
+                Graphics::FPoint2D(q2.x - L, q2.y + L) - q1,
+                Graphics::FPoint2D(q2.x + L, q2.y - L) - q1,
+                Graphics::FPoint2D(q2.x + L, q2.y + L) - q1
         };
 
-        Graphics::Point2D resultForce = {.0, .0};
+        Graphics::FPoint2D resultForce = {.0, .0};
         for (auto r: points) {
             normSqr = r.LengthSqr();
 
@@ -41,7 +41,7 @@ namespace Slab::Models::MolecularDynamics {
                 const DoubleAccess arg = {1.0 - norm / σ};
                 const DevFloat mag = ε / σ * pow(arg.val, ALPHA - 1.0) * arg.isPositive();
 
-                const Graphics::Point2D force = -(mag / norm) * r;
+                const Graphics::FPoint2D force = -(mag / norm) * r;
 
                 resultForce = resultForce + force;
             }
@@ -50,11 +50,11 @@ namespace Slab::Models::MolecularDynamics {
         return resultForce;
     }
 
-    DevFloat SoftDisk::U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
+    DevFloat SoftDisk::U(const Graphics::FPoint2D &q1, const Graphics::FPoint2D &q2) {
         const DevFloat SIGMA_SQR = σ * σ;
         DevFloat normSqr;
 
-        const Graphics::Point2D points[] = {
+        const Graphics::FPoint2D points[] = {
                 q2 - q1,
                 /*
                 Point2D(q2.x-SIMSPACE_SIDE_SIZE, q2.y)-q1,

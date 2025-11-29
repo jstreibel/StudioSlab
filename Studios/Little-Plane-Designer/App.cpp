@@ -33,6 +33,10 @@ bool FLittlePlaneDesignerApp::NotifyRender(const Graphics::FPlatformWindow& Plat
     CurrentScene->Tick(1.f/60.f);
     CurrentScene->Draw({PlatformWindow});
 
+    {
+
+    }
+
     return true;
 }
 

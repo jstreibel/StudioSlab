@@ -73,7 +73,7 @@ FPolygon::FPolygon(const FPointSet& PointSet) : FPointSet(PointSet) {
     ValidateWithException();
 }
 
-FPolygon::FPolygon(const Point2DVec& Points) : FPointSet(Points) {
+FPolygon::FPolygon(const FPoint2DVec& Points) : FPointSet(Points) {
     ValidateWithException();
 }
 

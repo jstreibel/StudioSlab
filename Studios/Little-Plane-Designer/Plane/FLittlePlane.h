@@ -45,9 +45,9 @@ public:
     float GetTotalMass() const override;
     float ComputeHullMass() const;
     float ComputeWingsMass() const;
-    b2Vec2 GetCenterOfMass_Global() const override;
-    b2Vec2 GetPosition() const override;
-    b2Vec2 GetVelocity() const override;
+    Math::Point2D GetCenterOfMass_Global() const override;
+    Math::Point2D GetPosition() const override;
+    Math::Point2D GetVelocity() const override;
 
     void Draw(const Graphics::FDraw2DParams&) override;
     const FWing& GetWing(int i) const { return *Wings[i]; }

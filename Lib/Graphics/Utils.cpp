@@ -7,7 +7,7 @@
 
 namespace Slab::Graphics {
 
-    Point2D FromSpaceToViewportCoord(const Point2D &spaceCoord, const RectR &spaceRegion,
+    FPoint2D FromSpaceToViewportCoord(const FPoint2D &spaceCoord, const RectR &spaceRegion,
                                      const RectI &viewport) {
         fix x = spaceCoord.x;
         fix y = spaceCoord.y;
@@ -22,7 +22,7 @@ namespace Slab::Graphics {
                 H*(y-yMin)/Δy};
     }
 
-    Point2D FromViewportToSpaceCoord(const Point2D &viewportCoord, const RectR &spaceRegion,
+    FPoint2D FromViewportToSpaceCoord(const FPoint2D &viewportCoord, const RectR &spaceRegion,
                                      const RectI &viewport) {
         fix X = viewportCoord.x;
         fix Y = viewportCoord.y;

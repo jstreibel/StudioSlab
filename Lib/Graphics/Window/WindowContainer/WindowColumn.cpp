@@ -146,7 +146,7 @@ namespace Slab::Graphics {
 
     bool WindowColumn::NotifyMouseMotion(int x, int y, int dx, int dy) {
         auto Responded = false;
-        for(auto &Win : Windows) if(Win->IsPointWithin(Point2D{DevFloat(x) ,DevFloat(y)}) ){
+        for(auto &Win : Windows) if(Win->IsPointWithin(FPoint2D{DevFloat(x) ,DevFloat(y)}) ){
             Responded = Win->NotifyMouseMotion(x,y,dx,dy);
         }
 

@@ -4,6 +4,7 @@
 
 #include "FLPDPhysicsEngine.h"
 
+#include "../Utils.h"
 #include "Graphics/Utils.h"
 #include "Utils/OnFirstRun.h"
 
@@ -53,7 +54,7 @@ void FLittlePlaneDesignerPhysicsEngine::Draw(const Graphics::FDraw2DParams & Par
     if (!b_DrawPhysics) return;
 
     DebugDraw.GetWriter()->Reshape(Params.ScreenWidth, Params.ScreenHeight);
-    DebugDraw.GetWriter()->SetPenPositionTransform([&](const Graphics::Point2D Pt) {
+    DebugDraw.GetWriter()->SetPenPositionTransform([&](const Graphics::FPoint2D Pt) {
         return FromSpaceToViewportCoord(Pt, Params.Region, Graphics::RectI{0, Params.ScreenWidth, 0, Params.ScreenHeight});
     });
 
@@ -101,7 +102,7 @@ void FLittlePlaneDesignerPhysicsEngine::Draw(const Graphics::FDraw2DParams & Par
 
     if (b_ShowGravity) {
         const auto Grav = b2World_GetGravity(World);
-        DebugDraw.DrawVector(TotalMass * Grav, COM, VectorScale, b2_colorForestGreen);
+        DebugDraw.DrawVector(TotalMass * Grav, b2Vec2_FromPoint2D(COM), VectorScale, b2_colorForestGreen);
     }
     if (b_ShowTorques || b_ShowAerodynamicForces)
     {
@@ -128,8 +129,12 @@ void FLittlePlaneDesignerPhysicsEngine::Draw(const Graphics::FDraw2DParams & Par
 
     if (b_ShowVerticalSpeed) {
         const auto [vx, vy] = Plane->GetVelocity();
-        fix VertSpeed = b2Vec2{0, vy};
-        DebugDraw.DrawVector(VertSpeed, COM, 1.0f, b2_colorWhite);
-        DebugDraw.Write("Vert speed", COM + VertSpeed);
+        fix VertSpeed = b2Vec2{0, static_cast<float>(vy)};
+        DebugDraw.DrawVector(VertSpeed, b2Vec2_FromPoint2D(COM), 1.0f, b2_colorWhite);
+        DebugDraw.Write("Vert speed", b2Vec2_FromPoint2D(COM) + VertSpeed);
     }
+}
+
+TPointer<const FLittlePlane> FLittlePlaneDesignerPhysicsEngine::GetPlane() const {
+    return Plane;
 }

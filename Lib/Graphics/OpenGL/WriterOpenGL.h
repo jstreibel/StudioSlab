@@ -17,7 +17,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    using FPenTransformFunction = std::function<Point2D(const Point2D&)>;
+    using FPenTransformFunction = std::function<FPoint2D(const FPoint2D&)>;
 
     class FWriterOpenGL final : public FWriter {
         ftgl::texture_font_t *Font = nullptr;
@@ -31,7 +31,7 @@ namespace Slab::Graphics::OpenGL {
         FPenTransformFunction m_PenTransform;
 
         void DrawBuffer();
-        void SetBufferText(const Str &Text, Point2D PenLocation, FColor Color=White, bool Rotate90Degrees=false);
+        void SetBufferText(const Str &Text, FPoint2D PenLocation, FColor Color=White, bool Rotate90Degrees=false);
 
         void UploadAtlas() const;
 
@@ -40,7 +40,7 @@ namespace Slab::Graphics::OpenGL {
         FWriterOpenGL(const Str &fontFile, float ptSize, const char *glyphsToPreload=nullptr);
         ~FWriterOpenGL() override;
 
-        void Write(const Str& Text, Point2D penLocation, FColor Color = White,
+        void Write(const Str& Text, FPoint2D penLocation, FColor Color = White,
                    bool Vertical = false) override;
         [[nodiscard]] DevFloat GetFontHeightInPixels() const override;
         void Reshape(int w, int h) override;

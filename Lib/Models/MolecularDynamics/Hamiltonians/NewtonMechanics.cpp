@@ -95,9 +95,9 @@ namespace Slab::Models::MolecularDynamics {
         const size_t N = v_q.size();
         DevFloat _U = 0.0;
         for (size_t i = 0; i < N - 1; i++) {
-            const Graphics::Point2D &q1 = v_q[i];
+            const Graphics::FPoint2D &q1 = v_q[i];
             for (size_t j = i; j < N; j++) {
-                const Graphics::Point2D &q2 = v_q[j];
+                const Graphics::FPoint2D &q2 = v_q[j];
 
                 _U += U(q1, q2);
             }
@@ -232,7 +232,7 @@ namespace Slab::Models::MolecularDynamics {
                     const auto &q2 = v_q[l];
                     auto       &F2 = v_dpdt[l];
 
-                    const Graphics::Point2D F = dUdr(q1, q2);
+                    const Graphics::FPoint2D F = dUdr(q1, q2);
 
                     F1 += F;
                     F2 -= F;

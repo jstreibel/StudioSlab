@@ -10,7 +10,7 @@ namespace Slab::Math {
 
     FPointSet::FPointSet() : Space(2) {}
 
-    FPointSet::FPointSet(const Point2DVec &points) : FPointSet() {
+    FPointSet::FPointSet(const FPoint2DVec &points) : FPointSet() {
         for (const auto &p: points) AddPoint(p);
     }
 
@@ -47,7 +47,7 @@ namespace Slab::Math {
         return *this;
     }
 
-    void FPointSet::SetPoints(Point2DVec newPoints) {
+    void FPointSet::SetPoints(FPoint2DVec newPoints) {
         *this = FPointSet(newPoints);
     }
 
@@ -93,9 +93,9 @@ namespace Slab::Math {
     }
 
     const
-    Point2DVec &FPointSet::GetPoints() const { return m_Points; }
+    FPoint2DVec &FPointSet::GetPoints() const { return m_Points; }
 
-    Point2DVec& FPointSet::GetPoints() { return m_Points; }
+    FPoint2DVec& FPointSet::GetPoints() { return m_Points; }
 
     FPointSet operator+(const Real2D& a, const FPointSet& b) {
         FPointSet Result{};
@@ -110,7 +110,7 @@ namespace Slab::Math {
         auto &pa = a.GetPoints();
         auto &pb = b.GetPoints();
 
-        Point2DVec c(pa.size() + pb.size());
+        FPoint2DVec c(pa.size() + pb.size());
         std::copy(pa.begin(), pa.end(), c.begin());
         std::copy(pb.begin(), pb.end(), c.begin() + pa.size());
 

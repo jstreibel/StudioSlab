@@ -7,7 +7,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    void RenderPlotOrPointset(const Point2DVec& pts, PlotStyle style) noexcept {
+    void RenderPlotOrPointset(const FPoint2DVec& pts, PlotStyle style) noexcept {
 
         if (style.filled && !(style.getPrimitive() == Points || style.getPrimitive() == Lines)) {
             const auto color = style.fillColor;
@@ -86,7 +86,7 @@ namespace Slab::Graphics::OpenGL {
         }
     }
 
-    void RenderOtherPrimitives(const Point2DVec& pts, PlotStyle style) noexcept
+    void RenderOtherPrimitives(const FPoint2DVec& pts, PlotStyle style) noexcept
     {
         GLenum Primitive;
         switch (style.getPrimitive()) {

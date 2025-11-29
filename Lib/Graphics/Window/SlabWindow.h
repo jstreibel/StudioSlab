@@ -86,11 +86,11 @@ namespace Slab::Graphics {
 
         [[nodiscard]] auto GetMouseState()               const -> TPointer<const FMouseState>;
         [[nodiscard]] auto IsMouseInside()               const -> bool;
-        [[nodiscard]] auto GetMouseViewportCoord()       const -> Point2D;
+        [[nodiscard]] auto GetMouseViewportCoord()       const -> FPoint2D;
         [[nodiscard]] virtual
-        auto IsPointWithin(const Point2D&)               const -> bool;
+        auto IsPointWithin(const FPoint2D&)               const -> bool;
         [[nodiscard]] virtual
-        auto FromPlatformWindowToViewportCoords(const Point2D&) const -> Point2D;
+        auto FromPlatformWindowToViewportCoords(const FPoint2D&) const -> FPoint2D;
 
         [[nodiscard]] auto GetTitle()                    const -> Str;
 

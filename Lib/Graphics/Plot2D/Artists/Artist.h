@@ -46,7 +46,7 @@ namespace Slab::Graphics {
         virtual void SetLabel(Str label);
         virtual auto GetLabel() const -> Str;
 
-        virtual auto GetXHairInfo(const Point2D &XHairCoord) const -> Str;
+        virtual auto GetXHairInfo(const FPoint2D &XHairCoord) const -> Str;
 
         virtual void SetVisibility(bool);
         auto IsVisible() const -> bool;

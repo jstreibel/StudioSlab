@@ -44,20 +44,21 @@ namespace Slab::Graphics {
     DefinePointers(RectI)
     DefinePointers(RectR)
 
-    struct Point2D {
-        Point2D() = default;
-        Point2D(const DevFloat x, const DevFloat y) : x(x), y(y) {}
-        Point2D(const Int x, const Int y) : x(static_cast<DevFloat>(x)), y(static_cast<DevFloat>(y)) {}
-        Point2D(const Point2D& p) = default;
+    struct FPoint2D {
+        FPoint2D() = default;
+        FPoint2D(const DevFloat x, const DevFloat y) : x(x), y(y) {}
+        FPoint2D(const Int x, const Int y) : x(static_cast<DevFloat>(x)), y(static_cast<DevFloat>(y)) {}
+        FPoint2D(const FPoint2D& p) = default;
+        FPoint2D(const Math::Real2D& p) : x(p.x), y(p.y) {}
 
-        Point2D operator +  (const Point2D &p) const {return {x+p.x, y+p.y}; }
+        FPoint2D operator +  (const FPoint2D &p) const {return {x+p.x, y+p.y}; }
 
-        void    operator += (const Point2D &p) { x+=p.x; y+=p.y; }
-        void    operator -= (const Point2D &p) { x-=p.x; y-=p.y; }
+        void    operator += (const FPoint2D &p) { x+=p.x; y+=p.y; }
+        void    operator -= (const FPoint2D &p) { x-=p.x; y-=p.y; }
 
         void    operator *= (const DevFloat &a) { x*=a; y*=a; }
 
-        Point2D WithTranslation(const DevFloat dx, const DevFloat dy) const { return {x+dx, y+dy}; }
+        FPoint2D WithTranslation(const DevFloat dx, const DevFloat dy) const { return {x+dx, y+dy}; }
 
         Math::Real2D ToReal2D() const { return {x, y}; }
 
@@ -68,11 +69,11 @@ namespace Slab::Graphics {
     };
 
     // Point2D operator + (const Point2D &a, const Point2D &b);
-    Point2D operator - (const Point2D &a, const Point2D &b);
-    Point2D operator * (const DevFloat &a, const Point2D &p);
-    Point2D operator * (const Point2D &p, const DevFloat &a);
+    FPoint2D operator - (const FPoint2D &a, const FPoint2D &b);
+    FPoint2D operator * (const DevFloat &a, const FPoint2D &p);
+    FPoint2D operator * (const FPoint2D &p, const DevFloat &a);
 
-    typedef Vector<Point2D> PointContainer;
+    typedef Vector<FPoint2D> PointContainer;
 
 }
 

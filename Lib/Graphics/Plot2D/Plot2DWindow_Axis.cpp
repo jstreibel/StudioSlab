@@ -14,7 +14,7 @@
 
 namespace Slab {
 
-    Str Graphics::FPlot2DWindow::GetXHairLabel(const Point2D &coords) const {
+    Str Graphics::FPlot2DWindow::GetXHairLabel(const FPoint2D &coords) const {
         fix digits = 5;
         auto &hUnit = AxisArtist.getHorizontalUnit();
         auto &vUnit = AxisArtist.getVerticalUnit();

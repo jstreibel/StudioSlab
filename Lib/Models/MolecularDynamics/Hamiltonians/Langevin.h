@@ -12,8 +12,8 @@ namespace Slab::Models::MolecularDynamics {
     class Langevin : public NewtonMechanics {
         DevFloat T;
 
-        auto F_nh(DevFloat t) -> Graphics::Point2D override;
-        static Graphics::Point2D xi();
+        auto F_nh(DevFloat t) -> Graphics::FPoint2D override;
+        static Graphics::FPoint2D xi();
 
     public:
         using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;

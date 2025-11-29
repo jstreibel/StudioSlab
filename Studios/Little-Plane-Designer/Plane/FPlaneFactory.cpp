@@ -60,7 +60,7 @@ auto FBodyPartRenderer::GetLeftView() const -> Math::Geometry::FPolygon {
 }
 
 auto FBodyPartRenderer::GetTopView() const -> Math::Geometry::FPolygon {
-    Math::Point2DVec Points;
+    Math::FPoint2DVec Points;
 
     fix xMin = Descriptor.Section.GetMin().x;
     fix yMin = -Descriptor.Depth*.5f;
@@ -240,8 +240,6 @@ TPointer<FWing> FPlaneFactory::BuildWing(const FWingDescriptor& Descriptor, cons
 
         auto Mass = b2Body_GetMass(WingBody);
         auto I = b2Body_GetRotationalInertia(WingBody);
-        Core::Log::Info(ToStr("Mass (expected, found): (%f, %f)", WingMassProperties.Mass, Mass));
-        Core::Log::Info(ToStr("Inertia (expected, found): (%f, %f)", WingMassProperties.InertiaOrigin, I));
     }
 
     return New<FWing>(FWing{

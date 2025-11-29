@@ -14,7 +14,7 @@ namespace Slab::Graphics {
 FShape::~FShape() {
 }
 
-FRectangleShape::FRectangleShape(Point2D top_left, Point2D bottom_right)
+FRectangleShape::FRectangleShape(FPoint2D top_left, FPoint2D bottom_right)
 : top_left(top_left), bottom_right(bottom_right) {    }
 
 void FRectangleShape::Draw(const FPlot2DWindow &window) {
@@ -24,7 +24,7 @@ void FRectangleShape::Draw(const FPlot2DWindow &window) {
     OpenGL::Legacy::DrawRectangle(*this);
 }
 
-Point2D FRectangleShape::GetCenter() const {
+FPoint2D FRectangleShape::GetCenter() const {
     const auto xCenter = (top_left.x + bottom_right.x) / 2;
     const auto yCenter = (top_left.y + bottom_right.y) / 2;
 
@@ -51,7 +51,7 @@ FRectangleShapeBuilder FRectangleShapeBuilder::At(double _x, double _y) const {
     return {w, h, _x, _y};
 }
 
-FRectangleShapeBuilder FRectangleShapeBuilder::At(Point2D Loc) const {
+FRectangleShapeBuilder FRectangleShapeBuilder::At(FPoint2D Loc) const {
     return At(Loc.x, Loc.y);
 }
 

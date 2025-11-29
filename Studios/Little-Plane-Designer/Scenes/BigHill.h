@@ -29,6 +29,8 @@ public:
     void HandleInputState(FInputState) override;
     bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override;
 
+    Graphics::RectR GetCurrentView() const override;
+
     void TogglePause() override;
 
 private:
@@ -49,6 +51,7 @@ private:
     const int PlotsHeight = 400;
     Vector<TPointer<Graphics::FPlot2DWindow>> Plots;
     TPointer<Graphics::FGUIContext> GUIContext;
+    Graphics::FMouseState CurrentMouse;
 
 
     /*

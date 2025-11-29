@@ -26,16 +26,16 @@ namespace Slab::Models::MolecularDynamics {
         virtual void applyBoundaryConditions(Graphics::PointContainer &v_q);      // For velocity Verlet stepper
         virtual void applyBoundaryConditions(MoleculeContainer &m);     // For RK4 stepper
 
-        virtual DevFloat U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) { return 0; };
+        virtual DevFloat U(const Graphics::FPoint2D &q1, const Graphics::FPoint2D &q2) { return 0; };
 
-        virtual Graphics::Point2D dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) = 0;
+        virtual Graphics::FPoint2D dUdr(const Graphics::FPoint2D &q1, const Graphics::FPoint2D &q2) = 0;
 
         /**
          * Non-homogeneous force term
          * @param t current simulation time
          * @return the non-homogeneous force
          */
-        virtual Graphics::Point2D F_nh(DevFloat t) { return {0,0}; }
+        virtual Graphics::FPoint2D F_nh(DevFloat t) { return {0,0}; }
 
         TPointer<Config> numeric_config;
 

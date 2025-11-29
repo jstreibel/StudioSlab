@@ -129,7 +129,7 @@ namespace Slab::Graphics {
         auto currStyle = PlotThemeManager::GetCurrent();
 
         auto c = currStyle->graphNumbersColor;
-        Point2D loc = {xMax_label + xGap, .5 * (yMax_label + yMin_label)};
+        FPoint2D loc = {xMax_label + xGap, .5 * (yMax_label + yMin_label)};
 
         auto writer = currStyle->LabelsWriter;
         loc = FromSpaceToViewportCoord(loc, {0, 1, 0, 1}, viewport);

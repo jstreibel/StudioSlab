@@ -84,7 +84,7 @@ namespace Slab::Graphics {
         return true;
     }
 
-    auto FSlabWindow::IsPointWithin(const Point2D &Point) const -> bool {
+    auto FSlabWindow::IsPointWithin(const FPoint2D &Point) const -> bool {
         auto GuiBackend = Slab::Graphics::GetGraphicsBackend();
 
         const auto Rect = GetViewport();
@@ -97,7 +97,7 @@ namespace Slab::Graphics {
         return Point.x > x && Point.x < x + w && Point.y > y && Point.y < y + h;
     }
 
-    auto FSlabWindow::FromPlatformWindowToViewportCoords(const Point2D& PointInPlatformWindowCoords) const -> Point2D {
+    auto FSlabWindow::FromPlatformWindowToViewportCoords(const FPoint2D& PointInPlatformWindowCoords) const -> FPoint2D {
         auto vpRect = GetViewport();
 
         IN Point = PointInPlatformWindowCoords;
@@ -144,12 +144,12 @@ namespace Slab::Graphics {
 
     auto FSlabWindow::IsMouseInside() const -> bool
     {
-        return IsPointWithin(Point2D{static_cast<double>(MouseState->x), static_cast<double>(MouseState->y)});
+        return IsPointWithin(FPoint2D{static_cast<double>(MouseState->x), static_cast<double>(MouseState->y)});
     }
 
-    auto FSlabWindow::GetMouseViewportCoord() const -> Point2D
+    auto FSlabWindow::GetMouseViewportCoord() const -> FPoint2D
     {
-        return FromPlatformWindowToViewportCoords(Point2D{MouseState->x, MouseState->y});
+        return FromPlatformWindowToViewportCoords(FPoint2D{MouseState->x, MouseState->y});
     }
 
     void FSlabWindow::SetMinimumWidth(const Slab::Resolution MinWidthArg) {

@@ -176,7 +176,7 @@ namespace Slab::Graphics {
         {
             const auto xMidpoint = region.xCenter();
             const auto yMidpoint = region.getYMin();
-            const Point2D loc = {xMidpoint, yMidpoint};
+            const FPoint2D loc = {xMidpoint, yMidpoint};
             writer = currStyle->LabelsWriter;
 
             auto pen = FromSpaceToViewportCoord(loc, region.getRect(), vp);
@@ -216,7 +216,7 @@ namespace Slab::Graphics {
 
             auto label = vUnit(mark, 2);
 
-            Point2D loc = {static_cast<float>(xLocationOfYAxis), static_cast<float>(mark)+yOffsetOfLabels};
+            FPoint2D loc = {static_cast<float>(xLocationOfYAxis), static_cast<float>(mark)+yOffsetOfLabels};
 
             Str text;
             if(vUnit.symbol().empty()) {
@@ -291,7 +291,7 @@ namespace Slab::Graphics {
         {
             const auto xMidpoint = region.getXMin();
             const auto yMidpoint = region.yCenter();
-            const Point2D loc = {xMidpoint, yMidpoint};
+            const FPoint2D loc = {xMidpoint, yMidpoint};
             auto labels_writer = currStyle->LabelsWriter;
 
             auto pen = FromSpaceToViewportCoord(loc, region.getRect(), vp);

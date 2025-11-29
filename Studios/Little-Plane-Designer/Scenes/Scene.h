@@ -11,6 +11,7 @@ using namespace Slab;
 
 struct IScene : Graphics::IDrawable, IUpdateable {
     virtual void Startup(const Graphics::FPlatformWindow&) = 0;
+    virtual Graphics::RectR GetCurrentView() const = 0;
 };
 
 #endif //STUDIOSLAB_FSCENE_H

@@ -25,6 +25,8 @@ public:
     bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state,
         Graphics::EModKeys modKeys) override;
 
+    Graphics::RectR GetCurrentView() const override;
+
     void AddPartAnnotation(const Str& Annotation, Math::Real2D ItemLocation);
     void AddGlobalCharacteristicAnnotation(const Str& Annotation);
 
@@ -33,6 +35,8 @@ private:
     TPointer<Graphics::OpenGL::FWriterOpenGL> Writer;
 
     void SetupAnnotations();
+
+    Graphics::RectR Region;
 
     Real64 GlyphHeight;
     int NumAnnotations = 0;

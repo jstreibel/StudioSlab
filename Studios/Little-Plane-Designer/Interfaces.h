@@ -6,23 +6,24 @@
 #define STUDIOSLAB_INTERFACES_H
 
 #include "Graphics/Backend/Events/KeyboardState.h"
+#include "Math/Point.h"
 #include "Render/DebugDraw.h"
 
 using Seconds = float;
 
 struct ILocatableEntity {
     virtual ~ILocatableEntity() = default;
-    virtual b2Vec2 GetPosition() const = 0;
+    virtual Slab::Math::Point2D GetPosition() const = 0;
 };
 
 struct IMovingEntity : ILocatableEntity {
-    virtual b2Vec2 GetVelocity() const = 0;
+    virtual Slab::Math::Point2D GetVelocity() const = 0;
 };
 
 struct IDynamicEntity : IMovingEntity {
     virtual void ComputeAndApplyForces() = 0;
     virtual float GetTotalMass() const = 0;
-    virtual b2Vec2 GetCenterOfMass_Global() const = 0;
+    virtual Slab::Math::Point2D GetCenterOfMass_Global() const = 0;
 };
 
 struct FInputState {

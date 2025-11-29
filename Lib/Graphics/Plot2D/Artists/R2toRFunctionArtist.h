@@ -66,7 +66,7 @@ namespace Slab::Graphics {
 
         void set_xPeriodicOn() const;
 
-        auto GetXHairInfo(const Point2D &XHairCoord) const -> Str override;
+        auto GetXHairInfo(const FPoint2D &XHairCoord) const -> Str override;
 
         auto getFieldTextureKontraption() const -> TPointer<FieldTextureKontraption>;
 

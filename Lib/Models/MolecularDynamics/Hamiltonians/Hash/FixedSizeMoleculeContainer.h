@@ -18,8 +18,8 @@ namespace Slab::Models::MolecularDynamics {
 
     class FixedSizeMoleculeContainer {
     public:
-        typedef Pair<const Graphics::Point2D *, const Graphics::Point2D *> PointRefPair;
-        typedef Pair<PointRefPair, Graphics::Point2D *> VerletPointTriple;
+        typedef Pair<const Graphics::FPoint2D *, const Graphics::FPoint2D *> PointRefPair;
+        typedef Pair<PointRefPair, Graphics::FPoint2D *> VerletPointTriple;
 
     public:
         FixedSizeMoleculeContainer() = default;

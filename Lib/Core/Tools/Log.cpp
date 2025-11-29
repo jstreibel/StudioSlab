@@ -6,6 +6,8 @@
 
 #include <typeinfo>
 #include <iomanip>
+#include <chrono>
+#include <ctime>
 #define GET_CLASS_NAME(obj) typeid(obj).name()
 
 
@@ -74,10 +76,22 @@ namespace Slab::Core {
     inline Str Log::Prefix() {
         StringStream ss;
 
-        auto time = Timer.getElTime_msec();
+        // Wall-clock timestamp (UTC) with milliseconds
+        const auto now = std::chrono::system_clock::now();
+        const auto tt = std::chrono::system_clock::to_time_t(now);
+        std::tm tm{};
+#if defined(_WIN32)
+        gmtime_s(&tm, &tt);
+#else
+        gmtime_r(&tt, &tm);
+#endif
+        const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
 
-
-        ss << Str("\n") << ResetFormatting << std::fixed << std::setprecision(2) << std::setw(10) << time << "ms [ ";
+        ss << "\n" << ResetFormatting
+           << std::put_time(&tm, "%FT%T") << '.'
+           << std::setfill('0') << std::setw(3) << ms.count()
+           << 'Z'
+           << " [ ";
 
         return ss.str();
     };

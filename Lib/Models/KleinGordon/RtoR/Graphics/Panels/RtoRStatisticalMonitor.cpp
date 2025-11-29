@@ -69,7 +69,7 @@ namespace Slab::Models::KGRtoR {
             auto TParam = FInterfaceManager::GetInstance().GetParametersValues({"T"});
             if (!TParam.empty()) {
                 auto T = std::stod(TParam[0].second);
-                auto pts = Math::Point2DVec({{-.1,                T},
+                auto pts = Math::FPoint2DVec({{-.1,                T},
                                              {params->Get_t() + .1, T}});
                 auto Tstyle = (*style++).permuteColors();
                 Tstyle.filled = false;

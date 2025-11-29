@@ -13,13 +13,13 @@ namespace Slab::Math {
 
 
 class FPointSet : public Space {
-    Point2DVec m_Points;
+    FPoint2DVec m_Points;
     Point2D max={.0,.0}, min={.0,.0};
 
 public:
     FPointSet();
     explicit
-    FPointSet(const Point2DVec& points);
+    FPointSet(const FPoint2DVec& points);
     FPointSet(const FPointSet& pointSet);
 
     FPointSet Clone() const;
@@ -34,7 +34,7 @@ public:
     void Clear();
     void AddPoint(DevFloat x, DevFloat y);
     FPointSet& AddPoint(const Point2D &point);
-    void SetPoints(Point2DVec points);
+    void SetPoints(FPoint2DVec points);
 
     FPointSet TranslateConst(const Point2D &p) const;
     FPointSet& Translate(const Point2D &p);
@@ -43,8 +43,8 @@ public:
     FPointSet operator*(Real64 a) const;
     FPointSet& operator*=(Real64 a);
 
-    const Point2DVec& GetPoints() const;
-    Point2DVec& GetPoints();
+    const FPoint2DVec& GetPoints() const;
+    FPoint2DVec& GetPoints();
 };
 
 FPointSet operator + (const Real2D &a, const FPointSet &b);

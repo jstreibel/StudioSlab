@@ -30,8 +30,8 @@ inline auto GetTexture(const Slab::Str& FileName) {
 
 FDecal::FDecal(
     const Slab::Str& LittlePlaneDesigner_FileName,
-    const Slab::Graphics::Point2D Position,
-    const Slab::Graphics::Point2D Size, Slab::DevFloat ZIndex)
+    const Slab::Graphics::FPoint2D Position,
+    const Slab::Graphics::FPoint2D Size, Slab::DevFloat ZIndex)
 : Position(Position)
 , ZIndex(ZIndex)
 , Size(Size)
@@ -49,7 +49,7 @@ void FDecal::Draw(const Slab::Graphics::FDraw2DParams&) {
 }
 
 FRuler::FRuler(
-    const Slab::Graphics::Point2D &Loc,
+    const Slab::Graphics::FPoint2D &Loc,
     const float &Unit,
     const Slab::DevFloat ZIndex): Loc(Loc), Unit(Unit), ZIndex(ZIndex) {}
 

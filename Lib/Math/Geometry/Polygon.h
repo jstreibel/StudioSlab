@@ -27,7 +27,7 @@ struct IPolygon : IGeometricObject {
 struct FPolygon final : FPointSet
 {
     explicit FPolygon(const FPointSet &PointSet);
-    explicit FPolygon(const Point2DVec &Points);
+    explicit FPolygon(const FPoint2DVec &Points);
 
     void ValidateWithException() const;
     FPolygonValidationResult Validate() const;

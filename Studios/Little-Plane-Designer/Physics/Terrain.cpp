@@ -45,8 +45,8 @@ void FTerrain::Setup(const b2WorldId World, const FTerrainDescriptor& Descriptor
     ChainId = b2CreateChain(BodyId, &ChainDef);
 
     {
-        Slab::Math::Point2DVec MeshTris(Descriptor.Count*6);
-        Slab::Math::Point2DVec SurfLine(Descriptor.Count);
+        Slab::Math::FPoint2DVec MeshTris(Descriptor.Count*6);
+        Slab::Math::FPoint2DVec SurfLine(Descriptor.Count);
         for (int k = 0; k < Descriptor.Count-1; ++k) {
             constexpr float k_GroundHeight = -30.0f;
 

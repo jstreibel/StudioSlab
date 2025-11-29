@@ -17,11 +17,11 @@ namespace Slab::Models::MolecularDynamics {
 
 // Used for RK4
     struct Molecule {
-        Molecule(Graphics::Point2D q, Graphics::Point2D p) : m_q(q), m_p(p) {}
+        Molecule(Graphics::FPoint2D q, Graphics::FPoint2D p) : m_q(q), m_p(p) {}
 
         Molecule() = default;
 
-        Graphics::Point2D m_q, m_p;
+        Graphics::FPoint2D m_q, m_p;
     };
 
     Molecule operator*(const DevFloat &a, const Molecule &m);

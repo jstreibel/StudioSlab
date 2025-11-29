@@ -40,7 +40,7 @@ void FPlaneStats::Draw(const Graphics::FDraw2DParams& Params) {
     constexpr double MpsToKmph = 3.6;                 // 3.6
     constexpr double MpsToMph  = 3600.0 / 1609.344;   // ≈ 2.2369362920544
 
-    const float speed = b2Length(Plane->GetVelocity());
+    const float speed = Plane->GetVelocity().norm();
     const float speedKmh = speed * static_cast<float>(MpsToKmph);
     const float speedMph = speed * static_cast<float>(MpsToMph);
     const float planeHeight = Plane->GetPosition().y;

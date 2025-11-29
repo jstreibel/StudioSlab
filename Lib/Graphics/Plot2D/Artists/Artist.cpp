@@ -23,7 +23,7 @@ namespace Slab::Graphics {
 
     auto FArtist::GetLabel() const -> Str { return label; }
 
-    auto FArtist::GetXHairInfo(const Point2D &XHairCoord) const -> Str {
+    auto FArtist::GetXHairInfo(const FPoint2D &XHairCoord) const -> Str {
         return Str();
     }
 

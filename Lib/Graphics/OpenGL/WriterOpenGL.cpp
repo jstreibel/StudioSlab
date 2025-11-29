@@ -26,7 +26,7 @@ namespace Slab::Graphics::OpenGL {
     FWriterOpenGL::FWriterOpenGL(const Str &fontFile, float ptSize, const char *glyphsToPreload)
             : VertexBuffer("vertex:3f,tex_coord:2f,color:4f")
             , Program(shaderDir + "v3f-t2f-c4f.vert", shaderDir + "v3f-t2f-c4f.frag")
-            , m_PenTransform([](const Point2D &p){ return p; }){
+            , m_PenTransform([](const FPoint2D &p){ return p; }){
 
         const auto factor = static_cast<int>(ceil(ptSize / 30.));
 
@@ -83,7 +83,7 @@ namespace Slab::Graphics::OpenGL {
         Font->atlas_dirty = 0;
     }
 
-    void FWriterOpenGL::SetBufferText(const Str &Text, Point2D PenLocation, const FColor Color, const bool Rotate90Degrees) {
+    void FWriterOpenGL::SetBufferText(const Str &Text, FPoint2D PenLocation, const FColor Color, const bool Rotate90Degrees) {
         CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));
 
         VertexBuffer.clear();
@@ -180,10 +180,10 @@ namespace Slab::Graphics::OpenGL {
 
     }
 
-    void FWriterOpenGL::Write(const Str &Text, const Point2D PenLocation, const FColor Color, const bool Vertical) {
+    void FWriterOpenGL::Write(const Str &Text, const FPoint2D PenLocation, const FColor Color, const bool Vertical) {
         if(Text.empty()) return;
 
-        const Point2D Pen = m_PenTransform(PenLocation);
+        const FPoint2D Pen = m_PenTransform(PenLocation);
 
         SetBufferText(Text, Pen, Color, Vertical);
         CheckGLErrors(Str(__PRETTY_FUNCTION__) + ":" + ToStr(__LINE__));

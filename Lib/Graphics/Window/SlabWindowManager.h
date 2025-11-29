@@ -33,7 +33,7 @@ namespace Slab::Graphics {
         Int WidthSysWin=10, HeightSysWin=10;
 
         TPointer<FWindowMetaInformation> CurrentlyFocused;
-        using Anchor = Point2D;
+        using Anchor = FPoint2D;
         struct Grabbed {Anchor anchor; enum What {None, Titlebar, Corner} what; TPointer<FSlabWindow> window;} Grabbed;
 
         TPointer<FMouseState> MouseState;

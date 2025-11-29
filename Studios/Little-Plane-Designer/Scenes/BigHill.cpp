@@ -77,19 +77,6 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
     // fix KeyboardState = PlatformWindow.GetKeyboardState();
     // HandleInputs(*KeyboardState);
 
-    // Update writers
-    // {
-    //     const auto Writer = DebugDraw_LegacyGL->GetWriter();
-    //     Writer->Reshape(WinWidth, WinHeight);
-    //     Writer->SetPenPositionTransform([Providers](const Graphics::Point2D& PenPosition) {
-    //         IN View = Providers.Region;
-    //         return Graphics::FromSpaceToViewportCoord(
-    //             PenPosition,
-    //             Graphics::RectR{View.xMin, View.xMax, View.yMin, View.yMax},
-    //             Graphics::RectI{0, Providers.ScreenWidth, 0, Providers.ScreenHeight});
-    //     });
-    // }
-
     Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
     Drawer::ResetModelView();
     Drawer::SetupOrtho(Camera->GetView());
@@ -108,6 +95,21 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
             Drawable->Draw(Params);
         }
     }
+
+    ImGui::Begin("Mouse position", nullptr);
+
+    fix xMouse = static_cast<float>(CurrentMouse.x);
+    fix yMouse = static_cast<float>(CurrentMouse.y);
+    ImGui::Text("Mouse position: (%.2f, %.2f)", xMouse, yMouse);
+    fix MouseSpace = Graphics::FromViewportToSpaceCoord({xMouse, yMouse},
+        Camera->GetView(), Graphics::RectI{0, WinWidth, 0, WinHeight});
+    ImGui::Text("Mouse space position: (%.2f, %.2f)", MouseSpace.x, MouseSpace.y);
+    fix PlanePos = Graphics::FPoint2D(PhysicsEngine->GetPlane()->GetPosition());
+    fix MousePlaneCoords = MouseSpace - PlanePos;
+    ImGui::Text("Mouse plane coords: (%.2f, %.2f)", MousePlaneCoords.x, MousePlaneCoords.y);
+
+
+    ImGui::End();
 
     // UpdateGraphs();
     // if (DebugDraw) { DoPhysicsDraw(); }
@@ -141,6 +143,8 @@ void FBigHill::HandleInputState(const FInputState InputState) {
     }
 
     Controller->HandleInputState(InputState);
+
+    CurrentMouse = InputState.MouseState;
 }
 
 bool FBigHill::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) {
@@ -151,6 +155,10 @@ bool FBigHill::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, 
     }
 
     return false;
+}
+
+Graphics::RectR FBigHill::GetCurrentView() const {
+    return Camera->GetView();
 }
 
 void FBigHill::TogglePause() { PhysicsEngine->TogglePause(); }
@@ -263,7 +271,7 @@ void FBigHill::SetupMonitors() {
 
 void FBigHill::SetupScenario() {
     constexpr auto Hilltop_x = 160.0f;
-    const auto Hilltop = Graphics::Point2D{Hilltop_x, 0.25*Hilltop_x};
+    const auto Hilltop = Graphics::FPoint2D{Hilltop_x, 0.25*Hilltop_x};
 
     fix World = PhysicsEngine->GetWorld();
 
@@ -314,7 +322,7 @@ void FBigHill::SetupScenario() {
     Drawables.emplace_back(Slab::New<FRuler>(Hilltop.WithTranslation(-2.0, -.8), HeightOfAHuman, ZIndexFront));
     Drawables.emplace_back(Slab::New<FGuy>(Hilltop.WithTranslation(-0.5, 0.9-.8), ZIndexFront));
     Drawables.emplace_back(Slab::New<FTree01>(Hilltop.WithTranslation(+3.0, 1.5), ZIndexFront));
-    Drawables.emplace_back(Slab::New<FTree01>(Graphics::Point2D{-5.0, 0.0}, ZIndexFront));
+    Drawables.emplace_back(Slab::New<FTree01>(Graphics::FPoint2D{-5.0, 0.0}, ZIndexFront));
 
 }
 
