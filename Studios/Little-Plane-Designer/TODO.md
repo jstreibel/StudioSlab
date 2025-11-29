@@ -10,7 +10,7 @@
   - [X] Plane hull composition
 - [X] Arbitrary ground heights (terrain)
 - [X] Correct forces diagram
-  - [ ] Simplified and useful forces diagram
+  - [X] Simplified and useful forces diagram
 - [X] Foil interactivity
   - [X] Spring response
   - [X] Fixed response (change aileron angle) 
@@ -39,9 +39,9 @@
   - [ ] Snowy
   - [ ] Hilly 
 - [ ] Landscape and sky parallax
-  - [ ] Fog 
+- [ ] Fog 
 - [ ] Analytic atmospheric pressure distribution
-  - [ ] Wind
+- [ ] Wind
 - [ ] More atmospheric effects 
   - [ ] Ascending/descending wind
   - [ ] Snow

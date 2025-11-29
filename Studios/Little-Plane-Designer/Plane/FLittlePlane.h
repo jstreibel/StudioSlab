@@ -48,6 +48,7 @@ public:
     Math::Point2D GetCenterOfMass_Global() const override;
     Math::Point2D GetPosition() const override;
     Math::Point2D GetVelocity() const override;
+    float GetAngle() const override;
 
     void Draw(const Graphics::FDraw2DParams&) override;
     const FWing& GetWing(int i) const { return *Wings[i]; }

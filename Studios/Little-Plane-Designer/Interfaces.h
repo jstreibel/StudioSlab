@@ -24,6 +24,8 @@ struct IDynamicEntity : IMovingEntity {
     virtual void ComputeAndApplyForces() = 0;
     virtual float GetTotalMass() const = 0;
     virtual Slab::Math::Point2D GetCenterOfMass_Global() const = 0;
+
+    virtual float GetAngle() const = 0;
 };
 
 struct FInputState {

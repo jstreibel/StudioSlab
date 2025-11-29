@@ -105,7 +105,9 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
         Camera->GetView(), Graphics::RectI{0, WinWidth, 0, WinHeight});
     ImGui::Text("Mouse space position: (%.2f, %.2f)", MouseSpace.x, MouseSpace.y);
     fix PlanePos = Graphics::FPoint2D(PhysicsEngine->GetPlane()->GetPosition());
-    fix MousePlaneCoords = MouseSpace - PlanePos;
+    fix Angle = PhysicsEngine->GetPlane()->GetAngle();
+    fix MousePlaneCoords = (MouseSpace - PlanePos).WithRotation(-Angle);
+
     ImGui::Text("Mouse plane coords: (%.2f, %.2f)", MousePlaneCoords.x, MousePlaneCoords.y);
 
 

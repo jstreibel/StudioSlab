@@ -49,7 +49,7 @@ namespace Slab::Graphics {
         FPoint2D(const DevFloat x, const DevFloat y) : x(x), y(y) {}
         FPoint2D(const Int x, const Int y) : x(static_cast<DevFloat>(x)), y(static_cast<DevFloat>(y)) {}
         FPoint2D(const FPoint2D& p) = default;
-        FPoint2D(const Math::Real2D& p) : x(p.x), y(p.y) {}
+        explicit FPoint2D(const Math::Real2D& p) : x(p.x), y(p.y) {}
 
         FPoint2D operator +  (const FPoint2D &p) const {return {x+p.x, y+p.y}; }
 
@@ -59,6 +59,7 @@ namespace Slab::Graphics {
         void    operator *= (const DevFloat &a) { x*=a; y*=a; }
 
         FPoint2D WithTranslation(const DevFloat dx, const DevFloat dy) const { return {x+dx, y+dy}; }
+        FPoint2D WithRotation(DevFloat AngleRad) const;
 
         Math::Real2D ToReal2D() const { return {x, y}; }
 

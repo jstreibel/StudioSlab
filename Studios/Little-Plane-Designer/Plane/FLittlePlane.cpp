@@ -146,6 +146,10 @@ Math::Point2D FLittlePlane::GetVelocity() const {
     return Point2D_Fromb2Vec2(b2Body_GetLinearVelocity(HullBody));
 }
 
+float FLittlePlane::GetAngle() const {
+    return b2Rot_GetAngle(b2Body_GetRotation(HullBody));
+}
+
 void FLittlePlane::Draw(const Graphics::FDraw2DParams& DrawParams) {
 
     // Draw a 2x2 textured rectangle centered at the hull body using HullTexture

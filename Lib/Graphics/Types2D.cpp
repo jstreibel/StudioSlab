@@ -8,6 +8,10 @@ namespace Slab::Graphics {
 
     // Point2D operator+(const Point2D &a, const Point2D &b) { return {a.x + b.x, a.y + b.y}; }
 
+    FPoint2D FPoint2D::WithRotation(const DevFloat AngleRad) const {
+        return {x*cos(AngleRad) - y*sin(AngleRad), x*sin(AngleRad) + y*cos(AngleRad)};
+    }
+
     FPoint2D operator-(const FPoint2D &a, const FPoint2D &b) { return {a.x - b.x, a.y - b.y}; }
 
     FPoint2D operator*(const DevFloat &a, const FPoint2D &p) { return {p.x * a, p.y * a}; }
