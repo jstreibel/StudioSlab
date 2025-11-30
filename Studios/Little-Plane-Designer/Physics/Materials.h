@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MATERIALS_H
 #define STUDIOSLAB_MATERIALS_H
 
-constexpr auto LightPlaneDensity = 100.0;
+constexpr auto LightPlaneDensity = 110.0;
 constexpr auto HeavyPlaneDensity = 230.0;
 
 constexpr auto LightRockDensity = 1600.0;

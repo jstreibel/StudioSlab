@@ -28,7 +28,6 @@ auto FWingDescriptorUtils::GetTopView() const -> Math::Geometry::FPolygon {
 
     fix ChordLength = Params.ChordLength;
     fix WingSpan = Params.Span;
-    fix AnchorX = Params.LocalAnchor.x + ChordLength/2;
     fix RelativeLocationX = RelativeLocation.x;
 
     Math::FPointSet Points{};
@@ -38,7 +37,7 @@ auto FWingDescriptorUtils::GetTopView() const -> Math::Geometry::FPolygon {
     fix xMax = ChordLength*.5f;
     fix yMax = WingSpan*.5f;
 
-    return Math::Geometry::FPolygon{Math::Geometry::FAABox{{xMin, yMin}, {xMax, yMax}}.GetPoints().Translate({RelativeLocationX+AnchorX, 0.0})};
+    return Math::Geometry::FPolygon{Math::Geometry::FAABox{{xMin, yMin}, {xMax, yMax}}.GetPoints().Translate({RelativeLocationX, 0.0})};
 }
 
 auto FWingDescriptorUtils::GetFrontView() const -> Math::Geometry::FPolygon {
@@ -56,17 +55,54 @@ auto FWingDescriptorUtils::ComputeMassProperties() const -> Math::Geometry::FMas
     return Vertices.ComputeMassProperties(Density*Params.Span);
 }
 
+FCircle FBodyPartDescriptor::GetCircle() const {
+    if (Shape != EShape::Circle) throw std::runtime_error("Not a circle");
+
+    return Circle;
+
+}
+
+Math::Geometry::FPolygon FBodyPartDescriptor::GetPolygon() const {
+    if (Shape != EShape::Polygon) throw std::runtime_error("Not a polygon");
+
+    return Polygon;
+}
+
 auto FBodyPartRenderer::GetLeftView() const -> Math::Geometry::FPolygon {
-    return Descriptor.Section;
+    if (Descriptor.GetShape() == EShape::Circle) {
+        return Math::Geometry::FPolygon{
+            Math::Geometry::FCircle(Descriptor.GetCircle().Center, Descriptor.GetCircle().Radius)
+            .GetPoints()
+        };
+    }
+
+    if (Descriptor.GetShape() == EShape::Polygon) return Descriptor.GetPolygon();
+
+    throw std::runtime_error("Not a circle or polygon");
 }
 
 auto FBodyPartRenderer::GetTopView() const -> Math::Geometry::FPolygon {
     Math::FPoint2DVec Points;
 
-    fix xMin = Descriptor.Section.GetMin().x;
-    fix yMin = -Descriptor.Depth*.5f;
-    fix xMax = Descriptor.Section.GetMax().x;
-    fix yMax = Descriptor.Depth*.5f;
+    Real64 xMin;
+    Real64 yMin;
+    Real64 xMax;
+    Real64 yMax;
+
+    if (Descriptor.GetShape() == EShape::Circle) {
+        fix Circle = Descriptor.GetCircle();
+        xMin = Circle.Center.x - Circle.Radius;
+        yMin = - Circle.Radius;
+        xMax = Circle.Center.x + Circle.Radius;
+        yMax = + Circle.Radius;
+
+    }
+    else if (Descriptor.GetShape() == EShape::Polygon) {
+        xMin = Descriptor.GetPolygon().GetMin().x;
+        yMin = -Descriptor.Depth*.5f;
+        xMax = Descriptor.GetPolygon().GetMax().x;
+        yMax = Descriptor.Depth*.5f;
+    }
 
     Points.emplace_back(xMin, yMin);
     Points.emplace_back(xMax, yMin);
@@ -168,38 +204,48 @@ b2BodyId FPlaneFactory::BuildBody(const b2WorldId World) const {
         ShapeDef.material.friction = Desc.Friction;
         ShapeDef.material.restitution = Desc.Restitution;
 
-        const auto &Pts = Desc.Section.GetPoints();
-        if (Pts.size() < 3) {
-            Core::Log::Error("Body part polygon has fewer than 3 points; skipping");
-            continue;
-        }
-
-        auto poly = b2Polygon{};
-        bool b_PolyOk = false;
-        if (Pts.size() <= B2_MAX_POLYGON_VERTICES) {
-            // Convert to b2Vec2 array
-            Vector<b2Vec2> verts;
-            verts.reserve(Pts.size());
-            for (const auto &p : Pts) {
-                verts.push_back({static_cast<float>(p.x), static_cast<float>(p.y)});
+        if (Desc.Shape == EShape::Polygon) {
+            const auto &Pts = Desc.Polygon.GetPoints();
+            if (Pts.size() < 3) {
+                Core::Log::Error("Body part polygon has fewer than 3 points; skipping");
+                continue;
             }
 
-            // Compute convex hull and create a Box2D polygon
-            b2Hull hull = b2ComputeHull(verts.data(), static_cast<int>(verts.size()));
-            if (hull.count < 3) {
-                Core::Log::Error("Box2D hull generation failed for body part; using bounding box");
+            auto poly = b2Polygon{};
+            bool b_PolyOk = false;
+            if (Pts.size() <= B2_MAX_POLYGON_VERTICES) {
+                // Convert to b2Vec2 array
+                Vector<b2Vec2> verts;
+                verts.reserve(Pts.size());
+                for (const auto &p : Pts) {
+                    verts.push_back({static_cast<float>(p.x), static_cast<float>(p.y)});
+                }
+
+                // Compute convex hull and create a Box2D polygon
+                b2Hull hull = b2ComputeHull(verts.data(), static_cast<int>(verts.size()));
+                if (hull.count < 3) {
+                    Core::Log::Error("Box2D hull generation failed for body part; using bounding box");
+                }
+
+                poly = b2MakePolygon(&hull, 0.0f);
+                b_PolyOk = true;
             }
-
-            poly = b2MakePolygon(&hull, 0.0f);
-            b_PolyOk = true;
+            if (!b_PolyOk) {
+                fix BoundingBox = Desc.Polygon.GetBoundingBox();
+                fix Pos = BoundingBox.Center();
+                poly = b2MakeOffsetBox(BoundingBox.Width()/2, BoundingBox.Height()/2, b2Vec2_FromPoint2D(Pos), b2MakeRot(0.0f));
+            }
+            b2CreatePolygonShape(Body, &ShapeDef, &poly);
         }
-        if (!b_PolyOk) {
-            fix BoundingBox = Desc.Section.GetBoundingBox();
-            fix Pos = BoundingBox.Center();
-            poly = b2MakeOffsetBox(BoundingBox.Width()/2, BoundingBox.Height()/2, b2Vec2_FromPoint2D(Pos), b2MakeRot(0.0f));
+        else if (Desc.Shape == EShape::Circle) {
+            const auto [Center, Radius] = Desc.GetCircle();
+            b2Circle Circle{};
+            Circle.center = b2Vec2_FromPoint2D(Center);
+            Circle.radius = static_cast<float>(Radius);
+            b2CreateCircleShape(Body, &ShapeDef, &Circle);
         }
 
-        b2CreatePolygonShape(Body, &ShapeDef, &poly);
+
     }
 
     return Body;

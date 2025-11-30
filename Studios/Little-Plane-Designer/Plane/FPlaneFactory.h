@@ -46,21 +46,49 @@ struct FWingDescriptorUtils final : IBodyPartBlueprintRenderer {
     FWingDescriptor Descriptor;
 };
 
+struct FCircle {
+    Math::Real2D Center;
+    Real64 Radius;
+};
+
+enum class EShape { Polygon, Circle };
+
 struct FBodyPartDescriptor final {
     Real64 Density = ExpandedPolystyreneDensity;
     Real64 Friction = ExpandedPolystyreneFriction;
     Real64 Restitution = ExpandedPolystyreneRestitution;
+    EShape Shape = EShape::Polygon;
+    Math::Geometry::FPolygon Polygon = Math::Geometry::FPolygon::MakeBox(.4, .4, {-1, -.5});
+    FCircle Circle;
 
-    Math::Geometry::FPolygon Section = Math::Geometry::FPolygon::MakeBox(.2, .2, {0,0}, 0);
+    FBodyPartDescriptor& ToBox(const Real64 Length, const Real64 Height, const Math::Real2D Location, const Real64 Rotation) {
+        Polygon = Math::Geometry::FPolygon::MakeBox(Length, Height, Location, Rotation);
+        Shape = EShape::Polygon;
+
+        return *this;
+    }
+
+    FBodyPartDescriptor& ToCircle(const Real64 Radius, const Math::Real2D Location) {
+        Circle.Radius = Radius;
+        Circle.Center = Location;
+        Shape = EShape::Circle;
+
+        return *this;
+    }
+
+    EShape GetShape() const { return Shape; }
+
+    FCircle GetCircle() const;
+
+    Math::Geometry::FPolygon GetPolygon() const;
 
     // Out-of-plane thickness/depth [m] to convert 3D density (kg/m^3)
     // to Box2D's 2D density (kg/m^2): density_2d = Density * Depth
-
     Real64 Depth = 0.30;
 };
 
 struct FBodyPartRenderer final : IBodyPartBlueprintRenderer {
-    FBodyPartDescriptor Descriptor;
+    const FBodyPartDescriptor &Descriptor;
 
     auto GetLeftView() const -> Math::Geometry::FPolygon override;
     auto GetTopView() const -> Math::Geometry::FPolygon override;
@@ -68,6 +96,7 @@ struct FBodyPartRenderer final : IBodyPartBlueprintRenderer {
 
     FBodyPartRenderer() = delete;
     explicit FBodyPartRenderer(const FBodyPartDescriptor& Descriptor) : Descriptor(Descriptor) {}
+
 
 };
 
