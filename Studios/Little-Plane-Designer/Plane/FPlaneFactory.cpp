@@ -7,6 +7,7 @@
 #include "Core/Tools/Log.h"
 #include "graphic/graphic_basic.h"
 #include "../Defaults.h"
+#include "../Utils.h"
 #include "Math/Geometry/Geometry.h"
 
 auto FWingDescriptorUtils::GetLeftView() const -> Math::Geometry::FPolygon {
@@ -173,21 +174,31 @@ b2BodyId FPlaneFactory::BuildBody(const b2WorldId World) const {
             continue;
         }
 
-        // Convert to b2Vec2 array
-        Vector<b2Vec2> verts;
-        verts.reserve(Pts.size());
-        for (const auto &p : Pts) {
-            verts.push_back({static_cast<float>(p.x), static_cast<float>(p.y)});
+        auto poly = b2Polygon{};
+        bool b_PolyOk = false;
+        if (Pts.size() <= B2_MAX_POLYGON_VERTICES) {
+            // Convert to b2Vec2 array
+            Vector<b2Vec2> verts;
+            verts.reserve(Pts.size());
+            for (const auto &p : Pts) {
+                verts.push_back({static_cast<float>(p.x), static_cast<float>(p.y)});
+            }
+
+            // Compute convex hull and create a Box2D polygon
+            b2Hull hull = b2ComputeHull(verts.data(), static_cast<int>(verts.size()));
+            if (hull.count < 3) {
+                Core::Log::Error("Box2D hull generation failed for body part; using bounding box");
+            }
+
+            poly = b2MakePolygon(&hull, 0.0f);
+            b_PolyOk = true;
+        }
+        if (!b_PolyOk) {
+            fix BoundingBox = Desc.Section.GetBoundingBox();
+            fix Pos = BoundingBox.Center();
+            poly = b2MakeOffsetBox(BoundingBox.Width()/2, BoundingBox.Height()/2, b2Vec2_FromPoint2D(Pos), b2MakeRot(0.0f));
         }
 
-        // Compute convex hull and create a Box2D polygon
-        b2Hull hull = b2ComputeHull(verts.data(), static_cast<int>(verts.size()));
-        if (hull.count < 3) {
-            Core::Log::Error("Box2D hull generation failed for body part; skipping");
-            continue;
-        }
-
-        const b2Polygon poly = b2MakePolygon(&hull, 0.0f);
         b2CreatePolygonShape(Body, &ShapeDef, &poly);
     }
 

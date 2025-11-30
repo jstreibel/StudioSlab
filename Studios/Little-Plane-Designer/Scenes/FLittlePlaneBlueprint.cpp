@@ -310,24 +310,48 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
     Factory.get()
     ->SetPosition({161.5f, 41.f})
     .SetRotation(DegToRad(0.0f))
-    .AddBodyPart({
-        .Density = LightPlaneDensity,
-        .Section = Math::Geometry::FPolygon::MakeBox(4, .5),
-        .Depth = 0.8f
-    })
+    // .AddBodyPart({ .Density = LightPlaneDensity, .Section = Math::Geometry::FPolygon::MakeBox(4, .5), .Depth = 0.8f })
     .AddBodyPart( {
-        .Density = LightPlaneDensity,
+        .Density = HeavyPlaneDensity,
         .Section = Math::Geometry::FPolygon{Math::FPoint2DVec{
             {
-                {-1.7, .32+0.03}, {-1.2, .37+0.015}, {-1.2, -.37+0.015+0.1}, {-1.7, -.32+0.25},
+                {-1.70, +0.36}, {-1.20, +0.39}, {-0.91, +0.39}, {-0.87, +0.19},
+                {-0.88, -0.02}, {-0.97, -0.28}, {-1.57, -0.14}, {-1.70, +0.04}
             }}},
-        .Depth = 0.25
+        .Depth = 0.75
     })
     .AddBodyPart( {
-        .Density = HeavyRockDensity,
-        .Section = Math::Geometry::FPolygon::MakeBox(.4, .15, {-1.5, 0}),
-        .Depth = 0.25
+        .Density = HeavyPlaneDensity,
+        .Section = Math::Geometry::FPolygon{Math::FPoint2DVec{
+            {
+                {-0.91, +0.39}, {-0.70, +0.41}, {-0.57, +0.30}, {+0.06, +0.28},
+                {+0.27, -0.20}, {-0.97, -0.28}, {-0.88, -0.02}, {-0.87, +0.19}
+            }}},
+        .Depth = 0.8
     })
+    .AddBodyPart( {
+        .Density = HeavyPlaneDensity,
+        .Section = Math::Geometry::FPolygon{Math::FPoint2DVec{
+            {
+                {+0.06, +0.28}, {+0.17, +0.35}, {+0.13, +0.49}, {-0.01, +0.59}, {+1.18, +0.31}, //{+1.45, +0.82}, {+1.80, +0.81},
+                {+1.98, -0.01}, {+0.27, -0.20}
+            }}},
+        .Depth = 0.5
+    })
+    .AddBodyPart( {
+        .Density = HeavyPlaneDensity,
+        .Section = Math::Geometry::FPolygon{Math::FPoint2DVec{
+            {
+                {+1.18, +0.31}, {+1.45, +0.82}, {+1.80, +0.81},
+                {+1.98, -0.01}, 
+            }}},
+        .Depth = 0.15
+    })
+    // .AddBodyPart( {
+    //     .Density = HeavyRockDensity,
+    //     .Section = Math::Geometry::FPolygon::MakeBox(.4, .15, {-1.5, 0}),
+    //     .Depth = 0.25
+    // })
     .AddBodyPart({
         .Density = LightPlaneDensity,
         .Section = Math::Geometry::FPolygon::MakeBox(.4, .4, {-1, -.5}),
