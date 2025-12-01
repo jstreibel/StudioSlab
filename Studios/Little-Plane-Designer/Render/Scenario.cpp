@@ -14,52 +14,7 @@ using Slab::Graphics::FColor;
 
 constexpr float k_BaseFrequency = 0.03f;
 
-const std::list<FScenario::FMountainLayer> FScenario::Layers = {{
-    {
-        .Parallax = 0.07f,
-        // .BaseHeight = 14.5f,
-        .BaseHeight = 2.5f,
-        .Amplitude = 15.5f,
-        // .Frequency = 0.085f,
-        .Frequency = k_BaseFrequency*0.2,
-        .Phase = 0.0f,
-        .Depth = -0.95f,
-        .Color = FColor::FromHex("#0d2f4c")*0.5
-    },
-    {
-        .Parallax = 0.18f,
-        // .BaseHeight = 14.5f,
-        .BaseHeight = 2.5f,
-        .Amplitude = 5.5f,
-        // .Frequency = 0.085f,
-        .Frequency = k_BaseFrequency,
-        .Phase = 0.0f,
-        .Depth = -0.95f,
-        .Color = FColor::FromHex("#0d2f4c")
-    },
-    {
-        .Parallax = 0.35f,
-        // .BaseHeight = 12.0f,
-        .BaseHeight = 1.0f,
-        .Amplitude = 1.0f,
-        //.Frequency = 0.120f,
-        .Frequency = k_BaseFrequency,
-        .Phase = 1.3f,
-        .Depth = -0.90f,
-        .Color = FColor::FromHex("#124166")
-    },
-    {
-        .Parallax = 0.55f,
-        // .BaseHeight = 9.0f,
-        .BaseHeight = 0.5f,
-        .Amplitude = 3.0f,
-        //.Frequency = 0.185f,
-        .Frequency = k_BaseFrequency,
-        .Phase = 2.45f,
-        .Depth = -0.85f,
-        .Color = FColor::FromHex("#195276")
-    },
-}};
+
 
 float FScenario::ApplyParallax(const float x, const float parallax, const float viewCenter) {
     return parallax * x + (1.0f - parallax) * viewCenter;
@@ -114,4 +69,53 @@ void FScenario::Draw(const Slab::Graphics::FDraw2DParams& Params) {
     }
 
     LegacyGL::PopScene();
+}
+
+FScenario::FScenario() {
+    Layers = {{
+        {
+            .Parallax = 0.07f,
+            // .BaseHeight = 14.5f,
+            .BaseHeight = 5.5f,
+            .Amplitude = 22.5f,
+            // .Frequency = 0.085f,
+            .Frequency = k_BaseFrequency*0.2,
+            .Phase = 0.0f,
+            .Depth = -0.95f,
+            .Color = FColor::FromHex("#0d2f4c")*0.5
+        },
+        {
+            .Parallax = 0.18f,
+            // .BaseHeight = 14.5f,
+            .BaseHeight = 2.5f,
+            .Amplitude = 5.5f,
+            // .Frequency = 0.085f,
+            .Frequency = k_BaseFrequency,
+            .Phase = 0.0f,
+            .Depth = -0.95f,
+            .Color = FColor::FromHex("#0d2f4c")
+        },
+        {
+            .Parallax = 0.35f,
+            // .BaseHeight = 12.0f,
+            .BaseHeight = 1.0f,
+            .Amplitude = 1.0f,
+            //.Frequency = 0.120f,
+            .Frequency = k_BaseFrequency,
+            .Phase = 1.3f,
+            .Depth = -0.90f,
+            .Color = FColor::FromHex("#124166")
+        },
+        {
+            .Parallax = 0.55f,
+            // .BaseHeight = 9.0f,
+            .BaseHeight = 0.5f,
+            .Amplitude = 3.0f,
+            //.Frequency = 0.185f,
+            .Frequency = k_BaseFrequency,
+            .Phase = 2.45f,
+            .Depth = -0.85f,
+            .Color = FColor::FromHex("#195276")
+        },
+    }};
 }

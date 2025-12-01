@@ -23,8 +23,24 @@ namespace Slab::Graphics {
         else return {b, r, g, a};
     }
 
-    auto FColor::inverse(bool invertAlpha) const -> FColor {
+    auto FColor::inverse(const bool invertAlpha) const -> FColor {
         return {1-r, 1-g, 1-b, invertAlpha ? 1-a : a};
+    }
+
+    FColor FColor::WithAlpha(const float alpha) const {
+        return {r, g, b, alpha};
+    }
+
+    FColor FColor::WithSaturation(float s) const {
+        auto hsv_color = rgb2hsv({r,g,b});
+        hsv_color.s = s;
+
+        auto rgb_color = hsv2rgb(hsv_color);
+        return {
+            static_cast<float>(rgb_color.r),
+            static_cast<float>(rgb_color.g),
+            static_cast<float>(rgb_color.b),
+            a};
     }
 
     auto FColor::FromBytes(Byte r, Byte g, Byte b, Byte a) -> FColor {
@@ -61,12 +77,28 @@ namespace Slab::Graphics {
         return {r, g, b, a};
     }
 
+    auto FColor::array() const -> std::array<Real32, 4> {
+        return std::array<Real32, 4>({r, g, b, a});
+    }
+    auto FColor::asFloat4fv() const -> const float * {
+        return reinterpret_cast<const float*>(this);
+    }
+    auto FColor::asFloat4fv() -> float * {
+        return reinterpret_cast<float*>(this);
+    }
     auto FColor::rgb() const -> FColor { return {r, g, b, a}; }
     auto FColor::brg() const -> FColor { return {b, r, g, a}; }
     auto FColor::gbr() const -> FColor { return {g, b, r, a}; }
+
     auto FColor::bgr() const -> FColor { return {b, g, r, a}; }
+
     auto FColor::grb() const -> FColor { return {g, r, b, a}; }
+
     auto FColor::rbg() const -> FColor { return {r, b, r, a}; }
+
+    FColor FColor::operator*(const Real32 v) const {
+        return {v*r, v*g, v*b, v*a};
+    }
 
     auto FColor::operator==(const FColor &rhs) const -> bool {
         fix eps = 1.e-4;
@@ -74,21 +106,5 @@ namespace Slab::Graphics {
                Common::AreEqual(g, rhs.g, eps) &&
                Common::AreEqual(b, rhs.b, eps) &&
                Common::AreEqual(a, rhs.a, eps);
-    }
-
-    auto FColor::array() const -> std::array<Real32, 4> {
-        return std::array<Real32, 4>({r, g, b, a});
-    }
-
-    auto FColor::asFloat4fv() const -> const float * {
-        return reinterpret_cast<const float*>(this);
-    }
-
-    auto FColor::asFloat4fv() -> float * {
-        return reinterpret_cast<float*>(this);
-    }
-
-    FColor FColor::operator*(const Real32 v) const {
-        return {v*r, v*g, v*b, v*a};
     }
 }

@@ -5,14 +5,13 @@
 #ifndef STUDIOSLAB_FSCENARIO_H
 #define STUDIOSLAB_FSCENARIO_H
 
-#include <array>
-
 #include "Graphics/Interfaces/IDrawable.h"
 #include "Graphics/Styles/Colors.h"
-#include "Graphics/Types2D.h"
 
 struct FScenario final : Slab::Graphics::IDrawable2D {
     void Draw(const Slab::Graphics::FDraw2DParams&) override;
+
+    explicit FScenario();
 
 private:
     struct FMountainLayer {
@@ -28,7 +27,7 @@ private:
     static float ApplyParallax(float x, float parallax, float viewCenter);
     static float Ridge(const float x, const FMountainLayer& layer);
 
-    static const std::list<FMountainLayer> Layers;
+    Slab::TList<FMountainLayer> Layers;
 };
 
 #endif //STUDIOSLAB_FSCENARIO_H
