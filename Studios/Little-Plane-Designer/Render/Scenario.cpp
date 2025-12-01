@@ -70,15 +70,18 @@ void FScenario::Draw(const Slab::Graphics::FDraw2DParams& Params) {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     const float viewWidth = Params.Region.GetWidth();
-    const float parallaxMargin = 1.f * viewWidth;
     const float sampleStep = std::max(0.5f, viewWidth / 100.0f);
-    const float xStart = Params.Region.xMin - parallaxMargin;
-    const float xEnd = Params.Region.xMax + parallaxMargin;
     const float baseY = Params.Region.yMin - 15.0f;
     const float viewCenter = Params.Region.xCenter();
 
+    const float parallaxMargin = 0.5f * viewWidth;
+
     for (const auto& layer : Layers) {
         glColor4f(layer.Color.r, layer.Color.g, layer.Color.b, layer.Color.a);
+
+        const float parallaxScale = std::max(layer.Parallax, 0.05f);
+        const float xStart = Params.Region.xMin - parallaxMargin / parallaxScale;
+        const float xEnd = Params.Region.xMax + parallaxMargin / parallaxScale;
 
         glBegin(GL_TRIANGLE_STRIP);
         for (float s = xStart; s <= xEnd + sampleStep; s += sampleStep) {
