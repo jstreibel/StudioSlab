@@ -355,7 +355,24 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
         .Density = LightPlaneDensity,
         .Friction = 0.0f,
         .Shape = EShape::Circle,
-        .Circle = FCircle({-1, -.55}, .2)
+        .Circle = FCircle({-1, -.55}, .2),
+        .Depth = .15,
+        .ZOffset = -.5
+    })
+    .AddBodyPart(FBodyPartDescriptor{
+        .Density = LightPlaneDensity,
+        .Friction = 0.0f,
+        .Shape = EShape::Circle,
+        .Circle = FCircle({-1, -.55}, .2),
+        .Depth = .15,
+        .ZOffset = +.5
+    })
+    .AddBodyPart(FBodyPartDescriptor{
+        .Density = LightPlaneDensity,
+        .Friction = 0.0f,
+        .Shape = EShape::Circle,
+        .Circle = FCircle({+1.76, -0.20}, .055),
+        .Depth = .03,
     })
     .AddWing({
         .Density = LightPlaneDensity,

@@ -60,6 +60,10 @@ struct FBodyPartDescriptor final {
     EShape Shape = EShape::Polygon;
     Math::Geometry::FPolygon Polygon = Math::Geometry::FPolygon::MakeBox(.4, .4, {-1, -.5});
     FCircle Circle;
+    // Out-of-plane thickness/depth [m] to convert 3D density (kg/m^3)
+    // to Box2D's 2D density (kg/m^2): density_2d = Density * Depth
+    Real64 Depth = 0.30;
+    Real64 ZOffset = 0.0;
 
     FBodyPartDescriptor& ToBox(const Real64 Length, const Real64 Height, const Math::Real2D Location, const Real64 Rotation) {
         Polygon = Math::Geometry::FPolygon::MakeBox(Length, Height, Location, Rotation);
@@ -81,10 +85,6 @@ struct FBodyPartDescriptor final {
     FCircle GetCircle() const;
 
     Math::Geometry::FPolygon GetPolygon() const;
-
-    // Out-of-plane thickness/depth [m] to convert 3D density (kg/m^3)
-    // to Box2D's 2D density (kg/m^2): density_2d = Density * Depth
-    Real64 Depth = 0.30;
 };
 
 struct FBodyPartRenderer final : IBodyPartBlueprintRenderer {

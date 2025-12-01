@@ -84,30 +84,25 @@ auto FBodyPartRenderer::GetLeftView() const -> Math::Geometry::FPolygon {
 auto FBodyPartRenderer::GetTopView() const -> Math::Geometry::FPolygon {
     Math::FPoint2DVec Points;
 
-    Real64 xMin;
-    Real64 yMin;
-    Real64 xMax;
-    Real64 yMax;
+    Real64 xMin{};
+    const Real64 yMin = - Descriptor.Depth*.5f;
+    Real64 xMax{};
+    const Real64 yMax = + Descriptor.Depth*.5f;;
 
     if (Descriptor.GetShape() == EShape::Circle) {
-        fix Circle = Descriptor.GetCircle();
-        xMin = Circle.Center.x - Circle.Radius;
-        yMin = - Circle.Radius;
-        xMax = Circle.Center.x + Circle.Radius;
-        yMax = + Circle.Radius;
-
+        const auto [Center, Radius] = Descriptor.GetCircle();
+        xMin = Center.x - Radius;
+        xMax = Center.x + Radius;
     }
     else if (Descriptor.GetShape() == EShape::Polygon) {
         xMin = Descriptor.GetPolygon().GetMin().x;
-        yMin = -Descriptor.Depth*.5f;
         xMax = Descriptor.GetPolygon().GetMax().x;
-        yMax = Descriptor.Depth*.5f;
     }
 
-    Points.emplace_back(xMin, yMin);
-    Points.emplace_back(xMax, yMin);
-    Points.emplace_back(xMax, yMax);
-    Points.emplace_back(xMin, yMax);
+    Points.emplace_back(xMin, yMin + Descriptor.ZOffset);
+    Points.emplace_back(xMax, yMin + Descriptor.ZOffset);
+    Points.emplace_back(xMax, yMax + Descriptor.ZOffset);
+    Points.emplace_back(xMin, yMax + Descriptor.ZOffset);
 
     return Math::Geometry::FPolygon(Points);
 }

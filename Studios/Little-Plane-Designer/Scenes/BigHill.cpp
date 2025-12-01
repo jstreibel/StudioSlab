@@ -10,6 +10,7 @@
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/Modules/Animator/Animator.h"
 #include "../Render/Drawables.h"
+#include "../Render/Scenario.h"
 #include "../Render/PlaneStats.h"
 
 struct FPlaneStats;
@@ -96,7 +97,7 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
         }
     }
 
-    ImGui::Begin("Mouse position", nullptr);
+    ImGui::Begin("Mouse position", nullptr, ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoInputs);
 
     fix xMouse = static_cast<float>(CurrentMouse.x);
     fix yMouse = static_cast<float>(CurrentMouse.y);
@@ -109,7 +110,6 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
     fix MousePlaneCoords = (MouseSpace - PlanePos).WithRotation(-Angle);
 
     ImGui::Text("Mouse plane coords: (%.2f, %.2f)", MousePlaneCoords.x, MousePlaneCoords.y);
-
 
     ImGui::End();
 
@@ -316,6 +316,7 @@ void FBigHill::SetupScenario() {
     constexpr auto ZIndexFront = 0.9f;
 
     Drawables.emplace_back(Slab::New<FSky>());
+    Drawables.emplace_back(Slab::New<FScenario>());
     Drawables.emplace_back(Terrain);
     // Drawables.emplace_back(Slab::New<FGarage>(Hilltop.WithTranslation(4.5, 1)));
     Drawables.emplace_back(Plane);

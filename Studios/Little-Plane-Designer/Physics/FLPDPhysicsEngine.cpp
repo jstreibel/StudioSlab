@@ -65,7 +65,8 @@ void FLittlePlaneDesignerPhysicsEngine::Draw(const Graphics::FDraw2DParams & Par
 
     auto &Drawer = *DebugDraw.handle();
 
-    ImGui::Begin("Physics Scheme", nullptr, ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_AlwaysAutoResize);
+    ImGui::Begin("Physics Scheme", nullptr,
+        ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing);
 
     static bool b_ShowTorques = true;
     static bool b_ShowAerodynamicForces = true;

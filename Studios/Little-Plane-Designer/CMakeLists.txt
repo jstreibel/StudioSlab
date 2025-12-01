@@ -40,6 +40,8 @@ add_executable( LittlePlaneDesigner
         Render/PlaneStats.h
         Render/Drawables.cpp
         Render/Drawables.h
+        Render/Scenario.cpp
+        Render/Scenario.h
         Plane/FPlaneController.cpp
         Physics/FLPDPhysicsEngine.cpp
         Scenes/FLittlePlaneBlueprint.cpp
