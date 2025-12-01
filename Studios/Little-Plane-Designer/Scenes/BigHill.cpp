@@ -159,9 +159,7 @@ bool FBigHill::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, 
     return false;
 }
 
-Graphics::RectR FBigHill::GetCurrentView() const {
-    return Camera->GetView();
-}
+Graphics::RectR FBigHill::GetCurrentView() const { return Camera->GetView(); }
 
 void FBigHill::TogglePause() { PhysicsEngine->TogglePause(); }
 

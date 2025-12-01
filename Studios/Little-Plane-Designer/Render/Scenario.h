@@ -28,7 +28,7 @@ private:
     static float ApplyParallax(float x, float parallax, float viewCenter);
     static float Ridge(const float x, const FMountainLayer& layer);
 
-    static const std::array<FMountainLayer, 3> Layers;
+    static const std::list<FMountainLayer> Layers;
 };
 
 #endif //STUDIOSLAB_FSCENARIO_H
