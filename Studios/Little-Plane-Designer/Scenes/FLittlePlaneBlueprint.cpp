@@ -3,6 +3,8 @@
 //
 
 #include "FLittlePlaneBlueprint.h"
+
+#include "imgui.h"
 #include "../Physics/Materials.h"
 #include "../Physics/Foils/NACA2412.h"
 #include "Core/Tools/Log.h"
@@ -57,6 +59,8 @@ void FLittlePlaneBlueprint::TogglePause() {
 
 }
 
+
+
 void FLittlePlaneBlueprint::SetupAnnotations() {
     NumAnnotations = 0;
     NumGlobalAnnotations = 0;
@@ -89,13 +93,23 @@ void FLittlePlaneBlueprint::Draw(const Graphics::FDrawInput& Input) {
     Graphics::OpenGL::Legacy::RestoreFromLegacyMode();
 
     Writer->Write(ToStr("1:%i", Proportion), {InnerX-0.01, -InnerY+0.0025});
+
+    if constexpr (false) {
+        ImGui::SetNextWindowSize({250., 250.*9/16}, ImGuiCond_Always);
+        ImVec2 Pos = {static_cast<float>(Input.Window.GetWidth() - 300), static_cast<float>(Input.Window.GetHeight() - 250)};
+        ImGui::SetNextWindowPos(Pos, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+        constexpr auto f_Flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground;
+        ImGui::Begin("Little Menu", nullptr, f_Flags);
+
+        ImGui::Button("To Hill", {200, 200.*9./16});
+        ImGui::End();
+    }
 }
 
 void FLittlePlaneBlueprint::Startup(const Graphics::FPlatformWindow&) {
 }
 
-void FLittlePlaneBlueprint::HandleInputState(FInputState) {
-
+void FLittlePlaneBlueprint::HandleInputState(FInputState InputState) {
 }
 
 bool FLittlePlaneBlueprint::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) {
@@ -244,6 +258,9 @@ void FLittlePlaneBlueprint::DrawPlane() {
     const Math::Real2D SideViewOrigin = {0, -3*InnerY/4};
     const Math::Real2D TopViewOrigin = {0,  +1*InnerY/4};
 
+    ImGui::SetNextWindowBgAlpha(0.78);
+    ImGui::Begin("Plane Parameters");
+
     for (const auto &Part : GetPlaneFactory()->BodyPartDescriptors) {
         auto LeftViewPoints = FBodyPartRenderer{Part}.GetLeftView();
         auto TopViewPoints = FBodyPartRenderer{Part}.GetTopView();
@@ -264,9 +281,19 @@ void FLittlePlaneBlueprint::DrawPlane() {
         Draw::RenderPointSet(Dummy((TopViewPoints*=Scale).Translate(TopViewOrigin)), StrongStrokeStyle);
     }
 
-    static bool FirstRun = true;
     for (const auto &Wing : GetPlaneFactory()->WingDescriptors) {
         fix WingUtils = FWingDescriptorUtils {Wing};
+
+        if (ImGui::CollapsingHeader(ToStr("Wing: %s", Wing.Params.Name.c_str()).c_str())) {
+            ImGui::Text("Airfoil: %s", Wing.Airfoil->GetName().c_str());
+            ImGui::Text("Span: %.2f m", Wing.Params.Span);
+            ImGui::Text("Chord: %.2f m", Wing.Params.ChordLength);
+            ImGui::Text("Mass: %.2f kg", WingUtils.ComputeMassProperties().Mass);
+            ImGui::Text("Position: (%.2f, %.2f)", Wing.RelativeLocation.x, Wing.RelativeLocation.y);
+            ImGui::Text("Base angle: %.2f rad", Wing.BaseAngle);
+            ImGui::Text("Max angle: %.2f rad", Wing.MaxAngle);
+            ImGui::Text("Min angle: %.2f rad", Wing.MinAngle);
+        }
 
         auto SideViewPoints = WingUtils.GetLeftView();
         auto TopViewPoints  = WingUtils.GetTopView();
@@ -284,20 +311,16 @@ void FLittlePlaneBlueprint::DrawPlane() {
         Mass += MyMass;
         WingMass += MyMass;
 
-        if (FirstRun) {
-            Core::Log::Info(ToStr("Wing mass: %.2fkg", MyMass));
-        }
-
         Draw::RenderPointSet((SideViewPoints * Scale).Translate(SideViewOrigin), StrongStrokeStyle);
         Draw::RenderPointSet((TopViewPoints * Scale).Translate(TopViewOrigin), StrongStrokeStyle);
 
         AddPartAnnotation(Wing.Airfoil->GetName(), MyCOM*Scale + SideViewOrigin);
     }
-    FirstRun = false;
+
+    ImGui::End();
 
     RenderCOM(COM * Scale / Mass + SideViewOrigin);
     RenderCOM(Math::Real2D{COM.x, 0.0} * Scale / Mass + TopViewOrigin);
-
 
     AddGlobalCharacteristicAnnotation(ToStr("Total mass: %.2fkg", Mass));
     AddGlobalCharacteristicAnnotation(ToStr("Hull mass: %.2fkg", HullMass));

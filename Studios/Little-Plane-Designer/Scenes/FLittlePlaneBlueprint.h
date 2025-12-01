@@ -27,13 +27,12 @@ public:
 
     Graphics::RectR GetCurrentView() const override;
 
-    void AddPartAnnotation(const Str& Annotation, Math::Real2D ItemLocation);
-    void AddGlobalCharacteristicAnnotation(const Str& Annotation);
-
 private:
     TPointer<FPlaneFactory> PlaneFactory;
     TPointer<Graphics::OpenGL::FWriterOpenGL> Writer;
 
+    void AddPartAnnotation(const Str& Annotation, Math::Real2D ItemLocation);
+    void AddGlobalCharacteristicAnnotation(const Str& Annotation);
     void SetupAnnotations();
 
     Graphics::RectR Region;
