@@ -313,8 +313,9 @@ void FBigHill::SetupScenario() {
 
     constexpr auto ZIndexFront = 0.9f;
 
-    Drawables.emplace_back(Slab::New<FSky>());
-    Drawables.emplace_back(Slab::New<FScenario>());
+    fix Sky = Slab::New<FSky>();
+    Drawables.emplace_back(Sky);
+    Drawables.emplace_back(Slab::New<FScenario>((Sky->HorizonColor+Sky->SkyColor)*.5));
     Drawables.emplace_back(Terrain);
     // Drawables.emplace_back(Slab::New<FGarage>(Hilltop.WithTranslation(4.5, 1)));
     Drawables.emplace_back(Plane);

@@ -96,6 +96,10 @@ namespace Slab::Graphics {
 
     auto FColor::rbg() const -> FColor { return {r, b, r, a}; }
 
+    FColor FColor::operator+(const FColor& Color) const {
+        return {r+Color.r, g+Color.g, b+Color.b, a+Color.a};
+    }
+
     FColor FColor::operator*(const Real32 v) const {
         return {v*r, v*g, v*b, v*a};
     }
@@ -106,5 +110,13 @@ namespace Slab::Graphics {
                Common::AreEqual(g, rhs.g, eps) &&
                Common::AreEqual(b, rhs.b, eps) &&
                Common::AreEqual(a, rhs.a, eps);
+    }
+
+    bool FColor::operator!() const {
+        return r<0 || g<0 || b<0 || a<0;
+    }
+
+    FColor operator*(const float lhs, const FColor& rhs) {
+        return rhs*lhs;
     }
 }

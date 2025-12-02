@@ -71,18 +71,32 @@ void FScenario::Draw(const Slab::Graphics::FDraw2DParams& Params) {
     LegacyGL::PopScene();
 }
 
-FScenario::FScenario() {
+
+FScenario::FScenario(const FColor SaturationColor) : SaturationColor(SaturationColor) {
+    const auto Layer4Color = FColor::FromHex("#0d2f4c")*0.5;
+    const auto Layer3Color = FColor::FromHex("#0d2f4c");
+    const auto Layer2Color = FColor::FromHex("#124166");
+    const auto Layer1Color = FColor::FromHex("#195276");
+
+    fix ComputeColor = [SaturationColor](const FColor &Color, float ClampedDistance) {
+        if (!SaturationColor) return Color;
+
+        return (1-ClampedDistance)*Color + SaturationColor*ClampedDistance;
+    };
+
+    const FColor BaseColor = Slab::Graphics::DarkGrass;
+
     Layers = {{
         {
             .Parallax = 0.07f,
             // .BaseHeight = 14.5f,
             .BaseHeight = 5.5f,
-            .Amplitude = 22.5f,
+            .Amplitude = 27.5f,
             // .Frequency = 0.085f,
-            .Frequency = k_BaseFrequency*0.2,
+            .Frequency = k_BaseFrequency*2,
             .Phase = 0.0f,
             .Depth = -0.95f,
-            .Color = FColor::FromHex("#0d2f4c")*0.5
+            .Color = ComputeColor(BaseColor, 0.75)*0.2
         },
         {
             .Parallax = 0.18f,
@@ -93,7 +107,7 @@ FScenario::FScenario() {
             .Frequency = k_BaseFrequency,
             .Phase = 0.0f,
             .Depth = -0.95f,
-            .Color = FColor::FromHex("#0d2f4c")
+            .Color = ComputeColor(BaseColor, 0.5f)
         },
         {
             .Parallax = 0.35f,
@@ -104,18 +118,18 @@ FScenario::FScenario() {
             .Frequency = k_BaseFrequency,
             .Phase = 1.3f,
             .Depth = -0.90f,
-            .Color = FColor::FromHex("#124166")
+            .Color = ComputeColor(BaseColor, 0.25f)
         },
         {
             .Parallax = 0.55f,
             // .BaseHeight = 9.0f,
-            .BaseHeight = 0.5f,
+            .BaseHeight = -0.5f,
             .Amplitude = 3.0f,
             //.Frequency = 0.185f,
             .Frequency = k_BaseFrequency,
             .Phase = 2.45f,
             .Depth = -0.85f,
-            .Color = FColor::FromHex("#195276")
+            .Color = ComputeColor(BaseColor, 0.1f)
         },
     }};
 }

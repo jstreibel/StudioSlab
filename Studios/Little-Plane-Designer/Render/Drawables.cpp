@@ -92,7 +92,7 @@ void FRuler::Draw(const Slab::Graphics::FDraw2DParams&) {
     glEnd();
 }
 
-void FSky::Draw(const Slab::Graphics::FDraw2DParams& ResProvider) {
+void FSky::Draw(const Slab::Graphics::FDraw2DParams&) {
 
     constexpr float horizonY = .0f;
     namespace LegacyGL = Slab::Graphics::OpenGL::Legacy;
@@ -109,19 +109,19 @@ void FSky::Draw(const Slab::Graphics::FDraw2DParams& ResProvider) {
     constexpr float Infinity = -0.9f;
 
     // bottom-left (near horizon): light, a bit warmer
-    glColor3f(0.65f, 0.80f, 0.95f);
+    glColor4fv(HorizonColor.asFloat4fv());
     glVertex3f(0.0f, horizonY, Infinity);
 
     // top-left: darker, more saturated
-    glColor3f(0.10f, 0.30f, 0.55f);
+    glColor4fv(SkyColor.asFloat4fv());
     glVertex3f(0.0f, 1.0f, Infinity);
 
     // bottom-right
-    glColor3f(0.65f, 0.80f, 0.95f);
+    glColor4fv(HorizonColor.asFloat4fv());
     glVertex3f(1.0f, horizonY, Infinity);
 
     // top-right
-    glColor3f(0.10f, 0.30f, 0.55f);
+    glColor4fv(SkyColor.asFloat4fv());
     glVertex3f(1.0f, 1.0f, Infinity);
 
     glEnd();

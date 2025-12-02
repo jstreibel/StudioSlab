@@ -11,8 +11,9 @@
 struct FScenario final : Slab::Graphics::IDrawable2D {
     void Draw(const Slab::Graphics::FDraw2DParams&) override;
 
-    explicit FScenario();
+    explicit FScenario(Slab::Graphics::FColor SaturationColor = Slab::Graphics::Nil);
 
+    Slab::Graphics::FColor SaturationColor = Slab::Graphics::Nil;
 private:
     struct FMountainLayer {
         float Parallax = 1.0f;

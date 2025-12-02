@@ -74,6 +74,9 @@ struct FRuler final : Slab::Graphics::IDrawable2D {
 
 struct FSky final : Slab::Graphics::IDrawable2D {
     void Draw(const Slab::Graphics::FDraw2DParams&) override;
+
+    Slab::Graphics::FColor HorizonColor = {0.65f, 0.80f, 0.95f, 1.0f};
+    Slab::Graphics::FColor SkyColor = {0.10f, 0.30f, 0.55f, 1.0f};
 };
 
 #endif //STUDIOSLAB_DRAWABLES_H

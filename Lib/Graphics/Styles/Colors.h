@@ -9,39 +9,44 @@
 #include "Utils/Types.h"
 
 namespace Slab::Graphics {
-    struct FColor
-    {
-        float r, g, b, a;
+struct FColor
+{
+    float r, g, b, a;
 
-        FColor();
-        FColor(float r, float g, float b, float a=1.);
-        FColor(FColor rgb, float a);
-        FColor(const FColor &c) = default;
+    FColor();
+    FColor(float r, float g, float b, float a=1.);
+    FColor(FColor rgb, float a);
+    FColor(const FColor &c) = default;
 
 
-        auto permute(bool odd=false) const -> FColor;
-        auto inverse(bool invertAlpha=false) const -> FColor;
+    auto permute(bool odd=false) const -> FColor;
+    auto inverse(bool invertAlpha=false) const -> FColor;
 
-        FColor WithAlpha(float) const;
-        FColor WithSaturation(float) const;
+    FColor WithAlpha(float) const;
+    FColor WithSaturation(float) const;
 
-        static auto FromBytes(Byte r, Byte g, Byte b, Byte a=0xff) -> FColor;
-        static auto FromHex(Str hex) -> FColor;
+    static auto FromBytes(Byte r, Byte g, Byte b, Byte a=0xff) -> FColor;
+    static auto FromHex(Str hex) -> FColor;
 
-        auto array() const -> std::array<Real32, 4>;
-        auto asFloat4fv() const -> const float*;
-        auto asFloat4fv() -> float*;
+    auto array() const -> std::array<Real32, 4>;
+    auto asFloat4fv() const -> const float*;
+    auto asFloat4fv() -> float*;
 
-        auto rgb() const -> FColor;
-        auto brg() const -> FColor;
-        auto gbr() const -> FColor;
-        auto bgr() const -> FColor;
-        auto grb() const -> FColor;
-        auto rbg() const -> FColor;
+    auto rgb() const -> FColor;
+    auto brg() const -> FColor;
+    auto gbr() const -> FColor;
+    auto bgr() const -> FColor;
+    auto grb() const -> FColor;
+    auto rbg() const -> FColor;
 
-        FColor operator*(const Real32) const;
-        bool operator==(const FColor &rhs) const;
-    };
+    FColor operator+(const FColor&) const;
+    FColor operator*(Real32) const;
+    bool operator==(const FColor &) const;
+
+    bool operator!() const;
+};
+
+FColor operator*(float lhs, const FColor& rhs);
 
 
 const FColor White = {1,1,1,1};
