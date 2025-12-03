@@ -119,10 +119,10 @@ void FLittlePlaneBlueprint::HandleInputState(const FInputState InputState) {
     fix MouseX = InputState.MouseState.x;
     fix MouseY = InputState.MouseState.y;
 
-    fix MousePosSpace = ((Graphics::FromViewportToSpaceCoord({MouseX, MouseY}, Region, VP).ToReal2D() - SideViewOrigin) * Proportion);
+    fix MousePosSpace = (Graphics::FromViewportToSpaceCoord({MouseX, MouseY}, Region, VP).ToReal2D() - SideViewOrigin) * Proportion;
 
     for (auto &Part : PlaneFactory->BodyPartDescriptors) {
-        Part.IsHovered = Part.Polygon.Contains(MousePosSpace);
+        Part.IsHovered = FBodyPartRenderer{Part}.GetLeftView().Contains(MousePosSpace);
     }
 }
 
@@ -328,7 +328,7 @@ void FLittlePlaneBlueprint::DrawPlane() {
         Draw::RenderPointSet((SideViewPoints * Scale).Translate(SideViewOrigin), StrongStrokeStyle);
         Draw::RenderPointSet((TopViewPoints * Scale).Translate(TopViewOrigin), StrongStrokeStyle);
 
-        AddPartAnnotation(Wing.Airfoil->GetName(), MyCOM*Scale + SideViewOrigin);
+        // AddPartAnnotation(Wing.Airfoil->GetName(), MyCOM*Scale + SideViewOrigin );
     }
 
     ImGui::End();
