@@ -33,6 +33,7 @@ struct FPolygon final : FPointSet
     FPolygonValidationResult Validate() const;
     auto ComputeMassProperties(const Real64 &Density) const -> FMass2DProperties;
     auto GetBoundingBox() const -> RectR;
+    bool Contains(const Point2D &Point) const;
 
     static FPolygon MakeBox(Real64 Length, Real64 Height, Real2D Location={}, Real64 Rotation0=0);
 };

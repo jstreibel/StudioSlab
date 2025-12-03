@@ -36,6 +36,7 @@ private:
     void SetupAnnotations();
 
     Graphics::RectR Region;
+    Graphics::RectI VP;
 
     Real64 GlyphHeight;
     int NumAnnotations = 0;

@@ -27,6 +27,9 @@ const auto OuterY = floorf(100*PaperHeight/2)/100;
 const auto InnerX = OuterX - 0.01;
 const auto InnerY = OuterY - 0.005;
 
+const Math::Real2D SideViewOrigin = {0, -3*InnerY/4};
+const Math::Real2D TopViewOrigin = {0,  +1*InnerY/4};
+
 constexpr auto Width_StrongStroke = 2.5;
 constexpr auto Width_RegularStroke = 1.5;
 constexpr auto Width_WeakStroke = 1.;
@@ -37,6 +40,9 @@ const auto LineColor = Graphics::GreyBlue*0.75;
 const auto StrokeColor = Graphics::White;
 const auto BlueprintColor = Graphics::BlueprintLight;
 
+Graphics::PlotStyle SelectedStrokeStyle{Graphics::GrassGreen, Graphics::LineLoop, false, Graphics::Nil, Width_StrongStroke};
+Graphics::PlotStyle UnavailableStrokeStyle{Graphics::DarkRed, Graphics::LineLoop, false, Graphics::Nil, Width_StrongStroke};
+
 Graphics::PlotStyle StrongStrokeStyle{StrokeColor, Graphics::LineLoop, false, Graphics::Nil, Width_StrongStroke};
 Graphics::PlotStyle RegularStrokeStyle{StrokeColor, Graphics::LineLoop, false, Graphics::Nil, Width_RegularStroke};
 Graphics::PlotStyle WeakStrokeStyle{StrokeColor, Graphics::LineLoop, false, Graphics::Nil, Width_WeakStroke};
@@ -44,7 +50,7 @@ Graphics::PlotStyle WeakStrokeStyle{StrokeColor, Graphics::LineLoop, false, Grap
 namespace Draw = Graphics::OpenGL::Legacy;
 
 
-FLittlePlaneBlueprint::FLittlePlaneBlueprint() {
+FLittlePlaneBlueprint::FLittlePlaneBlueprint() : Region(), VP(), GlyphHeight(10) {
     // auto FontFile = Core::Resources::BuiltinFonts::EngineerHand();
     auto FontFile = Core::Resources::BuiltinFonts::Y145m2009();
 
@@ -80,7 +86,7 @@ void FLittlePlaneBlueprint::Draw(const Graphics::FDrawInput& Input) {
 
     Writer->Reshape(WinWidth, WinHeight);
     Region = Graphics::RectR{-RegionWidth_2, RegionWidth_2, -RegionHeight_2, RegionHeight_2};
-    fix VP = Graphics::RectI{0, WinWidth, 0, WinHeight};
+    VP = Graphics::RectI{0, WinWidth, 0, WinHeight};
     Writer->SetPenPositionTransform([&](const Graphics::FPoint2D Pt) {
         return Graphics::FromSpaceToViewportCoord(Pt, Region, VP);
     });
@@ -109,16 +115,22 @@ void FLittlePlaneBlueprint::Draw(const Graphics::FDrawInput& Input) {
 void FLittlePlaneBlueprint::Startup(const Graphics::FPlatformWindow&) {
 }
 
-void FLittlePlaneBlueprint::HandleInputState(FInputState InputState) {
+void FLittlePlaneBlueprint::HandleInputState(const FInputState InputState) {
+    fix MouseX = InputState.MouseState.x;
+    fix MouseY = InputState.MouseState.y;
+
+    fix MousePosSpace = ((Graphics::FromViewportToSpaceCoord({MouseX, MouseY}, Region, VP).ToReal2D() - SideViewOrigin) * Proportion);
+
+    for (auto &Part : PlaneFactory->BodyPartDescriptors) {
+        Part.IsHovered = Part.Polygon.Contains(MousePosSpace);
+    }
 }
 
 bool FLittlePlaneBlueprint::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) {
     return false;
 }
 
-Graphics::RectR FLittlePlaneBlueprint::GetCurrentView() const {
-    return Region;
-}
+Graphics::RectR FLittlePlaneBlueprint::GetCurrentView() const { return Region; }
 
 void FLittlePlaneBlueprint::AddPartAnnotation(const Str& Annotation, Math::Real2D ItemLocation) {
     const int Sx = +(2*(NumAnnotations%2) - 1);
@@ -255,9 +267,6 @@ void FLittlePlaneBlueprint::DrawPlane() {
     Real64 HullMass = 0;
     Real64 WingMass = 0;
 
-    const Math::Real2D SideViewOrigin = {0, -3*InnerY/4};
-    const Math::Real2D TopViewOrigin = {0,  +1*InnerY/4};
-
     ImGui::SetNextWindowBgAlpha(0.78);
     ImGui::Begin("Plane Parameters");
 
@@ -277,8 +286,13 @@ void FLittlePlaneBlueprint::DrawPlane() {
         Mass += MyMass;
         HullMass += MyMass;
 
-        Draw::RenderPointSet(Dummy((LeftViewPoints*=Scale).Translate(SideViewOrigin)), StrongStrokeStyle);
-        Draw::RenderPointSet(Dummy((TopViewPoints*=Scale).Translate(TopViewOrigin)), StrongStrokeStyle);
+        auto Style = StrongStrokeStyle;
+        if (Part.IsHovered) {
+            if (Part.IsStatic) Style = UnavailableStrokeStyle;
+            else  Style = SelectedStrokeStyle;
+        }
+        Draw::RenderPointSet(Dummy((LeftViewPoints*=Scale).Translate(SideViewOrigin)), Style);
+        Draw::RenderPointSet(Dummy((TopViewPoints*=Scale).Translate(TopViewOrigin)), Style);
     }
 
     for (const auto &Wing : GetPlaneFactory()->WingDescriptors) {
@@ -340,7 +354,8 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
                 {-1.70, +0.36}, {-1.20, +0.39}, {-0.91, +0.39}, {-0.87, +0.19},
                 {-0.88, -0.02}, {-0.97, -0.28}, {-1.57, -0.14}, {-1.70, +0.04}
             }}},
-        .Depth = 0.75
+        .Depth = 0.75,
+        .IsStatic = true
     })
     .AddBodyPart( {
         .Density = LightPlaneDensity,
@@ -349,7 +364,8 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
                 {-0.91, +0.39}, {-0.70, +0.41}, {-0.57, +0.30}, {+0.06, +0.28},
                 {+0.27, -0.20}, {-0.97, -0.28}, {-0.88, -0.02}, {-0.87, +0.19}
             }}},
-        .Depth = 0.8
+        .Depth = 0.8,
+        .IsStatic = true
     })
     .AddBodyPart( {
         .Density = LightPlaneDensity,
@@ -358,7 +374,8 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
                 {+0.06, +0.28}, {+0.17, +0.35}, {+0.13, +0.49}, {-0.01, +0.59}, {+1.18, +0.31}, //{+1.45, +0.82}, {+1.80, +0.81},
                 {+1.98, -0.01}, {+0.27, -0.20}
             }}},
-        .Depth = 0.5
+        .Depth = 0.5,
+        .IsStatic = true
     })
     .AddBodyPart( {
         .Density = LightPlaneDensity,
@@ -367,7 +384,8 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
                 {+1.18, +0.31}, {+1.45, +0.82}, {+1.80, +0.81},
                 {+1.98, -0.01},
             }}},
-        .Depth = 0.15
+        .Depth = 0.15,
+        .IsStatic = true
     })
     .AddBodyPart( {
         .Density = LightRockDensity,
@@ -380,7 +398,8 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
         .Shape = EShape::Circle,
         .Circle = FCircle({-1, -.55}, .2),
         .Depth = .15,
-        .ZOffset = -.5
+        .ZOffset = -.5,
+        .IsStatic = true
     })
     .AddBodyPart(FBodyPartDescriptor{
         .Density = LightPlaneDensity,
@@ -388,7 +407,8 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
         .Shape = EShape::Circle,
         .Circle = FCircle({-1, -.55}, .2),
         .Depth = .15,
-        .ZOffset = +.5
+        .ZOffset = +.5,
+        .IsStatic = true
     })
     .AddBodyPart(FBodyPartDescriptor{
         .Density = LightPlaneDensity,
@@ -396,6 +416,7 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
         .Shape = EShape::Circle,
         .Circle = FCircle({+1.76, -0.20}, .055),
         .Depth = .03,
+        .IsStatic = true
     })
     .AddWing({
         .Density = LightPlaneDensity,

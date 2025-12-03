@@ -56,6 +56,7 @@ const FColor DarkGrey = {0.25,0.25,0.25,1};
 const FColor Black = {0,0,0,1};
 
 const FColor Red {1,0,0,1};
+const FColor DarkRed {0.5,0,0,1};
 
 const FColor GrassGreen = {63./255., 155./255., 11./255., 1.};
 const FColor DarkGrass = FColor::FromHex("#1b4b02");

@@ -104,6 +104,7 @@ void FLittlePlaneDesignerPhysicsEngine::Draw(const Graphics::FDraw2DParams & Par
     if (b_ShowGravity) {
         const auto Grav = b2World_GetGravity(World);
         DebugDraw.DrawVector(TotalMass * Grav, b2Vec2_FromPoint2D(COM), VectorScale, b2_colorForestGreen);
+        DebugDraw.Write("g", b2Vec2_FromPoint2D(COM) + TotalMass * Grav * VectorScale, b2_colorForestGreen);
     }
     if (b_ShowTorques || b_ShowAerodynamicForces)
     {

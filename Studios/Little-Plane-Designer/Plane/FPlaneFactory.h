@@ -5,6 +5,8 @@
 #ifndef STUDIOSLAB_FPLANEFACTORY_H
 #define STUDIOSLAB_FPLANEFACTORY_H
 
+#include <SFML/System/String.hpp>
+
 #include "FLittlePlane.h"
 #include "../Physics/Materials.h"
 
@@ -64,6 +66,22 @@ struct FBodyPartDescriptor final {
     // to Box2D's 2D density (kg/m^2): density_2d = Density * Depth
     Real64 Depth = 0.30;
     Real64 ZOffset = 0.0;
+    Str Name = ToStr(RandUtils::RandomUniformUInt());
+    bool IsStatic = false;
+    // bool IsDynamic = true;
+    // bool IsSensor = false;
+    // bool IsKinematic = false;
+    // bool IsBullet = false;
+    // bool IsSleepingAllowed = true;
+    // bool IsAwake = true;
+    // bool IsFixedRotation = false;
+    // bool IsIgnoreGravity = false;
+    // bool IsEnabled = true;
+    // bool IsRenderable = true;
+    bool IsRenderableInLeftView = true;
+    bool IsRenderableInTopView = true;
+    bool IsRenderableInFrontView = true;
+    bool IsHovered = false;
 
     FBodyPartDescriptor& ToBox(const Real64 Length, const Real64 Height, const Math::Real2D Location, const Real64 Rotation) {
         Polygon = Math::Geometry::FPolygon::MakeBox(Length, Height, Location, Rotation);

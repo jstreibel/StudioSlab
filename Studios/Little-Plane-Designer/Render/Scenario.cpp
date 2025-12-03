@@ -90,13 +90,13 @@ FScenario::FScenario(const FColor SaturationColor) : SaturationColor(SaturationC
         {
             .Parallax = 0.07f,
             // .BaseHeight = 14.5f,
-            .BaseHeight = 5.5f,
-            .Amplitude = 27.5f,
+            .BaseHeight = 20.f,
+            .Amplitude = 45.5f,
             // .Frequency = 0.085f,
-            .Frequency = k_BaseFrequency*2,
+            .Frequency = k_BaseFrequency*0.5,
             .Phase = 0.0f,
             .Depth = -0.95f,
-            .Color = ComputeColor(BaseColor, 0.75)*0.2
+            .Color = ComputeColor(BaseColor, 0.5)*0.9
         },
         {
             .Parallax = 0.18f,
@@ -107,7 +107,7 @@ FScenario::FScenario(const FColor SaturationColor) : SaturationColor(SaturationC
             .Frequency = k_BaseFrequency,
             .Phase = 0.0f,
             .Depth = -0.95f,
-            .Color = ComputeColor(BaseColor, 0.5f)
+            .Color = ComputeColor(BaseColor, 0.3f)
         },
         {
             .Parallax = 0.35f,
@@ -118,7 +118,7 @@ FScenario::FScenario(const FColor SaturationColor) : SaturationColor(SaturationC
             .Frequency = k_BaseFrequency,
             .Phase = 1.3f,
             .Depth = -0.90f,
-            .Color = ComputeColor(BaseColor, 0.25f)
+            .Color = ComputeColor(BaseColor, 0.2f)
         },
         {
             .Parallax = 0.55f,

@@ -5,6 +5,8 @@
 #include "Polygon.h"
 
 #include "Geometry.h"
+#include <algorithm>
+#include <cmath>
 
 namespace Slab::Math::Geometry {
 FMass2DProperties ComputePolygonMassProperties(const FPointSet& Polygon, Real64 Density) {
@@ -95,6 +97,40 @@ auto FPolygon::GetBoundingBox() const -> RectR {
     fix Max = GetMax();
     fix Min = GetMin();
     return RectR{Min.x, Max.x, Min.y, Max.y};
+}
+
+bool FPolygon::Contains(const Point2D& Point) const {
+    const auto& Vertices = GetPoints();
+    const int Count = static_cast<int>(Vertices.size());
+    if (Count < 3)
+        return false;
+
+    if (!GetBoundingBox().Contains(Point))
+        return false;
+
+    bool Inside = false;
+    for (int i = 0, j = Count - 1; i < Count; j = i++) {
+        const auto& Pi = Vertices[i];
+        const auto& Pj = Vertices[j];
+
+        if (const double Cross = (Pi.x - Point.x) * (Pj.y - Point.y) - (Pi.y - Point.y) * (Pj.x - Point.x);
+            std::fabs(Cross) <= EPS)
+        {
+            const double MinX = std::min(Pi.x, Pj.x) - EPS;
+            const double MaxX = std::max(Pi.x, Pj.x) + EPS;
+            const double MinY = std::min(Pi.y, Pj.y) - EPS;
+            const double MaxY = std::max(Pi.y, Pj.y) + EPS;
+            if (Point.x >= MinX && Point.x <= MaxX && Point.y >= MinY && Point.y <= MaxY)
+                return true; // on edge
+        }
+
+        const bool Intersects = ((Pi.y > Point.y) != (Pj.y > Point.y)) &&
+                                (Point.x < (Pj.x - Pi.x) * (Point.y - Pi.y) / (Pj.y - Pi.y) + Pi.x);
+        if (Intersects)
+            Inside = !Inside;
+    }
+
+    return Inside;
 }
 
 FPolygon FPolygon::MakeBox(const Real64 Length, const Real64 Height, const Real2D Location, const Real64 Rotation) {
