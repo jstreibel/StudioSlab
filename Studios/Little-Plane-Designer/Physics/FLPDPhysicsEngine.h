@@ -9,8 +9,6 @@
 #include "Utils/Pointer.h"
 
 #include "../Plane/FLittlePlane.h"
-#include "Graphics/Modules/ImGui/ImGuiContext.h"
-
 
 struct FLittlePlaneDesignerPhysicsEngine final : IUpdateable, Graphics::IDrawable2D
 {

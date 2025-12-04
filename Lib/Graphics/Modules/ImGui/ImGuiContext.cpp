@@ -25,7 +25,7 @@
 namespace Slab::Graphics {
     // Touch
     fix FONT_INDEX_FOR_IMGUI = 10; //6;
-#define FONT_SIZE_PIXELS Slab::Graphics::WindowStyle::font_size
+    #define FONT_SIZE_PIXELS Slab::Graphics::WindowStyle::font_size
 
     constexpr auto SHOW_DEAR_IMGUI_DEBUG_METRICS = false;
 
@@ -75,7 +75,7 @@ namespace Slab::Graphics {
         FontConfig.OversampleH = 4;
         FontConfig.OversampleV = 4;
         FontConfig.PixelSnapH = false;
-        auto font = io.Fonts->AddFontFromFileTTF(FontName.c_str(), FONT_SIZE_PIXELS, &FontConfig, &vRanges[0]);
+        auto font = io.Fonts->AddFontFromFileTTF(FontName.c_str(), WindowStyle::font_size, &FontConfig, &vRanges[0]);
 
         io.FontDefault = font;
 
@@ -83,7 +83,7 @@ namespace Slab::Graphics {
 
         Core::Log::Info() << "ImGui using font '" << Core::Resources::ExportedFonts[FONT_INDEX_FOR_IMGUI] << "'." << Core::Log::Flush;
 
-        //ImGui::PushFont(font);
+        // ImGui::PushFont(font);
     }
 
     FImGuiContext::FImGuiContext(FImplementationCallSet calls)
@@ -140,7 +140,7 @@ namespace Slab::Graphics {
     }
 
     DevFloat FImGuiContext::GetFontSize() const {
-        (void)this; // get rid of annoying "this method can be made static" warning.
+        (void)this; // get rid of the annoying "this method can be made static" warning.
 
         return FONT_SIZE_PIXELS;
     }

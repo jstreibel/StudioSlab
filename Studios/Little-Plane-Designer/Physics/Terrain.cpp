@@ -4,12 +4,6 @@
 
 #include "Terrain.h"
 
-#include <algorithm>
-#include <boost/fusion/algorithm/query/count.hpp>
-
-#include "../../../cmake-build-debug-clang/_deps/box2d-src/src/constants.h"
-#include "Graphics/OpenGL/WriterOpenGL.h"
-#include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 #include "Math/Function/R2toR/Model/Operators/Integral.h"
 
 Slab::Vector<b2Vec2> FTerrainDescriptor::GetPoints() const {
@@ -93,7 +87,7 @@ void FTerrain::Draw(const Slab::Graphics::FDraw2DParams&) {
     };
     SurfStyle.thickness = 3.0f;
 
-    Graphics::OpenGL::Legacy::RenderPointSet(MeshPoints, GroundStyle);
+    Draw::RenderPointSet(MeshPoints, GroundStyle);
 
-    Graphics::OpenGL::Legacy::RenderPointSet(SurfPoints, SurfStyle);
+    Draw::RenderPointSet(SurfPoints, SurfStyle);
 }

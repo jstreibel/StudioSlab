@@ -180,12 +180,11 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams& DrawParams) {
         const auto [tlx, tly] = xform(-HalfWidth,  +HalfHeight);
 
         // Bind texture and render immediate-mode quad
-        Graphics::OpenGL::Legacy::SetupLegacyGL();
+        Draw::SetupLegacyGL();
         Graphics::OpenGL::FTexture::EnableTextures();
         HullTexture->Activate();
         HullTexture->Bind();
-
-
+        
         // White modulation to preserve original texture colors
         glColor4f(1.f, 1.f, 1.f, 1.f);
 
@@ -204,8 +203,6 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams& DrawParams) {
         Graphics::OpenGL::FTexture::Deactivate();
         Graphics::OpenGL::FTexture::DisableTextures();
     }
-
-    namespace Drawer = Graphics::OpenGL::Legacy;
 
     Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
     WingStyle.thickness = 2.0f;
@@ -228,7 +225,7 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams& DrawParams) {
             Point.y = y + px*sinWing + py*cosWing;
         }
 
-        Drawer::RenderPointSet(Dummy(ProfileVertices), WingStyle);
+        Draw::RenderPointSet(Dummy(ProfileVertices), WingStyle);
 
     }
 
@@ -253,7 +250,7 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams& DrawParams) {
                                      yBody + x*s + y*c });
                 }
 
-                Drawer::RenderPointSet(Dummy(Points), HullStyle);
+                Draw::RenderPointSet(Dummy(Points), HullStyle);
             }
         }
     }

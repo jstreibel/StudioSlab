@@ -49,6 +49,7 @@ add_executable( LittlePlaneDesigner
         Render/DebugDraw.cpp
         Utils.cpp
         Utils.h
+        Render/Draw.h
 
 )
 target_include_directories(LittlePlaneDesigner PRIVATE ${box2d_SOURCE_DIR}/include)

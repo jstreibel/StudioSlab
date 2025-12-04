@@ -70,8 +70,6 @@ void FBigHill::Tick(const Seconds ElapsedTime) {
 }
 
 void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
-    namespace Drawer = Graphics::OpenGL::Legacy;
-
     fix WinHeight = DrawInput.Window.GetHeight();
     fix WinWidth = DrawInput.Window.GetWidth();
 
@@ -79,8 +77,8 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
     // HandleInputs(*KeyboardState);
 
     Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
-    Drawer::ResetModelView();
-    Drawer::SetupOrtho(Camera->GetView());
+    Draw::ResetModelView();
+    Draw::SetupOrtho(Camera->GetView());
 
     if constexpr (false) GUIContext->AddDrawCall([this] {
         ImGui::Begin("Wings");
@@ -89,7 +87,7 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
     });
 
     if (PrettyDraw) {
-        Drawer::SetupLegacyGL();
+        Draw::SetupLegacyGL();
 
         const Graphics::FDraw2DParams Params = {WinWidth, WinHeight, Camera->GetView()};
         for (const auto& Drawable : Drawables) {
@@ -97,21 +95,21 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
         }
     }
 
-    ImGui::Begin("Mouse position", nullptr, ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoInputs);
+    if constexpr (false) {
+        ImGui::Begin("Mouse position", nullptr, ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoInputs);
+        fix xMouse = static_cast<float>(CurrentMouse.x);
+        fix yMouse = static_cast<float>(CurrentMouse.y);
+        if constexpr (false) ImGui::Text("Mouse position: (%.2f, %.2f)", xMouse, yMouse);
+        fix MouseSpace = Graphics::FromViewportToSpaceCoord({xMouse, yMouse},
+            Camera->GetView(), Graphics::RectI{0, WinWidth, 0, WinHeight});
+        if constexpr (false) ImGui::Text("Mouse space position: (%.2f, %.2f)", MouseSpace.x, MouseSpace.y);
+        fix PlanePos = Graphics::FPoint2D(PhysicsEngine->GetPlane()->GetPosition());
+        fix Angle = PhysicsEngine->GetPlane()->GetAngle();
+        fix MousePlaneCoords = (MouseSpace - PlanePos).WithRotation(-Angle);
 
-    fix xMouse = static_cast<float>(CurrentMouse.x);
-    fix yMouse = static_cast<float>(CurrentMouse.y);
-    ImGui::Text("Mouse position: (%.2f, %.2f)", xMouse, yMouse);
-    fix MouseSpace = Graphics::FromViewportToSpaceCoord({xMouse, yMouse},
-        Camera->GetView(), Graphics::RectI{0, WinWidth, 0, WinHeight});
-    ImGui::Text("Mouse space position: (%.2f, %.2f)", MouseSpace.x, MouseSpace.y);
-    fix PlanePos = Graphics::FPoint2D(PhysicsEngine->GetPlane()->GetPosition());
-    fix Angle = PhysicsEngine->GetPlane()->GetAngle();
-    fix MousePlaneCoords = (MouseSpace - PlanePos).WithRotation(-Angle);
-
-    ImGui::Text("Mouse plane coords: (%.2f, %.2f)", MousePlaneCoords.x, MousePlaneCoords.y);
-
-    ImGui::End();
+        ImGui::Text("Mouse plane coords: (%.2f, %.2f)", MousePlaneCoords.x, MousePlaneCoords.y);
+        ImGui::End();
+    }
 
     // UpdateGraphs();
     // if (DebugDraw) { DoPhysicsDraw(); }

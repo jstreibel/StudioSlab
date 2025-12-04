@@ -6,11 +6,9 @@
 #define STUDIOSLAB_DEBUGDRAW_H
 
 #include <cstring>
-#include <vector>
 #include <box2d/box2d.h>
-#include <GL/glew.h>
 
-#include <Graphics/OpenGL/WriterOpenGL.h>
+#include "Draw.h"
 
 #include "Core/Tools/Resources.h"
 #include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
@@ -67,7 +65,7 @@ public:
     void setAlpha(float a) { m_alpha = a; }
     void setCircleSegments(int n) { m_circleSegments = n > 3 ? n : 3; }
 
-    static void SetupLegacyGL() { Slab::Graphics::OpenGL::Legacy::SetupLegacyGL(); }
+    static void SetupLegacyGL() { Draw::SetupLegacyGL(); }
 
     void DrawVector(b2Vec2 f, b2Vec2 p, float scale=1.f, b2HexColor color=b2_colorYellow) const;
 

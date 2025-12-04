@@ -7,8 +7,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
-#include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
+#include "Draw.h"
 
 using Slab::Graphics::FColor;
 
@@ -31,13 +30,11 @@ float FScenario::Ridge(const float x, const FMountainLayer& layer) {
 }
 
 void FScenario::Draw(const Slab::Graphics::FDraw2DParams& Params) {
-    namespace LegacyGL = Slab::Graphics::OpenGL::Legacy;
-
-    LegacyGL::SetupLegacyGL();
-    LegacyGL::PushLegacyMode();
-    LegacyGL::PushScene();
-    LegacyGL::ResetModelView();
-    LegacyGL::SetupOrtho(Params.Region);
+    Draw::SetupLegacyGL();
+    Draw::PushLegacyMode();
+    Draw::PushScene();
+    Draw::ResetModelView();
+    Draw::SetupOrtho(Params.Region);
 
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
@@ -68,7 +65,7 @@ void FScenario::Draw(const Slab::Graphics::FDraw2DParams& Params) {
         glEnd();
     }
 
-    LegacyGL::PopScene();
+    Draw::PopScene();
 }
 
 

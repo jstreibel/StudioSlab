@@ -9,7 +9,7 @@ namespace Slab::Graphics::WindowStyle {
 
     int TilingGapSize = 3;
 
-    int font_size = 24;
+    int font_size = 32;
     // int title_bar_height = 20;
     FColor titlebar_color = {232/255., 232/255., 232/255.};
 

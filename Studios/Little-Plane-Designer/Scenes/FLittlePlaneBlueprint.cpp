@@ -47,9 +47,6 @@ Graphics::PlotStyle StrongStrokeStyle{StrokeColor, Graphics::LineLoop, false, Gr
 Graphics::PlotStyle RegularStrokeStyle{StrokeColor, Graphics::LineLoop, false, Graphics::Nil, Width_RegularStroke};
 Graphics::PlotStyle WeakStrokeStyle{StrokeColor, Graphics::LineLoop, false, Graphics::Nil, Width_WeakStroke};
 
-namespace Draw = Graphics::OpenGL::Legacy;
-
-
 FLittlePlaneBlueprint::FLittlePlaneBlueprint() : Region(), VP(), GlyphHeight(10) {
     // auto FontFile = Core::Resources::BuiltinFonts::EngineerHand();
     auto FontFile = Core::Resources::BuiltinFonts::Y145m2009();
@@ -92,11 +89,11 @@ void FLittlePlaneBlueprint::Draw(const Graphics::FDrawInput& Input) {
     });
     GlyphHeight = .5/Proportion * Graphics::FromViewportToSpaceCoord({0., Writer->GetFontHeightInPixels()}, Region, VP).y;
 
-    Graphics::OpenGL::Legacy::PushLegacyMode();
+    Draw::PushLegacyMode();
     DrawBlueprint();
 
     DrawPlane();
-    Graphics::OpenGL::Legacy::RestoreFromLegacyMode();
+    Draw::RestoreFromLegacyMode();
 
     Writer->Write(ToStr("1:%i", Proportion), {InnerX-0.01, -InnerY+0.0025});
 

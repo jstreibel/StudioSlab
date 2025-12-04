@@ -5,7 +5,6 @@
 #ifndef STUDIOSLAB_PLANESTATS_H
 #define STUDIOSLAB_PLANESTATS_H
 
-#include "../../../Lib/Graphics/Interfaces/IDrawable.h"
 #include "Utils/Pointer.h"
 #include "../Plane/FLittlePlane.h"
 

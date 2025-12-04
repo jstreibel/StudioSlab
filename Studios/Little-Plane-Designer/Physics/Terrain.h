@@ -8,9 +8,10 @@
 #include <functional>
 
 #include "box2d/box2d.h"
-#include "../../../Lib/Graphics/Interfaces/IDrawable.h"
 #include "Math/VectorSpace/Impl/PointSet.h"
 #include "Utils/Arrays.h"
+
+#include "../Render/Draw.h"
 
 struct FTerrainDescriptor {
     std::function<float(float)> H;

@@ -45,7 +45,7 @@ void FDecal::Draw(const Slab::Graphics::FDraw2DParams&) {
     .At(Position)
     .Build();
 
-    Slab::Graphics::OpenGL::Legacy::DrawRectangleWithTexture(Rect, *Texture, ZIndex);
+    Draw::DrawRectangleWithTexture(Rect, *Texture, ZIndex);
 }
 
 FRuler::FRuler(
@@ -95,14 +95,13 @@ void FRuler::Draw(const Slab::Graphics::FDraw2DParams&) {
 void FSky::Draw(const Slab::Graphics::FDraw2DParams&) {
 
     constexpr float horizonY = .0f;
-    namespace LegacyGL = Slab::Graphics::OpenGL::Legacy;
 
-    LegacyGL::SetupLegacyGL();
-    LegacyGL::PushLegacyMode();
+    Draw::SetupLegacyGL();
+    Draw::PushLegacyMode();
 
-    LegacyGL::PushScene();
-    LegacyGL::ResetModelView();
-    LegacyGL::SetupOrthoI({0, 1, 0, 1});
+    Draw::PushScene();
+    Draw::ResetModelView();
+    Draw::SetupOrthoI({0, 1, 0, 1});
 
     glBegin(GL_TRIANGLE_STRIP);
 
@@ -126,5 +125,5 @@ void FSky::Draw(const Slab::Graphics::FDraw2DParams&) {
 
     glEnd();
 
-    LegacyGL::PopScene();
+    Draw::PopScene();
 }

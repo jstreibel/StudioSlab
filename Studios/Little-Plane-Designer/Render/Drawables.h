@@ -5,10 +5,8 @@
 #ifndef STUDIOSLAB_DRAWABLES_H
 #define STUDIOSLAB_DRAWABLES_H
 
-#include "../../../Lib/Graphics/Interfaces/IDrawable.h"
-#include "Graphics/Types2D.h"
-#include "Graphics/OpenGL/Texture.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
+#include "Draw.h"
 
 struct FDecal : Slab::Graphics::IDrawable2D {
     FDecal() = delete;
