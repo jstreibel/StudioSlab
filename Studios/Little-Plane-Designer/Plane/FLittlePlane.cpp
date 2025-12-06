@@ -184,7 +184,7 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams& DrawParams) {
         Graphics::OpenGL::FTexture::EnableTextures();
         HullTexture->Activate();
         HullTexture->Bind();
-        
+
         // White modulation to preserve original texture colors
         glColor4f(1.f, 1.f, 1.f, 1.f);
 

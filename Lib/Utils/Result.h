@@ -180,6 +180,7 @@ namespace Slab {
         StrVector MessagesStorage{};
     };
 
+    using FResult = TResult<void>;
 } // namespace Slab
 
 #endif // STUDIOSLAB_RESULT_H
