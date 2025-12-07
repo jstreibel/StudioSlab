@@ -196,6 +196,7 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/Artists/Overlay.h        		OpenGL/Artists/Overlay.cpp
 		OpenGL/Artists/ColorBarArtist.h			OpenGL/Artists/ColorBarArtist.cpp
 		OpenGL/LegacyGL/PointSetRenderer.h    	OpenGL/LegacyGL/PointSetRenderer.cpp
+		OpenGL/LegacyGL/LegacyDrawBackend2D.h   OpenGL/LegacyGL/LegacyDrawBackend2D.cpp
 
         Plot2D/Artists/Artist.cpp
 		Plot2D/Plot2DWindow.cpp

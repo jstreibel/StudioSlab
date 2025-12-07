@@ -30,9 +30,7 @@ void FPlaneStats::Draw(const Graphics::FDraw2DParams& Params) {
     fix H = Params.ScreenHeight;
     Writer->Reshape(W, H);
 
-    Graphics::OpenGL::SetViewport(Graphics::RectI{
-        .xMin = 0, .xMax = W, .yMin = 0, .yMax = H
-    });
+    Graphics::OpenGL::SetViewport(Params.Viewport);
 
     const float fontH = Writer->GetFontHeightInPixels();
     int n = 0;

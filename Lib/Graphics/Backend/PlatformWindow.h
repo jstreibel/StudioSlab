@@ -14,6 +14,7 @@
 #include "Graphics/Backend/Events/MouseState.h"
 #include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
 #include "Graphics/Interfaces/IResolutionProvider.h"
+#include "Graphics/IDrawBackend2D.h"
 #include "Graphics/Modules/GUIModule/GUIContext.h"
 #include "Graphics/Styles/Colors.h"
 
@@ -26,6 +27,7 @@ namespace Slab::Graphics {
 
         Vector<TPointer<FPlatformWindowEventListener>> Stash;
         TPointer<FGUIContext> GuiContext = nullptr;
+        TPointer<IDrawBackend2D> Renderer = nullptr;
 
         TVolatile<FPlatformWindow> SelfReference;
 
@@ -50,6 +52,8 @@ namespace Slab::Graphics {
 
         void Render();
         virtual void Clear(const FColor&) const = 0;
+        void SetRenderer(const TPointer<IDrawBackend2D>& renderer);
+        [[nodiscard]] TPointer<IDrawBackend2D> GetRenderer() const;
 
         virtual void SignalClose() = 0;
         [[nodiscard]] virtual bool ShouldClose() const = 0;

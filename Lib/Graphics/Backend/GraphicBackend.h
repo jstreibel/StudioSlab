@@ -7,7 +7,6 @@
 
 #include "Core/Backend/Backend.h"
 #include "Graphics/Modules/GraphicsModule.h"
-#include "PlatformWindow.h"
 
 namespace Slab::Graphics {
 

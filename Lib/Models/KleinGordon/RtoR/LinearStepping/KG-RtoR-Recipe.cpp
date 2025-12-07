@@ -14,6 +14,7 @@
 
 #include "KG-RtoRSolver.h"
 #include "KG-RtoRBoundaryCondition.h"
+#include "Graphics/SlabGraphics.h"
 #include "Graphics/Window/SingleWindowManager.h"
 
 #include "Math/Data/DataAllocator.h"
@@ -159,7 +160,7 @@ namespace Slab::Models::KGRtoR {
            *************************** VISUAL MONITOR *********************************************
            **************************************************************************************** */
         if (shouldOutputOpenGL) {
-            auto GuiBackend = Slab::Graphics::GetGraphicsBackend();
+            auto GuiBackend = Graphics::GetGraphicsBackend();
 
             auto outputOpenGL = TPointer<Monitor>(static_cast<Monitor *>(BuildOpenGLOutput()));
 

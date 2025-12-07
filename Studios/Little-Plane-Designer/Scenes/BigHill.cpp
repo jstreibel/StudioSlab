@@ -72,13 +72,19 @@ void FBigHill::Tick(const Seconds ElapsedTime) {
 void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
     fix WinHeight = DrawInput.Window.GetHeight();
     fix WinWidth = DrawInput.Window.GetWidth();
+    const auto Renderer = DrawInput.Window.GetRenderer();
+    const Graphics::RectI Viewport{0, WinWidth, 0, WinHeight};
 
     // fix KeyboardState = PlatformWindow.GetKeyboardState();
     // HandleInputs(*KeyboardState);
 
-    Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
-    Draw::ResetModelView();
-    Draw::SetupOrtho(Camera->GetView());
+    if (Renderer != nullptr) {
+        Renderer->BeginFrame(Viewport, Camera->GetView());
+    } else {
+        Graphics::OpenGL::SetViewport(Viewport);
+        Draw::ResetModelView();
+        Draw::SetupOrtho(Camera->GetView());
+    }
 
     if constexpr (false) GUIContext->AddDrawCall([this] {
         ImGui::Begin("Wings");
@@ -89,7 +95,7 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
     if (PrettyDraw) {
         Draw::SetupLegacyGL();
 
-        const Graphics::FDraw2DParams Params = {WinWidth, WinHeight, Camera->GetView()};
+        const Graphics::FDraw2DParams Params{WinWidth, WinHeight, Camera->GetView(), Viewport, Renderer};
         for (const auto& Drawable : Drawables) {
             Drawable->Draw(Params);
         }
@@ -126,6 +132,10 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
     */
 
     // PlaneStats->Draw(Providers);
+
+    if (Renderer != nullptr) {
+        Renderer->EndFrame();
+    }
 }
 
 void FBigHill::HandleInputState(const FInputState InputState) {

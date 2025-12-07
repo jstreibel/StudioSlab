@@ -91,6 +91,14 @@ namespace Slab::Graphics {
         EventTranslator->clear();
     }
 
+    void FPlatformWindow::SetRenderer(const TPointer<IDrawBackend2D>& renderer) {
+        Renderer = renderer;
+    }
+
+    TPointer<IDrawBackend2D> FPlatformWindow::GetRenderer() const {
+        return Renderer;
+    }
+
     FPlatformWindow_RawPointer FPlatformWindow::GetRawPlatformWindowPointer() const
     {
         return r_Window;

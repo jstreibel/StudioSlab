@@ -20,6 +20,7 @@
 #include "Graphics/Window/SlabWindowManager.h"
 #include "../../../../Lib/Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Core/SlabCore.h"
+#include "Graphics/SlabGraphics.h"
 
 using namespace Slab;
 

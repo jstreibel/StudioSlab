@@ -11,6 +11,8 @@
 #include "Core/Tools/Log.h"
 #include "Graphics/Modules/GUIModule/GUIModule.h"
 
+#include "PlatformWindow.h"
+
 namespace Slab::Graphics {
 
     GraphicBackend::GraphicBackend(const Str &name)

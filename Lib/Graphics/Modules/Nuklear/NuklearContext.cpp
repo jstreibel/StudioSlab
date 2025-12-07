@@ -2,6 +2,7 @@
 // Created by joao on 11/18/24.
 //
 
+#include "Graphics/OpenGL/OpenGL.h"
 #include "NuklearContext.h"
 #include "3rdParty/Nuklear/nuklear_glfw_gl4.h"
 

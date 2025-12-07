@@ -12,8 +12,11 @@
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 #include "Graphics/Plot2D/PlotStyle.h"
 #include "Graphics/SFML/Graph.h"
+#include "Graphics/Styles/Colors.h"
+#include "Graphics/IDrawBackend2D.h"
 #include "../Defaults.h"
 #include "../Utils.h"
+#include <array>
 
 Foil::FAirfoilDynamicData FLittlePlane::ComputeForces(
     const FWing& Wing,
@@ -152,6 +155,8 @@ float FLittlePlane::GetAngle() const {
 
 void FLittlePlane::Draw(const Graphics::FDraw2DParams& DrawParams) {
 
+    const auto Renderer = DrawParams.Backend;
+
     // Draw a 2x2 textured rectangle centered at the hull body using HullTexture
     const auto [xBody, yBody] = b2Body_GetPosition(HullBody);
     const auto [c, s] = b2Body_GetRotation(HullBody);
@@ -179,29 +184,39 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams& DrawParams) {
         const auto [trx, try_] = xform( +HalfWidth,  +HalfHeight);
         const auto [tlx, tly] = xform(-HalfWidth,  +HalfHeight);
 
-        // Bind texture and render immediate-mode quad
-        Draw::SetupLegacyGL();
-        Graphics::OpenGL::FTexture::EnableTextures();
-        HullTexture->Activate();
-        HullTexture->Bind();
+        constexpr auto z_coord = -0.1f;
+        if (Renderer != nullptr) {
+            std::array<Graphics::FTexturedVertex2D, 4> Vertices{{
+                {{static_cast<float>(blx), static_cast<float>(bly)}, {0.f, 1.f}, z_coord},
+                {{static_cast<float>(brx), static_cast<float>(bry)}, {1.f, 1.f}, z_coord},
+                {{static_cast<float>(trx), static_cast<float>(try_)}, {1.f, 0.f}, z_coord},
+                {{static_cast<float>(tlx), static_cast<float>(tly)}, {0.f, 0.f}, z_coord},
+            }};
+            Renderer->DrawTexturedQuad(Vertices, Graphics::White, *HullTexture);
+        } else {
+            // Bind texture and render immediate-mode quad
+            Draw::SetupLegacyGL();
+            Graphics::OpenGL::FTexture::EnableTextures();
+            HullTexture->Activate();
+            HullTexture->Bind();
 
-        // White modulation to preserve original texture colors
-        glColor4f(1.f, 1.f, 1.f, 1.f);
+            // White modulation to preserve original texture colors
+            glColor4f(1.f, 1.f, 1.f, 1.f);
 
-        glBegin(GL_QUADS);
-        {
-            // Use flipped V to compensate for typical top-left image origin
-            constexpr auto z_coord = -0.1;
-            glTexCoord2f(0.f, 1.f); glVertex3d(blx, bly, z_coord);
-            glTexCoord2f(1.f, 1.f); glVertex3d(brx, bry, z_coord);
-            glTexCoord2f(1.f, 0.f); glVertex3d(trx, try_, z_coord);
-            glTexCoord2f(0.f, 0.f); glVertex3d(tlx, tly, z_coord);
+            glBegin(GL_QUADS);
+            {
+                // Use flipped V to compensate for typical top-left image origin
+                glTexCoord2f(0.f, 1.f); glVertex3d(blx, bly, z_coord);
+                glTexCoord2f(1.f, 1.f); glVertex3d(brx, bry, z_coord);
+                glTexCoord2f(1.f, 0.f); glVertex3d(trx, try_, z_coord);
+                glTexCoord2f(0.f, 0.f); glVertex3d(tlx, tly, z_coord);
+            }
+            glEnd();
+
+            // Cleanup state
+            Graphics::OpenGL::FTexture::Deactivate();
+            Graphics::OpenGL::FTexture::DisableTextures();
         }
-        glEnd();
-
-        // Cleanup state
-        Graphics::OpenGL::FTexture::Deactivate();
-        Graphics::OpenGL::FTexture::DisableTextures();
     }
 
     Graphics::PlotStyle WingStyle{Graphics::White, Graphics::TriangleFan};
@@ -225,7 +240,11 @@ void FLittlePlane::Draw(const Graphics::FDraw2DParams& DrawParams) {
             Point.y = y + px*sinWing + py*cosWing;
         }
 
-        Draw::RenderPointSet(Dummy(ProfileVertices), WingStyle);
+        if (Renderer != nullptr) {
+            Renderer->DrawPointSet(Dummy(ProfileVertices), WingStyle);
+        } else {
+            Draw::RenderPointSet(Dummy(ProfileVertices), WingStyle);
+        }
 
     }
 

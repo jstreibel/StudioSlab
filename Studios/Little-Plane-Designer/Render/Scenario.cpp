@@ -6,8 +6,10 @@
 
 #include <algorithm>
 #include <cmath>
+#include <vector>
 
 #include "Draw.h"
+#include "Graphics/IDrawBackend2D.h"
 
 using Slab::Graphics::FColor;
 
@@ -30,6 +32,36 @@ float FScenario::Ridge(const float x, const FMountainLayer& layer) {
 }
 
 void FScenario::Draw(const Slab::Graphics::FDraw2DParams& Params) {
+    const float viewWidth = Params.Region.GetWidth();
+    const float sampleStep = std::max(0.5f, viewWidth / 100.0f);
+    const float baseY = Params.Region.yMin - 15.0f;
+    const float xCenter = Params.Region.xCenter();
+    const float yCenter = Params.Region.yCenter();
+
+    const float parallaxMargin = 0.5f * viewWidth;
+
+    if (const auto Backend = Params.Backend; Backend != nullptr) {
+        for (const auto& layer : Layers) {
+            const float parallaxScale = std::max(layer.Parallax, 0.05f);
+            const float xStart = Params.Region.xMin - parallaxMargin / parallaxScale;
+            const float xEnd = Params.Region.xMax + parallaxMargin / parallaxScale;
+
+            std::vector<Slab::Graphics::FColoredVertex2D> Strip;
+            const auto sampleCount = static_cast<size_t>((xEnd - xStart) / sampleStep) + 4;
+            Strip.reserve(sampleCount * 2);
+
+            for (float s = xStart; s <= xEnd + sampleStep; s += sampleStep) {
+                const float x = ApplyParallax(s, layer.Parallax, xCenter);
+                const float y = ApplyParallax(Ridge(s, layer), layer.Parallax, yCenter);
+                Strip.push_back({{x, baseY}, layer.Depth, layer.Color});
+                Strip.push_back({{x, y}, layer.Depth, layer.Color});
+            }
+
+            Backend->DrawTriangleStrip(Strip);
+        }
+        return;
+    }
+
     Draw::SetupLegacyGL();
     Draw::PushLegacyMode();
     Draw::PushScene();
@@ -39,14 +71,6 @@ void FScenario::Draw(const Slab::Graphics::FDraw2DParams& Params) {
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    const float viewWidth = Params.Region.GetWidth();
-    const float sampleStep = std::max(0.5f, viewWidth / 100.0f);
-    const float baseY = Params.Region.yMin - 15.0f;
-    const float xCenter = Params.Region.xCenter();
-    const float yCenter = Params.Region.yCenter();
-
-    const float parallaxMargin = 0.5f * viewWidth;
 
     for (const auto& layer : Layers) {
         glColor4f(layer.Color.r, layer.Color.g, layer.Color.b, layer.Color.a);

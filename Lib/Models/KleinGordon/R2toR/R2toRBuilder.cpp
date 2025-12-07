@@ -8,6 +8,7 @@
 #include "Utils/Files.h"
 
 #include "Core/Backend/BackendManager.h"
+#include "Graphics/SlabGraphics.h"
 
 #include "Math/Numerics/ODE/Output/Format/OutputFormatterBase.h"
 #include "Math/Numerics/ODE/Output/Format/BinarySOF.h"
@@ -97,7 +98,7 @@ namespace Slab::Models::KGR2toR {
 
         ///********************************************************************************************/
         if (*OutputOptions.VisualMonitor) {
-            auto Backend = Slab::Graphics::GetGraphicsBackend();
+            auto Backend = Graphics::GetGraphicsBackend();
 
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
 

@@ -8,6 +8,7 @@
 #include "Utils/ReferenceIterator.h"
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/Utils.h"
+#include "Graphics/OpenGL/LegacyGL/LegacyDrawBackend2D.h"
 #include "Graphics/OpenGL/WriterOpenGL.h"
 #include "Graphics/Window/WindowStyles.h"
 
@@ -165,6 +166,8 @@ namespace Slab::Graphics {
         glfwSetWindowUserPointer(static_cast<GLFWwindow *>(r_Window), this);
 
         glfwMakeContextCurrent(static_cast<GLFWwindow *>(r_Window));
+
+        SetRenderer(New<OpenGL::Legacy::FLegacyDrawBackend2D>());
 
         arrowCursor     = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
         IBeamCursor     = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);

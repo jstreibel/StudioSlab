@@ -21,6 +21,7 @@
 #include "Math/Numerics/ODE/Output/Sockets/OutputConsoleMonitor.h"
 
 #include "Graphics/Window/SlabWindowManager.h"
+#include "Graphics/Backend/PlatformWindow.h"
 
 namespace Slab::Models::MolecularDynamics {
     FMolecularDynamicsRecipe::FMolecularDynamicsRecipe()

@@ -10,6 +10,7 @@
 #include "Application.h"
 
 #include <utility>
+#include "Graphics/Backend/PlatformWindow.h"
 
 namespace Slab {
 

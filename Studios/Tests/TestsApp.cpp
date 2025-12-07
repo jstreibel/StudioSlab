@@ -20,6 +20,7 @@
 #include "VShapeExpansionTest.h"
 #include "LaTeXTests.h"
 #include "ImGuiUITest.h"
+#include "Graphics/SlabGraphics.h"
 #include "Graphics/ImGui/ImGuiWindowManager.h"
 #include "Graphics/SFML/Graph.h"
 

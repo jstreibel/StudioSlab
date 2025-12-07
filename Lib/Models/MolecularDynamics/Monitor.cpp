@@ -4,8 +4,8 @@
 
 #include "Monitor.h"
 
-#include "Graphics/SlabGraphics.h"
 #include "Graphics/Backend/SFML/SFMLBackend.h"
+#include "Graphics/Backend/PlatformWindow.h"
 #include "Models/MolecularDynamics/Hamiltonians/Particle.h"
 
 #include "Hamiltonians/Lennard-Jones/LennardJonesParams.h"

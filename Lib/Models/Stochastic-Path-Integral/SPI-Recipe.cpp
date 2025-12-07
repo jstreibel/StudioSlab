@@ -11,6 +11,7 @@
 #include "SPI-Solver.h"
 #include "SPI-State.h"
 #include "SPI-BC.h"
+#include "Graphics/SlabGraphics.h"
 
 #include "Math/Function/R2toR/Model/FunctionsCollection/AnalyticOscillon1p1_FourierImpl.h"
 #include "Math/Numerics/ODE/Steppers/Euler.h"
