@@ -13,7 +13,7 @@
 #include "Graphics/Plot2D/PlotStyle.h"
 #include "Graphics/SFML/Graph.h"
 #include "Graphics/Styles/Colors.h"
-#include "Graphics/IDrawBackend2D.h"
+#include "../../../Lib/Graphics/Interfaces/IDrawBackend2D.h"
 #include "../Defaults.h"
 #include "../Utils.h"
 #include <array>

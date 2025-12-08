@@ -22,6 +22,7 @@ namespace Slab::Graphics {
 
     public:
         void Clear(const FColor&) const override;
+        TPointer<IDrawBackend2D> GetRenderer() const override;
 
     private:
         sf::Text text;

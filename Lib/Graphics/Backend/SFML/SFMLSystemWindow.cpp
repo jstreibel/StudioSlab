@@ -51,6 +51,10 @@ void SFMLSystemWindow::Clear(const FColor&) const {
     sfml_native_window->clear();
 }
 
+TPointer<IDrawBackend2D> SFMLSystemWindow::GetRenderer() const {
+    NOT_IMPLEMENTED_CLASS_METHOD
+}
+
 void SFMLSystemWindow::PollEvents() {
     sf::Event event{};
 

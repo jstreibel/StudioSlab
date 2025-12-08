@@ -5,10 +5,13 @@
 #include "glfw.h"
 
 #include "GLFWPlatformWindow.h"
+
+#include "Core/SlabCore.h"
 #include "Utils/ReferenceIterator.h"
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/Utils.h"
 #include "Graphics/OpenGL/LegacyGL/LegacyDrawBackend2D.h"
+#include "Graphics/OpenGL/ModernGL/ModernDrawBackend2D.h"
 #include "Graphics/OpenGL/WriterOpenGL.h"
 #include "Graphics/Window/WindowStyles.h"
 
@@ -134,8 +137,7 @@ namespace Slab::Graphics {
         glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
         Log::Info() << "Mouse buttons and keyboard keys sticky mode " << Log::FGGreen << "ENABLED" << Log::Flush;
 
-        fix RAW_MOUSE_MODE = false;
-        if (RAW_MOUSE_MODE && glfwRawMouseMotionSupported()) {
+        if constexpr (constexpr auto RawMouseMode = false; RawMouseMode && glfwRawMouseMotionSupported()) {
             // When the cursor is disabled, raw (unscaled and unaccelerated) mouse motion can be enabled if available.
             // If supported, raw mouse motion can be enabled or disabled per-window and at any time, but it will only be
             // provided when the cursor is disabled.
@@ -166,8 +168,6 @@ namespace Slab::Graphics {
         glfwSetWindowUserPointer(static_cast<GLFWwindow *>(r_Window), this);
 
         glfwMakeContextCurrent(static_cast<GLFWwindow *>(r_Window));
-
-        SetRenderer(New<OpenGL::Legacy::FLegacyDrawBackend2D>());
 
         arrowCursor     = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
         IBeamCursor     = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
@@ -238,6 +238,19 @@ namespace Slab::Graphics {
     void FGLFWPlatformWindow::Flush()
     {
         glfwSwapBuffers(static_cast<GLFWwindow *>(r_Window));
+    }
+
+    TPointer<IDrawBackend2D> FGLFWPlatformWindow::GetRenderer() const {
+        static TPointer<IDrawBackend2D> Renderer = nullptr;
+        if (Renderer == nullptr)
+        try {
+            LoadModule("ModernOpenGL");
+            Renderer = New<OpenGL::Modern::FModernDrawBackend2D>();
+        } catch (...) {
+            Renderer = New<OpenGL::Legacy::FLegacyDrawBackend2D>();
+        }
+
+        return Renderer;
     }
 
     bool FGLFWPlatformWindow::ShouldClose() const {

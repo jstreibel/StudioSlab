@@ -5,8 +5,8 @@
 #ifndef STUDIOSLAB_IDRAWBACKEND2D_H
 #define STUDIOSLAB_IDRAWBACKEND2D_H
 #include "Math/VectorSpace/Impl/PointSet.h"
-#include "Plot2D/PlotStyle.h"
-#include "Plot2D/Shapes/Shape.h"
+#include "../Plot2D/PlotStyle.h"
+#include "../Plot2D/Shapes/Shape.h"
 #include "Graphics/Types2D.h"
 #include "Graphics/Styles/Colors.h"
 

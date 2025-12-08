@@ -11,7 +11,7 @@
 #include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
-#include "Graphics/IDrawBackend2D.h"
+#include "../../../Lib/Graphics/Interfaces/IDrawBackend2D.h"
 #include "Graphics/Styles/Colors.h"
 
 #include <array>

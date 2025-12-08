@@ -197,6 +197,7 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/Artists/ColorBarArtist.h			OpenGL/Artists/ColorBarArtist.cpp
 		OpenGL/LegacyGL/PointSetRenderer.h    	OpenGL/LegacyGL/PointSetRenderer.cpp
 		OpenGL/LegacyGL/LegacyDrawBackend2D.h   OpenGL/LegacyGL/LegacyDrawBackend2D.cpp
+		OpenGL/ModernGL/ModernDrawBackend2D.h   OpenGL/ModernGL/ModernDrawBackend2D.cpp
 
         Plot2D/Artists/Artist.cpp
 		Plot2D/Plot2DWindow.cpp
@@ -327,6 +328,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/LegacyGL/LegacyMode.h
 		Backend/Events/KeyboardState.cpp
 		IDrawBackend2D.h
+		Interfaces/IDrawBackend2DProvider.cpp
+		Interfaces/IDrawBackend2DProvider.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

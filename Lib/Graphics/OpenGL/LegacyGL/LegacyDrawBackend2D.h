@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_LEGACYDRAWBACKEND2D_H
 #define STUDIOSLAB_LEGACYDRAWBACKEND2D_H
 
-#include "Graphics/IDrawBackend2D.h"
+#include "../../Interfaces/IDrawBackend2D.h"
 #include "Graphics/OpenGL/Texture.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 

@@ -77,22 +77,19 @@ void FTerrain::Draw(const Slab::Graphics::FDraw2DParams& Params) {
     const Graphics::PlotStyle GroundStyle{
         Graphics::DarkGrass,
         Graphics::Triangles,
-        false,
+        true,
+        Graphics::DarkGrass,
+        3.0f
     };
 
-    Graphics::PlotStyle SurfStyle{
+    const Graphics::PlotStyle SurfStyle{
         Graphics::GrassGreen,
         Graphics::LineStrip,
         false,
+        Graphics::Nil,
+        3.0f
     };
-    SurfStyle.thickness = 3.0f;
 
-    if (Params.Backend != nullptr) {
-        Params.Backend->DrawPointSet(MeshPoints, GroundStyle);
-        Params.Backend->DrawPointSet(SurfPoints, SurfStyle);
-        return;
-    }
-
-    Draw::RenderPointSet(MeshPoints, GroundStyle);
-    Draw::RenderPointSet(SurfPoints, SurfStyle);
+    Params.Backend->DrawPointSet(MeshPoints, GroundStyle);
+    Params.Backend->DrawPointSet(SurfPoints, SurfStyle);
 }

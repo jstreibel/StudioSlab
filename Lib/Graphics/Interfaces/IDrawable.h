@@ -7,7 +7,7 @@
 
 #include "IRectProvider.h"
 #include "Graphics/Backend/PlatformWindow.h"
-#include "Graphics/IDrawBackend2D.h"
+#include "IDrawBackend2D.h"
 #include "Utils/Pointer.h"
 
 #include <utility>
