@@ -138,47 +138,8 @@ void FRuler::Draw(const Slab::Graphics::FDraw2DParams& Params) {
 }
 
 void FSky::Draw(const Slab::Graphics::FDraw2DParams& Params) {
-
-    constexpr float horizonY = .0f;
     constexpr float Infinity = -0.9f;
+    const Slab::Graphics::FRectangleShape Quad{Params.Region};
+    Params.Backend->DrawVerticalGradientQuad(Quad, HorizonColor, SkyColor, Infinity);
 
-    if (const auto Backend = Params.Backend; Backend != nullptr) {
-        std::array<Slab::Graphics::FColoredVertex2D, 4> Vertices{{
-            {{0.0f, horizonY}, Infinity, HorizonColor},
-            {{0.0f, 1.0f},     Infinity, SkyColor},
-            {{1.0f, horizonY}, Infinity, HorizonColor},
-            {{1.0f, 1.0f},     Infinity, SkyColor},
-        }};
-        Backend->DrawTriangleStrip(Vertices);
-        return;
-    }
-
-    Draw::SetupLegacyGL();
-    Draw::PushLegacyMode();
-
-    Draw::PushScene();
-    Draw::ResetModelView();
-    Draw::SetupOrthoI({0, 1, 0, 1});
-
-    glBegin(GL_TRIANGLE_STRIP);
-
-    // bottom-left (near horizon): light, a bit warmer
-    glColor4fv(HorizonColor.asFloat4fv());
-    glVertex3f(0.0f, horizonY, Infinity);
-
-    // top-left: darker, more saturated
-    glColor4fv(SkyColor.asFloat4fv());
-    glVertex3f(0.0f, 1.0f, Infinity);
-
-    // bottom-right
-    glColor4fv(HorizonColor.asFloat4fv());
-    glVertex3f(1.0f, horizonY, Infinity);
-
-    // top-right
-    glColor4fv(SkyColor.asFloat4fv());
-    glVertex3f(1.0f, 1.0f, Infinity);
-
-    glEnd();
-
-    Draw::PopScene();
 }

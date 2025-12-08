@@ -9,7 +9,6 @@
 #include "Plot2D/Shapes/Shape.h"
 #include "Graphics/Types2D.h"
 #include "Graphics/Styles/Colors.h"
-#include "Utils/Result.h"
 
 #include <array>
 #include <span>
@@ -46,21 +45,26 @@ struct IDrawBackend2D {
 
     virtual FDrawBackend2DCapabilities GetCapabilities() const noexcept = 0;
 
-    virtual FResult BeginFrame(const RectI& viewport, const RectR& view) const noexcept = 0;
-    virtual FResult EndFrame() const noexcept = 0;
+    virtual void BeginFrame(const RectI& viewport, const RectR& view) const noexcept = 0;
+    virtual void EndFrame() const noexcept = 0;
 
-    virtual FResult DrawPointSet(const Math::FPointSet_constptr& pSet, const PlotStyle& style) const noexcept = 0;
-    virtual FResult DrawPointSet(const Math::FPointSet& pSet, const PlotStyle& style) const noexcept = 0;
+    virtual void DrawPointSet(const Math::FPointSet_constptr& pSet, const PlotStyle& style) const noexcept = 0;
+    virtual void DrawPointSet(const Math::FPointSet& pSet, const PlotStyle& style) const noexcept = 0;
 
-    virtual FResult DrawSolidQuad(const FRectangleShape& rect, const FColor& color, DevFloat zIndex) const noexcept = 0;
-    virtual FResult DrawLineSegments(std::span<const FLineSegment2D> segments, const FColor& color, DevFloat width) const noexcept = 0;
-    virtual FResult DrawTriangleStrip(std::span<const FColoredVertex2D> vertices) const noexcept = 0;
+    virtual void DrawSolidQuad(const FRectangleShape& rect, const FColor& color, DevFloat zIndex) const noexcept = 0;
+    virtual void DrawLineSegments(std::span<const FLineSegment2D> segments, const FColor& color, DevFloat width) const noexcept = 0;
+    virtual void DrawTriangleStrip(std::span<const FColoredVertex2D> vertices) const noexcept = 0;
 
-    virtual FResult DrawTexturedQuad(const std::array<FTexturedVertex2D, 4>& vertices,
-                                     const FColor& modulation,
-                                     const OpenGL::FTexture& texture) const noexcept = 0;
+    virtual void DrawTexturedQuad(const std::array<FTexturedVertex2D, 4>& vertices,
+                                  const FColor& modulation,
+                                  const OpenGL::FTexture& texture) const noexcept = 0;
 
-    virtual FResult DrawText(const Str& text, const FPoint2D& position, const FColor& color) const noexcept = 0;
+    virtual void DrawVerticalGradientQuad(const FRectangleShape& rect,
+                                          const FColor& bottom,
+                                          const FColor& top,
+                                          DevFloat zIndex) const noexcept = 0;
+
+    virtual void DrawText(const Str& text, const FPoint2D& position, const FColor& color) const noexcept = 0;
 };
 }
 

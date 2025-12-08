@@ -3,7 +3,6 @@
 //
 
 #include "Shape.h"
-#include "Graphics/OpenGL/OpenGL.h"
 #include "Graphics/OpenGL/LegacyGL/LegacyMode.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
@@ -14,7 +13,11 @@ namespace Slab::Graphics {
 FShape::~FShape() {
 }
 
-FRectangleShape::FRectangleShape(FPoint2D top_left, FPoint2D bottom_right)
+FRectangleShape::FRectangleShape(const RectR& Rect)
+: FRectangleShape({Rect.xMin, Rect.yMax}, {Rect.xMax, Rect.yMin}) {
+}
+
+FRectangleShape::FRectangleShape(const FPoint2D top_left, const FPoint2D bottom_right)
 : top_left(top_left), bottom_right(bottom_right) {    }
 
 void FRectangleShape::Draw(const FPlot2DWindow &window) {
@@ -47,11 +50,11 @@ FRectangleShapeBuilder FRectangleShapeBuilder::WithHeight(const double _h) const
     return {w, _h, x, y};
 }
 
-FRectangleShapeBuilder FRectangleShapeBuilder::At(double _x, double _y) const {
+FRectangleShapeBuilder FRectangleShapeBuilder::At(const double _x, const double _y) const {
     return {w, h, _x, _y};
 }
 
-FRectangleShapeBuilder FRectangleShapeBuilder::At(FPoint2D Loc) const {
+FRectangleShapeBuilder FRectangleShapeBuilder::At(const FPoint2D& Loc) const {
     return At(Loc.x, Loc.y);
 }
 
