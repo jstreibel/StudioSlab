@@ -8,7 +8,7 @@
 
 namespace Slab::Math {
 
-    FDataRegistry::FDataRegistry() : Singleton("Data Manager") {}
+    FDataRegistry::FDataRegistry() : FSingleton("Data Manager") {}
 
     FDataName FDataRegistry::RegisterData(FDataName name, TPointer<Data> data) {
         if(name.empty()) name = ToStr(data->get_id());

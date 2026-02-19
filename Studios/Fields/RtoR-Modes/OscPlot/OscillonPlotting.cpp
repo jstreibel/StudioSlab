@@ -141,7 +141,7 @@ namespace Studios {
         Slab::FTimer timer;
         renderOscillons();
         this->setFunction(rendered_phi);
-        render_time = timer.getElTime_msec();
+        render_time = timer.GetElapsedTimeMsec();
 
         auto kg_viewer = getCurrentKGViewer();
         if(kg_viewer) {

@@ -134,7 +134,7 @@ namespace Slab::Graphics {
         for (auto &Win: Windows) {
             Win->ImmediateDraw(PlatformWindow);
             OpenGL::CheckGLErrors(
-                    Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(Win.get()));
+                    Str(__PRETTY_FUNCTION__) + " drawing " + Common::GetClassName(Win.get()));
         }
     }
 

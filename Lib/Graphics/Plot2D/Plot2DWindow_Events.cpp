@@ -17,8 +17,8 @@ namespace Slab {
 
         if (button == EMouseButton::MouseButton_RIGHT) {
             if (state == EKeyState::Press) {
-                time.reset();
-            } else if (state == EKeyState::Release && time.getElTime_msec() < 200) {
+                time.Reset();
+            } else if (state == EKeyState::Release && time.GetElapsedTimeMsec() < 200) {
                 PopupOn = true;
 
                 auto popupName = Str("win_") + Title + Str("_popup");

@@ -32,7 +32,7 @@ namespace Modes::DatabaseViewer {
         using SnapshotMashup = Math::R2toR::NumericFunction_CPU;
         Vector<TPointer<SnapshotMashup>> allMashups;
         Vector<Graphics::R2toRFunctionArtist_ptr> mashupArtists;
-        Vector<Utils::MaxInfo> maxValues;
+        Vector<Utils::FMaxInfo> maxValues;
 
         TPointer<SnapshotMashup> currentMashup;
         Graphics::R2toRFunctionArtist_ptr currentMeshupArtist;

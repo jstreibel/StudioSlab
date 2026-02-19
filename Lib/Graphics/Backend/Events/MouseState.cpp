@@ -12,15 +12,15 @@ namespace Slab::Graphics {
         switch (Which) {
             case MouseButton_LEFT:
                 Left = State;
-                SinceLeftPressed.reset();
+                SinceLeftPressed.Reset();
                 break;
             case MouseButton_MIDDLE:
                 Center = State;
-                SinceCenterPressed.reset();
+                SinceCenterPressed.Reset();
                 break;
             case MouseButton_RIGHT:
                 Right = State;
-                SinceRightPressed.reset();
+                SinceRightPressed.Reset();
                 break;
             case MouseButton_4:
             case MouseButton_5:
@@ -28,6 +28,7 @@ namespace Slab::Graphics {
             case MouseButton_7:
             case MouseButton_8:
             default:
+                break;
         }
 
         return false;

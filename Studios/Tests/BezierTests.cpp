@@ -71,25 +71,25 @@ namespace Tests {
         const auto &GraphRegion = Graph.GetRegion();
         if(Graphics::Animator::Contains(*GraphRegion.getReference_xMin())){
             auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_xMin());
-            fix t = Animation.Timer.GetElapsedTime_Seconds() / Animation.TimeInSeconds;
+            fix t = Animation.Timer.GetElapsedTimeSeconds() / Animation.TimeInSeconds;
             CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 
         if(Graphics::Animator::Contains(*GraphRegion.getReference_xMax())){
             auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_xMax());
-            fix t = Animation.Timer.GetElapsedTime_Seconds() / Animation.TimeInSeconds;
+            fix t = Animation.Timer.GetElapsedTimeSeconds() / Animation.TimeInSeconds;
             CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 
         if(Graphics::Animator::Contains(*GraphRegion.getReference_yMin())){
             auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_yMin());
-            fix t = Animation.Timer.GetElapsedTime_Seconds() / Animation.TimeInSeconds;
+            fix t = Animation.Timer.GetElapsedTimeSeconds() / Animation.TimeInSeconds;
             CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 
         if(Graphics::Animator::Contains(*GraphRegion.getReference_yMax())){
             auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_yMax());
-            fix t = Animation.Timer.GetElapsedTime_Seconds() / Animation.TimeInSeconds;
+            fix t = Animation.Timer.GetElapsedTimeSeconds() / Animation.TimeInSeconds;
             CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 

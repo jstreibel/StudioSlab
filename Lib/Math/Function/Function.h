@@ -84,7 +84,7 @@ namespace Slab::Math::Base {
         [[nodiscard]] bool isGPUFriendly() const { return myGPUFriendlyVersion != nullptr; }
 
         [[nodiscard]] virtual Str Symbol() const { return "f(x)"; }
-        [[nodiscard]] virtual Str generalName() const { return Common::getClassName(this); }
+        [[nodiscard]] virtual Str generalName() const { return Common::GetClassName(this); }
 
         // RENDERING
         struct RenderingOptions {

@@ -7,20 +7,19 @@
 const auto dpi = 800;
 const auto LaTEXTextWidthInches = 6.47699;
 
-auto Slab::Printing::getDPI() -> int {
+auto Slab::Printing::GetDPI() -> int {
     return dpi;
 }
 
-auto Slab::Printing::getTextWidthInches() -> DevFloat {
+auto Slab::Printing::GetTextWidthInches() -> DevFloat {
     return LaTEXTextWidthInches;
 }
 
-auto Slab::Printing::getTotalHorizontalDots(DevFloat proportionOfTextWidth) -> int {
+auto Slab::Printing::GetTotalHorizontalDots(DevFloat proportionOfTextWidth) -> int {
     return dpi*(LaTEXTextWidthInches*proportionOfTextWidth);
 }
 
-auto Slab::Printing::getTotalVerticalDots(DevFloat proportionOfTextWidth) -> int {
+auto Slab::Printing::GetTotalVerticalDots(DevFloat proportionOfTextWidth) -> int {
     return dpi*(LaTEXTextWidthInches*proportionOfTextWidth);
 }
-
 

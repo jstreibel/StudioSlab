@@ -26,7 +26,7 @@ namespace Slab::Math {
     }
 
     void RungeKutta4::Step(const CountType n_steps) {
-        auto swap = swapsIterator.next();
+        auto swap = swapsIterator.Next();
         swap->setData(*_f);
 
         auto &H = *_H;

@@ -26,7 +26,7 @@ namespace Slab::Core {
 
     AppBase::~AppBase() {
         Core::Finish();
-        Log::Info() << Common::getClassName(this) << " terminated." << Log::Flush;
+        Log::Info() << Common::GetClassName(this) << " terminated." << Log::Flush;
     }
 
 }

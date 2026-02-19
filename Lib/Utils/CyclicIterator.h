@@ -13,7 +13,7 @@ namespace Slab {
     public:
         explicit TCyclicIterator(const std::vector<T>& elements) : elements_(elements), current_index_(0) {}
 
-        T next() {
+        T Next() {
             if (elements_.empty()) {
                 throw std::out_of_range("The container is empty.");
             }
@@ -22,9 +22,15 @@ namespace Slab {
             return element;
         }
 
-        void reset() {
+        void Reset() {
             current_index_ = 0;
         }
+
+        [[deprecated("Use Next")]]
+        T next() { return Next(); }
+
+        [[deprecated("Use Reset")]]
+        void reset() { Reset(); }
 
     private:
         const std::vector<T>& elements_;

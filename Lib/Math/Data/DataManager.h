@@ -21,7 +21,7 @@ namespace Slab::Math {
         DataLocation_GPU
     };
 
-    class FDataRegistry final : public Singleton<FDataRegistry>
+    class FDataRegistry final : public FSingleton<FDataRegistry>
     {
     public:
         struct EntryDescription { FDataName Name; DataType Type; };
@@ -50,12 +50,12 @@ namespace Slab::Math {
 
     };
 
-    class FDataManager final : public Singleton<FDataManager>
+    class FDataManager final : public FSingleton<FDataManager>
     {
 
     public:
 
-        explicit FDataManager() : Singleton("Data Keeper") { }
+        explicit FDataManager() : FSingleton("Data Keeper") { }
 
         ~FDataManager() override;
         static bool Contains(const FDataRegistry::EntryDescription& EntryDescription);

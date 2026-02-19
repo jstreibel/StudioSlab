@@ -117,7 +117,7 @@ namespace Slab::Common {
         return x.to_ulong();
     }
 
-    double periodic_space(double x, double xMin, double xMax) {
+    double PeriodicSpace(double x, double xMin, double xMax) {
         fix Δx = xMax - xMin;
         return xMin + std::fmod(x - xMin, Δx);
     }

@@ -46,7 +46,7 @@ namespace Slab::Models::KGRtoR {
         Log::Success() << ChannelName << " allocated " << SizeMB << " of data." << Log::Flush;
     }
 
-    auto SimHistory::Transfer(const FOutputPacket &Packet, ValarrayWrapper<DevFloat> &DataOut) -> void {
+    auto SimHistory::Transfer(const FOutputPacket &Packet, FValarrayWrapper<DevFloat> &DataOut) -> void {
         IN stateIn = *Packet.GetNakedStateData<EquationState>();
 
         IN f_in = dynamic_cast<RtoR::NumericFunction&>(stateIn.getPhi());
@@ -78,7 +78,7 @@ namespace Slab::Models::KGRtoR {
 
         fix j_in = Packet.GetSteps();
         fix j_out = int(floor((DevFloat)j_in * t_ratio));
-        ValarrayWrapper InstantData(&Data->At(0, j_out), Data->getN());
+        FValarrayWrapper InstantData(&Data->At(0, j_out), Data->getN());
 
         Transfer(Packet, InstantData);
 

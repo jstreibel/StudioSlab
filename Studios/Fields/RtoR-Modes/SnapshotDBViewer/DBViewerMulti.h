@@ -45,7 +45,7 @@ namespace Modes::DatabaseViewer {
         using FullField_ptr = TPointer<Math::R2toR::NumericFunction_CPU>;
         Vector<FullField_ptr> fullFields;
         Vector<Graphics::R2toRFunctionArtist_ptr> fullFieldsArtist;
-        Vector<Utils::MaxInfo> maxValues;
+        Vector<Utils::FMaxInfo> maxValues;
 
         std::map<Str, TPointer<Math::R2toR::NumericFunction_CPU>> fullHistoriesMap;
 

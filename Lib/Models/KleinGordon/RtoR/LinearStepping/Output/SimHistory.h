@@ -39,7 +39,7 @@ namespace Slab::Models::KGRtoR {
         R2toR::FNumericFunction_ptr Data;
         IntVector Timesteps;
 
-        virtual auto Transfer(const FOutputPacket &Packet, ValarrayWrapper <DevFloat> &DataOut) -> void;
+        virtual auto Transfer(const FOutputPacket &Packet, FValarrayWrapper <DevFloat> &DataOut) -> void;
 
     };
 

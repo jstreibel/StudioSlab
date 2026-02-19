@@ -38,7 +38,7 @@ namespace Slab::Models::MolecularDynamics {
 
             if (normSqr < SIGMA_SQR) {
                 const DevFloat norm = r.Length();
-                const DoubleAccess arg = {1.0 - norm / σ};
+                const FDoubleAccess arg = {1.0 - norm / σ};
                 const DevFloat mag = ε / σ * pow(arg.val, ALPHA - 1.0) * arg.isPositive();
 
                 const Graphics::FPoint2D force = -(mag / norm) * r;
@@ -73,7 +73,7 @@ namespace Slab::Models::MolecularDynamics {
             normSqr = r.LengthSqr();
             if (normSqr < SIGMA_SQR) {
                 const DevFloat norm = sqrt(normSqr);
-                const DoubleAccess arg = {1 - norm / σ};
+                const FDoubleAccess arg = {1 - norm / σ};
 
                 return ε / ALPHA * pow(arg.val, ALPHA) * arg.isPositive();
             }
@@ -86,7 +86,7 @@ namespace Slab::Models::MolecularDynamics {
 
         if( r > σ) return .0;
 
-        const DoubleAccess arg = {1 - r / σ};
+        const FDoubleAccess arg = {1 - r / σ};
 
         return ε / ALPHA * pow(arg.val, ALPHA) * arg.isPositive();
     }

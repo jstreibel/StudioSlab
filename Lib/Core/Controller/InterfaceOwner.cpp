@@ -26,7 +26,7 @@ namespace Slab::Core {
 
         if (DoRegister) RegisterToManager();
         else
-            Log::Debug() << Common::getClassName(this) << ": interface \"" << Interface->GetName()
+            Log::Debug() << Common::GetClassName(this) << ": interface \"" << Interface->GetName()
                          << "\" did NOT immediately register to InterfaceManager." << Log::Flush;
     }
 

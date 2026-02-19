@@ -18,13 +18,15 @@ namespace Slab {
     #define SLAB_FUNC_RUNTHROUGH(method, ...) [__VA_ARGS__] (const auto &obj) { \
         obj->method(__VA_ARGS__); return false; }
 
-    enum ReferenceIterationPolicy {
+    enum EReferenceIterationPolicy {
         IterateAll=false,
         StopOnFirstResponder=true
     };
 
+    using ReferenceIterationPolicy [[deprecated("Use EReferenceIterationPolicy")]] = EReferenceIterationPolicy;
+
     template<Iterable Container, typename FuncTy>
-    bool IterateReferences(Container& container, FuncTy func, ReferenceIterationPolicy policy = IterateAll) {
+    bool IterateReferences(Container& container, FuncTy func, EReferenceIterationPolicy policy = IterateAll) {
         auto any_responded = false;
 
         auto it = container.begin();

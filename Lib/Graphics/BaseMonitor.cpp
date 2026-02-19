@@ -43,7 +43,7 @@ namespace Slab::Graphics {
         isPaused = currStep == lastStep;
 
         static auto timer = FTimer();
-        auto elTime = timer.getElTime_msec();
+        auto elTime = timer.GetElapsedTimeMsec();
         timer = FTimer();
 
         // const auto &p = params;
@@ -89,9 +89,9 @@ namespace Slab::Graphics {
 
         static auto totalTime = FTimer();
 
-        if (hasFinished) totalTime.stop();
+        if (hasFinished) totalTime.Stop();
 
-        fix totalTimeIn_msec = (int) totalTime.getElTime_msec();
+        fix totalTimeIn_msec = (int) totalTime.GetElapsedTimeMsec();
         fix totalTimeMSecs = (totalTimeIn_msec % 1000);
         fix totalTimeSecs = (totalTimeIn_msec / 1000) % 60;
         fix totalTimeMins = (totalTimeIn_msec / 1000) / 60;
@@ -129,7 +129,7 @@ namespace Slab::Graphics {
         {
             writeStats();
             WindowPanel::ImmediateDraw(PlatformWindow); // draw();
-            frameTimer.reset();
+            frameTimer.Reset();
         }
     }
 

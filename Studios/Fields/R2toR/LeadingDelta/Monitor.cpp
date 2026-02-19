@@ -69,7 +69,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
         if (!LastPacket.hasValidData()) return;
 
         static auto timer = FTimer();
-        // auto elTime = timer.getElTime_msec();
+        // auto elTime = timer.GetElapsedTimeMsec();
         timer = FTimer();
 
         auto &rd = *ringDelta1;

@@ -11,7 +11,7 @@
 #include "Utils.h"
 
 #define NOT_IMPLEMENTED_CLASS_METHOD throw NotImplementedException( \
-    Slab::Common::getClassName(this) +                   \
+    Slab::Common::GetClassName(this) +                   \
     " (" + Str(__PRETTY_FUNCTION__) + " FROM FILE " + (__FILE__) + ":" + Slab::ToStr(__LINE__) + ")");
 
 #define NOT_IMPLEMENTED throw NotImplementedException( \

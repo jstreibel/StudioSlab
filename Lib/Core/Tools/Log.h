@@ -20,7 +20,7 @@
 
 namespace Slab::Core {
 
-    class Log final : public Singleton<Log>, FInterfaceOwner {
+    class Log final : public FSingleton<Log>, FInterfaceOwner {
         static Log *pMyInstance;
 
         TPointer<BoolParameter> LogDebug = New<BoolParameter>(false, FParameterDescription{"log_debug", "Show debug messages."});

@@ -180,7 +180,7 @@ void RtoR::Signal::OutGL::draw() {
         lastStep = lastData.getSteps();
     }
 
-    auto interval = frameTimer.getElTime_msec();
+    auto interval = frameTimer.GetElapsedTimeMsec();
 
     auto stepsPerSecond = 1e3*deltaSteps/interval;
 

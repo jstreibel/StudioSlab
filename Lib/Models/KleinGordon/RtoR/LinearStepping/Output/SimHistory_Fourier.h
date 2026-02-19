@@ -31,7 +31,7 @@ namespace Slab::Models::KGRtoR {
     private:
         FDFTDataHistory DFTDataHistory;
 
-        auto Transfer(const FOutputPacket &Input, ValarrayWrapper<DevFloat> &DataOut) -> void override;
+        auto Transfer(const FOutputPacket &Input, FValarrayWrapper<DevFloat> &DataOut) -> void override;
     };
 
 

@@ -79,7 +79,7 @@ namespace Slab::Graphics {
 
     TPointer<PlotThemeManager> mePointer=nullptr;
     PlotThemeManager::PlotThemeManager()
-    : Singleton("Styles manager") {
+    : FSingleton("Styles manager") {
         // Core::LoadModule("GUI");
 
         // TODO isso eh gambiarra:

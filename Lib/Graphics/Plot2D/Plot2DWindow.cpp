@@ -160,7 +160,7 @@ namespace Slab::Graphics {
                     ShowInterface = !ShowInterface;
                 } else if (ImGui::MenuItem(AddUniqueIdToString("Save graph").c_str())) {
 
-                    auto w = Printing::getTotalHorizontalDots(.5);
+                    auto w = Printing::GetTotalHorizontalDots(.5);
                     auto h = w * .5;
                     auto fileName = Title + " " +
                                     Core::FInterfaceManager::GetInstance().RenderParametersToString({"N", "L"}) +

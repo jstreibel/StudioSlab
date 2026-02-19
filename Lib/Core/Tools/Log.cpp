@@ -56,13 +56,13 @@ namespace Slab::Core {
     const Str Log::ErrorFormat = Log::ResetFormatting + Log::FGRed;
     const Str Log::ErrorFatalFormat = Log::ResetFormatting + Log::FGRed + Log::BoldFace;
 
-    Log::Log() : Singleton<Log>("Log"), FInterfaceOwner(true) {};
+    Log::Log() : FSingleton<Log>("Log"), FInterfaceOwner(true) {};
 
     auto Log::GetSingleton() -> Log & {
-        if (Singleton::singleInstance == nullptr) {
+        if (FSingleton<Log>::singleInstance == nullptr) {
             auto me = new Log;
             Log::pMyInstance = me;
-            Singleton::singleInstance = Log::pMyInstance;
+            FSingleton<Log>::singleInstance = Log::pMyInstance;
 
             Log::Note() << "Logging system initiated." << Log::Flush;
 

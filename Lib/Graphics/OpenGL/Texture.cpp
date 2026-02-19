@@ -8,7 +8,7 @@
 #include "Utils.h"
 
 #define CHECK_GL_ERRORS(count) CheckGLErrors(Str(__PRETTY_FUNCTION__) \
-    + " from " + Common::getClassName(this)                                        \
+    + " from " + Common::GetClassName(this)                                        \
     + " (check " + ToStr((count)) + ")");
 
 namespace Slab::Graphics::OpenGL {

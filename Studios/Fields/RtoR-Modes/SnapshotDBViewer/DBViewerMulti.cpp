@@ -316,9 +316,9 @@ namespace Modes::DatabaseViewer {
 
     auto DBViewerMulti::NotifyMouseButton(Graphics::EMouseButton button, Graphics::EKeyState state, Graphics::EModKeys keys) -> bool {
         static FTimer timer;
-        auto elTime = timer.getElTime_msec();
+        auto elTime = timer.GetElapsedTimeMsec();
         if(button==Graphics::MouseButton_LEFT){
-            if(state==Graphics::Press) timer.reset();
+            if(state==Graphics::Press) timer.Reset();
             else if(state==Graphics::Release && elTime < 200 && keys.Mod_Ctrl) {
                 loadDataUnderMouse();
                 return true;
