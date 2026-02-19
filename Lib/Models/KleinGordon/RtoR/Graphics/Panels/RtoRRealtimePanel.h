@@ -49,10 +49,10 @@ namespace Slab::Models::KGRtoR {
         FPointSet WHistoryData;
         FPointSet VHistoryData;
 
-        const PlotStyle U_style = PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
-        const PlotStyle K_style = PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
-        const PlotStyle W_style = PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
-        const PlotStyle V_style = PlotThemeManager::GetCurrent()->FuncPlotStyles[3];
+        const PlotStyle U_style = FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        const PlotStyle K_style = FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        const PlotStyle W_style = FPlotThemeManager::GetCurrent()->FuncPlotStyles[2];
+        const PlotStyle V_style = FPlotThemeManager::GetCurrent()->FuncPlotStyles[3];
 
         bool bShowPot = true;
         bool bShowKineticEnergy = false;

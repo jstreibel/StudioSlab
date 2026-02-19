@@ -37,7 +37,7 @@ public:
 
         Core::BackendManager::Startup("GLFW");
 
-        // Graphics::PlotThemeManager::G
+        // Graphics::FPlotThemeManager::G
 
         Core::ParseCLArgs(argc, argv);
     }

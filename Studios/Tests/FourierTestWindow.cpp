@@ -63,7 +63,7 @@ namespace Tests {
 
     FourierTestWindow::FourierTestWindow()
     : Graphics::FWindowRow({"Fourier tests"})
-    , theme(Graphics::PlotThemeManager::GetCurrent())
+    , theme(Graphics::FPlotThemeManager::GetCurrent())
     , realFTArtist(nullptr, theme->FuncPlotStyles[0])
     , imagFTArtist(nullptr, theme->FuncPlotStyles[1])
     , loc1Artist(nullptr, theme->FuncPlotStyles[3])

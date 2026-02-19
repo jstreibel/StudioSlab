@@ -19,7 +19,7 @@ namespace Slab::Models {
         AddWindow(TotalEnergiesWindow);
         AddWindow(FullHistoriesWindow, true);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         EnergyHistoryArtist    = Graphics::FPlotter::AddPointSet(TotalEnergiesWindow, EnergyHistory,
                                                                   style, "e", true);
         KineticHistoryArtist   = Graphics::FPlotter::AddPointSet(TotalEnergiesWindow, KineticHistory,

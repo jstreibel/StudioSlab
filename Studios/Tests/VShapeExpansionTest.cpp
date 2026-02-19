@@ -19,7 +19,7 @@ namespace Tests {
         derivs = potential->diff(0);
 
         auto window = New<Graphics::FPlot2DWindow>("V-shape series test");
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         style.filled = false;
         Graphics::FPlotter::AddRtoRFunction(window, potential, style, "KG V-shape");
         Graphics::FPlotter::AddRtoRFunction(window, derivs, style, "V'");

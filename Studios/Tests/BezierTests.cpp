@@ -45,17 +45,17 @@ namespace Tests {
         AnimTimeSeconds = Graph.GetAnimationTime();
 
         static Math::Base::NativeFunction<Math::RtoR::Function> s_function(CubicBezierInterpolation);
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         Graphics::FPlotter::AddRtoRFunction(Naked(Graph), Naked(s_function), style, "Bezier");
 
         Fix Lim = 1.e3;
         static Math::FPointSet vertLine1{{{0.0, -Lim}, {0.0, Lim}}};
         static Math::FPointSet vertLine2{{{1.0, -Lim}, {1.0, Lim}}};
-        style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         Graphics::FPlotter::AddPointSet(Naked(Graph), Naked(vertLine1), style, "Vertical Line 1", false);
         Graphics::FPlotter::AddPointSet(Naked(Graph), Naked(vertLine2), style, "Vertical Line 2", false);
 
-        style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
+        style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[2];
         style.setPrimitive(Slab::Graphics::Points);
         style.thickness = 10;
         Graphics::FPlotter::AddPointSet(Naked(Graph), Naked(CurrentPoint), style, "Current Point", false);

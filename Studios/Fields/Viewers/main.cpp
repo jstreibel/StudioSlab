@@ -51,7 +51,7 @@ public:
 
         Core::BackendManager::Startup("GLFW");
 
-        Slab::Graphics::PlotThemeManager::GetInstance();
+        Slab::Graphics::FPlotThemeManager::GetInstance();
 
         Core::CLArgsManager::Parse(argc, argv);
     }

@@ -68,7 +68,7 @@ namespace Slab {
 
         if(!unaffected)
         {
-            auto currStyle = PlotThemeManager::GetCurrent();
+            auto currStyle = FPlotThemeManager::GetCurrent();
             auto pix = Slab::Graphics::PixelSizeInSpace(newRegion, GetViewport());
             auto Δx = static_cast<DevFloat>(currStyle->hAxisPaddingInPixels) * pix.x;
             auto Δy = static_cast<DevFloat>(currStyle->hAxisPaddingInPixels) * pix.y;

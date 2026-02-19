@@ -58,7 +58,7 @@ namespace Slab::Graphics {
             function_section = New<RtoR2::StraightLine>(Real2D{domain.xMin, domain.yMin},
                                                         Real2D{domain.xMax, domain.yMin},
                                                         domain.xMin, domain.xMax);
-            auto style = PlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
+            auto style = FPlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
             style->filled = false;
             section_artist->addSection(function_section, style, "");
 
@@ -102,7 +102,7 @@ namespace Slab::Graphics {
             dft_section = New<RtoR2::StraightLine>(Real2D{0, domain.yMin},
                                                    Real2D{domain.xMax, domain.yMin},
                                                    0, domain.xMax);
-            auto style = PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+            auto style = FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             dft_section_artist->addSection(dft_section, style.clone(), "dft section");
         } else {
             dft_section->getx0().x = domain.xMin;

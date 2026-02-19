@@ -49,7 +49,7 @@ namespace Slab::Models::KGRtoR {
     // , imGuiWindow(Naked(mEnergyGraph))
     {
         {
-            const auto CurrStyle = PlotThemeManager::GetCurrent();
+            const auto CurrStyle = FPlotThemeManager::GetCurrent();
 
             auto sty = CurrStyle->FuncPlotStyles.begin();
 

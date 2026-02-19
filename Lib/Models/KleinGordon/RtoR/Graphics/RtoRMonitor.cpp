@@ -43,7 +43,7 @@ namespace Slab::Models::KGRtoR {
         FullSFTHistoryGraph->SetAutoReviewGraphRanges(true);
 
 
-        auto currStyle = Graphics::PlotThemeManager::GetCurrent();
+        auto currStyle = Graphics::FPlotThemeManager::GetCurrent();
 
         AddDataView(Slab::New<FRealtimePanel>(params, hamiltonian, *GuiWindow));
         AddDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, *GuiWindow));

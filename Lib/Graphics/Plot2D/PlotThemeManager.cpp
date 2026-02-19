@@ -43,7 +43,7 @@ namespace Slab::Graphics {
                                                              {"Elegant",    GetSchemeElegant}};
     std::map<Str, GraphTheme_ptr> loadedStyles;
 
-    Str PlotThemeManager::GetDefault() {
+    Str FPlotThemeManager::GetDefault() {
         // return "Elegant";
         return "Dark2";
         // return "PrintSmall";
@@ -59,26 +59,26 @@ namespace Slab::Graphics {
                 loadedStyles[style] = sty;
                 Core::Log::Info() << "Loaded plotting theme '" << style << "'." << Core::Log::Flush;
             } else {
-                auto themes = Slab::Graphics::PlotThemeManager::GetThemes();
+                auto themes = Slab::Graphics::FPlotThemeManager::GetThemes();
                 Str available_themes;
                 for(auto &theme : themes)
                     available_themes += Str("'") + theme + "', ";
                 Core::Log::Warning() << "Trying to set plotting theme to '" << style
                     << "', but theme couldn't be found. Available themes are: " << available_themes << Core::Log::Flush;
 
-                PlotThemeManager::GetInstance().current = PlotThemeManager::GetDefault();
+                FPlotThemeManager::GetInstance().current = FPlotThemeManager::GetDefault();
             }
         }
 
-        if(sty != nullptr && style != PlotThemeManager::GetInstance().current) {
-            PlotThemeManager::GetInstance().current = style;
+        if(sty != nullptr && style != FPlotThemeManager::GetInstance().current) {
+            FPlotThemeManager::GetInstance().current = style;
         }
 
         return sty;
     }
 
-    TPointer<PlotThemeManager> mePointer=nullptr;
-    PlotThemeManager::PlotThemeManager()
+    TPointer<FPlotThemeManager> mePointer=nullptr;
+    FPlotThemeManager::FPlotThemeManager()
     : FSingleton("Styles manager") {
         // Core::LoadModule("GUI");
 
@@ -89,23 +89,23 @@ namespace Slab::Graphics {
         // }
     }
 
-    GraphTheme_ptr PlotThemeManager::GetCurrent() {
+    GraphTheme_ptr FPlotThemeManager::GetCurrent() {
         // initialize, if not yet. This only serves so that theme choice shows up in main menu bar.
         GetInstance();
 
-        if(PlotThemeManager::GetInstance().current.empty()) {
-            PlotThemeManager::GetInstance().current = GetDefault();
+        if(FPlotThemeManager::GetInstance().current.empty()) {
+            FPlotThemeManager::GetInstance().current = GetDefault();
         }
 
-        auto style = loadedStyles[PlotThemeManager::GetInstance().current];
+        auto style = loadedStyles[FPlotThemeManager::GetInstance().current];
         if(style == nullptr) {
-            style = LoadStyle(PlotThemeManager::GetInstance().current);
+            style = LoadStyle(FPlotThemeManager::GetInstance().current);
         }
 
         return style;
     }
 
-    bool PlotThemeManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
+    bool FPlotThemeManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
         /*
         auto GuiContext = PlatformWindow.GetGUIContext();
 
@@ -119,7 +119,7 @@ namespace Slab::Graphics {
                     MainMenuLocation{"Style", "Graphs"},
                     entries,
                     [](const Str &name) {
-                        PlotThemeManager::GetInstance().current = name;
+                        FPlotThemeManager::GetInstance().current = name;
                     }
             });
         }
@@ -128,22 +128,22 @@ namespace Slab::Graphics {
         return FPlatformWindowEventListener::NotifyRender(PlatformWindow);
     }
 
-    bool PlotThemeManager::SetTheme(const Str& theme) {
+    bool FPlotThemeManager::SetTheme(const Str& theme) {
         if(stylesInitializers[theme] == nullptr) {
             Core::Log::Warning() << "While trying to set theme to '" << theme << "'. "
                                  << "Falling back to '" << GetDefault() << "'." << Core::Log::Flush;
 
-            PlotThemeManager::GetInstance().current = GetDefault();
+            FPlotThemeManager::GetInstance().current = GetDefault();
 
             return false;
         } else {
-            PlotThemeManager::GetInstance().current = theme;
+            FPlotThemeManager::GetInstance().current = theme;
         }
 
         return true;
     }
 
-    StrVector PlotThemeManager::GetThemes() {
+    StrVector FPlotThemeManager::GetThemes() {
         StrVector Vecky;
         for(auto &a : stylesInitializers)
             Vecky.push_back(a.first);

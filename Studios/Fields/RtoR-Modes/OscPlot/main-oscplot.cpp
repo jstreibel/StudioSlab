@@ -21,7 +21,7 @@ public:
 
         Slab::Core::BackendManager::Startup("GLFW");
 
-        Slab::Graphics::PlotThemeManager::GetInstance();
+        Slab::Graphics::FPlotThemeManager::GetInstance();
 
         Slab::Core::ParseCLArgs(argc, argv);
     }

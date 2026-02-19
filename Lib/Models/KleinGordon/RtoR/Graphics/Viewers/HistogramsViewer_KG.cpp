@@ -30,7 +30,7 @@ namespace Slab::Models::KGRtoR {
         AddWindow(potential_window, true);
         AddWindow(kinetic_window);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
 
         Graphics::FPlotter::AddPointSet(energy_window,
                                        Naked(histogram_data_energy),

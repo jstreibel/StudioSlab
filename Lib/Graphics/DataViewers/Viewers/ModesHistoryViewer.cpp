@@ -57,8 +57,8 @@ namespace Slab::Graphics {
         fix t_0 = xFourierTransform->y0;
         fix t_f = t_0 + xFourierTransform->Ly;
 
-        auto styles_begin = PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
-        auto styles_end = PlotThemeManager::GetCurrent()->FuncPlotStyles.end();
+        auto styles_begin = FPlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
+        auto styles_end = FPlotThemeManager::GetCurrent()->FuncPlotStyles.end();
         auto style = styles_begin;
 
         for(int i=0; i<n_modes; ++i) {
@@ -105,7 +105,7 @@ namespace Slab::Graphics {
         //     dft_section = New<RtoR2::StraightLine>(Real2D{domain.xMin, domain.yMin},
         //                                            Real2D{domain.xMax, domain.yMin},
         //                                            domain.xMin, domain.xMax);
-        //     auto style = PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+        //     auto style = FPlotThemeManager::GetCurrent()->funcPlotStyles[1];
         //     dft_section_artist->addSection(dft_section, style);
         // } else {
         //     dft_section->getx0().x = domain.xMin;

@@ -12,7 +12,7 @@ namespace Slab::Core {
 
     using IdType = UInt;
 
-    class UniqueObject {
+    class FUniqueObject {
         static CountType Count;
         IdType Id;
 
@@ -21,9 +21,11 @@ namespace Slab::Core {
         [[nodiscard]] Str GetIdString() const;
         [[nodiscard]] Str AddUniqueIdToString(const Str&) const;
 
-        UniqueObject();
+        FUniqueObject();
 
     };
+
+    using UniqueObject [[deprecated("Use FUniqueObject")]] = FUniqueObject;
 
 } // Slab::Core
 

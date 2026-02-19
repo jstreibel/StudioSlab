@@ -39,7 +39,7 @@ namespace Modes::DatabaseViewer {
         TPointer<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
 
         {
-            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
+            auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[2];
             style.setPrimitive(Graphics::PlottingVerticalLinesWithCircles);
             style.filled = false;
             style.thickness = 1.5;
@@ -58,18 +58,18 @@ namespace Modes::DatabaseViewer {
         {
             allDataDisplay.GetAxisArtist().setVerticalUnit(Math::Constants::π);
             allDataDisplay.GetAxisArtist().setHorizontalUnit(Math::Constants::π);
-            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+            auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             style.thickness = 3;
             style.filled = false;
             KGRelation_artist = Graphics::FPlotter::AddPointSet(Naked(allDataDisplay), KGRelation, style,
                                                                "ω²-kₚₑₐₖ²-m²=0", false, z_order(1));
-            style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+            style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             style.thickness = 3;
             style.filled = false;
             KGRelation_high_k_artist = Graphics::FPlotter::AddPointSet(Naked(allDataDisplay), KGRelation_high_k,
                                                                       style, "k=ω-½m²/ω+...", false, z_order(2));
 
-            style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+            style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.setPrimitive(Graphics::Points);
             style.thickness = 8;
             Graphics::FPlotter::AddPointSet(Naked(allDataDisplay), Naked(maxValuesPointSet), style,
@@ -163,14 +163,14 @@ namespace Modes::DatabaseViewer {
                 Math::RtoR::KGDispersionRelation_high_k(mass, dispersionMode),
                 0.0, xMax, 10000);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         style.thickness = 3;
         style.filled = false;
         KGRelation_artist->setStyle(style);
         KGRelation_artist->setPointSet(KGRelation);
         KGRelation_artist->SetLabel(Str("ω²-kₚₑₐₖ²-m²=0   (Klein-Gordon with m=") + ToStr(mass) + ")");
 
-        style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
+        style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[2];
         style.thickness = 3;
         style.filled = false;
         KGRelation_high_k_artist->setStyle(style);

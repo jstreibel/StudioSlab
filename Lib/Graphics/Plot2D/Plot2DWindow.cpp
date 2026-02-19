@@ -61,7 +61,7 @@ namespace Slab::Graphics {
     , Title(std::move(_title))
     {
         // Instantiate our dedicated Plot themes manager
-        PlotThemeManager::GetInstance();
+        FPlotThemeManager::GetInstance();
 
         AxisArtist.SetLabel("Axis");
         ArtistXHair.SetLabel("X-hair");
@@ -247,7 +247,7 @@ namespace Slab::Graphics {
 
     void FPlot2DWindow::SetupOrtho() const {
         fix Viewport = GetViewport();
-        fix CurrentStyle = PlotThemeManager::GetCurrent();
+        fix CurrentStyle = FPlotThemeManager::GetCurrent();
         CurrentStyle->LabelsWriter->Reshape(Viewport.GetWidth(), Viewport.GetHeight());
         CurrentStyle->TicksWriter->Reshape(Viewport.GetWidth(), Viewport.GetHeight());
     }

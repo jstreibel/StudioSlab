@@ -180,7 +180,7 @@ namespace Slab::Models::KGRtoR {
 
         Graphics::FPlotter::AddCurve(kSpaceGraph,
                                     Slab::Naked(cutoffLine),
-                                    PlotThemeManager::GetCurrent()->FuncPlotStyles[0], "k cutoff");
+                                    FPlotThemeManager::GetCurrent()->FuncPlotStyles[0], "k cutoff");
     }
 
     void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {

@@ -34,7 +34,7 @@ namespace Modes {
         }
 
         // fullSFTHistoryArtist.addPointSet(modes,
-        //     Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0].permuteColors(ODD),
+        //     Graphics::FPlotThemeManager::GetCurrent()->funcPlotStyles[0].permuteColors(ODD),
         //     "A(ω)", DONT_AFFECT_RANGES);
 
         if(CUSTOM_TICKS) {

@@ -61,7 +61,7 @@ namespace Slab::Models::KGR2toR {
 
             fix line = Slab::New<RtoR2::StraightLine>(Real2D{0, yMin}, Real2D{0, yMax}, yMin, yMax);
 
-            sectionArtist.addSection(line, Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone(), "section 1");
+            sectionArtist.addSection(line, Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone(), "section 1");
         }
     }
 

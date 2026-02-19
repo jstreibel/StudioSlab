@@ -14,8 +14,8 @@ namespace Slab::Models {
     FKGOutputOptions::FKGOutputOptions(bool bDoRegister)
     : FInterfaceOwner("Output Options", 0, DONT_REGISTER)
     {
-        const auto DefaultTheme = Graphics::PlotThemeManager::GetDefault();
-        auto Themes = Graphics::PlotThemeManager::GetThemes();
+        const auto DefaultTheme = Graphics::FPlotThemeManager::GetDefault();
+        auto Themes = Graphics::FPlotThemeManager::GetThemes();
         Str AvailableThemes = PlotTheme.GetDescription() + " Available themes are: ";
         for(auto &theme : Themes)
             AvailableThemes += Str("'") + theme + "', ";
@@ -46,7 +46,7 @@ namespace Slab::Models {
 
         if(*VisualMonitor) {
             StartBackend("GLFW");
-            Graphics::PlotThemeManager::SetTheme(*PlotTheme);
+            Graphics::FPlotThemeManager::SetTheme(*PlotTheme);
         }
         else BackendManager::Startup("Headless");
     }

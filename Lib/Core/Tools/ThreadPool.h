@@ -16,7 +16,7 @@
 
 namespace Slab::Core {
 
-    class ThreadPool {
+    class FThreadPool {
         Vector<std::thread> Workers;
         std::queue<std::function<void()>> Tasks;
         Mutex QueueMutex;
@@ -24,13 +24,15 @@ namespace Slab::Core {
         bool bTerminate = false;
 
     public:
-        ThreadPool(size_t NumThreads);
+        explicit FThreadPool(size_t NumThreads);
 
-        ~ThreadPool();
+        ~FThreadPool();
 
         void Enqueue(std::function<void()> task);
 
     };
+
+    using ThreadPool [[deprecated("Use FThreadPool")]] = FThreadPool;
 
 } // Slab::Core
 

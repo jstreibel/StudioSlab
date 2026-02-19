@@ -126,7 +126,7 @@ namespace Slab::Graphics {
         glDisable(GL_LINE_STIPPLE);
         glLineWidth(1.5);
 
-        auto currStyle = PlotThemeManager::GetCurrent();
+        auto currStyle = FPlotThemeManager::GetCurrent();
 
         auto c = currStyle->graphNumbersColor;
         FPoint2D loc = {xMax_label + xGap, .5 * (yMax_label + yMin_label)};

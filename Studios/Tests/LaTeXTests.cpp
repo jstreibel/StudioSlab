@@ -18,7 +18,7 @@ namespace Tests {
     , graph("Graph")
     , stats(Graphics::FSlabWindowConfig{"Stats"})
     {
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         style.filled = false;
     }
 

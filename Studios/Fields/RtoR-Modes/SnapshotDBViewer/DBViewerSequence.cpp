@@ -39,7 +39,7 @@ namespace Modes::DatabaseViewer {
         this->AddWindow(Naked(guiWindow));
 
         {
-            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+            auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.filled = false;
             style.setPrimitive(Slab::Graphics::PlottingSolid);
             auto funky = Math::RtoR::NativeFunction([](DevFloat x) { return x; }).Clone();
@@ -48,7 +48,7 @@ namespace Modes::DatabaseViewer {
 
         // Setup masses Re and Im pointsets.
         {
-            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
+            auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[2];
             style.setPrimitive(Graphics::PlottingVerticalLinesWithCircles);
             style.filled = false;
             style.thickness = 1.5;
@@ -70,13 +70,13 @@ namespace Modes::DatabaseViewer {
         {
             mashupDisplay.GetAxisArtist().setVerticalUnit(Math::Constants::π);
             mashupDisplay.GetAxisArtist().setHorizontalUnit(Math::Constants::π);
-            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+            auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             style.thickness = 3;
             style.filled = false;
             KGRelation_artist = Graphics::FPlotter::AddPointSet(Naked(mashupDisplay), KGRelation, style,
                                                                "ω²-kₚₑₐₖ²-m²=0", false, z_order(1));
 
-            style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+            style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.setPrimitive(Graphics::Points);
             style.thickness = 8;
             Graphics::FPlotter::AddPointSet(Naked(mashupDisplay), Naked(maxValuesPointSet), style,
@@ -174,7 +174,7 @@ namespace Modes::DatabaseViewer {
                 Math::RtoR::KGDispersionRelation(mass, dispersionMode),
                 0.0, xMax, 10000);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         style.thickness = 3;
         style.filled = false;
         KGRelation_artist->setStyle(style);

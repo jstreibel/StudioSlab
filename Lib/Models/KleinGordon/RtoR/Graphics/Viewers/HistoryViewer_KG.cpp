@@ -72,7 +72,7 @@ namespace Slab::Models::KGRtoR {
             function_section = New<RtoR2::StraightLine>(Real2D{domain.xMin, domain.yMin},
                                                         Real2D{domain.xMax, domain.yMin},
                                                         domain.xMin, domain.xMax);
-            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
+            auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
             style->filled = false;
             function_section_artist->addSection(function_section, style, "ϕ");
 
@@ -101,10 +101,10 @@ namespace Slab::Models::KGRtoR {
         d2dt2_function_section_artist->setFunction(d2dt2_function);
         d2dt2_function_section_artist->clearSections();
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1].clone();
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1].clone();
         ddt_function_section_artist->addSection(function_section, style, "ϕₜ");
 
-        style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2].clone();
+        style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[2].clone();
         d2dt2_function_section_artist->addSection(function_section, style, "ϕₜₜ");
     }
 

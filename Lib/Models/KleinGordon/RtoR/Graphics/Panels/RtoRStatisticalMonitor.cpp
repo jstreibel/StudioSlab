@@ -48,7 +48,7 @@ namespace Slab::Models::KGRtoR {
         AddWindow(Slab::Naked(mCorrelationGraph));
 
         {
-            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
+            auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
 
             auto mTemperaturesGraph = Slab::New<Graphics::FPlot2DWindow>("T");
 
@@ -85,7 +85,7 @@ namespace Slab::Models::KGRtoR {
             auto mHistogramsGraphE    = Slab::New<Graphics::FPlot2DWindow>   ("e histogram");
 
 
-            auto style = PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
+            auto style = FPlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
             FPlotter::AddPointSet(mHistogramsGraphE,
                                            Slab::Naked(histogramEData),
                                            *style++, "E");
@@ -211,7 +211,7 @@ namespace Slab::Models::KGRtoR {
         temperature3HistoryData.AddPoint({t, tau_2});
 
         std::ostringstream ss;
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
         guiWindow.AddVolatileStat("<\\br>");
         guiWindow.AddVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
         guiWindow.AddVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
@@ -219,7 +219,7 @@ namespace Slab::Models::KGRtoR {
         guiWindow.AddVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
         guiWindow.AddVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
 
-        style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
+        style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
         fix decimalPlaces = 3;
         guiWindow.AddVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, decimalPlaces),
                                   (style++)->lineColor.permute());

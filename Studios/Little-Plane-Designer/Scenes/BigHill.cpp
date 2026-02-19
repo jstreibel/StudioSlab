@@ -195,11 +195,11 @@ void FBigHill::SetupMonitors() {
         Ref->SetNoGUI();
         Ref->SetRegion(PlotRegion(PlotRegionWidth, 3.0));
 
-        auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        auto Style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         Style.lineColor = Graphics::LightGrey;
         Plotter::AddRtoRFunction(Ref, C_l, Style, "C_l");
 
-        Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        Style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         Style.lineColor = Graphics::DarkGrass;
         Plotter::AddRtoRFunction(Ref, C_d, Style, "C_d");
 
@@ -220,7 +220,7 @@ void FBigHill::SetupMonitors() {
         Ref->TieRegion_xMaxMin(*Plots[0]);
         Ref->GetRegion().set_y_limits(-.08, .08);
 
-        auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        auto Style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         Style.lineColor = Graphics::LightGrey;
         Plotter::AddRtoRFunction(Plots[1], C_mc4, Style, "C_mc4");
 
@@ -229,7 +229,7 @@ void FBigHill::SetupMonitors() {
         Style.lineColor = Graphics::White;
         Plotter::AddPointSet(Plots[1], CurrentTorquePolar, Style, "", false);
 
-        const auto Theme = Graphics::PlotThemeManager::GetCurrent();
+        const auto Theme = Graphics::FPlotThemeManager::GetCurrent();
         const TPointer<Graphics::OpenGL::FWriterOpenGL> Writer = Slab::New<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(3), 24);
         Theme->graphBackground.a = 0.25f;
         Theme->LabelsWriter = Writer;
@@ -248,7 +248,7 @@ void FBigHill::SetupMonitors() {
         Ref->GetAxisArtist().setVerticalAxisLabel("|F|");
         Ref->GetAxisArtist().SetHorizontalAxisLabel("t");
 
-        auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[3];
+        auto Style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[3];
         Plotter::AddPointSet(Plots[2], ForcesTimeSeries, Style, "Forces");
     }
 
@@ -263,7 +263,7 @@ void FBigHill::SetupMonitors() {
         Ref->GetAxisArtist().setVerticalAxisLabel("E");
         Ref->GetAxisArtist().SetHorizontalAxisLabel("t");
 
-        auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        auto Style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         Style.lineColor = Graphics::White;
         Plotter::AddPointSet(Ref, EnergyTotalTimeSeries, Style, "E");
         Style.lineColor = Graphics::GrassGreen;

@@ -16,7 +16,7 @@
 
 #include "Models/KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.h"
 
-using Themes = Slab::Graphics::PlotThemeManager;
+using Themes = Slab::Graphics::FPlotThemeManager;
 
 void setup_viewer(Slab::TPointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
     Slab::Core::StartBackend("GLFW");

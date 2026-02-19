@@ -6,7 +6,7 @@
 
 
 namespace Slab::Core {
-    ThreadPool::ThreadPool(size_t NumThreads) {
+    FThreadPool::FThreadPool(size_t NumThreads) {
         for (size_t i = 0; i < NumThreads; ++i) {
             Workers.emplace_back([this] {
                 while (true) {
@@ -24,7 +24,7 @@ namespace Slab::Core {
         }
     }
 
-    ThreadPool::~ThreadPool() {
+    FThreadPool::~FThreadPool() {
         {
             std::unique_lock<std::mutex> Lock(QueueMutex);
             bTerminate = true;
@@ -35,7 +35,7 @@ namespace Slab::Core {
         }
     }
 
-    void ThreadPool::Enqueue(std::function<void()> task) {
+    void FThreadPool::Enqueue(std::function<void()> task) {
         {
             std::unique_lock<std::mutex> Lock(QueueMutex);
             Tasks.push(task);

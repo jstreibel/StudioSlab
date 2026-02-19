@@ -64,7 +64,7 @@ namespace Slab::Graphics {
     void FAxisArtist::computeTicks(const FPlot2DWindow &graph) {
         const auto& region = graph.GetRegion();
 
-        auto currStyle = PlotThemeManager::GetCurrent();
+        auto currStyle = FPlotThemeManager::GetCurrent();
 
         auto writer = currStyle->TicksWriter;
 
@@ -108,7 +108,7 @@ namespace Slab::Graphics {
         const auto vp = graph.GetViewport();
         const auto& region = graph.GetRegion();
 
-        const auto currStyle = PlotThemeManager::GetCurrent();
+        const auto currStyle = FPlotThemeManager::GetCurrent();
 
         auto writer = currStyle->TicksWriter;
         fix fontHeight = writer->GetFontHeightInPixels();
@@ -192,7 +192,7 @@ namespace Slab::Graphics {
     {
         auto vp = graph.GetViewport();
         const auto& region = graph.GetRegion();
-        auto currStyle = PlotThemeManager::GetCurrent();
+        auto currStyle = FPlotThemeManager::GetCurrent();
 
         auto writer = currStyle->TicksWriter;
 
@@ -339,11 +339,11 @@ namespace Slab::Graphics {
         ImGui::SliderFloat(UniqueName("x label spacing factor").c_str(), &x_spacing_multiplier, 0.5, 10.0);
         ImGui::SliderFloat(UniqueName("y label spacing factor").c_str(), &y_spacing_multiplier, 0.5, 10.0);
 
-        IntVector axis_padding{(int)PlotThemeManager::GetCurrent()->hAxisPaddingInPixels,
-                               (int)PlotThemeManager::GetCurrent()->vAxisPaddingInPixels};
+        IntVector axis_padding{(int)FPlotThemeManager::GetCurrent()->hAxisPaddingInPixels,
+                               (int)FPlotThemeManager::GetCurrent()->vAxisPaddingInPixels};
         if(ImGui::SliderInt2(UniqueName("Axis padding (in pixels)").c_str(), &axis_padding[0], 20, 640)){
-            PlotThemeManager::GetCurrent()->hAxisPaddingInPixels = axis_padding[0];
-            PlotThemeManager::GetCurrent()->vAxisPaddingInPixels = axis_padding[1];
+            FPlotThemeManager::GetCurrent()->hAxisPaddingInPixels = axis_padding[0];
+            FPlotThemeManager::GetCurrent()->vAxisPaddingInPixels = axis_padding[1];
         };
 
 

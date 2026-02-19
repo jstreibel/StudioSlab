@@ -28,7 +28,7 @@ namespace Slab::Models::KGRtoR {
         xLine = New<Math::RtoR2::StraightLine>(Real2D{xMin, 0.0}, Real2D{xMax,0.0}, xMin, xMax);
         kLine = New<Math::RtoR2::StraightLine>(Real2D{kMin, 0.0}, Real2D{kMax,0.0}, kMin, kMax);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         style.thickness = 3;
         auto xArtie = New<Graphics::ParametricCurve2DArtist>(xLine, style);
         auto kArtie = New<Graphics::ParametricCurve2DArtist>(kLine, style);
@@ -121,7 +121,7 @@ namespace Slab::Models::KGRtoR {
         FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryGraph);
 
         auto sectionArtist = Graphics::FPlotter::AddR2Section(xSection, simulationHistory, "ϕ");
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         sectionArtist->addSection(xLine, style.clone(), "ϕ(0,x)");
 
         xSpaceHistory->AddArtist(simHistoryGraph);
@@ -134,7 +134,7 @@ namespace Slab::Models::KGRtoR {
         FRtoRPanel::SetSpaceFourierHistory(sftHistory, history, sftHistoryGraph);
 
         auto sectionArtist = Graphics::FPlotter::AddR2Section(kSection, sftHistory, "ℱₓ(k)");
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         style.setPrimitive(PlottingVerticalLinesWithCircles);
         style.filled = false;
         sectionArtist->addSection(kLine, style.clone(), "");
