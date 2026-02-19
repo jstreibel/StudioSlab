@@ -42,6 +42,12 @@ private:
     int NumAnnotations = 0;
     int NumGlobalAnnotations = 0;
     int Proportion = 40; // Scale is 1:Proportion
+    int SelectedBodyPartIndex = -1;
+    int SelectedWingIndex = -1;
+    int HoveredWingIndex = -1;
+    bool bLeftMousePressed = false;
+    bool bIsDragging = false;
+    Math::Real2D LastMousePosSpace = {0.0, 0.0};
 
     static void DrawBlueprint();
     void DrawPlane();
