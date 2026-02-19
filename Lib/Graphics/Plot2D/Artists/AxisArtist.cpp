@@ -227,7 +227,7 @@ namespace Slab::Graphics {
                 buffer << mark;
 
                 text = buffer.str();
-                if (numRegion < -1 && elegant) text = elegantScientific(text);
+                if (numRegion < -1 && elegant) text = ElegantScientific(text);
             } else text = vUnit(mark, 2);
 
             loc = FromSpaceToViewportCoord(loc, region.getRect(), vp);

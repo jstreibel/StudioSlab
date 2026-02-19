@@ -8,7 +8,7 @@
 
 namespace Slab {
 
-    IntPair getBeginAndEndForThreadedFor(int N) {
+    IntPair GetBeginAndEndForThreadedFor(int N) {
 #ifdef USE_OMP
         const int nThreads = omp_get_num_threads();
         const int myThreadRank = omp_get_thread_num();

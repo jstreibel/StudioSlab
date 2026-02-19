@@ -288,10 +288,10 @@ void RtoR::Signal::OutGL::draw() {
             for(auto i=0; i<func.N; i++) in[i] = F[i];
 
             {
-                auto floats = Studios::Utils::resample(in, NMore);
+                auto floats = Studios::Utils::Resample(in, NMore);
                 for (auto i = 0; i < floats.size(); i++) FMore[i] = floats[i];
             } {
-                auto floats = Studios::Utils::resample(in, NLess);
+                auto floats = Studios::Utils::Resample(in, NLess);
                 for (auto i = 0; i < floats.size(); i++) FLess[i] = floats[i];
             }
 

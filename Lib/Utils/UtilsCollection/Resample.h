@@ -6,12 +6,18 @@
 #define STUDIOSLAB_RESAMPLE_H
 
 #include "Utils/Arrays.h"
+#include <utility>
 // #include "3rdParty/libresample/include/libresample.h"
 
 
 namespace Slab {
     namespace Utils {
-        Vector<float> resample(Vector<float> in, int output_size);
+        Vector<float> Resample(Vector<float> in, int output_size);
+
+        [[deprecated("Use Resample")]]
+        inline Vector<float> resample(Vector<float> in, int output_size) {
+            return Resample(std::move(in), output_size);
+        }
     }
 }
 

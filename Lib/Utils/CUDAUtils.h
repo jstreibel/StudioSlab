@@ -11,6 +11,9 @@
 
 namespace Slab::CUDA {
 
+    void CheckCudaError(cudaError err);
+
+    [[deprecated("Use CheckCudaError")]]
     void cew(cudaError err);
 
 }

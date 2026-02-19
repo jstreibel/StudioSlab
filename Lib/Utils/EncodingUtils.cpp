@@ -93,7 +93,7 @@ namespace Slab {
  * if character is a sequence character, and negative value
  * if unknown.
  */
-    int utf8_characterByteSize(const char *character) {
+    int Utf8CharacterByteSize(const char *character) {
         auto ch = character[0];
 
         const unsigned char codes[] = {0b11000000, 0b10000000,  // Sequence char
@@ -128,7 +128,7 @@ namespace Slab {
             {'9', "⁹"},
     };
 
-    const Str &mapToSuperscript(char c) {
+    const Str &MapToSuperscript(char c) {
         // auto newChar = Str("⁺ ⁻  ⁰¹²³⁴⁵⁶⁷⁸⁹").substr(c-'+', 1);
 
         // Log::Info() << "Mapping '" << c << "' (" << int(c) << ") ↦ " << int(c-'+') << ": " << newChar << Log::Flush;
@@ -136,7 +136,7 @@ namespace Slab {
         return map[c];
     }
 
-    Str &elegantScientific(Str &stringScientificValue) {
+    Str &ElegantScientific(Str &stringScientificValue) {
         Str &original = stringScientificValue;
 
         fix pos = original.find("e");
@@ -146,7 +146,7 @@ namespace Slab {
             // Start from the character after 'e'
             for (std::size_t i = pos + 1; i < original.size(); ++i) {
 
-                newString += mapToSuperscript(original[i]);
+                newString += MapToSuperscript(original[i]);
             }
             original = newString;
 

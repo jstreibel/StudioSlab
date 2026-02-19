@@ -91,7 +91,7 @@ namespace Slab::Graphics::OpenGL {
         size_t i;
         float r = Color.r, g = Color.g, b = Color.b, a = Color.a;
         auto text = Text.c_str();
-        for (i = 0; i < strlen(text); i += utf8_characterByteSize(text + i)) {
+        for (i = 0; i < strlen(text); i += Utf8CharacterByteSize(text + i)) {
             auto code_point = text + i;
 
             texture_glyph_t *glyph = texture_font_get_glyph(Font, code_point);

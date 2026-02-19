@@ -111,7 +111,7 @@ namespace Slab::Graphics {
         FWindowManager::NotifyMouseButton(button, state, keys); // Update delegates
 
         if(state==Press) {
-            const auto First = FindFirst_If(SlabWindows, [this](const TPointer<FWindowMetaInformation> &meta) {
+            const auto First = FindFirstIf(SlabWindows, [this](const TPointer<FWindowMetaInformation> &meta) {
                 fix is_mouse_in = meta->Window->IsMouseInside();
                 fix is_decorated = !(meta->Window->GetFlags() & SlabWindowNoDecoration);
                 fix is_mouse_over_grab_region = Decorator.IsMouseOverGrabRegion(*meta->Window,

@@ -25,13 +25,19 @@ namespace Slab {
     }
 
     template <typename T, typename Predicate>
-    typename TList<T>::iterator FindFirst_If(TList<T>& lst, Predicate pred) {
+    typename TList<T>::iterator FindFirstIf(TList<T>& lst, Predicate pred) {
         for(auto it = lst.begin(); it != lst.end(); ++it) {
             if(pred(*it)) {
                 return it;
             }
         }
         return lst.end();
+    }
+
+    template <typename T, typename Predicate>
+    [[deprecated("Use FindFirstIf")]]
+    typename TList<T>::iterator FindFirst_If(TList<T>& lst, Predicate pred) {
+        return FindFirstIf(lst, pred);
     }
 
     template <typename T>

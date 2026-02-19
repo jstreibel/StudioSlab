@@ -259,7 +259,7 @@ void outputProbedData(jack_nframes_t nframes) {
 
     if (nsamples) {
         if (1) {
-            auto to_out = Studios::Utils::resample(probedSamples_floats, nframes);
+            auto to_out = Studios::Utils::Resample(probedSamples_floats, nframes);
 
             std::copy(to_out.begin(), to_out.end(), out);
         } else {
@@ -273,4 +273,3 @@ void outputProbedData(jack_nframes_t nframes) {
         }
     }
 }
-

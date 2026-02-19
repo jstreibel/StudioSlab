@@ -21,12 +21,7 @@ if(&NAME == nullptr) throw Exception("Bad cast.");
 
 #if USE_CUDA
 
-#include <driver_types.h>
-
-namespace Slab::CUDA {
-// cew stands for Cuda Error Wrapper
-void cew(cudaError err);
-}
+#include "CUDAUtils.h"
 
 #endif // USE_CUDA
 
