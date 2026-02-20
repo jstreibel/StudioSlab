@@ -78,7 +78,7 @@ namespace Slab::Models::KGRtoR {
         Slab::Math::RtoR::Histogram histogram;
 
         if(getFunction() == nullptr || getFunctionDerivative() == nullptr) {
-            Slab::Core::Log::Error() << "At " << __PRETTY_FUNCTION__ << ":" << __LINE__ << Slab::Core::Log::Flush;
+            Slab::Core::FLog::Error() << "At " << __PRETTY_FUNCTION__ << ":" << __LINE__ << Slab::Core::FLog::Flush;
             return;
         }
 
@@ -141,7 +141,7 @@ namespace Slab::Models::KGRtoR {
             auto ddt_phi = Slicer(getFunctionDerivative(), j, laplacian_type);
 
             if(phi==nullptr || ddt_phi==nullptr) {
-                Slab::Core::Log::Error() << "At " << __PRETTY_FUNCTION__ << ":" << __LINE__ << Slab::Core::Log::Flush;
+                Slab::Core::FLog::Error() << "At " << __PRETTY_FUNCTION__ << ":" << __LINE__ << Slab::Core::FLog::Flush;
                 return data;
             }
 

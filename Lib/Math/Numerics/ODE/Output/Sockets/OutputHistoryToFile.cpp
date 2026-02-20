@@ -25,14 +25,14 @@ namespace Slab::Math {
     {
         file.open(outFileName, std::ios::out);
 
-        using Core::Log;
+        using Core::FLog;
 
         if (!file) {
-            Log::Error() << "OutputHistoryToFile couldn't open file '" << outFileName << "'" << Log::Flush;
+            FLog::Error() << "OutputHistoryToFile couldn't open file '" << outFileName << "'" << FLog::Flush;
             throw Exception("OutputHistoryToFile couldn't open file.");
         }
 
-        Log::Info() << "Sim history data file is \'" << Common::GetPWD() << "/" << outFileName << "\'. " << Log::Flush;
+        FLog::Info() << "Sim history data file is \'" << Common::GetPWD() << "/" << outFileName << "\'. " << FLog::Flush;
         Str spaces(HEADER_SIZE_BYTES - 1, ' ');
 
         file << spaces << '\n';
@@ -56,13 +56,13 @@ namespace Slab::Math {
 
         FTimer timer;
 
-        using Core::Log;
+        using Core::FLog;
 
         for (size_t Ti = 0; Ti < count; Ti++) {
             if (timer.GetElapsedTimeSeconds() > 1) {
                 timer.Reset();
-                Log::Info() << std::setprecision(3) << "Flushing " << (DevFloat) Ti / DevFloat(count) * 100.0 << "%    "
-                            << Log::Flush;
+                FLog::Info() << std::setprecision(3) << "Flushing " << (DevFloat) Ti / DevFloat(count) * 100.0 << "%    "
+                            << FLog::Flush;
             }
 
             file << outputFormatter(stepHistory[int(Ti)]);
@@ -77,7 +77,7 @@ namespace Slab::Math {
 
         file.flush();
 
-        Log::Success() << "Flushed " << "100% " << Log::Flush;
+        FLog::Success() << "Flushed " << "100% " << FLog::Flush;
     }
 
     void OutputHistoryToFile::_printHeaderToFile(Vector<std::string> channelNames) {

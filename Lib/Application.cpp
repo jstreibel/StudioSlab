@@ -26,9 +26,9 @@ namespace Slab {
     {
         Slab::Startup();
 
-        Core::Log::Info() << "Compiled with " << USED_CXX_COMPILER << Core::Log::Flush;
-        // Log::Info() << "Compiler: " << COMPILER_NAME << Log::Flush;
-        Core::Log::Info() << "PWD: " << Common::GetPWD() << Core::Log::Flush;
+        Core::FLog::Info() << "Compiled with " << USED_CXX_COMPILER << Core::FLog::Flush;
+        // FLog::Info() << "Compiler: " << COMPILER_NAME << FLog::Flush;
+        Core::FLog::Info() << "PWD: " << Common::GetPWD() << Core::FLog::Flush;
     }
 
     FApplication::~FApplication() {

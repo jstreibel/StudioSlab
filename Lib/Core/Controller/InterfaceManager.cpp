@@ -19,9 +19,9 @@ namespace Slab::Core {
     }
 
     void FInterfaceManager::RegisterInterface(const TPointer<FInterface> &anInterface) {
-        auto &log = Log::Note();
-        log << "InterfaceManager registering interface \"" << Log::FGBlue << anInterface->GetName()
-            << Log::ResetFormatting << "\" [ "
+        auto &log = FLog::Note();
+        log << "InterfaceManager registering interface \"" << FLog::FGBlue << anInterface->GetName()
+            << FLog::ResetFormatting << "\" [ "
             << "priority " << anInterface->Priority << " ]";
 
         Interfaces.emplace_back(anInterface);
@@ -37,10 +37,10 @@ namespace Slab::Core {
             auto desc = p->GetDescription();
             if (!desc.empty()) desc = " (" + desc + ")";
 
-            log << "\n\t\t\t\t\t\tParameter: " << Log::FGBlue << p->GetFullCommandLineName() << Log::ResetFormatting << desc;
+            log << "\n\t\t\t\t\t\tParameter: " << FLog::FGBlue << p->GetFullCommandLineName() << FLog::ResetFormatting << desc;
         }
 
-        log << Log::Flush;
+        log << FLog::Flush;
 
         for (const auto &subInterface: subInterfaces)
             RegisterInterface(subInterface);
@@ -55,12 +55,12 @@ namespace Slab::Core {
     }
 
     void FInterfaceManager::FeedInterfaces(const CLVariablesMap &vm) {
-        Log::Debug() << "InterfaceManager started feeding interfaces." << Log::Flush;
+        FLog::Debug() << "InterfaceManager started feeding interfaces." << FLog::Flush;
 
         auto comp = [](const TPointer<FInterface> &a, const TPointer<FInterface> &b) { return *a < *b; };
         std::sort(Interfaces.begin(), Interfaces.end(), comp);
 
-        auto &log = Log::Debug();
+        auto &log = FLog::Debug();
         log << "[priority] Interface";
         for (const auto &interface: Interfaces) {
 
@@ -69,7 +69,7 @@ namespace Slab::Core {
             if (!interface->SubInterfaces.empty())
                 log << "\t\t\t\t---> Contains " << interface->SubInterfaces.size() << " sub-interfaces.";
         }
-        log << Log::Flush;
+        log << FLog::Flush;
 
         for (const auto &interface: Interfaces) {
             // TODO passar (somehow) para as interfaces somente as variaveis que importam, e não todas o tempo todo.
@@ -84,7 +84,7 @@ namespace Slab::Core {
                 // listener->NotifyAllCLArgsSetupFinished();
         }
 
-        Log::Debug() << "InterfaceManager finished feeding interfaces." << Log::Flush;
+        FLog::Debug() << "InterfaceManager finished feeding interfaces." << FLog::Flush;
     }
 
     auto FInterfaceManager::RenderAsPythonDictionaryEntries() -> Str {
@@ -124,8 +124,8 @@ namespace Slab::Core {
         auto it = std::find_if(Interfaces.begin(), Interfaces.end(), compFunc);
 
         if (it == Interfaces.end())
-            Log::WarningImportant() << "InterfaceManager could not find Interface " << Log::FGCyan << target
-                                    << Log::Flush;
+            FLog::WarningImportant() << "InterfaceManager could not find Interface " << FLog::FGCyan << target
+                                    << FLog::Flush;
 
         return *it;
     }
@@ -155,12 +155,12 @@ namespace Slab::Core {
             }
         }
 
-        Log::Warning() << "InterfaceManager could not find parameter '" << name << "'." << Log::Flush;
-        Log::Info() << "Available parameters:" << Log::Flush;
+        FLog::Warning() << "InterfaceManager could not find parameter '" << name << "'." << FLog::Flush;
+        FLog::Info() << "Available parameters:" << FLog::Flush;
         for (const auto &interface: Interfaces) {
             auto parameters = interface->GetParameters();
             for (const auto &parameter: parameters) {
-                Log::Info() << "\t[" << interface->GetName() << "] " << parameter->GetCommandLineArgumentName(true) << ": " << parameter->ValueToString() << Log::Flush;
+                FLog::Info() << "\t[" << interface->GetName() << "] " << parameter->GetCommandLineArgumentName(true) << ": " << parameter->ValueToString() << FLog::Flush;
             }
         }
 

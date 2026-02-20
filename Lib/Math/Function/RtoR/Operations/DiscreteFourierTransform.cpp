@@ -99,7 +99,7 @@ namespace Slab::Math::RtoR {
         auto mags = dftResult.getMagnitudes()->GetPoints();
 
         auto Δk = mags.back().x;
-        Core::Log::Debug() << "Computing magnitudes for dft result with Δk=" << Δk << Core::Log::Flush;
+        Core::FLog::Debug() << "Computing magnitudes for dft result with Δk=" << Δk << Core::FLog::Flush;
         fix n = mags.size();
 
         auto func = DataAlloc<NumericFunction_CPU>("dft_result", n, 0, Δk);

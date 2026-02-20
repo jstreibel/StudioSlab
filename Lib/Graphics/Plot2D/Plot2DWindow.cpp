@@ -31,7 +31,7 @@
 
 namespace Slab::Graphics {
 
-    using Log = Core::Log;
+    using Core::FLog;
 
     std::map<Str, FPlot2DWindow *> FPlot2DWindow::GraphMap = {};
     CountType FPlot2DWindow::WindowCount = 0;
@@ -80,7 +80,7 @@ namespace Slab::Graphics {
         Core::LoadModule("ImGui");
         Core::LoadModule("RealTimeAnimation");
 
-        Log::Note() << "Created PlottingWindow '" << Title << "'" << Log::Flush;
+        FLog::Note() << "Created PlottingWindow '" << Title << "'" << FLog::Flush;
 
         AddArtist(Naked(AxisArtist), 5);
         AddArtist(Naked(LabelsArtist), 5);
@@ -94,17 +94,17 @@ namespace Slab::Graphics {
 
     void FPlot2DWindow::AddArtist(const FArtist_ptr &pArtist, zOrder_t zOrder) {
         if (pArtist == nullptr) {
-            Log::Error() << __PRETTY_FUNCTION__ << " trying to add "
-                         << Log::FGBlue << "nullptr" << Log::ResetFormatting << " artist.";
+            FLog::Error() << __PRETTY_FUNCTION__ << " trying to add "
+                         << FLog::FGBlue << "nullptr" << FLog::ResetFormatting << " artist.";
 
             return;
         }
 
         Content.emplace(zOrder, pArtist);
 
-        Log::Note()
+        FLog::Note()
         << "PlottingWindow '" << this->Title << "' added artist '"
-        << pArtist->GetLabel() << "'." << Log::Flush;
+        << pArtist->GetLabel() << "'." << FLog::Flush;
     }
 
     bool FPlot2DWindow::RemoveArtist(const Graphics::FArtist_ptr &pArtist) {
@@ -259,9 +259,9 @@ namespace Slab::Graphics {
         {
             if (Artist->IsVisible() && !Artist->Draw(*this))
             {
-                Core::Log::Error()
+                Core::FLog::Error()
                 << "In PlottingWindow \"" << Title
-                << "\" while drawing Artist \"" << Artist->GetLabel() << "\"" << Core::Log::Flush;
+                << "\" while drawing Artist \"" << Artist->GetLabel() << "\"" << Core::FLog::Flush;
             }
         }
     }

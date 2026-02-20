@@ -84,14 +84,14 @@ namespace Slab::Graphics {
     void FGLFWPlatformWindow::drop_callback(GLFWwindow *window, int count, const char **paths) {
         StrVector pathsVec;
 
-        auto &log = Core::Log::Info() << "Dropped files: ";
+        auto &log = Core::FLog::Info() << "Dropped files: ";
         int i;
         for (i = 0; i < count; i++) {
             log << "\n\t\t" << paths[i];
             pathsVec.emplace_back(paths[i]);
         }
 
-        log << Core::Log::Flush;
+        log << Core::FLog::Flush;
 
         auto &Me = *static_cast<FGLFWPlatformWindow*>(glfwGetWindowUserPointer(window));
 
@@ -126,7 +126,7 @@ namespace Slab::Graphics {
         }
 
         if (!window) {
-            Log::Error() << "Failed creating GLFW window." << Log::Flush;
+            FLog::Error() << "Failed creating GLFW window." << FLog::Flush;
             throw Exception("GLFW error");
         }
 
@@ -135,7 +135,7 @@ namespace Slab::Graphics {
 
         glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
         glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
-        Log::Info() << "Mouse buttons and keyboard keys sticky mode " << Log::FGGreen << "ENABLED" << Log::Flush;
+        FLog::Info() << "Mouse buttons and keyboard keys sticky mode " << FLog::FGGreen << "ENABLED" << FLog::Flush;
 
         if constexpr (constexpr auto RawMouseMode = false; RawMouseMode && glfwRawMouseMotionSupported()) {
             // When the cursor is disabled, raw (unscaled and unaccelerated) mouse motion can be enabled if available.

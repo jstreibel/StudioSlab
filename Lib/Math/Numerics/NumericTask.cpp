@@ -8,7 +8,7 @@
 
 namespace Slab::Math {
 
-    using Core::Log;
+    using Core::FLog;
 
     FNumericTask::FNumericTask(const TPointer <Base::FNumericalRecipe> &recipe, const bool pre_init)
     : FTask("Numeric Integration")
@@ -20,7 +20,7 @@ namespace Slab::Math {
     }
 
     FNumericTask::~FNumericTask() {
-        Log::Note() << "Avg. integration time: " << BenchmarkData << Log::Flush;
+        FLog::Note() << "Avg. integration time: " << BenchmarkData << FLog::Flush;
     }
 
     void FNumericTask::Init() {
@@ -52,9 +52,9 @@ namespace Slab::Math {
             // Set the scheduling policy and priority of the current process.
             int ret = sched_setscheduler(0, SCHED_FIFO, &param);
             if (ret == -1) {
-                Log::Error() << "Couldn't set realtime scheduling: " << std::strerror(errno) << Log::Flush;
+                FLog::Error() << "Couldn't set realtime scheduling: " << std::strerror(errno) << FLog::Flush;
             } else {
-                Log::Info() << "Program running with realtime priority." << Log::Flush;
+                FLog::Info() << "Program running with realtime priority." << FLog::Flush;
             }
         }
 #endif
@@ -92,7 +92,7 @@ namespace Slab::Math {
         const size_t nCyclesToNextOutput = OutputManager->ComputeNStepsToNextOutput(StepsConcluded);
 
         if (nCyclesToNextOutput > 50000) {
-            Log::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << Log::Flush;
+            FLog::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << FLog::Flush;
         }
 
         if (nCyclesToNextOutput == 0) {

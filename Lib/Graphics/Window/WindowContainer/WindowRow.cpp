@@ -164,7 +164,7 @@ namespace Slab::Graphics {
         if (reserverdWidth < 1 - (float) freeWidths * 1.e-2)
             return true;
 
-        auto &log = Core::Log::Error() << "Inconsistent column widths: ";
+        auto &log = Core::FLog::Error() << "Inconsistent column widths: ";
 
         for (auto w: widths) log << (w == -1 ? Str("free") : ToStr(w)) << "; ";
 
@@ -206,7 +206,7 @@ namespace Slab::Graphics {
 
         //auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
         //if(mouseState.leftPressed){
-        //    Log::Error() << "Resize not implemented" << Log::Flush;
+        //    FLog::Error() << "Resize not implemented" << FLog::Flush;
         //    for(auto &winData : windowsList) {
 //
         //    }

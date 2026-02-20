@@ -12,7 +12,7 @@ namespace Slab::Graphics::OpenGL {
     fix UspecifiedFormat = OpenGL::PixelDataFormat::DataFormat_Red;
     fix UnspecifiedType  = OpenGL::PixelDataType::DataType_Float32;
 
-    using Log = Core::Log;
+    using Core::FLog;
 
     FTexture2D::FTexture2D(GLsizei w, GLsizei h, InternalFormat format, GLenum textureUnit)
     : FTexture(Texture_2D, format, textureUnit)
@@ -22,16 +22,16 @@ namespace Slab::Graphics::OpenGL {
         auto maxTextureSize = GetMaxTextureSize();
 
         if(w>maxTextureSize || h>maxTextureSize) {
-            Log::Error() << "Requested texture size " << w << "x" << h
+            FLog::Error() << "Requested texture size " << w << "x" << h
                          << " too big: max texture size allowed is " << maxTextureSize << "x" << maxTextureSize
-                         << Log::Flush;
+                         << FLog::Flush;
 
             throw Exception("Texture too big");
         }
 
         Bind();
 
-        // Log::Critical() << "OpenGL::Texture is reserving GPU texture space to upload " << w << "x" << h << " pixels to." << Log::Flush;
+        // FLog::Critical() << "OpenGL::Texture is reserving GPU texture space to upload " << w << "x" << h << " pixels to." << FLog::Flush;
 
         // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml
         glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, UspecifiedFormat, UnspecifiedType, nullptr);
@@ -39,7 +39,7 @@ namespace Slab::Graphics::OpenGL {
         SetAntiAliasOn();
 
         if(CheckGLErrors("reserve " + ToStr(w) + "x" + ToStr(h) + " GPU texture pixels"))
-            Log::Error() << "OpenGL::Texture failed reserving " << w << "x" << h << " GPU texture pixels." << Log::Flush;
+            FLog::Error() << "OpenGL::Texture failed reserving " << w << "x" << h << " GPU texture pixels." << FLog::Flush;
     }
 
     GLsizei FTexture2D::GetWidth() const { return w; }
@@ -125,13 +125,13 @@ namespace Slab::Graphics::OpenGL {
                             dataFormat, dataType, dataBegin);
 
         if(CheckGLErrors(__PRETTY_FUNCTION__, false)) {
-            Log::Error() << "OpenGL::Texture failed to upload " << w << "x" << h
+            FLog::Error() << "OpenGL::Texture failed to upload " << w << "x" << h
                          << " data to target " << TargetToString(GetTarget())
                          << " with internal format " << InternalFormatToString(GetInternalFormat())
                          << " @ unit " << GetTextureUnit() << " (" << TextureUnitToString(GetGLtextureUnit()) << ")."
                          << " The input pixel format was " << PixelData::PixelDataFormatToString(dataFormat)
                          << " and data type " << PixelData::PixelDataTypeToString(dataType)
-                         << Log::Flush;
+                         << FLog::Flush;
 
             FTexture::Diagnose();
 

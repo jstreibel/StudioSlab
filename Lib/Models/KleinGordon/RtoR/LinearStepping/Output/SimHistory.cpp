@@ -12,7 +12,7 @@ namespace Slab::Models::KGRtoR {
 
     // const auto nₒᵤₜ = (Resolution)(Nₒᵤₜ*t/L);
 
-    using Core::Log;
+    using Core::FLog;
 
     SimHistory::SimHistory(CountType MaxSteps, const DevFloat tMax, Resolution N_x, Resolution N_t,
     DevFloat xMin, DevFloat L, const Str &ChannelName, bool bManageData)
@@ -28,9 +28,9 @@ namespace Slab::Models::KGRtoR {
 
         const auto SizeMB = static_cast<DevFloat>(N_x) * TimeResolution * sizeof(DevFloat) / (1024 * 1024.);
 
-        Log::Critical() << ChannelName << " is about to allocate " << SizeMB
+        FLog::Critical() << ChannelName << " is about to allocate " << SizeMB
                         << "MB of data to store full " << N_x << 'x' << (int) TimeResolution + 1
-                        << "x8 bytes simulation history." << Log::Flush;
+                        << "x8 bytes simulation history." << FLog::Flush;
 
 
         fix SafeTimeResolution = TimeResolution + 1;
@@ -43,7 +43,7 @@ namespace Slab::Models::KGRtoR {
             Data = DataAlloc<R2toR::NumericFunction_CPU>(ChannelName, N_x, (int) SafeTimeResolution, xMin, 0.0, hx, ht);
         }
 
-        Log::Success() << ChannelName << " allocated " << SizeMB << " of data." << Log::Flush;
+        FLog::Success() << ChannelName << " allocated " << SizeMB << " of data." << FLog::Flush;
     }
 
     auto SimHistory::Transfer(const FOutputPacket &Packet, FValarrayWrapper<DevFloat> &DataOut) -> void {

@@ -28,8 +28,8 @@ namespace Slab::Graphics {
                     (sfmlBackend->GetMainSystemWindow())->addSFMLListener(myReference);
 
         } catch (std::bad_cast &e) {
-            Core::Log::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
-                            "to be SFML." << Core::Log::Flush;
+            Core::FLog::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
+                            "to be SFML." << Core::FLog::Flush;
             return;
         }
 

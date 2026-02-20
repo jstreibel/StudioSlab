@@ -19,7 +19,7 @@ namespace Slab {
         static T *singleInstance;
 
         explicit FSingleton(Str name) : name(std::move(name)) {
-            // Log::Info("Singleton \"") << name << "\" has been instantiated." << Log::Flush;
+            // FLog::Info("Singleton \"") << name << "\" has been instantiated." << FLog::Flush;
         };
 
         virtual ~FSingleton() = default;

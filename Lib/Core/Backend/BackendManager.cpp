@@ -21,7 +21,7 @@ namespace Slab::Core {
     TPointer<FBackend>  BackendManager::GetBackend() {
         if (!BackendManager::instance) {
             BackendManager::Startup("Headless");
-            Log::Info() << "Backend initializing to default headless backend." << Log::Flush;
+            FLog::Info() << "Backend initializing to default headless backend." << FLog::Flush;
         };
 
         return BackendManager::instance;
@@ -61,7 +61,7 @@ namespace Slab::Core {
 
         GetBackend()->NotifyModuleLoaded(module);
 
-        Log::Info() << "Loaded module '" << Log::FGBlue << module_name << Log::ResetFormatting << "'." << Log::Flush;
+        FLog::Info() << "Loaded module '" << FLog::FGBlue << module_name << FLog::ResetFormatting << "'." << FLog::Flush;
     }
 
     FModuleIdentifier BackendManager::ParseName(const FModuleIdentifier& requested_module_name) {
@@ -84,9 +84,9 @@ namespace Slab::Core {
         }
 
         bad:
-        Log::Warning() << "Module '" << Log::FGBlue << requested_module_name << Log::ResetFormatting << "' not found." << Log::Flush;
-        Log::Info() << "Available modules:" << Log::Flush;
-        for(const auto& pair : AvailableModules) Log::Info() << "\t" << pair.first << Log::Flush;
+        FLog::Warning() << "Module '" << FLog::FGBlue << requested_module_name << FLog::ResetFormatting << "' not found." << FLog::Flush;
+        FLog::Info() << "Available modules:" << FLog::Flush;
+        for(const auto& pair : AvailableModules) FLog::Info() << "\t" << pair.first << FLog::Flush;
         throw Exception("Unknown module '" + requested_module_name + "'");
     }
 
@@ -115,13 +115,13 @@ namespace Slab::Core {
 
         BackendManager::AvailableBackends[Name] = std::move(Alloc);
 
-        Log::Note() << "Backend '" << Log::FGBlue << Name << Log::ResetFormatting << "' available." << Log::Flush;
+        FLog::Note() << "Backend '" << FLog::FGBlue << Name << FLog::ResetFormatting << "' available." << FLog::Flush;
     }
 
     void BackendManager::RegisterAvailableModule(const FModuleIdentifier &Name, FModuleAllocator Alloc) {
         BackendManager::AvailableModules[Name] = std::move(Alloc);
 
-        Log::Note() << "Module '"  << Log::FGBlue << Name << Log::ResetFormatting << "' available." << Log::Flush;
+        FLog::Note() << "Module '"  << FLog::FGBlue << Name << FLog::ResetFormatting << "' available." << FLog::Flush;
     }
 
     Str BackendManager::GetBackendName() {

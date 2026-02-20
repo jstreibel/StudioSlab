@@ -16,7 +16,7 @@
 
 namespace Slab::Graphics {
 
-    using Core::Log;
+    using Core::FLog;
 
     FBaseMonitor::FBaseMonitor(const CountType MaxSteps, const Str &ChannelName, int StepsBetweenDraws)
     : FOutputChannel(ChannelName, StepsBetweenDraws), FWindowPanel(FSlabWindowConfig{{}}), MaxSteps(MaxSteps)
@@ -25,7 +25,7 @@ namespace Slab::Graphics {
         AddWindow(GuiWindow);
         SetColumnRelativeWidth(0, 0.1);
 
-        Log::Status() << "Graphic monitor '" << ChannelName << "'. instantiated " << Log::Flush;
+        FLog::Status() << "Graphic monitor '" << ChannelName << "'. instantiated " << FLog::Flush;
     }
 
     void FBaseMonitor::HandleOutput(const FOutputPacket &outInfo) {

@@ -13,7 +13,7 @@ const int HEADER_SIZE_BYTES = 2048;
 
 namespace Slab::Math {
 
-    using Core::Log;
+    using Core::FLog;
 
     RtoR::OutputHistoryToFile::OutputHistoryToFile(UInt stepsInterval,
                                                    SpaceFilterBase *spaceFilter,
@@ -27,7 +27,7 @@ namespace Slab::Math {
 
         if (!file) throw "OutputHistoryToFile: nao abriu arquivo.";
 
-        Log::Info() << "Sim history will be saved in '" << outFileName << "'. " << Log::Flush;
+        FLog::Info() << "Sim history will be saved in '" << outFileName << "'. " << FLog::Flush;
 
         file << Str(HEADER_SIZE_BYTES - 1, ' ') << '\n';
     }
@@ -53,8 +53,8 @@ namespace Slab::Math {
         for (size_t Ti = 0; Ti < count; Ti++) {
             if (timer.GetElapsedTimeSeconds() > 1) {
                 timer.Reset();
-                Log::Info() << std::setprecision(3) << "Flushing " << (DevFloat) Ti / DevFloat(count) * 100.0 << "%"
-                            << Log::Flush;
+                FLog::Info() << std::setprecision(3) << "Flushing " << (DevFloat) Ti / DevFloat(count) * 100.0 << "%"
+                            << FLog::Flush;
             }
 
             file << outputFormatter(stepHistory[int(Ti)]);
@@ -69,7 +69,7 @@ namespace Slab::Math {
 
         file.flush();
 
-        Log::Success() << "Flushed " << "100%" << Log::Flush;
+        FLog::Success() << "Flushed " << "100%" << FLog::Flush;
     }
 
 

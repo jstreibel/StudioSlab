@@ -15,7 +15,7 @@ namespace Slab::Core {
     }
 
     void CLArgsManager::Parse(int argc, const char **argv) {
-        Log::Info() << "CLArgsManager parsing command line options." << Log::Flush;
+        FLog::Info() << "CLArgsManager parsing command line options." << FLog::Flush;
 
         CLOptionsDescription allOptions("StudioSlab");
 
@@ -36,7 +36,7 @@ namespace Slab::Core {
             exit(0);
         }
 
-        Log::Info() << "CLArgsManager finished parsing command line options." << Log::Flush;
+        FLog::Info() << "CLArgsManager finished parsing command line options." << FLog::Flush;
     }
 
     auto CLArgsManager::BuildOptionsDescription(const FInterface &Interface, CLOptionsDescription &Opts) -> void {
@@ -53,9 +53,9 @@ namespace Slab::Core {
             }
             catch (cxxopts::exceptions::option_already_exists &e) {
                 fix same = FInterfaceManager::GetInstance().GetParameter(Param->GetCommandLineArgumentName());
-                Log::Error() << "Couldn't add CLI option '" << Param->GetFullCommandLineName() << "' (" << Param->GetDescription()
+                FLog::Error() << "Couldn't add CLI option '" << Param->GetFullCommandLineName() << "' (" << Param->GetDescription()
                              << "): option already exists as '"
-                             << same->GetFullCommandLineName() << "' (" << same->GetDescription() << ")." << Log::Flush;
+                             << same->GetFullCommandLineName() << "' (" << same->GetDescription() << ")." << FLog::Flush;
                 throw e;
             }
     }

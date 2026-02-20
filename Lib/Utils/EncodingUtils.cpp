@@ -131,7 +131,7 @@ namespace Slab {
     const Str &MapToSuperscript(char c) {
         // auto newChar = Str("⁺ ⁻  ⁰¹²³⁴⁵⁶⁷⁸⁹").substr(c-'+', 1);
 
-        // Log::Info() << "Mapping '" << c << "' (" << int(c) << ") ↦ " << int(c-'+') << ": " << newChar << Log::Flush;
+        // FLog::Info() << "Mapping '" << c << "' (" << int(c) << ") ↦ " << int(c-'+') << ": " << newChar << FLog::Flush;
 
         return map[c];
     }

@@ -48,7 +48,7 @@ namespace Slab::Models::KGRtoR {
     {
         std::ofstream outputFile(outputFileName, std::ios::out | std::ios::binary);
         if(!outputFile){
-            Core::Log::Error() << "Could not open '" << outputFileName << "' for snapshot output." << Core::Log::Flush;
+            Core::FLog::Error() << "Could not open '" << outputFileName << "' for snapshot output." << Core::FLog::Flush;
             return false;
         }
 
@@ -67,7 +67,7 @@ namespace Slab::Models::KGRtoR {
         outputFile.write(reinterpret_cast<const char*>(&data[0]), (long)(data.size()*sizeof(DevFloat)));
 
         outputFile.close();
-        Core::Log::Success() << "Snapshot saved to '" << outputFileName << "'." << Core::Log::Flush;
+        Core::FLog::Success() << "Snapshot saved to '" << outputFileName << "'." << Core::FLog::Flush;
 
         return true;
     }

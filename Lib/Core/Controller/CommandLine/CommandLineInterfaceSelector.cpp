@@ -48,12 +48,12 @@ namespace Slab::Core {
         }
 
         auto currSelection = GetCurrentCandidate();
-        Log::Critical() << "InterfaceSelector '" << Interface->GetName()
+        FLog::Critical() << "InterfaceSelector '" << Interface->GetName()
                         << "' has pre-parsed its options. Selection is '"
-                        << currSelection->GetName() << "'." << Log::Flush;
+                        << currSelection->GetName() << "'." << FLog::Flush;
 
         if (registerInInterfaceManager) {
-            Log::Info(
+            FLog::Info(
                     "InterfaceSelector is registering selected interface (and sub-interfaces if present) in InterfaceManager.");
 
             auto &interfaceManager = FInterfaceManager::GetInstance();
@@ -79,9 +79,9 @@ namespace Slab::Core {
         auto curr = GetCurrentCandidate();
         for (int i = 0; i < Candidates.size(); i++) {
             auto cand = Candidates[i];
-            if (*cand == *curr) simsHelp << Log::BoldFace << Log::FGBlue;
+            if (*cand == *curr) simsHelp << FLog::BoldFace << FLog::FGBlue;
             simsHelp << i << ". " << cand->GetName();
-            if (*cand == *curr) simsHelp << Log::ResetFormatting;
+            if (*cand == *curr) simsHelp << FLog::ResetFormatting;
             simsHelp << "\n";
         }
 

@@ -210,7 +210,7 @@ namespace Slab::Models::KGR2toR {
             cubeAxes->DrawZGridlinesOff();
             cubeAxes->SetZTitle("phi");
 
-            Log::Info("z (min,max) = (") << zMin << "," << zMax << ")" << Log::Flush;
+            FLog::Info("z (min,max) = (") << zMin << "," << zMax << ")" << FLog::Flush;
             cubeAxes->SetZAxisRange(zMin, zMax);
             //cubeAxes->SetZAxisRange(-0.5, 0.7);
             cubeAxes->SetTickLocationToOutside();

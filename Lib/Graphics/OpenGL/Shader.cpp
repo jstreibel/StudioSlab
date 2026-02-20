@@ -18,7 +18,7 @@
 
 #define CHECK_UNIFORM_EXISTS \
     if(loc == -1){               \
-    Log::Error("While setting uniform '") << Name << "'. Uniform not found, " \
+    FLog::Error("While setting uniform '") << Name << "'. Uniform not found, " \
         << "might have been pruned by shader compiler."; \
     return; \
     }
@@ -28,7 +28,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    using Log = Core::Log;
+    using Core::FLog;
 
     void ListShaderUniforms(GLuint handle, std::basic_ostream<char, std::char_traits<char>> &log) {
         GLint numActiveUniforms = 0;
@@ -91,16 +91,16 @@ namespace Slab::Graphics::OpenGL {
 
         Handle = ShaderLoader::Load(vertFilename, fragFilename);
 
-        Log::Note() << "Shader files '" << vertFilename
-                                << "' and '" << fragFilename << "' loaded and compiled." << Log::Flush;
-        auto &log = Log::Debug() << "Are active in this shader:";
+        FLog::Note() << "Shader files '" << vertFilename
+                                << "' and '" << fragFilename << "' loaded and compiled." << FLog::Flush;
+        auto &log = FLog::Debug() << "Are active in this shader:";
 
         log << "\n\t\t\t\tUniforms:";
         ListShaderUniforms(Handle, log);
 
         log << "\n\t\t\t\tVertex attributes:";
         ListShaderAttributes(Handle, log);
-        log << Log::Flush;
+        log << FLog::Flush;
     }
 
     void FShader::BindTextures() const {
@@ -127,7 +127,7 @@ namespace Slab::Graphics::OpenGL {
 
         glUniform1i(loc, Value);
 
-        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + Name + Log::FGBlue + "' = " + ToStr(Value));
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + FLog::FGGreen + Name + FLog::FGBlue + "' = " + ToStr(Value));
     }
 
     void FShader::SetUniform(const Str& Name, GLfloat Value) const {
@@ -139,7 +139,7 @@ namespace Slab::Graphics::OpenGL {
 
         glUniform1f(loc, Value);
 
-        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + Name + Log::FGBlue + "' = " + ToStr(Value));
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + FLog::FGGreen + Name + FLog::FGBlue + "' = " + ToStr(Value));
     }
 
     void FShader::SetUniform(const Str &Name, const Real2D& Vec2) const {
@@ -151,7 +151,7 @@ namespace Slab::Graphics::OpenGL {
 
         glUniform2f(loc, static_cast<GLfloat>(Vec2.x), static_cast<GLfloat>(Vec2.y));
 
-        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + Name + Log::FGBlue + "' = " + ToStr(Vec2.x) + " " + ToStr(Vec2.y));
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + FLog::FGGreen + Name + FLog::FGBlue + "' = " + ToStr(Vec2.x) + " " + ToStr(Vec2.y));
     }
 
     void FShader::SetUniform(const Str& Name, const glm::mat4 &Mat4) const {

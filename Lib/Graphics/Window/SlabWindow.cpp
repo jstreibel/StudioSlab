@@ -76,7 +76,7 @@ namespace Slab::Graphics {
 
         if (Width<=0 || Height<=0)
         {
-            Core::Log::Warning("Refuse to set glViewport for values w=") << Width << ", h=" << Height;
+            Core::FLog::Warning("Refuse to set glViewport for values w=") << Width << ", h=" << Height;
             return false;
         }
 

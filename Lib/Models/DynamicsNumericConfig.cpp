@@ -24,14 +24,14 @@ namespace Slab::Models {
     {
         if (**t < 0) {
             *t = **L * .5;
-            Log::Attention("NumericParams") << " parameter 't' is <0. Setting to t = L/2 = " << *t;
+            FLog::Attention("NumericParams") << " parameter 't' is <0. Setting to t = L/2 = " << *t;
         }
         return **t;
     }
 
     auto DynamicsNumericConfig::Set_t(DevFloat t_max) const -> void {
-        Log::Attention() << "Command line argument '" << t->GetCommandLineArgumentName(true) << "' "
-                         << "being overridden and set to " << t_max << ";" << Log::Flush;
+        FLog::Attention() << "Command line argument '" << t->GetCommandLineArgumentName(true) << "' "
+                         << "being overridden and set to " << t_max << ";" << FLog::Flush;
 
         t->SetValue(t_max);
     }

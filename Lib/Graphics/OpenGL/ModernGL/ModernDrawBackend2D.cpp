@@ -81,7 +81,7 @@ GLuint CompileProgram(const char* vertSrc, const char* fragSrc) {
     if (linked == GL_FALSE) {
         GLchar messages[512];
         glGetProgramInfoLog(program, sizeof(messages), nullptr, messages);
-        Core::Log::Error() << "Modern GL backend shader link failed: " << messages << Core::Log::Flush;
+        Core::FLog::Error() << "Modern GL backend shader link failed: " << messages << Core::FLog::Flush;
         glDeleteProgram(program);
         program = 0;
     }

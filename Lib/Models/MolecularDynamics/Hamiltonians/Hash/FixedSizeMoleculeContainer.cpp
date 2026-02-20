@@ -14,7 +14,7 @@ namespace Slab::Models::MolecularDynamics {
 
     void FixedSizeMoleculeContainer::add(VerletPointTriple triple) {
         if (occupation > HASH_CONTAINER_SIZE) {
-            Core::Log::Error() << "Max occupancy reached: " << occupation << "/" << HASH_CONTAINER_SIZE << std::endl;
+            Core::FLog::Error() << "Max occupancy reached: " << occupation << "/" << HASH_CONTAINER_SIZE << std::endl;
             throw "FixedSizeMoleculeContainer max occupancy reached.";
         }
 

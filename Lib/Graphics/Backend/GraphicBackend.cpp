@@ -58,7 +58,7 @@ namespace Slab::Graphics {
     void GraphicBackend::SetupGUIForPlatformWindow(const FPlatformWindow *PlatformWindow_RawPtr) const {
         if(PlatformWindow_RawPtr == nullptr)
         {
-            Core::Log::Error("While trying to setup a GUI context for nullptr SystemWindow.");
+            Core::FLog::Error("While trying to setup a GUI context for nullptr SystemWindow.");
             return;
         }
 
@@ -76,6 +76,6 @@ namespace Slab::Graphics {
             }
         }
 
-        Core::Log::Error("Failed to setup GUI for platform window; window not found in backend data.");
+        Core::FLog::Error("Failed to setup GUI for platform window; window not found in backend data.");
     }
 }

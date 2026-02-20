@@ -58,13 +58,13 @@ namespace Slab::Graphics {
         static ImVector<ImWchar> vRanges;
         GlyphRangesBuilder.BuildRanges(&vRanges);
 
-        auto &Log = Core::Log::Debug() << "ImGui loading glyph ranges: ";
+        auto &Log = Core::FLog::Debug() << "ImGui loading glyph ranges: ";
         int i = 0;
         for (auto &v: vRanges) {
             if (v == 0) break;
             Log << std::hex << v << (++i % 2 ? "-" : " ");
         }
-        Log << std::dec << Core::Log::Flush;
+        Log << std::dec << Core::FLog::Flush;
 
         ImGuiIO &io = ImGui::GetIO();
         auto FontName = Core::Resources::GetIndexedFontFileName(FONT_INDEX_FOR_IMGUI);
@@ -81,7 +81,7 @@ namespace Slab::Graphics {
 
         io.Fonts->Build();
 
-        Core::Log::Info() << "ImGui using font '" << Core::Resources::ExportedFonts[FONT_INDEX_FOR_IMGUI] << "'." << Core::Log::Flush;
+        Core::FLog::Info() << "ImGui using font '" << Core::Resources::ExportedFonts[FONT_INDEX_FOR_IMGUI] << "'." << Core::FLog::Flush;
 
         // ImGui::PushFont(font);
     }
@@ -102,7 +102,7 @@ namespace Slab::Graphics {
 
         BuildFonts();
 
-        Core::Log::Info() << "Created ImGui context." << Core::Log::Flush;
+        Core::FLog::Info() << "Created ImGui context." << Core::FLog::Flush;
     }
 
     // SlabImGuiContext::SlabImGuiContext() {

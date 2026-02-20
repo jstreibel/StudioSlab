@@ -43,12 +43,12 @@ namespace Slab::Math {
 
     void HistoryKeeper::HandleOutput(const FOutputPacket &packet) {
         if (getUtilMemLoadBytes() > 4 * ONE_GB) {
-            Core::Log::Critical() << "Dumping " << (getUtilMemLoadBytes() * 4e-6) << "GB of data." << Core::Log::Flush;
+            Core::FLog::Critical() << "Dumping " << (getUtilMemLoadBytes() * 4e-6) << "GB of data." << Core::FLog::Flush;
             this->_dump(false);
             countTotal += count;
             count = 0;
             spaceDataHistory.clear(); // TODO compute total liberated memory from this history
-            Core::Log::Success() << "Memory dump successful." << Core::Log::Flush;
+            Core::FLog::Success() << "Memory dump successful." << Core::FLog::Flush;
         }
 
         spaceDataHistory.emplace_back(spaceFilter(packet));

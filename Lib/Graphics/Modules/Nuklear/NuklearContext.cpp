@@ -40,7 +40,7 @@ namespace Slab::Graphics {
         // nk_sfml_font_stash_end();
         //
         // /* nk_style_load_all_cursors(ctx, atlas->cursors);*/
-        // if(droid == nullptr) Core::Log::Error() << "Could not load font '" << font_filename << "'. Using default Nuklear font." << Core::Log::Flush;
+        // if(droid == nullptr) Core::FLog::Error() << "Could not load font '" << font_filename << "'. Using default Nuklear font." << Core::FLog::Flush;
         // else nk_style_set_font(nkContext, &droid->handle);
 
         if (IN Owner = NewOwner.lock())

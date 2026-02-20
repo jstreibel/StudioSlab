@@ -96,7 +96,7 @@ FMolecularDynamicsMonitor::FMolecularDynamicsMonitor(const TPointer<Config>& con
             }
         }
 
-        Log::Info("ParticleDynamics::Monitor: ")
+        FLog::Info("ParticleDynamics::Monitor: ")
             << "\n\t\t\t\t\tNearest zero " << NearestZero.first << " @ r=" << NearestZero.second
             << "\n\t\t\t\t\tSmallest     " << Smallest.first << " @ r=" << Smallest.second
             << "\n\t\t\t\t\tLargest      " << Largest.first << " @ r=" << Largest.second;

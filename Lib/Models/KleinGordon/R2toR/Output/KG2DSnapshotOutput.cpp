@@ -30,7 +30,7 @@ namespace Slab::Models::KGR2toR {
         IN stateData = final_output.GetNakedStateData<StateType>();
 
         if(stateData == nullptr) {
-            Core::Log::Error() << "Failed casting StateData to Slab::Math::R2toR::EquationState." << Core::Log::Flush;
+            Core::FLog::Error() << "Failed casting StateData to Slab::Math::R2toR::EquationState." << Core::FLog::Flush;
 
             return false;
         }

@@ -19,14 +19,14 @@ namespace Slab::Core {
             : FInterfaceOwner("App", 100, doRegister) {
         Slab::Startup();
 
-        Log::Info() << "Compiler: " << USED_CXX_COMPILER << Log::Flush;
-        // Log::Info() << "Compiler: " << COMPILER_NAME << Log::Flush;
-        Log::Info() << "PWD: " << Common::GetPWD() << Log::Flush;
+        FLog::Info() << "Compiler: " << USED_CXX_COMPILER << FLog::Flush;
+        // FLog::Info() << "Compiler: " << COMPILER_NAME << FLog::Flush;
+        FLog::Info() << "PWD: " << Common::GetPWD() << FLog::Flush;
     }
 
     AppBase::~AppBase() {
         Core::Finish();
-        Log::Info() << Common::GetClassName(this) << " terminated." << Log::Flush;
+        FLog::Info() << Common::GetClassName(this) << " terminated." << FLog::Flush;
     }
 
 }

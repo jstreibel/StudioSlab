@@ -57,14 +57,14 @@ namespace Slab::Graphics {
             if(initializer != nullptr) {
                 sty = initializer();
                 loadedStyles[style] = sty;
-                Core::Log::Info() << "Loaded plotting theme '" << style << "'." << Core::Log::Flush;
+                Core::FLog::Info() << "Loaded plotting theme '" << style << "'." << Core::FLog::Flush;
             } else {
                 auto themes = Slab::Graphics::FPlotThemeManager::GetThemes();
                 Str available_themes;
                 for(auto &theme : themes)
                     available_themes += Str("'") + theme + "', ";
-                Core::Log::Warning() << "Trying to set plotting theme to '" << style
-                    << "', but theme couldn't be found. Available themes are: " << available_themes << Core::Log::Flush;
+                Core::FLog::Warning() << "Trying to set plotting theme to '" << style
+                    << "', but theme couldn't be found. Available themes are: " << available_themes << Core::FLog::Flush;
 
                 FPlotThemeManager::GetInstance().current = FPlotThemeManager::GetDefault();
             }
@@ -85,7 +85,7 @@ namespace Slab::Graphics {
         // TODO isso eh gambiarra:
         // mePointer = Naked(*this);
         // if (!GetGraphicsBackend()->GetMainSystemWindow()->AddEventListener(mePointer)) {
-        //     Core::Log::Error() << "Failed to add event listener for PlotThemeManager." << Core::Log::Flush;
+        //     Core::FLog::Error() << "Failed to add event listener for PlotThemeManager." << Core::FLog::Flush;
         // }
     }
 
@@ -130,8 +130,8 @@ namespace Slab::Graphics {
 
     bool FPlotThemeManager::SetTheme(const Str& theme) {
         if(stylesInitializers[theme] == nullptr) {
-            Core::Log::Warning() << "While trying to set theme to '" << theme << "'. "
-                                 << "Falling back to '" << GetDefault() << "'." << Core::Log::Flush;
+            Core::FLog::Warning() << "While trying to set theme to '" << theme << "'. "
+                                 << "Falling back to '" << GetDefault() << "'." << Core::FLog::Flush;
 
             FPlotThemeManager::GetInstance().current = GetDefault();
 

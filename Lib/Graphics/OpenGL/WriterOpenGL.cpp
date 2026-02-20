@@ -35,8 +35,8 @@ namespace Slab::Graphics::OpenGL {
 
         if(Font == nullptr) throw Exception(Str("Bad font file: ") + fontFile);
 
-        Core::Log::Info() << "WriterOpenGL instantiation with font '" << fontFile << "' with size " << ptSize << "pts instantiated."
-                             << Core::Log::Flush;
+        Core::FLog::Info() << "WriterOpenGL instantiation with font '" << fontFile << "' with size " << ptSize << "pts instantiated."
+                             << Core::FLog::Flush;
 
         FColor white = {1, 1, 1, 1};
         glGenTextures(1, &Atlas->id);
@@ -58,10 +58,10 @@ namespace Slab::Graphics::OpenGL {
 
         const Str name = Font->filename;
         try {
-            Core::Log::Warning() << "TODO: fix problematic font deletion. Font '" << name << "' was not deleted." << Core::Log::Flush;
+            Core::FLog::Warning() << "TODO: fix problematic font deletion. Font '" << name << "' was not deleted." << Core::FLog::Flush;
             //texture_font_delete(font); // TODO: problematik
         } catch(...) {
-            Core::Log::Warning() << "Deletion of font '" << name << "' did not go smooth." << Core::Log::Flush;
+            Core::FLog::Warning() << "Deletion of font '" << name << "' did not go smooth." << Core::FLog::Flush;
         }
         Font = nullptr;
     }
@@ -97,8 +97,8 @@ namespace Slab::Graphics::OpenGL {
             texture_glyph_t *glyph = texture_font_get_glyph(Font, code_point);
 
             if(glyph == nullptr){
-                Core::Log::Error() << "Graphics::OpenGL::WriterOpenGL could not load glyph '" << code_point << "' "
-                                   << "for font '" << Font->filename << "'." << Core::Log::Flush;
+                Core::FLog::Error() << "Graphics::OpenGL::WriterOpenGL could not load glyph '" << code_point << "' "
+                                   << "for font '" << Font->filename << "'." << Core::FLog::Flush;
             }
             else // if (glyph != nullptr)
             {

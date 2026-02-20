@@ -21,7 +21,7 @@ namespace Slab::Core {
     }
 
     FConsoleBackend::~FConsoleBackend() {
-        Core::Log::Info() << "Destroying ConsoleBackend." << Log::Flush;
+        Core::FLog::Info() << "Destroying ConsoleBackend." << FLog::Flush;
     }
 
 }

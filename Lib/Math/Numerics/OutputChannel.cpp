@@ -55,7 +55,7 @@ namespace Slab::Math {
     auto FOutputChannel::GetName() const -> Str { return Name; }
 
     FOutputChannel::~FOutputChannel() {
-        Core::Log::Info() << "Closed output channel '" << GetName() << "'." << Core::Log::Flush;
+        Core::FLog::Info() << "Closed output channel '" << GetName() << "'." << Core::FLog::Flush;
     }
 
 

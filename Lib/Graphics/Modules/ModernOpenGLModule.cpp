@@ -14,13 +14,13 @@ namespace Slab::Graphics {
 
         GLenum glewInitStatus = glewInit();
         if (glewInitStatus != GLEW_OK){
-            Core::Log::Error() << "Failed GLEW initialization: "
-                << Core::Log::BGRed << Core::Log::FGBlack << " " << glewGetErrorString(glewInitStatus) << " "
-                << Core::Log::ResetFormatting << Core::Log::Flush;
+            Core::FLog::Error() << "Failed GLEW initialization: "
+                << Core::FLog::BGRed << Core::FLog::FGBlack << " " << glewGetErrorString(glewInitStatus) << " "
+                << Core::FLog::ResetFormatting << Core::FLog::Flush;
             throw Exception("Failed GLEW initialization");
         }
-        Core::Log::Info() << "Using GLEW " << glewGetString(GLEW_VERSION) << Core::Log::Flush;
+        Core::FLog::Info() << "Using GLEW " << glewGetString(GLEW_VERSION) << Core::FLog::Flush;
 
-        Core::Log::Info() << "Supported OpenGL version " << glGetString(GL_VERSION) << Core::Log::Flush;
+        Core::FLog::Info() << "Supported OpenGL version " << glGetString(GL_VERSION) << Core::FLog::Flush;
     }
 } // Core

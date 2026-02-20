@@ -31,8 +31,8 @@ namespace Slab::Math::Base {
             Core::RegisterCLInterface(Interface);
         }
 
-        Core::Log::Status() << "SimulationBuilder '" << Interface->GetName() << "': \""
-                      << Interface->GetGeneralDescription() << "\" instantiated." << Core::Log::Flush;
+        Core::FLog::Status() << "SimulationBuilder '" << Interface->GetName() << "': \""
+                      << Interface->GetGeneralDescription() << "\" instantiated." << Core::FLog::Flush;
     }
 
     auto FNumericalRecipe::GetNumericConfig() const -> const TPointer<FNumericConfig> & {

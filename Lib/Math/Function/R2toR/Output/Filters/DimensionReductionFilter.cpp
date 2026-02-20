@@ -14,8 +14,8 @@ namespace Slab::Math::R2toR {
 
     DimensionReductionFilter::DimensionReductionFilter(UInt resolution, RtoR2::StraightLine alongLine, DevFloat L)
             : line(alongLine), N_low(resolution), L(L) {
-        Core::Log::Info("DimensionReductionFilter") << " will interpolate straight line from " << alongLine.getx0()
-                                              << " to " << (alongLine.getx0() + alongLine.getr()) << Core::Log::Flush;
+        Core::FLog::Info("DimensionReductionFilter") << " will interpolate straight line from " << alongLine.getx0()
+                                              << " to " << (alongLine.getx0() + alongLine.getr()) << Core::FLog::Flush;
     }
 
     DiscreteSpacePair DimensionReductionFilter::operator()(const FOutputPacket &outputInfo) {

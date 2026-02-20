@@ -20,7 +20,7 @@ namespace Slab::Graphics {
     bool finishFlag = false;
 
     void errorCallback(int error_code, const char *description) {
-        Log::Error() << "GLFW error " << error_code << ": " << description << Log::Flush;
+        FLog::Error() << "GLFW error " << error_code << ": " << description << FLog::Flush;
     }
 
     GLFWBackend::GLFWBackend() : GraphicBackend("GLFW Backend") {
@@ -32,11 +32,11 @@ namespace Slab::Graphics {
         glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_FALSE);
 
         if (!glfwInit()) throw Exception("Error initializing GLFW");
-        Log::Info() << "GLFW runtime version " << major << "." << minor << "." << rev
+        FLog::Info() << "GLFW runtime version " << major << "." << minor << "." << rev
                        << " initialized to compile version " << GLFW_VERSION_MAJOR << "." << GLFW_VERSION_MINOR << "."
-                       << GLFW_VERSION_REVISION << "." << Log::Flush;
+                       << GLFW_VERSION_REVISION << "." << FLog::Flush;
 
-        if (glfwVulkanSupported()) Log::Note() << "Vulkan is supported." << Log::Flush;
+        if (glfwVulkanSupported()) FLog::Note() << "Vulkan is supported." << FLog::Flush;
 
     }
 
@@ -45,7 +45,7 @@ namespace Slab::Graphics {
 
         glfwTerminate();
 
-        Log::Info() << "GLFWBackend terminated." << Log::Flush;
+        FLog::Info() << "GLFWBackend terminated." << FLog::Flush;
     }
 
     void GLFWBackend::Run() {

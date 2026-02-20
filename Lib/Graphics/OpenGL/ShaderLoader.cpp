@@ -15,7 +15,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    using Log = Core::Log;
+    using Core::FLog;
 
     fix shadersRoot = Core::Resources::ShadersFolder;
 
@@ -28,7 +28,7 @@ namespace Slab::Graphics::OpenGL {
 
         std::ifstream file(filePath);
         if (!file.is_open()) {
-            Log::Error() << "Failed to open shader file: " << filePath << Log::Flush;
+            FLog::Error() << "Failed to open shader file: " << filePath << FLog::Flush;
             throw Exception("while trying to compile glsl shader");
         }
 
@@ -83,11 +83,11 @@ namespace Slab::Graphics::OpenGL {
             glGetShaderInfoLog( handle, BUFFER_SIZE, nullptr, &rawMessages[0] );
             auto messages = GetLines(rawMessages);
 
-            auto &log = Log::Error() << "While compiling "
+            auto &log = FLog::Error() << "While compiling "
                 << (type==VertexShader?"vertex":(type==FragmentShader?"fragment":"<unknown_type>"))
                 << " shader;\n";
 
-            log << "Messages:" << Log::FGYellow;
+            log << "Messages:" << FLog::FGYellow;
             std::set<CountType> problematicLines;
             for(auto &message : messages) {
                 log << "\n" << message;
@@ -97,24 +97,24 @@ namespace Slab::Graphics::OpenGL {
                 if(number!=0) problematicLines.insert(number);
             }
 
-            log << Log::ResetFormatting << "\n\n";
-            log << "Source:\n" << Log::BGBlue;
+            log << FLog::ResetFormatting << "\n\n";
+            log << "Source:\n" << FLog::BGBlue;
             CountType lineNumber = 1;
             auto srcLines = GetLines(source);
             for(auto &line : srcLines) {
                 if(problematicLines.contains(lineNumber))
-                    log << Log::FGRed;
+                    log << FLog::FGRed;
                 else
-                    log << Log::FGBlack;
+                    log << FLog::FGBlack;
 
                 log
-                << Log::Format(3) << Log::Format(Log::Right) << lineNumber << ":   "
+                << FLog::Format(3) << FLog::Format(FLog::Right) << lineNumber << ":   "
                 << line << "\n";
 
                 ++lineNumber;
             }
 
-            log << Log::ResetFormatting << Log::Flush;
+            log << FLog::ResetFormatting << FLog::Flush;
 
             throw Exception("while trying to compile glsl shader");
         }
@@ -146,7 +146,7 @@ namespace Slab::Graphics::OpenGL {
         {
             GLchar messages[256];
             glGetProgramInfoLog( handle, sizeof(messages), nullptr, &messages[0] );
-            Log::Error() << messages;
+            FLog::Error() << messages;
             throw Exception("while trying to compile glsl shader");
         }
         return handle;

@@ -20,13 +20,13 @@
     {                    \
         GLenum err;                                                 \
         while((err = glGetError()) != GL_NO_ERROR)                  \
-            Log::Warning() << "OpenGL error " << err << " (" << (strMark) << "): \"" << gluErrorString(err) << "\"" << Log::Flush; \
+            FLog::Warning() << "OpenGL error " << err << " (" << (strMark) << "): \"" << gluErrorString(err) << "\"" << FLog::Flush; \
                                                                     \
     }
 
 namespace Slab {
 
-    using Log = Core::Log;
+    using Core::FLog;
 
 static bool DepthCheckEnabled = false;
 
@@ -35,8 +35,8 @@ static bool DepthCheckEnabled = false;
 
         GLenum err;
         while ((err = glGetError()) != GL_NO_ERROR) {
-            Log::Warning() << "OpenGL error " << err << " (" << Log::FGBlue << (hint) << Log::ResetFormatting
-                           << "): " << gluErrorString(err) << Log::Flush;
+            FLog::Warning() << "OpenGL error " << err << " (" << FLog::FGBlue << (hint) << FLog::ResetFormatting
+                           << "): " << gluErrorString(err) << FLog::Flush;
             bad = true;
         }
 
@@ -112,8 +112,8 @@ static bool DepthCheckEnabled = false;
         // bool success = FreeImage_Save(FIF_JPEG, image, fileName.c_str(), JPEG_QUALITYSUPERB);
 
         if (!success)
-            Log::Error() << "Failed to save the image." << Log::Flush;
-        else Log::Success() << "Image \"" << fileName << "\" saved successfully!" << Log::Flush;
+            FLog::Error() << "Failed to save the image." << FLog::Flush;
+        else FLog::Success() << "Image \"" << fileName << "\" saved successfully!" << FLog::Flush;
 
         FreeImage_Unload(image);
 
@@ -142,7 +142,7 @@ static bool DepthCheckEnabled = false;
         // Check..
         auto retVal = true;
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-            Log::Error() << "Outputting png: Framebuffer is not complete!" << Log::Flush;
+            FLog::Error() << "Outputting png: Framebuffer is not complete!" << FLog::Flush;
 
             retVal = false;
         } else {

@@ -354,12 +354,12 @@ namespace Slab::Models::KGRtoR {
     }
 
     void FKGRtoR_Recipe::SetLaplacianPeriodicBC() {
-        Log::Attention() << "KGBuilder Laplacian forced to PERIODIC borders." << Log::Flush;
+        FLog::Attention() << "KGBuilder Laplacian forced to PERIODIC borders." << FLog::Flush;
         force_periodicBC = true;
     }
 
     void FKGRtoR_Recipe::SetLaplacianFixedBC() {
-        // Log::Info() << "KGBuilder Laplacian set to FIXED borders." << Log::Flush;
+        // FLog::Info() << "KGBuilder Laplacian set to FIXED borders." << FLog::Flush;
         force_periodicBC = false;
     }
 

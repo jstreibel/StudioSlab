@@ -119,7 +119,7 @@ namespace Slab::Graphics {
         if (reservedHeight < 1 - (float) freeHeights * 1.e-2)
             return true;
 
-        auto &log = Log::Error() << "Inconsistent column widths: ";
+        auto &log = FLog::Error() << "Inconsistent column widths: ";
 
         for (auto w: heights) log << (w == -1 ? Str("free") : ToStr(w)) << "; ";
 

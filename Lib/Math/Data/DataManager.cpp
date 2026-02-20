@@ -83,7 +83,7 @@ namespace Slab::Math {
         auto entry = data_map.find(name);
 
         if(entry == data_map.end()) {
-            Core::Log::Error("Could not find dataset '" + name + "'.") << Core::Log::Flush;
+            Core::FLog::Error("Could not find dataset '" + name + "'.") << Core::FLog::Flush;
 
             static class InvalidData : public Data {
             public:

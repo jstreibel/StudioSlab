@@ -13,7 +13,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    using Log = Core::Log;
+    using Core::FLog;
 
     Texture1D_Color::Texture1D_Color(GLsizei size, GLenum textureUnit)
     : FTexture(Texture_1D, RGBA, textureUnit)
@@ -22,9 +22,9 @@ namespace Slab::Graphics::OpenGL {
         GLint maxTextureSize;
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
         if(size>maxTextureSize) {
-            Log::Error() << "Requested texture size " << size
+            FLog::Error() << "Requested texture size " << size
                          << " too big: max texture size allowed is " << maxTextureSize
-                         << Log::Flush;
+                         << FLog::Flush;
 
             return;
         }
@@ -37,7 +37,7 @@ namespace Slab::Graphics::OpenGL {
         fix sizeMB = size*4/(1024*1024.);
         glTexImage1D(Texture_1D, 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
         if(!CheckGLErrors("after trying to reserve texture in gpu"))
-            Log::Note() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << Log::Flush;
+            FLog::Note() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << FLog::Flush;
     }
 
     bool Texture1D_Color::setColor(int i, FColor color) {
@@ -63,7 +63,7 @@ namespace Slab::Graphics::OpenGL {
             glTexImage1D(GetTarget(), 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             auto error = glGetError();
             if(error != GL_NO_ERROR)
-                Log::Error() << "OpenGL::Texture failed to upload " << size << " data to GL_TEXTURE_2D." << Log::Flush;
+                FLog::Error() << "OpenGL::Texture failed to upload " << size << " data to GL_TEXTURE_2D." << FLog::Flush;
         }
         else {
             glTexSubImage1D(GL_TEXTURE_1D, 0, (GLint)start, (GLint)n, GL_RGBA, GL_UNSIGNED_BYTE, &data[start * 4]);

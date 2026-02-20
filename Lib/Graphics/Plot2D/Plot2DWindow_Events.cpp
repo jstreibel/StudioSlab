@@ -23,7 +23,7 @@ namespace Slab {
 
                 auto popupName = Str("win_") + Title + Str("_popup");
                 if (POPUP_ON_MOUSE_CALL) {
-                    Core::Log::Info() << "Popup (on mouse call) '" << popupName << "' is on" << Core::Log::Flush;
+                    Core::FLog::Info() << "Popup (on mouse call) '" << popupName << "' is on" << Core::FLog::Flush;
                     ImGui::OpenPopup(popupName.c_str());
                     PopupOn = false;
                 }

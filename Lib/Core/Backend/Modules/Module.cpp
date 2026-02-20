@@ -12,6 +12,6 @@ namespace Slab::Core {
     : Name(std::move(name)), bRequiresGraphicsBackend(reqGraphBack) { }
 
     SlabModule::~SlabModule() {
-        Log::Info() << "Releasing module \'" << Log::FGBlue << Name << Log::ResetFormatting << "\'." << Log::Flush;
+        FLog::Info() << "Releasing module \'" << FLog::FGBlue << Name << FLog::ResetFormatting << "\'." << FLog::Flush;
     }
 } // Core
