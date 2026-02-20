@@ -18,7 +18,7 @@
 
 #define DONT_SELF_REGISTER false
 
-XY::App::App(int argc, const char **argv) : Slab::Core::AppBase(argc, argv, DONT_SELF_REGISTER) {
+XY::App::App(int argc, const char **argv) : Slab::Core::FAppBase(argc, argv, DONT_SELF_REGISTER) {
     Interface->AddParameters({&N, &T, &MCSteps, &transient});
 
     RegisterToManager();

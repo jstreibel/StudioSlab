@@ -24,13 +24,13 @@
 
 using namespace Slab;
 
-class App : public Core::AppBase {
+class App : public Core::FAppBase {
     Core::MultiStringParameter snapshotDBFolders = Core::MultiStringParameter({"./"}, Core::FParameterDescription{"db_folders", "the location of the snapshots database folders"});
     Core::StringParameter      criticalParameter = Core::StringParameter("harmonic",  Core::FParameterDescription{"param", "the critical param of the db set; should be the only changing value both on the filenames and snapshot header"});
 
 public:
     App(int argc, const char **argv)
-    : AppBase(argc, argv, false)
+    : FAppBase(argc, argv, false)
     {
         Interface->AddParameters({&snapshotDBFolders, &criticalParameter});
         Core::RegisterCLInterface(Interface);

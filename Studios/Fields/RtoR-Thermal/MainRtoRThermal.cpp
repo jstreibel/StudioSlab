@@ -30,7 +30,7 @@ int run(int argc, const char **argv){
     auto selection = dynamic_cast<Slab::Models::KGRtoR::FKGRtoR_Recipe*>(
             selector.PreParse(argc, argv).GetCurrentCandidate()->GetOwner());
 
-    auto prog = MathApp(argc, argv, Slab::Models::KGRtoR::FKGRtoR_Recipe_ptr(selection));
+    auto prog = FMathApp(argc, argv, Slab::Models::KGRtoR::FKGRtoR_Recipe_ptr(selection));
 
     return prog.run();
 }

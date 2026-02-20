@@ -15,7 +15,7 @@
 
 namespace Slab::Core {
 
-    AppBase::AppBase(int argc, const char **argv, bool doRegister)
+    FAppBase::FAppBase(int argc, const char **argv, bool doRegister)
             : FInterfaceOwner("App", 100, doRegister) {
         Slab::Startup();
 
@@ -24,7 +24,7 @@ namespace Slab::Core {
         FLog::Info() << "PWD: " << Common::GetPWD() << FLog::Flush;
     }
 
-    AppBase::~AppBase() {
+    FAppBase::~FAppBase() {
         Core::Finish();
         FLog::Info() << Common::GetClassName(this) << " terminated." << FLog::Flush;
     }

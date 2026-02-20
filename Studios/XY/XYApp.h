@@ -10,7 +10,7 @@
 
 namespace XY {
 
-    class App : public Slab::Core::AppBase {
+    class App : public Slab::Core::FAppBase {
         Slab::Core::IntegerParameter N =         {20,   Slab::Core::FParameterDescription{'N', "sqrtN", "Sqrt of number of sites"}};
         Slab::Core::IntegerParameter MCSteps =   {7000, Slab::Core::FParameterDescription{'S', "MCS", "Total Monte Carlo steps to simulate"}};
         Slab::Core::IntegerParameter transient = {1000, Slab::Core::FParameterDescription{"transient", "Transient guess to reach equilibrium"}};

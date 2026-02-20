@@ -29,7 +29,7 @@ int run(int argc, const char **argv) {
 
     Slab::Core::FInterfaceManager::GetInstance().RegisterInterface(input->GetInterface());
 
-    auto prog = Math::MathApp(argc, argv, input_ptr);
+    auto prog = Math::FMathApp(argc, argv, input_ptr);
 
     return prog.run();
 }

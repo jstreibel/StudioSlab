@@ -13,9 +13,9 @@
 
 #include "Core/SlabCore.h"
 
-class App : public Slab::Core::AppBase {
+class App : public Slab::Core::FAppBase {
 public:
-    App(int argc, const char **argv) : AppBase(argc, argv, false) {
+    App(int argc, const char **argv) : FAppBase(argc, argv, false) {
         // interface->addParameters({&snapshotDBFolders, &criticalParameter});
         Slab::Core::RegisterCLInterface(Interface);
 

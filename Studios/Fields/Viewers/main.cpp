@@ -39,12 +39,12 @@
 
 using namespace Slab;
 
-class App : public Core::AppBase {
+class App : public Core::FAppBase {
     Core::StringParameter      filename = Core::StringParameter("", Core::FParameterDescription{'f', "filename", ".oscb file."});
 
 public:
     App(int argc, const char **argv)
-            : AppBase(argc, argv, false)
+            : FAppBase(argc, argv, false)
     {
         Interface->AddParameters({&filename});
         Core::RegisterCLInterface(Interface);

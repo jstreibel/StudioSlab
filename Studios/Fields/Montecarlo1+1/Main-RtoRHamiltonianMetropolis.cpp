@@ -38,7 +38,7 @@ int run(int argc, const char **argv) {
     auto mc_recipe = Slab::New<Recipe>(max_steps);
     Slab::Core::RegisterCLInterface(mc_recipe->GetInterface());
 
-    auto prog = Slab::New<Slab::Math::MathApp> (argc, argv, mc_recipe);
+    auto prog = Slab::New<Slab::Math::FMathApp> (argc, argv, mc_recipe);
 
     setup_viewer(mc_recipe->getField().ϕ);
 

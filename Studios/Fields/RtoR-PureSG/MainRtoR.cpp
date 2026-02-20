@@ -34,7 +34,7 @@ int run(int argc, const char **argv) {
     auto input    = dynamic_cast<FKGRtoR_Recipe*>(selectedInterface->GetOwner());
     auto inputPtr = FKGRtoR_Recipe_ptr(input);
 
-    auto prog = MathApp(argc, argv, inputPtr);
+    auto prog = FMathApp(argc, argv, inputPtr);
 
     return prog.run();
 }

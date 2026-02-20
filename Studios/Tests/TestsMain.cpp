@@ -8,7 +8,7 @@
 
 
 int run(int argc, const char **argv){
-    Slab::Core::AppBase *prog = new TestsApp(argc, argv);
+    Slab::Core::FAppBase *prog = new TestsApp(argc, argv);
 
     return prog->run();
 }

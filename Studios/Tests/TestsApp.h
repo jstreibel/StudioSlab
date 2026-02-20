@@ -9,7 +9,7 @@
 #include "AppBase.h"
 
 
-class TestsApp : public Slab::Core::AppBase {
+class TestsApp : public Slab::Core::FAppBase {
 
 public:
     TestsApp(int argc, const char**argv);

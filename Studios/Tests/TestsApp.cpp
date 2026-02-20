@@ -26,9 +26,9 @@
 
 #define DONT_REGISTER false
 
-TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::AppBase(argc, argv, DONT_REGISTER) {
+TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::FAppBase(argc, argv, DONT_REGISTER) {
 
-    AppBase::RegisterToManager();
+    FAppBase::RegisterToManager();
 
     Slab::Core::CLArgsManager::Parse(argc, argv);
 }
