@@ -30,7 +30,7 @@ namespace Slab::Math::R2toR {
 namespace Slab::Models::KGRtoR {
     class FKGEnergy;
 
-    class Monitor : public Graphics::BaseMonitor {
+    class Monitor : public Graphics::FBaseMonitor {
     protected:
         Vector<FRtoRPanel_ptr> DataViews;
         TPointer<FRtoRPanel> CurrentDataView;
@@ -77,4 +77,3 @@ namespace Slab::Models::KGRtoR {
 
 
 #endif // V_SHAPE_RTORMONITOR_BASE_H
-

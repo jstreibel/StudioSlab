@@ -11,11 +11,11 @@
 
 namespace Slab::Graphics {
 
-    class WindowContainer : public FSlabWindow {
+    class FWindowContainer : public FSlabWindow {
         std::list<TPointer<FSlabWindow>> windows;
 
     public:
-        WindowContainer() = default;
+        FWindowContainer() = default;
 
         bool removeWindow(const TPointer<FSlabWindow>&);
         bool isEmpty() const;
@@ -31,6 +31,8 @@ namespace Slab::Graphics {
                                EModKeys keys) override;
         bool NotifyMouseWheel(double dx, double dy) override;
     };
+
+    using WindowContainer = FWindowContainer;
 
 } // Slab::Graphics
 

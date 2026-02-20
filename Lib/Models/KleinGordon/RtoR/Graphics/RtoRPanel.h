@@ -22,7 +22,7 @@ namespace Slab::Models::KGRtoR {
     using namespace Math;
     using namespace Graphics;
 
-    class FRtoRPanel : public WindowPanel, public FOutputChannel {
+    class FRtoRPanel : public FWindowPanel, public FOutputChannel {
     protected:
         FGUIWindow &guiWindow;
         TPointer<FKGNumericConfig> Params;

@@ -7,11 +7,11 @@
 #include <utility>
 
 namespace Slab::Graphics {
-    WindowProxy::WindowProxy(FSlabWindowConfig ConfigArg) : FSlabWindow(std::move(ConfigArg)) {
+    FWindowProxy::FWindowProxy(FSlabWindowConfig ConfigArg) : FSlabWindow(std::move(ConfigArg)) {
 
     }
 
-    void WindowProxy::setWindow(TPointer<FSlabWindow> win) {
+    void FWindowProxy::setWindow(TPointer<FSlabWindow> win) {
         window = std::move(win);
 
         window->NotifyReshape(GetWidth(), GetHeight());

@@ -18,8 +18,8 @@ namespace Slab::Graphics {
 
     using Core::Log;
 
-    BaseMonitor::BaseMonitor(const CountType MaxSteps, const Str &ChannelName, int StepsBetweenDraws)
-    : FOutputChannel(ChannelName, StepsBetweenDraws), WindowPanel(FSlabWindowConfig{{}}), MaxSteps(MaxSteps)
+    FBaseMonitor::FBaseMonitor(const CountType MaxSteps, const Str &ChannelName, int StepsBetweenDraws)
+    : FOutputChannel(ChannelName, StepsBetweenDraws), FWindowPanel(FSlabWindowConfig{{}}), MaxSteps(MaxSteps)
     , GuiWindow(New<FGUIWindow>(FSlabWindowConfig(ChannelName)))
     {
         AddWindow(GuiWindow);
@@ -28,11 +28,11 @@ namespace Slab::Graphics {
         Log::Status() << "Graphic monitor '" << ChannelName << "'. instantiated " << Log::Flush;
     }
 
-    void BaseMonitor::HandleOutput(const FOutputPacket &outInfo) {
+    void FBaseMonitor::HandleOutput(const FOutputPacket &outInfo) {
         step = outInfo.GetSteps();
     }
 
-    void BaseMonitor::writeStats() {
+    void FBaseMonitor::writeStats() {
         static bool hasFinished = false;
         static bool isPaused = false;
         static CountType lastStep = 0;
@@ -123,17 +123,17 @@ namespace Slab::Graphics {
         lastStep = step;
     }
 
-    void BaseMonitor::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+    void FBaseMonitor::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         assert(LastPacket.hasValidData());
 
         {
             writeStats();
-            WindowPanel::ImmediateDraw(PlatformWindow); // draw();
+            FWindowPanel::ImmediateDraw(PlatformWindow); // draw();
             frameTimer.Reset();
         }
     }
 
-    bool BaseMonitor::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+    bool FBaseMonitor::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         static fix baseNSteps = Get_nSteps();
         static let multiplier = 1;
 
@@ -163,10 +163,10 @@ namespace Slab::Graphics {
             }
         }
 
-        return WindowPanel::NotifyKeyboard(key, state, modKeys);
+        return FWindowPanel::NotifyKeyboard(key, state, modKeys);
     }
 
-    FGUIWindow &BaseMonitor::getGUIWindow() const {
+    FGUIWindow &FBaseMonitor::getGUIWindow() const {
         return *GuiWindow;
     }
 

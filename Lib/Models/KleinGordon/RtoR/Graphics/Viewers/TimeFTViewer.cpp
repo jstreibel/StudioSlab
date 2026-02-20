@@ -100,7 +100,7 @@ namespace Slab::Models::KGRtoR {
 
     void TimeFTViewer::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         auto function = getFunction();
-        if(function== nullptr){ WindowPanel::ImmediateDraw(PlatformWindow); return;}
+        if(function== nullptr){ FWindowPanel::ImmediateDraw(PlatformWindow); return;}
 
         gui_window->AddExternalDraw([this](){
             auto function = getFunction();
@@ -170,7 +170,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void TimeFTViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {

@@ -12,7 +12,7 @@
 
 namespace Slab::Models::KGR2toR {
 
-    class OutputOpenGL : public Graphics::BaseMonitor {
+    class OutputOpenGL : public Graphics::FBaseMonitor {
 
     protected:
 

@@ -22,7 +22,7 @@
 namespace Slab::Models::KGRtoR {
 
     Monitor::Monitor(const TPointer<FKGNumericConfig> &params, FKGEnergy &hamiltonian, const Str &name)
-    : BaseMonitor(params->Get_n(), Str("ℝ↦ℝ ") + name, 10)
+    : FBaseMonitor(params->Get_n(), Str("ℝ↦ℝ ") + name, 10)
     , Hamiltonian(hamiltonian)
     , FullHistoryGraph(   Slab::New<FPlot2DWindow>("Full field history"))
     , FullSFTHistoryGraph(Slab::New<FPlot2DWindow>("Full space FT history"))
@@ -84,7 +84,7 @@ namespace Slab::Models::KGRtoR {
         for (const auto &dataView: DataViews)
             dataView->Output(outInfo);
 
-        Graphics::BaseMonitor::HandleOutput(outInfo);
+        Graphics::FBaseMonitor::HandleOutput(outInfo);
     }
 
     bool Monitor::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
@@ -96,7 +96,7 @@ namespace Slab::Models::KGRtoR {
             return true;
         }
 
-        return BaseMonitor::NotifyKeyboard(key, state, modKeys);
+        return FBaseMonitor::NotifyKeyboard(key, state, modKeys);
     }
 
     void Monitor::SetSimulationHistory(const TPointer<const R2toR::FNumericFunction> &simHistory) {
@@ -174,7 +174,7 @@ namespace Slab::Models::KGRtoR {
         UpdateHistoryGraph();
         UpdateSFTHistoryGraph();
 
-        BaseMonitor::ImmediateDraw(PlatformWindow);
+        FBaseMonitor::ImmediateDraw(PlatformWindow);
     }
 
 

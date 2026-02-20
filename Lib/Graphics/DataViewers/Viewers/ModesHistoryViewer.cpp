@@ -45,7 +45,7 @@ namespace Slab::Graphics {
                 setupModes();
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void ModesHistoryViewer::setupModes() {

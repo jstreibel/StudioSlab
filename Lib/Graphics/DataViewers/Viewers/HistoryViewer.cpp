@@ -134,7 +134,7 @@ namespace Slab::Graphics {
             }
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
 } // Slab::Graphics

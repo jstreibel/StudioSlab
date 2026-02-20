@@ -71,7 +71,7 @@ namespace Slab::Models::KGRtoR {
             ImGui::Text("Sheer data size: %i", (int)sheer_size);
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void HistogramsViewer_KG::updateHistograms() {

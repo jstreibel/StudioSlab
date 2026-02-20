@@ -13,7 +13,7 @@ namespace Slab::Models::KGRtoR {
         const Str &name,
         const Str &description)
     : FOutputChannel(name, 1, description)
-    , WindowPanel(FSlabWindowConfig(name))
+    , FWindowPanel(FSlabWindowConfig(name))
     , guiWindow(guiWindow)
     , Params(params)
     , Hamiltonian(hamiltonian)

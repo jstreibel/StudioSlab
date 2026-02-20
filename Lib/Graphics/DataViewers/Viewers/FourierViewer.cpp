@@ -169,7 +169,7 @@ namespace Slab::Graphics {
             }
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     auto FourierViewer::FilterSpace(const TPointer<const R2toR::FNumericFunction>& func, DevFloat tMin,

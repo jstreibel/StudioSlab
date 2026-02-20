@@ -55,7 +55,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void HistoryViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {

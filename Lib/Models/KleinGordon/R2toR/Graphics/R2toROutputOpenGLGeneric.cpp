@@ -34,7 +34,7 @@ namespace Slab::Models::KGR2toR {
     }
 
     OutputOpenGL::OutputOpenGL(CountType max_steps)
-    : BaseMonitor(max_steps, "ℝ²↦ℝ OpenGL monitor", 1)
+    : FBaseMonitor(max_steps, "ℝ²↦ℝ OpenGL monitor", 1)
     , mSectionGraph("Sections")
     , mFieldDisplay("Field")
     {
@@ -47,7 +47,7 @@ namespace Slab::Models::KGR2toR {
     void OutputOpenGL::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if (!LastPacket.hasValidData()) return;
 
-        BaseMonitor::ImmediateDraw(PlatformWindow);
+        FBaseMonitor::ImmediateDraw(PlatformWindow);
 
         if (sectionArtist.getFunction() == nullptr) {
             auto phi = getPhi(LastPacket);

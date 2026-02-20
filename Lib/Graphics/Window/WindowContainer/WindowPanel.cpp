@@ -10,9 +10,9 @@
 
 namespace Slab::Graphics {
 
-    WindowPanel::WindowPanel(FSlabWindowConfig config) : FSlabWindow(config) {    }
+    FWindowPanel::FWindowPanel(FSlabWindowConfig config) : FSlabWindow(config) {    }
 
-    void WindowPanel::AddWindow(const TPointer<FSlabWindow>& window, bool newColumn, float newColumnWidth) {
+    void FWindowPanel::AddWindow(const TPointer<FSlabWindow>& window, bool newColumn, float newColumnWidth) {
         if (newColumn) {
             columns.emplace_back();
             widths.emplace_back(newColumnWidth);
@@ -27,7 +27,7 @@ namespace Slab::Graphics {
         column->addWindow(window);
     }
 
-    bool WindowPanel::removeWindow(const TPointer<FSlabWindow> &windowToRemove) {
+    bool FWindowPanel::removeWindow(const TPointer<FSlabWindow> &windowToRemove) {
         int i=0;
         for(auto &column : columns){
             if(column.removeWindow(windowToRemove)) {
@@ -45,7 +45,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool WindowPanel::addWindowToColumn(const TPointer<FSlabWindow> &window, int columnId) {
+    bool FWindowPanel::addWindowToColumn(const TPointer<FSlabWindow> &window, int columnId) {
         if (columns.size() - 1 < columnId) return false;
 
         auto *column = &columns[columnId];
@@ -54,7 +54,7 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void WindowPanel::ArrangeWindows() {
+    void FWindowPanel::ArrangeWindows() {
         assertConsistency();
 
         auto m = columns.size();
@@ -101,18 +101,18 @@ namespace Slab::Graphics {
         }
     }
 
-    void WindowPanel::SetColumnRelativeWidth(int column, float relWidth) {
+    void FWindowPanel::SetColumnRelativeWidth(int column, float relWidth) {
         widths[column] = relWidth;
 
         assertConsistency();
     }
 
-    void WindowPanel::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+    void FWindowPanel::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         for (auto &column: columns)
             column.ImmediateDraw(PlatformWindow);
     }
 
-    float WindowPanel::computeReservedWidth() const {
+    float FWindowPanel::computeReservedWidth() const {
         auto val = .0f;
         for (auto w: widths) val += w >= 0 ? w : 0;
 
@@ -120,14 +120,14 @@ namespace Slab::Graphics {
 
     }
 
-    int WindowPanel::countFreeWidths() const {
+    int FWindowPanel::countFreeWidths() const {
         auto val = 0;
         for (auto w: widths) if (w <= 0) ++val;
 
         return val;
     }
 
-    void WindowPanel::assertConsistency() const {
+    void FWindowPanel::assertConsistency() const {
 
         auto resWidth = computeReservedWidth();
         auto freeWidths = countFreeWidths();
@@ -148,7 +148,7 @@ namespace Slab::Graphics {
         throw ss.str();
     }
 
-    bool WindowPanel::NotifyMouseMotion(int x, int y, int dx, int dy) {
+    bool FWindowPanel::NotifyMouseMotion(int x, int y, int dx, int dy) {
         auto Responded = false;
         for (auto &col: columns)
             if (col.IsPointWithin({x, y}))
@@ -157,14 +157,14 @@ namespace Slab::Graphics {
         return Responded;
     }
 
-    void WindowPanel::NotifyReshape(int newWinW, int newWinH) {
+    void FWindowPanel::NotifyReshape(int newWinW, int newWinH) {
         FSlabWindow::NotifyReshape(newWinW, newWinH);
 
         ArrangeWindows();
     }
 
     bool
-    WindowPanel::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+    FWindowPanel::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         // return GUIEventListener::notifyKeyboard(key, state, modKeys);
 
         auto Responded = false;
@@ -174,7 +174,7 @@ namespace Slab::Graphics {
         return Responded;
     }
 
-    bool WindowPanel::NotifyMouseButton(EMouseButton button, EKeyState state,
+    bool FWindowPanel::NotifyMouseButton(EMouseButton button, EKeyState state,
                                         EModKeys keys) {
         constexpr bool AlwaysPropagate = false; // state==Core::Release;
 
@@ -185,7 +185,7 @@ namespace Slab::Graphics {
         return Responded;
     }
 
-    bool WindowPanel::NotifyMouseWheel(double dx, double dy) {
+    bool FWindowPanel::NotifyMouseWheel(double dx, double dy) {
         auto Responded = false;
         for (auto &Col: columns)
             if (Col.IsMouseInside()) Responded = Col.NotifyMouseWheel(dx, dy);
@@ -193,13 +193,13 @@ namespace Slab::Graphics {
         return Responded;
     }
 
-    void WindowPanel::Set_x(int x) {
+    void FWindowPanel::Set_x(int x) {
         FSlabWindow::Set_x(x);
 
         ArrangeWindows();
     }
 
-    void WindowPanel::Set_y(int y) {
+    void FWindowPanel::Set_y(int y) {
         FSlabWindow::Set_y(y);
 
         ArrangeWindows();

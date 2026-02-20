@@ -34,12 +34,12 @@ namespace Slab::Graphics {
 
     using namespace Core;
 
-    void WindowColumn::addWindow(const TPointer<FSlabWindow>& window, float windowHeight) {
+    void FWindowColumn::addWindow(const TPointer<FSlabWindow>& window, float windowHeight) {
         Windows.emplace_back(window);
         heights.emplace_back(windowHeight);
     }
 
-    bool WindowColumn::removeWindow(const TPointer<FSlabWindow>& window) {
+    bool FWindowColumn::removeWindow(const TPointer<FSlabWindow>& window) {
 
         auto it = Windows.begin();
         for(auto i=0; i<Windows.size(); ++i){
@@ -56,7 +56,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    void WindowColumn::arrangeWindows() {
+    void FWindowColumn::arrangeWindows() {
         if (!assertConsistency()) throw Exception("WindowRow inconsistency");
 
         auto m = Windows.size();
@@ -107,7 +107,7 @@ namespace Slab::Graphics {
         }
     }
 
-    bool WindowColumn::assertConsistency() const {
+    bool FWindowColumn::assertConsistency() const {
         auto reservedHeight = SumLargerThanZero(heights)
         auto freeHeights = CountLessThanZero(heights)
 
@@ -126,11 +126,11 @@ namespace Slab::Graphics {
         return false;
     }
 
-    WindowColumn::WindowColumn() : FSlabWindow(FSlabWindowConfig{"<col>"})
+    FWindowColumn::FWindowColumn() : FSlabWindow(FSlabWindowConfig{"<col>"})
     {
     }
 
-    void WindowColumn::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+    void FWindowColumn::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         for (auto &Win: Windows) {
             Win->ImmediateDraw(PlatformWindow);
             OpenGL::CheckGLErrors(
@@ -138,13 +138,13 @@ namespace Slab::Graphics {
         }
     }
 
-    void WindowColumn::NotifyReshape(int newWinW, int newWinH) {
+    void FWindowColumn::NotifyReshape(int newWinW, int newWinH) {
         FSlabWindow::NotifyReshape(newWinW, newWinH);
 
         arrangeWindows();
     }
 
-    bool WindowColumn::NotifyMouseMotion(int x, int y, int dx, int dy) {
+    bool FWindowColumn::NotifyMouseMotion(int x, int y, int dx, int dy) {
         auto Responded = false;
         for(auto &Win : Windows) if(Win->IsPointWithin(FPoint2D{DevFloat(x) ,DevFloat(y)}) ){
             Responded = Win->NotifyMouseMotion(x,y,dx,dy);
@@ -156,11 +156,11 @@ namespace Slab::Graphics {
     }
 
     bool
-    WindowColumn::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+    FWindowColumn::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         PropagateEvent(NotifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn)
     }
 
-    bool WindowColumn::NotifyMouseButton(EMouseButton button, EKeyState state,
+    bool FWindowColumn::NotifyMouseButton(EMouseButton button, EKeyState state,
                                          EModKeys keys) {
         if(state == Release)
             PropagateEvent(NotifyMouseButton(button, state, keys), AlwaysPropagate)
@@ -169,21 +169,21 @@ namespace Slab::Graphics {
         PropagateEvent(NotifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
     }
 
-    bool WindowColumn::NotifyMouseWheel(double dx, double dy) {
+    bool FWindowColumn::NotifyMouseWheel(double dx, double dy) {
         PropagateEvent(NotifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn)
     }
 
-    bool WindowColumn::isEmpty() const {
+    bool FWindowColumn::isEmpty() const {
         return Windows.empty();
     }
 
-    void WindowColumn::Set_x(int x) {
+    void FWindowColumn::Set_x(int x) {
         FSlabWindow::Set_x(x);
 
         arrangeWindows();
     }
 
-    void WindowColumn::Set_y(int y) {
+    void FWindowColumn::Set_y(int y) {
         FSlabWindow::Set_y(y);
 
         arrangeWindows();

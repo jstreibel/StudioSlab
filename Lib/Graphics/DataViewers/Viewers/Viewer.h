@@ -11,7 +11,7 @@
 
 namespace Slab::Graphics {
 
-    class Viewer : public WindowPanel {
+    class Viewer : public FWindowPanel {
         TPointer<Math::R2toR::FNumericFunction> base_function;
 
         bool is_visible = false;

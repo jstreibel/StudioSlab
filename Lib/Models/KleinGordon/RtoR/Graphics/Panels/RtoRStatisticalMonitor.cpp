@@ -99,7 +99,7 @@ namespace Slab::Models::KGRtoR {
                                            Slab::Naked(histogramVData),
                                            *style++, "V");
 
-            auto *histogramsPanel = new WindowPanel(FSlabWindowConfig{"Histograms"});
+            auto *histogramsPanel = new FWindowPanel(FSlabWindowConfig{"Histograms"});
             histogramsPanel->AddWindow(mHistogramsGraphV);
             histogramsPanel->AddWindow(mHistogramsGraphGrad);
             histogramsPanel->AddWindow(mHistogramsGraphK);
