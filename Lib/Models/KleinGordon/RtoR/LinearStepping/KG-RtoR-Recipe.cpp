@@ -57,7 +57,7 @@ namespace Slab::Models::KGRtoR {
         if (bDoRegister) RegisterCLInterface(Interface);
     }
 
-    class Filter1D final : public Math::SpaceFilterBase{
+    class Filter1D final : public Math::FSpaceFilterBase{
         DimensionMetaData dim;
     public:
         explicit Filter1D(DimensionMetaData dim) : dim(std::move(dim)) {}
@@ -142,10 +142,10 @@ namespace Slab::Models::KGRtoR {
            *************************** HISTORY OUTPUT *********************************************
            **************************************************************************************** */
         if (shouldOutputHistory) {
-            OutputFormatterBase *outputFilter = new BinarySOF;
+            FOutputFormatterBase *outputFilter = new FBinarySOF;
 
             const auto dimData = DimensionMetaData({(unsigned) *OutputOptions.OutputResolution}, {L / *OutputOptions.OutputResolution});
-            // auto *spaceFilter = new ResolutionReductionFilter(dimData);
+            // auto *spaceFilter = new FResolutionReductionFilter(dimData);
             auto *spaceFilter = new Filter1D(dimData);
 
             fix stepsInterval = static_cast<UInt>(N / (Nₒᵤₜ * r));

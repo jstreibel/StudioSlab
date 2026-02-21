@@ -16,9 +16,9 @@ namespace Slab::Math {
 #define outputFilename std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))
 
     OutputHistoryToFile::OutputHistoryToFile(UInt stepsInterval,
-                                             SpaceFilterBase *spaceFilter,
+                                             FSpaceFilterBase *spaceFilter,
                                              const Str &outputFileName,
-                                             OutputFormatterBase *outputFormatter)
+                                             FOutputFormatterBase *outputFormatter)
     : HistoryKeeper(stepsInterval, spaceFilter)
     , outFileName(outputFilename)
     , outputFormatter(*outputFormatter)

@@ -18,10 +18,10 @@ namespace Slab::Math::RtoR {
         const Str outFileName;
         std::ofstream file;
 
-        OutputFormatterBase &outputFormatter;
+        FOutputFormatterBase &outputFormatter;
 
     public:
-        OutputHistoryToFile(UInt stepsInterval, SpaceFilterBase *spaceFilter, Str  outputFileName);
+        OutputHistoryToFile(UInt stepsInterval, FSpaceFilterBase *spaceFilter, Str  outputFileName);
 
         ~OutputHistoryToFile() override;
 

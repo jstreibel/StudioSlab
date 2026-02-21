@@ -21,14 +21,14 @@ namespace Slab::Math {
         std::ofstream file;
 
         /*! I manage this. */
-        OutputFormatterBase &outputFormatter;
+        FOutputFormatterBase &outputFormatter;
 
 
     public:
 
-        OutputHistoryToFile(UInt stepsInterval, SpaceFilterBase *spaceFilter,
+        OutputHistoryToFile(UInt stepsInterval, FSpaceFilterBase *spaceFilter,
                             const Str &outputFileName,
-                            OutputFormatterBase *outputFormatter = new BinarySOF());
+                            FOutputFormatterBase *outputFormatter = new FBinarySOF());
 
         ~OutputHistoryToFile() override;
 

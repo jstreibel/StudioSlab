@@ -8,13 +8,13 @@
 
 namespace Slab::Math {
 
-    BinarySOF::BinarySOF() = default;;
+    FBinarySOF::FBinarySOF() = default;;
 
-    auto BinarySOF::getFormatDescription() const -> Str {
+    auto FBinarySOF::getFormatDescription() const -> Str {
         return Str("fp32");
     }
 
-    auto BinarySOF::operator()(const DiscreteSpace &fOut) const -> ByteData {
+    auto FBinarySOF::operator()(const DiscreteSpace &fOut) const -> ByteData {
         const auto &space = fOut;
         const RealArray &X = fOut.getHostData(true);
 
@@ -30,7 +30,7 @@ namespace Slab::Math {
         return data;
     }
 
-    auto BinarySOF::operator()(const DevFloat &out) const -> ByteData {
+    auto FBinarySOF::operator()(const DevFloat &out) const -> ByteData {
         ByteDataConvertHelperUnion<float> byteData((float) out);
 
 
@@ -41,7 +41,7 @@ namespace Slab::Math {
         return data;
     }
 
-    bool BinarySOF::isBinary() const {
+    bool FBinarySOF::isBinary() const {
         return true;
     }
 

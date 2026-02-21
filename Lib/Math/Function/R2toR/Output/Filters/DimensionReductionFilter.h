@@ -12,7 +12,7 @@
 
 namespace Slab::Math::R2toR {
 
-    class DimensionReductionFilter : public SpaceFilterBase {
+    class DimensionReductionFilter : public FSpaceFilterBase {
         /**
          * This classes reduces the dimension of a 2d space to 1d along a determined line
          * */

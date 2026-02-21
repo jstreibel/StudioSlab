@@ -16,11 +16,11 @@ namespace Slab::Math {
     using Core::FLog;
 
     RtoR::OutputHistoryToFile::OutputHistoryToFile(UInt stepsInterval,
-                                                   SpaceFilterBase *spaceFilter,
+                                                   FSpaceFilterBase *spaceFilter,
                                                    Str outputFileName)
             : HistoryKeeper(stepsInterval, spaceFilter),
               outFileName(std::move(outputFileName)),
-              outputFormatter(*(new BinarySOF())) {
+              outputFormatter(*(new FBinarySOF())) {
         this->Name = "Full (1+1) history output";
 
         file.open(outFileName, std::ios::out);

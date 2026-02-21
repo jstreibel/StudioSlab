@@ -77,9 +77,9 @@ namespace Slab::Models::KGR2toR {
 
             const UInt outputResolutionX = *OutputOptions.OutputResolution;
 
-            OutputFormatterBase *outputFilter = new BinarySOF;
+            FOutputFormatterBase *outputFilter = new FBinarySOF;
 
-            SpaceFilterBase *spaceFilter = new Slab::Math::R2toR::DimensionReductionFilter(
+            FSpaceFilterBase *spaceFilter = new Slab::Math::R2toR::DimensionReductionFilter(
                     outputResolutionX, section, KGNumericConfig->GetL());
 
             const auto N = (DevFloat) KGNumericConfig->getN();

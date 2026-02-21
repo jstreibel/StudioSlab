@@ -17,7 +17,7 @@ namespace Slab::Math {
         void HandleOutput(const FOutputPacket &outInfo) final;
 
     protected:
-        SpaceFilterBase &spaceFilter;
+        FSpaceFilterBase &spaceFilter;
 
         Vector<DiscreteSpacePair> spaceDataHistory; // pair: phi and dphidt
         FRealVector stepHistory;
@@ -25,7 +25,7 @@ namespace Slab::Math {
         size_t countTotal;
 
     public:
-        HistoryKeeper(size_t nStepsInterval, SpaceFilterBase *filter);
+        HistoryKeeper(size_t nStepsInterval, FSpaceFilterBase *filter);
 
         ~HistoryKeeper() override;
 

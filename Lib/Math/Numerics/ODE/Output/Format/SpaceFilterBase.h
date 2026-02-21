@@ -12,9 +12,9 @@
 
 namespace Slab::Math {
 
-    class SpaceFilterBase {
+    class FSpaceFilterBase {
     public:
-        virtual ~SpaceFilterBase() {};
+        virtual ~FSpaceFilterBase() = default;
 
         /*!
          * The filter operator.
@@ -26,7 +26,9 @@ namespace Slab::Math {
         virtual auto getOutputDim() const -> DimensionMetaData = 0;
     };
 
-    typedef SpaceFilterBase BypassFilter;
+    using FBypassFilter = FSpaceFilterBase;
+    using SpaceFilterBase [[deprecated("Use FSpaceFilterBase")]] = FSpaceFilterBase;
+    using BypassFilter [[deprecated("Use FBypassFilter")]] = FBypassFilter;
 
 
 }

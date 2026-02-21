@@ -9,13 +9,13 @@
 
 namespace Slab::Math {
 
-    CustomStringSeparatedSOF::CustomStringSeparatedSOF(std::string sep) : sep(std::move(sep)) {}
+    FCustomStringSeparatedSOF::FCustomStringSeparatedSOF(std::string sep) : sep(std::move(sep)) {}
 
-    auto CustomStringSeparatedSOF::getFormatDescription() const -> Str {
+    auto FCustomStringSeparatedSOF::getFormatDescription() const -> Str {
         return Str("text");
     }
 
-    auto CustomStringSeparatedSOF::operator()(const DiscreteSpace &fOut) const -> ByteData {
+    auto FCustomStringSeparatedSOF::operator()(const DiscreteSpace &fOut) const -> ByteData {
         const auto &space = fOut;
 
         const RealArray &X = space.getHostData(true);
@@ -35,7 +35,7 @@ namespace Slab::Math {
         return data;
     }
 
-    auto CustomStringSeparatedSOF::operator()(const DevFloat &out) const -> ByteData {
+    auto FCustomStringSeparatedSOF::operator()(const DevFloat &out) const -> ByteData {
         std::ostringstream oss;
 
         oss << out << sep;
@@ -48,7 +48,7 @@ namespace Slab::Math {
         return data;
     }
 
-    bool CustomStringSeparatedSOF::isBinary() const {
+    bool FCustomStringSeparatedSOF::isBinary() const {
         return false;
     }
 

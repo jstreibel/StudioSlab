@@ -63,7 +63,7 @@ namespace Slab::Math {
                 EqStateOutputInterface::fDataOutType = EqStateOutputInterface::PhiAndDPhiDt;
 
                 /*
-                CustomStringSeparatedSOF formatter(", ");
+                FCustomStringSeparatedSOF formatter(", ");
                 file << "# {" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() *//*<< ", " *//* << "\"t\": "
                      << t
                      << ", \"phi\": (" << formatter(*spaceData.first) << ")"

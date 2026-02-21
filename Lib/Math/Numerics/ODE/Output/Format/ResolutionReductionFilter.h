@@ -11,9 +11,9 @@
 namespace Slab::Math {
 
 /*! A discrete space filter that reduces resolution and returns a CPU- (host) located discrete space. */
-    class ResolutionReductionFilter : public SpaceFilterBase {
+    class FResolutionReductionFilter : public FSpaceFilterBase {
     public:
-        explicit ResolutionReductionFilter(DimensionMetaData newDim);
+        explicit FResolutionReductionFilter(DimensionMetaData newDim);
 
         DiscreteSpacePair operator()(const FOutputPacket &outputInfo) override;
 
@@ -22,6 +22,8 @@ namespace Slab::Math {
     private:
         DimensionMetaData newDim;
     };
+
+    using ResolutionReductionFilter [[deprecated("Use FResolutionReductionFilter")]] = FResolutionReductionFilter;
 
 
 }
