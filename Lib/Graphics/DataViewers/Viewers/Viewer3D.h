@@ -12,8 +12,8 @@
 namespace Slab::Graphics {
 
     class FViewer3D : public FViewer {
-        TPointer<Scene3DWindow> scene3DWindow;
-        TPointer<R2toRFunctionActor> sceneActor;
+        TPointer<FScene3DWindow> scene3DWindow;
+        TPointer<FR2toRFunctionActor> sceneActor;
     public:
         FViewer3D(TPointer<FGUIWindow>);
 

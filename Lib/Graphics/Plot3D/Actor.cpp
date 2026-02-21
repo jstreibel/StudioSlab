@@ -7,26 +7,26 @@
 #include <utility>
 
 namespace Slab::Graphics {
-    bool Actor::hasGUI() {
+    bool FActor::hasGUI() {
         return false;
     }
 
-    void Actor::drawGUI() {
+    void FActor::drawGUI() {
     }
 
-    void Actor::setLabel(Str newLabel) {
+    void FActor::setLabel(Str newLabel) {
         label = std::move(newLabel);
     }
 
-    auto Actor::getLabel() const -> Str {
+    auto FActor::getLabel() const -> Str {
         return label;
     }
 
-    void Actor::setVisibility(bool visibility) {
+    void FActor::setVisibility(bool visibility) {
         visible = visibility;
     }
 
-    bool Actor::isVisible() const {
+    bool FActor::isVisible() const {
         return visible;
     }
 } // Graphics

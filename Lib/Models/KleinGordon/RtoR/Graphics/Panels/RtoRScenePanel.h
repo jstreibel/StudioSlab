@@ -11,7 +11,7 @@
 namespace Slab::Models::KGRtoR {
 
     class RtoRScenePanel : public FRtoRPanel {
-        Graphics::Scene3DWindow_ptr scene;
+        Graphics::FScene3DWindow_ptr scene;
 
     public:
         RtoRScenePanel(const TPointer<FKGNumericConfig> &params,

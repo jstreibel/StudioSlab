@@ -11,11 +11,11 @@ namespace Slab::Models::KGRtoR {
                                    FGUIWindow &guiWindow,
                                    FKGEnergy &hamiltonian)
     : FRtoRPanel(params, guiWindow, hamiltonian, "Scene", "3D view of some data")
-    , scene(Slab::New<Scene3DWindow>())
+    , scene(Slab::New<FScene3DWindow>())
     {
         AddWindow(scene);
 
-        // auto testy = Slab::New<Slab::Graphics::TestActor>();
+        // auto testy = Slab::New<Slab::Graphics::FTestActor>();
         // testy->setLabel("Test Artie");
         // scene->addActor(testy);
     }
@@ -24,7 +24,7 @@ namespace Slab::Models::KGRtoR {
  simulationHistory,
                                               const R2toRFunctionArtist_ptr &simHistoryArtist) {
         /*
-        auto functionActor = Slab::New<Slab::Graphics::R2toRFunctionActor>(simulationHistory);
+        auto functionActor = Slab::New<Slab::Graphics::FR2toRFunctionActor>(simulationHistory);
 
         functionActor->setLabel("ϕ(t,x)");
         scene->addActor(functionActor);
@@ -37,7 +37,7 @@ namespace Slab::Models::KGRtoR {
     RtoRScenePanel::SetSpaceFourierHistory(TPointer<const R2toR::FNumericFunction>
  sftHistory, const FDFTDataHistory &history,
                                            const R2toRFunctionArtist_ptr &sftHistoryGraph) {
-        auto functionActor = Slab::New<Slab::Graphics::R2toRFunctionActor>(sftHistory);
+        auto functionActor = Slab::New<Slab::Graphics::FR2toRFunctionActor>(sftHistory);
 
         functionActor->setLabel("ℱₓ(t,k)");
         scene->addActor(functionActor);

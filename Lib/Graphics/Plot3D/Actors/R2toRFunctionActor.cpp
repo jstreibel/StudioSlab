@@ -42,9 +42,9 @@ namespace Slab::Graphics {
     void GenerateXYPLane(OpenGL::FVertexBuffer &buffer, int N, int M,
                          float width, float height);
 
-    R2toRFunctionActor::R2toRFunctionActor(R2toR::FNumericFunction_constptr function)
+    FR2toRFunctionActor::FR2toRFunctionActor(R2toR::FNumericFunction_constptr function)
     : func(std::move(function))
-    , gridMetadata(R2toRFunctionActor::GridMetadata::FromNumericFunction(func))
+    , gridMetadata(FR2toRFunctionActor::GridMetadata::FromNumericFunction(func))
     , program(Core::Resources::ShadersFolder + "FieldShading.vert",
               Core::Resources::ShadersFolder + "FieldShading.frag")
     , vertexBuffer("position:2f,texcoord:2f")
@@ -77,7 +77,7 @@ namespace Slab::Graphics {
         program.SetUniform("texelSize", Real2D(1./(DevFloat)gridM, 1./(DevFloat)gridN));
     }
 
-    void R2toRFunctionActor::draw(const Scene3DWindow &graph3D) {
+    void FR2toRFunctionActor::draw(const FScene3DWindow &graph3D) {
         texture.Bind();
 
         auto camera = graph3D.getCamera();
@@ -93,15 +93,15 @@ namespace Slab::Graphics {
         vertexBuffer.Render(GL_TRIANGLES);
     }
 
-    void R2toRFunctionActor::setAmbientLight(FColor color) { program.SetUniform("amb", color.array()); }
+    void FR2toRFunctionActor::setAmbientLight(FColor color) { program.SetUniform("amb", color.array()); }
 
-    void R2toRFunctionActor::setGridSubdivs(int n) { program.SetUniform("gridSubdivs", n); }
+    void FR2toRFunctionActor::setGridSubdivs(int n) { program.SetUniform("gridSubdivs", n); }
 
-    bool R2toRFunctionActor::hasGUI() {
+    bool FR2toRFunctionActor::hasGUI() {
         return true;
     }
 
-    void R2toRFunctionActor::drawGUI() {
+    void FR2toRFunctionActor::drawGUI() {
         if(ImGui::Button("Rebuild texture data")) {
             rebuildTextureData();
         }
@@ -127,7 +127,7 @@ namespace Slab::Graphics {
             program.SetUniform("shading", current);
     }
 
-    void R2toRFunctionActor::rebuildTextureData() {
+    void FR2toRFunctionActor::rebuildTextureData() {
         fix gridN = gridMetadata.gridN;
         fix gridM = gridMetadata.gridM;
 
@@ -137,7 +137,7 @@ namespace Slab::Graphics {
         texture.upload();
     }
 
-    void R2toRFunctionActor::GridMetadata::generateXYPlane(OpenGL::FVertexBuffer &buffer) const {
+    void FR2toRFunctionActor::GridMetadata::generateXYPlane(OpenGL::FVertexBuffer &buffer) const {
         Vector<GLuint> indices;
         Vector<Field2DVertex> vertices;
 
@@ -185,11 +185,11 @@ namespace Slab::Graphics {
         buffer.PushBack(&vertices[0], vertices.size(), &indices[0], indices.size());
     }
 
-    R2toRFunctionActor::GridMetadata
-    R2toRFunctionActor::GridMetadata::FromNumericFunction(const R2toR::FNumericFunction_constptr &func) {
+    FR2toRFunctionActor::GridMetadata
+    FR2toRFunctionActor::GridMetadata::FromNumericFunction(const R2toR::FNumericFunction_constptr &func) {
         fix D = func->getDomain();
 
-        R2toRFunctionActor::GridMetadata gridMetadata;
+        FR2toRFunctionActor::GridMetadata gridMetadata;
         gridMetadata.gridN = (int)func->getN();
         gridMetadata.gridM = (int)func->getM();
         gridMetadata.xMinSpace = (float)D.xMin;

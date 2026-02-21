@@ -12,15 +12,15 @@
 
 namespace Slab::Graphics {
 
-    class TestActor : public Actor {
+    class FTestActor : public FActor {
         OpenGL::FShader program;
         OpenGL::FVertexBuffer vertexBuffer;
         OpenGL::Texture2D_Real texture;
 
     public:
-        TestActor();
+        FTestActor();
 
-        void draw(const Scene3DWindow &graph3D) override;
+        void draw(const FScene3DWindow &graph3D) override;
 
         bool hasGUI() override;
 
@@ -28,6 +28,8 @@ namespace Slab::Graphics {
 
         void setAmbientLight(FColor color);
     };
+
+    using TestActor [[deprecated("Use FTestActor")]] = FTestActor;
 
 } // Graphics
 

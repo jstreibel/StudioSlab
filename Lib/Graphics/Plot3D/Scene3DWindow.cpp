@@ -17,9 +17,9 @@
 
 namespace Slab::Graphics {
 
-    CountType Scene3DWindow::WindowCount = 0;
+    CountType FScene3DWindow::WindowCount = 0;
 
-    Scene3DWindow::Scene3DWindow()
+    FScene3DWindow::FScene3DWindow()
     : FSlabWindow(FSlabWindowConfig(Str("Scene3D (" + ToStr(WindowCount+1) +")")))
     , id(++WindowCount)
     {
@@ -29,7 +29,7 @@ namespace Slab::Graphics {
         SetClear(false);
     }
 
-    void Scene3DWindow::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+    void FScene3DWindow::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         FSlabWindow::ImmediateDraw(PlatformWindow);
 
         glEnable(GL_DEPTH_TEST);
@@ -47,7 +47,7 @@ namespace Slab::Graphics {
         drawGUI();
     }
 
-    void Scene3DWindow::updateCamera() {
+    void FScene3DWindow::updateCamera() {
         glm::vec3 target = camera.target;
         glm::vec3 up = glm::vec3(0.0f, 0.0f, 1.0f);
 
@@ -62,7 +62,7 @@ namespace Slab::Graphics {
         camera.aspect = (float) GetWidth() / (float) GetHeight();
     }
 
-    bool Scene3DWindow::NotifyMouseMotion(int x, int y, int dx, int dy) {
+    bool FScene3DWindow::NotifyMouseMotion(int x, int y, int dx, int dy) {
         FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
 
         fix Mouse = GetMouseState();
@@ -105,17 +105,17 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool Scene3DWindow::NotifyMouseWheel(double dx, double dy) {
+    bool FScene3DWindow::NotifyMouseWheel(double dx, double dy) {
         camera.yFov += .01f*camera.yFov*(float)dy;
 
         return FSlabWindow::NotifyMouseWheel(dx, dy);
     }
 
-    auto Scene3DWindow::getCamera() const -> const Camera & {
+    auto FScene3DWindow::getCamera() const -> const Camera & {
         return camera;
     }
 
-    bool Scene3DWindow::addActor(const Actor_ptr& actor) {
+    bool FScene3DWindow::addActor(const FActor_ptr& actor) {
         if(Contains(content, actor)) return false;
 
         content.emplace_back(actor);
@@ -123,7 +123,7 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void Scene3DWindow::drawGUI() {
+    void FScene3DWindow::drawGUI() {
         // auto popupName = title + Str(" window popup");
 
         if (showInterface) {
@@ -154,7 +154,7 @@ namespace Slab::Graphics {
         }
     }
 
-    bool Scene3DWindow::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+    bool FScene3DWindow::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         if(key == EKeyMap::Key_TAB && state == EKeyState::Release && modKeys.Mod_Shift == Press) {
             showInterface = !showInterface;
             return true;

@@ -7,7 +7,7 @@
 namespace Slab::Graphics {
 
     FViewer3D::FViewer3D(TPointer<FGUIWindow> gui_window) : FViewer(gui_window) {
-        scene3DWindow = New<Scene3DWindow>();
+        scene3DWindow = New<FScene3DWindow>();
 
         AddWindow(scene3DWindow);
     }
@@ -19,7 +19,7 @@ namespace Slab::Graphics {
 
         FViewer::SetFunction(function);
 
-        sceneActor = New<R2toRFunctionActor>(function);
+        sceneActor = New<FR2toRFunctionActor>(function);
         scene3DWindow->addActor(sceneActor);
     }
 

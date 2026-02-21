@@ -11,14 +11,14 @@
 
 namespace Slab::Graphics {
 
-    class Scene3DWindow;
+    class FScene3DWindow;
 
-    class Actor {
+    class FActor {
         Str label = "<unnamed actor>";
         bool visible = true;
 
     public:
-        virtual void draw(const Scene3DWindow &graph3D) = 0;
+        virtual void draw(const FScene3DWindow &graph3D) = 0;
         virtual bool hasGUI();
         virtual void drawGUI();
 
@@ -29,7 +29,13 @@ namespace Slab::Graphics {
         bool isVisible() const;
     };
 
-    DefinePointers(Actor)
+    DefinePointers(FActor)
+
+    using Actor [[deprecated("Use FActor")]] = FActor;
+    using Actor_ptr [[deprecated("Use FActor_ptr")]] = FActor_ptr;
+    using Actor_constptr [[deprecated("Use FActor_constptr")]] = FActor_constptr;
+    using Actor_ref [[deprecated("Use FActor_ref")]] = FActor_ref;
+    using Actor_constref [[deprecated("Use FActor_constref")]] = FActor_constref;
 
 } // Graphics
 

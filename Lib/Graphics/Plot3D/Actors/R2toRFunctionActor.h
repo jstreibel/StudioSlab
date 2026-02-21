@@ -15,7 +15,7 @@ namespace Slab::Graphics {
 
     using namespace Math;
 
-    class R2toRFunctionActor : public Actor {
+    class FR2toRFunctionActor : public FActor {
         R2toR::FNumericFunction_constptr func;
 
         struct GridMetadata {
@@ -36,9 +36,9 @@ namespace Slab::Graphics {
         void rebuildTextureData();
 
     public:
-        explicit R2toRFunctionActor(R2toR::FNumericFunction_constptr function);
+        explicit FR2toRFunctionActor(R2toR::FNumericFunction_constptr function);
 
-        void draw(const Scene3DWindow &graph3D) override;
+        void draw(const FScene3DWindow &graph3D) override;
 
         bool hasGUI() override;
 
@@ -48,7 +48,13 @@ namespace Slab::Graphics {
         void setGridSubdivs(int n);
     };
 
-    DefinePointers(R2toRFunctionActor)
+    DefinePointers(FR2toRFunctionActor)
+
+    using R2toRFunctionActor [[deprecated("Use FR2toRFunctionActor")]] = FR2toRFunctionActor;
+    using R2toRFunctionActor_ptr [[deprecated("Use FR2toRFunctionActor_ptr")]] = FR2toRFunctionActor_ptr;
+    using R2toRFunctionActor_constptr [[deprecated("Use FR2toRFunctionActor_constptr")]] = FR2toRFunctionActor_constptr;
+    using R2toRFunctionActor_ref [[deprecated("Use FR2toRFunctionActor_ref")]] = FR2toRFunctionActor_ref;
+    using R2toRFunctionActor_constref [[deprecated("Use FR2toRFunctionActor_constref")]] = FR2toRFunctionActor_constref;
 
 } // Graphics
 

@@ -51,7 +51,7 @@ namespace Slab::Graphics {
     void GenerateXYPLane(OpenGL::FVertexBuffer &buffer, int N, int M,
                          float width, float height);
 
-    TestActor::TestActor()
+    FTestActor::FTestActor()
             : program(Core::Resources::ShadersFolder + "FieldShading.vert",
                       Core::Resources::ShadersFolder + "FieldShading.frag")
             , vertexBuffer("position:2f,texcoord:2f")
@@ -88,7 +88,7 @@ namespace Slab::Graphics {
         program.SetUniform("texelSize", Real2D(1./(DevFloat)gridM, 1./(DevFloat)gridN));
     }
 
-    void TestActor::draw(const Scene3DWindow &graph3D) {
+    void FTestActor::draw(const FScene3DWindow &graph3D) {
         texture.Bind();
 
         auto camera = graph3D.getCamera();
@@ -104,13 +104,13 @@ namespace Slab::Graphics {
         vertexBuffer.Render(GL_TRIANGLES);
     }
 
-    void TestActor::setAmbientLight(FColor color) { program.SetUniform("amb", color.array()); }
+    void FTestActor::setAmbientLight(FColor color) { program.SetUniform("amb", color.array()); }
 
-    bool TestActor::hasGUI() {
+    bool FTestActor::hasGUI() {
         return true;
     }
 
-    void TestActor::drawGUI() {
+    void FTestActor::drawGUI() {
 
         static float scale = 1.0;
         if(ImGui::SliderFloat("scale", &scale, .1f, 10.f))
