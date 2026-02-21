@@ -9,16 +9,18 @@
 
 namespace Studios::Fields::RtoRThermal {
 
-    class StatisticalBuilder  : public Builder {
+    class FStatisticalBuilder  : public FBuilder {
         RealParameter E    = RealParameter   {1.,  FParameterDescription{'E', "E0", "Initial distributed energy"}};
         IntegerParameter n = IntegerParameter{100, FParameterDescription{'n', "n_osc", "Number of initial oscillons"}};
 
     public:
-        StatisticalBuilder();
+        FStatisticalBuilder();
 
         auto GetBoundary() -> Base::BoundaryConditions_ptr override;
         static auto getDetailedDescription() -> Str;
     };
+
+    using StatisticalBuilder [[deprecated("Use FStatisticalBuilder")]] = FStatisticalBuilder;
 }
 
 

@@ -12,12 +12,12 @@ namespace Studios::Fields::RtoRThermal {
     using namespace Slab;
     using namespace Slab::Math;
 
-    MachineGunBuilder::MachineGunBuilder() : Builder("Machinegun", "Machinegun scattering") {
+    FMachineGunBuilder::FMachineGunBuilder() : FBuilder("Machinegun", "Machinegun scattering") {
         Interface->AddParameters({&v1, &n});
 
     }
 
-    auto MachineGunBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
+    auto FMachineGunBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
         RtoR::FunctionSummable initCondPhi, initCondDPhiDt;
 
         auto scaleBig = 1.0;

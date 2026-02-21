@@ -14,12 +14,12 @@ namespace Studios::Fields::RtoRThermal {
     using namespace Slab;
     using namespace Slab::Math;
 
-    RandomEnergyOverDotPhiBuilder::RandomEnergyOverDotPhiBuilder()
-            : Builder("Random dphipt", "Energy density over time-derivative of field") {
+    FRandomEnergyOverDotPhiBuilder::FRandomEnergyOverDotPhiBuilder()
+            : FBuilder("Random dphipt", "Energy density over time-derivative of field") {
         Interface->AddParameters({&E});
     }
 
-    auto RandomEnergyOverDotPhiBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
+    auto FRandomEnergyOverDotPhiBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
         auto N = KGNumericConfig->getN();
         auto h = KGNumericConfig->geth();
         auto dotPhi = newFunctionArbitrary();

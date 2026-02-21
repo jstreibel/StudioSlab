@@ -17,7 +17,7 @@
 
 namespace Studios::Fields::RtoRThermal {
 
-    Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister)
+    FBuilder::FBuilder(const Str &name, const Str &generalDescription, bool doRegister)
     : FKGRtoR_Recipe(name, generalDescription, DONT_SELF_REGISTER) {
         Interface->AddParameters({&temperature, &dissipation, &transientGuess});
 
@@ -26,7 +26,7 @@ namespace Studios::Fields::RtoRThermal {
         if(doRegister) RegisterToManager();
     }
 
-    auto Builder::buildSolver() -> TPointer<Base::LinearStepSolver> {
+    auto FBuilder::buildSolver() -> TPointer<Base::LinearStepSolver> {
         if(!(*temperature>0)) {
             Log::Info() << "Temperature is set to ZERO. Using usual non-stochastic Klein-Gordon solver." << Log::Flush;
             return KGRtoR::FKGRtoR_Recipe::buildSolver();
@@ -44,7 +44,7 @@ namespace Studios::Fields::RtoRThermal {
         return solver;
     }
 
-    Str Builder::SuggestFileName() const {
+    Str FBuilder::SuggestFileName() const {
         auto str = FNumericalRecipe::SuggestFileName();
 
         auto extra1 = Interface->ToString({"T", "k"}, " ", SHORT_NAME);

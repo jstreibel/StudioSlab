@@ -18,12 +18,12 @@ namespace Studios::Fields::RtoRThermal {
     using namespace Slab;
     using namespace Slab::Math;
 
-    StatisticalBuilder::StatisticalBuilder()
-            : Builder("Statistical", "Energy and density of oscillons statistical input") {
+    FStatisticalBuilder::FStatisticalBuilder()
+            : FBuilder("Statistical", "Energy and density of oscillons statistical input") {
         Interface->AddParameters({&E, &n});
     }
 
-    auto StatisticalBuilder::getDetailedDescription() -> Str {
+    auto FStatisticalBuilder::getDetailedDescription() -> Str {
         return Str("Fractality in the signum-Gordon field theory."
                    ""
                    "Oscillons are a very degenerate solution to the 1+1 dimensional signum-Gordon equation."
@@ -34,7 +34,7 @@ namespace Studios::Fields::RtoRThermal {
                    "on a bath of small oscillons (some sort of thermal equilibrium) could find subsidy to remain stable.");
     }
 
-    auto StatisticalBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
+    auto FStatisticalBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
         auto L = KGNumericConfig->GetL();
         auto xLeft = KGNumericConfig->Get_xMin();
 

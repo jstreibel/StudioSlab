@@ -8,14 +8,16 @@
 #include "../ThermalBuilder.h"
 
 namespace Studios::Fields::RtoRThermal {
-    class RandomEnergyOverDotPhiBuilder : public Builder {
+    class FRandomEnergyOverDotPhiBuilder : public FBuilder {
         RealParameter E = RealParameter{1. / 24, FParameterDescription{'E', "Total energy over space."}};
 
     public:
-        RandomEnergyOverDotPhiBuilder();
+        FRandomEnergyOverDotPhiBuilder();
 
         auto GetBoundary() -> Base::BoundaryConditions_ptr override;
     };
+
+    using RandomEnergyOverDotPhiBuilder [[deprecated("Use FRandomEnergyOverDotPhiBuilder")]] = FRandomEnergyOverDotPhiBuilder;
 
 }
 
