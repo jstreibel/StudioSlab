@@ -18,15 +18,15 @@ namespace Slab::Graphics {
     class FMainViewer : public FWindowRow {
         TPointer<FGUIWindow> gui_window;
 
-        Vector<TPointer<Viewer>> viewers;
-        TPointer<Viewer> current_viewer;
+        Vector<TPointer<FViewer>> viewers;
+        TPointer<FViewer> current_viewer;
 
         TPointer<Math::R2toR::FNumericFunction> base_function;
 
     protected:
         virtual bool setCurrentViewer(Index i);
 
-        auto getCurrentViewer() -> TPointer<Viewer>;
+        auto getCurrentViewer() -> TPointer<FViewer>;
 
     public:
         explicit FMainViewer(TPointer<Math::R2toR::FNumericFunction> baseFunction=nullptr);
@@ -37,11 +37,11 @@ namespace Slab::Graphics {
 
         void setFunction(TPointer<Math::R2toR::FNumericFunction>);
 
-        auto getCurrentViewer() const -> TPointer<const Viewer>;
+        auto getCurrentViewer() const -> TPointer<const FViewer>;
 
         auto getGUIWindow() -> TPointer<FGUIWindow>;
 
-        void addViewer(const TPointer<Viewer>&);
+        void addViewer(const TPointer<FViewer>&);
     };
 
     using MainViewer [[deprecated("Use FMainViewer")]] = FMainViewer;

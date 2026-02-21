@@ -47,7 +47,7 @@ void setup_viewer(const Slab::TPointer<Slab::Math::R2toR::NumericFunction_CPU>& 
     arts->setDataMutable(true);
 
     auto viewer = Slab::New<Slab::Graphics::FMainViewer>();
-    viewer->addViewer(Slab::New<Slab::Graphics::FourierViewer>(viewer->getGUIWindow()));
+    viewer->addViewer(Slab::New<Slab::Graphics::FFourierViewer>(viewer->getGUIWindow()));
     viewer->setFunction(field);
 
     auto wm = Slab::New<Slab::Graphics::FSlabWindowManager>();

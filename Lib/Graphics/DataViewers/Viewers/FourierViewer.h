@@ -18,7 +18,7 @@
 
 namespace Slab::Graphics{
 
-    class FourierViewer : public Viewer {
+    class FFourierViewer : public FViewer {
         using Function = TPointer<Math::R2toR::FNumericFunction>;
 
         R2toRFunctionArtist_ptr function_artist;
@@ -83,12 +83,14 @@ namespace Slab::Graphics{
 
         Str GetName() const override;
 
-        explicit FourierViewer(const TPointer<FGUIWindow>&);
+        explicit FFourierViewer(const TPointer<FGUIWindow>&);
 
         void SetFunction(Function func) override;
 
         void ImmediateDraw(const FPlatformWindow&) override;
     };
+
+    using FourierViewer [[deprecated("Use FFourierViewer")]] = FFourierViewer;
 
 } // Studios::Fields
 

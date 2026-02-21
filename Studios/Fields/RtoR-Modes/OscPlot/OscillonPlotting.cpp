@@ -46,7 +46,7 @@ namespace Studios {
         auto time_ft_space_avg_viewer = Slab::New<Slab::Models::KGRtoR::TimeFTViewer>(getGUIWindow());
         addKGViewer(time_ft_space_avg_viewer);
 
-        auto fourier_viewer = Slab::New<Slab::Graphics::FourierViewer>(getGUIWindow());
+        auto fourier_viewer = Slab::New<Slab::Graphics::FFourierViewer>(getGUIWindow());
         addViewer(fourier_viewer);
 
         histograms_viewer = Slab::New<Slab::Models::KGRtoR::HistogramsViewer_KG>(getGUIWindow());

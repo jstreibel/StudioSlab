@@ -59,7 +59,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void HistoryViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
-        Viewer::SetFunction(function);
+        FViewer::SetFunction(function);
 
         dt = function->getDomain().getLy() / (DevFloat)function->getM();
 

@@ -15,7 +15,7 @@
 
 namespace Slab::Graphics {
 
-    class HistoryViewer : public Viewer {
+    class FHistoryViewer : public FViewer {
         TPointer<FPlot2DWindow> history_window = nullptr;
         TPointer<FPlot2DWindow> xft_history_window = nullptr;
 
@@ -36,7 +36,7 @@ namespace Slab::Graphics {
 
         void computeTransform();
     public:
-        explicit HistoryViewer(const TPointer<FGUIWindow> &guiWindow, const TPointer<R2toR::FNumericFunction> &function = nullptr);
+        explicit FHistoryViewer(const TPointer<FGUIWindow> &guiWindow, const TPointer<R2toR::FNumericFunction> &function = nullptr);
 
         Str GetName() const override;
 
@@ -46,6 +46,8 @@ namespace Slab::Graphics {
 
         void NotifyBecameVisible() override;
     };
+
+    using HistoryViewer [[deprecated("Use FHistoryViewer")]] = FHistoryViewer;
 
 } // Slab::Graphics
 

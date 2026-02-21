@@ -107,7 +107,7 @@ namespace Slab::Models::KGRtoR {
         t_min = domain.yMin;
         t_delta = domain.yMax-t_min;
 
-        Viewer::SetFunction(function);
+        FViewer::SetFunction(function);
     }
 
     void HistogramsViewer_KG::SetFunctionDerivative(FuncPointer pointer) {

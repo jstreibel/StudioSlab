@@ -11,16 +11,18 @@
 
 namespace Slab::Graphics {
 
-    class Viewer3D : public Viewer {
+    class FViewer3D : public FViewer {
         TPointer<Scene3DWindow> scene3DWindow;
         TPointer<R2toRFunctionActor> sceneActor;
     public:
-        Viewer3D(TPointer<FGUIWindow>);
+        FViewer3D(TPointer<FGUIWindow>);
 
         void SetFunction(TPointer<Math::R2toR::FNumericFunction> function) override;
 
         Str GetName() const override;
     };
+
+    using Viewer3D [[deprecated("Use FViewer3D")]] = FViewer3D;
 
 } // Graphics::Slab
 

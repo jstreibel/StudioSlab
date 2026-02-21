@@ -15,7 +15,7 @@ namespace Slab::Models::KGRtoR {
     using FuncPointer = TPointer<Math::R2toR::FNumericFunction>;
     using ConstFuncPointer = TPointer<const Math::R2toR::FNumericFunction>;
 
-    class KGViewer : public Graphics::Viewer {
+    class KGViewer : public Graphics::FViewer {
 
         FuncPointer ddt_base_function;
 

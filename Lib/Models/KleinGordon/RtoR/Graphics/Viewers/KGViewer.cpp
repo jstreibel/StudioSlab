@@ -11,7 +11,7 @@ namespace Slab::Models::KGRtoR {
     KGViewer::KGViewer(const TPointer<Graphics::FGUIWindow> &gui_window,
                        const TPointer<Math::R2toR::FNumericFunction> &func,
                        const TPointer<Math::R2toR::FNumericFunction> &ddt_func)
-    : Viewer(gui_window, func), ddt_base_function(ddt_func) {}
+    : FViewer(gui_window, func), ddt_base_function(ddt_func) {}
 
     void KGViewer::SetFunctionDerivative(FuncPointer derivs) {
         ddt_base_function = std::move(derivs);

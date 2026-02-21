@@ -48,7 +48,7 @@ namespace Slab::Models {
     }
 
     void KGRtoR::EnergyViewer_KG::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
-        Viewer::SetFunction(function);
+        FViewer::SetFunction(function);
 
         Func_Artist->setFunction(getFunction());
         // f_artist->setColorMap(Graphics::ColorMaps["BrBG"]->inverse().clone());
@@ -169,7 +169,7 @@ namespace Slab::Models {
     }
 
     void KGRtoR::EnergyViewer_KG::NotifyBecameVisible() {
-        Viewer::NotifyBecameVisible();
+        FViewer::NotifyBecameVisible();
 
         if(areFunctionsConsistent()) UpdateEnergy();
     }

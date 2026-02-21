@@ -14,8 +14,8 @@
 
 namespace Slab::Graphics {
 
-    ModesHistoryViewer::ModesHistoryViewer(const TPointer<FGUIWindow> &guiWindow)
-    : Viewer(guiWindow, nullptr)
+    FModesHistoryViewer::FModesHistoryViewer(const TPointer<FGUIWindow> &guiWindow)
+    : FViewer(guiWindow, nullptr)
     , curves_artists(0)
     {
         xft_history_window = New<FPlot2DWindow>("Space DFT");
@@ -32,7 +32,7 @@ namespace Slab::Graphics {
         AddWindow(modes_window);
     }
 
-    void ModesHistoryViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+    void FModesHistoryViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         if(getFunction() == nullptr) return;
 
         gui_window->AddExternalDraw([this]() {
@@ -48,7 +48,7 @@ namespace Slab::Graphics {
         FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void ModesHistoryViewer::setupModes() {
+    void FModesHistoryViewer::setupModes() {
         xft_history_window->RemoveArtists(curves_artists);
         curves_artists.clear();
         modes_artist->clearSections();
@@ -81,15 +81,15 @@ namespace Slab::Graphics {
         modes_window->ReviewGraphRanges();
     }
 
-    void ModesHistoryViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
-        Viewer::SetFunction(function);
+    void FModesHistoryViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
+        FViewer::SetFunction(function);
 
         xFourierTransform = nullptr;
 
         if(this->isVisible()) computeTransform();
     }
 
-    void ModesHistoryViewer::computeTransform() {
+    void FModesHistoryViewer::computeTransform() {
         auto func = getFunction();
         if(func == nullptr) return;
 
@@ -118,13 +118,13 @@ namespace Slab::Graphics {
         setupModes();
     }
 
-    void ModesHistoryViewer::NotifyBecameVisible() {
-        Viewer::NotifyBecameVisible();
+    void FModesHistoryViewer::NotifyBecameVisible() {
+        FViewer::NotifyBecameVisible();
 
         if(xFourierTransform == nullptr) computeTransform();
     }
 
-    Str ModesHistoryViewer::GetName() const {
+    Str FModesHistoryViewer::GetName() const {
         return "Modes history viewer";
     }
 

@@ -14,12 +14,12 @@
 
 namespace Slab::Graphics {
 
-    Str HistoryViewer::GetName() const {
+    Str FHistoryViewer::GetName() const {
         return "History viewer";
     }
 
-    HistoryViewer::HistoryViewer(const TPointer<FGUIWindow> &gui_window, const TPointer<R2toR::FNumericFunction> &function)
-    : Viewer(gui_window, function)
+    FHistoryViewer::FHistoryViewer(const TPointer<FGUIWindow> &gui_window, const TPointer<R2toR::FNumericFunction> &function)
+    : FViewer(gui_window, function)
     {
         history_window = New<FPlot2DWindow>("Function");
         history_window->GetAxisArtist().setVerticalAxisLabel("");
@@ -46,8 +46,8 @@ namespace Slab::Graphics {
         xft_history_window->TieRegion_yMaxMin(*history_window);
     }
 
-    void HistoryViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
-        Viewer::SetFunction(function);
+    void FHistoryViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
+        FViewer::SetFunction(function);
 
         auto funky = getFunction();
         function_artist->setFunction(funky);
@@ -77,13 +77,13 @@ namespace Slab::Graphics {
         if(this->isVisible()) computeTransform();
     }
 
-    void HistoryViewer::NotifyBecameVisible() {
-        Viewer::NotifyBecameVisible();
+    void FHistoryViewer::NotifyBecameVisible() {
+        FViewer::NotifyBecameVisible();
 
         if(xFourierTransform == nullptr) computeTransform();
     }
 
-    void HistoryViewer::computeTransform() {
+    void FHistoryViewer::computeTransform() {
         auto func = getFunction();
         if(func == nullptr) return;
 
@@ -113,7 +113,7 @@ namespace Slab::Graphics {
         dft_section_artist->setSamples(func->getN()*oversampling);
     }
 
-    void HistoryViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+    void FHistoryViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         if(getFunction()== nullptr) return;
 
         gui_window->AddExternalDraw([this]() {

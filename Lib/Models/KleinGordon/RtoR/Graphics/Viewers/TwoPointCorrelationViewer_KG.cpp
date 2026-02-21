@@ -41,7 +41,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void TwoPointCorrelationViewer_KG::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
-        Viewer::SetFunction(function);
+        FViewer::SetFunction(function);
 
         {
             fix t_min = (float)function->getDomain().yMin;
@@ -200,7 +200,7 @@ namespace Slab::Models::KGRtoR {
         // Fourier transform *********************************************************************************
         DevFloat t_0 = (DevFloat)t0;
         DevFloat t_f = t_0 + (DevFloat)Δt;
-        auto toFT = Graphics::FourierViewer::FilterSpace(function, t_0, t_f);
+        auto toFT = Graphics::FFourierViewer::FilterSpace(function, t_0, t_f);
         auto dft2DFunction = Math::R2toR::R2toRDFT::DFTReal(*toFT);
 
         // Power spectrum ************************************************************************************

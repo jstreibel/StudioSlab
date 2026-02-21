@@ -41,7 +41,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void TimeFTViewer::compute() {
-        // auto filtered = Graphics::FourierViewer::FilterSpace(getFunction(), t_min, t_max);
+        // auto filtered = Graphics::FFourierViewer::FilterSpace(getFunction(), t_min, t_max);
 
         auto function = getFunction();
 
@@ -174,7 +174,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void TimeFTViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
-        Viewer::SetFunction(function);
+        FViewer::SetFunction(function);
 
         t0 = (float)getFunction()->getDomain().yMin;
         Δt = (float)getFunction()->getDomain().getLy();
@@ -187,7 +187,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void TimeFTViewer::NotifyBecameVisible() {
-        Viewer::NotifyBecameVisible();
+        FViewer::NotifyBecameVisible();
 
         if(getFunction() != nullptr) compute();
     }

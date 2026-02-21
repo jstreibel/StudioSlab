@@ -28,7 +28,7 @@ namespace Slab::Graphics {
         arrangeWindows();
     }
 
-    void FMainViewer::addViewer(const TPointer<Viewer>& viewer) {
+    void FMainViewer::addViewer(const TPointer<FViewer>& viewer) {
         viewers.emplace_back(viewer);
         if(base_function!= nullptr) viewer->SetFunction(base_function);
 
@@ -118,11 +118,11 @@ namespace Slab::Graphics {
         return gui_window;
     }
 
-    auto FMainViewer::getCurrentViewer() const -> TPointer<const Viewer> {
+    auto FMainViewer::getCurrentViewer() const -> TPointer<const FViewer> {
         return current_viewer;
     }
 
-    auto FMainViewer::getCurrentViewer() -> TPointer<Viewer> {
+    auto FMainViewer::getCurrentViewer() -> TPointer<FViewer> {
         return current_viewer;
     }
 
