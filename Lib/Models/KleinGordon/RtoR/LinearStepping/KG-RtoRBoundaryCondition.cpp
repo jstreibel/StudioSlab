@@ -10,7 +10,7 @@
 namespace Slab::Models::KGRtoR {
 
 
-    FBoundaryCondition::FBoundaryCondition(const EquationState_constptr &prototype,
+    FBoundaryCondition::FBoundaryCondition(const FEquationState_constptr &prototype,
                                            RtoR::Function_ptr initialPhiCondition,
                                            RtoR::Function_ptr initialdPhiDtCondition,
                                            RtoR::Function_ptr leftPhiBoundaryCondition,
@@ -27,7 +27,7 @@ namespace Slab::Models::KGRtoR {
     { }
 
 
-    void FBoundaryCondition::ApplyKG(EquationState &kgState, DevFloat t) const {
+    void FBoundaryCondition::ApplyKG(FEquationState &kgState, DevFloat t) const {
         if (t == 0.0) {
             kgState.SetPhi(*initialPhiCondition);
             kgState.SetDPhiDt(*initialdPhiDtCondition);
@@ -43,7 +43,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void FBoundaryCondition::Apply(Base::EquationState &state, const DevFloat t) const {
-        auto &KGState = dynamic_cast<EquationState&>(state);
+        auto &KGState = dynamic_cast<FEquationState&>(state);
 
         this->ApplyKG(KGState, t);
 

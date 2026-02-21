@@ -63,7 +63,7 @@ namespace Slab::Models::KGRtoR {
         explicit Filter1D(DimensionMetaData dim) : dim(std::move(dim)) {}
 
         auto operator()(const FOutputPacket &outputInfo) -> DiscreteSpacePair override {
-            auto nakedData = outputInfo.GetNakedStateData<KGRtoR::EquationState>();
+            auto nakedData = outputInfo.GetNakedStateData<KGRtoR::FEquationState>();
 
             auto N_new = dim.getN(0);
 
@@ -286,9 +286,9 @@ namespace Slab::Models::KGRtoR {
         throw Exception("Error while instantiating Field: device not recognized.");
     }
 
-    EquationState_ptr FKGRtoR_Recipe::NewFieldState() const {
-        return New<EquationState>(this->newFunctionArbitrary(),
-                                       this->newFunctionArbitrary());
+    FEquationState_ptr FKGRtoR_Recipe::NewFieldState() const {
+        return New<FEquationState>(this->newFunctionArbitrary(),
+                                   this->newFunctionArbitrary());
     }
 
     TPointer<Base::LinearStepSolver> FKGRtoR_Recipe::buildSolver() {
@@ -299,7 +299,7 @@ namespace Slab::Models::KGRtoR {
 #if USE_CUDA == true
         /*
         if(simulationConfig.dev == device::GPU) {
-            return New<RtoR::SystemGordonGPU>(simulationConfig.numericConfig, *dphi, *potential);
+            return New<RtoR::FSystemGordonGPU>(simulationConfig.numericConfig, *dphi, *potential);
         }
          */
 #endif
@@ -314,7 +314,7 @@ namespace Slab::Models::KGRtoR {
         return new Monitor(KGNumericConfig, *static_cast<FKGEnergy *>(getHamiltonian()));
     }
 
-    auto FKGRtoR_Recipe::getInitialState() const -> KGRtoR::EquationState_ptr {
+    auto FKGRtoR_Recipe::getInitialState() const -> KGRtoR::FEquationState_ptr {
         auto u_0 = NewFieldState();
 
         u_0->SetPhi(RtoR::NullFunction());

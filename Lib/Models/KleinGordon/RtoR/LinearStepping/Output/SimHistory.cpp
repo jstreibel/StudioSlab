@@ -47,7 +47,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     auto FSimHistory::Transfer(const FOutputPacket &Packet, FValarrayWrapper<DevFloat> &DataOut) -> void {
-        IN stateIn = *Packet.GetNakedStateData<EquationState>();
+        IN stateIn = *Packet.GetNakedStateData<FEquationState>();
 
         IN f_in = dynamic_cast<RtoR::NumericFunction&>(stateIn.getPhi());
         IN in = f_in.getSpace().getHostData(true);
@@ -67,7 +67,7 @@ namespace Slab::Models::KGRtoR {
         if (Packet.GetSteps() > MaxSteps)
             return;
 
-        IN StateIn = Packet.GetNakedStateData<KGRtoR::EquationState>();
+        IN StateIn = Packet.GetNakedStateData<KGRtoR::FEquationState>();
 
 
         assert(&StateIn != nullptr);

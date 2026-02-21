@@ -25,10 +25,10 @@ namespace Slab::Models::KGRtoR {
 
     protected:
 
-        virtual void ApplyKG(EquationState &kgState, DevFloat t) const;
+        virtual void ApplyKG(FEquationState &kgState, DevFloat t) const;
 
     public:
-        FBoundaryCondition(const KGRtoR::EquationState_constptr &prototype,
+        FBoundaryCondition(const KGRtoR::FEquationState_constptr &prototype,
                            RtoR::Function_ptr initialPhiCondition,
                            RtoR::Function_ptr initialdPhiDtCondition,
                            RtoR::Function_ptr leftPhiBoundaryCondition = nullptr,

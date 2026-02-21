@@ -129,7 +129,7 @@ namespace Slab::Models::KGRtoR {
         if (not isSetup && LastPacket.hasValidData()) {
 
             auto &phi = dynamic_cast<RtoR::NumericFunction&>
-                    (LastPacket.GetNakedStateData<EquationState>()->getPhi());
+                    (LastPacket.GetNakedStateData<FEquationState>()->getPhi());
 
             if (phi.getLaplacianType() == RtoR::NumericFunction::Standard1D_PeriodicBorder)
                 FullHistoryArtist->set_xPeriodicOn();
@@ -165,7 +165,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void Monitor::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
-        const EquationState &fieldState = *LastPacket.GetNakedStateData<EquationState>();
+        const FEquationState &fieldState = *LastPacket.GetNakedStateData<FEquationState>();
 
         auto &phi = dynamic_cast<RtoR::NumericFunction&>(fieldState.getPhi());
         auto &ddtPhi = dynamic_cast<RtoR::NumericFunction&>(fieldState.getDPhiDt());

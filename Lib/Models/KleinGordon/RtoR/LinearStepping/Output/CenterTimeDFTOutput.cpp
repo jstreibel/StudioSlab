@@ -33,7 +33,7 @@ namespace Slab::Models::KGRtoR {
         fix curr_step = packet.GetSteps();
         if(curr_step < step_start || curr_step > step_end) return;
 
-        auto funky = packet.GetNakedStateData<KGRtoR::EquationState>();
+        auto funky = packet.GetNakedStateData<KGRtoR::FEquationState>();
 
         IN phi = funky->getPhi();
         auto i=0;

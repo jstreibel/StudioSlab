@@ -27,7 +27,7 @@ namespace Slab::Models::KGRtoR {
     auto FSnapshotOutput::filterData(const FOutputPacket &packet) -> RtoR::NumericFunction_CPU {
         NOT_IMPLEMENTED
         /*
-        auto &phi = packet.GetNakedStateData<EquationState>()->getPhi();
+        auto &phi = packet.GetNakedStateData<FEquationState>()->getPhi();
 
         return RtoR::NumericFunction_CPU(phi);
          */
