@@ -57,7 +57,7 @@ namespace Slab::Graphics {
                     }
 
                     if (ImGui::BeginMenu("Datasets")) {
-                        auto &mathModule = dynamic_cast<Math::MathModule &>(Slab::GetModule("Math"));
+                        auto &mathModule = dynamic_cast<Math::FMathModule &>(Slab::GetModule("Math"));
                         auto entries = mathModule.GetDataEntries();
 
                         if (entries.empty()) {

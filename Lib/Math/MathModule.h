@@ -9,15 +9,17 @@
 #include "Math/Data/DataManager.h"
 
 namespace Slab::Math {
-    class MathModule : public Core::FSlabModule {
+    class FMathModule : public Core::FSlabModule {
     public:
-        MathModule();
+        FMathModule();
 
         void RegisterData(const FDataName&, TPointer<Data>);
         FDataWrap GetData(const FDataName&);
         Vector<FDataRegistry::EntryDescription> GetDataEntries();
 
     };
+
+    using MathModule [[deprecated("Use FMathModule")]] = FMathModule;
 } // Slab::Math
 
 #endif //STUDIOSLAB_MATHMODULE_H
