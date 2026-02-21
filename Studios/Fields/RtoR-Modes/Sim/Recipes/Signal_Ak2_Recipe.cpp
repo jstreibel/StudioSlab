@@ -19,7 +19,7 @@
 
 namespace Modes {
 
-    Signal_Ak2_Recipe::Signal_Ak2_Recipe(bool doRegister)
+    FSignalAk2Recipe::FSignalAk2Recipe(bool doRegister)
     : FKGRtoR_Recipe("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
         Interface->AddParameters(TList<FParameter*>{&A, &omega});
@@ -27,13 +27,13 @@ namespace Modes {
         if(doRegister) RegisterCLInterface(Interface);
     }
 
-    Base::BoundaryConditions_ptr Signal_Ak2_Recipe::GetBoundary() {
+    Base::BoundaryConditions_ptr FSignalAk2Recipe::GetBoundary() {
         auto prototype = NewFieldState();
 
-        return New <SignalBC> (prototype, *A,  *omega);
+        return New <FSignalBC> (prototype, *A,  *omega);
     }
 
-    void Signal_Ak2_Recipe::NotifyInterfaceSetupIsFinished() {
+    void FSignalAk2Recipe::NotifyInterfaceSetupIsFinished() {
         FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
         const auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
@@ -53,19 +53,19 @@ namespace Modes {
         Log::Info() << Log::BGWhite+Log::FGBlack << "  Technical sine resolution is " << res << " steps/cycle (" << int(res*a) << " sites/linear period)  " << Log::ResetFormatting << Log::Flush;
     }
 
-    void *Signal_Ak2_Recipe::BuildOpenGLOutput() {
+    void *FSignalAk2Recipe::BuildOpenGLOutput() {
         auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 
 
         // fix amp = (*A) * 1.1;
-        auto monitor = new Modes::Monitor(config, *static_cast<KGRtoR::FKGEnergy *>(getHamiltonian()), "Modes monitor");
+        auto monitor = new Modes::FMonitor(config, *static_cast<KGRtoR::FKGEnergy *>(getHamiltonian()), "Modes monitor");
 
         monitor->setInputModes({*A}, {*omega}, {*omega});
 
         return monitor;
     }
 
-    Str Signal_Ak2_Recipe::SuggestFileName() const {
+    Str FSignalAk2Recipe::SuggestFileName() const {
         const auto SEPARATOR = " ";
 
         const StrVector params = {A.GetCommandLineArgumentName(false), omega.GetCommandLineArgumentName(false)};

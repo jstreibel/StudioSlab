@@ -29,12 +29,12 @@ namespace Modes {
 
 
 
-    SignalBC::SignalBC(const KGRtoR::FEquationState_ptr &prototype, const DevFloat A, const DevFloat ω)
+    FSignalBC::FSignalBC(const KGRtoR::FEquationState_ptr &prototype, const DevFloat A, const DevFloat ω)
     : FBoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ())
     , A(A)
     , ω(ω) {}
 
-    void SignalBC::ApplyKG(KGRtoR::FEquationState &kgState, const DevFloat t) const {
+    void FSignalBC::ApplyKG(KGRtoR::FEquationState &kgState, const DevFloat t) const {
         if(t==0.0) FBoundaryCondition::ApplyKG(kgState, t);
 
         OUT ϕ   = kgState.getPhi();
@@ -44,11 +44,11 @@ namespace Modes {
         𝜕ₜϕ.getSpace().getHostData()[0] = A*ω*cos(ω*t);
     }
 
-    DrivenBC::DrivenBC(const KGRtoR::FEquationState_ptr &prototype, TPointer<SquareWave> sqrWave)
+    FDrivenBC::FDrivenBC(const KGRtoR::FEquationState_ptr &prototype, TPointer<FSquareWave> sqrWave)
     : FBoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ()),
       sqrWave(std::move(sqrWave)) { }
 
-    void DrivenBC::ApplyKG(KGRtoR::FEquationState &toFunction, DevFloat t) const {
+    void FDrivenBC::ApplyKG(KGRtoR::FEquationState &toFunction, DevFloat t) const {
         if(sqrWave != nullptr) sqrWave->set_t(t);
 
         FBoundaryCondition::Apply(toFunction, t);

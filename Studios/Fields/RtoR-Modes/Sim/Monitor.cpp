@@ -16,13 +16,13 @@
 #define CUSTOM_TICKS true
 
 namespace Modes {
-    Monitor::Monitor(const TPointer<KGNumericConfig> &params, Slab::Models::KGRtoR::FKGEnergy &hamiltonian,
+    FMonitor::FMonitor(const TPointer<KGNumericConfig> &params, Slab::Models::KGRtoR::FKGEnergy &hamiltonian,
                      const Str &name)
     : Slab::Models::KGRtoR::Monitor(params, hamiltonian, name)
     {
     }
 
-    void Monitor::setInputModes(FRealVector A, const FRealVector& k, FRealVector Ω) {
+    void FMonitor::setInputModes(FRealVector A, const FRealVector& k, FRealVector Ω) {
         assert(A.size() == Ω.size());
 
         fix N = A.size();

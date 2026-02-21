@@ -5,12 +5,12 @@
 #include "SquareWave.h"
 
 namespace Modes {
-    SquareWave::SquareWave(DevFloat wavelength)
+    FSquareWave::FSquareWave(DevFloat wavelength)
     : FunctionT(nullptr, false)
     , len(wavelength)
     , k(2*M_PI/len){}
 
-    DevFloat SquareWave::operator()(DevFloat x) const {
+    DevFloat FSquareWave::operator()(DevFloat x) const {
         auto parity = int(floorf64(2*(x+t)*len));
         return - (2*(parity%2) - 1);
 
@@ -20,15 +20,15 @@ namespace Modes {
         // return 4*M_1_PI*val;
     }
 
-    Str SquareWave::Symbol() const {
+    Str FSquareWave::Symbol() const {
         return "Sqₜ(x)";
     }
 
-    Str SquareWave::generalName() const {
+    Str FSquareWave::generalName() const {
         return "Square wave";
     }
 
-    void SquareWave::set_t(DevFloat t) {
+    void FSquareWave::set_t(DevFloat t) {
         this->t = t;
     }
 

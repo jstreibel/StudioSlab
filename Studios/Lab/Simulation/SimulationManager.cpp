@@ -108,7 +108,7 @@ void FSimulationManager::CreateBlueprint(const Slab::Graphics::FPlatformWindow& 
     AddResponder(BlueprintRenderer);
 
     Blueprint->SetupDemo();
-    const auto Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
+    const auto Recipe = Slab::New<Modes::FNumericalRecipePlaneWaves>();
 
     FBlueprintNode* Node;
     Node = Blueprint->SpawnNodeFromInterface(*Recipe->GetInterface());
@@ -185,10 +185,10 @@ void FSimulationManager::AddSimulationMenu()
                 {
                     Slab::TPointer<Slab::Models::KGRecipe> Recipe;
 
-                    if      (ItemString == "Plane Waves")                 Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
-                    else if (ItemString == "Monochromatic sine wave##1")  Recipe = Slab::New<Modes::NumericalRecipe_wkA>();
-                    else if (ItemString == "Monochromatic sine wave##2")  Recipe = Slab::New<Modes::NumericalRecipe_Ak2>();
-                    else if (ItemString == "Monochromatic signal")        Recipe = Slab::New<Modes::Signal_Ak2_Recipe>();
+                    if      (ItemString == "Plane Waves")                 Recipe = Slab::New<Modes::FNumericalRecipePlaneWaves>();
+                    else if (ItemString == "Monochromatic sine wave##1")  Recipe = Slab::New<Modes::FNumericalRecipeWkA>();
+                    else if (ItemString == "Monochromatic sine wave##2")  Recipe = Slab::New<Modes::FNumericalRecipeAk2>();
+                    else if (ItemString == "Monochromatic signal")        Recipe = Slab::New<Modes::FSignalAk2Recipe>();
                     else if (ItemString == "Symmetric Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::InputSymmetricOscillon>();
                     else if (ItemString == "Perturbed Simple Oscillon")   Recipe = Slab::New<Studios::PureSG::InputPerturbations>();
                     else if (ItemString == "General Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::InputGeneralOscillons>();

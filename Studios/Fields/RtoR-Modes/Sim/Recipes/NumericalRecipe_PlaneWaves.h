@@ -11,20 +11,22 @@
 
 namespace Modes {
 
-    class FNumericalRecipe_PlaneWaves final : public Models::KGRtoR::FKGRtoR_Recipe
+    class FNumericalRecipePlaneWaves final : public Models::KGRtoR::FKGRtoR_Recipe
     {
 
         RealParameter    Q               = RealParameter   (1.0,  FParameterDescription{'Q',        "Scale-invariant Q=Ak²=Aω²-4/π"});
         IntegerParameter harmonic        = IntegerParameter(10,   FParameterDescription{"harmonic", "Harmonic number 'n'. Wavenumber is computed as k=2πn/L. "});
-        TPointer<SquareWave> p_SquareWave;
+        TPointer<FSquareWave> p_SquareWave;
 
     public:
-        FNumericalRecipe_PlaneWaves();
+        FNumericalRecipePlaneWaves();
 
         auto GetBoundary() -> Base::BoundaryConditions_ptr override;
 
         [[nodiscard]] auto SuggestFileName() const -> Str override;
     };
+
+    using FNumericalRecipe_PlaneWaves [[deprecated("Use FNumericalRecipePlaneWaves")]] = FNumericalRecipePlaneWaves;
 
 } // Modes
 

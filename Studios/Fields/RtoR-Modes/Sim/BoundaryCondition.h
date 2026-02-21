@@ -24,27 +24,29 @@ namespace Modes {
     };
 
 
-    class SignalBC final : public KGRtoR::FBoundaryCondition {
+    class FSignalBC final : public KGRtoR::FBoundaryCondition {
     protected:
         void ApplyKG(KGRtoR::FEquationState &, DevFloat t) const override;
 
     public:
         DevFloat A, ω;
 
-        SignalBC(const KGRtoR::FEquationState_ptr &prototype, DevFloat A, DevFloat ω);
+        FSignalBC(const KGRtoR::FEquationState_ptr &prototype, DevFloat A, DevFloat ω);
     };
 
 
-    class DrivenBC final : public KGRtoR::FBoundaryCondition {
-        Slab::TPointer<Modes::SquareWave> sqrWave;
+    class FDrivenBC final : public KGRtoR::FBoundaryCondition {
+        Slab::TPointer<Modes::FSquareWave> sqrWave;
 
     protected:
         void ApplyKG(KGRtoR::FEquationState &, DevFloat t) const override;
 
     public:
-        DrivenBC(const KGRtoR::FEquationState_ptr &prototype, Slab::TPointer<Modes::SquareWave> sqrWave);
+        FDrivenBC(const KGRtoR::FEquationState_ptr &prototype, Slab::TPointer<Modes::FSquareWave> sqrWave);
     };
 
+    using SignalBC [[deprecated("Use FSignalBC")]] = FSignalBC;
+    using DrivenBC [[deprecated("Use FDrivenBC")]] = FDrivenBC;
 
 } // Modes
 

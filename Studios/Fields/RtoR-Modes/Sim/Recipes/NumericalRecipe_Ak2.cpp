@@ -21,7 +21,7 @@ namespace Modes {
 
     // using namespace Slab::Models;
 
-    NumericalRecipe_Ak2::NumericalRecipe_Ak2(bool doRegister)
+    FNumericalRecipeAk2::FNumericalRecipeAk2(bool doRegister)
     : KGRtoR::FKGRtoR_Recipe("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
         Interface->AddParameters({&BCSelection, &Ak2, &wavelengths, &driving_force});
@@ -29,7 +29,7 @@ namespace Modes {
         if(doRegister) RegisterCLInterface(Interface);
     }
 
-    Math::Base::BoundaryConditions_ptr NumericalRecipe_Ak2::GetBoundary() {
+    Math::Base::BoundaryConditions_ptr FNumericalRecipeAk2::GetBoundary() {
         auto prototype = KGRtoR::FKGRtoR_Recipe::NewFieldState();
 
         fix L = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig())->GetL();
@@ -40,7 +40,7 @@ namespace Modes {
         fix m2 = *mass < 0 ? 4*k*k / (M_PI*ι) : *mass**mass;
         fix ω = sqrt(k*k + m2);
 
-        if(*BCSelection == 0) return New <Modes::SignalBC> (prototype, A,  ω);
+        if(*BCSelection == 0) return New <Modes::FSignalBC> (prototype, A,  ω);
         if(*BCSelection == 1) {
             fix A2 = A * 0.0;
 
@@ -57,13 +57,13 @@ namespace Modes {
         if(*BCSelection == 2){
             if(GetNonHomogenousTerm() == nullptr) GetNonHomogenousTerm();
 
-            return New <Modes::DrivenBC> (prototype, squareWave);
+            return New <Modes::FDrivenBC> (prototype, squareWave);
         }
 
         throw Exception(Str("Unknown initial condition ") + ToStr(*BCSelection));
     }
 
-    void NumericalRecipe_Ak2::NotifyInterfaceSetupIsFinished() {
+    void FNumericalRecipeAk2::NotifyInterfaceSetupIsFinished() {
         FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
         auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
@@ -103,12 +103,12 @@ namespace Modes {
         Log::Info() << Log::BGWhite+Log::FGBlack << "  Technical sine resolution is " << res << " steps/cycle (" << int(res*a) << " sites/linear period)  " << Log::ResetFormatting << Log::Flush;
     }
 
-    void *NumericalRecipe_Ak2::BuildOpenGLOutput() {
+    void *FNumericalRecipeAk2::BuildOpenGLOutput() {
         auto config = DynamicPointerCast<FKGNumericConfig>(GetNumericConfig());
 
 
         // fix amp = (*A) * 1.1;
-        auto monitor = new Modes::Monitor(config, *(KGRtoR::FKGEnergy*)getHamiltonian(), "Modes monitor");
+        auto monitor = new Modes::FMonitor(config, *(KGRtoR::FKGEnergy*)getHamiltonian(), "Modes monitor");
 
         fix L = config->GetL();
         fix λ = L / *wavelengths;
@@ -123,7 +123,7 @@ namespace Modes {
         return monitor;
     }
 
-    Str NumericalRecipe_Ak2::SuggestFileName() const {
+    Str FNumericalRecipeAk2::SuggestFileName() const {
         const auto SEPARATOR = " ";
 
         StrVector params = {"Ak2", "wavelengths"};
@@ -133,8 +133,8 @@ namespace Modes {
         return KGRtoR::FKGRtoR_Recipe::SuggestFileName() + SEPARATOR + strParams;
     }
 
-    TPointer<Base::FunctionT<DevFloat, DevFloat>> NumericalRecipe_Ak2::GetNonHomogenousTerm() {
-        if(*driving_force && squareWave == nullptr) squareWave = Slab::New<Modes::SquareWave>(1);
+    TPointer<Base::FunctionT<DevFloat, DevFloat>> FNumericalRecipeAk2::GetNonHomogenousTerm() {
+        if(*driving_force && squareWave == nullptr) squareWave = Slab::New<Modes::FSquareWave>(1);
 
         return squareWave;
     }
