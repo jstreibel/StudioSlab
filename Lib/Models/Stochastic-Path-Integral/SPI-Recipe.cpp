@@ -61,10 +61,10 @@ namespace Slab::Models::StochasticPathIntegrals {
         auto du = New<SPIBC>(prototypeState);
         auto solver = New<SPISolver>(du);
 
-        return New<Euler>(solver, dT);
+        return New<FEuler>(solver, dT);
 
         // return New<Odeint::StepperRK4>();
 
-        // return New<RungeKutta4>(solver, dT);
+        // return New<FRungeKutta4>(solver, dT);
     }
 } // StochasticPathIntegrals::Models::Slab

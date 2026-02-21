@@ -5,7 +5,7 @@
 #include "Euler.h"
 
 namespace Slab::Math {
-    Euler::Euler(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt)
+    FEuler::FEuler(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt)
     : _H(solver)
     , dt(dt)
     , _f(solver->NewEqState("Euler 'f'"))
@@ -14,7 +14,7 @@ namespace Slab::Math {
 
     }
 
-    void Euler::Step(size_t n_steps) {
+    void FEuler::Step(size_t n_steps) {
 
         auto &H = *_H;
         auto &f = *_f;
@@ -33,7 +33,7 @@ namespace Slab::Math {
         step_counter += n_steps;
     }
 
-    auto Euler::GetCurrentState() const -> TPointer<const Base::EquationState> {
+    auto FEuler::GetCurrentState() const -> TPointer<const Base::EquationState> {
         return _f;
     }
 }

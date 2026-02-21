@@ -23,7 +23,7 @@
 
 namespace Slab::Math {
 
-    class RungeKutta4 : public FStepper {
+    class FRungeKutta4 : public FStepper {
         Mutex mutey;
 
         TPointer<Base::LinearStepSolver> _H;
@@ -39,15 +39,17 @@ namespace Slab::Math {
         DevFloat dt;
     public:
 
-        explicit RungeKutta4(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt, CountType totalSwapStates = 5);
+        explicit FRungeKutta4(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt, CountType totalSwapStates = 5);
 
-        ~RungeKutta4() override = default;
+        ~FRungeKutta4() override = default;
 
         void Step(const CountType n_steps) override;
 
         [[nodiscard]] auto GetCurrentState() const -> Base::EquationState_constptr override;
 
     };
+
+    using RungeKutta4 [[deprecated("Use FRungeKutta4")]] = FRungeKutta4;
 
 
 }
