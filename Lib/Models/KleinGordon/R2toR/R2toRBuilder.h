@@ -15,15 +15,15 @@ namespace Slab::Models::KGR2toR {
 
     using namespace Slab::Math;
 
-    class Builder : public Models::KGRecipe {
+    class FKGR2toRBuilder : public Models::KGRecipe {
         Str name;
 
     protected:
         virtual auto buildOpenGLOutput() -> OutputOpenGL*;
 
     public:
-        Builder(const Str& name, const Str& description, bool do_register=false);
-        virtual ~Builder() = default;
+        FKGR2toRBuilder(const Str& name, const Str& description, bool do_register = false);
+        virtual ~FKGR2toRBuilder() = default;
 
         auto BuildOutputSockets()   -> Vector<TPointer<FOutputChannel>> override;
         auto buildSolver()  -> TPointer<Base::LinearStepSolver> override;
@@ -37,6 +37,8 @@ namespace Slab::Models::KGR2toR {
 
 
     };
+
+    using Builder [[deprecated("Use FKGR2toRBuilder")]] = FKGR2toRBuilder;
 }
 
 

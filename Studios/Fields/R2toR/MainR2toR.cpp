@@ -24,8 +24,8 @@ int run(int argc, const char **argv) {
     /* sim 4 *///selector.registerOption(option4->getInterface());
 
     auto selectedInterface = selector.PreParse(argc, argv).GetCurrentCandidate();
-    auto input    = dynamic_cast<Models::KGR2toR::Builder*>(selectedInterface->GetOwner());
-    auto input_ptr = TPointer<Models::KGR2toR::Builder>(input);
+    auto input = dynamic_cast<Models::KGR2toR::FKGR2toRBuilder*>(selectedInterface->GetOwner());
+    auto input_ptr = TPointer<Models::KGR2toR::FKGR2toRBuilder>(input);
 
     Slab::Core::FInterfaceManager::GetInstance().RegisterInterface(input->GetInterface());
 

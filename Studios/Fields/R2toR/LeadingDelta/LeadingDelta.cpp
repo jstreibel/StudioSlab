@@ -79,9 +79,9 @@ namespace Studios::Fields::R2toRLeadingDelta {
     }
 
 
-    FBuilder::FBuilder(bool do_register) : Models::KGR2toR::Builder("Leading Delta", "simulation builder for (2+1)-d "
-                                                                       "signum-Gordon shockwave as the "
-                                                                       "trail of a driving delta.", false) {
+    FBuilder::FBuilder(bool do_register) : Models::KGR2toR::FKGR2toRBuilder("Leading Delta", "simulation builder for (2+1)-d "
+                                                                               "signum-Gordon shockwave as the "
+                                                                               "trail of a driving delta.", false) {
         Interface->AddParameters({&W_0, &eps, &deltaDuration});
 
         if(do_register) RegisterToManager();

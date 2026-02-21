@@ -34,10 +34,10 @@
 
 namespace Slab::Models::KGR2toR {
 
-    Builder::Builder(const Str& name, const Str& description, bool do_register)
+    FKGR2toRBuilder::FKGR2toRBuilder(const Str& name, const Str& description, bool do_register)
             : Models::KGRecipe(New<Models::FKGNumericConfig>(false), name, description, do_register) {    }
 
-    Vector<TPointer<FOutputChannel>> Builder::BuildOutputSockets() {
+    Vector<TPointer<FOutputChannel>> FKGR2toRBuilder::BuildOutputSockets() {
         Vector<TPointer<FOutputChannel>> sockets;
 
         ///********************************************************************************************/
@@ -115,7 +115,7 @@ namespace Slab::Models::KGR2toR {
 
     }
 
-    R2toR::FNumericFunction_ptr Builder::newFunctionArbitrary() {
+    R2toR::FNumericFunction_ptr FKGR2toRBuilder::newFunctionArbitrary() {
         const size_t N = KGNumericConfig->getN();
         const floatt xLeft = KGNumericConfig->Get_xMin();
         fix h = KGNumericConfig->geth();
@@ -131,7 +131,7 @@ namespace Slab::Models::KGR2toR {
         throw Exception("Error while instantiating Field: device not recognized.");
     }
 
-    TPointer<Base::LinearStepSolver> Builder::buildSolver() {
+    TPointer<Base::LinearStepSolver> FKGR2toRBuilder::buildSolver() {
         auto thePotential = New<RtoR::AbsFunction>();
         auto dphi = getBoundary();
 
@@ -141,20 +141,20 @@ namespace Slab::Models::KGR2toR {
         return New<SolvySolver>(dphi, Laplacian, thePotential);
     }
 
-    auto Builder::buildOpenGLOutput() -> OutputOpenGL * {
+    auto FKGR2toRBuilder::buildOpenGLOutput() -> OutputOpenGL * {
         // t_max, max_steps, x_min, x_max, y_min, y_max
         IN conf = *KGNumericConfig;
         return new OutputOpenGL(conf.Get_n());
     }
 
-    auto Builder::newFieldState() -> R2toR::EquationState_ptr {
+    auto FKGR2toRBuilder::newFieldState() -> R2toR::EquationState_ptr {
         auto u   = newFunctionArbitrary();
         auto du  = newFunctionArbitrary();
 
         return New<R2toR::EquationState>(u, du);
     }
 
-    R2toR::EquationState_ptr Builder::getInitialState() {
+    R2toR::EquationState_ptr FKGR2toRBuilder::getInitialState() {
         RtoR::NullFunction nullFunction;
         R2toR::FFunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
 
