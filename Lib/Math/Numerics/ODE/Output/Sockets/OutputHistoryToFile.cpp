@@ -15,11 +15,11 @@ namespace Slab::Math {
     const Str extension = ".osc";
 #define outputFilename std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))
 
-    OutputHistoryToFile::OutputHistoryToFile(UInt stepsInterval,
-                                             FSpaceFilterBase *spaceFilter,
-                                             const Str &outputFileName,
-                                             FOutputFormatterBase *outputFormatter)
-    : HistoryKeeper(stepsInterval, spaceFilter)
+    FOutputHistoryToFile::FOutputHistoryToFile(UInt stepsInterval,
+                                               FSpaceFilterBase *spaceFilter,
+                                               const Str &outputFileName,
+                                               FOutputFormatterBase *outputFormatter)
+    : FHistoryKeeper(stepsInterval, spaceFilter)
     , outFileName(outputFilename)
     , outputFormatter(*outputFormatter)
     {
@@ -38,12 +38,12 @@ namespace Slab::Math {
         file << spaces << '\n';
     }
 
-    OutputHistoryToFile::~OutputHistoryToFile() {
+    FOutputHistoryToFile::~FOutputHistoryToFile() {
         auto *f = &outputFormatter;
         delete f;
     };
 
-    void OutputHistoryToFile::_dump(bool integrationIsFinished) {
+    void FOutputHistoryToFile::_dump(bool integrationIsFinished) {
         if (integrationIsFinished) {
             _printHeaderToFile({"phi"});
 
@@ -80,7 +80,7 @@ namespace Slab::Math {
         FLog::Success() << "Flushed " << "100% " << FLog::Flush;
     }
 
-    void OutputHistoryToFile::_printHeaderToFile(Vector<std::string> channelNames) {
+    void FOutputHistoryToFile::_printHeaderToFile(Vector<std::string> channelNames) {
         std::ostringstream oss;
 
         oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal + count);

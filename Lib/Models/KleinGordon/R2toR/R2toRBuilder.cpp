@@ -89,7 +89,7 @@ namespace Slab::Models::KGR2toR {
 
             auto outputFileName = this->SuggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
 
-            auto out = New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
+            auto out = New<FOutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
 
             sockets.emplace_back(out);
         }
@@ -109,7 +109,7 @@ namespace Slab::Models::KGR2toR {
 
             sockets.emplace_back(glOut);
         }
-        else sockets.emplace_back(New<OutputConsoleMonitor>(KGNumericConfig->Get_n()));
+        else sockets.emplace_back(New<FOutputConsoleMonitor>(KGNumericConfig->Get_n()));
 
         return sockets;
 

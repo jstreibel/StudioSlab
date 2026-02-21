@@ -4,13 +4,13 @@
 
 namespace Slab::Math {
 
-    OutputConsoleMonitor::OutputConsoleMonitor(const CountType total_steps, CountType steps_interval)
+    FOutputConsoleMonitor::FOutputConsoleMonitor(const CountType total_steps, CountType steps_interval)
     : FOutputChannel("Console monitor output", static_cast<int>(steps_interval))
     , total_steps(total_steps) {
 
     }
 
-    bool OutputConsoleMonitor::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
+    bool FOutputConsoleMonitor::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
         // Isso aqui eh para aparecer o 100% completo (se nao fica uns quebrados).
         FOutputPacket dummyInfo = FOutputPacket(nullptr, total_steps);
 
@@ -18,7 +18,7 @@ namespace Slab::Math {
         return true;
     }
 
-    void OutputConsoleMonitor::HandleOutput(const FOutputPacket &outputInfo) {
+    void FOutputConsoleMonitor::HandleOutput(const FOutputPacket &outputInfo) {
         static Vector<DevFloat> measures;
         auto elTime = timer.GetElapsedTimeSeconds();
 

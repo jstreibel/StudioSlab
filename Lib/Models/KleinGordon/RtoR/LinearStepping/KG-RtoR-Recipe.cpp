@@ -150,7 +150,7 @@ namespace Slab::Models::KGRtoR {
 
             fix stepsInterval = static_cast<UInt>(N / (Nₒᵤₜ * r));
 
-            FOutputChannel_ptr out = Slab::New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
+            FOutputChannel_ptr out = Slab::New<FOutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
             Sockets.emplace_back(out);
         }
 
@@ -192,7 +192,7 @@ namespace Slab::Models::KGRtoR {
 
             Sockets.emplace_back(outputOpenGL);
         } else {
-            Sockets.emplace_back(Slab::New<OutputConsoleMonitor>(max_steps, max_steps/2));
+            Sockets.emplace_back(Slab::New<FOutputConsoleMonitor>(max_steps, max_steps/2));
         }
 
         return Sockets;

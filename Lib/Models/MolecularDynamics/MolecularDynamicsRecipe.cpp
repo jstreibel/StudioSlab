@@ -37,7 +37,7 @@ namespace Slab::Models::MolecularDynamics {
 
         auto numericConfig = DynamicPointerCast<MolDynNumericConfig>(NumericConfig);
 
-        sockets.emplace_back(Slab::New <Math::OutputConsoleMonitor> (numericConfig->Get_n()));
+        sockets.emplace_back(Slab::New <Math::FOutputConsoleMonitor> (numericConfig->Get_n()));
 
         FMolecularDynamicsMonitor::Model simModel = *Model==0
                 ? FMolecularDynamicsMonitor::Model::LennardJones

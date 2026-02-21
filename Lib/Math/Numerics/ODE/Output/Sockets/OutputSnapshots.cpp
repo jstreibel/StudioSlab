@@ -19,22 +19,22 @@ namespace Slab::Math {
 
     using Core::FLog;
 
-    OutputSnapshot::OutputSnapshot(Str customFileDescription,
-                                   const size_t T_fileNamePrecision)
+    FOutputSnapshot::FOutputSnapshot(Str customFileDescription,
+                                     const size_t T_fileNamePrecision)
             : FOutputChannel("Snapshot output", 1),
               customFileDescription(std::move(customFileDescription)),
               T_fileNamePrecision(T_fileNamePrecision) {}
 
-    OutputSnapshot::~OutputSnapshot() = default;
+    FOutputSnapshot::~FOutputSnapshot() = default;
 
-    void OutputSnapshot::addSnapshotStep(const size_t snapshotStep) {
+    void FOutputSnapshot::addSnapshotStep(const size_t snapshotStep) {
         snapSteps.push_back(snapshotStep);
 
         FLog::Attention() << "A snapshot will be taken at the step " << snapshotStep << FLog::Flush;
     }
 
-    void OutputSnapshot::doOutput(const FOutputPacket &outInfo, const Str &customFileDescription,
-                                  const size_t T_fileNamePrecision) {
+    void FOutputSnapshot::doOutput(const FOutputPacket &outInfo, const Str &customFileDescription,
+                                   const size_t T_fileNamePrecision) {
         StringStream filePhiNameStream;
         filePhiNameStream.setf(std::ios::fixed, std::ios::floatfield);
         filePhiNameStream.precision(T_fileNamePrecision);
@@ -86,14 +86,14 @@ namespace Slab::Math {
         FLog::Success() << "Snapshot saved! File '" << fileName << "'" << FLog::Flush;
     }
 
-    bool OutputSnapshot::ShouldOutput(const long unsigned timeStep) {
+    bool FOutputSnapshot::ShouldOutput(const long unsigned timeStep) {
         for (const size_t step: snapSteps)
             if (step == timeStep) return true;
 
         return false;
     }
 
-    size_t OutputSnapshot::ComputeNextRecStep(UInt currStep) {
+    size_t FOutputSnapshot::ComputeNextRecStep(UInt currStep) {
         size_t smallest = snapSteps.back();
         for (auto step: snapSteps) if (step < smallest) smallest = step;
 

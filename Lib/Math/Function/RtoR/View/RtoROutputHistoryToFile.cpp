@@ -15,29 +15,29 @@ namespace Slab::Math {
 
     using Core::FLog;
 
-    RtoR::OutputHistoryToFile::OutputHistoryToFile(UInt stepsInterval,
+    RtoR::FOutputHistoryToFile::FOutputHistoryToFile(UInt stepsInterval,
                                                    FSpaceFilterBase *spaceFilter,
                                                    Str outputFileName)
-            : HistoryKeeper(stepsInterval, spaceFilter),
+            : FHistoryKeeper(stepsInterval, spaceFilter),
               outFileName(std::move(outputFileName)),
               outputFormatter(*(new FBinarySOF())) {
         this->Name = "Full (1+1) history output";
 
         file.open(outFileName, std::ios::out);
 
-        if (!file) throw "OutputHistoryToFile: nao abriu arquivo.";
+        if (!file) throw "FOutputHistoryToFile: nao abriu arquivo.";
 
         FLog::Info() << "Sim history will be saved in '" << outFileName << "'. " << FLog::Flush;
 
         file << Str(HEADER_SIZE_BYTES - 1, ' ') << '\n';
     }
 
-    RtoR::OutputHistoryToFile::~OutputHistoryToFile() {
+    RtoR::FOutputHistoryToFile::~FOutputHistoryToFile() {
         auto *f = &outputFormatter;
         delete f;
     }
 
-    void RtoR::OutputHistoryToFile::_dump(bool integrationIsFinished) {
+    void RtoR::FOutputHistoryToFile::_dump(bool integrationIsFinished) {
         if (integrationIsFinished) {
             _printHeaderToFile();
 
@@ -73,7 +73,7 @@ namespace Slab::Math {
     }
 
 
-    void RtoR::OutputHistoryToFile::_printHeaderToFile() {
+    void RtoR::FOutputHistoryToFile::_printHeaderToFile() {
         // Allocator &builder = Allocator::getInstance();
 
 

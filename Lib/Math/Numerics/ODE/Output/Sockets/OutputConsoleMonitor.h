@@ -7,7 +7,7 @@
 
 namespace Slab::Math {
 
-    class OutputConsoleMonitor : public FOutputChannel {
+    class FOutputConsoleMonitor : public FOutputChannel {
     private:
         FTimer timer = FTimer();
         const CountType total_steps;
@@ -16,9 +16,11 @@ namespace Slab::Math {
         void HandleOutput(const FOutputPacket &outputInfo) override;
 
     public:
-        explicit OutputConsoleMonitor(CountType total_steps, CountType steps_interval=100);
+        explicit FOutputConsoleMonitor(CountType total_steps, CountType steps_interval=100);
         bool NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) override;
     };
+
+    using OutputConsoleMonitor [[deprecated("Use FOutputConsoleMonitor")]] = FOutputConsoleMonitor;
 
 
 }
