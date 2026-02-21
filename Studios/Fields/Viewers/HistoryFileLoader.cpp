@@ -32,7 +32,7 @@ namespace Modes {
         return new_vec;
     }
 
-    auto HistoryFileLoader::Load(const Str &filename) -> TPointer<Math::R2toR::NumericFunction_CPU> {
+    auto FHistoryFileLoader::Load(const Str &filename) -> TPointer<Math::R2toR::NumericFunction_CPU> {
         fix base_msg = Str("Error opening file '") + filename + "'";
 
         if(!std::filesystem::exists(filename)) throw Exception(base_msg + ": file does not exist.");
@@ -84,7 +84,7 @@ namespace Modes {
         return field;
     }
 
-    auto HistoryFileLoader::ReadPyDict(std::ifstream &file) -> PythonUtils::PyDict {
+    auto FHistoryFileLoader::ReadPyDict(std::ifstream &file) -> PythonUtils::PyDict {
         Str line;
         if (std::getline(file, line))
             if(!PythonUtils::BadPythonDictionary(line))
@@ -94,7 +94,7 @@ namespace Modes {
         throw Exception("file does not contain Python dictionary header");
     }
 
-    auto HistoryFileLoader::ReadData(std::ifstream &file, PythonUtils::PyDict pyDict) -> RealArray {
+    auto FHistoryFileLoader::ReadData(std::ifstream &file, PythonUtils::PyDict pyDict) -> RealArray {
         IN outresX = pyDict["outresX"];
         IN outresT = pyDict["outresT"];
         IN dataType = pyDict["data_type"].first=="fp32" ? fp32 : pyDict["data_type"].first=="fp64" ? fp64 : throw Exception("Unknown data type in .oscb file");

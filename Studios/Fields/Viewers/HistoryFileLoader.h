@@ -12,14 +12,16 @@ namespace Modes {
 
     using namespace Slab;
 
-    class HistoryFileLoader {
-        enum DataType {fp32, fp64};
+    class FHistoryFileLoader {
+        enum EDataType { fp32, fp64 };
 
         static auto ReadPyDict(std::ifstream& file) -> PythonUtils::PyDict;
         static auto ReadData(std::ifstream &filePath, PythonUtils::PyDict pyDict) -> RealArray ;
     public:
         static auto Load(const Str &filename) -> TPointer<Math::R2toR::NumericFunction_CPU>;
     };
+
+    using HistoryFileLoader [[deprecated("Use FHistoryFileLoader")]] = FHistoryFileLoader;
 
 } // Modes
 

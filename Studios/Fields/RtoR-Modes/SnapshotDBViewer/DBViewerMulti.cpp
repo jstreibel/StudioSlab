@@ -371,7 +371,7 @@ namespace Modes::DatabaseViewer {
 
         if(fieldHistory == nullptr) {
             Log::Info() << "Not found. Loading history..." << Log::Flush;
-            fieldHistory = HistoryFileLoader::Load(filename);
+            fieldHistory = FHistoryFileLoader::Load(filename);
             fullHistoriesMap[filename] = fieldHistory;
         }
         Log::Info() << "Set function" << Log::Flush;
