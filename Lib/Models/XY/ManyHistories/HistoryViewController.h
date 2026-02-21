@@ -52,7 +52,7 @@ namespace Slab::Lost {
             Lost::Graph *time_corr_view;
             Lost::Graph *space_corr_est_view;
 
-            typedef Pair<XYMetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
+            typedef Pair<FXYMetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
 
             sf::Image helperBitmap;
             Vector<sf::Drawable *> drawables;

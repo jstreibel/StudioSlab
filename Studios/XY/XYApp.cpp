@@ -35,8 +35,8 @@ int XY::App::App::run() {
 
     auto viewControl = Slab::New<Slab::Lost::ThermoOutput::SingleSimViewController>(*N, *MCSteps, *transient);
 
-    using Algorithm = Slab::Math::XYMetropolisAlgorithm;
-    Slab::Math::XYMetropolisAlgorithm mcCalculator(*N, *T, .0,
+    using Algorithm = Slab::Math::FXYMetropolisAlgorithm;
+    Slab::Math::FXYMetropolisAlgorithm mcCalculator(*N, *T, .0,
                                                    Algorithm::InitialConditions::Ferromagnetic,
                                                    Algorithm::Dynamic::Metropolis,
                                                    Algorithm::Sweeping::Random);

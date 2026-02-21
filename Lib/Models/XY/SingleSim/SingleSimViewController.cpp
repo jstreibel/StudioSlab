@@ -640,7 +640,7 @@ namespace Slab::Lost::ThermoOutput {
         myfile.close();
     }
 
-    void SingleSimViewController::setAlgorithm(XYMetropolisAlgorithm *pAlgorithm) {
+    void SingleSimViewController::setAlgorithm(FXYMetropolisAlgorithm *pAlgorithm) {
         this->algorithm = pAlgorithm;
     }
 

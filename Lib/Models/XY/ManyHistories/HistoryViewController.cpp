@@ -25,7 +25,7 @@ namespace Slab::Lost::ThermoOutput {
     const int fontSize = 12;
 
     // Dynamic
-    const auto dynamic = XYMetropolisAlgorithm::Kawasaki;
+    const auto dynamic = FXYMetropolisAlgorithm::Kawasaki;
     #define FERRO_IC false
     #define PARA_IC true
     #define _SINGLE_IC ((FERRO_IC & !PARA_IC) || (!FERRO_IC & PARA_IC))
@@ -90,17 +90,17 @@ namespace Slab::Lost::ThermoOutput {
                 sprite->setScale(isingSpriteScale, isingSpriteScale);
                 sprite->setPosition(float(i) * (miniBorder + isingSpriteSize) + _border, float(j) * (miniBorder + isingSpriteSize) + _border);
 
-                auto ic = (!_SINGLE_IC) ? (j >= SQRT_SIMS / 2 ? XYMetropolisAlgorithm::Paramagnetic : XYMetropolisAlgorithm::Ferromagnetic)
-                                        : (FERRO_IC ? XYMetropolisAlgorithm::Ferromagnetic : XYMetropolisAlgorithm::Paramagnetic);
+                auto ic = (!_SINGLE_IC) ? (j >= SQRT_SIMS / 2 ? FXYMetropolisAlgorithm::Paramagnetic : FXYMetropolisAlgorithm::Ferromagnetic)
+                                        : (FERRO_IC ? FXYMetropolisAlgorithm::Ferromagnetic : FXYMetropolisAlgorithm::Paramagnetic);
 
-                auto sweep = (DYNAMIC_BEFORE_EQ == _SWEEP_SEQ) ? XYMetropolisAlgorithm::Sequential : XYMetropolisAlgorithm::Random;
+                auto sweep = (DYNAMIC_BEFORE_EQ == _SWEEP_SEQ) ? FXYMetropolisAlgorithm::Sequential : FXYMetropolisAlgorithm::Random;
 
                 /***********************************************************************************
                  * *********************************************************************************
                  * ********** TODO: MAKE THIS WORK AGAIN *******************************************
                  * *********************************************************************************
                  */
-                auto calc = new XYMetropolisAlgorithm(L, T, .0, ic, dynamic, sweep);
+                auto calc = new FXYMetropolisAlgorithm(L, T, .0, ic, dynamic, sweep);
                 /***********************************************************************************
                  * *********************************************************************************
                  * *********************************************************************************
@@ -218,7 +218,7 @@ namespace Slab::Lost::ThermoOutput {
 
             e += data->e;
 
-            if(calc->ic == XYMetropolisAlgorithm::Ferromagnetic || _SINGLE_IC)
+            if(calc->ic == FXYMetropolisAlgorithm::Ferromagnetic || _SINGLE_IC)
                 mag_ferro += fabs(data->m);
             else if(!_SINGLE_IC)
                 mag_para += fabs(data->m);
@@ -428,8 +428,8 @@ namespace Slab::Lost::ThermoOutput {
         for(auto drawable : drawables)
             window.draw(*drawable);
 
-        auto sweep = simulations[0].first->sweeping == XYMetropolisAlgorithm::Random ? "RANDOM" : "SEQUENTIAL";
-        auto dynamicStr = dynamic == XYMetropolisAlgorithm::Metropolis ? "METROPOLIS" : "KAWASAKI";
+        auto sweep = simulations[0].first->sweeping == FXYMetropolisAlgorithm::Random ? "RANDOM" : "SEQUENTIAL";
+        auto dynamicStr = dynamic == FXYMetropolisAlgorithm::Metropolis ? "METROPOLIS" : "KAWASAKI";
         std::ostringstream textOutput;
         textOutput  << "Simulating with "<< sweep <<" sweep and " << dynamicStr << " algorithm.\n\n"
 
@@ -469,7 +469,7 @@ namespace Slab::Lost::ThermoOutput {
         if(1)
         {
             auto data = space_corr_est_view->getData();
-            auto nameAppend = std::string(dynamic == XYMetropolisAlgorithm::Kawasaki ? "-kawasaki" : "-metropolis") + "--space-corr.dat";
+            auto nameAppend = std::string(dynamic == FXYMetropolisAlgorithm::Kawasaki ? "-kawasaki" : "-metropolis") + "--space-corr.dat";
             myfile.open(fileLoc + fileName.str() + nameAppend);
             for (const auto d : data) {
                 auto t = d.first;

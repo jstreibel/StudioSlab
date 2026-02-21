@@ -12,7 +12,7 @@
 
 namespace Slab::Math {
 
-    class XYMetropolisAlgorithm {
+    class FXYMetropolisAlgorithm {
     public:
 
         enum InitialConditions {
@@ -69,12 +69,12 @@ namespace Slab::Math {
          * @param dynamic
          * @param sweeping
          */
-        explicit XYMetropolisAlgorithm(int L, DevFloat T, DevFloat h,
-                                       InitialConditions ic,
-                                       Dynamic dynamic,
-                                       Sweeping sweeping);
+        explicit FXYMetropolisAlgorithm(int L, DevFloat T, DevFloat h,
+                                        InitialConditions ic,
+                                        Dynamic dynamic,
+                                        Sweeping sweeping);
 
-        ~XYMetropolisAlgorithm() = default;
+        ~FXYMetropolisAlgorithm() = default;
 
         void set_T(DevFloat T);
 
@@ -89,6 +89,8 @@ namespace Slab::Math {
         const FXYNetwork& getS() const { return S; }
 
     };
+
+    using XYMetropolisAlgorithm [[deprecated("Use FXYMetropolisAlgorithm")]] = FXYMetropolisAlgorithm;
 
 
 }

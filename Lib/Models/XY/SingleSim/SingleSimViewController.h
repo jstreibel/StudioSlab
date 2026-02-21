@@ -60,7 +60,7 @@ namespace Slab::Lost::ThermoOutput {
 
         std::shared_ptr<Graphics::FGUIContext> nkContext = nullptr;
         sf::RenderWindow *window = nullptr;
-        XYMetropolisAlgorithm *algorithm = nullptr;
+        FXYMetropolisAlgorithm *algorithm = nullptr;
 
     public:
 
@@ -71,7 +71,7 @@ namespace Slab::Lost::ThermoOutput {
 
         void render(sf::RenderWindow *window) override;
 
-        void setAlgorithm(XYMetropolisAlgorithm *algorithm);
+        void setAlgorithm(FXYMetropolisAlgorithm *algorithm);
 
     private:
         void computeTimeCorrelations(int upToMCStep);

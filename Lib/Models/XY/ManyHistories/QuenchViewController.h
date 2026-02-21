@@ -39,7 +39,7 @@ namespace Slab::Lost::ThermoOutput {
 
         Vector<DevFloat> av_e, av_e2, av_m, av_m2, av_m4, T_values;
 
-        typedef Pair<XYMetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
+        typedef Pair<FXYMetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
 
         sf::Image helperBitmap;
         Vector<sf::Drawable *> drawables;
