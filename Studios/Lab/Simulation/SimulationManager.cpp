@@ -241,7 +241,7 @@ void FSimulationManager::AddSimulationMenu()
                 {
                     Slab::TPointer<Slab::Models::KGRecipe> Recipe;
 
-                    if (ItemString == "Shockwave") Recipe = Slab::New<Studios::Fields::R2toRLeadingDelta::Builder>();
+                    if (ItemString == "Shockwave") Recipe = Slab::New<Studios::Fields::R2toRLeadingDelta::FBuilder>();
 
                     if (Recipe == nullptr)
                     {

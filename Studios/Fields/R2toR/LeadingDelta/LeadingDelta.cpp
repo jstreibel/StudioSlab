@@ -79,14 +79,14 @@ namespace Studios::Fields::R2toRLeadingDelta {
     }
 
 
-    Builder::Builder(bool do_register) : Models::KGR2toR::Builder("Leading Delta", "simulation builder for (2+1)-d "
-                                                                     "signum-Gordon shockwave as the "
-                                                                     "trail of a driving delta.", false) {
+    FBuilder::FBuilder(bool do_register) : Models::KGR2toR::Builder("Leading Delta", "simulation builder for (2+1)-d "
+                                                                       "signum-Gordon shockwave as the "
+                                                                       "trail of a driving delta.", false) {
         Interface->AddParameters({&W_0, &eps, &deltaDuration});
 
         if(do_register) RegisterToManager();
     }
-    auto Builder::NotifyInterfaceSetupIsFinished()    ->       void {
+    auto FBuilder::NotifyInterfaceSetupIsFinished()    ->       void {
         FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
         auto &p = *KGNumericConfig;
@@ -103,23 +103,23 @@ namespace Studios::Fields::R2toRLeadingDelta {
         ringDelta1 = drivingFunc;
     }
 
-    auto Builder::getBoundary() -> TPointer<Base::BoundaryConditions> {
+    auto FBuilder::getBoundary() -> TPointer<Base::BoundaryConditions> {
         auto eqStatePrototype = newFieldState();
 
         return New<FBoundaryCondition>(eqStatePrototype, drivingFunc, *deltaDuration, false);
     }
 
-    auto Builder::buildOpenGLOutput() -> Models::KGR2toR::OutputOpenGL * {
+    auto FBuilder::buildOpenGLOutput() -> Models::KGR2toR::OutputOpenGL * {
         return new OutGL(KGNumericConfig->Get_n(), ringDelta1);
     }
 
-    Str Builder::SuggestFileName() const {
+    Str FBuilder::SuggestFileName() const {
         auto fname = FNumericalRecipe::SuggestFileName();
 
         return fname + " " + Interface->ToString({"W", "eps", "delta_duration"});
     }
 
-    void *Builder::getHamiltonian() {
+    void *FBuilder::getHamiltonian() {
         return nullptr;
     }
 
