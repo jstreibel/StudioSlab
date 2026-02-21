@@ -25,9 +25,9 @@
 constexpr auto b2_pi = M_PI;
 constexpr auto ArrowThickness = 4.f;
 
-class LegacyGLDebugDraw {
+class FLegacyGLDebugDraw {
 public:
-    explicit LegacyGLDebugDraw(float alpha = 1.0f, int circleSegments = 128)
+    explicit FLegacyGLDebugDraw(float alpha = 1.0f, int circleSegments = 128)
     : m_alpha(alpha)
     , m_circleSegments(circleSegments)
     , Writer(Slab::New<Slab::Graphics::OpenGL::FWriterOpenGL>(Slab::Core::Resources::GetIndexedFontFileName(3), 28))
@@ -49,16 +49,16 @@ public:
         m_dd.drawFrictionImpulses = true;
         m_dd.drawIslands = true;
 
-        m_dd.DrawSegmentFcn       = &LegacyGLDebugDraw::DrawSegmentThunk;
-        m_dd.DrawPolygonFcn       = &LegacyGLDebugDraw::DrawPolygonThunk;
-        m_dd.DrawSolidPolygonFcn  = &LegacyGLDebugDraw::DrawSolidPolygonThunk;
-        m_dd.DrawCircleFcn        = &LegacyGLDebugDraw::DrawCircleThunk;
-        m_dd.DrawSolidCircleFcn   = &LegacyGLDebugDraw::DrawSolidCircleThunk;
-        m_dd.DrawSolidCapsuleFcn  = &LegacyGLDebugDraw::DrawSolidCapsuleThunk;
-        m_dd.DrawPointFcn         = &LegacyGLDebugDraw::DrawPointThunk;
-        m_dd.DrawTransformFcn     = &LegacyGLDebugDraw::DrawTransformThunk;
+        m_dd.DrawSegmentFcn       = &FLegacyGLDebugDraw::DrawSegmentThunk;
+        m_dd.DrawPolygonFcn       = &FLegacyGLDebugDraw::DrawPolygonThunk;
+        m_dd.DrawSolidPolygonFcn  = &FLegacyGLDebugDraw::DrawSolidPolygonThunk;
+        m_dd.DrawCircleFcn        = &FLegacyGLDebugDraw::DrawCircleThunk;
+        m_dd.DrawSolidCircleFcn   = &FLegacyGLDebugDraw::DrawSolidCircleThunk;
+        m_dd.DrawSolidCapsuleFcn  = &FLegacyGLDebugDraw::DrawSolidCapsuleThunk;
+        m_dd.DrawPointFcn         = &FLegacyGLDebugDraw::DrawPointThunk;
+        m_dd.DrawTransformFcn     = &FLegacyGLDebugDraw::DrawTransformThunk;
 
-        m_dd.DrawStringFcn        = &LegacyGLDebugDraw::DrawStringThunk;
+        m_dd.DrawStringFcn        = &FLegacyGLDebugDraw::DrawStringThunk;
     }
 
     b2DebugDraw* handle() { return &m_dd; }
@@ -115,5 +115,7 @@ private:
     Slab::TPointer<Slab::Graphics::OpenGL::FWriterOpenGL> Writer;
 
 };
+
+using LegacyGLDebugDraw [[deprecated("Use FLegacyGLDebugDraw")]] = FLegacyGLDebugDraw;
 
 #endif //STUDIOSLAB_DEBUGDRAW_H

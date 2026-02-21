@@ -493,7 +493,7 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
     })
     .AddWing({
         .Density = LightPlaneDensity,
-        .Airfoil = New<Foil::ViternaAirfoil2412>(),
+        .Airfoil = New<Foil::FViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
             .Name = "Wing",
             .ChordLength = 1.15f,
@@ -506,7 +506,7 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
     })
     .AddWing({
         .Density = LightPlaneDensity,
-        .Airfoil = New<Foil::ViternaAirfoil2412>(),
+        .Airfoil = New<Foil::FViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
             .Name = "Winglet",
             .ChordLength = 0.6f,

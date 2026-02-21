@@ -14,7 +14,7 @@
 #include "../Render/PlaneStats.h"
 
 struct FPlaneStats;
-using CAirfoil = Foil::ViternaAirfoil2412;
+using CAirfoil = Foil::FViternaAirfoil2412;
 
 auto PrettyDraw = true;
 auto DebugDraw = false;
@@ -289,14 +289,14 @@ void FBigHill::SetupScenario() {
             .H = [](const float t) {
                 constexpr auto BaseFreq =  0.1f*static_cast<float>(M_PI);
 
-                struct AOhm { float A; float ohm; };
+                struct FAOhm { float A; float ohm; };
                 auto MultiplyNoise = [](const float Freq) {
                     // return static_cast<float>(Freq * RandUtils::RandomUniformReal(1.005, 0.995));
                     return static_cast<float>(Freq);
                 };
 
                 int n=1;
-                const auto A = Vector<AOhm>{
+                const auto A = Vector<FAOhm>{
                     {0.75f, MultiplyNoise(BaseFreq*n++)},
                     {0.25f, MultiplyNoise(BaseFreq*n++)},
                     {0.10f, MultiplyNoise(BaseFreq*n++)}};

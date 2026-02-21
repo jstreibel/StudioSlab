@@ -12,7 +12,7 @@ namespace Foil {
 // COM from geometric center, in units of chord_length and thickness, respectively
 // Hint: 38% behind LE (NACA2412 usually sits 35-40% chord length)
 
-class Airfoil_NACA2412 final : public IAirfoilPolars
+class FAirfoilNACA2412 final : public IAirfoilPolars
 {
 public:
     // ---- Polars ----
@@ -73,7 +73,7 @@ inline double wrapPi(double a) { // map to (-pi, pi]
 
 //-----------------------------------------------------------
 
-struct ViternaParams {
+struct FViternaParams {
     // Linear pre-stall
     double a      = 2.0 * M_PI;   // lift curve slope
     double alpha0 = -0.038;       // zero-lift (rad)
@@ -89,10 +89,10 @@ struct ViternaParams {
     double Cm0  = -0.05;
 };
 
-class ViternaAirfoil2412 final : public IAirfoilPolars {
+class FViternaAirfoil2412 final : public IAirfoilPolars {
 public:
 
-    explicit ViternaAirfoil2412(const ViternaParams& p = ViternaParams()) : P(p) {
+    explicit FViternaAirfoil2412(const FViternaParams& p = FViternaParams()) : P(p) {
         // Precompute stall match at +alpha_s for Viterna
         const double as = P.alpha_s_pos;
         const double Cls = detail::clamp(P.a * (as - P.alpha0), P.Cl_min, P.Cl_max);
@@ -176,10 +176,14 @@ public:
     Str GetName() const override { return "NACA2412-Viterna"; };
 
 private:
-    ViternaParams P;
+    FViternaParams P;
     double A_{0.0}, B_{0.0};
     double invWidth_{1.0};
 };
+
+using Airfoil_NACA2412 [[deprecated("Use FAirfoilNACA2412")]] = FAirfoilNACA2412;
+using ViternaParams [[deprecated("Use FViternaParams")]] = FViternaParams;
+using ViternaAirfoil2412 [[deprecated("Use FViternaAirfoil2412")]] = FViternaAirfoil2412;
 
 } // namespace Foil
 

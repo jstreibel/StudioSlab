@@ -4,7 +4,7 @@
 
 #include "DebugDraw.h"
 
-void LegacyGLDebugDraw::DrawVector(b2Vec2 f, b2Vec2 p, float scale, b2HexColor color) const {
+void FLegacyGLDebugDraw::DrawVector(b2Vec2 f, b2Vec2 p, float scale, b2HexColor color) const {
     SetupLegacyGL();
 
     const float mag = std::sqrt(f.x*f.x + f.y*f.y);
@@ -33,7 +33,7 @@ void LegacyGLDebugDraw::DrawVector(b2Vec2 f, b2Vec2 p, float scale, b2HexColor c
     endPrim();
 }
 
-void LegacyGLDebugDraw::DrawPseudoVector(float mag, b2Vec2 c, float scale, float alpha0, b2HexColor color,
+void FLegacyGLDebugDraw::DrawPseudoVector(float mag, b2Vec2 c, float scale, float alpha0, b2HexColor color,
     int segments) const {
     SetupLegacyGL();
 
@@ -74,7 +74,7 @@ void LegacyGLDebugDraw::DrawPseudoVector(float mag, b2Vec2 c, float scale, float
     endPrim();
 }
 
-void LegacyGLDebugDraw::Write(std::string s, b2Vec2 p, const b2HexColor c) const {
+void FLegacyGLDebugDraw::Write(std::string s, b2Vec2 p, const b2HexColor c) const {
 
     Writer->Write(std::string(s), {p.x, p.y}, ToFColor(c, m_alpha));
 
@@ -82,7 +82,7 @@ void LegacyGLDebugDraw::Write(std::string s, b2Vec2 p, const b2HexColor c) const
     Slab::Graphics::OpenGL::FShader::LegacyGL();
 }
 
-Slab::Graphics::FColor LegacyGLDebugDraw::ToFColor(b2HexColor hc, float alpha) {
+Slab::Graphics::FColor FLegacyGLDebugDraw::ToFColor(b2HexColor hc, float alpha) {
     const uint32_t rgb = static_cast<uint32_t>(hc);
     const float r = ((rgb >> 16) & 0xFF) / 255.0f;
     const float g = ((rgb >>  8) & 0xFF) / 255.0f;
@@ -91,7 +91,7 @@ Slab::Graphics::FColor LegacyGLDebugDraw::ToFColor(b2HexColor hc, float alpha) {
     return Slab::Graphics::FColor(r, g, b, alpha);
 }
 
-void LegacyGLDebugDraw::glColor(b2HexColor hc, float alpha) {
+void FLegacyGLDebugDraw::glColor(b2HexColor hc, float alpha) {
     const uint32_t rgb = static_cast<uint32_t>(hc);
     const float r = ((rgb >> 16) & 0xFF) / 255.0f;
     const float g = ((rgb >>  8) & 0xFF) / 255.0f;
@@ -100,7 +100,7 @@ void LegacyGLDebugDraw::glColor(b2HexColor hc, float alpha) {
     ::glColor4f(r, g, b, alpha);
 }
 
-void LegacyGLDebugDraw::beginLines(float width) {
+void FLegacyGLDebugDraw::beginLines(float width) {
     ::glDisable(GL_TEXTURE_2D);
     ::glEnable(GL_BLEND);
     ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -108,9 +108,9 @@ void LegacyGLDebugDraw::beginLines(float width) {
     ::glBegin(GL_LINES);
 }
 
-void LegacyGLDebugDraw::endPrim() { ::glEnd(); }
+void FLegacyGLDebugDraw::endPrim() { ::glEnd(); }
 
-void LegacyGLDebugDraw::drawPolyLine(const b2Vec2* v, int n, b2HexColor c, float a) {
+void FLegacyGLDebugDraw::drawPolyLine(const b2Vec2* v, int n, b2HexColor c, float a) {
     glColor(c, a);
     beginLines(ArrowThickness);
     for (int i = 0; i < n; ++i) {
@@ -122,8 +122,8 @@ void LegacyGLDebugDraw::drawPolyLine(const b2Vec2* v, int n, b2HexColor c, float
     endPrim();
 }
 
-void LegacyGLDebugDraw::DrawSegmentThunk(b2Vec2 p1, b2Vec2 p2, b2HexColor color, void* ctx) {
-    auto* self = static_cast<LegacyGLDebugDraw*>(ctx);
+void FLegacyGLDebugDraw::DrawSegmentThunk(b2Vec2 p1, b2Vec2 p2, b2HexColor color, void* ctx) {
+    auto* self = static_cast<FLegacyGLDebugDraw*>(ctx);
     glColor(color, self->m_alpha);
     beginLines(ArrowThickness);
     ::glVertex2f(p1.x, p1.y);
@@ -131,14 +131,14 @@ void LegacyGLDebugDraw::DrawSegmentThunk(b2Vec2 p1, b2Vec2 p2, b2HexColor color,
     endPrim();
 }
 
-void LegacyGLDebugDraw::DrawPolygonThunk(const b2Vec2* verts, int count, b2HexColor color, void* ctx) {
-    auto* self = static_cast<LegacyGLDebugDraw*>(ctx);
+void FLegacyGLDebugDraw::DrawPolygonThunk(const b2Vec2* verts, int count, b2HexColor color, void* ctx) {
+    auto* self = static_cast<FLegacyGLDebugDraw*>(ctx);
     drawPolyLine(verts, count, color, self->m_alpha);
 }
 
-void LegacyGLDebugDraw::DrawSolidPolygonThunk(b2Transform xf, const b2Vec2* localVerts, int count, float,
+void FLegacyGLDebugDraw::DrawSolidPolygonThunk(b2Transform xf, const b2Vec2* localVerts, int count, float,
     b2HexColor color, void* ctx) {
-    auto* self = static_cast<LegacyGLDebugDraw*>(ctx);
+    auto* self = static_cast<FLegacyGLDebugDraw*>(ctx);
     // Transform to world
     std::vector<b2Vec2> v(count);
     for (int i = 0; i < count; ++i) v[i] = b2TransformPoint(xf, localVerts[i]);
@@ -156,8 +156,8 @@ void LegacyGLDebugDraw::DrawSolidPolygonThunk(b2Transform xf, const b2Vec2* loca
     drawPolyLine(v.data(), count, color, self->m_alpha);
 }
 
-void LegacyGLDebugDraw::DrawCircleThunk(b2Vec2 center, float radius, b2HexColor color, void* ctx) {
-    auto* self = static_cast<LegacyGLDebugDraw*>(ctx);
+void FLegacyGLDebugDraw::DrawCircleThunk(b2Vec2 center, float radius, b2HexColor color, void* ctx) {
+    auto* self = static_cast<FLegacyGLDebugDraw*>(ctx);
     glColor(color, self->m_alpha);
     ::glDisable(GL_TEXTURE_2D);
     ::glBegin(GL_LINE_LOOP);
@@ -169,8 +169,8 @@ void LegacyGLDebugDraw::DrawCircleThunk(b2Vec2 center, float radius, b2HexColor 
     ::glEnd();
 }
 
-void LegacyGLDebugDraw::DrawSolidCircleThunk(b2Transform xf, float radius, b2HexColor color, void* ctx) {
-    auto* self = static_cast<LegacyGLDebugDraw*>(ctx);
+void FLegacyGLDebugDraw::DrawSolidCircleThunk(b2Transform xf, float radius, b2HexColor color, void* ctx) {
+    auto* self = static_cast<FLegacyGLDebugDraw*>(ctx);
     const b2Vec2 c = xf.p; // center
     // Fill
     glColor(color, 0.35f * self->m_alpha);
@@ -187,8 +187,8 @@ void LegacyGLDebugDraw::DrawSolidCircleThunk(b2Transform xf, float radius, b2Hex
     DrawCircleThunk(c, radius, color, ctx);
 }
 
-void LegacyGLDebugDraw::DrawSolidCapsuleThunk(b2Vec2 p1, b2Vec2 p2, float r, b2HexColor color, void* ctx) {
-    auto* self = static_cast<LegacyGLDebugDraw*>(ctx);
+void FLegacyGLDebugDraw::DrawSolidCapsuleThunk(b2Vec2 p1, b2Vec2 p2, float r, b2HexColor color, void* ctx) {
+    auto* self = static_cast<FLegacyGLDebugDraw*>(ctx);
     b2Vec2 d = {p2.x - p1.x, p2.y - p1.y};
     const float len = std::sqrt(d.x * d.x + d.y * d.y);
     if (len > 0.0f) { d.x /= len; d.y /= len; }
@@ -231,8 +231,8 @@ void LegacyGLDebugDraw::DrawSolidCapsuleThunk(b2Vec2 p1, b2Vec2 p2, float r, b2H
     DrawCircleThunk(p2, r, color, ctx);
 }
 
-void LegacyGLDebugDraw::DrawPointThunk(b2Vec2 p, float size, b2HexColor color, void* ctx) {
-    auto* self = static_cast<LegacyGLDebugDraw*>(ctx);
+void FLegacyGLDebugDraw::DrawPointThunk(b2Vec2 p, float size, b2HexColor color, void* ctx) {
+    auto* self = static_cast<FLegacyGLDebugDraw*>(ctx);
     glColor(color, self->m_alpha);
     ::glDisable(GL_TEXTURE_2D);
     ::glPointSize(size);
@@ -241,8 +241,8 @@ void LegacyGLDebugDraw::DrawPointThunk(b2Vec2 p, float size, b2HexColor color, v
     ::glEnd();
 }
 
-void LegacyGLDebugDraw::DrawTransformThunk(b2Transform xf, void* ctx) {
-    auto* self = static_cast<LegacyGLDebugDraw*>(ctx);
+void FLegacyGLDebugDraw::DrawTransformThunk(b2Transform xf, void* ctx) {
+    auto* self = static_cast<FLegacyGLDebugDraw*>(ctx);
     const float L = 0.5f; // axis length in world units
     const b2Vec2 px = b2TransformPoint(xf, b2Vec2{ L, 0.0f});
     const b2Vec2 py = b2TransformPoint(xf, b2Vec2{0.0f,  L});
@@ -260,8 +260,8 @@ void LegacyGLDebugDraw::DrawTransformThunk(b2Transform xf, void* ctx) {
     endPrim();
 }
 
-void LegacyGLDebugDraw::DrawStringThunk(b2Vec2 p, const char* s, b2HexColor c, void* ctx) {
-    auto* self = static_cast<LegacyGLDebugDraw*>(ctx);
+void FLegacyGLDebugDraw::DrawStringThunk(b2Vec2 p, const char* s, b2HexColor c, void* ctx) {
+    auto* self = static_cast<FLegacyGLDebugDraw*>(ctx);
     auto alpha = self->m_alpha;
 
     self->Write(std::string(s), {p.x, p.y}, c);

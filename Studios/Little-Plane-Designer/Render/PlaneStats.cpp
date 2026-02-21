@@ -49,7 +49,7 @@ void FPlaneStats::Draw(const Graphics::FDraw2DParams& Params) {
 
     float sumFy = 0.0f;
     float sumWingMass = 0.0f;
-    struct WingInfo {
+    struct FWingInfo {
         const char *name;
         float mass;
         float Cl;
@@ -57,7 +57,7 @@ void FPlaneStats::Draw(const Graphics::FDraw2DParams& Params) {
         float Fy;
         float AoAdeg;
     };
-    Vector<WingInfo> infos;
+    Vector<FWingInfo> infos;
     const int nWings = Plane->GetWingCount();
     infos.reserve(nWings);
     for (int i = 0; i < nWings; ++i) {
@@ -68,7 +68,7 @@ void FPlaneStats::Draw(const Graphics::FDraw2DParams& Params) {
         const float Fy = data.GetTotalForce().y;
         sumFy += Fy;
         const float AoAdeg = data.AoA * static_cast<float>(180.0 / M_PI);
-        infos.push_back(WingInfo{wing.Params.Name.c_str(), wingMass, data.Cl, data.Cd, Fy, AoAdeg});
+        infos.push_back(FWingInfo{wing.Params.Name.c_str(), wingMass, data.Cl, data.Cd, Fy, AoAdeg});
     }
 
     const auto x = W - 1200.0f;

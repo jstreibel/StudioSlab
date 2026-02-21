@@ -53,10 +53,10 @@ static Math::Geometry::FPolygon GetNACA2412ProfileVertices(int N, const float ch
     return Math::Geometry::FPolygon(v);
 }
 
-Math::Geometry::FPolygon Foil::Airfoil_NACA2412::GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const {
+Math::Geometry::FPolygon Foil::FAirfoilNACA2412::GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const {
     return GetNACA2412ProfileVertices(N, chord_length, thickness_in_units_of_chord);
 }
 
-Math::Geometry::FPolygon Foil::ViternaAirfoil2412::GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const {
+Math::Geometry::FPolygon Foil::FViternaAirfoil2412::GetProfileVertices(int N, float chord_length, float thickness_in_units_of_chord) const {
     return GetNACA2412ProfileVertices(N, chord_length, thickness_in_units_of_chord);
 }
