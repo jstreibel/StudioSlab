@@ -10,19 +10,21 @@
 
 namespace Studios::Fields {
 
-    class AnalysisMonitor : public Slab::Graphics::WindowPanel {
-        Slab::Vector<Slab::Pointer<DataView>> dataViews;
-        Slab::Pointer<DataView> currentDataView;
+    class FAnalysisMonitor : public Slab::Graphics::WindowPanel {
+        Slab::Vector<Slab::Pointer<FDataView>> dataViews;
+        Slab::Pointer<FDataView> currentDataView;
 
         void setDataView(int index);
 
     public:
         void draw() override;
 
-        void addDataView(const Slab::Pointer<DataView>&);
+        void addDataView(const Slab::Pointer<FDataView>&);
 
         bool notifyKeyboard(Slab::KeyMap key, Slab::KeyState state, Slab::ModKeys modKeys) override;
     };
+
+    using AnalysisMonitor [[deprecated("Use FAnalysisMonitor")]] = FAnalysisMonitor;
 
 } // Studios::Fields
 

@@ -27,17 +27,17 @@ namespace Slab::Math::RtoR {
         extern DevFloat dampFactor;
 
 
-        class JackOutput : public Math::Socket {
+        class FJackOutput : public Math::Socket {
             auto handleOutput(const OutputPacket &packet) -> void override;
 
         public:
-            JackOutput(const NumericConfig &params);
+            FJackOutput(const NumericConfig &params);
             auto shouldOutput(DevFloat t, unsigned long timestep) -> bool override;
 
         };
 
 
-        class OutputBuilder : public OutputStructureBuilderRtoR {
+        class FOutputBuilder : public OutputStructureBuilderRtoR {
         protected:
         public:
             auto build(Str outputFileName) -> OutputManager * override;
@@ -47,7 +47,7 @@ namespace Slab::Math::RtoR {
         };
 
 
-        class BoundaryCondition : public Core::BoundaryConditions<RtoR::EquationState> {
+        class FBoundaryCondition : public Core::BoundaryConditions<RtoR::EquationState> {
             DevFloat f, A;
             mutable jack_default_audio_sample_t *currentBuffer = nullptr;
             mutable size_t currentBufferLocation = 0;
@@ -55,23 +55,28 @@ namespace Slab::Math::RtoR {
             mutable size_t bufferNumber = 0;
 
         public:
-            BoundaryCondition(DevFloat f, DevFloat A);;
+            FBoundaryCondition(DevFloat f, DevFloat A);;
             void apply(EquationState &function, DevFloat t) const override;
         };
 
 
-    class CLI : public RtoR::BCInterface {
+    class FCLI : public RtoR::BCInterface {
             RealParameter freq =      RealParameter{1, "freq", "The freq of the driving force"};
             RealParameter amplitude =   RealParameter{1, "amplitude", "The amplitude of the driving force"};
             RealParameter damping =     RealParameter{1.5e-3, "damping", "The damping factor at the right hand region of the field"};
             RealParameter dampPercent = RealParameter{.2, "damp_percent", "Percentage (in the range 0..1) of space to use for damping"};
         public:
-            CLI();
+            FCLI();
             auto getBoundary() const -> const void * override;
 
         protected:
             auto buildOpenGLOutput() -> RtoR::Monitor * override;
         };
+
+        using JackOutput [[deprecated("Use FJackOutput")]] = FJackOutput;
+        using OutputBuilder [[deprecated("Use FOutputBuilder")]] = FOutputBuilder;
+        using BoundaryCondition [[deprecated("Use FBoundaryCondition")]] = FBoundaryCondition;
+        using CLI [[deprecated("Use FCLI")]] = FCLI;
 
 
 

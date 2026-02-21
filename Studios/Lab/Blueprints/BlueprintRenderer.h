@@ -54,7 +54,7 @@ namespace Lab::Blueprints {
         std::map<Editor::NodeId, float, FNodeIdLess> m_NodeTouchTime;
         bool                 m_ShowOrdinals = false;
 
-        EditorUtil::BlueprintNodeBuilder Builder;
+        EditorUtil::FBlueprintNodeBuilder Builder;
         TPointer<FBlueprint> Blueprint;
 
         void TouchNode(Editor::NodeId id);

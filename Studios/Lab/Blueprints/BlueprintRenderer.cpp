@@ -72,7 +72,7 @@ namespace Lab::Blueprints {
         m_SaveIcon         = Graphics::SlabTexture::LoadTextureFromImage(location + "ic_save_white_24dp.png");
         m_RestoreIcon      = Graphics::SlabTexture::LoadTextureFromImage(location + "ic_restore_white_24dp.png");
 
-        Builder = EditorUtil::BlueprintNodeBuilder(m_HeaderBackground, Graphics::SlabTexture::GetTextureWidth(m_HeaderBackground), Graphics::SlabTexture::GetTextureHeight(m_HeaderBackground));
+        Builder = EditorUtil::FBlueprintNodeBuilder(m_HeaderBackground, Graphics::SlabTexture::GetTextureWidth(m_HeaderBackground), Graphics::SlabTexture::GetTextureHeight(m_HeaderBackground));
     }
 
     void FBlueprintRenderer::TouchNode(const Editor::NodeId id) { m_NodeTouchTime[id] = m_TouchTime; }

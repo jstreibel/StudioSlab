@@ -11,15 +11,15 @@ namespace Slab::Math::RtoR {
 
     namespace Signal {
 
-        class JackControl : public Window {
+        class FJackControl : public Window {
         public:
             void draw() override;
         };
 
-        class OutGL : public RtoR::Monitor {
+        class FOutGL : public RtoR::Monitor {
             GraphRtoR signalBufferGraph;
             GraphRtoR signalFullGraph;
-            JackControl jackControlWindow;
+            FJackControl jackControlWindow;
 
             GraphRtoR fullRecordingGraph;
             Window fullRecordingWindow;
@@ -35,7 +35,7 @@ namespace Slab::Math::RtoR {
             void handleOutput(const OutputPacket &outInfo) override;
 
         public:
-            OutGL(const NumericConfig &params, DevFloat phiMin, DevFloat phiMax);
+            FOutGL(const NumericConfig &params, DevFloat phiMin, DevFloat phiMax);
 
             void draw() override;
 
@@ -43,6 +43,9 @@ namespace Slab::Math::RtoR {
 
             bool notifyKeyboard(unsigned char key, int x, int y) override;
         };
+
+        using JackControl [[deprecated("Use FJackControl")]] = FJackControl;
+        using OutGL [[deprecated("Use FOutGL")]] = FOutGL;
     }
 }
 

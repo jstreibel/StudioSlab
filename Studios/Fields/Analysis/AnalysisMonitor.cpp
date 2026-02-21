@@ -6,7 +6,7 @@
 
 namespace Studios::Fields {
 
-    void AnalysisMonitor::setDataView(int index) {
+    void FAnalysisMonitor::setDataView(int index) {
         if (index > dataViews.size() - 1) return;
 
         auto oldDataView = currentDataView;
@@ -26,14 +26,14 @@ namespace Studios::Fields {
         if (oldDataView != nullptr) oldDataView->notifyBecameInvisible();
     }
 
-    void AnalysisMonitor::draw() { WindowPanel::draw(); }
+    void FAnalysisMonitor::draw() { WindowPanel::draw(); }
 
-    void AnalysisMonitor::addDataView(const Slab::Pointer<DataView> &dataView) {
+    void FAnalysisMonitor::addDataView(const Slab::Pointer<FDataView> &dataView) {
         dataViews.push_back(dataView);
     }
 
     bool
-    AnalysisMonitor::notifyKeyboard(Slab::KeyMap key, Slab::KeyState state, Slab::ModKeys modKeys) {
+    FAnalysisMonitor::notifyKeyboard(Slab::KeyMap key, Slab::KeyState state, Slab::ModKeys modKeys) {
         if(state==Slab::Core::Release && modKeys.Mod_Alt) {
             int n = key - Slab::Core::Key_1 + 1;
 

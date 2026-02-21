@@ -16,7 +16,7 @@
 #include <cstring>
 
 
-JackServer *jack = nullptr;
+FJackServer *jack = nullptr;
 
 
 float testWaveFreq = 1.0;
@@ -50,9 +50,9 @@ int processJack(jack_nframes_t nframes, void *arg){
 
     auto &processedSamples = jack->dataToOutput;
     const auto nsamples = processedSamples.size();
-    jack->samplingFlag = (nframes > nsamples) ? JackServer::UnderSampled :
-                         (nframes < nsamples) ? JackServer::OverSampled :
-                                                JackServer::EvenSampled ;
+    jack->samplingFlag = (nframes > nsamples) ? FJackServer::UnderSampled :
+                         (nframes < nsamples) ? FJackServer::OverSampled :
+                                                FJackServer::EvenSampled ;
 
     jack->totalLastOutputProcessedSamples = nsamples;
 
@@ -65,7 +65,7 @@ int processJack(jack_nframes_t nframes, void *arg){
 }
 
 
-JackServer::JackServer() {
+FJackServer::FJackServer() {
     if(jack != nullptr) throw "Fields' Jack server already initialized";
 
     jack_set_error_function(error);
@@ -134,18 +134,18 @@ JackServer::JackServer() {
         throw "Jack error 4";
 }
 
-JackServer* JackServer::GetInstance() {
+FJackServer* FJackServer::GetInstance() {
     if (jack == nullptr)
-        jack = new JackServer();
+        jack = new FJackServer();
 
     return jack;
 }
 
-int JackServer::getInputBufferSize() {
+int FJackServer::getInputBufferSize() {
     return buffer_size;
 }
 
-void JackServer::recordInputBuffer(jack_nframes_t nframes) {
+void FJackServer::recordInputBuffer(jack_nframes_t nframes) {
     auto jack_input_buffer = (jack_default_audio_sample_t*) jack_port_get_buffer(getInputPort(), nframes);
     memcpy(input_buffer, jack_input_buffer, sizeof(jack_default_audio_sample_t) * nframes);
 
@@ -155,7 +155,7 @@ void JackServer::recordInputBuffer(jack_nframes_t nframes) {
     totalInputBufferUpdates++;
 }
 
-bool JackServer::toggleRecording() {
+bool FJackServer::toggleRecording() {
     isRecordingInput = !isRecordingInput;
 
     Log::Attention() << "JackServer is " << (isRecordingInput?"":"not ") << "recording input." << Log::Flush;
@@ -163,24 +163,24 @@ bool JackServer::toggleRecording() {
     return isRecordingInput;
 }
 
-Vector<float> JackServer::getRecording() {
+Vector<float> FJackServer::getRecording() {
     return recordedInput;
 }
 
 
-jack_default_audio_sample_t *JackServer::getInputBuffer() {
+jack_default_audio_sample_t *FJackServer::getInputBuffer() {
     return input_buffer;
 }
 
-jack_port_t *JackServer::getInputPort() {
+jack_port_t *FJackServer::getInputPort() {
     return input_port;
 }
 
-jack_port_t *JackServer::getOutputPort() {
+jack_port_t *FJackServer::getOutputPort() {
     return output_processed_port;
 }
 
-void JackServer::operator<<(DevFloat value) {
+void FJackServer::operator<<(DevFloat value) {
     dataMutex.lock();
     dataToOutput.emplace_back(value);
     dataMutex.unlock();
