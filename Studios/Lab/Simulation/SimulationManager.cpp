@@ -83,7 +83,7 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
 
         if (ImGui::Button("Run"))
         {
-            const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
+            const auto TaskManager = Slab::Core::GetModule<Slab::Core::FTaskManager>("TaskManager");
             const auto Task = Slab::New<Slab::Math::FNumericTask>(Material.GetRecipe(), false);
             Task->SetOutputManager(Material.BuildOutputManager());
             TaskManager->AddTask(Task);

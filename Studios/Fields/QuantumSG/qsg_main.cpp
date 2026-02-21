@@ -32,7 +32,7 @@ public:
 protected:
     Slab::TPointer<Slab::Graphics::MainViewer> main_viewer;
     void OnStart() override {
-        GET task_manager = Slab::GetModule<Slab::Core::MTaskManager>("TaskManager");
+        GET task_manager = Slab::GetModule<Slab::Core::FTaskManager>("TaskManager");
 
         numeric_task->Init();
 

@@ -13,7 +13,7 @@
 
 namespace Slab::Core {
 
-        class MTaskManager final : public FSlabModule {
+        class FTaskManager final : public FSlabModule {
             using FTaskPointer = TPointer<FTask>;
             struct FJob
             {
@@ -32,9 +32,9 @@ namespace Slab::Core {
             } destructorPolicy;
 
         public:
-            explicit MTaskManager(EDestructorPolicy Policy=AbortAll);
+            explicit FTaskManager(EDestructorPolicy Policy=AbortAll);
             // Destructor to join all threads
-            ~MTaskManager() override;
+            ~FTaskManager() override;
 
             [[nodiscard]] auto HasRunningTasks() const -> bool;
             [[nodiscard]] auto GetNumberOfRunningTasks() const -> size_t;
@@ -54,6 +54,8 @@ namespace Slab::Core {
 
 
         };
+
+        using MTaskManager [[deprecated("Use FTaskManager")]] = FTaskManager;
 
 } // Slab::Core
 

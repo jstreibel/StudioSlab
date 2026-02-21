@@ -7,10 +7,10 @@
 
 namespace Slab::Core {
 
-    MTaskManager::MTaskManager(MTaskManager::EDestructorPolicy Policy)
+    FTaskManager::FTaskManager(FTaskManager::EDestructorPolicy Policy)
     : FSlabModule("Task Manager"), destructorPolicy(Policy) {    }
 
-    MTaskManager::~MTaskManager() {
+    FTaskManager::~FTaskManager() {
         if(destructorPolicy == WaitAll) {
             for(const auto & [Task, JobThread] : Jobs) {
                 if (JobThread->joinable()) JobThread->join();
@@ -20,7 +20,7 @@ namespace Slab::Core {
             AbortAllTasks();
     }
 
-    auto MTaskManager::AddTask(const FTaskPointer& Task) -> MTaskManager::FJob {
+    auto FTaskManager::AddTask(const FTaskPointer& Task) -> FTaskManager::FJob {
         auto funky = [Task]() {
             Task->Start();
 
@@ -55,13 +55,13 @@ namespace Slab::Core {
         return job;
     }
 
-    void MTaskManager::AbortAllTasks() const
+    void FTaskManager::AbortAllTasks() const
     {
         for(const auto& job : Jobs)
             Abort(job);
     }
 
-    void MTaskManager::Abort(const FJob& Job) {
+    void FTaskManager::Abort(const FJob& Job) {
         auto &Task = Job.Task;
         auto &Thread = Job.JobThread;
 
@@ -80,21 +80,21 @@ namespace Slab::Core {
 
     }
 
-    auto MTaskManager::HasRunningTasks() const -> bool {
+    auto FTaskManager::HasRunningTasks() const -> bool {
         return std::ranges::any_of(Jobs, [](const FJob &job){ return job.Task->IsTaskRunning(); });
     }
 
-    auto MTaskManager::GetNumberOfRunningTasks() const -> size_t
+    auto FTaskManager::GetNumberOfRunningTasks() const -> size_t
     {
         return Jobs.size();
     }
 
-    TList<MTaskManager::FJob> MTaskManager::GetAllJobs()
+    TList<FTaskManager::FJob> FTaskManager::GetAllJobs()
     {
         return Jobs;
     }
 
-    bool MTaskManager::ClearJob(const FJob& Job)
+    bool FTaskManager::ClearJob(const FJob& Job)
     {
         if (Job.Task->IsTaskRunning()) return false;
 

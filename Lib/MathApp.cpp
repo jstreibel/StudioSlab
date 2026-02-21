@@ -25,7 +25,7 @@ namespace Slab::Math {
     auto FMathApp::run() -> int {
         const auto integrationTask = Slab::New<FNumericTask>(Recipe);
 
-        const auto TaskManager = dynamic_cast<Core::MTaskManager*>
+        const auto TaskManager = dynamic_cast<Core::FTaskManager*>
                 (Core::BackendManager::GetModule("TaskManager").get());
 
         TaskManager->AddTask(integrationTask);

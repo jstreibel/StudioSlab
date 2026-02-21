@@ -66,7 +66,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
         constexpr auto WindowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
         if (ImGui::Begin(StudioConfig::SidePaneId, nullptr, WindowFlags))
         {
-            const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
+            const auto TaskManager = Slab::Core::GetModule<Slab::Core::FTaskManager>("TaskManager");
 
             ShowJobs();
             ShowManagedData(*this);
@@ -120,7 +120,7 @@ Slab::TPointer<Slab::Graphics::FImGuiContext> StudioWindowManager::GetImGuiConte
 
 void ShowJobs()
 {
-    const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
+    const auto TaskManager = Slab::Core::GetModule<Slab::Core::FTaskManager>("TaskManager");
 
     // SHOW JOBS **********************************************************************
     if (auto Jobs = TaskManager->GetAllJobs(); !Jobs.empty())

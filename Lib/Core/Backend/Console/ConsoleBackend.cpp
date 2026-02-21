@@ -11,7 +11,7 @@ namespace Slab::Core {
     }
 
     void FConsoleBackend::Run() {
-        auto TaskManager = dynamic_cast<MTaskManager*>(BackendManager::GetModule("TaskManager").get());
+        auto TaskManager = dynamic_cast<FTaskManager*>(BackendManager::GetModule("TaskManager").get());
 
         while(TaskManager->HasRunningTasks());
     }

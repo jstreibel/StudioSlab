@@ -27,7 +27,7 @@ namespace Studios::MolecularDynamics {
 
         NumericTask = Slab::New<Slab::Math::FNumericTask>(Slab::Dummy(Recipe));
 
-        auto taskManager = Slab::DynamicPointerCast<Slab::Core::MTaskManager>(Slab::Core::GetModule("TaskManager"));
+        auto taskManager = Slab::DynamicPointerCast<Slab::Core::FTaskManager>(Slab::Core::GetModule("TaskManager"));
         taskManager->AddTask(NumericTask);
 
         Slab::Graphics::GetGraphicsBackend()->Run();

@@ -55,7 +55,7 @@ namespace Slab::Core {
     }
 
     void RegisterModules(){
-        BackendManager::RegisterAvailableModule<MTaskManager>("TaskManager");
+        BackendManager::RegisterAvailableModule<FTaskManager>("TaskManager");
     }
 
 }
