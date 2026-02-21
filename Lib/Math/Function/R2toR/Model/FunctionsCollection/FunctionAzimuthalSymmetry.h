@@ -14,15 +14,18 @@
 
 namespace Slab::Math::R2toR {
 
-class FunctionAzimuthalSymmetry : public R2toR::Function {
+class FFunctionAzimuthalSymmetry : public R2toR::Function {
     public:
-        typedef std::shared_ptr<FunctionAzimuthalSymmetry> Ptr;
+        using Ptr = std::shared_ptr<FFunctionAzimuthalSymmetry>;
 
-        FunctionAzimuthalSymmetry(const RtoR::Function *baseFunction, DevFloat coef=1, DevFloat eccentricity=0,
-                                  DevFloat angle=0, bool keepBaseFunction=true)
+        FFunctionAzimuthalSymmetry(const RtoR::Function* baseFunction,
+                                   DevFloat coef = 1,
+                                   DevFloat eccentricity = 0,
+                                   DevFloat angle = 0,
+                                   bool keepBaseFunction = true)
             : radialFunction(*baseFunction), c(coef), theta(angle), a(1. / sqrt(1. - eccentricity * eccentricity)), keepBaseFunction(keepBaseFunction)
                {};
-        ~FunctionAzimuthalSymmetry(){ if(keepBaseFunction) delete &radialFunction; }
+        ~FFunctionAzimuthalSymmetry() { if(keepBaseFunction) delete &radialFunction; }
 
         DevFloat operator()(Real2D x) const override {
             Rotation T(theta);
@@ -47,6 +50,8 @@ class FunctionAzimuthalSymmetry : public R2toR::Function {
         const bool keepBaseFunction;
         const RtoR::Function &radialFunction;
     };
+
+using FunctionAzimuthalSymmetry [[deprecated("Use FFunctionAzimuthalSymmetry")]] = FFunctionAzimuthalSymmetry;
 
 }
 

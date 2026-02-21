@@ -156,7 +156,7 @@ namespace Slab::Models::KGR2toR {
 
     R2toR::EquationState_ptr Builder::getInitialState() {
         RtoR::NullFunction nullFunction;
-        R2toR::FunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
+        R2toR::FFunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
 
         auto u_0 = newFieldState();
 

@@ -27,7 +27,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
         if (t == 0) {
             RtoR::NullFunction nullFunction;
-            R2toR::FunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
+            R2toR::FFunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
 
             stateKG.SetPhi(fullNull);
             stateKG.SetDPhiDt(fullNull);
@@ -125,5 +125,4 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
 
 }
-
 

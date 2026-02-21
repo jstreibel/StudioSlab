@@ -12,7 +12,7 @@ namespace Slab::Math {
 //
 //}
 
-    DevFloat RtoR::AnalyticShockwave2DRadialSymmetry::W_k(UInt k, DevFloat z) const {
+    DevFloat RtoR::FAnalyticShockwave2DRadialSymmetry::W_k(UInt k, DevFloat z) const {
         if (k >= quant) return .0;
         if (z > .0) return .0;
 
@@ -30,13 +30,13 @@ namespace Slab::Math {
             return c * (z + a) + beta_k[k] * (1. / sqrt(-z) - 1. / sqrt(a));
     }
 
-    DevFloat RtoR::AnalyticShockwave2DRadialSymmetry::theta_k(UInt k, DevFloat z) const {
+    DevFloat RtoR::FAnalyticShockwave2DRadialSymmetry::theta_k(UInt k, DevFloat z) const {
         if (!k) return UnitStep(-z) * UnitStep(-(-z - a_k[0]));
 
         return UnitStep(-(z + a_k[k - 1])) * UnitStep(z + a_k[k]);
     }
 
-    DevFloat RtoR::AnalyticShockwave2DRadialSymmetry::operator()(DevFloat r) const {
+    DevFloat RtoR::FAnalyticShockwave2DRadialSymmetry::operator()(DevFloat r) const {
         DevFloat z = .25 * (r * r - t * t);
 
         DevFloat sum = .0;
@@ -47,7 +47,7 @@ namespace Slab::Math {
         return sum;
     }
 
-    RtoR::AnalyticShockwave2DRadialSymmetry::AnalyticShockwave2DRadialSymmetry(DevFloat a0) {
+    RtoR::FAnalyticShockwave2DRadialSymmetry::FAnalyticShockwave2DRadialSymmetry(DevFloat a0) {
         for (auto i = 0; i < quant; ++i) {
             auto &a = a_k[i];
             auto &beta = beta_k[i];
@@ -58,7 +58,7 @@ namespace Slab::Math {
     }
 
 
-    DevFloat RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivative::dW_kdz(UInt k, DevFloat z) const {
+    DevFloat RtoR::FAnalyticShockwave2DRadialSymmetryTimeDerivative::dW_kdz(UInt k, DevFloat z) const {
         if (k >= quant) return .0;
         if (z > .0) return .0;
 
@@ -73,13 +73,13 @@ namespace Slab::Math {
             return c + beta_k[k] * .5 * pow(-z, 1.5);
     }
 
-    DevFloat RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivative::theta_k(UInt k, DevFloat z) const {
+    DevFloat RtoR::FAnalyticShockwave2DRadialSymmetryTimeDerivative::theta_k(UInt k, DevFloat z) const {
         if (!k) return UnitStep(-z) * UnitStep(-(-z - a_k[0]));
 
         return UnitStep(-(z + a_k[k - 1])) * UnitStep(z + a_k[k]);
     }
 
-    DevFloat RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivative::operator()(DevFloat r) const {
+    DevFloat RtoR::FAnalyticShockwave2DRadialSymmetryTimeDerivative::operator()(DevFloat r) const {
         DevFloat z = .25 * (r * r - t * t);
         DevFloat dzdt = -.5 * t;
 

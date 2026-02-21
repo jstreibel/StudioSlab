@@ -21,7 +21,7 @@
 #define xMin params.getxMin()
 #define xMax params.getxMax()
 
-Slab::Math::R2toR::FunctionAzimuthalSymmetry nullFunc(new Slab::Math::RtoR::NullFunction);
+Slab::Math::R2toR::FFunctionAzimuthalSymmetry nullFunc(new Slab::Math::RtoR::NullFunction);
 
 namespace Studios::Fields::R2toRLeadingDelta {
 
