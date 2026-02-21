@@ -46,7 +46,7 @@ namespace Lab::Blueprints {
 
     struct FBlueprintNode;
 
-    struct Pin
+    struct FPin
     {
         Editor::PinId   ID;
         Blueprints::FBlueprintNode*     Node;
@@ -54,7 +54,7 @@ namespace Lab::Blueprints {
         PinType     Type;
         PinKind     Kind;
 
-        Pin(int id, const char* name, PinType type):
+        FPin(int id, const char* name, PinType type):
                 ID(id), Node(nullptr), Name(name), Type(type), Kind(PinKind::Input)
         {
         }
@@ -64,8 +64,8 @@ namespace Lab::Blueprints {
     {
         Editor::NodeId ID;
         Slab::Str Name;
-        Slab::Vector<Pin> Inputs;
-        Slab::Vector<Pin> Outputs;
+        Slab::Vector<FPin> Inputs;
+        Slab::Vector<FPin> Outputs;
         ImColor Color;
         NodeType Type;
         ImVec2 Size;
@@ -79,7 +79,7 @@ namespace Lab::Blueprints {
         }
     };
 
-    struct Link
+    struct FLink
     {
         Editor::LinkId ID;
 
@@ -88,19 +88,23 @@ namespace Lab::Blueprints {
 
         ImColor Color;
 
-        Link(Editor::LinkId id, Editor::PinId startPinId, Editor::PinId endPinId):
+        FLink(Editor::LinkId id, Editor::PinId startPinId, Editor::PinId endPinId):
                 ID(id), StartPinID(startPinId), EndPinID(endPinId), Color(255, 255, 255)
         {
         }
     };
 
-    struct NodeIdLess
+    struct FNodeIdLess
     {
         bool operator()(const Editor::NodeId& lhs, const Editor::NodeId& rhs) const
         {
             return lhs.AsPointer() < rhs.AsPointer();
         }
     };
+
+    using Pin [[deprecated("Use FPin")]] = FPin;
+    using Link [[deprecated("Use FLink")]] = FLink;
+    using NodeIdLess [[deprecated("Use FNodeIdLess")]] = FNodeIdLess;
 
     static bool Splitter(bool split_vertically, float thickness, float* size1, float* size2, float min_size1, float min_size2, float splitter_long_axis_size = -1.0f)
     {

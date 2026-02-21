@@ -21,7 +21,7 @@ namespace Lab::Blueprints {
 
         static ImColor GetIconColor(PinType type);;
 
-        void DrawPinIcon(const Pin& pin, bool connected, int alpha) const;;
+        void DrawPinIcon(const FPin& pin, bool connected, int alpha) const;;
 
         static void ShowStyleEditor(bool* show = nullptr);
 
@@ -36,8 +36,8 @@ namespace Lab::Blueprints {
             Editor::LinkId ContextLinkId = 0;
             Editor::PinId ContextPinId = 0;
             bool bCreateNewNode = false;
-            Pin *NewNodeLinkPin = nullptr;
-            Pin *NewLinkPin = nullptr;
+            FPin *NewNodeLinkPin = nullptr;
+            FPin *NewLinkPin = nullptr;
 
             float LeftPaneWidth = 400.0f;
             float RightPaneWidth = 800.0f;
@@ -51,7 +51,7 @@ namespace Lab::Blueprints {
         ImTextureID          m_SaveIcon = nullptr;
         ImTextureID          m_RestoreIcon = nullptr;
         const float          m_TouchTime = 1.0f;
-        std::map<Editor::NodeId, float, NodeIdLess> m_NodeTouchTime;
+        std::map<Editor::NodeId, float, FNodeIdLess> m_NodeTouchTime;
         bool                 m_ShowOrdinals = false;
 
         EditorUtil::BlueprintNodeBuilder Builder;

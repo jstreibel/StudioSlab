@@ -237,7 +237,7 @@ namespace Lab::Blueprints {
                         else {
                             ShowLabel("+ Create Link", ImColor(32, 45, 32, 180));
                             if (Editor::AcceptNewItem(ImColor(128, 255, 128), 4.0f)) {
-                                m_Links.emplace_back(Link(FBlueprint::GetNextId(), startPinId, endPinId));
+                                m_Links.emplace_back(FLink(FBlueprint::GetNextId(), startPinId, endPinId));
                                 m_Links.back().Color = GetIconColor(StartPin->Type);
                             }
                         }
@@ -307,7 +307,7 @@ namespace Lab::Blueprints {
         }
     }
 
-    void FBlueprintRenderer::DrawPinIcon(const Pin &pin, const bool connected, const int alpha) const
+    void FBlueprintRenderer::DrawPinIcon(const FPin &pin, const bool connected, const int alpha) const
     {
         IconType iconType;
         ImColor  color = GetIconColor(pin.Type);
