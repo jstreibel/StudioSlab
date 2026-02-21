@@ -6,9 +6,9 @@
 #include "Math/Numerics/ODE/Odeint/OdeintState.h"
 #include "Math/Numerics/ODE/Odeint/OdeintToSlabState.h"
 
-class SolverTest : public Slab::Math::Odeint::OdeintSolver {
+class FSolverTest : public Slab::Math::Odeint::OdeintSolver {
 public:
-    SolverTest() = default;
+    FSolverTest() = default;
 
     void operator()(const Slab::Math::Odeint::OdeintStateWrapper &x,
                           Slab::Math::Odeint::OdeintStateWrapper &dxdt,
@@ -17,7 +17,7 @@ public:
     }
 };
 
-class StateyState : public Slab::Math::Odeint::OdeintState<Slab::DevFloat> {
+class FStateyState : public Slab::Math::Odeint::OdeintState<Slab::DevFloat> {
 
 };
 
@@ -34,7 +34,7 @@ int main() {
     double t = 0.0;
     double dt = 0.01;
 
-    SolverTest solvyDolvy;
+    FSolverTest solvyDolvy;
 
     /*
     boost::numeric::odeint::integrate_const(stepper, solvyDolvy, x, t, 10.0, dt,
