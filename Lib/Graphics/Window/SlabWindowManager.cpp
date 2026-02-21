@@ -56,7 +56,7 @@ namespace Slab::Graphics {
 
                 auto &window = CurrentlyFocused->Window;
                 constexpr Int N=10000;
-                Animator::SetCallback(0, N, AnimationTimeInSeconds,
+                FAnimator::SetCallback(0, N, AnimationTimeInSeconds,
                                       [&window, rect_0, Δrect](Int i) {
                                           fix s = (DevFloat(i)/N);
                                            fix rect = rect_0 + Δrect*s ;
@@ -86,7 +86,7 @@ namespace Slab::Graphics {
                 auto &window = CurrentlyFocused->Window;
                 constexpr Int N=10000;
 
-                Animator::SetCallback(0, N, AnimationTimeInSeconds,
+                FAnimator::SetCallback(0, N, AnimationTimeInSeconds,
                     [&window, rect_0, Δrect](Int i) {
                         fix s = (DevFloat(i)/N);
                         fix rect = rect_0 + Δrect*s ;

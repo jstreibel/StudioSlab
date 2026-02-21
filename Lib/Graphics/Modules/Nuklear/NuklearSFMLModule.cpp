@@ -46,7 +46,7 @@ namespace Slab::Graphics {
 
 
     void FNuklearSFMLModule::Update() {
-        GraphicsModule::Update();
+        FGraphicsModule::Update();
 
         /* IMPORTANT: `nk_sfml_render` modifies some global OpenGL state
         * with blending, scissor, face culling and depth test and defaults everything

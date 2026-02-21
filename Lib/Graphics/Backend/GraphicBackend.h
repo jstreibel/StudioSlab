@@ -17,7 +17,7 @@ namespace Slab::Graphics {
 
         explicit GraphicBackend(const Str &name);
 
-        Vector<TVolatile<GraphicsModule>> GraphicModules;
+        Vector<TVolatile<FGraphicsModule>> GraphicModules;
         TList<TPointer<FPlatformWindow>> SystemWindows;
 
         virtual void ClearModules();
@@ -37,9 +37,9 @@ namespace Slab::Graphics {
 
         void SetupGUIForPlatformWindow(const FPlatformWindow *) const;
 
-        void AddGraphicsModule(const TVolatile<GraphicsModule> &module);
+        void AddGraphicsModule(const TVolatile<FGraphicsModule>& module);
 
-        auto GetGraphicsModules() -> const Vector<TVolatile<GraphicsModule>> &;
+        auto GetGraphicsModules() -> const Vector<TVolatile<FGraphicsModule>>&;
 
         void Terminate() override;
 

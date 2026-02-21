@@ -34,7 +34,7 @@ namespace Slab::Graphics {
         ImGui_ImplGlfw_NewFrame();
     };
 
-    ImGuiModuleGLFW::ImGuiModuleGLFW(GLFWwindow* Window)
+    FImGuiModuleGLFW::FImGuiModuleGLFW(GLFWwindow* Window)
     : FImGuiModule(FImplementationCallSet{Window, Init, End, Draw, NewFrame}) {  }
 
 } // Core

@@ -9,10 +9,12 @@
 
 namespace Slab::Graphics {
 
-    class ModernOpenGLModule : public Core::SlabModule {
+    class FModernOpenGLModule : public Core::SlabModule {
     public:
-        ModernOpenGLModule();
+        FModernOpenGLModule();
     };
+
+    using ModernOpenGLModule [[deprecated("Use FModernOpenGLModule")]] = FModernOpenGLModule;
 
 } // Core
 

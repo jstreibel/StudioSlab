@@ -32,9 +32,9 @@ namespace Slab::Graphics {
     template<typename T>
     using AnimationMap = std::unordered_map<TPointer<T>, Animation<T>>;
 
-    class Animator {
-        static Animator& Instance();
-        Animator() = default;
+    class FAnimator {
+        static FAnimator& Instance();
+        FAnimator() = default;
 
         AnimationMap<double> double_animations;
         AnimationMap<int> int_animations;
@@ -65,6 +65,8 @@ namespace Slab::Graphics {
         static void Update();
 
     };
+
+    using Animator [[deprecated("Use FAnimator")]] = FAnimator;
 
 } // Core
 

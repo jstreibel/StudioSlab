@@ -10,12 +10,14 @@
 
 namespace Slab::Graphics {
 
-    class RealTimeAnimationModule : public GraphicsModule {
+    class FRealTimeAnimationModule : public FGraphicsModule {
     public:
-        explicit RealTimeAnimationModule();
+        explicit FRealTimeAnimationModule();
 
         void Update() override;
     };
+
+    using RealTimeAnimationModule [[deprecated("Use FRealTimeAnimationModule")]] = FRealTimeAnimationModule;
 
 } // Core
 

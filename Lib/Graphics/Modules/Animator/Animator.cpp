@@ -10,36 +10,36 @@
 
 namespace Slab::Graphics {
 
-    Animator &Animator::Instance() {
-        static Animator instance;
+    FAnimator& FAnimator::Instance() {
+        static FAnimator instance;
         return instance;
     }
 
-    void Animator::Set(double &variable, double targetValue, double timeInSeconds,
+    void FAnimator::Set(double &variable, double targetValue, double timeInSeconds,
                        AnimStepCallback<double> onStep, AnimFinishCallback onFinish) {
         auto &animations = Instance().double_animations;
 
         animations[Dummy(variable)] = {variable, targetValue, timeInSeconds, onStep, onFinish};
     }
 
-    void Animator::Set(Int &variable, Int targetValue, double timeInSeconds,
+    void FAnimator::Set(Int &variable, Int targetValue, double timeInSeconds,
                        AnimStepCallback<Int> onStep, std::function<void(void)> onFinish) {
         auto &animations = Instance().int_animations;
 
         animations[Dummy(variable)] = {variable, targetValue, timeInSeconds, onStep, onFinish};
     }
 
-    void Animator::SetCallback(Int v0, Int targetValue, double timeInSeconds, AnimStepCallback<Int> onStep, AnimFinishCallback onFinish) {
+    void FAnimator::SetCallback(Int v0, Int targetValue, double timeInSeconds, AnimStepCallback<Int> onStep, AnimFinishCallback onFinish) {
         auto &animations = Instance().int_animations;
 
         animations[New<Int>(v0)] = {v0, targetValue, timeInSeconds, onStep, onFinish};
     }
 
-    void Animator::Update() {
+    void FAnimator::Update() {
         auto now = std::chrono::steady_clock::now();
 
         {
-            auto &animations = Animator::Instance().double_animations;
+            auto &animations = FAnimator::Instance().double_animations;
 
             for (auto it = animations.begin(); it != animations.end();) {
                 auto &[var, anim] = *it;
@@ -58,7 +58,7 @@ namespace Slab::Graphics {
                 }
             }
         }{
-            auto &animations = Animator::Instance().int_animations;
+            auto &animations = FAnimator::Instance().int_animations;
 
             for (auto it = animations.begin(); it != animations.end();) {
                 auto &[var, anim] = *it;
@@ -80,9 +80,9 @@ namespace Slab::Graphics {
 
     }
 
-    double Animator::cubicBezierInterpolation(double startValue, double endValue, double t) {
-        fix p1 = Animator::Instance().p1;
-        fix p2 = Animator::Instance().p2;
+    double FAnimator::cubicBezierInterpolation(double startValue, double endValue, double t) {
+        fix p1 = FAnimator::Instance().p1;
+        fix p2 = FAnimator::Instance().p2;
 
         // Cubic Bezier curve with control points P0, P1, P2, P3
         double P0 = startValue;
@@ -97,21 +97,21 @@ namespace Slab::Graphics {
                           std::pow(t, 3)     * P3;
     }
 
-    bool Animator::Contains(const double &variable) {
-        return Animator::Instance().double_animations.contains(Dummy(const_cast<double&>(variable)));
+    bool FAnimator::Contains(const double &variable) {
+        return FAnimator::Instance().double_animations.contains(Dummy(const_cast<double&>(variable)));
     }
 
-    void Animator::SetBezierParams(double p1, double p2) {
+    void FAnimator::SetBezierParams(double p1, double p2) {
         Instance().p1 = p1;
         Instance().p2 = p2;
     }
 
-    auto Animator::Get(const double &variable) -> const Animation<double> & {
-        return Animator::Instance().double_animations[Dummy(const_cast<double&>(variable))];
+    auto FAnimator::Get(const double &variable) -> const Animation<double> & {
+        return FAnimator::Instance().double_animations[Dummy(const_cast<double&>(variable))];
     }
 
-    auto Animator::GetBezierParams() -> Pair<double, double> {
-        auto &anim = Animator::Instance();
+    auto FAnimator::GetBezierParams() -> Pair<double, double> {
+        auto &anim = FAnimator::Instance();
         return {anim.p1, anim.p2};
     }
 

@@ -63,7 +63,7 @@ namespace Slab::Graphics {
             throw NotImplementedException("Headless ImGui module");
         if(BackendImplName == "GLFW")
         {
-            return new ImGuiModuleGLFW(static_cast<GLFWwindow*>(RawPlatformWindowPtr));
+            return new FImGuiModuleGLFW(static_cast<GLFWwindow*>(RawPlatformWindowPtr));
         }
         if(BackendImplName == "SFML")
             throw NotImplementedException("SFML ImGui module");

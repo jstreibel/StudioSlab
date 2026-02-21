@@ -6,7 +6,7 @@
 
 namespace Slab::Graphics {
     FGUIModule::FGUIModule(const Str& name)
-    : GraphicsModule(name) {
+    : FGraphicsModule(name) {
 
     }
 } // Slab::Graphics

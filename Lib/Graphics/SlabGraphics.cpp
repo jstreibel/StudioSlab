@@ -36,14 +36,14 @@ namespace Slab::Graphics {
     }
 
     void RegisterModules() {
-        Core::BackendManager::RegisterAvailableModule<SlabGraphicsModule>("Slab:Graphics");
+        Core::BackendManager::RegisterAvailableModule<FSlabGraphicsModule>("Slab:Graphics");
 
         Core::BackendManager::RegisterAvailableModule("GUI:ImGui",   [](){ return FImGuiModule::BuildModule(); });
         Core::BackendManager::RegisterAvailableModule("GUI:Nuklear", [](){ return FNuklearModule::BuildModule(); });
         Core::BackendManager::RegisterAvailableModule("GUI:NanoGUI", []() {throw Exception("NanoGUI module not implemented"); return nullptr; });
 
-        Core::BackendManager::RegisterAvailableModule("RealTimeAnimation", ModuleAllocator<RealTimeAnimationModule>);
-        Core::BackendManager::RegisterAvailableModule("ModernOpenGL",      ModuleAllocator<ModernOpenGLModule>);
+        Core::BackendManager::RegisterAvailableModule("RealTimeAnimation", ModuleAllocator<FRealTimeAnimationModule>);
+        Core::BackendManager::RegisterAvailableModule("ModernOpenGL",      ModuleAllocator<FModernOpenGLModule>);
 
         Core::BackendManager::RegisterAvailableModule("Jack", []() {throw Exception("Jack module not implemented"); return nullptr; });
         Core::BackendManager::RegisterAvailableModule("NodeJS", []() {throw Exception("NodeJS module not implemented"); return nullptr; });

@@ -7,11 +7,11 @@
 
 namespace Slab::Graphics {
 
-    void RealTimeAnimationModule::Update() {
-        GraphicsModule::Update();
-        Graphics::Animator::Update();
+    void FRealTimeAnimationModule::Update() {
+        FGraphicsModule::Update();
+        Graphics::FAnimator::Update();
     }
 
-    RealTimeAnimationModule::RealTimeAnimationModule() : GraphicsModule("Realtime Animation") {}
+    FRealTimeAnimationModule::FRealTimeAnimationModule() : FGraphicsModule("Realtime Animation") {}
 
 } // Core

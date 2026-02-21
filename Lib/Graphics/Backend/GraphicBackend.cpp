@@ -21,9 +21,9 @@ namespace Slab::Graphics {
     GraphicBackend::~GraphicBackend() = default;
 
 
-    void GraphicBackend::AddGraphicsModule(const TVolatile<GraphicsModule> &module) { GraphicModules.emplace_back(module); }
+    void GraphicBackend::AddGraphicsModule(const TVolatile<FGraphicsModule>& module) { GraphicModules.emplace_back(module); }
 
-    const Vector<TVolatile<GraphicsModule>> &GraphicBackend::GetGraphicsModules() { return GraphicModules; }
+    const Vector<TVolatile<FGraphicsModule>>& GraphicBackend::GetGraphicsModules() { return GraphicModules; }
 
     bool GraphicBackend::IsHeadless() const { return false; }
 
@@ -43,7 +43,7 @@ namespace Slab::Graphics {
 
     void GraphicBackend::NotifyModuleLoaded(const TPointer<Core::SlabModule> &module) {
         if(module->bRequiresGraphicsBackend) {
-            auto GraphicModule = DynamicPointerCast<GraphicsModule>(module);
+            auto GraphicModule = DynamicPointerCast<FGraphicsModule>(module);
 
             AddGraphicsModule(GraphicModule);
         }

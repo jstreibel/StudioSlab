@@ -11,14 +11,16 @@
 
 namespace Slab::Graphics {
 
-    class GraphicsModule : public Core::SlabModule, public FPlatformWindowEventListener {
+    class FGraphicsModule : public Core::SlabModule, public FPlatformWindowEventListener {
     public:
-        GraphicsModule() = delete;
-        explicit GraphicsModule(const Str &name) : SlabModule(name, true) {}
+        FGraphicsModule() = delete;
+        explicit FGraphicsModule(const Str &name) : SlabModule(name, true) {}
 
         virtual
         void Update() {};
     };
+
+    using GraphicsModule [[deprecated("Use FGraphicsModule")]] = FGraphicsModule;
 
 } // Slab::Graphics
 
