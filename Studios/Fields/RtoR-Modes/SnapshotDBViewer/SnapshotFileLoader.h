@@ -12,31 +12,36 @@
 namespace Modes {
     using namespace Slab;
 
-    namespace DatabaseViewer { class DBParser; }
+    namespace DatabaseViewer { class FDBParser; }
 
-    struct SnapshotData {
+    struct FSnapshotData {
         TPointer<Math::RtoR::NumericFunction_CPU> data;
         PythonUtils::PyDict metaData;
         Str filename;
-        enum SnapshotDataType {
+        enum ESnapshotDataType {
             SpaceSnapshot,
             TimeDFTSnapshot,
             SpaceDFTSnapshot,
             unknownSnapshot
         } snapshotDataType;
+
+        using SnapshotDataType [[deprecated("Use ESnapshotDataType")]] = ESnapshotDataType;
     };
 
-    class SnapshotFileLoader {
-        SnapshotData snapshotData;
+    class FSnapshotFileLoader {
+        FSnapshotData snapshotData;
 
         static auto ReadPyDict(const Str& filePath) -> PythonUtils::PyDict;
         static auto ReadData(const Str& filePath) -> FRealVector;
 
     public:
-        explicit SnapshotFileLoader(const Str &filename);
+        explicit FSnapshotFileLoader(const Str &filename);
 
-        static auto Load(const Str &filename) -> SnapshotData;
+        static auto Load(const Str &filename) -> FSnapshotData;
     };
+
+    using SnapshotData [[deprecated("Use FSnapshotData")]] = FSnapshotData;
+    using SnapshotFileLoader [[deprecated("Use FSnapshotFileLoader")]] = FSnapshotFileLoader;
 
 } // Modes
 

@@ -47,8 +47,8 @@ public:
 
         const auto GuiBackend = Slab::Graphics::GetGraphicsBackend();
 
-        // auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerMulti>(dbLocations, *criticalParameter);
-        const auto Viewer = Slab::New<Modes::DatabaseViewer::DBViewerSequence>(dbLocations, *criticalParameter);
+        // auto viewer = Slab::New<Modes::DatabaseViewer::FDBViewerMulti>(dbLocations, *criticalParameter);
+        const auto Viewer = Slab::New<Modes::DatabaseViewer::FDBViewerSequence>(dbLocations, *criticalParameter);
 
 
         const auto WindowManager = Slab::New<Graphics::FSlabWindowManager>();

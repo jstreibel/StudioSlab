@@ -21,8 +21,8 @@ namespace Modes::DatabaseViewer {
     fix DefaultDFTSnapshotsFolder = "./snapshots/";
     fix DefaultHistoriesFolder = "./histories/";
 
-    struct SnapshotEntry {
-        SnapshotData snapshotData;
+    struct FSnapshotEntry {
+        FSnapshotData snapshotData;
 
         DevFloat critical_parameter_value;
         Str critical_parameter_name;
@@ -31,7 +31,7 @@ namespace Modes::DatabaseViewer {
         DevFloat getScaledCriticalParameter() const { return critical_parameter_value*scaling; }
     };
 
-    enum DatabaseType {
+    enum EDatabaseType {
         SpaceDFTDBType,
         TimeDFTDBType,
         SpaceDBType,
@@ -39,9 +39,12 @@ namespace Modes::DatabaseViewer {
         unknownDBType
     };
 
-    using FieldMap = std::map<DevFloat, SnapshotEntry>;
+    using SnapshotEntry [[deprecated("Use FSnapshotEntry")]] = FSnapshotEntry;
+    using DatabaseType [[deprecated("Use EDatabaseType")]] = EDatabaseType;
 
-    class DBParser {
+    using FieldMap = std::map<DevFloat, FSnapshotEntry>;
+
+    class FDBParser {
         Str rootDatabaseFolder;
         Str snapshotFolder;
         std::map<DevFloat, Str> fileSet;
@@ -52,9 +55,9 @@ namespace Modes::DatabaseViewer {
         void checkIntervalConsistency() const;
 
     public:
-        using Ptr = TPointer<Modes::DatabaseViewer::DBParser>;
+        using Ptr = TPointer<Modes::DatabaseViewer::FDBParser>;
 
-        explicit DBParser(Str rootDBFolder,
+        explicit FDBParser(Str rootDBFolder,
                           Str  criticalParameter,
                           Str snapshotsFolder=DefaultDFTSnapshotsFolder);
 
@@ -62,13 +65,15 @@ namespace Modes::DatabaseViewer {
         auto getFileSet() const -> const std::map<DevFloat, Str>&;
         auto getSnapshotMap() const -> const FieldMap &;
 
-        DatabaseType evaluateDatabaseType() const;
+        EDatabaseType evaluateDatabaseType() const;
 
         auto getRootDatabaseFolder() const -> const Str&;
 
         auto buildSnapshotMashup() const -> TPointer<Math::R2toR::NumericFunction_CPU>;
 
     };
+
+    using DBParser [[deprecated("Use FDBParser")]] = FDBParser;
 } // Modes::DatabaseViewer
 
 #endif //STUDIOSLAB_DATABASEPARSER_H

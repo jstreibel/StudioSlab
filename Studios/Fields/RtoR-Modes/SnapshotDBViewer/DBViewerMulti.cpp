@@ -23,14 +23,14 @@ namespace Modes::DatabaseViewer {
 
     #define z_order(z) (z)
 
-    DBViewerMulti::DBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam)
+    FDBViewerMulti::FDBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam)
     : guiWindow(Graphics::FSlabWindowConfig("GUI"))
     , allDataDisplay              ("All data")
     , fullParticularHistoryDisplay("Particular data")
     , massesGraph                 ("masses")
     {
         for(const auto &dbFilename : dbFilenames){
-            auto parser = New<Modes::DatabaseViewer::DBParser>(dbFilename, criticalParam);
+            auto parser = New<Modes::DatabaseViewer::FDBParser>(dbFilename, criticalParam);
             dbParsers.emplace_back(parser);
         }
 
@@ -100,7 +100,7 @@ namespace Modes::DatabaseViewer {
         reloadData();
     }
 
-    void DBViewerMulti::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FDBViewerMulti::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
 
         fix ω_XHair = allDataDisplay.GetLastXHairPosition().x;
         fix dx = fullFields[0]->getSpace().getMetaData().geth(0);
@@ -140,7 +140,7 @@ namespace Modes::DatabaseViewer {
         FWindowRow::ImmediateDraw(PlatformWindow);
     }
 
-    void DBViewerMulti::updateKGDispersion(bool visible) {
+    void FDBViewerMulti::updateKGDispersion(bool visible) {
         DevFloat mass = KG_mass;
 
         if(!visible) return;
@@ -157,10 +157,10 @@ namespace Modes::DatabaseViewer {
                             : Slab::Math::RtoR::k_AsFunctionOf_ω;
 
         KGRelation = Math::RtoR::FunctionRenderer::ToPointSet(
-                Math::RtoR::KGDispersionRelation(mass, dispersionMode),
+                Math::RtoR::FKGDispersionRelation(mass, dispersionMode),
                 0.0, xMax, 10000);
         KGRelation_high_k = Math::RtoR::FunctionRenderer::ToPointSet(
-                Math::RtoR::KGDispersionRelation_high_k(mass, dispersionMode),
+                Math::RtoR::FKGDispersionRelationHighK(mass, dispersionMode),
                 0.0, xMax, 10000);
 
         auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
@@ -178,7 +178,7 @@ namespace Modes::DatabaseViewer {
         KGRelation_high_k_artist->SetLabel(Str("k=ω-½m²/ω+...   (Klein-Gordon high-k approx with m=") + ToStr(mass) + ")");
     }
 
-    void DBViewerMulti::computeMasses() {
+    void FDBViewerMulti::computeMasses() {
         maxValues.clear();
         maxValuesPointSet.Clear();
         massesImag_pointSet.Clear();
@@ -232,7 +232,7 @@ namespace Modes::DatabaseViewer {
         }
     }
 
-    void DBViewerMulti::drawTable(int specialIndex) {
+    void FDBViewerMulti::drawTable(int specialIndex) {
 
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY;
         // const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
@@ -278,7 +278,7 @@ namespace Modes::DatabaseViewer {
 
             ImGui::TableSetColumnIndex(3);
             auto type = entry.second.snapshotData.snapshotDataType;
-            fix signal = type==SnapshotData::SpaceDFTSnapshot ? 1 : type==SnapshotData::TimeDFTSnapshot?-1:0;
+            fix signal = type==FSnapshotData::SpaceDFTSnapshot ? 1 : type==FSnapshotData::TimeDFTSnapshot?-1:0;
             fix ω = entry.second.getScaledCriticalParameter();
 
             fix m² = signal*(ω*ω - k*k);
@@ -300,7 +300,7 @@ namespace Modes::DatabaseViewer {
         ImGui::EndTable();
     }
 
-    auto DBViewerMulti::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) -> bool {
+    auto FDBViewerMulti::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) -> bool {
         if( key==Graphics::Key_LEFT_SHIFT  ) shiftKey = state;
 
         if( key==Graphics::Key_F5 && state==Graphics::Press ){
@@ -314,7 +314,7 @@ namespace Modes::DatabaseViewer {
         return FWindowRow::NotifyKeyboard(key, state, modKeys);
     }
 
-    auto DBViewerMulti::NotifyMouseButton(Graphics::EMouseButton button, Graphics::EKeyState state, Graphics::EModKeys keys) -> bool {
+    auto FDBViewerMulti::NotifyMouseButton(Graphics::EMouseButton button, Graphics::EKeyState state, Graphics::EModKeys keys) -> bool {
         static FTimer timer;
         auto elTime = timer.GetElapsedTimeMsec();
         if(button==Graphics::MouseButton_LEFT){
@@ -328,7 +328,7 @@ namespace Modes::DatabaseViewer {
         return FWindowRow::NotifyMouseButton(button, state, keys);
     }
 
-    void DBViewerMulti::reloadData() {
+    void FDBViewerMulti::reloadData() {
         if(!fullFields.empty()) NOT_IMPLEMENTED_CLASS_METHOD;
 
         for(auto &artie : fullFieldsArtist)
@@ -351,7 +351,7 @@ namespace Modes::DatabaseViewer {
         computeMasses();
     }
 
-    void DBViewerMulti::loadDataUnderMouse() {
+    void FDBViewerMulti::loadDataUnderMouse() {
         auto &fSet = dbParsers[0]->getFileSet();
 
         auto index = index_XHair-1;
@@ -388,7 +388,7 @@ namespace Modes::DatabaseViewer {
         Log::Info() << "Done\n" << Log::Flush;
     }
 
-    auto DBViewerMulti::NotifyMouseMotion(int x, int y, int dx, int dy) -> bool {
+    auto FDBViewerMulti::NotifyMouseMotion(int x, int y, int dx, int dy) -> bool {
         if( shiftKey == Graphics::Press ){
             loadDataUnderMouse();
             return true;
