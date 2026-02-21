@@ -23,7 +23,7 @@ namespace Slab::Models::MolecularDynamics {
 #define SHOW_RADIUS true
 #define SHOW_HASH_GRID false
 
-#define SFML_Backend DynamicPointerCast<Graphics::SFMLBackend>(Slab::Graphics::GetGraphicsBackend())
+#define SFML_Backend DynamicPointerCast<Graphics::FSFMLBackend>(Slab::Graphics::GetGraphicsBackend())
 
 FMolecularDynamicsMonitor::FMolecularDynamicsMonitor(const TPointer<Config>& config, Model model)
     : FOutputChannel("Particle dynamics monitor", 10)

@@ -10,7 +10,7 @@
 
 #include "Graphics/SlabGraphics.h"
 
-#define SFML_Backend dynamic_cast<Graphics::SFMLBackend&>(Graphics::GetGraphicsBackend())
+#define SFML_Backend dynamic_cast<Graphics::FSFMLBackend&>(Graphics::GetGraphicsBackend())
 
 namespace Studios::MolecularDynamics {
 

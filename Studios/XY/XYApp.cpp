@@ -44,8 +44,8 @@ int XY::App::App::run() {
     viewControl->setAlgorithm(&mcCalculator);
 
     auto backend = Slab::Graphics::GetGraphicsBackend();
-    Slab::DynamicPointerCast<Slab::Graphics::SFMLSystemWindow>
-            (backend->GetMainSystemWindow())->addSFMLListener(viewControl);
+    Slab::DynamicPointerCast<Slab::Graphics::FSFMLSystemWindow>
+            (backend->GetMainSystemWindow())->AddSFMLListener(viewControl);
     backend->Run();
 
     return 0;

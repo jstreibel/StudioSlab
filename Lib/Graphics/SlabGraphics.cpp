@@ -30,8 +30,8 @@ namespace Slab::Graphics {
     void RegisterBackends() {
         Core::BackendManager::RegisterAvailableBackend("GLFW",    BackendAllocator<GLFWBackend>);
         //Core::BackendManager::RegisterAvailableBackend("GLUT",    BackendAllocator<GLUTBackend>);
-        Core::BackendManager::RegisterAvailableBackend("SFML",    BackendAllocator<SFMLBackend>);
-        Core::BackendManager::RegisterAvailableBackend("Default", BackendAllocator<SFMLBackend>);
+        Core::BackendManager::RegisterAvailableBackend("SFML",    BackendAllocator<FSFMLBackend>);
+        Core::BackendManager::RegisterAvailableBackend("Default", BackendAllocator<FSFMLBackend>);
         Core::BackendManager::RegisterAvailableBackend("VTK", [] () { throw Exception("VTKBackend not implemented"); return nullptr; }) ;
     }
 

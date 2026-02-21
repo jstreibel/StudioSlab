@@ -14,7 +14,7 @@
 
 namespace Slab::Graphics {
 
-    class NuklearSFMLModule : public NuklearModule, public SFMLListener {
+    class NuklearSFMLModule : public NuklearModule, public FSFMLListener {
         sf::RenderWindow *renderWindow = nullptr;
     public:
         NuklearSFMLModule();

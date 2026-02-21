@@ -15,11 +15,11 @@
 namespace Slab::Graphics {
     inline EKeyMap mapFromSFML(sf::Event::KeyEvent);
 
-    SFMLEventTranslator::SFMLEventTranslator(SFMLSystemWindow* owner): Owner(owner)
+    FSFMLEventTranslator::FSFMLEventTranslator(FSFMLSystemWindow* owner): Owner(owner)
     {
     }
 
-    void SFMLEventTranslator::event(const sf::Event &event) {
+    void FSFMLEventTranslator::event(const sf::Event &event) {
         fix type = event.type;
         bool isKey              = type == sf::Event::KeyPressed || type == sf::Event::KeyReleased;
         bool isMouseButton      = type == sf::Event::MouseButtonPressed
@@ -94,7 +94,7 @@ namespace Slab::Graphics {
         }
     }
 
-    void SFMLEventTranslator::render(sf::RenderWindow *window) {
+    void FSFMLEventTranslator::render(sf::RenderWindow *window) {
         auto Funky = [this] (const auto &obj) {
             return obj->NotifyRender(*Owner);
         };

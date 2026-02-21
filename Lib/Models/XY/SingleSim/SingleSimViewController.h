@@ -26,7 +26,7 @@
 namespace Slab::Lost::ThermoOutput {
     const double T_c = 0.8935;
 
-    class SingleSimViewController : public SFMLListener {
+    class SingleSimViewController : public FSFMLListener {
         sf::Font font;
         sf::Text text;
 

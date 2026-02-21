@@ -20,12 +20,12 @@ namespace Slab::Graphics {
 
     NuklearSFMLModule::NuklearSFMLModule() {
         try {
-            auto sfmlBackend = DynamicPointerCast<SFMLBackend>(Core::GetBackend());
+            auto sfmlBackend = DynamicPointerCast<FSFMLBackend>(Core::GetBackend());
             // renderWindow = &sfmlBackend->GetMainSystemWindow();
 
             static auto myReference = Naked(*this);
-            DynamicPointerCast<SFMLSystemWindow>
-                    (sfmlBackend->GetMainSystemWindow())->addSFMLListener(myReference);
+            DynamicPointerCast<FSFMLSystemWindow>
+                    (sfmlBackend->GetMainSystemWindow())->AddSFMLListener(myReference);
 
         } catch (std::bad_cast &e) {
             Core::FLog::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
