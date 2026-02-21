@@ -11,14 +11,14 @@
 
 namespace Slab::Math::R2toR {
 
-    class BoundaryCondition : public Base::BoundaryConditions {
+    class FBoundaryCondition : public Base::BoundaryConditions {
         Function *initialPhiCondition;
         Function *initialdPhiDtCondition;
 
     public:
-        BoundaryCondition(Function *initialPhiCondition,
-                          Function *initialdPhiDtCondition,
-                          const R2toR::EquationState_constptr& prototype);
+        FBoundaryCondition(Function *initialPhiCondition,
+                           Function *initialdPhiDtCondition,
+                           const R2toR::EquationState_constptr& prototype);
 
 
 
@@ -27,6 +27,8 @@ namespace Slab::Math::R2toR {
     protected:
         virtual void apply_KGR2toR(EquationState &fieldState, DevFloat t) const;
     };
+
+    using BoundaryCondition [[deprecated("Use FBoundaryCondition")]] = FBoundaryCondition;
 }
 
 
