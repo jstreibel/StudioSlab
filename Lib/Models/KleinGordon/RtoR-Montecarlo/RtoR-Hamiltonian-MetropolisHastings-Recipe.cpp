@@ -44,7 +44,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
     }
 
     auto FRtoRHamiltonianMetropolisHastingsRecipe::BuildStepper() -> TPointer<FStepper> {
-        RtoRMetropolisSetup setup;
+        FRtoRMetropolisSetup setup;
 
         Temperature T=1E-2;
         constexpr auto δϕₘₐₓ = 1e-0;
@@ -56,18 +56,18 @@ namespace Slab::Models::KGRtoR::Metropolis {
             return RandUtils::RandomUniformReal01() < Min(1.0, exp(-ΔE / T));
         };;
 
-        using RandomSite = RtoRMetropolisSetup::RandomSite;
-        using NewValue = RtoRMetropolisSetup::NewValue;
+        using FRtoRRandomSite = FRtoRMetropolisSetup::FRandomSite;
+        using FRtoRNewValue = FRtoRMetropolisSetup::FNewValue;
 
-        setup.draw_value = [field](RandomSite site){
+        setup.draw_value = [field](FRtoRRandomSite site){
             fix ϕ_old = field.ϕ->getSpace().getHostData()[site];
             fix π_old = field.π->getSpace().getHostData()[site];
 
-            return NewValue{RandUtils::RandomUniformReal(ϕ_old-δϕₘₐₓ, ϕ_old+δϕₘₐₓ),
-                            RandUtils::RandomUniformReal(π_old-δπₘₐₓ, π_old+δπₘₐₓ)};
+            return FRtoRNewValue{RandUtils::RandomUniformReal(ϕ_old-δϕₘₐₓ, ϕ_old+δϕₘₐₓ),
+                                 RandUtils::RandomUniformReal(π_old-δπₘₐₓ, π_old+δπₘₐₓ)};
         };
 
-        setup.ΔS = [field](RandomSite n, NewValue new_val) {
+        setup.ΔS = [field](FRtoRRandomSite n, FRtoRNewValue new_val) {
             fix N = field.ϕ->N;
             auto φₖ = [field, N](int n) {
                 fix i = n<0 ? N+n : n>N-1 ? n-N : n;
@@ -96,7 +96,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
 
             fix N = field.ϕ->N;
 
-            Vector<RandomSite> samples(N);
+            Vector<FRtoRRandomSite> samples(N);
 
             for(auto &site : samples)
                 site = border_size + RandUtils::RandomUniformUInt() % (N - 2 * border_size);
@@ -104,14 +104,14 @@ namespace Slab::Models::KGRtoR::Metropolis {
             return samples;
         };
 
-        setup.modify = [field](RandomSite n, NewValue value){
+        setup.modify = [field](FRtoRRandomSite n, FRtoRNewValue value){
             field.ϕ->getSpace().getHostData()[n] = value.first;
             field.ϕ->getSpace().getHostData()[n] = value.second;
         };
 
-        auto metropolis = New<RtoRMetropolis>(setup);
+        auto metropolis = New<FRtoRMetropolis>(setup);
 
-        return New<FMontecarloStepper<RandomSite, NewValue>>(metropolis);
+        return New<FMontecarloStepper<FRtoRRandomSite, FRtoRNewValue>>(metropolis);
     }
 
 }

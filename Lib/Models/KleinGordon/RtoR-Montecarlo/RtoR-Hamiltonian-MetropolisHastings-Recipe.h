@@ -15,13 +15,16 @@ namespace Slab::Models::KGRtoR::Metropolis {
     using namespace Slab::Math;
 
     // Site type is Int (not UInt) to help with periodic BC.
-    using RtoRMetropolis = FMetropolisAlgorithm<Int, RealPair>;
+    using FRtoRRandomSite = Int;
+    using FRtoRNewValue = RealPair;
+    using FRtoRMetropolis = FMetropolisAlgorithm<FRtoRRandomSite, FRtoRNewValue>;
+    using RtoRMetropolis [[deprecated("Use FRtoRMetropolis")]] = FRtoRMetropolis;
     struct FFieldPair { TPointer<RtoR::NumericFunction_CPU> ϕ, π; };
     using FieldPair [[deprecated("Use FFieldPair")]] = FFieldPair;
 
     class FRtoRHamiltonianMetropolisHastingsRecipe : public Base::FNumericalRecipe {
         FFieldPair field_data;
-        using RtoRMetropolisSetup = FMetropolisSetup<Int, RealPair>;
+        using FRtoRMetropolisSetup = FMetropolisSetup<FRtoRRandomSite, FRtoRNewValue>;
 
     public:
         explicit FRtoRHamiltonianMetropolisHastingsRecipe(UInt max_steps);

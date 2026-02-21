@@ -12,17 +12,20 @@
 namespace Slab::Math {
     template<typename SiteType, typename OutCategory>
     struct FMetropolisSetup {
-        using NewValue = OutCategory;
-        using RandomSite = SiteType;
+        using FNewValue = OutCategory;
+        using FRandomSite = SiteType;
 
         using Temperature = DevFloat;
         using ΔSValue = DevFloat;
 
-        using ΔSFunction          = std::function<ΔSValue(RandomSite, NewValue)>;
-        using ModifyFunction      = std::function<void(RandomSite, NewValue)>;
-        using SamplerFunction     = std::function<Vector<RandomSite>()>;
-        using ValueDrawerFunction = std::function<NewValue(RandomSite)>;
+        using ΔSFunction          = std::function<ΔSValue(FRandomSite, FNewValue)>;
+        using ModifyFunction      = std::function<void(FRandomSite, FNewValue)>;
+        using SamplerFunction     = std::function<Vector<FRandomSite>()>;
+        using ValueDrawerFunction = std::function<FNewValue(FRandomSite)>;
         using AcceptanceFunction  = std::function<bool(ΔSValue)>;
+
+        using NewValue [[deprecated("Use FNewValue")]] = FNewValue;
+        using RandomSite [[deprecated("Use FRandomSite")]] = FRandomSite;
 
         ΔSFunction          ΔS;
         ModifyFunction      modify;

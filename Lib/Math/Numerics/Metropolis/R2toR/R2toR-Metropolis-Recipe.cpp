@@ -50,7 +50,7 @@ namespace Slab::Math {
     }
 
     TPointer<FStepper> FR2toRMetropolisRecipe::BuildStepper() {
-        R2toRMetropolisSetup setup;
+        FR2toRMetropolisSetup setup;
 
         Temperature T=0.1;
         constexpr auto δϕₘₐₓ = 2e-4;
@@ -76,7 +76,7 @@ namespace Slab::Math {
             return RandUtils::RandomUniformReal(old_val-δϕₘₐₓ, old_val+δϕₘₐₓ);
         };
 
-        setup.ΔS = [field](FRandomSite site, NewValue new_val) {
+        setup.ΔS = [field](FRandomSite site, FNewValue new_val) {
             fix i = site.i;
             fix n = site.j;
 
@@ -159,11 +159,11 @@ namespace Slab::Math {
             return sites;
         };
 
-        setup.modify = [field](FRandomSite site, NewValue value){ field->At(site.i, site.j) = value; };
+        setup.modify = [field](FRandomSite site, FNewValue value){ field->At(site.i, site.j) = value; };
 
-        auto metropolis = New<R2toRMetropolis>(setup);
+        auto metropolis = New<FR2toRMetropolis>(setup);
 
-        return New<FMontecarloStepper<FRandomSite, NewValue>>(metropolis);
+        return New<FMontecarloStepper<FRandomSite, FNewValue>>(metropolis);
     }
 
 } // Slab::Math

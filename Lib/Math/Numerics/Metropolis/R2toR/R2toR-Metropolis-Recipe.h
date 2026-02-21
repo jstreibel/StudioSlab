@@ -15,14 +15,16 @@ namespace Slab::Math {
 
     struct FRandomSite { UInt i; UInt j; };
     using RandomSite [[deprecated("Use FRandomSite")]] = FRandomSite;
-    using NewValue = DevFloat;
-    using R2toRMetropolis = FMetropolisAlgorithm<FRandomSite, NewValue>;
+    using FNewValue = DevFloat;
+    using FR2toRMetropolis = FMetropolisAlgorithm<FRandomSite, FNewValue>;
+    using NewValue [[deprecated("Use FNewValue")]] = FNewValue;
+    using R2toRMetropolis [[deprecated("Use FR2toRMetropolis")]] = FR2toRMetropolis;
 
     class FR2toRMetropolisRecipe : public Base::FNumericalRecipe {
         TPointer<R2toR::NumericFunction_CPU> field_data;
 
         using Site = struct{UInt i; UInt j;};
-        using R2toRMetropolisSetup = R2toRMetropolis::Setup;
+        using FR2toRMetropolisSetup = FR2toRMetropolis::Setup;
 
     public:
         auto getField() -> TPointer<R2toR::NumericFunction_CPU>;
