@@ -127,7 +127,7 @@ namespace Slab::Models::KGRtoR {
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + SuggestFileName();
-            Sockets.emplace_back(Slab::New<DFTSnapshotOutput>(N, L, snapshotFilename));
+            Sockets.emplace_back(Slab::New<FDFTSnapshotOutput>(N, L, snapshotFilename));
         }
         if(*OutputOptions.TakeTimeDFTSnapshot) {
             auto time_dftsnapshots = getTimeDFTSnapshots();
@@ -173,7 +173,7 @@ namespace Slab::Models::KGRtoR {
                                                  xMin,
                                                  L);
 
-                auto ftHistory = Slab::New<SimHistory_DFT>(max_steps, t, N, L, nₒᵤₜ);
+                auto ftHistory = Slab::New<FSimHistoryDFT>(max_steps, t, N, L, nₒᵤₜ);
 
                 Sockets.emplace_back(simHistory);
                 Sockets.emplace_back(ftHistory);
@@ -258,10 +258,10 @@ namespace Slab::Models::KGRtoR {
         Utils::TouchFolder(folder);
 
         const auto snapshotFilename = folder + SuggestFileName();
-        TimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, t_start, t_end};
+        FTimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, t_start, t_end};
 
         fix &conf = *KGNumericConfig;
-        return Slab::New<CenterTimeDFTOutput>(conf.Get_t(), conf.Get_n(), dftConfig);
+        return Slab::New<FCenterTimeDFTOutput>(conf.Get_t(), conf.Get_n(), dftConfig);
     }
 
     RtoR::NumericFunction_ptr FKGRtoR_Recipe::newFunctionArbitrary() const {

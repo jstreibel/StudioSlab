@@ -13,8 +13,8 @@
 
 namespace Slab::Models::KGRtoR {
 
-    Slab::Models::KGRtoR::CenterTimeDFTOutput::CenterTimeDFTOutput(
-            DevFloat t_max, CountType max_steps, TimeDFTOutputConfig dftConfig)
+    Slab::Models::KGRtoR::FCenterTimeDFTOutput::FCenterTimeDFTOutput(
+            DevFloat t_max, CountType max_steps, FTimeDFTOutputConfig dftConfig)
     : FOutputChannel(Str("Single-location time-DFT"), 10,
              Str("t_start=")    + ToStr(Common::max(dftConfig.t_start, 0.0)) +
              Str(" ... t_end=") + ToStr(Common::min(dftConfig.t_end, t_max)))
@@ -27,7 +27,7 @@ namespace Slab::Models::KGRtoR {
     , step_end  ((int)(t_end  /t_max * (DevFloat)max_steps))
     {    }
 
-    void Slab::Models::KGRtoR::CenterTimeDFTOutput::HandleOutput(const Slab::Math::FOutputPacket &packet) {
+    void Slab::Models::KGRtoR::FCenterTimeDFTOutput::HandleOutput(const Slab::Math::FOutputPacket &packet) {
         assert(x_measure.size() == dataset.size());
 
         fix curr_step = packet.GetSteps();
@@ -43,22 +43,22 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    size_t CenterTimeDFTOutput::ComputeNextRecStep(UInt currStep) {
+    size_t FCenterTimeDFTOutput::ComputeNextRecStep(UInt currStep) {
         if(currStep < step_start)
             return step_start;
 
         return FOutputChannel::ComputeNextRecStep(currStep);
     }
 
-    bool CenterTimeDFTOutput::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
+    bool FCenterTimeDFTOutput::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
         FOutputChannel::NotifyIntegrationHasFinished(theVeryLastOutputInformation);
-        using DFT = Slab::Math::RtoR::FDFT;
+        using FDFT = Slab::Math::RtoR::FDFT;
 
         Vector<TPointer<RtoR::NumericFunction>> maggies;
         for(auto &data : dataset) {
             auto slice = New<Math::RtoR::NumericFunction_CPU>(RealArray(data.data(), data.size()), t_start, t_end);
-            auto result = DFT::Compute(*slice.get());
-            maggies.emplace_back(DFT::Magnitudes(result));
+            auto result = FDFT::Compute(*slice.get());
+            maggies.emplace_back(FDFT::Magnitudes(result));
         }
 
         auto average = maggies[0];

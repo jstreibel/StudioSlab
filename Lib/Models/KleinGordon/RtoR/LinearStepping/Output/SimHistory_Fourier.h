@@ -15,16 +15,16 @@
 
 namespace Slab::Models::KGRtoR {
 
-    struct DFTInstantResult {
+    struct FDFTInstantResult {
         DevFloat t{};
         RtoR::FDFTResult Result;
     };
-    typedef Vector<DFTInstantResult> FDFTDataHistory;
+    using FDFTDataHistory = Vector<FDFTInstantResult>;
 
-    class SimHistory_DFT : public SimHistory {
+    class FSimHistoryDFT : public SimHistory {
 
     public:
-        explicit SimHistory_DFT(CountType max_steps, DevFloat t_max, Resolution N, DevFloat L, Resolution N_time);
+        explicit FSimHistoryDFT(CountType max_steps, DevFloat t_max, Resolution N, DevFloat L, Resolution N_time);
 
         const FDFTDataHistory &GetDFTDataHistory() const;
 
@@ -34,6 +34,8 @@ namespace Slab::Models::KGRtoR {
         auto Transfer(const FOutputPacket &Input, FValarrayWrapper<DevFloat> &DataOut) -> void override;
     };
 
+    using DFTInstantResult [[deprecated("Use FDFTInstantResult")]] = FDFTInstantResult;
+    using SimHistory_DFT [[deprecated("Use FSimHistoryDFT")]] = FSimHistoryDFT;
 
 }
 

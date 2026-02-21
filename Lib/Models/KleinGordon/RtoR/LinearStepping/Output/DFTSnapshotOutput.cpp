@@ -13,14 +13,14 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    DFTSnapshotOutput::DFTSnapshotOutput(const Resolution N, const DevFloat L, const Str &fileName)
+    FDFTSnapshotOutput::FDFTSnapshotOutput(const Resolution N, const DevFloat L, const Str &fileName)
     : SnapshotOutput(fileName + ".dft", "DFT snapshot output", "outputs the DFT of the last simulation instant")
     , N_DFT_modes(NDFTModes)
     , k_max(kMaxDFT)
     {   }
 
 
-    RtoR::NumericFunction_CPU DFTSnapshotOutput::filterData(const FOutputPacket &packet) {
+    RtoR::NumericFunction_CPU FDFTSnapshotOutput::filterData(const FOutputPacket &packet) {
         RtoR::NumericFunction_CPU dft(static_cast<int>(N_DFT_modes), 0.0, k_max);
 
         IN kgState = *packet.GetNakedStateData<KGRtoR::EquationState>();
