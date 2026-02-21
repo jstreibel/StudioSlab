@@ -15,7 +15,7 @@ namespace Slab::Core {
     std::shared_ptr<FBackend> BackendManager::instance = nullptr;
 
     Map<FModuleIdentifier, FModuleAllocator> BackendManager::AvailableModules{};
-    Map<FModuleIdentifier , std::shared_ptr<SlabModule>> BackendManager::LoadedModules{};
+    Map<FModuleIdentifier , std::shared_ptr<FSlabModule>> BackendManager::LoadedModules{};
     Map<FBackendIdentifier, FBackendAllocator> BackendManager::AvailableBackends{};
 
     TPointer<FBackend>  BackendManager::GetBackend() {
@@ -55,9 +55,9 @@ namespace Slab::Core {
         if(!IsModuleAvailable(module_name)) throw Exception("Unkonwn module '" + module_name + "'");
 
         auto alloc_module = AvailableModules[module_name];
-        auto module = TPointer<SlabModule>(alloc_module());
+        auto module = TPointer<FSlabModule>(alloc_module());
 
-        LoadedModules[module_name] = TPointer<SlabModule>(module);
+        LoadedModules[module_name] = TPointer<FSlabModule>(module);
 
         GetBackend()->NotifyModuleLoaded(module);
 
@@ -96,7 +96,7 @@ namespace Slab::Core {
         return modules;
     }
 
-    TPointer<SlabModule> BackendManager::GetModule(const FModuleIdentifier& module_name) {
+    TPointer<FSlabModule> BackendManager::GetModule(const FModuleIdentifier& module_name) {
         auto parsed_name = ParseName(module_name);
 
         if(!IsModuleLoaded(parsed_name)) LoadModule(parsed_name);

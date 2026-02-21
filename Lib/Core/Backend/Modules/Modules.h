@@ -11,7 +11,7 @@
 
 namespace Slab::Core {
     using FModuleIdentifier = Str;
-    using FModuleAllocator = std::function<SlabModule*(void)>;
+    using FModuleAllocator = std::function<FSlabModule*(void)>;
 }
 
 #endif //STUDIOSLAB_MODULES_H

@@ -9,7 +9,7 @@
 
 namespace Slab::Math::GiNaC {
 
-    class GiNaCModule : public Core::SlabModule {
+    class GiNaCModule : public Core::FSlabModule {
     public:
         GiNaCModule();
     };

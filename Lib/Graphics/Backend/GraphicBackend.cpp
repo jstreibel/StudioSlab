@@ -41,7 +41,7 @@ namespace Slab::Graphics {
 
     void GraphicBackend::Terminate() { UnloadAllModules(); }
 
-    void GraphicBackend::NotifyModuleLoaded(const TPointer<Core::SlabModule> &module) {
+    void GraphicBackend::NotifyModuleLoaded(const TPointer<Core::FSlabModule> &module) {
         if(module->bRequiresGraphicsBackend) {
             auto GraphicModule = DynamicPointerCast<FGraphicsModule>(module);
 

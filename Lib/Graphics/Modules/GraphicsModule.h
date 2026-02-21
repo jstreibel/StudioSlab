@@ -11,10 +11,10 @@
 
 namespace Slab::Graphics {
 
-    class FGraphicsModule : public Core::SlabModule, public FPlatformWindowEventListener {
+    class FGraphicsModule : public Core::FSlabModule, public FPlatformWindowEventListener {
     public:
         FGraphicsModule() = delete;
-        explicit FGraphicsModule(const Str &name) : SlabModule(name, true) {}
+        explicit FGraphicsModule(const Str &name) : FSlabModule(name, true) {}
 
         virtual
         void Update() {};

@@ -9,7 +9,7 @@
 
 namespace Slab::Graphics {
 
-    class FModernOpenGLModule : public Core::SlabModule {
+    class FModernOpenGLModule : public Core::FSlabModule {
     public:
         FModernOpenGLModule();
     };

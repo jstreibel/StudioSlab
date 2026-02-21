@@ -9,15 +9,17 @@
 
 namespace Slab::Core {
 
-    class SlabModule {
+    class FSlabModule {
     public:
         const Str Name;
         const bool bRequiresGraphicsBackend;
 
-        SlabModule() = delete;
-        explicit SlabModule(Str name, bool bRequiresGraphicsBackend=false);
-        virtual ~SlabModule();
+        FSlabModule() = delete;
+        explicit FSlabModule(Str name, bool bRequiresGraphicsBackend = false);
+        virtual ~FSlabModule();
     };
+
+    using SlabModule [[deprecated("Use FSlabModule")]] = FSlabModule;
 
 } // Core
 

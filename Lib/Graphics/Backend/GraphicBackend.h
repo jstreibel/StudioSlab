@@ -11,7 +11,7 @@
 namespace Slab::Graphics {
 
     class GraphicBackend : public Core::FBackend {
-        void NotifyModuleLoaded(const TPointer<Slab::Core::SlabModule> &pointer) override;
+        void NotifyModuleLoaded(const TPointer<Slab::Core::FSlabModule> &pointer) override;
 
     protected:
 

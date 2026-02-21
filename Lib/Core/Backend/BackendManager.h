@@ -19,7 +19,7 @@ namespace Slab::Core {
     class BackendManager {
         static FBackendIdentifier BackendName;
         static std::shared_ptr<FBackend> instance;
-        static std::map<FModuleIdentifier, std::shared_ptr<SlabModule>> LoadedModules;
+        static std::map<FModuleIdentifier, std::shared_ptr<FSlabModule>> LoadedModules;
 
         static Map<FBackendIdentifier, FBackendAllocator> AvailableBackends;
         static Map<FModuleIdentifier, FModuleAllocator> AvailableModules;
@@ -43,7 +43,7 @@ namespace Slab::Core {
 
         static StrVector GetAvailableModules();
 
-        static TPointer<SlabModule> GetModule(const FModuleIdentifier&);
+        static TPointer<FSlabModule> GetModule(const FModuleIdentifier&);
         static bool IsModuleAvailable(const FModuleIdentifier&);
         static bool IsModuleLoaded(const FModuleIdentifier&);
 

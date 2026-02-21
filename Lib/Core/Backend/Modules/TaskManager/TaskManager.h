@@ -13,7 +13,7 @@
 
 namespace Slab::Core {
 
-        class MTaskManager final : public SlabModule {
+        class MTaskManager final : public FSlabModule {
             using FTaskPointer = TPointer<FTask>;
             struct FJob
             {

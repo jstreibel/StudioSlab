@@ -9,7 +9,7 @@
 #include <GL/glew.h>
 
 namespace Slab::Graphics {
-    FModernOpenGLModule::FModernOpenGLModule() : SlabModule("Modern OpenGL", false) {
+    FModernOpenGLModule::FModernOpenGLModule() : FSlabModule("Modern OpenGL", false) {
         GetGraphicsBackend()->GetMainSystemWindow(); // Guarantee a OpenGL context is built.
 
         GLenum glewInitStatus = glewInit();

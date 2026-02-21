@@ -8,7 +8,7 @@
 namespace Slab::Core {
 
     MTaskManager::MTaskManager(MTaskManager::EDestructorPolicy Policy)
-    : SlabModule("Task Manager"), destructorPolicy(Policy) {    }
+    : FSlabModule("Task Manager"), destructorPolicy(Policy) {    }
 
     MTaskManager::~MTaskManager() {
         if(destructorPolicy == WaitAll) {

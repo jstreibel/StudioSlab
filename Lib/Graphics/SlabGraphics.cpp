@@ -23,7 +23,7 @@ namespace Slab::Graphics {
     };
 
     template<class ModuleClass>
-    Core::SlabModule* ModuleAllocator() {
+    Core::FSlabModule* ModuleAllocator() {
         return new ModuleClass();
     };
 

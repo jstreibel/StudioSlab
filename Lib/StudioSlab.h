@@ -24,7 +24,7 @@ namespace Slab {
 
     TPointer<Core::FBackend> CreatePlatform(Core::FBackendIdentifier);
 
-    template<typename ModuleType = Core::SlabModule>
+    template<typename ModuleType = Core::FSlabModule>
     ModuleType &GetModule(const Core::FModuleIdentifier &name){
         return dynamic_cast<ModuleType&>(*Core::BackendManager::GetModule(name));
     }

@@ -15,7 +15,7 @@ namespace Slab::Core {
 
         Str Name;
 
-        virtual void NotifyModuleLoaded(const TPointer<SlabModule>&) {};
+        virtual void NotifyModuleLoaded(const TPointer<FSlabModule>&) {};
     protected:
         explicit FBackend(const Str& Name);
 

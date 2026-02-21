@@ -15,7 +15,7 @@ namespace Slab::Core {
     TPointer<FBackend> GetBackend();
 
     void LoadModule(const FModuleIdentifier&);
-    TPointer<SlabModule> GetModule(const FModuleIdentifier&);
+    TPointer<FSlabModule> GetModule(const FModuleIdentifier&);
 
     template <typename ModuleType>
     TPointer<ModuleType>

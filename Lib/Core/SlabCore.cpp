@@ -35,7 +35,7 @@ namespace Slab::Core {
     void LoadModule(const FModuleIdentifier &name) {
         GetModule(name);
     }
-    TPointer<SlabModule> GetModule(const FModuleIdentifier &module) {
+    TPointer<FSlabModule> GetModule(const FModuleIdentifier &module) {
         if(!Slab::IsStarted()) Slab::Startup();
         return BackendManager::GetModule(module);
     }
