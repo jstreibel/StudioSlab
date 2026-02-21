@@ -127,8 +127,8 @@ namespace Tests {
     }
 
     void FourierTestWindow::updateGraphs() {
-        static Math::RtoR::DFTResult modes;
-        using FFT = Math::RtoR::DFT;
+        static Math::RtoR::FDFTResult modes;
+        using FFT = Math::RtoR::FDFT;
 
         fourierModes.setL(L);
         fourierModes.setNSamples(N_modes);

@@ -67,7 +67,7 @@ namespace Slab::Graphics{
         DevFloat kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
     protected:
-        void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
+        void refreshInverseDFT(RtoR::FDFTInverse::FFilter *filter);
         void computeTimeDFT();
 
         void computeSpaceDFT();

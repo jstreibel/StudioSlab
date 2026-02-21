@@ -133,10 +133,10 @@ namespace Slab::Graphics {
 
                 if ((autoRefresh || ImGui::Button("Compute ℱₖ⁻¹")) && needRefresh) {
                     if (selected == 1) {
-                        RtoR::DFTInverse::LowPass lowPass((int) kFilterCutoff);
+                        RtoR::FDFTInverse::FLowPass lowPass((int) kFilterCutoff);
                         refreshInverseDFT(&lowPass);
                     } else if (selected == 0) {
-                        RtoR::DFTInverse::HighPass highPass((int) kFilterCutoff);
+                        RtoR::FDFTInverse::FHighPass highPass((int) kFilterCutoff);
                         refreshInverseDFT(&highPass);
                     }
 
@@ -258,7 +258,7 @@ namespace Slab::Graphics {
 
     }
 
-    void FFourierViewer::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
+    void FFourierViewer::refreshInverseDFT(RtoR::FDFTInverse::FFilter *filter) {
         auto function = getFunction();
 
         if(function == nullptr) return;
@@ -289,7 +289,7 @@ namespace Slab::Graphics {
         int _n = 0;
         for(auto &data : *dftData){
 
-            auto func = RtoR::DFTInverse::Compute(data.result, xMin, L,
+            auto func = RtoR::FDFTInverse::Compute(data.result, xMin, L,
                                                   filter);
 
             auto *out = &rebuiltHistory->At(0, _n);
@@ -339,7 +339,7 @@ namespace Slab::Graphics {
 
             for(auto j=0; j<M; ++j) spaceData_temp[j] = function->At(i, j₀+j);
 
-            auto dftMagnitudes = RtoR::DFT::Compute(tempSpace).getMagnitudes();
+            auto dftMagnitudes = RtoR::FDFT::Compute(tempSpace).getMagnitudes();
 
             assert(dftMagnitudes->Count()==m);
 

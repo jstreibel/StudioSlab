@@ -139,7 +139,7 @@ namespace Slab::Models::KGRtoR {
 
         // *************************** Histograms *****************************
         {
-            RtoR::Histogram histogram;
+            RtoR::FHistogram histogram;
             static auto nbins = 200;
             static auto pretty = HISTOGRAM_SHOULD_BE_PRETTY;
 

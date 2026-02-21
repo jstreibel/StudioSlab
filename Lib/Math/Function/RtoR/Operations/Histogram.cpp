@@ -11,11 +11,11 @@
 
 namespace Slab::Math::RtoR {
 
-    Histogram::Histogram() {
+    FHistogram::FHistogram() {
 
     }
 
-    void Histogram::Compute(const RealArray &F, int nbins) {
+    void FHistogram::Compute(const RealArray &F, int nbins) {
         this->nBins = nbins ;
 
         auto max = F[0];
@@ -42,13 +42,13 @@ namespace Slab::Math::RtoR {
             bins[bin(v)]++;
     }
 
-    void Histogram::Compute(RtoR::NumericFunction_constptr func, int _nBins) {
+    void FHistogram::Compute(RtoR::NumericFunction_constptr func, int _nBins) {
         auto &F = func->getSpace().getHostData();
 
         Compute(F, _nBins);
     }
 
-    TPointer<RtoR::Function> Histogram::asPDFFunction() const {
+    TPointer<RtoR::Function> FHistogram::asPDFFunction() const {
         auto func = DataAlloc<RtoR::NumericFunction_CPU>("", bins.size(), vMin, vMax);
 
         auto &F = func->getSpace().getHostData();
@@ -64,12 +64,12 @@ namespace Slab::Math::RtoR {
         return func;
     }
 
-    auto Histogram::asPDFPointSet(bool beautiful) const -> FPointSet_ptr {
+    auto FHistogram::asPDFPointSet(bool beautiful) const -> FPointSet_ptr {
         FPointSet_ptr pointSet;
         return renderPDFToPointSet(pointSet, beautiful);
     }
 
-    auto Histogram::renderPDFToPointSet(FPointSet_ptr pointSet, bool beautiful) const -> FPointSet_ptr {
+    auto FHistogram::renderPDFToPointSet(FPointSet_ptr pointSet, bool beautiful) const -> FPointSet_ptr {
         if(pointSet == nullptr) pointSet = Slab::New<FPointSet>();
 
         const auto N = DevFloat(count);
@@ -98,7 +98,7 @@ namespace Slab::Math::RtoR {
         return pointSet;
     }
 
-    auto Histogram::integrate() const -> DevFloat {
+    auto FHistogram::integrate() const -> DevFloat {
         let sum = .0;
 
         for (fix density: bins)

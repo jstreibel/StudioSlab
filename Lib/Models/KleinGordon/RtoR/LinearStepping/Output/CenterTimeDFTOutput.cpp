@@ -52,7 +52,7 @@ namespace Slab::Models::KGRtoR {
 
     bool CenterTimeDFTOutput::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
         FOutputChannel::NotifyIntegrationHasFinished(theVeryLastOutputInformation);
-        using DFT = Slab::Math::RtoR::DFT;
+        using DFT = Slab::Math::RtoR::FDFT;
 
         Vector<TPointer<RtoR::NumericFunction>> maggies;
         for(auto &data : dataset) {

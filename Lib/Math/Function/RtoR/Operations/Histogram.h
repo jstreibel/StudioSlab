@@ -11,9 +11,9 @@
 
 namespace Slab::Math::RtoR {
 
-    class Histogram {
+    class FHistogram {
     public:
-        Histogram();
+        FHistogram();
 
         void Compute(const RealArray &, int nbins=100);
         void Compute(RtoR::NumericFunction_constptr func, int nBins = 100);
@@ -35,6 +35,8 @@ namespace Slab::Math::RtoR {
         FRealVector bins;
 
     };
+
+    using Histogram [[deprecated("Use FHistogram")]] = FHistogram;
 
 }
 

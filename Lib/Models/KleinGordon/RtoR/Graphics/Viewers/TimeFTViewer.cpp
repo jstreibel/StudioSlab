@@ -77,7 +77,7 @@ namespace Slab::Models::KGRtoR {
 
             for(auto j=0; j<M; ++j) spaceData_temp[j] = function->At(i, j_0+j);
 
-            auto dftMagnitudes = RtoR::DFT::Compute(tempSpace).getMagnitudes();
+            auto dftMagnitudes = RtoR::FDFT::Compute(tempSpace).getMagnitudes();
 
             assert(dftMagnitudes->Count()==m);
 

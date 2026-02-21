@@ -75,7 +75,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void FHistogramsViewer_KG::updateHistograms() {
-        Slab::Math::RtoR::Histogram histogram;
+        Slab::Math::RtoR::FHistogram histogram;
 
         if(getFunction() == nullptr || getFunctionDerivative() == nullptr) {
             Slab::Core::FLog::Error() << "At " << __PRETTY_FUNCTION__ << ":" << __LINE__ << Slab::Core::FLog::Flush;

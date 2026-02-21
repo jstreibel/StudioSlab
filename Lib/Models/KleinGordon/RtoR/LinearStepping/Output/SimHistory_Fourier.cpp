@@ -18,7 +18,7 @@ namespace Slab::Models::KGRtoR {
 
         IN phi = dynamic_cast<RtoR::NumericFunction&>(stateIn.getPhi());
 
-        auto DftNewData = RtoR::DFT::Compute(phi);
+        auto DftNewData = RtoR::FDFT::Compute(phi);
 
         fix dt = Max_t / (DevFloat)MaxSteps;
         auto result = DFTInstantResult{Input.GetSteps()*dt, DftNewData};
