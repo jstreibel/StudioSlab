@@ -39,11 +39,11 @@
 
 using namespace Slab;
 
-class App : public Core::FAppBase {
+class FApp : public Core::FAppBase {
     Core::StringParameter      filename = Core::StringParameter("", Core::FParameterDescription{'f', "filename", ".oscb file."});
 
 public:
-    App(int argc, const char **argv)
+    FApp(int argc, const char **argv)
             : FAppBase(argc, argv, false)
     {
         Interface->AddParameters({&filename});
@@ -90,7 +90,7 @@ public:
 };
 
 int run(int argc, const char** argv){
-    App app(argc, argv);
+    FApp app(argc, argv);
 
     return app.run();
 }
@@ -99,7 +99,7 @@ int main(int argc, const char* argv[]) {
     return Slab::SafetyNet::jump(
             [](int argc, const char **argv)
             {
-                App app(argc, argv);
+                FApp app(argc, argv);
                 return app.run();
             }, argc, argv);
 }

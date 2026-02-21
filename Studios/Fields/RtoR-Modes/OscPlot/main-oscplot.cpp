@@ -13,9 +13,9 @@
 
 #include "Core/SlabCore.h"
 
-class App : public Slab::Core::FAppBase {
+class FApp : public Slab::Core::FAppBase {
 public:
-    App(int argc, const char **argv) : FAppBase(argc, argv, false) {
+    FApp(int argc, const char **argv) : FAppBase(argc, argv, false) {
         // interface->addParameters({&snapshotDBFolders, &criticalParameter});
         Slab::Core::RegisterCLInterface(Interface);
 
@@ -47,7 +47,7 @@ int main(int argc, const char **argv) {
     auto run =
             [](int argc, const char **argv)
             {
-                App app(argc, argv);
+                FApp app(argc, argv);
                 return app.run();
             };
 
