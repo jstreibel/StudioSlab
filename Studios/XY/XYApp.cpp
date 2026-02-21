@@ -27,7 +27,7 @@ XY::App::App(int argc, const char **argv) : Slab::Core::FAppBase(argc, argv, DON
     // Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
     Slab::Core::LoadModule("Nuklear");
 
-    Slab::Core::CLArgsManager::Parse(argc, argv);
+    Slab::Core::FCLArgsManager::Parse(argc, argv);
 }
 
 

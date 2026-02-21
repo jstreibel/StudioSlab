@@ -30,7 +30,7 @@ TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::FAppBase(argc, arg
 
     FAppBase::RegisterToManager();
 
-    Slab::Core::CLArgsManager::Parse(argc, argv);
+    Slab::Core::FCLArgsManager::Parse(argc, argv);
 }
 
 

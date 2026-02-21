@@ -10,12 +10,12 @@
 
 namespace Slab::Core {
 
-    void CLArgsManager::ShowHelp() {
+    void FCLArgsManager::ShowHelp() {
         throw "Show help not implemented";
     }
 
-    void CLArgsManager::Parse(int argc, const char **argv) {
-        FLog::Info() << "CLArgsManager parsing command line options." << FLog::Flush;
+    void FCLArgsManager::Parse(int argc, const char **argv) {
+        FLog::Info() << "FCLArgsManager parsing command line options." << FLog::Flush;
 
         CLOptionsDescription allOptions("StudioSlab");
 
@@ -36,10 +36,10 @@ namespace Slab::Core {
             exit(0);
         }
 
-        FLog::Info() << "CLArgsManager finished parsing command line options." << FLog::Flush;
+        FLog::Info() << "FCLArgsManager finished parsing command line options." << FLog::Flush;
     }
 
-    auto CLArgsManager::BuildOptionsDescription(const FInterface &Interface, CLOptionsDescription &Opts) -> void {
+    auto FCLArgsManager::BuildOptionsDescription(const FInterface &Interface, CLOptionsDescription &Opts) -> void {
         fix Desc = Interface.GetGeneralDescription();
         fix Name = Interface.GetName() + (Desc != "" ? Str(" (") + Desc + ")" : "");
 

@@ -45,7 +45,7 @@ namespace Slab::Core {
     }
 
     void ParseCLArgs(int argc, const char **argv) {
-        Core::CLArgsManager::Parse(argc, argv);
+        Core::FCLArgsManager::Parse(argc, argv);
     }
 
     void RegisterBackends(){

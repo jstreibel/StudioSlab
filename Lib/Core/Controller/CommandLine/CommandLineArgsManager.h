@@ -11,8 +11,8 @@
 
 namespace Slab::Core {
 
-    class CLArgsManager {
-        CLArgsManager() = delete;
+    class FCLArgsManager {
+        FCLArgsManager() = delete;
 
     public:
         static void ShowHelp();
@@ -23,6 +23,7 @@ namespace Slab::Core {
 
     };
 
+    using CLArgsManager [[deprecated("Use FCLArgsManager")]] = FCLArgsManager;
 
 }
 

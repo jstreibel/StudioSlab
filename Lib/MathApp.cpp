@@ -19,7 +19,7 @@ namespace Slab::Math {
     FMathApp::FMathApp(int argc, const char **argv, TPointer<Base::FNumericalRecipe> SimBuilder)
             : FAppBase(argc, argv), Recipe(std::move(SimBuilder)) {
 
-        Core::CLArgsManager::Parse(argc, argv);
+        Core::FCLArgsManager::Parse(argc, argv);
     }
 
     auto FMathApp::run() -> int {

@@ -20,7 +20,7 @@ namespace Studios::MolecularDynamics {
             : FAppBase(argc, argv) {
         Slab::Core::FBackendManager::Startup("SFML");
 
-        Slab::Core::CLArgsManager::Parse(argc, argv);
+        Slab::Core::FCLArgsManager::Parse(argc, argv);
     }
 
     int MolecularDynamics::App::run() {

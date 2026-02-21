@@ -53,7 +53,7 @@ public:
 
         Slab::Graphics::FPlotThemeManager::GetInstance();
 
-        Core::CLArgsManager::Parse(argc, argv);
+        Core::FCLArgsManager::Parse(argc, argv);
     }
 
     auto run() -> int override {
