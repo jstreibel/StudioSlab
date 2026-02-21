@@ -61,7 +61,7 @@ namespace Tests {
     Math::RtoC::FourierModes fourierModes(Dummy(Func), 0, L, 100);
     Math::RtoR::ComplexMagnitude amplitudes(Dummy(fourierModes));
 
-    FourierTestWindow::FourierTestWindow()
+    FFourierTestWindow::FFourierTestWindow()
     : Graphics::FWindowRow({"Fourier tests"})
     , theme(Graphics::FPlotThemeManager::GetCurrent())
     , realFTArtist(nullptr, theme->FuncPlotStyles[0])
@@ -104,7 +104,7 @@ namespace Tests {
         // addResponder(gui_ptr);
     }
 
-    void FourierTestWindow::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FFourierTestWindow::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         gui.AddExternalDraw([this]() {
 
             if (ImGui::SliderFloat("ω", &ω, 0.1, ωₘₐₓ)
@@ -126,7 +126,7 @@ namespace Tests {
         FWindowRow::ImmediateDraw(PlatformWindow);
     }
 
-    void FourierTestWindow::updateGraphs() {
+    void FFourierTestWindow::updateGraphs() {
         static Math::RtoR::FDFTResult modes;
         using FFT = Math::RtoR::FDFT;
 

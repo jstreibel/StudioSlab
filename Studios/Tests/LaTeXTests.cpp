@@ -12,7 +12,7 @@
 namespace Tests {
     using namespace Slab;
 
-    LaTeXTests::LaTeXTests()
+    FLaTeXTests::FLaTeXTests()
     : FWindowRow("LaTeX tests")
     , writer(Core::Resources::GetIndexedFontFileName(10), 19)
     , graph("Graph")
@@ -22,7 +22,7 @@ namespace Tests {
         style.filled = false;
     }
 
-    void LaTeXTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FLaTeXTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         constexpr int buffer_size = 64 * 1024;
         static char buffer[buffer_size];
 
@@ -42,7 +42,7 @@ namespace Tests {
         latexWriter.draw();
     }
 
-    void LaTeXTests::NotifyReshape(int w, int h) {
+    void FLaTeXTests::NotifyReshape(int w, int h) {
         writer.Reshape(w, h);
         FWindowRow::NotifyReshape(w, h);
     }

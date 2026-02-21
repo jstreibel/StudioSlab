@@ -15,7 +15,7 @@ namespace Tests {
 
     using Writer = Slab::Graphics::OpenGL::FWriterOpenGL;
 
-    class LaTeXTests : public Slab::Graphics::FWindowRow {
+    class FLaTeXTests : public Slab::Graphics::FWindowRow {
         Slab::Graphics::FGUIWindow stats;
         Slab::Graphics::FPlot2DWindow graph;
 
@@ -24,12 +24,14 @@ namespace Tests {
         Slab::Graphics::LaTeX::LaTeXWriter latexWriter;
 
     public:
-        LaTeXTests();
+        FLaTeXTests();
 
         void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
 
         void NotifyReshape(int w, int h) override;
     };
+
+    using LaTeXTests [[deprecated("Use FLaTeXTests")]] = FLaTeXTests;
 
 } // Tests
 

@@ -12,16 +12,18 @@
 #include "Graphics/OpenGL/WriterOpenGL.h"
 using Writer = Slab::Graphics::OpenGL::FWriterOpenGL;
 
-class GLFreeTypeTests : public Slab::Graphics::FSlabWindow {
+class FGLFreeTypeTests : public Slab::Graphics::FSlabWindow {
     Writer writer1, writer2;
 
 public:
-    GLFreeTypeTests();
+    FGLFreeTypeTests();
 
     void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
 
     void NotifyReshape(int newWinW, int newWinH) override;
 };
+
+using GLFreeTypeTests [[deprecated("Use FGLFreeTypeTests")]] = FGLFreeTypeTests;
 
 
 #endif //STUDIOSLAB_GLFREETYPETESTS_H

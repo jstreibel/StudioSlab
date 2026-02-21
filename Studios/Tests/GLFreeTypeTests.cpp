@@ -11,13 +11,13 @@
 
 using namespace Slab;
 
-GLFreeTypeTests::GLFreeTypeTests()
+FGLFreeTypeTests::FGLFreeTypeTests()
 : Slab::Graphics::FSlabWindow(Graphics::FSlabWindowConfig{"FreeType tests"})
 , writer1(Core::Resources::GetIndexedFontFileName(17), 24) // Math symb: 6; 10; 17
 , writer2(Core::Resources::GetIndexedFontFileName(7), 22)
 {   }
 
-void GLFreeTypeTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+void FGLFreeTypeTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
     FSlabWindow::ImmediateDraw(PlatformWindow);
 
     glMatrixMode(GL_MODELVIEW);
@@ -51,7 +51,7 @@ void GLFreeTypeTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWin
 
 }
 
-void GLFreeTypeTests::NotifyReshape(int newWinW, int newWinH) {
+void FGLFreeTypeTests::NotifyReshape(int newWinW, int newWinH) {
     FSlabWindow::NotifyReshape(newWinW, newWinH);
 
     auto vp = GetViewport();

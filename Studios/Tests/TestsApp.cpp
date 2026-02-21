@@ -26,7 +26,7 @@
 
 #define DONT_REGISTER false
 
-TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::FAppBase(argc, argv, DONT_REGISTER) {
+FTestsApp::FTestsApp(int argc, const char**argv) : Slab::Core::FAppBase(argc, argv, DONT_REGISTER) {
 
     FAppBase::RegisterToManager();
 
@@ -34,7 +34,7 @@ TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::FAppBase(argc, arg
 }
 
 
-int TestsApp::run() {
+int FTestsApp::run() {
     using namespace Slab;
 
     TPointer<Graphics::FGraphicBackend> Backend = nullptr;
@@ -49,12 +49,12 @@ int TestsApp::run() {
         auto WindowManager = New<Graphics::FImGuiWindowManager>(ImGuiContext);
         MainSystemWindow->AddAndOwnEventListener(WindowManager);
 
-        WindowManager->AddSlabWindow(New<Tests::LaTeXTests>(), false);
-        WindowManager->AddSlabWindow(New<Tests::VShapeExpansionTest>(), false);
-        WindowManager->AddSlabWindow(New<Tests::ModernGLTests>(), false);
-        WindowManager->AddSlabWindow(New<Tests::Graph3DTests>(), false);
+        WindowManager->AddSlabWindow(New<Tests::FLaTeXTests>(), false);
+        WindowManager->AddSlabWindow(New<Tests::FVShapeExpansionTest>(), false);
+        WindowManager->AddSlabWindow(New<Tests::FModernGLTests>(), false);
+        WindowManager->AddSlabWindow(New<Tests::FGraph3DTests>(), false);
         WindowManager->AddSlabWindow(New<Tests::FBezierTests>(), false);
-        WindowManager->AddSlabWindow(New<Tests::FourierTestWindow>(), false);
+        WindowManager->AddSlabWindow(New<Tests::FFourierTestWindow>(), false);
         WindowManager->AddSlabWindow(Tests::GetImGuiTestWindow(), false);
 
         // temp = New<WindowTreeBuilderTest>();
@@ -76,7 +76,7 @@ int TestsApp::run() {
         Core::FBackendManager::Startup("GLFW");
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
         Backend = guiBackend;
-        guiBackend->GetMainSystemWindow()->AddEventListener(TPointer<Graphics::FPlatformWindowEventListener>(new Tests::NuklearTests()));
+        guiBackend->GetMainSystemWindow()->AddEventListener(TPointer<Graphics::FPlatformWindowEventListener>(new Tests::FNuklearTests()));
     }
 
     Backend->Run();

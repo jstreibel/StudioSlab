@@ -11,16 +11,18 @@
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 
 
-class WindowPanelTest : public Slab::Graphics::FSlabWindow {
+class FWindowPanelTest : public Slab::Graphics::FSlabWindow {
     Slab::Graphics::WindowPanel *panel;
 
 public:
-    WindowPanelTest();
+    FWindowPanelTest();
     void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
 
     void NotifyReshape(int width, int height) override;
 
 };
+
+using WindowPanelTest [[deprecated("Use FWindowPanelTest")]] = FWindowPanelTest;
 
 
 #endif //V_SHAPE_WINDOWPANELTEST_H

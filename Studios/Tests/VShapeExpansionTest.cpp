@@ -10,7 +10,7 @@
 namespace Tests {
     using namespace Slab;
 
-    VShapeExpansionTest::VShapeExpansionTest()
+    FVShapeExpansionTest::FVShapeExpansionTest()
     : FWindowRow("V-shape expansion test")
     , graph("V-Shape expansion")
     , stats(Graphics::FSlabWindowConfig{"Stats"})
@@ -28,7 +28,7 @@ namespace Tests {
         AddWindow(window);
     }
 
-    void VShapeExpansionTest::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FVShapeExpansionTest::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         stats.AddExternalDraw([this](){
             auto A = (float) potential->getA();
             auto s = (float) potential->get_s();
