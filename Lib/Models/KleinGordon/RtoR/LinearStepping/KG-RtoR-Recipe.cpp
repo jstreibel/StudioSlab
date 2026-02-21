@@ -335,7 +335,7 @@ namespace Slab::Models::KGRtoR {
             return Slab::New<RtoR::NullFunction>();
         }
         if (*PotentialOptions.Potential == KLEIN_GORDON_POTENTIAL) {
-            return Slab::New<RtoR::HarmonicPotential>(*PotentialOptions.MassSquared);
+            return Slab::New<RtoR::FHarmonicPotential>(*PotentialOptions.MassSquared);
         }
         if (*PotentialOptions.Potential == SIGNUM_GORDON_POTENTIAL) {
             return Slab::New<RtoR::AbsFunction>();

@@ -9,10 +9,10 @@
 
 namespace Slab::Math::RtoR {
 
-    class Sine : public RtoR::Function {
+    class FSine : public RtoR::Function {
         DevFloat A, k;
     public:
-        Sine(DevFloat a, DevFloat k);
+        FSine(DevFloat a, DevFloat k);
 
         DevFloat operator()(DevFloat x) const override;
 
@@ -21,10 +21,10 @@ namespace Slab::Math::RtoR {
         auto Clone() const -> Function_ptr override;
     };
 
-    class Cosine : public RtoR::Function {
+    class FCosine : public RtoR::Function {
         DevFloat A, k;
     public:
-        Cosine(DevFloat a, DevFloat k);
+        FCosine(DevFloat a, DevFloat k);
 
         DevFloat operator()(DevFloat x) const override;
 
@@ -32,6 +32,9 @@ namespace Slab::Math::RtoR {
 
         auto Clone() const -> Function_ptr override;
     };
+
+    using Sine [[deprecated("Use FSine")]] = FSine;
+    using Cosine [[deprecated("Use FCosine")]] = FCosine;
 
 } // RtoR
 

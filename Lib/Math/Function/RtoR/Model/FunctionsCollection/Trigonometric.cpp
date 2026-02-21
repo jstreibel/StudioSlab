@@ -5,37 +5,37 @@
 #include "Trigonometric.h"
 
 namespace Slab::Math::RtoR {
-    Sine::Sine(DevFloat a, DevFloat k) : FunctionT(nullptr, false), A(a), k(k) {}
+    FSine::FSine(DevFloat a, DevFloat k) : FunctionT(nullptr, false), A(a), k(k) {}
 
-    DevFloat Sine::operator()(DevFloat x) const {
+    DevFloat FSine::operator()(DevFloat x) const {
         return A*sin(k*x);
     }
 
-    Function_ptr Sine::diff(int n) const {
+    Function_ptr FSine::diff(int n) const {
         assert(n==0);
 
-        return New<Cosine>(A*k, k);
+        return New<FCosine>(A*k, k);
     }
 
-    Function_ptr Sine::Clone() const {
-        return New<Sine>(A, k);
+    Function_ptr FSine::Clone() const {
+        return New<FSine>(A, k);
     }
 
 
 
-    Cosine::Cosine(DevFloat a, DevFloat k) : FunctionT(nullptr, false), A(a), k(k) {}
+    FCosine::FCosine(DevFloat a, DevFloat k) : FunctionT(nullptr, false), A(a), k(k) {}
 
-    DevFloat Cosine::operator()(DevFloat x) const {
+    DevFloat FCosine::operator()(DevFloat x) const {
         return A*cos(k*x);
     }
 
-    Function_ptr Cosine::diff(int n) const {
+    Function_ptr FCosine::diff(int n) const {
         assert(n==0);
 
-        return New <Sine> (-A*k, k);
+        return New<FSine>(-A*k, k);
     }
 
-    Function_ptr Cosine::Clone() const {
-        return New <Cosine> (A, k);
+    Function_ptr FCosine::Clone() const {
+        return New<FCosine>(A, k);
     }
 } // RtoR

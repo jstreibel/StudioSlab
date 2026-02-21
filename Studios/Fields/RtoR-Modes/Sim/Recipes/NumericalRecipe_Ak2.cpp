@@ -44,12 +44,12 @@ namespace Modes {
         if(*BCSelection == 1) {
             fix A2 = A * 0.0;
 
-            auto func1 = RtoR::Sine(A, k);
-            auto func2 = RtoR::Sine(A2, 2*k);
+            auto func1 = RtoR::FSine(A, k);
+            auto func2 = RtoR::FSine(A2, 2*k);
             auto f_0 = New <RtoR::FunctionSummable> (func1, func2);
 
-            auto ddtfunc1 = RtoR::Cosine(A*ω, k);
-            auto ddtfunc2 = RtoR::Cosine(A2*(2*ω), 2*k);
+            auto ddtfunc1 = RtoR::FCosine(A*ω, k);
+            auto ddtfunc2 = RtoR::FCosine(A2*(2*ω), 2*k);
             auto ddtf_0 = New <RtoR::FunctionSummable> (ddtfunc1, ddtfunc2);
 
             return New <KGRtoR::BoundaryCondition> (prototype, f_0, ddtf_0);

@@ -9,13 +9,13 @@
 
 
 namespace Slab::Math::RtoR {
-    class HarmonicDerivative : public RtoR::Function {
+    class FHarmonicDerivative : public RtoR::Function {
         DevFloat m_sqr;
     public:
-        explicit HarmonicDerivative(DevFloat m_sqr) : m_sqr(m_sqr) { };
+        explicit FHarmonicDerivative(DevFloat m_sqr) : m_sqr(m_sqr) { };
         DevFloat operator()(DevFloat x) const override { return m_sqr*x; }
 
-        Function_ptr Clone() const override { return New <HarmonicDerivative> (m_sqr); }
+        Function_ptr Clone() const override { return New<FHarmonicDerivative>(m_sqr); }
 
         Str Symbol() const override {
             return "m²ϕ   m=" + ToStr(sqrt(m_sqr), 2);
@@ -23,21 +23,21 @@ namespace Slab::Math::RtoR {
 
     };
 
-    class HarmonicPotential : public RtoR::Function {
+    class FHarmonicPotential : public RtoR::Function {
         DevFloat m_sqr;
     public:
-        explicit HarmonicPotential(DevFloat massSqr=1.0) : m_sqr(massSqr) { };
+        explicit FHarmonicPotential(DevFloat massSqr=1.0) : m_sqr(massSqr) { };
 
         DevFloat operator()(DevFloat x) const override {
             return .5*m_sqr*x*x;
         }
 
         Function_ptr diff(int n) const override {
-            return New <HarmonicDerivative> (m_sqr);
+            return New<FHarmonicDerivative>(m_sqr);
         }
 
         Function_ptr Clone() const override {
-            return New <HarmonicPotential> ();
+            return New<FHarmonicPotential>();
         }
 
         Str Symbol() const override {
@@ -53,6 +53,9 @@ namespace Slab::Math::RtoR {
             return x*x;
         }
     };
+
+    using HarmonicDerivative [[deprecated("Use FHarmonicDerivative")]] = FHarmonicDerivative;
+    using HarmonicPotential [[deprecated("Use FHarmonicPotential")]] = FHarmonicPotential;
 
 }
 

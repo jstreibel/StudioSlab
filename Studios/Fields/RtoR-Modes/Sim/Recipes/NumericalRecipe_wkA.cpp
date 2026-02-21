@@ -43,13 +43,13 @@ namespace Modes {
         if(*BCSelection == 1) {
             fix A2 = A_0 * 0.0;
 
-            auto func1 = RtoR::Sine(A_0, k_0);
-            auto func2 = RtoR::Sine(A2, 2*k_0);
+            auto func1 = RtoR::FSine(A_0, k_0);
+            auto func2 = RtoR::FSine(A2, 2*k_0);
 
             auto f_0 = New <RtoR::FunctionSummable> (func1, func2);
 
-            auto ddtfunc1 = RtoR::Cosine(A*ω, k_0);
-            auto ddtfunc2 = RtoR::Cosine(A2*(2*ω), 2*k_0);
+            auto ddtfunc1 = RtoR::FCosine(A*ω, k_0);
+            auto ddtfunc2 = RtoR::FCosine(A2*(2*ω), 2*k_0);
 
             auto ddtf_0 = New <RtoR::FunctionSummable> (ddtfunc1, ddtfunc2);
 
