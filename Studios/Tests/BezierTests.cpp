@@ -40,8 +40,8 @@ namespace Tests {
     : FWindowRow("Bezier Tests")
     , Stats(Graphics::FSlabWindowConfig("Stats"))
     , Graph("Graph") {
-        Param1 = static_cast<float>(Graphics::Animator::GetBezierParams().first);
-        Param2 = static_cast<float>(Graphics::Animator::GetBezierParams().second);
+        Param1 = static_cast<float>(Graphics::FAnimator::GetBezierParams().first);
+        Param2 = static_cast<float>(Graphics::FAnimator::GetBezierParams().second);
         AnimTimeSeconds = Graph.GetAnimationTime();
 
         static Math::Base::NativeFunction<Math::RtoR::Function> s_function(CubicBezierInterpolation);
@@ -69,26 +69,26 @@ namespace Tests {
     void FBezierTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         CurrentPoint.Clear();
         const auto &GraphRegion = Graph.GetRegion();
-        if(Graphics::Animator::Contains(*GraphRegion.getReference_xMin())){
-            auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_xMin());
+        if(Graphics::FAnimator::Contains(*GraphRegion.getReference_xMin())){
+            auto &Animation = Graphics::FAnimator::Get(*GraphRegion.getReference_xMin());
             fix t = Animation.Timer.GetElapsedTimeSeconds() / Animation.TimeInSeconds;
             CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 
-        if(Graphics::Animator::Contains(*GraphRegion.getReference_xMax())){
-            auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_xMax());
+        if(Graphics::FAnimator::Contains(*GraphRegion.getReference_xMax())){
+            auto &Animation = Graphics::FAnimator::Get(*GraphRegion.getReference_xMax());
             fix t = Animation.Timer.GetElapsedTimeSeconds() / Animation.TimeInSeconds;
             CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 
-        if(Graphics::Animator::Contains(*GraphRegion.getReference_yMin())){
-            auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_yMin());
+        if(Graphics::FAnimator::Contains(*GraphRegion.getReference_yMin())){
+            auto &Animation = Graphics::FAnimator::Get(*GraphRegion.getReference_yMin());
             fix t = Animation.Timer.GetElapsedTimeSeconds() / Animation.TimeInSeconds;
             CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 
-        if(Graphics::Animator::Contains(*GraphRegion.getReference_yMax())){
-            auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_yMax());
+        if(Graphics::FAnimator::Contains(*GraphRegion.getReference_yMax())){
+            auto &Animation = Graphics::FAnimator::Get(*GraphRegion.getReference_yMax());
             fix t = Animation.Timer.GetElapsedTimeSeconds() / Animation.TimeInSeconds;
             CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
@@ -105,7 +105,7 @@ namespace Tests {
             if(ImGui::SliderFloat("param1", &Param1, -1, 2)
              | ImGui::SliderFloat("param2", &Param2, -1, 2)
              | ImGui::SliderFloat("time", &AnimTimeSeconds, 0.1, 5)){
-                Graphics::Animator::SetBezierParams(Param1, Param2);
+                Graphics::FAnimator::SetBezierParams(Param1, Param2);
                 Graph.SetAnimationTime(AnimTimeSeconds);
             }});
 
