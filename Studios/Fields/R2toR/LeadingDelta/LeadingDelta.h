@@ -21,17 +21,19 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
     extern TPointer<RingDeltaFunc> ringDelta1;
 
-    class BoundaryCondition : public Slab::Math::Base::BoundaryConditions {
+    class FBoundaryCondition : public Slab::Math::Base::BoundaryConditions {
         TPointer<RingDeltaFunc> ringDelta;
         DevFloat tf;
         bool deltaSpeedOp;
 
     public:
-        explicit BoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
-                                   TPointer<RingDeltaFunc> ringDelta,
-                                   DevFloat tf, bool deltaOperatesOnSpeed);
+        explicit FBoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
+                                    TPointer<RingDeltaFunc> ringDelta,
+                                    DevFloat tf, bool deltaOperatesOnSpeed);
         void Apply(Slab::Math::Base::EquationState &function, DevFloat t) const override;
     };
+
+    using BoundaryCondition [[deprecated("Use FBoundaryCondition")]] = FBoundaryCondition;
 
 
 class Builder : public Models::KGR2toR::Builder {

@@ -11,16 +11,16 @@
 namespace Studios::Fields::R2toRLeadingDelta {
     TPointer<RingDeltaFunc> ringDelta1;
 
-    BoundaryCondition::BoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
-                                         TPointer<RingDeltaFunc> ringDelta,
-                                         DevFloat tf,
-                                         bool deltaOperatesOnSpeed)
-            : Slab::Math::Base::BoundaryConditions(prototype)
-            , ringDelta(std::move(ringDelta))
-            , tf(tf)
-            , deltaSpeedOp(deltaOperatesOnSpeed) { }
+    FBoundaryCondition::FBoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
+                                           TPointer<RingDeltaFunc> ringDelta,
+                                           DevFloat tf,
+                                           bool deltaOperatesOnSpeed)
+    : Slab::Math::Base::BoundaryConditions(prototype)
+    , ringDelta(std::move(ringDelta))
+    , tf(tf)
+    , deltaSpeedOp(deltaOperatesOnSpeed) { }
 
-    void BoundaryCondition::Apply(Slab::Math::Base::EquationState &state, DevFloat t) const {
+    void FBoundaryCondition::Apply(Slab::Math::Base::EquationState &state, DevFloat t) const {
         const bool applyDelta = t<tf || tf<0;
 
         auto stateKG = dynamic_cast<Slab::Math::R2toR::EquationState&>(state);
@@ -106,7 +106,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     auto Builder::getBoundary() -> TPointer<Base::BoundaryConditions> {
         auto eqStatePrototype = newFieldState();
 
-        return New<BoundaryCondition>(eqStatePrototype, drivingFunc, *deltaDuration, false);
+        return New<FBoundaryCondition>(eqStatePrototype, drivingFunc, *deltaDuration, false);
     }
 
     auto Builder::buildOpenGLOutput() -> Models::KGR2toR::OutputOpenGL * {
@@ -125,4 +125,3 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
 
 }
-
