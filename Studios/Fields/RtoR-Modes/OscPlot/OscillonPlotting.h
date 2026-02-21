@@ -19,7 +19,7 @@
 
 namespace Studios {
 
-    class OscillonPlotting : public Slab::Models::KGRtoR::KGMainViewer {
+    class OscillonPlotting : public Slab::Models::KGRtoR::FKGMainViewer {
         using AnalyticOscillon = Slab::Math::R2toR::AnalyticOscillon_1plus1d;
         // using AnalyticOscillon = Slab::Math::R2toR::AnalyticOscillon1p1_FourierImpl;
         using Function         = Slab::Math::R2toR::NumericFunction_CPU;
@@ -44,8 +44,8 @@ namespace Studios {
         Slab::TPointer<Function> rendered_phi = nullptr;
         Slab::TPointer<Function> rendered_dphi= nullptr;
 
-        Slab::TPointer<Slab::Models::KGRtoR::HistogramsViewer_KG> histograms_viewer;
-        Slab::TPointer<Slab::Models::KGRtoR::EnergyViewer_KG> energy_viewer;
+        Slab::TPointer<Slab::Models::KGRtoR::FHistogramsViewer_KG> histograms_viewer;
+        Slab::TPointer<Slab::Models::KGRtoR::FEnergyViewer_KG> energy_viewer;
 
         bool oscillons_dirty = true;
         bool ddt_oscillons_dirty = true;

@@ -34,25 +34,25 @@ namespace Studios {
     };
 
     OscillonPlotting::OscillonPlotting()
-    : Slab::Models::KGRtoR::KGMainViewer()
+    : Slab::Models::KGRtoR::FKGMainViewer()
     {
         fix l = 1.0;
         osc_params = Parameters{-l/2, l, .0, .0, .0};
         setupOscillons();
 
-        auto two_point_viewer = Slab::New<Slab::Models::KGRtoR::TwoPointCorrelationViewer_KG>(getGUIWindow());
+        auto two_point_viewer = Slab::New<Slab::Models::KGRtoR::FTwoPointCorrelationViewer_KG>(getGUIWindow());
         addKGViewer(two_point_viewer);
 
-        auto time_ft_space_avg_viewer = Slab::New<Slab::Models::KGRtoR::TimeFTViewer>(getGUIWindow());
+        auto time_ft_space_avg_viewer = Slab::New<Slab::Models::KGRtoR::FTimeFTViewer>(getGUIWindow());
         addKGViewer(time_ft_space_avg_viewer);
 
         auto fourier_viewer = Slab::New<Slab::Graphics::FFourierViewer>(getGUIWindow());
         addViewer(fourier_viewer);
 
-        histograms_viewer = Slab::New<Slab::Models::KGRtoR::HistogramsViewer_KG>(getGUIWindow());
+        histograms_viewer = Slab::New<Slab::Models::KGRtoR::FHistogramsViewer_KG>(getGUIWindow());
         addKGViewer(histograms_viewer);
 
-        energy_viewer = Slab::New<Slab::Models::KGRtoR::EnergyViewer_KG>(getGUIWindow());
+        energy_viewer = Slab::New<Slab::Models::KGRtoR::FEnergyViewer_KG>(getGUIWindow());
         addKGViewer(energy_viewer);
     }
 

@@ -63,17 +63,17 @@ public:
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
         guiBackend->GetMainSystemWindow()->SetSystemWindowTitle(*filename);
 
-        auto viewer = Slab::New<Slab::Models::KGRtoR::KGMainViewer>();
+        auto viewer = Slab::New<Slab::Models::KGRtoR::FKGMainViewer>();
 
         auto gui_window = viewer->getGUIWindow();
         viewer->addViewer(Slab::New<Graphics::FFourierViewer>(gui_window));
         viewer->addViewer(Slab::New<Graphics::FHistoryViewer>(gui_window));
-        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::TimeFTViewer>(gui_window));
-        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::HistoryViewer>(gui_window));
-        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::TwoPointCorrelationViewer_KG>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::FTimeFTViewer>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::FHistoryViewer_KG>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::FTwoPointCorrelationViewer_KG>(gui_window));
         viewer->addViewer(Slab::New<Graphics::FModesHistoryViewer>(gui_window));
-        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::HistogramsViewer_KG>(gui_window));
-        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::EnergyViewer_KG>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::FHistogramsViewer_KG>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::FEnergyViewer_KG>(gui_window));
         viewer->addViewer(Slab::New<Slab::Graphics::FViewer3D>(gui_window));
 
         viewer->setFunction(function);

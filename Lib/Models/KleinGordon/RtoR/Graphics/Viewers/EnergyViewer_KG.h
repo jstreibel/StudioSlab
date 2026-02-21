@@ -14,7 +14,7 @@
 namespace Slab::Models::KGRtoR {
 
     // Grapha34f ics::Viewer
-    class EnergyViewer_KG : public KGViewer {
+    class FEnergyViewer_KG : public FKGViewer {
         TPointer<Graphics::FPlot2DWindow> TotalEnergiesWindow;
         TPointer<Graphics::FPlot2DWindow> TemperaturesWindow;
         TPointer<Graphics::FPlot2DWindow> FullHistoriesWindow;
@@ -39,7 +39,7 @@ namespace Slab::Models::KGRtoR {
         TPointer<FPointSet> PotentialHistory = New<FPointSet>();
 
     public:
-        explicit EnergyViewer_KG(const TPointer<Graphics::FGUIWindow> &pointer);
+        explicit FEnergyViewer_KG(const TPointer<Graphics::FGUIWindow> &pointer);
 
         Str GetName() const override;
 
@@ -51,6 +51,8 @@ namespace Slab::Models::KGRtoR {
 
         void UpdateEnergy();
     };
+
+    using EnergyViewer_KG [[deprecated("Use FEnergyViewer_KG")]] = FEnergyViewer_KG;
 
 } // Slab::Models::KGRtoR
 

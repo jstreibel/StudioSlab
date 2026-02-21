@@ -9,8 +9,8 @@
 
 namespace Slab::Models {
 
-    KGRtoR::EnergyViewer_KG::EnergyViewer_KG(const TPointer<Graphics::FGUIWindow> &gui_window)
-    : KGViewer(gui_window)
+    KGRtoR::FEnergyViewer_KG::FEnergyViewer_KG(const TPointer<Graphics::FGUIWindow> &gui_window)
+    : FKGViewer(gui_window)
     , TotalEnergiesWindow(New<Graphics::FPlot2DWindow>("Energy"))
     , TemperaturesWindow (New<Graphics::FPlot2DWindow>("Temperature"))
     , FullHistoriesWindow(New<Graphics::FPlot2DWindow>("Histories"))
@@ -47,15 +47,15 @@ namespace Slab::Models {
 
     }
 
-    void KGRtoR::EnergyViewer_KG::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
+    void KGRtoR::FEnergyViewer_KG::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
         FViewer::SetFunction(function);
 
         Func_Artist->setFunction(getFunction());
         // f_artist->setColorMap(Graphics::ColorMaps["BrBG"]->inverse().clone());
     }
 
-    void KGRtoR::EnergyViewer_KG::SetFunctionDerivative(FuncPointer pointer) {
-        KGViewer::SetFunctionDerivative(pointer);
+    void KGRtoR::FEnergyViewer_KG::SetFunctionDerivative(FuncPointer pointer) {
+        FKGViewer::SetFunctionDerivative(pointer);
 
         ddtFunc_Artist->setFunction(pointer);
         // dfdt_artist->setColorMap(Graphics::ColorMaps["BrBG"]->brg().inverse().clone());
@@ -63,7 +63,7 @@ namespace Slab::Models {
         if(isVisible() && areFunctionsConsistent()) UpdateEnergy();
     }
 
-    void KGRtoR::EnergyViewer_KG::UpdateEnergy() {
+    void KGRtoR::FEnergyViewer_KG::UpdateEnergy() {
         if(!areFunctionsConsistent()) return;
 
         auto f = getFunction();
@@ -168,13 +168,13 @@ namespace Slab::Models {
         FullHistoriesWindow->ReviewGraphRanges();
     }
 
-    void KGRtoR::EnergyViewer_KG::NotifyBecameVisible() {
+    void KGRtoR::FEnergyViewer_KG::NotifyBecameVisible() {
         FViewer::NotifyBecameVisible();
 
         if(areFunctionsConsistent()) UpdateEnergy();
     }
 
-    Str KGRtoR::EnergyViewer_KG::GetName() const {
+    Str KGRtoR::FEnergyViewer_KG::GetName() const {
         return "[KG] Stress-energy viewer";
     }
 } // Slab::Models

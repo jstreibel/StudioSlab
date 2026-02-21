@@ -13,12 +13,12 @@
 
 namespace Slab::Models::KGRtoR {
 
-    Str TimeFTViewer::GetName() const { return "Time-DFT space-average viewer"; }
+    Str FTimeFTViewer::GetName() const { return "Time-DFT space-average viewer"; }
 
-    TimeFTViewer::TimeFTViewer(const TPointer<Graphics::FGUIWindow> &GuiWindow,
+    FTimeFTViewer::FTimeFTViewer(const TPointer<Graphics::FGUIWindow> &GuiWindow,
                                const TPointer<R2toR::FNumericFunction> &func,
                                const TPointer<R2toR::FNumericFunction> &ddtFunc)
-    : KGViewer(GuiWindow, func, ddtFunc) {
+    : FKGViewer(GuiWindow, func, ddtFunc) {
         using Plotter = Graphics::FPlotter;
         using Themes = Graphics::FPlotThemeManager;
 
@@ -40,7 +40,7 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void TimeFTViewer::compute() {
+    void FTimeFTViewer::compute() {
         // auto filtered = Graphics::FFourierViewer::FilterSpace(getFunction(), t_min, t_max);
 
         auto function = getFunction();
@@ -98,7 +98,7 @@ namespace Slab::Models::KGRtoR {
         timeDFTAverageArtist->SetLabel(Str("∫dx ϕ(ω,x), ") + timeInterval);
     }
 
-    void TimeFTViewer::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FTimeFTViewer::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         auto function = getFunction();
         if(function== nullptr){ FWindowPanel::ImmediateDraw(PlatformWindow); return;}
 
@@ -173,7 +173,7 @@ namespace Slab::Models::KGRtoR {
         FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void TimeFTViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
+    void FTimeFTViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
         FViewer::SetFunction(function);
 
         t0 = (float)getFunction()->getDomain().yMin;
@@ -182,11 +182,11 @@ namespace Slab::Models::KGRtoR {
         if(isVisible()) compute();
     }
 
-    void TimeFTViewer::SetFunctionDerivative(FuncPointer pointer) {
-        KGViewer::SetFunctionDerivative(pointer);
+    void FTimeFTViewer::SetFunctionDerivative(FuncPointer pointer) {
+        FKGViewer::SetFunctionDerivative(pointer);
     }
 
-    void TimeFTViewer::NotifyBecameVisible() {
+    void FTimeFTViewer::NotifyBecameVisible() {
         FViewer::NotifyBecameVisible();
 
         if(getFunction() != nullptr) compute();

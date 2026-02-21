@@ -11,7 +11,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class TimeFTViewer : public KGViewer {
+    class FTimeFTViewer : public FKGViewer {
         float t0=0, Δt=1;
         bool auto_update = false;
 
@@ -21,7 +21,7 @@ namespace Slab::Models::KGRtoR {
         void compute();
 
     public:
-        TimeFTViewer(const TPointer<Graphics::FGUIWindow> &guiWindow,
+        FTimeFTViewer(const TPointer<Graphics::FGUIWindow> &guiWindow,
                      const TPointer<R2toR::FNumericFunction> &func=nullptr,
                      const TPointer<R2toR::FNumericFunction> &ddtFunc=nullptr);
 
@@ -36,6 +36,8 @@ namespace Slab::Models::KGRtoR {
 
         Str GetName() const override;
     };
+
+    using TimeFTViewer [[deprecated("Use FTimeFTViewer")]] = FTimeFTViewer;
 
 } // Slab::Models::KGRtoR
 

@@ -14,7 +14,7 @@ namespace Slab::Models::KGRtoR {
 
     using PlotWindow = Slab::Graphics::FPlot2DWindow;
 
-    class HistogramsViewer_KG : public KGViewer {
+    class FHistogramsViewer_KG : public FKGViewer {
         Slab::Math::FPointSet histogram_data_energy;
         Slab::Math::FPointSet histogram_data_kinetic;
         Slab::Math::FPointSet histogram_data_gradient;
@@ -46,7 +46,7 @@ namespace Slab::Models::KGRtoR {
         HarnessData harness();
 
     public:
-        explicit HistogramsViewer_KG(const Slab::TPointer<Slab::Graphics::FGUIWindow> &);
+        explicit FHistogramsViewer_KG(const Slab::TPointer<Slab::Graphics::FGUIWindow> &);
 
         Str GetName() const override;
 
@@ -60,6 +60,8 @@ namespace Slab::Models::KGRtoR {
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
     };
+
+    using HistogramsViewer_KG [[deprecated("Use FHistogramsViewer_KG")]] = FHistogramsViewer_KG;
 
 } // Studios::Fields::Viewers
 

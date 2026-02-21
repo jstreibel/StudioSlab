@@ -15,10 +15,10 @@ namespace Slab::Models::KGRtoR {
     using Plotter = Graphics::FPlotter;
     using Themes = Graphics::FPlotThemeManager;
 
-    TwoPointCorrelationViewer_KG::TwoPointCorrelationViewer_KG(const TPointer<Graphics::FGUIWindow> &guiWindow,
+    FTwoPointCorrelationViewer_KG::FTwoPointCorrelationViewer_KG(const TPointer<Graphics::FGUIWindow> &guiWindow,
                                                                const TPointer<R2toR::FNumericFunction> &func,
                                                                const TPointer<R2toR::FNumericFunction> &ddtFunc)
-    : KGViewer(guiWindow, func, ddtFunc)
+    : FKGViewer(guiWindow, func, ddtFunc)
     {
         twoPointArtist->SetLabel("avg[ϕ(x)ϕ(x+r)]");
 
@@ -40,7 +40,7 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    void TwoPointCorrelationViewer_KG::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
+    void FTwoPointCorrelationViewer_KG::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
         FViewer::SetFunction(function);
 
         {
@@ -78,7 +78,7 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void TwoPointCorrelationViewer_KG::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FTwoPointCorrelationViewer_KG::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if(getFunction() == nullptr) return;
 
         gui_window->AddExternalDraw([this](){
@@ -193,7 +193,7 @@ namespace Slab::Models::KGRtoR {
         FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void TwoPointCorrelationViewer_KG::computeTwoPointCorrelation() {
+    void FTwoPointCorrelationViewer_KG::computeTwoPointCorrelation() {
         auto function = getFunction();
         if(function == nullptr) return;
 
@@ -223,7 +223,7 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    Str TwoPointCorrelationViewer_KG::GetName() const {
+    Str FTwoPointCorrelationViewer_KG::GetName() const {
         return "[KG] 2-point correlation viewer";
     }
 } // Slab::Models::KGRtoR

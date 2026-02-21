@@ -15,12 +15,12 @@ namespace Slab::Models::KGRtoR {
     using FuncPointer = TPointer<Math::R2toR::FNumericFunction>;
     using ConstFuncPointer = TPointer<const Math::R2toR::FNumericFunction>;
 
-    class KGViewer : public Graphics::FViewer {
+    class FKGViewer : public Graphics::FViewer {
 
         FuncPointer ddt_base_function;
 
     public:
-        explicit KGViewer(const TPointer<Graphics::FGUIWindow> &
+        explicit FKGViewer(const TPointer<Graphics::FGUIWindow> &
                , const TPointer<Math::R2toR::FNumericFunction> &func = nullptr
                , const TPointer<Math::R2toR::FNumericFunction> &ddt_func = nullptr);
 
@@ -37,6 +37,8 @@ namespace Slab::Models::KGRtoR {
 
 
     };
+
+    using KGViewer [[deprecated("Use FKGViewer")]] = FKGViewer;
 
 } // Slab::Models::KGRtoR
 
