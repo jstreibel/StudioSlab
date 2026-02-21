@@ -19,7 +19,7 @@ namespace Slab::Models::KGR2toR {
         Str name;
 
     protected:
-        virtual auto buildOpenGLOutput() -> OutputOpenGL*;
+        virtual auto buildOpenGLOutput() -> FOutputOpenGL*;
 
     public:
         FKGR2toRBuilder(const Str& name, const Str& description, bool do_register = false);

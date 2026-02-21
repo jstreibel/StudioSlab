@@ -44,7 +44,7 @@ class FBuilder : public Models::KGR2toR::FKGR2toRBuilder {
         TPointer<FRingDeltaFunc> drivingFunc;
 
     protected:
-        auto buildOpenGLOutput() -> Models::KGR2toR::OutputOpenGL * override;
+        auto buildOpenGLOutput() -> Models::KGR2toR::FOutputOpenGL * override;
 
     public:
         void *getHamiltonian() override;

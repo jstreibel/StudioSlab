@@ -26,7 +26,7 @@ Slab::Math::R2toR::FFunctionAzimuthalSymmetry nullFunc(new Slab::Math::RtoR::Nul
 namespace Studios::Fields::R2toRLeadingDelta {
 
     FOutGL::FOutGL(CountType max_steps, TPointer<Slab::Math::R2toR::Function> drivingFunction)
-    : Models::KGR2toR::OutputOpenGL(max_steps), drivingFunction(std::move(drivingFunction))
+    : Models::KGR2toR::FOutputOpenGL(max_steps), drivingFunction(std::move(drivingFunction))
     , mTotalEnergyGraph ("Total energy")
     , mEnergyGraph      ("Energy")
     , mEnergyRatioGraph ("Energy ratio")

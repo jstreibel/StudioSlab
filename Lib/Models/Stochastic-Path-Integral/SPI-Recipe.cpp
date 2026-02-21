@@ -34,7 +34,7 @@ namespace Slab::Models::StochasticPathIntegrals {
     auto SPIRecipe::BuildOutputSockets() -> Base::OutputSockets {
         Base::OutputSockets sockets;
 
-        auto monitor = New<KGR2toR::OutputOpenGL>(SPI_NumericConfig->Get_n());
+        auto monitor = New<KGR2toR::FOutputOpenGL>(SPI_NumericConfig->Get_n());
         auto manager = Slab::New<Graphics::FSlabWindowManager>();
         manager->AddSlabWindow(monitor, false);
 

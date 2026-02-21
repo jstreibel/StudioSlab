@@ -33,7 +33,7 @@ namespace Slab::Models::KGR2toR {
         NOT_IMPLEMENTED
     }
 
-    OutputOpenGL::OutputOpenGL(CountType max_steps)
+    FOutputOpenGL::FOutputOpenGL(CountType max_steps)
     : FBaseMonitor(max_steps, "ℝ²↦ℝ OpenGL monitor", 1)
     , mSectionGraph("Sections")
     , mFieldDisplay("Field")
@@ -44,7 +44,7 @@ namespace Slab::Models::KGR2toR {
         AddWindow(Naked(mFieldDisplay), ADD_TO_NEW_COLUMN, .25);
     }
 
-    void OutputOpenGL::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FOutputOpenGL::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if (!LastPacket.hasValidData()) return;
 
         FBaseMonitor::ImmediateDraw(PlatformWindow);

@@ -109,7 +109,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
         return New<FBoundaryCondition>(eqStatePrototype, drivingFunc, *deltaDuration, false);
     }
 
-    auto FBuilder::buildOpenGLOutput() -> Models::KGR2toR::OutputOpenGL * {
+    auto FBuilder::buildOpenGLOutput() -> Models::KGR2toR::FOutputOpenGL * {
         return new FOutGL(KGNumericConfig->Get_n(), ringDelta1);
     }
 

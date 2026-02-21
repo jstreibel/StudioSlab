@@ -14,7 +14,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     using namespace Slab;
     using namespace Math;
 
-    class FOutGL : public Models::KGR2toR::OutputOpenGL {
+    class FOutGL : public Models::KGR2toR::FOutputOpenGL {
 
         TPointer<R2toR::Function> drivingFunction;
 

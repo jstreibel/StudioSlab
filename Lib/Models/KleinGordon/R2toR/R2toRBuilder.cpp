@@ -50,7 +50,7 @@ namespace Slab::Models::KGR2toR {
             sockets.emplace_back(Slab::New<FKG2DSnapshotOutput>(snapshotFilename));
 
             #ifdef USE_VTK
-            sockets.emplace_back(New<LastOutputVTKVisualizer>(kg_numeric_config->getN()));
+            sockets.emplace_back(New<FLastOutputVTKVisualizer>(kg_numeric_config->getN()));
             #endif
         }
         ///********************************************************************************************/
@@ -141,10 +141,10 @@ namespace Slab::Models::KGR2toR {
         return New<SolvySolver>(dphi, Laplacian, thePotential);
     }
 
-    auto FKGR2toRBuilder::buildOpenGLOutput() -> OutputOpenGL * {
+    auto FKGR2toRBuilder::buildOpenGLOutput() -> FOutputOpenGL * {
         // t_max, max_steps, x_min, x_max, y_min, y_max
         IN conf = *KGNumericConfig;
-        return new OutputOpenGL(conf.Get_n());
+        return new FOutputOpenGL(conf.Get_n());
     }
 
     auto FKGR2toRBuilder::newFieldState() -> R2toR::EquationState_ptr {
