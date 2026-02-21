@@ -34,7 +34,7 @@ void setup_viewer(Slab::TPointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
 
 int run(int argc, const char **argv) {
     constexpr unsigned max_steps = -1;
-    using Recipe = Slab::Models::KGRtoR::Metropolis::RtoRHamiltonianMetropolisHastingsRecipe;
+    using Recipe = Slab::Models::KGRtoR::Metropolis::FRtoRHamiltonianMetropolisHastingsRecipe;
     auto mc_recipe = Slab::New<Recipe>(max_steps);
     Slab::Core::RegisterCLInterface(mc_recipe->GetInterface());
 

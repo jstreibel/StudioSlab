@@ -17,7 +17,7 @@ namespace Slab::Math {
 
     // inline DevFloat sqr(const DevFloat &v){ return v*v; }
 
-    auto RtoRActionMetropolisRecipe::getField() -> TPointer<RtoR::NumericFunction_CPU> {
+    auto FRtoRActionMetropolisRecipe::getField() -> TPointer<RtoR::NumericFunction_CPU> {
         if(field_data == nullptr){
             fix t_min=0.;
             fix t=2.;
@@ -29,12 +29,12 @@ namespace Slab::Math {
         return field_data;
     }
 
-    RtoRActionMetropolisRecipe::RtoRActionMetropolisRecipe(UInt max_steps)
-    : Base::FNumericalRecipe(New<MetropolisRtoRConfig>(max_steps), "Metropolis R2->R", "", DONT_REGISTER) {
+    FRtoRActionMetropolisRecipe::FRtoRActionMetropolisRecipe(UInt max_steps)
+    : Base::FNumericalRecipe(New<FMetropolisRtoRConfig>(max_steps), "Metropolis R2->R", "", DONT_REGISTER) {
         // Core::RegisterCLInterface(interface);
     }
 
-    Vector<TPointer<FOutputChannel>> RtoRActionMetropolisRecipe::BuildOutputSockets() {
+    Vector<TPointer<FOutputChannel>> FRtoRActionMetropolisRecipe::BuildOutputSockets() {
         fix total_steps = GetNumericConfig()->Get_n();
 
         auto console_monitor = New<FOutputConsoleMonitor>(total_steps);
@@ -43,7 +43,7 @@ namespace Slab::Math {
         return {console_monitor};
     }
 
-    TPointer<FStepper> RtoRActionMetropolisRecipe::BuildStepper() {
+    TPointer<FStepper> FRtoRActionMetropolisRecipe::BuildStepper() {
         RtoRMetropolisSetup setup;
 
         Temperature T=1E-2;

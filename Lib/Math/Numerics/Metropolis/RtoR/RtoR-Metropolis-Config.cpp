@@ -6,12 +6,12 @@
 
 namespace Slab::Math {
 
-    MetropolisRtoRConfig::MetropolisRtoRConfig(UInt max_steps)
+    FMetropolisRtoRConfig::FMetropolisRtoRConfig(UInt max_steps)
             : FNumericConfig(DONT_REGISTER), max_steps(max_steps) {
         // registerToManager();
     }
 
-    auto MetropolisRtoRConfig::Get_n() const -> UIntBig { return max_steps; }
+    auto FMetropolisRtoRConfig::Get_n() const -> UIntBig { return max_steps; }
 
-    auto MetropolisRtoRConfig::to_string() const -> Str { return {}; }
+    auto FMetropolisRtoRConfig::to_string() const -> Str { return {}; }
 }

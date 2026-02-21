@@ -14,12 +14,12 @@
 
 namespace Slab::Models::KGRtoR::Metropolis {
 
-    RtoRHamiltonianMetropolisHastingsRecipe::RtoRHamiltonianMetropolisHastingsRecipe(UInt max_steps)
-    : Base::FNumericalRecipe(New<MetropolisRtoRConfig>(max_steps), "Metropolis-Hastings ℝ↦ℝ", "", DONT_REGISTER) {
+    FRtoRHamiltonianMetropolisHastingsRecipe::FRtoRHamiltonianMetropolisHastingsRecipe(UInt max_steps)
+    : Base::FNumericalRecipe(New<FMetropolisRtoRConfig>(max_steps), "Metropolis-Hastings ℝ↦ℝ", "", DONT_REGISTER) {
         Core::RegisterCLInterface(Interface);
     }
 
-    auto RtoRHamiltonianMetropolisHastingsRecipe::getField() -> FieldPair {
+    auto FRtoRHamiltonianMetropolisHastingsRecipe::getField() -> FFieldPair {
         if(field_data.ϕ == nullptr){
             assert(field_data.π == nullptr);
 
@@ -34,7 +34,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
         return field_data;
     }
 
-    auto RtoRHamiltonianMetropolisHastingsRecipe::BuildOutputSockets() -> Vector<TPointer<FOutputChannel>> {
+    auto FRtoRHamiltonianMetropolisHastingsRecipe::BuildOutputSockets() -> Vector<TPointer<FOutputChannel>> {
         fix total_steps = GetNumericConfig()->Get_n();
 
         auto console_monitor = New<FOutputConsoleMonitor>(total_steps);
@@ -43,7 +43,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
         return {console_monitor};
     }
 
-    auto RtoRHamiltonianMetropolisHastingsRecipe::BuildStepper() -> TPointer<FStepper> {
+    auto FRtoRHamiltonianMetropolisHastingsRecipe::BuildStepper() -> TPointer<FStepper> {
         RtoRMetropolisSetup setup;
 
         Temperature T=1E-2;

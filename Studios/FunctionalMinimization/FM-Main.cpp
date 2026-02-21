@@ -63,7 +63,7 @@ void setup_viewer(Slab::TPointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
 
 int run(int argc, const char **argv) {
     constexpr unsigned max_steps = -1;
-    auto mc_recipe = Slab::New<Slab::Math::RtoRActionMetropolisRecipe>(max_steps);
+    auto mc_recipe = Slab::New<Slab::Math::FRtoRActionMetropolisRecipe>(max_steps);
     Slab::Core::RegisterCLInterface(mc_recipe->GetInterface());
 
     auto prog = Slab::New<Slab::Math::FMathApp> (argc, argv, mc_recipe);
