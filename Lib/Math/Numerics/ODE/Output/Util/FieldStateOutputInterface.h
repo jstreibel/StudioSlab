@@ -12,9 +12,9 @@
 
 namespace Slab::Math {
 
-    class EqStateOutputInterface {
+    class FEqStateOutputInterface {
     public:
-        virtual ~EqStateOutputInterface() = default;
+        virtual ~FEqStateOutputInterface() = default;
 
         static enum Formats {
             SpaceSeparated,
@@ -32,9 +32,9 @@ namespace Slab::Math {
         virtual void outputdPhiDt(OStream &out,
                                   Str separator) const { throw "EqStateOutputInterface::outputDPhiDt(...) not implemented."; }
 
-        [[nodiscard]] virtual EqStateOutputInterface *Copy(UInt N) const = 0;
+        [[nodiscard]] virtual FEqStateOutputInterface *Copy(UInt N) const = 0;
 
-        friend OStream &operator<<(OStream &stream, const EqStateOutputInterface &oStreamReady) {
+        friend OStream &operator<<(OStream &stream, const FEqStateOutputInterface &oStreamReady) {
             Str sep = format == SpaceSeparated ? " " : ", ";
 
             if (format == PythonDictionaryEntry) stream << "\"phi\": (";
@@ -48,6 +48,8 @@ namespace Slab::Math {
             return stream;
         }
     };
+
+    using EqStateOutputInterface [[deprecated("Use FEqStateOutputInterface")]] = FEqStateOutputInterface;
 
 
 }

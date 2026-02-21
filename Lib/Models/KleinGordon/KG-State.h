@@ -21,7 +21,7 @@ namespace Slab::Models {
      * @tparam EqCategory Usually some NumericFunction type.
      */
     template<class InCategory>
-    class KGState : public Base::EquationState, public EqStateOutputInterface {
+    class KGState : public Base::EquationState, public FEqStateOutputInterface {
     public:
         typedef Base::EquationState State;
         typedef DevFloat OutCategory;

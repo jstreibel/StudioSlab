@@ -59,8 +59,8 @@ namespace Slab::Math {
                 file.open(fileName);
                 FLog::Note() << "Opened file \"" << fileName << "\"" << FLog::Flush;
 
-                EqStateOutputInterface::format = EqStateOutputInterface::PythonDictionaryEntry;
-                EqStateOutputInterface::fDataOutType = EqStateOutputInterface::PhiAndDPhiDt;
+                FEqStateOutputInterface::format = FEqStateOutputInterface::PythonDictionaryEntry;
+                FEqStateOutputInterface::fDataOutType = FEqStateOutputInterface::PhiAndDPhiDt;
 
                 /*
                 FCustomStringSeparatedSOF formatter(", ");

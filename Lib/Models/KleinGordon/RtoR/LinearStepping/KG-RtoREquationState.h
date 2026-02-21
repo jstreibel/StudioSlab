@@ -36,7 +36,7 @@ namespace Slab::Models::KGRtoR {
                 out << vDPhiDt[n] << separator;
         }
 
-        [[nodiscard]] EqStateOutputInterface *Copy(UInt N) const override {
+        [[nodiscard]] FEqStateOutputInterface *Copy(UInt N) const override {
             NOT_IMPLEMENTED_CLASS_METHOD
             // new EquationState(dynamic_cast<RtoR::NumericFunction*>(phi->CloneWithSize(N)),
             //                   dynamic_cast<RtoR::NumericFunction*>(dPhiDt->CloneWithSize(N)));
