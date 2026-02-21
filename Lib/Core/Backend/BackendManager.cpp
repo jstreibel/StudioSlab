@@ -28,12 +28,12 @@ namespace Slab::Core {
     }
 
     /*
-    auto FBackendManager::GetGUIBackend() -> GraphicBackend & {
+    auto FBackendManager::GetGUIBackend() -> FGraphicBackend & {
         auto &backend = FBackendManager::GetBackend();
 
         if(backend.isHeadless()) throw Exception("requiring graphic backend on headless run");
 
-        return dynamic_cast<GraphicBackend&>(backend);
+        return dynamic_cast<FGraphicBackend&>(backend);
     }
      */
 

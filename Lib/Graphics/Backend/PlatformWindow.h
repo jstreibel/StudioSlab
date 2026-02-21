@@ -24,7 +24,7 @@ namespace Slab::Graphics {
     using FPlatformWindow_RawPointer = void*;
 
     class FPlatformWindow : public IResolutionProvider, public IDrawBackend2DProvider {
-        friend class GraphicBackend;
+        friend class FGraphicBackend;
     public:
         FPlatformWindow() = delete;
         explicit FPlatformWindow(void *window_ptr, TPointer<FEventTranslator>);

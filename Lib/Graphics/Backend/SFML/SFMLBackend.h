@@ -13,7 +13,7 @@
 
 namespace Slab::Graphics {
 
-    class FSFMLBackend : public GraphicBackend {
+    class FSFMLBackend : public FGraphicBackend {
         sf::Mutex off_sync;
 
     public:

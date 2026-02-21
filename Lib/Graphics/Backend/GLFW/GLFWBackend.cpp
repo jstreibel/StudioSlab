@@ -23,7 +23,7 @@ namespace Slab::Graphics {
         FLog::Error() << "GLFW error " << error_code << ": " << description << FLog::Flush;
     }
 
-    FGLFWBackend::FGLFWBackend() : GraphicBackend("GLFW Backend") {
+    FGLFWBackend::FGLFWBackend() : FGraphicBackend("GLFW Backend") {
         glfwSetErrorCallback(errorCallback);
 
         int major, minor, rev;

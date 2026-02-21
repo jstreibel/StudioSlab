@@ -12,7 +12,7 @@ public:
     FLittlePlaneDesignerApp(int argc, const char* argv[]);
 
 protected:
-    Slab::TPointer<Slab::Graphics::GraphicBackend> CreatePlatform() override;
+    Slab::TPointer<Slab::Graphics::FGraphicBackend> CreatePlatform() override;
     void OnStart() override;
 };
 

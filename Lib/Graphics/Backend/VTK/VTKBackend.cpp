@@ -4,6 +4,6 @@
 
 #include "VTKBackend.h"
 
-void Slab::Graphics::VTKBackend::Run() {
+void Slab::Graphics::FVTKBackend::Run() {
     NOT_IMPLEMENTED
 }

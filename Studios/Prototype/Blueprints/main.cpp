@@ -18,7 +18,7 @@ public:
 
 protected:
     Slab::TPointer<Slab::Platform> CreatePlatform() override {
-        return Slab::DynamicPointerCast<Slab::Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
+        return Slab::DynamicPointerCast<Slab::Graphics::FGraphicBackend>(Slab::CreatePlatform("GLFW"));
     }
 
 

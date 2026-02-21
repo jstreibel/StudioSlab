@@ -10,12 +10,12 @@
 
 namespace Slab::Graphics {
 
-    class GraphicBackend : public Core::FBackend {
+    class FGraphicBackend : public Core::FBackend {
         void NotifyModuleLoaded(const TPointer<Slab::Core::FSlabModule> &pointer) override;
 
     protected:
 
-        explicit GraphicBackend(const Str &name);
+        explicit FGraphicBackend(const Str &name);
 
         Vector<TVolatile<FGraphicsModule>> GraphicModules;
         TList<TPointer<FPlatformWindow>> SystemWindows;
@@ -27,7 +27,7 @@ namespace Slab::Graphics {
         TPointer<FPlatformWindow> CreatePlatformWindow(const Str& title) = 0;
 
     public:
-        ~GraphicBackend() override;
+        ~FGraphicBackend() override;
 
         TPointer<FPlatformWindow>
         NewSystemWindow(const Str& title);
@@ -45,6 +45,8 @@ namespace Slab::Graphics {
 
         auto IsHeadless() const -> bool final;
     };
+
+    using GraphicBackend [[deprecated("Use FGraphicBackend")]] = FGraphicBackend;
 
 }
 

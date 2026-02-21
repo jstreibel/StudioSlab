@@ -11,7 +11,7 @@ namespace Slab::Graphics {
     void Startup();
     void Finish();
 
-    TPointer<GraphicBackend> GetGraphicsBackend();
+    TPointer<FGraphicBackend> GetGraphicsBackend();
 }
 
 #endif //STUDIOSLAB_SLABGRAPHICS_H

@@ -32,7 +32,7 @@ namespace Slab::Graphics {
         //Core::FBackendManager::RegisterAvailableBackend("GLUT",    BackendAllocator<GLUTBackend>);
         Core::FBackendManager::RegisterAvailableBackend("SFML",    BackendAllocator<FSFMLBackend>);
         Core::FBackendManager::RegisterAvailableBackend("Default", BackendAllocator<FSFMLBackend>);
-        Core::FBackendManager::RegisterAvailableBackend("VTK", [] () { throw Exception("VTKBackend not implemented"); return nullptr; }) ;
+        Core::FBackendManager::RegisterAvailableBackend("VTK", [] () { throw Exception("FVTKBackend not implemented"); return nullptr; }) ;
     }
 
     void RegisterModules() {
@@ -58,8 +58,8 @@ namespace Slab::Graphics {
 
     }
 
-    TPointer<GraphicBackend> GetGraphicsBackend() {
-        return DynamicPointerCast<GraphicBackend>(Core::FBackendManager::GetBackend());
+    TPointer<FGraphicBackend> GetGraphicsBackend() {
+        return DynamicPointerCast<FGraphicBackend>(Core::FBackendManager::GetBackend());
     }
 
 }

@@ -13,7 +13,7 @@ namespace Slab::Graphics {
 
 
     FSFMLBackend::FSFMLBackend()
-        : GraphicBackend("SFML backend")
+        : FGraphicBackend("SFML backend")
     {
     }
 

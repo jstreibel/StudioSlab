@@ -37,7 +37,7 @@ TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::FAppBase(argc, arg
 int TestsApp::run() {
     using namespace Slab;
 
-    TPointer<Graphics::GraphicBackend> Backend = nullptr;
+    TPointer<Graphics::FGraphicBackend> Backend = nullptr;
 
     if(true) {
         Core::FBackendManager::Startup("GLFW");
