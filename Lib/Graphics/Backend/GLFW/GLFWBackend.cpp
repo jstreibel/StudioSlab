@@ -23,7 +23,7 @@ namespace Slab::Graphics {
         FLog::Error() << "GLFW error " << error_code << ": " << description << FLog::Flush;
     }
 
-    GLFWBackend::GLFWBackend() : GraphicBackend("GLFW Backend") {
+    FGLFWBackend::FGLFWBackend() : GraphicBackend("GLFW Backend") {
         glfwSetErrorCallback(errorCallback);
 
         int major, minor, rev;
@@ -40,7 +40,7 @@ namespace Slab::Graphics {
 
     }
 
-    GLFWBackend::~GLFWBackend() {
+    FGLFWBackend::~FGLFWBackend() {
         SystemWindows.clear();
 
         glfwTerminate();
@@ -48,16 +48,16 @@ namespace Slab::Graphics {
         FLog::Info() << "GLFWBackend terminated." << FLog::Flush;
     }
 
-    void GLFWBackend::Run() {
+    void FGLFWBackend::Run() {
         MainLoop();
     }
 
-    void GLFWBackend::Terminate() {
+    void FGLFWBackend::Terminate() {
         // glfwSetWindowShouldClose(systemWindow, GLFW_TRUE);
         finishFlag = true;
     }
 
-    void GLFWBackend::MainLoop() {
+    void FGLFWBackend::MainLoop() {
 
         // static auto BeginEvents = FuncRun(beginEvents);
         // static auto EndEvents   = FuncRun(endEvents);
@@ -78,15 +78,15 @@ namespace Slab::Graphics {
         }
     }
 
-    GLFWBackend &GLFWBackend::GetInstance() {
+    FGLFWBackend& FGLFWBackend::GetInstance() {
         // TODO: assert(Core::BackendManager::GetImplementation() == Core::GLFW);
 
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
-        return *DynamicPointerCast<GLFWBackend>(guiBackend);
+        return *DynamicPointerCast<FGLFWBackend>(guiBackend);
     }
 
-    TPointer<FPlatformWindow> GLFWBackend::CreatePlatformWindow(const Str& title) {
+    TPointer<FPlatformWindow> FGLFWBackend::CreatePlatformWindow(const Str& title) {
         TPointer<FGLFWPlatformWindow> NewPlatformWindow = New<FGLFWPlatformWindow>();
         NewPlatformWindow->ProvideSelfReference(NewPlatformWindow);
 

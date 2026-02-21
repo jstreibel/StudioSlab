@@ -17,7 +17,7 @@
 namespace Slab::Graphics {
 
     class FGLFWPlatformWindow : public FPlatformWindow {
-        friend class GLFWBackend;
+        friend class FGLFWBackend;
 
         TList<TVolatile<FGLFWListener>> GLFWListeners{};
 

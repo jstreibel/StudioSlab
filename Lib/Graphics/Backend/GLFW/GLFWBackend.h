@@ -20,16 +20,16 @@
 namespace Slab::Graphics {
 
 
-    class GLFWBackend : public GraphicBackend {
+    class FGLFWBackend : public GraphicBackend {
         void MainLoop();
 
-        static GLFWBackend &GetInstance();
+        static FGLFWBackend& GetInstance();
 
         TPointer<Slab::Graphics::FPlatformWindow> CreatePlatformWindow(const Str& title) override;
     public:
-        explicit GLFWBackend();
+        explicit FGLFWBackend();
 
-        ~GLFWBackend() override;
+        ~FGLFWBackend() override;
 
         void Run() override;
 
@@ -37,6 +37,8 @@ namespace Slab::Graphics {
 
         // auto getScreenHeight() const -> DevFloat override;
     };
+
+    using GLFWBackend [[deprecated("Use FGLFWBackend")]] = FGLFWBackend;
 
 
 }

@@ -28,7 +28,7 @@ namespace Slab::Graphics {
     };
 
     void RegisterBackends() {
-        Core::BackendManager::RegisterAvailableBackend("GLFW",    BackendAllocator<GLFWBackend>);
+        Core::BackendManager::RegisterAvailableBackend("GLFW",    BackendAllocator<FGLFWBackend>);
         //Core::BackendManager::RegisterAvailableBackend("GLUT",    BackendAllocator<GLUTBackend>);
         Core::BackendManager::RegisterAvailableBackend("SFML",    BackendAllocator<FSFMLBackend>);
         Core::BackendManager::RegisterAvailableBackend("Default", BackendAllocator<FSFMLBackend>);
