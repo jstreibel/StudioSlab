@@ -125,7 +125,7 @@ namespace Slab::Math {
 
         auto metropolis = New<RtoRMetropolis>(setup);
 
-        return New<MontecarloStepper<RandomSite, NewValue>>(metropolis);
+        return New<FMontecarloStepper<RandomSite, NewValue>>(metropolis);
     }
 
 } // Slab::Math

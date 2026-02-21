@@ -111,7 +111,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
 
         auto metropolis = New<RtoRMetropolis>(setup);
 
-        return New<MontecarloStepper<RandomSite, NewValue>>(metropolis);
+        return New<FMontecarloStepper<RandomSite, NewValue>>(metropolis);
     }
 
 }

@@ -16,7 +16,7 @@ namespace Slab::Math {
     struct FRandomSite { UInt i; UInt j; };
     using RandomSite [[deprecated("Use FRandomSite")]] = FRandomSite;
     using NewValue = DevFloat;
-    using R2toRMetropolis = MetropolisAlgorithm<FRandomSite, NewValue>;
+    using R2toRMetropolis = FMetropolisAlgorithm<FRandomSite, NewValue>;
 
     class FR2toRMetropolisRecipe : public Base::FNumericalRecipe {
         TPointer<R2toR::NumericFunction_CPU> field_data;

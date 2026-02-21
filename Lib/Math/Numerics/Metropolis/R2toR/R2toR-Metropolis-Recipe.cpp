@@ -163,7 +163,7 @@ namespace Slab::Math {
 
         auto metropolis = New<R2toRMetropolis>(setup);
 
-        return New<MontecarloStepper<FRandomSite, NewValue>>(metropolis);
+        return New<FMontecarloStepper<FRandomSite, NewValue>>(metropolis);
     }
 
 } // Slab::Math

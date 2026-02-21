@@ -11,7 +11,7 @@
 
 namespace Slab::Math {
     template<typename SiteType, typename OutCategory>
-    struct MetropolisSetup {
+    struct FMetropolisSetup {
         using NewValue = OutCategory;
         using RandomSite = SiteType;
 
@@ -30,6 +30,9 @@ namespace Slab::Math {
         ValueDrawerFunction draw_value;
         AcceptanceFunction  should_accept;
     };
+
+    template<typename SiteType, typename OutCategory>
+    using MetropolisSetup [[deprecated("Use FMetropolisSetup")]] = FMetropolisSetup<SiteType, OutCategory>;
 }
 
 #endif //STUDIOSLAB_METROPOLIS_SETUP_H
