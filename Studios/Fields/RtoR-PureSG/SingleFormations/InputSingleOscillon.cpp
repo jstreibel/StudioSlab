@@ -21,7 +21,7 @@ namespace Studios::PureSG {
 
         auto proto = NewFieldState();
 
-        return New<BoundaryCondition>(proto,
+        return New<FBoundaryCondition>(proto,
             RtoR::AnalyticOscillon(0.0, *v, *V, *alpha, false, false, RtoR::AnalyticOscillon::Bit::phi).Clone(),
             RtoR::AnalyticOscillon(0.0, *v, *V, *alpha, false, false, RtoR::AnalyticOscillon::Bit::dPhiDt).Clone());
     }

@@ -53,7 +53,7 @@ namespace Modes {
 
             auto ddtf_0 = New <RtoR::FunctionSummable> (ddtfunc1, ddtfunc2);
 
-            return New <KGRtoR::BoundaryCondition> (prototype, f_0, ddtf_0);
+            return New <KGRtoR::FBoundaryCondition> (prototype, f_0, ddtf_0);
         }
         if(*BCSelection == 2){
             if(GetNonHomogenousTerm() == nullptr) GetNonHomogenousTerm();

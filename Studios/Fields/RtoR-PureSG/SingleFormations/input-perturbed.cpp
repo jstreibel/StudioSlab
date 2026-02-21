@@ -19,7 +19,7 @@ namespace Studios::PureSG {
 
         auto pertOscillon = New <RtoR::PerturbedOscillonTimeDerivative> (l.GetValue(), eps.GetValue());
 
-        return New<BoundaryCondition>(proto,
+        return New<FBoundaryCondition>(proto,
                                       New <RtoR::NullFunction> (),
                                       pertOscillon);
     }

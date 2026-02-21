@@ -29,7 +29,7 @@ namespace Studios::PureSG {
 
         auto proto = NewFieldState();
 
-        return New<BoundaryCondition>(proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
+        return New<FBoundaryCondition>(proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
     }
 
 

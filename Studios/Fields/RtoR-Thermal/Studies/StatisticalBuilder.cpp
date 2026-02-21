@@ -60,7 +60,7 @@ namespace Studios::Fields::RtoRThermal {
 
         using namespace Slab::Models::KGRtoR;
         auto proto = NewFieldState();
-        return New<KGRtoR::BoundaryCondition>(proto, RtoR::NullFunction().Clone(), dPhidt0.Clone());
+        return New<KGRtoR::FBoundaryCondition>(proto, RtoR::NullFunction().Clone(), dPhidt0.Clone());
     }
 
 

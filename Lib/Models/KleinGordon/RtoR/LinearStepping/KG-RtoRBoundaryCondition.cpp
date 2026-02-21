@@ -10,13 +10,13 @@
 namespace Slab::Models::KGRtoR {
 
 
-    BoundaryCondition::BoundaryCondition(const EquationState_constptr &prototype,
-                                               RtoR::Function_ptr initialPhiCondition,
-                                               RtoR::Function_ptr initialdPhiDtCondition,
-                                               RtoR::Function_ptr leftPhiBoundaryCondition,
-                                               RtoR::Function_ptr leftdPhiDtBoundaryCondition,
-                                               RtoR::Function_ptr rightPhiBoundaryCondition,
-                                               RtoR::Function_ptr rightdPhiDtBoundaryCondition)
+    FBoundaryCondition::FBoundaryCondition(const EquationState_constptr &prototype,
+                                           RtoR::Function_ptr initialPhiCondition,
+                                           RtoR::Function_ptr initialdPhiDtCondition,
+                                           RtoR::Function_ptr leftPhiBoundaryCondition,
+                                           RtoR::Function_ptr leftdPhiDtBoundaryCondition,
+                                           RtoR::Function_ptr rightPhiBoundaryCondition,
+                                           RtoR::Function_ptr rightdPhiDtBoundaryCondition)
     : Base::BoundaryConditions(prototype)
     , initialPhiCondition(          std::move(initialPhiCondition)          )
     , leftPhiBoundaryCondition(     std::move(leftPhiBoundaryCondition)     )
@@ -27,7 +27,7 @@ namespace Slab::Models::KGRtoR {
     { }
 
 
-    void BoundaryCondition::ApplyKG(EquationState &kgState, DevFloat t) const {
+    void FBoundaryCondition::ApplyKG(EquationState &kgState, DevFloat t) const {
         if (t == 0.0) {
             kgState.SetPhi(*initialPhiCondition);
             kgState.SetDPhiDt(*initialdPhiDtCondition);
@@ -42,13 +42,13 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void BoundaryCondition::Apply(Base::EquationState &state, const DevFloat t) const {
+    void FBoundaryCondition::Apply(Base::EquationState &state, const DevFloat t) const {
         auto &KGState = dynamic_cast<EquationState&>(state);
 
         this->ApplyKG(KGState, t);
 
     }
 
-    BoundaryCondition::~BoundaryCondition() = default;
+    FBoundaryCondition::~FBoundaryCondition() = default;
 
 }

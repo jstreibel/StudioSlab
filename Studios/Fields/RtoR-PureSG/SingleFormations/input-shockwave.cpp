@@ -28,7 +28,7 @@ namespace Studios::PureSG {
         auto reggy = RtoR::RegularDiracDelta::Regularization(deltaType);
         auto DiracMateyMate = New <RtoR::RegularDiracDelta> (eps, a, reggy);
 
-        return New<BoundaryCondition>(proto, New <RtoR::NullFunction> (), DiracMateyMate);
+        return New<FBoundaryCondition>(proto, New <RtoR::NullFunction> (), DiracMateyMate);
     }
 
 

@@ -37,7 +37,7 @@ namespace Studios::Fields::RtoRThermal {
         }
 
         auto proto = NewFieldState();
-        return New<Slab::Models::KGRtoR::BoundaryCondition>(proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
+        return New<Slab::Models::KGRtoR::FBoundaryCondition>(proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
     }
 
 

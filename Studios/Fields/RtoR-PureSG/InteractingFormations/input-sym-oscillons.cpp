@@ -28,7 +28,7 @@ namespace Studios::PureSG {
         *initCondDPhiDt += oscRight.swap() + oscLeft.swap();
 
         auto proto = NewFieldState();
-        return New<BoundaryCondition>(proto, initCondPhi, initCondDPhiDt);
+        return New<FBoundaryCondition>(proto, initCondPhi, initCondDPhiDt);
     }
 
 }

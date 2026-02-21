@@ -10,7 +10,7 @@
 
 namespace Modes {
     FPlaneWaveBC::FPlaneWaveBC(const KGRtoR::EquationState_constptr& prototype, DevFloat Q, DevFloat k)
-    : BoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ())
+    : FBoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ())
     , Q(Q), k(k)
     {
     }
@@ -30,12 +30,12 @@ namespace Modes {
 
 
     SignalBC::SignalBC(const KGRtoR::EquationState_ptr &prototype, const DevFloat A, const DevFloat ω)
-    : BoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ())
+    : FBoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ())
     , A(A)
     , ω(ω) {}
 
     void SignalBC::ApplyKG(KGRtoR::EquationState &kgState, const DevFloat t) const {
-        if(t==0.0) BoundaryCondition::ApplyKG(kgState, t);
+        if(t==0.0) FBoundaryCondition::ApplyKG(kgState, t);
 
         OUT ϕ   = kgState.getPhi();
         OUT 𝜕ₜϕ = kgState.getDPhiDt() ;
@@ -45,12 +45,12 @@ namespace Modes {
     }
 
     DrivenBC::DrivenBC(const KGRtoR::EquationState_ptr &prototype, TPointer<SquareWave> sqrWave)
-    : BoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ()),
+    : FBoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ()),
       sqrWave(std::move(sqrWave)) { }
 
     void DrivenBC::ApplyKG(KGRtoR::EquationState &toFunction, DevFloat t) const {
         if(sqrWave != nullptr) sqrWave->set_t(t);
 
-        BoundaryCondition::Apply(toFunction, t);
+        FBoundaryCondition::Apply(toFunction, t);
     }
 }

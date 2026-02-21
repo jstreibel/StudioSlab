@@ -50,10 +50,10 @@ namespace Studios::Fields::RtoRThermal {
 
             auto phi = RtoR::NullFunction();
 
-            return New<Slab::Models::KGRtoR::BoundaryCondition>(proto, RtoR::NullFunction().Clone(), dotPhi);
+            return New<Slab::Models::KGRtoR::FBoundaryCondition>(proto, RtoR::NullFunction().Clone(), dotPhi);
 
         } else {
-            return New<Slab::Models::KGRtoR::BoundaryCondition>(proto, RtoR::NullFunction().Clone(), RtoR::NullFunction().Clone());
+            return New<Slab::Models::KGRtoR::FBoundaryCondition>(proto, RtoR::NullFunction().Clone(), RtoR::NullFunction().Clone());
         }
     }
 
