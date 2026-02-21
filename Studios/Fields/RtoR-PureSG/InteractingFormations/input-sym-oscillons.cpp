@@ -9,13 +9,13 @@ namespace Studios::PureSG {
     
     using namespace Slab::Math;
 
-    InputSymmetricOscillon::InputSymmetricOscillon()
-            : PureSG::Builder("Symmetric scattering",
+    FInputSymmetricOscillon::FInputSymmetricOscillon()
+            : PureSG::FBuilder("Symmetric scattering",
                               "Symmetric / antisymmetric oscillon scattering in (1+1) dimensions.") {
         Interface->AddParameters({&v, &V, &alpha, &isAntiSymmetric});
     }
 
-    auto InputSymmetricOscillon::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
+    auto FInputSymmetricOscillon::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
         auto initCondPhi    = New <RtoR::FunctionSummable> ();
         auto initCondDPhiDt = New <RtoR::FunctionSummable> ();
 

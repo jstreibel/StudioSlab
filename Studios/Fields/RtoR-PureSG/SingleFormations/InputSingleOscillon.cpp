@@ -12,11 +12,11 @@ namespace Studios::PureSG {
 
     using namespace Slab::Math;
 
-    InputSingleOscillon::InputSingleOscillon() : Builder("Single 1d oscillon", "Single 1+1 dim oscillon") {
+    FInputSingleOscillon::FInputSingleOscillon() : FBuilder("Single 1d oscillon", "Single 1+1 dim oscillon") {
         Interface->AddParameters({&v, &V, &alpha, &lambda, &mirror});
     }
 
-    auto InputSingleOscillon::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
+    auto FInputSingleOscillon::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
         // RtoR::AnalyticOscillon oscillon =
 
         auto proto = NewFieldState();

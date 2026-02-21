@@ -189,11 +189,11 @@ void FSimulationManager::AddSimulationMenu()
                     else if (ItemString == "Monochromatic sine wave##1")  Recipe = Slab::New<Modes::FNumericalRecipeWkA>();
                     else if (ItemString == "Monochromatic sine wave##2")  Recipe = Slab::New<Modes::FNumericalRecipeAk2>();
                     else if (ItemString == "Monochromatic signal")        Recipe = Slab::New<Modes::FSignalAk2Recipe>();
-                    else if (ItemString == "Symmetric Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::InputSymmetricOscillon>();
-                    else if (ItemString == "Perturbed Simple Oscillon")   Recipe = Slab::New<Studios::PureSG::InputPerturbations>();
-                    else if (ItemString == "General Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::InputGeneralOscillons>();
-                    else if (ItemString == "Shockwave")                   Recipe = Slab::New<Studios::PureSG::InputShockwave>();
-                    else if (ItemString == "Single Oscillon")             Recipe = Slab::New<Studios::PureSG::InputSingleOscillon>();
+                    else if (ItemString == "Symmetric Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::FInputSymmetricOscillon>();
+                    else if (ItemString == "Perturbed Simple Oscillon")   Recipe = Slab::New<Studios::PureSG::FInputPerturbations>();
+                    else if (ItemString == "General Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::FInputGeneralOscillons>();
+                    else if (ItemString == "Shockwave")                   Recipe = Slab::New<Studios::PureSG::FInputShockwave>();
+                    else if (ItemString == "Single Oscillon")             Recipe = Slab::New<Studios::PureSG::FInputSingleOscillon>();
 
                     if (Recipe == nullptr)
                     {

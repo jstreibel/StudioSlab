@@ -12,11 +12,11 @@
 
 namespace Studios::PureSG {
 
-    InputShockwave::InputShockwave() : Builder("1d shockwave", "Shockwave in 1-dim") {
+    FInputShockwave::FInputShockwave() : FBuilder("1d shockwave", "Shockwave in 1-dim") {
         Interface->AddParameters({Naked(a0), Naked(E)});
     }
 
-    auto InputShockwave::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
+    auto FInputShockwave::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
         //deltaType = vm["delta"].as<unsigned int>();
 
         auto a = 2 * a0.GetValue();

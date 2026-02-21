@@ -18,11 +18,11 @@ int run(int argc, const char **argv) {
 
     FCommandLineInterfaceSelector selector("Simulation builder selector");
 
-    auto option0 = new Studios::PureSG::InputSymmetricOscillon();
-    auto option1 = new Studios::PureSG::InputPerturbations();
-    auto option2 = new Studios::PureSG::InputGeneralOscillons();
-    auto option3 = new Studios::PureSG::InputShockwave();
-    auto option4 = new Studios::PureSG::InputSingleOscillon();
+    auto option0 = new Studios::PureSG::FInputSymmetricOscillon();
+    auto option1 = new Studios::PureSG::FInputPerturbations();
+    auto option2 = new Studios::PureSG::FInputGeneralOscillons();
+    auto option3 = new Studios::PureSG::FInputShockwave();
+    auto option4 = new Studios::PureSG::FInputSingleOscillon();
 
     /* sim 0 */selector.RegisterOption(option0->GetInterface());
     /* sim 1 */selector.RegisterOption(option1->GetInterface());
@@ -42,5 +42,4 @@ int run(int argc, const char **argv) {
 auto main(int argc, const char **argv) -> int {
     return Slab::SafetyNet::jump(run, argc, argv);
 }
-
 
