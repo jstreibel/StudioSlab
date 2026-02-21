@@ -26,7 +26,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
     using ArbFunc = Slab::Math::Base::NumericFunction<Slab::Math::Real2D, Slab::DevFloat>;
 
-    class RingDeltaFunc : public Slab::Math::R2toR::Function {
+    class FRingDeltaFunc : public Slab::Math::R2toR::Function {
     protected:
         Slab::DevFloat eps, a, dt;
         Slab::DevFloat radius;
@@ -50,11 +50,13 @@ namespace Studios::Fields::R2toRLeadingDelta {
          * @param dt the minimum 't' to consider (because 't' appears in a denominator). Recommended value
          * is the actual simulation timestep.
          */
-        RingDeltaFunc(DevFloat eps, DevFloat a, DevFloat dt, bool asTheta);
+        FRingDeltaFunc(DevFloat eps, DevFloat a, DevFloat dt, bool asTheta);
         auto operator()(Real2D x) const -> DevFloat override;
 
         bool renderToNumericFunction(ArbFunc *toFunc) const override;
     };
+
+    using RingDeltaFunc [[deprecated("Use FRingDeltaFunc")]] = FRingDeltaFunc;
 
 }
 

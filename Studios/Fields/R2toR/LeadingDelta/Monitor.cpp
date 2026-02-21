@@ -25,7 +25,7 @@ Slab::Math::R2toR::FFunctionAzimuthalSymmetry nullFunc(new Slab::Math::RtoR::Nul
 
 namespace Studios::Fields::R2toRLeadingDelta {
 
-    OutGL::OutGL(CountType max_steps, TPointer<Slab::Math::R2toR::Function> drivingFunction)
+    FOutGL::FOutGL(CountType max_steps, TPointer<Slab::Math::R2toR::Function> drivingFunction)
     : Models::KGR2toR::OutputOpenGL(max_steps), drivingFunction(std::move(drivingFunction))
     , mTotalEnergyGraph ("Total energy")
     , mEnergyGraph      ("Energy")
@@ -65,7 +65,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
     }
 
-    void OutGL::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FOutGL::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if (!LastPacket.hasValidData()) return;
 
         static auto timer = FTimer();

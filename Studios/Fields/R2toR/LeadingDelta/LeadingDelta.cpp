@@ -9,10 +9,10 @@
 #include "Monitor.h"
 
 namespace Studios::Fields::R2toRLeadingDelta {
-    TPointer<RingDeltaFunc> ringDelta1;
+    TPointer<FRingDeltaFunc> ringDelta1;
 
     FBoundaryCondition::FBoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
-                                           TPointer<RingDeltaFunc> ringDelta,
+                                           TPointer<FRingDeltaFunc> ringDelta,
                                            DevFloat tf,
                                            bool deltaOperatesOnSpeed)
     : Slab::Math::Base::BoundaryConditions(prototype)
@@ -99,7 +99,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
         if(!asTheta) coef *= 2*eps;
 
         // p.sett(L*.5 - eps);
-        drivingFunc = New<RingDeltaFunc>(*eps, coef, dt, asTheta);
+        drivingFunc = New<FRingDeltaFunc>(*eps, coef, dt, asTheta);
         ringDelta1 = drivingFunc;
     }
 
@@ -110,7 +110,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     }
 
     auto FBuilder::buildOpenGLOutput() -> Models::KGR2toR::OutputOpenGL * {
-        return new OutGL(KGNumericConfig->Get_n(), ringDelta1);
+        return new FOutGL(KGNumericConfig->Get_n(), ringDelta1);
     }
 
     Str FBuilder::SuggestFileName() const {
