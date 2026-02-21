@@ -40,7 +40,7 @@ int TestsApp::run() {
     TPointer<Graphics::GraphicBackend> Backend = nullptr;
 
     if(true) {
-        Core::BackendManager::Startup("GLFW");
+        Core::FBackendManager::Startup("GLFW");
 
         Backend = Slab::Graphics::GetGraphicsBackend();
         auto MainSystemWindow = Backend->GetMainSystemWindow();
@@ -73,7 +73,7 @@ int TestsApp::run() {
         // wm->addSlabWindow(temp);
 
     } else {
-        Core::BackendManager::Startup("GLFW");
+        Core::FBackendManager::Startup("GLFW");
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
         Backend = guiBackend;
         guiBackend->GetMainSystemWindow()->AddEventListener(TPointer<Graphics::FPlatformWindowEventListener>(new Tests::NuklearTests()));

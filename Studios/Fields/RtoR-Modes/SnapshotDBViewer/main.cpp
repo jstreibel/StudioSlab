@@ -35,7 +35,7 @@ public:
         Interface->AddParameters({&snapshotDBFolders, &criticalParameter});
         Core::RegisterCLInterface(Interface);
 
-        Core::BackendManager::Startup("GLFW");
+        Core::FBackendManager::Startup("GLFW");
 
         // Graphics::FPlotThemeManager::G
 

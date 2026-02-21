@@ -26,7 +26,7 @@ namespace Slab {
 
     template<typename ModuleType = Core::FSlabModule>
     ModuleType &GetModule(const Core::FModuleIdentifier &name){
-        return dynamic_cast<ModuleType&>(*Core::BackendManager::GetModule(name));
+        return dynamic_cast<ModuleType&>(*Core::FBackendManager::GetModule(name));
     }
 }
 

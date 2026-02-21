@@ -19,7 +19,7 @@ public:
         // interface->addParameters({&snapshotDBFolders, &criticalParameter});
         Slab::Core::RegisterCLInterface(Interface);
 
-        Slab::Core::BackendManager::Startup("GLFW");
+        Slab::Core::FBackendManager::Startup("GLFW");
 
         Slab::Graphics::FPlotThemeManager::GetInstance();
 

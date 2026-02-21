@@ -49,7 +49,7 @@ public:
         Interface->AddParameters({&filename});
         Core::RegisterCLInterface(Interface);
 
-        Core::BackendManager::Startup("GLFW");
+        Core::FBackendManager::Startup("GLFW");
 
         Slab::Graphics::FPlotThemeManager::GetInstance();
 

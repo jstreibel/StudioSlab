@@ -48,7 +48,7 @@ namespace Slab::Models {
             StartBackend("GLFW");
             Graphics::FPlotThemeManager::SetTheme(*PlotTheme);
         }
-        else BackendManager::Startup("Headless");
+        else FBackendManager::Startup("Headless");
     }
 
 

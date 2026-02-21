@@ -50,7 +50,7 @@ namespace Slab::Graphics {
 
 
     FImGuiModule* FImGuiModule::BuildModule() {
-        const Str BackendImplName = Core::BackendManager::GetBackendName();
+        const Str BackendImplName = Core::FBackendManager::GetBackendName();
 
         if(BackendImplName == "Uninitialized")
         {

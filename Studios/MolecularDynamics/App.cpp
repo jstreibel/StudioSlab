@@ -18,7 +18,7 @@ namespace Studios::MolecularDynamics {
 
     MolecularDynamics::App::App(int argc, const char **argv)
             : FAppBase(argc, argv) {
-        Slab::Core::BackendManager::Startup("SFML");
+        Slab::Core::FBackendManager::Startup("SFML");
 
         Slab::Core::CLArgsManager::Parse(argc, argv);
     }

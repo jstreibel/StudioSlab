@@ -34,7 +34,7 @@ namespace Slab {
     FApplication::~FApplication() {
         if (p_Platform != nullptr) p_Platform->Terminate();
 
-        Core::BackendManager::UnloadAllModules();
+        Core::FBackendManager::UnloadAllModules();
     }
 
     bool FApplication::Create(Resolution width, Resolution height) {

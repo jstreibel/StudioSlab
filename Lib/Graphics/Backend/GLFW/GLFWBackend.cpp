@@ -79,7 +79,7 @@ namespace Slab::Graphics {
     }
 
     FGLFWBackend& FGLFWBackend::GetInstance() {
-        // TODO: assert(Core::BackendManager::GetImplementation() == Core::GLFW);
+        // TODO: assert(Core::FBackendManager::GetImplementation() == Core::GLFW);
 
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 

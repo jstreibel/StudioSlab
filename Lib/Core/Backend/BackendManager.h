@@ -16,7 +16,7 @@
 namespace Slab::Core {
 
     // Singleton manager for backends
-    class BackendManager {
+    class FBackendManager {
         static FBackendIdentifier BackendName;
         static std::shared_ptr<FBackend> instance;
         static std::map<FModuleIdentifier, std::shared_ptr<FSlabModule>> LoadedModules;
@@ -51,6 +51,8 @@ namespace Slab::Core {
 
         static void UnloadAllModules();
     };
+
+    using BackendManager [[deprecated("Use FBackendManager")]] = FBackendManager;
 
 } // Core
 

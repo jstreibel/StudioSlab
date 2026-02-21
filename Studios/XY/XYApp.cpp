@@ -23,7 +23,7 @@ XY::App::App(int argc, const char **argv) : Slab::Core::FAppBase(argc, argv, DON
 
     RegisterToManager();
 
-    Slab::Core::BackendManager::Startup("SFML");
+    Slab::Core::FBackendManager::Startup("SFML");
     // Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
     Slab::Core::LoadModule("Nuklear");
 

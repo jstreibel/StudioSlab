@@ -21,7 +21,7 @@ namespace Slab::Graphics {
         fix non_opengl = Vector<Str>{"Uninitialized", "VTK", "Headless"};
         fix opengl = Vector<Str>{"GLFW", "GLUT", "SFML"};
 
-        fix backend_name = Core::BackendManager::GetBackendName();
+        fix backend_name = Core::FBackendManager::GetBackendName();
 
         if(Contains(non_opengl, backend_name))  NOT_IMPLEMENTED
         if(Contains(opengl, backend_name)) Core::LoadModule("ModernOpenGL");
@@ -38,7 +38,7 @@ namespace Slab::Graphics {
     FNuklearModule* FNuklearModule::BuildModule() {
         auto not_implemented = Vector<Str>{"Uninitialized", "VTK", "Headless", "GLUT"};
 
-        Str backendImpl = Core::BackendManager::GetBackendName();
+        Str backendImpl = Core::FBackendManager::GetBackendName();
         if(Contains(not_implemented, backendImpl)) NOT_IMPLEMENTED
 
         if(backendImpl == "GLFW") return new FNuklearGLFWModule();

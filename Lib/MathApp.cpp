@@ -26,11 +26,11 @@ namespace Slab::Math {
         const auto integrationTask = Slab::New<FNumericTask>(Recipe);
 
         const auto TaskManager = dynamic_cast<Core::FTaskManager*>
-                (Core::BackendManager::GetModule("TaskManager").get());
+                (Core::FBackendManager::GetModule("TaskManager").get());
 
         TaskManager->AddTask(integrationTask);
 
-        Core::BackendManager::GetBackend()->Run();
+        Core::FBackendManager::GetBackend()->Run();
 
         // If tasks are still running after backend has finished around, we abort all tasks.
         TaskManager->AbortAllTasks();

@@ -11,7 +11,7 @@
 namespace Slab::Core {
 
     class FBackend : public FInterfaceOwner {
-        friend class BackendManager;
+        friend class FBackendManager;
 
         Str Name;
 

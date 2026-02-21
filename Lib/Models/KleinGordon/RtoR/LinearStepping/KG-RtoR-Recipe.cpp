@@ -99,8 +99,8 @@ namespace Slab::Models::KGRtoR {
         const auto shouldOutputOpenGL = *OutputOptions.VisualMonitor;
         const auto shouldOutputHistory = !*OutputOptions.NoHistoryToFile;
 
-        // if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
-        // else                Core::BackendManager::Startup("Headless");
+        // if (*VisualMonitor) Core::FBackendManager::Startup("GLFW");
+        // else                Core::FBackendManager::Startup("Headless");
 
         const FKGNumericConfig &p = dynamic_cast<FKGNumericConfig&>(*NumericConfig);
 
