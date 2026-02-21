@@ -16,14 +16,14 @@ namespace Studios::MolecularDynamics {
 
     static Slab::Models::MolecularDynamics::FMolecularDynamicsRecipe Recipe;
 
-    MolecularDynamics::App::App(int argc, const char **argv)
+    MolecularDynamics::FApp::FApp(int argc, const char **argv)
             : FAppBase(argc, argv) {
         Slab::Core::FBackendManager::Startup("SFML");
 
         Slab::Core::FCLArgsManager::Parse(argc, argv);
     }
 
-    int MolecularDynamics::App::run() {
+    int MolecularDynamics::FApp::run() {
 
         NumericTask = Slab::New<Slab::Math::FNumericTask>(Slab::Dummy(Recipe));
 

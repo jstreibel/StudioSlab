@@ -18,7 +18,7 @@
 
 #define DONT_SELF_REGISTER false
 
-XY::App::App(int argc, const char **argv) : Slab::Core::FAppBase(argc, argv, DONT_SELF_REGISTER) {
+XY::FApp::FApp(int argc, const char **argv) : Slab::Core::FAppBase(argc, argv, DONT_SELF_REGISTER) {
     Interface->AddParameters({&N, &T, &MCSteps, &transient});
 
     RegisterToManager();
@@ -31,7 +31,7 @@ XY::App::App(int argc, const char **argv) : Slab::Core::FAppBase(argc, argv, DON
 }
 
 
-int XY::App::App::run() {
+int XY::FApp::run() {
 
     auto viewControl = Slab::New<Slab::Lost::ThermoOutput::SingleSimViewController>(*N, *MCSteps, *transient);
 

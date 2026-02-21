@@ -5,7 +5,7 @@
 
 
 int run(int argc, const char *argv[]) {
-    auto app = new XY::App(argc, argv);
+    auto app = new XY::FApp(argc, argv);
 
     return app->run();
 }
