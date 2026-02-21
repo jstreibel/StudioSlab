@@ -59,7 +59,7 @@ void FSimulationManager::ExposeInterface(const Slab::TPointer<Slab::Core::FInter
         }
 
         for (const auto Parameters = Interface->GetParameters();
-            const auto &Parameter : Parameters) ParameterGUIRenderer::RenderParameter(Parameter);
+            const auto &Parameter : Parameters) FParameterGUIRenderer::RenderParameter(Parameter);
 
         ImGui::NewLine();
 

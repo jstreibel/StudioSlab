@@ -25,8 +25,7 @@ void FLittlePlaneDesignerApp::OnStart()
 
     Slab::Core::LoadModule("ModernOpenGL");
 
-    const auto WindowManager = Slab::New<StudioWindowManager>();
+    const auto WindowManager = Slab::New<FStudioWindowManager>();
     this->GetPlatform()->GetMainSystemWindow()->AddAndOwnEventListener(WindowManager);
 }
-
 

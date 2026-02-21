@@ -8,10 +8,10 @@
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 #include "Graphics/Window/WindowManager.h"
 
-class StudioWindowManager final : public Slab::Graphics::FWindowManager {
+class FStudioWindowManager final : public Slab::Graphics::FWindowManager {
 
 public:
-    explicit StudioWindowManager();
+    explicit FStudioWindowManager();
 
     void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>&) override;
     void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>&, bool hidden) override;
@@ -32,6 +32,8 @@ private:
 
     Slab::TPointer<class FSimulationManager> SimulationManager;
 };
+
+using StudioWindowManager [[deprecated("Use FStudioWindowManager")]] = FStudioWindowManager;
 
 
 

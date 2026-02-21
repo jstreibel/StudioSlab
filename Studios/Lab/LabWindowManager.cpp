@@ -21,7 +21,7 @@
 
 #include "Simulation/SimulationManager.h"
 
-StudioWindowManager::StudioWindowManager(): SidePaneWidth(StudioConfig::SidePaneWidth)
+FStudioWindowManager::FStudioWindowManager(): SidePaneWidth(FStudioConfig::SidePaneWidth)
 {
     auto &ImGuiModule = Slab::GetModule<Slab::Graphics::FImGuiModule>("ImGui");
     fix PlatformWindow = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
@@ -35,12 +35,12 @@ StudioWindowManager::StudioWindowManager(): SidePaneWidth(StudioConfig::SidePane
     this->AddResponder(SimulationManager);
 }
 
-void StudioWindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>& SlabWindow)
+void FStudioWindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>& SlabWindow)
 {
     AddSlabWindow(SlabWindow, false);
 }
 
-void StudioWindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>& Window, bool hidden)
+void FStudioWindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow>& Window, bool hidden)
 {
     AddResponder(Window);
 
@@ -50,10 +50,10 @@ void StudioWindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSl
 }
 
 void ShowJobs();
-void ShowManagedData(StudioWindowManager& Self);
+void ShowManagedData(FStudioWindowManager& Self);
 void ShowMainMenuEntries(const Slab::Graphics::FPlatformWindow &PlatformWindow, Slab::Graphics::FImGuiContext &ImGuiContext);
 
-bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& PlatformWindow)
+bool FStudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& PlatformWindow)
 {
     ImGuiContext->NewFrame();
     ImGuiContext->SetupOptionalMenuItems();
@@ -62,9 +62,9 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
     {
         fix MenuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
         ImGui::SetNextWindowPos(ImVec2(0, static_cast<float>(MenuHeight)));
-        ImGui::SetNextWindowSize(ImVec2(StudioConfig::SidePaneWidth, static_cast<float>(HeightSysWin - MenuHeight)), ImGuiCond_Appearing);
+        ImGui::SetNextWindowSize(ImVec2(FStudioConfig::SidePaneWidth, static_cast<float>(HeightSysWin - MenuHeight)), ImGuiCond_Appearing);
         constexpr auto WindowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
-        if (ImGui::Begin(StudioConfig::SidePaneId, nullptr, WindowFlags))
+        if (ImGui::Begin(FStudioConfig::SidePaneId, nullptr, WindowFlags))
         {
             const auto TaskManager = Slab::Core::GetModule<Slab::Core::FTaskManager>("TaskManager");
 
@@ -93,7 +93,7 @@ bool StudioWindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow& Pl
 }
 
 
-bool StudioWindowManager::NotifySystemWindowReshape(int w, int h)
+bool FStudioWindowManager::NotifySystemWindowReshape(int w, int h)
 {
     WidthSysWin = w;
     HeightSysWin = h;
@@ -113,7 +113,7 @@ bool StudioWindowManager::NotifySystemWindowReshape(int w, int h)
     return FWindowManager::NotifySystemWindowReshape(w, h);
 }
 
-Slab::TPointer<Slab::Graphics::FImGuiContext> StudioWindowManager::GetImGuiContext()
+Slab::TPointer<Slab::Graphics::FImGuiContext> FStudioWindowManager::GetImGuiContext()
 {
     return ImGuiContext;
 }
@@ -178,7 +178,7 @@ void ShowJobs()
     }
 }
 
-void ShowManagedData(StudioWindowManager& Self)
+void ShowManagedData(FStudioWindowManager& Self)
 {
     if (const auto AllManagedData = Slab::Math::FDataManager::GetDataList(); !AllManagedData.empty())
     {
