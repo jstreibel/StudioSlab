@@ -25,21 +25,21 @@ namespace Slab::Graphics {
 
     const bool HighPriority = true;
 
-    NuklearGLFWModule::~NuklearGLFWModule() { nk_glfw3_shutdown(); }
+    FNuklearGLFWModule::~FNuklearGLFWModule() { nk_glfw3_shutdown(); }
 
-    // void NuklearGLFWModule::endRender() { nk_glfw3_render(NK_ANTI_ALIASING_ON); }
-    // void NuklearGLFWModule::beginEvents() { nk_glfw3_new_frame(); }
+    // void FNuklearGLFWModule::endRender() { nk_glfw3_render(NK_ANTI_ALIASING_ON); }
+    // void FNuklearGLFWModule::beginEvents() { nk_glfw3_new_frame(); }
 
 
-    bool NuklearGLFWModule::CharEvent(GLFWwindow *window, Codepoint value) {
+    bool FNuklearGLFWModule::CharEvent(GLFWwindow *window, Codepoint value) {
         nk_glfw3_char_callback(window, value); return false;
     }
 
-    bool NuklearGLFWModule::MouseButton(GLFWwindow *window, int button, int action, int mods) {
+    bool FNuklearGLFWModule::MouseButton(GLFWwindow *window, int button, int action, int mods) {
         nk_glfw3_mouse_button_callback(window, button, action, mods); return false;
     }
 
-    bool NuklearGLFWModule::MouseWheel(GLFWwindow *window, double xoffset, double yoffset) {
+    bool FNuklearGLFWModule::MouseWheel(GLFWwindow *window, double xoffset, double yoffset) {
         nk_gflw3_scroll_callback(window, xoffset, yoffset); return false;
     }
 

@@ -39,7 +39,7 @@ namespace Slab::Graphics {
         Core::BackendManager::RegisterAvailableModule<SlabGraphicsModule>("Slab:Graphics");
 
         Core::BackendManager::RegisterAvailableModule("GUI:ImGui",   [](){ return FImGuiModule::BuildModule(); });
-        Core::BackendManager::RegisterAvailableModule("GUI:Nuklear", [](){ return NuklearModule::BuildModule(); });
+        Core::BackendManager::RegisterAvailableModule("GUI:Nuklear", [](){ return FNuklearModule::BuildModule(); });
         Core::BackendManager::RegisterAvailableModule("GUI:NanoGUI", []() {throw Exception("NanoGUI module not implemented"); return nullptr; });
 
         Core::BackendManager::RegisterAvailableModule("RealTimeAnimation", ModuleAllocator<RealTimeAnimationModule>);

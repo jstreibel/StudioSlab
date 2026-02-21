@@ -53,7 +53,7 @@ namespace Tests {
     }
 
     bool NuklearTests::NotifyRender(const Graphics::FPlatformWindow&) {
-        auto& nkModule = dynamic_cast<Graphics::NuklearModule&>(*Core::BackendManager::GetModule("Nuklear"));
+        auto& nkModule = dynamic_cast<Graphics::FNuklearModule&>(*Core::BackendManager::GetModule("Nuklear"));
         NOT_IMPLEMENTED
         // auto *nkContext =  nkModule.getContext();
         nk_context *nkContext; // dumb var

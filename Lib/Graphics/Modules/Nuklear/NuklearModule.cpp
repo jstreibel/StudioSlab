@@ -15,7 +15,7 @@
 // https://immediate-mode-ui.github.io/Nuklear/doc/index.html
 
 namespace Slab::Graphics {
-    NuklearModule::NuklearModule()
+    FNuklearModule::FNuklearModule()
     : FGUIModule("Nuklear GUI")
     {
         fix non_opengl = Vector<Str>{"Uninitialized", "VTK", "Headless"};
@@ -27,27 +27,27 @@ namespace Slab::Graphics {
         if(Contains(opengl, backend_name)) Core::LoadModule("ModernOpenGL");
     }
 
-    // void NuklearModule::beginEvents() {
+    // void FNuklearModule::beginEvents() {
     //     nk_input_begin(nkContext);
     // }
 //
-    // void NuklearModule::endEvents() {
+    // void FNuklearModule::endEvents() {
     //     nk_input_end(nkContext);
     // }
 
-    NuklearModule *NuklearModule::BuildModule() {
+    FNuklearModule* FNuklearModule::BuildModule() {
         auto not_implemented = Vector<Str>{"Uninitialized", "VTK", "Headless", "GLUT"};
 
         Str backendImpl = Core::BackendManager::GetBackendName();
         if(Contains(not_implemented, backendImpl)) NOT_IMPLEMENTED
 
-        if(backendImpl == "GLFW") return new NuklearGLFWModule();
-        if(backendImpl == "SFML") return new NuklearSFMLModule();
+        if(backendImpl == "GLFW") return new FNuklearGLFWModule();
+        if(backendImpl == "SFML") return new FNuklearSFMLModule();
 
         throw Exception("Unknown module " + backendImpl + " @ " + __PRETTY_FUNCTION__);
     }
 
-    TPointer<FGUIContext> NuklearModule::CreateContext(FOwnerPlatformWindow window) {
+    TPointer<FGUIContext> FNuklearModule::CreateContext(FOwnerPlatformWindow window) {
         NOT_IMPLEMENTED_CLASS_METHOD
         return Slab::TPointer<FGUIContext>();
     }

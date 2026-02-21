@@ -18,7 +18,7 @@
 
 namespace Slab::Graphics {
 
-    NuklearSFMLModule::NuklearSFMLModule() {
+    FNuklearSFMLModule::FNuklearSFMLModule() {
         try {
             auto sfmlBackend = DynamicPointerCast<FSFMLBackend>(Core::GetBackend());
             // renderWindow = &sfmlBackend->GetMainSystemWindow();
@@ -38,14 +38,14 @@ namespace Slab::Graphics {
 
     }
 
-    NuklearSFMLModule::~NuklearSFMLModule() { nk_sfml_shutdown(); }
+    FNuklearSFMLModule::~FNuklearSFMLModule() { nk_sfml_shutdown(); }
 
-    void NuklearSFMLModule::event(const sf::Event &event) {
+    void FNuklearSFMLModule::event(const sf::Event &event) {
         nk_sfml_handle_event(&const_cast<sf::Event &>(event));
     }
 
 
-    void NuklearSFMLModule::Update() {
+    void FNuklearSFMLModule::Update() {
         GraphicsModule::Update();
 
         /* IMPORTANT: `nk_sfml_render` modifies some global OpenGL state

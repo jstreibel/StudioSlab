@@ -14,17 +14,19 @@
 
 namespace Slab::Graphics {
 
-    class NuklearSFMLModule : public NuklearModule, public FSFMLListener {
+    class FNuklearSFMLModule : public FNuklearModule, public FSFMLListener {
         sf::RenderWindow *renderWindow = nullptr;
     public:
-        NuklearSFMLModule();
-        ~NuklearSFMLModule() override;
+        FNuklearSFMLModule();
+        ~FNuklearSFMLModule() override;
 
         void event(const sf::Event &event) override;
 
         void Update() override;
 
     };
+
+    using NuklearSFMLModule [[deprecated("Use FNuklearSFMLModule")]] = FNuklearSFMLModule;
 
 } // Core
 

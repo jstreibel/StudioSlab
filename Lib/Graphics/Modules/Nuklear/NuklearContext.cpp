@@ -14,15 +14,15 @@ namespace Slab::Graphics {
     constexpr Int Max_Vertex_Buffer  = 2*1024*1024;
     constexpr Int Max_Element_Buffer = 2*1024*1024;
 
-    void NuklearContext::NewFrame() {
+    void FNuklearContext::NewFrame() {
         nk_input_begin(context);
     }
 
-    void NuklearContext::AddMainMenuItem(MainMenuItem item) {
+    void FNuklearContext::AddMainMenuItem(MainMenuItem item) {
 
     }
 
-    void NuklearContext::SetParentPlatformWindow(FOwnerPlatformWindow NewOwner)
+    void FNuklearContext::SetParentPlatformWindow(FOwnerPlatformWindow NewOwner)
     {
         // nkContext = nk_sfml_init(renderWindow);
         // /* Load Fonts: if none of these are loaded a default font will be used  */
@@ -67,15 +67,15 @@ namespace Slab::Graphics {
         }
     }
 
-    void NuklearContext::Bind() {
+    void FNuklearContext::Bind() {
         
     }
 
-    void NuklearContext::Render() {
+    void FNuklearContext::Render() {
 
     }
 
-    void *NuklearContext::GetContextPointer() {
+    void *FNuklearContext::GetContextPointer() {
         return context;
     }
 
