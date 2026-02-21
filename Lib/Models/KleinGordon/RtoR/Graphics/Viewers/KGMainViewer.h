@@ -10,7 +10,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class KGMainViewer : public Graphics::MainViewer {
+    class KGMainViewer : public Graphics::FMainViewer {
         Slab::Vector<Slab::TPointer<KGViewer>> kg_viewers;
 
         TPointer<R2toR::FNumericFunction> ddtbase_function;

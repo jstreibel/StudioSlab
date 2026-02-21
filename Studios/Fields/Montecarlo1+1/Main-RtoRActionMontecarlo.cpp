@@ -46,7 +46,7 @@ void setup_viewer(const Slab::TPointer<Slab::Math::R2toR::NumericFunction_CPU>& 
     auto arts = Slab::Graphics::FPlotter::AddR2toRFunction(plot_window, field, "ϕ(t,x)");
     arts->setDataMutable(true);
 
-    auto viewer = Slab::New<Slab::Graphics::MainViewer>();
+    auto viewer = Slab::New<Slab::Graphics::FMainViewer>();
     viewer->addViewer(Slab::New<Slab::Graphics::FourierViewer>(viewer->getGUIWindow()));
     viewer->setFunction(field);
 

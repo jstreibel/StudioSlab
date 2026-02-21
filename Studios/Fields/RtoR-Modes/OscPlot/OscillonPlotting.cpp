@@ -108,7 +108,7 @@ namespace Studios {
             }
         });
 
-        Slab::Graphics::MainViewer::ImmediateDraw(PlatformWindow);
+        Slab::Graphics::FMainViewer::ImmediateDraw(PlatformWindow);
     }
 
     void OscillonPlotting::setupOscillons() {

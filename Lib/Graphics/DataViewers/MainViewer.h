@@ -15,7 +15,7 @@
 
 namespace Slab::Graphics {
 
-    class MainViewer : public FWindowRow {
+    class FMainViewer : public FWindowRow {
         TPointer<FGUIWindow> gui_window;
 
         Vector<TPointer<Viewer>> viewers;
@@ -29,7 +29,7 @@ namespace Slab::Graphics {
         auto getCurrentViewer() -> TPointer<Viewer>;
 
     public:
-        explicit MainViewer(TPointer<Math::R2toR::FNumericFunction> baseFunction=nullptr);
+        explicit FMainViewer(TPointer<Math::R2toR::FNumericFunction> baseFunction=nullptr);
 
         void ImmediateDraw(const FPlatformWindow&) override;
 
@@ -43,6 +43,8 @@ namespace Slab::Graphics {
 
         void addViewer(const TPointer<Viewer>&);
     };
+
+    using MainViewer [[deprecated("Use FMainViewer")]] = FMainViewer;
 
 } // Studios::Viewers
 

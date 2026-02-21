@@ -30,7 +30,7 @@ public:
     ~SPIApp() override = default;
 
 protected:
-    Slab::TPointer<Slab::Graphics::MainViewer> main_viewer;
+    Slab::TPointer<Slab::Graphics::FMainViewer> main_viewer;
     void OnStart() override {
         GET task_manager = Slab::GetModule<Slab::Core::FTaskManager>("TaskManager");
 

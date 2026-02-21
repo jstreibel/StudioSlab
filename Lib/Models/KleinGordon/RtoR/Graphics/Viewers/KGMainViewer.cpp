@@ -11,7 +11,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     bool KGMainViewer::setCurrentViewer(Slab::Index i) {
-        auto value = MainViewer::setCurrentViewer(i);
+        auto value = FMainViewer::setCurrentViewer(i);
 
         auto kg_viewer = getCurrentKGViewer();
         if(kg_viewer){
