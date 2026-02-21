@@ -79,7 +79,7 @@ namespace Slab::Models::KGR2toR {
 
             FOutputFormatterBase *outputFilter = new FBinarySOF;
 
-            FSpaceFilterBase *spaceFilter = new Slab::Math::R2toR::DimensionReductionFilter(
+            FSpaceFilterBase *spaceFilter = new Slab::Math::R2toR::FDimensionReductionFilter(
                     outputResolutionX, section, KGNumericConfig->GetL());
 
             const auto N = (DevFloat) KGNumericConfig->getN();

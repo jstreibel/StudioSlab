@@ -12,12 +12,12 @@
 
 namespace Slab::Math::R2toR {
 
-    class DimensionReductionFilter : public FSpaceFilterBase {
+    class FDimensionReductionFilter : public FSpaceFilterBase {
         /**
          * This classes reduces the dimension of a 2d space to 1d along a determined line
          * */
     public:
-        DimensionReductionFilter(UInt resolution, RtoR2::StraightLine alongLine, DevFloat L);
+        FDimensionReductionFilter(UInt resolution, RtoR2::StraightLine alongLine, DevFloat L);
 
         DiscreteSpacePair operator()(const FOutputPacket &outputInfo) override;
 
@@ -28,6 +28,8 @@ namespace Slab::Math::R2toR {
         const RtoR2::StraightLine line;
         const UInt N_low;
     };
+
+    using DimensionReductionFilter [[deprecated("Use FDimensionReductionFilter")]] = FDimensionReductionFilter;
 
 
 }
