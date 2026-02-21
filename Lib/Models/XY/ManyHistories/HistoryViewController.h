@@ -18,7 +18,7 @@
 
 namespace Slab::Lost {
     namespace ThermoOutput {
-        class HistoryViewController : public ViewControlBase {
+        class HistoryViewController : public FViewControlBase {
             double T;
             double eT; // expected avg e/spin in thermod. equilibrium
 
@@ -74,7 +74,7 @@ namespace Slab::Lost {
 
             void _computeSpaceCorrelations();
 
-            void __updateIsingGraph(const XYNetwork &S, sf::Texture &networkTexture);
+            void __updateIsingGraph(const FXYNetwork& S, sf::Texture& networkTexture);
 
             void _treatEvents();
 

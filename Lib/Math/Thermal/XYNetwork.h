@@ -18,13 +18,13 @@ namespace Slab::Math {
 
     typedef Vector<DevFloat> StateType;
 
-    class XYNetwork {
+    class FXYNetwork {
         StateType ThetaField;
 
     public:
         const int L, N;
 
-        explicit XYNetwork(int L);
+        explicit FXYNetwork(int L);
 
         int ij_to_k_periodic(int i, int j) const;
 
@@ -88,6 +88,7 @@ namespace Slab::Math {
 
     };
 
+    using XYNetwork [[deprecated("Use FXYNetwork")]] = FXYNetwork;
 
 }
 

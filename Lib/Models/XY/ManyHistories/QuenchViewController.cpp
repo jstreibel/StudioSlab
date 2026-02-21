@@ -144,7 +144,7 @@ namespace Slab::Lost::ThermoOutput {
         int i=0;
         for (auto sim : simulations) {
             auto calc = sim.first;
-            const XYNetwork &S = calc->getS();
+            const FXYNetwork &S = calc->getS();
 
             calc->MCStep();
 
@@ -260,7 +260,7 @@ namespace Slab::Lost::ThermoOutput {
         return true;
     }
 
-    void QuenchViewController::__updateIsingGraph(const XYNetwork &S, sf::Texture &networkTexture) {
+    void QuenchViewController::__updateIsingGraph(const FXYNetwork &S, sf::Texture &networkTexture) {
         u_char neg = .2*255;
         u_char pos = .8*255;
         auto positiveColor = sf::Color(pos,pos,pos);

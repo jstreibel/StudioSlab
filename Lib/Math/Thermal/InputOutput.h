@@ -15,11 +15,11 @@ namespace Slab::Lost::ThermoOutput {
     using namespace Math;
 
     struct OutputData {
-        const XYNetwork &S;
+        const FXYNetwork& S;
 
         const int accepted=0, rejected=0;
 
-        OutputData(XYNetwork &S, DevFloat h, int acceptedCount=0, int rejectedCount=0)
+        OutputData(FXYNetwork& S, DevFloat h, int acceptedCount=0, int rejectedCount=0)
         : S(S)
         , accepted(acceptedCount)
         , rejected(rejectedCount)
@@ -33,7 +33,7 @@ namespace Slab::Lost::ThermoOutput {
             m2=M*M/N;
         }
 
-        OutputData(const XYNetwork &S, DevFloat h) : S(S) {
+        OutputData(const FXYNetwork& S, DevFloat h) : S(S) {
             DevFloat E = S.E(double(h)), M = S.M();
 
             N = (double)S.N;

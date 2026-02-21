@@ -254,7 +254,7 @@ namespace Slab::Lost::ThermoOutput {
     }
 
     void SingleSimViewController::updateIsingGraph() {
-        const XYNetwork &S = algorithm->getData().S;
+        const FXYNetwork &S = algorithm->getData().S;
 
         float eMin=100, eMax=-100;
         for(int i=0; i<S.L; ++i) {

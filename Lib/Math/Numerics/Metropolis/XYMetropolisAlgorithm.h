@@ -46,7 +46,7 @@ namespace Slab::Math {
         /** Total single-spin change accepted during last MCStep.  */
         int _totalAcceptedSSCLastMCStep = 0;
 
-        XYNetwork S;
+        FXYNetwork S;
 
         bool shouldAccept(DevFloat deltaE) const;
 
@@ -86,7 +86,7 @@ namespace Slab::Math {
 
         auto getData() -> Lost::ThermoOutput::OutputData;
 
-        const XYNetwork &getS() const { return S; }
+        const FXYNetwork& getS() const { return S; }
 
     };
 
