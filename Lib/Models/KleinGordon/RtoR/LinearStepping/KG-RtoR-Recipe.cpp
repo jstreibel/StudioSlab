@@ -120,7 +120,7 @@ namespace Slab::Models::KGRtoR {
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + SuggestFileName();
-            Sockets.emplace_back(Slab::New<SnapshotOutput>(snapshotFilename));
+            Sockets.emplace_back(Slab::New<FSnapshotOutput>(snapshotFilename));
         }
         if (*OutputOptions.TakeSpaceDFTSnapshot) {
             const auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
@@ -167,11 +167,11 @@ namespace Slab::Models::KGRtoR {
             if (t > 0) {
                 fix nₒᵤₜ = ((Nₒᵤₜ / L) * t);
 
-                auto simHistory = Slab::New<SimHistory>(max_steps, t,
-                                                 static_cast<Resolution>(Nₒᵤₜ),
-                                                 (Resolution) nₒᵤₜ,
-                                                 xMin,
-                                                 L);
+                auto simHistory = Slab::New<FSimHistory>(max_steps, t,
+                                                         static_cast<Resolution>(Nₒᵤₜ),
+                                                         (Resolution) nₒᵤₜ,
+                                                         xMin,
+                                                         L);
 
                 auto ftHistory = Slab::New<FSimHistoryDFT>(max_steps, t, N, L, nₒᵤₜ);
 

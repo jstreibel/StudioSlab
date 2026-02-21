@@ -14,8 +14,8 @@ namespace Slab::Models::KGRtoR {
 
     using Core::FLog;
 
-    SimHistory::SimHistory(CountType MaxSteps, const DevFloat tMax, Resolution N_x, Resolution N_t,
-    DevFloat xMin, DevFloat L, const Str &ChannelName, bool bManageData)
+    FSimHistory::FSimHistory(CountType MaxSteps, const DevFloat tMax, Resolution N_x, Resolution N_t,
+                             DevFloat xMin, DevFloat L, const Str &ChannelName, bool bManageData)
     : FOutputChannel(ChannelName, StepsInterval,
         "A specific history tracker designed to watch the full sim history through visual monitors.")
     , MaxSteps(MaxSteps), Max_t(tMax), N_x((int)N_x), N_t((int)N_t)
@@ -46,7 +46,7 @@ namespace Slab::Models::KGRtoR {
         FLog::Success() << ChannelName << " allocated " << SizeMB << " of data." << FLog::Flush;
     }
 
-    auto SimHistory::Transfer(const FOutputPacket &Packet, FValarrayWrapper<DevFloat> &DataOut) -> void {
+    auto FSimHistory::Transfer(const FOutputPacket &Packet, FValarrayWrapper<DevFloat> &DataOut) -> void {
         IN stateIn = *Packet.GetNakedStateData<EquationState>();
 
         IN f_in = dynamic_cast<RtoR::NumericFunction&>(stateIn.getPhi());
@@ -63,7 +63,7 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void SimHistory::HandleOutput(const FOutputPacket &Packet) {
+    void FSimHistory::HandleOutput(const FOutputPacket &Packet) {
         if (Packet.GetSteps() > MaxSteps)
             return;
 
@@ -85,12 +85,12 @@ namespace Slab::Models::KGRtoR {
         Timesteps.emplace_back(Packet.GetSteps());
     }
 
-    auto SimHistory::GetData() const -> TPointer<const R2toR::FNumericFunction>
+    auto FSimHistory::GetData() const -> TPointer<const R2toR::FNumericFunction>
     {
         return Data;
     }
 
-    auto SimHistory::GetData() -> TPointer<R2toR::FNumericFunction>
+    auto FSimHistory::GetData() -> TPointer<R2toR::FNumericFunction>
     {
         return Data;
     }

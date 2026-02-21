@@ -37,7 +37,7 @@ namespace Slab::Models::KGR2toR {
 
         auto &space = stateData->getPhi().getSpace();
         IN N = space.getMetaData().getN();
-        KGRtoR::SnapshotOutput::OutputNumericFunction(space, filename, {{"outresX", ToStr(N[0])}, {"outresY", ToStr(N[1])}});
+        KGRtoR::FSnapshotOutput::OutputNumericFunction(space, filename, {{"outresX", ToStr(N[0])}, {"outresY", ToStr(N[1])}});
 
         return true;
     }

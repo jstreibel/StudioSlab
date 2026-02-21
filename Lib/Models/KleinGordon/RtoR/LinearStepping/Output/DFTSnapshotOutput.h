@@ -12,7 +12,7 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    class FDFTSnapshotOutput final : public SnapshotOutput {
+    class FDFTSnapshotOutput final : public FSnapshotOutput {
     protected:
         const CountType N_DFT_modes;
         const DevFloat k_max;

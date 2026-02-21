@@ -154,14 +154,14 @@ void FSimulationManager::AddSimulationMenu()
             fix MaxSteps = NumericConfig->Get_n();
             fix xMin = NumericConfig->Get_xMin();
 
-            const auto SimHistory = Slab::New<Slab::Models::KGRtoR::SimHistory>(
+            const auto simHistory = Slab::New<Slab::Models::KGRtoR::FSimHistory>(
                 MaxSteps, t, NOut, MOut, xMin, L, KGRecipe->GetInterface()->GetName(), true);
 
-            auto Data = SimHistory->GetData();
+            auto Data = simHistory->GetData();
             Slab::Math::FDataManager::AddData(Data);
 
             auto OutputManager = Slab::New<Slab::Math::FOutputManager>(MaxSteps);
-            OutputManager->AddOutputChannel(SimHistory);
+            OutputManager->AddOutputChannel(simHistory);
 
             return OutputManager;
         };

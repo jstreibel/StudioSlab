@@ -10,21 +10,21 @@ namespace Slab::Models::KGRtoR {
 
     const Str suffix = ".simsnap";
 
-    SnapshotOutput::SnapshotOutput(const Str &fileName,
-                                   const Str &socketName, const Str &description)
+    FSnapshotOutput::FSnapshotOutput(const Str &fileName,
+                                     const Str &socketName, const Str &description)
     : FOutputChannel(socketName, -1, description)
     , outputFileName(fileName + suffix)
     {    }
 
-    SnapshotOutput::SnapshotOutput(const Str &fileName)
-    : SnapshotOutput(fileName, "Snapshot output", "outputs the last simulation instant")
+    FSnapshotOutput::FSnapshotOutput(const Str &fileName)
+    : FSnapshotOutput(fileName, "Snapshot output", "outputs the last simulation instant")
     {    }
 
 
-    void SnapshotOutput::HandleOutput(const FOutputPacket &) { /* do nothing */ }
+    void FSnapshotOutput::HandleOutput(const FOutputPacket &) { /* do nothing */ }
 
 
-    auto SnapshotOutput::filterData(const FOutputPacket &packet) -> RtoR::NumericFunction_CPU {
+    auto FSnapshotOutput::filterData(const FOutputPacket &packet) -> RtoR::NumericFunction_CPU {
         NOT_IMPLEMENTED
         /*
         auto &phi = packet.GetNakedStateData<EquationState>()->getPhi();
@@ -34,7 +34,7 @@ namespace Slab::Models::KGRtoR {
     }
 
 
-    bool SnapshotOutput::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
+    bool FSnapshotOutput::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
         FOutputChannel::NotifyIntegrationHasFinished(theVeryLastOutputInformation);
 
         auto f = filterData(theVeryLastOutputInformation);
@@ -42,9 +42,9 @@ namespace Slab::Models::KGRtoR {
         return OutputNumericFunction(f.getSpace(), outputFileName);
     }
 
-    bool SnapshotOutput::OutputNumericFunction(const Math::DiscreteSpace& space,
-                                               const Str& outputFileName,
-                                               const Vector<Pair<Str,Str>>& xtraPyDictEntries)
+    bool FSnapshotOutput::OutputNumericFunction(const Math::DiscreteSpace& space,
+                                                const Str& outputFileName,
+                                                const Vector<Pair<Str,Str>>& xtraPyDictEntries)
     {
         std::ofstream outputFile(outputFileName, std::ios::out | std::ios::binary);
         if(!outputFile){

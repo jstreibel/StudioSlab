@@ -21,7 +21,7 @@ namespace Slab::Models::KGRtoR {
     };
     using FDFTDataHistory = Vector<FDFTInstantResult>;
 
-    class FSimHistoryDFT : public SimHistory {
+    class FSimHistoryDFT : public FSimHistory {
 
     public:
         explicit FSimHistoryDFT(CountType max_steps, DevFloat t_max, Resolution N, DevFloat L, Resolution N_time);
