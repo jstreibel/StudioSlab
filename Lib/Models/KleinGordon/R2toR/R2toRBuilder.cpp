@@ -47,7 +47,7 @@ namespace Slab::Models::KGR2toR {
 
             auto snapshotFilename = snapshotsFolder + SuggestFileName() + ".kg2d.snapshot.oscb";
 
-            sockets.emplace_back(Slab::New<KG2DSnapshotOutput>(snapshotFilename));
+            sockets.emplace_back(Slab::New<FKG2DSnapshotOutput>(snapshotFilename));
 
             #ifdef USE_VTK
             sockets.emplace_back(New<LastOutputVTKVisualizer>(kg_numeric_config->getN()));
