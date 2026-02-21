@@ -19,7 +19,7 @@
 
 namespace Studios {
 
-    class OscillonPlotting : public Slab::Models::KGRtoR::FKGMainViewer {
+    class FOscillonPlotting : public Slab::Models::KGRtoR::FKGMainViewer {
         using AnalyticOscillon = Slab::Math::R2toR::AnalyticOscillon_1plus1d;
         // using AnalyticOscillon = Slab::Math::R2toR::AnalyticOscillon1p1_FourierImpl;
         using Function         = Slab::Math::R2toR::NumericFunction_CPU;
@@ -57,12 +57,14 @@ namespace Studios {
         void renderOscillonsTimeDerivative();
 
     public:
-        OscillonPlotting();
+        FOscillonPlotting();
 
         auto
         getFunctionTimeDerivative() -> Slab::TPointer<Slab::Math::R2toR::FNumericFunction> override;
         void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
     };
+
+    using OscillonPlotting [[deprecated("Use FOscillonPlotting")]] = FOscillonPlotting;
 
 }
 

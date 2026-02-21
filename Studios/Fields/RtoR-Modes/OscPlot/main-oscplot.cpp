@@ -29,7 +29,7 @@ public:
     int run() override {
         auto gui_backend = Slab::Graphics::GetGraphicsBackend();
 
-        auto osc_plot = Slab::New<Studios::OscillonPlotting>();
+        auto osc_plot = Slab::New<Studios::FOscillonPlotting>();
 
         auto wm = Slab::New<Slab::Graphics::FSlabWindowManager>();
         wm->AddSlabWindow(osc_plot, false);
