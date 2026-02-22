@@ -12,6 +12,11 @@ namespace Slab::Math::LiveData::V2 {
         Session = session;
     }
 
+    auto FSessionLiveViewV2::InvalidateSessionBinding() -> void {
+        std::lock_guard lock(Mutex);
+        Session = nullptr;
+    }
+
     auto FSessionLiveViewV2::PublishEvent(const Numerics::V2::FSimulationEventV2 &event) -> void {
         std::lock_guard lock(Mutex);
 
@@ -28,6 +33,11 @@ namespace Slab::Math::LiveData::V2 {
             .bHasState = (event.State != nullptr),
             .bRealtimeBestEffort = event.bIsRealtimeBestEffort
         };
+
+        if (event.Reason == Numerics::V2::EEventReasonV2::Final ||
+            event.Reason == Numerics::V2::EEventReasonV2::AbortFinal) {
+            Session = nullptr;
+        }
     }
 
     auto FSessionLiveViewV2::HasBoundSession() const -> bool {

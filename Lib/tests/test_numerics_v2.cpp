@@ -624,38 +624,35 @@ TEST_CASE("PhaseD V2 - Session blocking read lease captures coherent cursor and 
     CHECK(*lease.GetCursor().SimulationTime == Catch::Approx(0.5).margin(1e-12));
 }
 
-TEST_CASE("PhaseE V2 - Live view publisher captures telemetry and zero-copy lease", "[V2][PhaseE][LiveData]") {
+TEST_CASE("PhaseE V2 - Live view exposes lease while active and invalidates on final event", "[V2][PhaseE][LiveData]") {
     using namespace Slab::Math::Numerics::V2;
     using namespace Slab::Math::LiveData::V2;
 
     auto liveView = New<FSessionLiveViewV2>();
     auto publisher = New<FSessionLiveViewPublisherListenerV2>(liveView, "test-live-view");
+    FCountingSessionV2 session(0.25);
 
-    Vector<FSubscriptionV2> subscriptions = {
-        {New<FEveryNStepsTriggerV2>(2), publisher, EDeliveryModeV2::Synchronous, true, true}
-    };
+    session.Step(5);
+    auto sessionLease = session.AcquireReadLease();
 
-    FRunLimitsV2 limits;
-    limits.Mode = ERunModeV2::FiniteSteps;
-    limits.MaxSteps = 5;
+    FSimulationEventV2 event;
+    event.Cursor = sessionLease.GetCursor();
+    event.State = sessionLease.GetState();
+    event.Reason = EEventReasonV2::Scheduled;
+    event.Session = &session;
+    event.PublishedVersion = sessionLease.GetPublishedVersion();
 
-    auto recipe = New<FTestRecipeV2>(
-        []() -> TUnique<FSimulationSessionV2> { return std::make_unique<FCountingSessionV2>(0.25); },
-        subscriptions,
-        limits);
-
-    auto task = New<FNumericTaskV2>(recipe, false, 16);
-    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+    publisher->OnSample(event);
 
     REQUIRE(liveView->HasBoundSession());
 
     const auto telemetry = liveView->TryGetTelemetry();
     REQUIRE(telemetry.has_value());
-    CHECK(telemetry->LastReason == EEventReasonV2::Final);
+    CHECK(telemetry->LastReason == EEventReasonV2::Scheduled);
     CHECK(telemetry->Cursor.Step == 5);
     REQUIRE(telemetry->Cursor.SimulationTime.has_value());
     CHECK(*telemetry->Cursor.SimulationTime == Catch::Approx(1.25).margin(1e-12));
-    CHECK(telemetry->PublishedVersion == 3);
+    CHECK(telemetry->PublishedVersion == 1);
     CHECK_FALSE(telemetry->bRealtimeBestEffort);
 
     const auto leaseOpt = liveView->AcquireReadLease();
@@ -663,6 +660,17 @@ TEST_CASE("PhaseE V2 - Live view publisher captures telemetry and zero-copy leas
     CHECK(leaseOpt->OwnsLock());
     CHECK(leaseOpt->GetCursor().Step == telemetry->Cursor.Step);
     CHECK(leaseOpt->GetPublishedVersion() == telemetry->PublishedVersion);
+
+    event.Reason = EEventReasonV2::Final;
+    publisher->OnRunFinished(event);
+
+    CHECK_FALSE(liveView->HasBoundSession());
+    CHECK_FALSE(liveView->AcquireReadLease().has_value());
+
+    const auto finalTelemetry = liveView->TryGetTelemetry();
+    REQUIRE(finalTelemetry.has_value());
+    CHECK(finalTelemetry->LastReason == EEventReasonV2::Final);
+    CHECK(finalTelemetry->Cursor.Step == 5);
 }
 
 TEST_CASE("PhaseE V2 - SPI recipe can publish a live session view", "[V2][PhaseE][SPI][LiveData]") {
@@ -706,17 +714,7 @@ TEST_CASE("PhaseE V2 - SPI recipe can publish a live session view", "[V2][PhaseE
     CHECK(telemetry->Cursor.Step == 4);
     CHECK(telemetry->bHasState);
     CHECK(telemetry->PublishedVersion >= 1);
+    CHECK_FALSE(liveView->HasBoundSession());
 
-    const auto leaseOpt = liveView->AcquireReadLease();
-    REQUIRE(leaseOpt.has_value());
-    CHECK(leaseOpt->GetCursor().Step == 4);
-    CHECK(leaseOpt->GetPublishedVersion() == telemetry->PublishedVersion);
-
-    auto spiState = std::dynamic_pointer_cast<const SPIState>(leaseOpt->GetState());
-    REQUIRE(spiState != nullptr);
-
-    const auto phiAbs = SumAbsValues(spiState->getPhi()->getSpace().getHostData(true));
-    CAPTURE(phiAbs);
-    CHECK(std::isfinite(phiAbs));
-    CHECK(phiAbs > 0.0);
+    CHECK_FALSE(liveView->AcquireReadLease().has_value());
 }

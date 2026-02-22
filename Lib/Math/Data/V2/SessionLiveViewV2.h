@@ -25,6 +25,7 @@ namespace Slab::Math::LiveData::V2 {
 
     public:
         auto BindSession(const Numerics::V2::FSimulationSessionV2 *session) -> void;
+        auto InvalidateSessionBinding() -> void;
 
         auto PublishEvent(const Numerics::V2::FSimulationEventV2 &event) -> void;
 
