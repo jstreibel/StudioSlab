@@ -4,6 +4,7 @@
 
 include_directories(../Lib)
 
+add_subdirectory(CLI)
 add_subdirectory(MolecularDynamics)
 add_subdirectory(XY)
 add_subdirectory(Fields)
