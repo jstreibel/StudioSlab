@@ -5,6 +5,7 @@
 #include "SnapshotOutput.h"
 
 #include "../../../../../Core/Controller/InterfaceManager.h"
+#include "../KG-RtoREquationState.h"
 
 namespace Slab::Models::KGRtoR {
 
@@ -25,12 +26,13 @@ namespace Slab::Models::KGRtoR {
 
 
     auto FSnapshotOutput::filterData(const FOutputPacket &packet) -> RtoR::NumericFunction_CPU {
-        NOT_IMPLEMENTED
-        /*
-        auto &phi = packet.GetNakedStateData<FEquationState>()->getPhi();
+        const auto *state = packet.GetNakedStateData<FEquationState>();
+        if (state == nullptr) {
+            throw Exception("Snapshot output expected KGRtoR::FEquationState data.");
+        }
 
+        const auto &phi = dynamic_cast<const RtoR::NumericFunction &>(state->getPhi());
         return RtoR::NumericFunction_CPU(phi);
-         */
     }
 
 

@@ -106,7 +106,7 @@ namespace Slab::Models::KGRtoR::Metropolis {
 
         setup.modify = [field](FRtoRRandomSite n, FRtoRNewValue value){
             field.ϕ->getSpace().getHostData()[n] = value.first;
-            field.ϕ->getSpace().getHostData()[n] = value.second;
+            field.π->getSpace().getHostData()[n] = value.second;
         };
 
         auto metropolis = New<FRtoRMetropolis>(setup);

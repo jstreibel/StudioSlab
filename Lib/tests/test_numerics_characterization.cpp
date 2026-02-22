@@ -11,6 +11,7 @@
 
 #include "Math/Numerics/ODE/Steppers/RungeKutta4.h"
 #include "Math/Numerics/ODE/Steppers/Euler.h"
+#include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
 
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
@@ -33,6 +34,7 @@
 #include "Models/MolecularDynamics/MolDynNumericConfig.h"
 
 #include "Math/Numerics/Metropolis/RtoR/RtoR-Action-Metropolis-Recipe.h"
+#include "Models/KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.h"
 
 namespace Slab {
     namespace {
@@ -107,6 +109,109 @@ namespace {
 
         return checksum;
     }
+
+    auto SumAbs(const Slab::RealArray &data) -> Slab::DevFloat {
+        Slab::DevFloat sum = 0.0;
+        for (size_t i = 0; i < data.size(); ++i) {
+            sum += std::abs(data[i]);
+        }
+        return sum;
+    }
+
+    class FScalarState final : public Slab::Math::Base::EquationState {
+        Slab::DevFloat Value = 0.0;
+
+        static auto Cast(const Slab::Math::Base::EquationState &state) -> const FScalarState & {
+            return dynamic_cast<const FScalarState &>(state);
+        }
+
+    public:
+        explicit FScalarState(Slab::DevFloat v = 0.0) : Value(v) {}
+
+        auto GetValue() const -> Slab::DevFloat { return Value; }
+        void SetValue(Slab::DevFloat v) { Value = v; }
+
+        Slab::Math::Base::EquationState &
+        StoreAddition(const Slab::Math::Base::EquationState &a, const Slab::Math::Base::EquationState &b) override {
+            Value = Cast(a).Value + Cast(b).Value;
+            return *this;
+        }
+
+        Slab::Math::Base::EquationState &
+        StoreSubtraction(const Slab::Math::Base::EquationState &a, const Slab::Math::Base::EquationState &b) override {
+            Value = Cast(a).Value - Cast(b).Value;
+            return *this;
+        }
+
+        Slab::Math::Base::EquationState &Add(const Slab::Math::Base::EquationState &a) override {
+            Value += Cast(a).Value;
+            return *this;
+        }
+
+        Slab::Math::Base::EquationState &Subtract(const Slab::Math::Base::EquationState &a) override {
+            Value -= Cast(a).Value;
+            return *this;
+        }
+
+        Slab::Math::Base::EquationState &
+        StoreScalarMultiplication(const Slab::Math::Base::EquationState &a, Slab::DevFloat k) override {
+            Value = Cast(a).Value * k;
+            return *this;
+        }
+
+        Slab::Math::Base::EquationState &Multiply(Slab::DevFloat k) override {
+            Value *= k;
+            return *this;
+        }
+
+        [[nodiscard]] auto category() const -> Slab::Str override {
+            return "test|scalar";
+        }
+
+        [[nodiscard]] auto Replicate(std::optional<Slab::Str> Name) const
+            -> Slab::TPointer<Slab::Math::Base::EquationState> override {
+            (void) Name;
+            return Slab::New<FScalarState>(0.0);
+        }
+
+        auto setData(const Slab::Math::Base::EquationState &other) -> void override {
+            Value = Cast(other).Value;
+        }
+    };
+
+    class FNoBoundaryCondition final : public Slab::Math::Base::BoundaryConditions {
+    public:
+        explicit FNoBoundaryCondition(const Slab::Math::Base::EquationState_constptr &prototype)
+        : BoundaryConditions(prototype) {}
+
+        void Apply(Slab::Math::Base::EquationState &toFunction, Slab::DevFloat t) const override {
+            (void) toFunction;
+            (void) t;
+        }
+    };
+
+    class FProbeLinearStepSolver final : public Slab::Math::Base::LinearStepSolver {
+        Slab::Vector<Slab::DevFloat> &SampledTimes;
+
+    public:
+        explicit FProbeLinearStepSolver(const Slab::TPointer<FNoBoundaryCondition> &bc,
+                                        Slab::Vector<Slab::DevFloat> &times)
+        : LinearStepSolver(bc)
+        , SampledTimes(times) {}
+
+        Slab::Math::Base::EquationState &
+        F(const Slab::Math::Base::EquationState &in,
+          Slab::Math::Base::EquationState &out,
+          Slab::DevFloat t) override {
+            SampledTimes.emplace_back(t);
+
+            const auto &inState = dynamic_cast<const FScalarState &>(in);
+            auto &outState = dynamic_cast<FScalarState &>(out);
+            outState.SetValue(inState.GetValue());
+
+            return out;
+        }
+    };
 }
 
 TEST_CASE("Wave0 characterization - KG RK4", "[Wave0][Numerics][KG][RK4]") {
@@ -306,4 +411,54 @@ TEST_CASE("Wave0 characterization - Metropolis RtoR", "[Wave0][Numerics][Metropo
     CHECK(mean == Catch::Approx(-7.1346e-06).margin(1e-8));
     CHECK(var == Catch::Approx(5.80436e-09).margin(1e-11));
     CHECK(checksum == Catch::Approx(-0.00696318).margin(1e-8));
+}
+
+TEST_CASE("Wave1 regression - RK4 uses stage times", "[Wave1][Numerics][RK4]") {
+    using namespace Slab;
+    using namespace Slab::Math;
+
+    Vector<DevFloat> sampledTimes;
+
+    auto prototype = New<FScalarState>(1.0);
+    auto bc = New<FNoBoundaryCondition>(prototype);
+    auto solver = New<FProbeLinearStepSolver>(bc, sampledTimes);
+    auto stepper = New<FRungeKutta4>(solver, 0.1);
+
+    stepper->Step(1);
+
+    REQUIRE(sampledTimes.size() == 4);
+    CHECK(sampledTimes[0] == Catch::Approx(0.0).margin(1e-12));
+    CHECK(sampledTimes[1] == Catch::Approx(0.05).margin(1e-12));
+    CHECK(sampledTimes[2] == Catch::Approx(0.05).margin(1e-12));
+    CHECK(sampledTimes[3] == Catch::Approx(0.1).margin(1e-12));
+}
+
+TEST_CASE("Wave1 regression - Hamiltonian Metropolis updates pi", "[Wave1][Numerics][Metropolis][Hamiltonian]") {
+    using namespace Slab;
+    using namespace Slab::Models::KGRtoR::Metropolis;
+
+    RandUtils::SeedUniformReal(59);
+    RandUtils::SeedUniformUInt(61);
+    RandUtils::SeedGaussianNoise(67);
+
+    auto recipe = New<FRtoRHamiltonianMetropolisHastingsRecipe>(50);
+    auto fields = recipe->getField();
+    REQUIRE(fields.ϕ != nullptr);
+    REQUIRE(fields.π != nullptr);
+
+    const auto initialPiAbs = SumAbs(fields.π->getSpace().getHostData(true));
+    CHECK(initialPiAbs == Catch::Approx(0.0).margin(1e-12));
+
+    auto stepper = recipe->BuildStepper();
+    REQUIRE(stepper != nullptr);
+
+    stepper->Step(3);
+
+    const auto phiAbs = SumAbs(fields.ϕ->getSpace().getHostData(true));
+    const auto piAbs = SumAbs(fields.π->getSpace().getHostData(true));
+
+    CAPTURE(phiAbs, piAbs);
+
+    CHECK(phiAbs > 0.0);
+    CHECK(piAbs > 0.0);
 }
