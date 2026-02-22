@@ -25,6 +25,7 @@ namespace Slab::Models::KGRtoR {
 
     protected:
         auto HandleOutput(const Math::FOutputPacket &packet) -> void override;
+        auto ShouldOutput(long unsigned timestep) -> bool override;
 
     public:
         auto ComputeNextRecStep(UInt currStep) -> size_t override;

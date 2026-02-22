@@ -11,6 +11,8 @@
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 #include "SnapshotOutput.h"
 
+#include <limits>
+
 namespace Slab::Models::KGRtoR {
 
     Slab::Models::KGRtoR::FCenterTimeDFTOutput::FCenterTimeDFTOutput(
@@ -43,11 +45,36 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    size_t FCenterTimeDFTOutput::ComputeNextRecStep(UInt currStep) {
-        if(currStep < step_start)
-            return step_start;
+    auto FCenterTimeDFTOutput::ShouldOutput(long unsigned timestep) -> bool {
+        if (step_start > step_end) return false;
 
-        return FOutputChannel::ComputeNextRecStep(currStep);
+        const auto step = static_cast<size_t>(timestep);
+        const auto start = static_cast<size_t>(step_start);
+        const auto end = static_cast<size_t>(step_end);
+
+        if (step < start || step > end) return false;
+
+        const auto interval = static_cast<size_t>(Get_nSteps());
+        return ((step - start) % interval) == 0;
+    }
+
+    size_t FCenterTimeDFTOutput::ComputeNextRecStep(UInt currStep) {
+        if (step_start > step_end) {
+            return std::numeric_limits<size_t>::max();
+        }
+
+        const auto curr = static_cast<size_t>(currStep);
+        const auto start = static_cast<size_t>(step_start);
+        const auto end = static_cast<size_t>(step_end);
+
+        if (curr < start) {
+            return start;
+        }
+
+        const auto interval = static_cast<size_t>(Get_nSteps());
+        const auto next = start + (((curr - start) / interval) + 1) * interval;
+
+        return next <= end ? next : std::numeric_limits<size_t>::max();
     }
 
     bool FCenterTimeDFTOutput::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {

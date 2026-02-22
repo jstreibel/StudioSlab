@@ -28,6 +28,7 @@
 #include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBoundaryCondition.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRSolver.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/Output/CenterTimeDFTOutput.h"
 
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/NullFunction.h"
@@ -711,4 +712,65 @@ TEST_CASE("Wave5 regression - NumericTask zero-step runs report full progress", 
 
     const Vector<size_t> expectedOutputs = {0};
     CHECK(outputRecorder->GetOutputSteps() == expectedOutputs);
+}
+
+TEST_CASE("Wave8 regression - Time DFT output scheduling matches output predicate", "[Wave8][Numerics][Output]") {
+    using namespace Slab;
+    using namespace Slab::Models::KGRtoR;
+
+    const Str baseFilename = "wave8-center-time-dft-contract";
+    const FTimeDFTOutputConfig config{
+        .filename = baseFilename,
+        .x_measure = {0.0},
+        .t_start = 0.13,
+        .t_end = 0.42
+    };
+
+    FCenterTimeDFTOutput output(1.0, 95, config);
+    auto &channel = static_cast<Math::FOutputChannel &>(output);
+
+    const auto first = output.ComputeNextRecStep(0);
+    const auto second = output.ComputeNextRecStep(static_cast<UInt>(first));
+    const auto third = output.ComputeNextRecStep(static_cast<UInt>(second));
+    const auto afterThird = output.ComputeNextRecStep(static_cast<UInt>(third));
+
+    CAPTURE(first, second, third, afterThird);
+
+    CHECK(first == 12);
+    CHECK(second == 22);
+    CHECK(third == 32);
+    CHECK(afterThird > third);
+
+    CHECK(channel.ShouldOutput(first));
+    CHECK(channel.ShouldOutput(second));
+    CHECK(channel.ShouldOutput(third));
+    CHECK_FALSE(channel.ShouldOutput(first + 1));
+    CHECK_FALSE(channel.ShouldOutput(11));
+    CHECK_FALSE(channel.ShouldOutput(39));
+}
+
+TEST_CASE("Wave8 regression - Time DFT output stops scheduling after window", "[Wave8][Numerics][Output]") {
+    using namespace Slab;
+    using namespace Slab::Models::KGRtoR;
+
+    const Str baseFilename = "wave8-center-time-dft-window-end";
+    const FTimeDFTOutputConfig config{
+        .filename = baseFilename,
+        .x_measure = {0.0},
+        .t_start = 0.80,
+        .t_end = 0.81
+    };
+
+    FCenterTimeDFTOutput output(1.0, 100, config);
+    auto &channel = static_cast<Math::FOutputChannel &>(output);
+
+    const auto first = output.ComputeNextRecStep(0);
+    const auto afterFirst = output.ComputeNextRecStep(static_cast<UInt>(first));
+
+    CAPTURE(first, afterFirst);
+
+    CHECK(first == 80);
+    CHECK(channel.ShouldOutput(first));
+    CHECK_FALSE(channel.ShouldOutput(81));
+    CHECK(afterFirst > 100);
 }
