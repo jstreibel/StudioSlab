@@ -1,8 +1,11 @@
 #include <catch2/catch_all.hpp>
 
 #include <chrono>
+#include <cmath>
 #include <functional>
 #include <thread>
+
+#include "Utils/RandUtils.h"
 
 #include "Math/Numerics/V2/Listeners/ConsoleProgressListenerV2.h"
 #include "Math/Numerics/V2/Listeners/DummyListenerV2.h"
@@ -10,6 +13,7 @@
 #include "Math/Numerics/V2/Scheduling/OutputSchedulerV2.h"
 #include "Math/Numerics/V2/Scheduling/WindowedEveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
+#include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
 
 namespace {
 
@@ -168,6 +172,12 @@ namespace {
         out.reserve(events.size());
         for (const auto &e : events) out.push_back(e.Reason);
         return out;
+    }
+
+    auto SumAbsValues(const RealArray &values) -> DevFloat {
+        DevFloat sum = 0.0;
+        for (const auto value : values) sum += std::fabs(value);
+        return sum;
     }
 }
 
@@ -400,4 +410,40 @@ TEST_CASE("PhaseB V2 - Windowed trigger integrates with task and console listene
 
     CHECK(EventSteps(events) == expectedSteps);
     CHECK(EventReasons(events) == expectedReasons);
+}
+
+TEST_CASE("PhaseC0 V2 - Metropolis Hamiltonian recipe runs through NumericTaskV2", "[V2][PhaseC0][Metropolis][Task]") {
+    using namespace Slab;
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::KGRtoR::Metropolis::V2;
+
+    RandUtils::SeedUniformReal(59);
+    RandUtils::SeedUniformUInt(61);
+    RandUtils::SeedGaussianNoise(67);
+
+    constexpr UIntBig maxSteps = 6;
+    auto recipe = New<FRtoRHamiltonianMetropolisHastingsRecipeV2>(maxSteps, 1000);
+    auto task = New<FNumericTaskV2>(recipe, false, 16);
+
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    CHECK(task->GetCursor().Step == maxSteps);
+
+    const auto progress = task->GetProgress01();
+    REQUIRE(progress.has_value());
+    CHECK(*progress == Catch::Approx(1.0f).margin(1e-6f));
+
+    const auto phiField = recipe->GetPhiField();
+    const auto piField = recipe->GetPiField();
+
+    REQUIRE(phiField != nullptr);
+    REQUIRE(piField != nullptr);
+
+    const auto phiAbs = SumAbsValues(phiField->getSpace().getHostData(true));
+    const auto piAbs = SumAbsValues(piField->getSpace().getHostData(true));
+
+    CAPTURE(phiAbs, piAbs);
+
+    CHECK(phiAbs > 0.0);
+    CHECK(piAbs > 0.0);
 }

@@ -9,6 +9,8 @@ set ( KG_SOURCES
         KleinGordon/RtoR-Montecarlo/Montecarlo-Lorentz-2ndOrder.h
         KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.h
         KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.cpp
+        KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h
+        KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.cpp
 
         KleinGordon/RtoR/LinearStepping/KG-RtoR-Recipe.cpp
         KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.cpp
