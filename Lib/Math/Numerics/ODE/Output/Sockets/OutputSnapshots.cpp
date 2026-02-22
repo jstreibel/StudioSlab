@@ -12,6 +12,7 @@
 
 #include <fstream>
 #include <iomanip>
+#include <limits>
 #include <utility>
 
 
@@ -94,10 +95,15 @@ namespace Slab::Math {
     }
 
     size_t FOutputSnapshot::ComputeNextRecStep(UInt currStep) {
-        size_t smallest = snapSteps.back();
-        for (auto step: snapSteps) if (step < smallest) smallest = step;
+        size_t nextStep = std::numeric_limits<size_t>::max();
 
-        return smallest;
+        for (const auto step : snapSteps) {
+            if (step > currStep && step < nextStep) {
+                nextStep = step;
+            }
+        }
+
+        return nextStep;
     }
 
 

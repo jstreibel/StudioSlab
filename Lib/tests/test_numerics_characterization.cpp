@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <fstream>
 #include <numbers>
 #include <thread>
 
@@ -15,6 +16,7 @@
 #include "Math/Numerics/NumericTask.h"
 #include "Math/Numerics/ODE/Steppers/RungeKutta4.h"
 #include "Math/Numerics/ODE/Steppers/Euler.h"
+#include "Math/Numerics/ODE/Output/Sockets/OutputSnapshots.h"
 #include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
 
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
@@ -286,6 +288,17 @@ namespace {
         : FOutputChannel("Wave2 output recorder", intervalSteps, "Records output steps for tests") {}
 
         [[nodiscard]] auto GetOutputSteps() const -> const Slab::Vector<size_t> & { return OutputSteps; }
+    };
+
+    class FDummySnapshotOutput final : public Slab::Math::FOutputSnapshot {
+    protected:
+        void _outputToFile(std::ofstream &file) override {
+            (void) file;
+        }
+
+    public:
+        FDummySnapshotOutput()
+        : FOutputSnapshot("wave3-dummy-snapshot", 4) {}
     };
 
     auto RunTaskAndWait(Slab::Math::FNumericTask &task) -> Slab::Core::ETaskStatus {
@@ -610,4 +623,27 @@ TEST_CASE("Wave2 regression - NumericTask preserves output cadence", "[Wave2][Nu
 
     const Vector<size_t> expectedOutputs = {0, 50, 100, 150, 200, totalSteps};
     CHECK(outputRecorder->GetOutputSteps() == expectedOutputs);
+}
+
+TEST_CASE("Wave3 regression - Snapshot output schedules future steps only", "[Wave3][Numerics][Output]") {
+    using namespace Slab;
+
+    auto snapshotOutput = New<FDummySnapshotOutput>();
+    snapshotOutput->addSnapshotStep(10);
+    snapshotOutput->addSnapshotStep(30);
+    snapshotOutput->addSnapshotStep(20);
+
+    CHECK(snapshotOutput->ComputeNextRecStep(0) == 10);
+    CHECK(snapshotOutput->ComputeNextRecStep(10) == 20);
+    CHECK(snapshotOutput->ComputeNextRecStep(20) == 30);
+    CHECK(snapshotOutput->ComputeNextRecStep(30) > 30);
+}
+
+TEST_CASE("Wave3 regression - Snapshot output handles empty schedule", "[Wave3][Numerics][Output]") {
+    using namespace Slab;
+
+    auto snapshotOutput = New<FDummySnapshotOutput>();
+
+    CHECK(snapshotOutput->ComputeNextRecStep(0) > 0);
+    CHECK(snapshotOutput->ComputeNextRecStep(123) > 123);
 }
