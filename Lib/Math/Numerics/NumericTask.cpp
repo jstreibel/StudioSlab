@@ -1,5 +1,7 @@
 #include "NumericTask.h"
 
+#include <algorithm>
+
 #define ATTEMP_REALTIME false
 #if ATTEMP_REALTIME
 #include <sched.h>
@@ -9,6 +11,9 @@
 namespace Slab::Math {
 
     using Core::FLog;
+    namespace {
+        constexpr size_t MaxIntegrationBatchSteps = 2048;
+    }
 
     FNumericTask::FNumericTask(const TPointer <Base::FNumericalRecipe> &recipe, const bool pre_init)
     : FTask("Numeric Integration")
@@ -88,18 +93,24 @@ namespace Slab::Math {
         return true;
     }
 
-    bool FNumericTask::CycleUntilOutputOrFinish() {
-        const size_t nCyclesToNextOutput = OutputManager->ComputeNStepsToNextOutput(StepsConcluded);
+    auto FNumericTask::ComputeCycleSize(const size_t remainingSteps) -> size_t {
+        if (remainingSteps == 0) return 0;
 
-        if (nCyclesToNextOutput > 50000) {
-            FLog::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << FLog::Flush;
+        auto nCycles = std::min(remainingSteps, MaxIntegrationBatchSteps);
+
+        if (OutputManager != nullptr) {
+            const size_t nCyclesToNextOutput = OutputManager->ComputeNStepsToNextOutput(StepsConcluded);
+
+            if (nCyclesToNextOutput == 0) {
+                FLog::WarningImportant() << "Output manager requested 0 cycle size at step "
+                                         << StepsConcluded << ". Falling back to integration batch." << FLog::Flush;
+                return nCycles;
+            }
+
+            nCycles = std::min(nCycles, nCyclesToNextOutput);
         }
 
-        if (nCyclesToNextOutput == 0) {
-            return false;
-        }
-
-        return Cycle(nCyclesToNextOutput);
+        return nCycles;
     }
 
     void FNumericTask::Output(const bool force) {
@@ -130,12 +141,15 @@ namespace Slab::Math {
 
         const size_t n = TotalSteps;
 
-        while (!forceStopFlag && StepsConcluded < n && CycleUntilOutputOrFinish()) { }
+        while (!forceStopFlag && StepsConcluded < n) {
+            const size_t remainingSteps = n - StepsConcluded;
+            const size_t nCycles = ComputeCycleSize(remainingSteps);
 
-        if(forceStopFlag)                                       return Core::TaskAborted;
+            if (nCycles == 0) return Core::TaskError;
+            if (!Cycle(nCycles)) return forceStopFlag ? Core::TaskAborted : Core::TaskError;
+        }
 
-        // Para cumprir com os steps quebrados faltantes:
-        if (StepsConcluded < n) if(!Cycle(n - StepsConcluded)) return Core::TaskError;
+        if (forceStopFlag) return Core::TaskAborted;
 
         OutputManager->NotifyIntegrationFinished(GetOutputInfo());
 

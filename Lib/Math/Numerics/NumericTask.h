@@ -36,7 +36,7 @@ namespace Slab::Math {
 
         auto Cycle(size_t nCycles) -> bool;
 
-        auto CycleUntilOutputOrFinish() -> bool;
+        auto ComputeCycleSize(size_t remainingSteps) -> size_t;
 
     protected:
         Core::ETaskStatus Run() override;

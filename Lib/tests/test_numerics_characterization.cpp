@@ -4,11 +4,15 @@
 
 #include <catch2/catch_all.hpp>
 
+#include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <numbers>
+#include <thread>
 
 #include "Utils/RandUtils.h"
 
+#include "Math/Numerics/NumericTask.h"
 #include "Math/Numerics/ODE/Steppers/RungeKutta4.h"
 #include "Math/Numerics/ODE/Steppers/Euler.h"
 #include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
@@ -212,6 +216,92 @@ namespace {
             return out;
         }
     };
+
+    class FFixedNumericConfig final : public Slab::Math::FNumericConfig {
+        Slab::UIntBig NSteps = 0;
+
+    public:
+        explicit FFixedNumericConfig(Slab::UIntBig nSteps)
+        : FNumericConfig(false)
+        , NSteps(nSteps) {}
+
+        [[nodiscard]] auto Get_n() const -> Slab::UIntBig override { return NSteps; }
+        [[nodiscard]] auto to_string() const -> Slab::Str override { return "test|fixed-numeric-config"; }
+    };
+
+    class FCountingStepper final : public Slab::Math::FStepper {
+        Slab::Vector<size_t> StepCalls;
+        size_t TotalStepped = 0;
+        Slab::Math::Base::EquationState_ptr State = Slab::New<FScalarState>(0.0);
+
+    public:
+        void Step(size_t n_steps) override {
+            StepCalls.emplace_back(n_steps);
+            TotalStepped += n_steps;
+
+            auto &scalar = dynamic_cast<FScalarState &>(*State);
+            scalar.SetValue(static_cast<Slab::DevFloat>(TotalStepped));
+        }
+
+        [[nodiscard]] auto GetCurrentState() const -> Slab::Math::Base::EquationState_constptr override {
+            return State;
+        }
+
+        [[nodiscard]] auto GetStepCalls() const -> const Slab::Vector<size_t> & { return StepCalls; }
+        [[nodiscard]] auto GetTotalStepped() const -> size_t { return TotalStepped; }
+    };
+
+    class FCountingRecipe final : public Slab::Math::Base::FNumericalRecipe {
+        Slab::TPointer<FCountingStepper> CountingStepper;
+
+    public:
+        explicit FCountingRecipe(size_t nSteps)
+        : FNumericalRecipe(Slab::New<FFixedNumericConfig>(nSteps),
+                           "Wave2 Test Recipe",
+                           "Wave2 test numerics recipe",
+                           false) {}
+
+        auto BuildOutputSockets() -> Slab::Math::Base::OutputSockets override { return {}; }
+
+        auto BuildStepper() -> Slab::TPointer<Slab::Math::FStepper> override {
+            CountingStepper = Slab::New<FCountingStepper>();
+            return CountingStepper;
+        }
+
+        [[nodiscard]] auto GetCountingStepper() const -> Slab::TPointer<FCountingStepper> {
+            return CountingStepper;
+        }
+    };
+
+    class FRecordingOutputChannel final : public Slab::Math::FOutputChannel {
+        Slab::Vector<size_t> OutputSteps;
+
+    protected:
+        auto HandleOutput(const Slab::Math::FOutputPacket &packet) -> void override {
+            OutputSteps.emplace_back(packet.GetSteps());
+        }
+
+    public:
+        explicit FRecordingOutputChannel(int intervalSteps)
+        : FOutputChannel("Wave2 output recorder", intervalSteps, "Records output steps for tests") {}
+
+        [[nodiscard]] auto GetOutputSteps() const -> const Slab::Vector<size_t> & { return OutputSteps; }
+    };
+
+    auto RunTaskAndWait(Slab::Math::FNumericTask &task) -> Slab::Core::ETaskStatus {
+        std::thread worker([&task] { task.Start(); });
+
+        while (true) {
+            const auto status = task.GetStatus();
+            if (status != Slab::Core::TaskNotInitialized && status != Slab::Core::TaskRunning) {
+                task.Release();
+                worker.join();
+                return status;
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+    }
 }
 
 TEST_CASE("Wave0 characterization - KG RK4", "[Wave0][Numerics][KG][RK4]") {
@@ -461,4 +551,63 @@ TEST_CASE("Wave1 regression - Hamiltonian Metropolis updates pi", "[Wave1][Numer
 
     CHECK(phiAbs > 0.0);
     CHECK(piAbs > 0.0);
+}
+
+TEST_CASE("Wave2 regression - NumericTask batches long cycles", "[Wave2][Numerics][Task]") {
+    using namespace Slab;
+
+    constexpr size_t totalSteps = 1000000;
+    auto recipe = New<FCountingRecipe>(totalSteps);
+    auto outputRecorder = New<FRecordingOutputChannel>(1000003);
+
+    auto outputManager = New<Math::FOutputManager>(totalSteps);
+    outputManager->AddOutputChannel(outputRecorder);
+
+    auto task = New<Math::FNumericTask>(recipe, false);
+    task->SetOutputManager(outputManager);
+
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    const auto stepper = recipe->GetCountingStepper();
+    REQUIRE(stepper != nullptr);
+
+    const auto &stepCalls = stepper->GetStepCalls();
+    REQUIRE_FALSE(stepCalls.empty());
+
+    size_t maxCycle = 0;
+    size_t totalIntegrated = 0;
+    for (const auto nCycles : stepCalls) {
+        maxCycle = std::max(maxCycle, nCycles);
+        totalIntegrated += nCycles;
+    }
+
+    CAPTURE(stepCalls.size(), maxCycle, totalIntegrated);
+
+    CHECK(stepCalls.size() > 1);
+    CHECK(maxCycle < totalSteps);
+    CHECK(totalIntegrated == totalSteps);
+    CHECK(stepper->GetTotalStepped() == totalSteps);
+    CHECK(task->GetSteps() == totalSteps);
+
+    const Vector<size_t> expectedOutputs = {0, totalSteps};
+    CHECK(outputRecorder->GetOutputSteps() == expectedOutputs);
+}
+
+TEST_CASE("Wave2 regression - NumericTask preserves output cadence", "[Wave2][Numerics][Task]") {
+    using namespace Slab;
+
+    constexpr size_t totalSteps = 230;
+    auto recipe = New<FCountingRecipe>(totalSteps);
+    auto outputRecorder = New<FRecordingOutputChannel>(50);
+
+    auto outputManager = New<Math::FOutputManager>(totalSteps);
+    outputManager->AddOutputChannel(outputRecorder);
+
+    auto task = New<Math::FNumericTask>(recipe, false);
+    task->SetOutputManager(outputManager);
+
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    const Vector<size_t> expectedOutputs = {0, 50, 100, 150, 200, totalSteps};
+    CHECK(outputRecorder->GetOutputSteps() == expectedOutputs);
 }
