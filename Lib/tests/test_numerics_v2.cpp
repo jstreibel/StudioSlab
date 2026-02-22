@@ -4,8 +4,11 @@
 #include <functional>
 #include <thread>
 
+#include "Math/Numerics/V2/Listeners/ConsoleProgressListenerV2.h"
+#include "Math/Numerics/V2/Listeners/DummyListenerV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Scheduling/OutputSchedulerV2.h"
+#include "Math/Numerics/V2/Scheduling/WindowedEveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
 namespace {
@@ -304,4 +307,97 @@ TEST_CASE("PhaseA V2 - NumericTask open-ended runs until abort", "[V2][PhaseA][T
 
     CHECK_FALSE(task->GetProgress01().has_value());
     CHECK(task->GetCursor().Step == 6);
+}
+
+TEST_CASE("PhaseB V2 - WindowedEveryNStepsTrigger matches windowed contract", "[V2][PhaseB][Trigger]") {
+    using namespace Slab::Math::Numerics::V2;
+
+    FWindowedEveryNStepsTriggerV2 trigger(10, 12, 39);
+    trigger.Reset(FSimulationCursorV2{.Step = 0});
+
+    const auto next1 = trigger.GetNextDueStepAfter(FSimulationCursorV2{.Step = 0});
+    const auto next2 = trigger.GetNextDueStepAfter(FSimulationCursorV2{.Step = 12});
+    const auto next3 = trigger.GetNextDueStepAfter(FSimulationCursorV2{.Step = 22});
+    const auto next4 = trigger.GetNextDueStepAfter(FSimulationCursorV2{.Step = 32});
+
+    REQUIRE(next1.has_value());
+    REQUIRE(next2.has_value());
+    REQUIRE(next3.has_value());
+
+    CHECK(*next1 == 12);
+    CHECK(*next2 == 22);
+    CHECK(*next3 == 32);
+    CHECK_FALSE(next4.has_value());
+
+    CHECK(trigger.IsDue(FSimulationCursorV2{.Step = 12}));
+    CHECK(trigger.IsDue(FSimulationCursorV2{.Step = 22}));
+    CHECK(trigger.IsDue(FSimulationCursorV2{.Step = 32}));
+    CHECK_FALSE(trigger.IsDue(FSimulationCursorV2{.Step = 11}));
+    CHECK_FALSE(trigger.IsDue(FSimulationCursorV2{.Step = 39}));
+    CHECK_FALSE(trigger.IsDue(FSimulationCursorV2{.Step = 40}));
+}
+
+TEST_CASE("PhaseB V2 - NumericTask supports final-only subscriptions without trigger", "[V2][PhaseB][Task]") {
+    using namespace Slab::Math::Numerics::V2;
+
+    auto finalOnly = New<FRecordingListenerV2>("final-only");
+    auto dummy = New<FDummyListenerV2>();
+
+    Vector<FSubscriptionV2> subscriptions = {
+        {nullptr, finalOnly, EDeliveryModeV2::Synchronous, false, true},
+        {New<FEveryNStepsTriggerV2>(100), dummy, EDeliveryModeV2::Synchronous, false, false}
+    };
+
+    FRunLimitsV2 limits;
+    limits.Mode = ERunModeV2::FiniteSteps;
+    limits.MaxSteps = 7;
+
+    auto recipe = New<FTestRecipeV2>(
+        []() -> TUnique<FSimulationSessionV2> { return std::make_unique<FCountingSessionV2>(); },
+        subscriptions,
+        limits);
+
+    auto task = New<FNumericTaskV2>(recipe, false, 16);
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    const auto &events = finalOnly->GetEvents();
+    REQUIRE(events.size() == 1);
+    CHECK(events[0].Step == 7);
+    CHECK(events[0].Reason == EEventReasonV2::Final);
+}
+
+TEST_CASE("PhaseB V2 - Windowed trigger integrates with task and console listener", "[V2][PhaseB][Task][Windowed]") {
+    using namespace Slab::Math::Numerics::V2;
+
+    auto recorder = New<FRecordingListenerV2>("windowed-recorder");
+    auto console = New<FConsoleProgressListenerV2>(15, "console-smoke");
+
+    Vector<FSubscriptionV2> subscriptions = {
+        {New<FWindowedEveryNStepsTriggerV2>(4, 3, 12), recorder, EDeliveryModeV2::Synchronous, false, true},
+        {New<FEveryNStepsTriggerV2>(5), console, EDeliveryModeV2::Synchronous, true, true}
+    };
+
+    FRunLimitsV2 limits;
+    limits.Mode = ERunModeV2::FiniteSteps;
+    limits.MaxSteps = 15;
+
+    auto recipe = New<FTestRecipeV2>(
+        []() -> TUnique<FSimulationSessionV2> { return std::make_unique<FCountingSessionV2>(); },
+        subscriptions,
+        limits);
+
+    auto task = New<FNumericTaskV2>(recipe, false, 32);
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    const auto events = recorder->GetEvents();
+    const Vector<UIntBig> expectedSteps = {3, 7, 11, 15};
+    const Vector<EEventReasonV2> expectedReasons = {
+        EEventReasonV2::Scheduled,
+        EEventReasonV2::Scheduled,
+        EEventReasonV2::Scheduled,
+        EEventReasonV2::Final
+    };
+
+    CHECK(EventSteps(events) == expectedSteps);
+    CHECK(EventReasons(events) == expectedReasons);
 }
