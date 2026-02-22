@@ -5,6 +5,7 @@
 #include "OutputSnapshots.h"
 
 #include "Math/Numerics/ODE/Output/Format/CustomStringSeparatedSOF.h"
+#include "Math/Numerics/ODE/Output/Util/FieldStateOutputInterface.h"
 #include "Math/Numerics/OutputChannel.h"
 #include "Core/Tools/Log.h"
 

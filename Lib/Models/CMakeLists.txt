@@ -7,6 +7,8 @@ set ( KG_SOURCES
 		KleinGordon/KG-State.h
         KleinGordon/__archive__/KG-Langevin.h
         KleinGordon/RtoR-Montecarlo/Montecarlo-Lorentz-2ndOrder.h
+        KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.h
+        KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.cpp
 
         KleinGordon/RtoR/LinearStepping/KG-RtoR-Recipe.cpp
         KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.cpp

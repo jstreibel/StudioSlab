@@ -2,11 +2,6 @@
 #define INTEGRATOR_H
 
 #include "OutputManager.h"
-
-#include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
-
-#include "Math/Numerics/ODE/Solver/BoundaryConditions.h"
-
 #include "Stepper.h"
 #include "NumericalRecipe.h"
 

@@ -5,6 +5,7 @@
 #include "../../Core/Controller/CommandLine/CommandLineInterfaceSelector.h"
 #include "Core/SlabCore.h"
 #include "Core/Tools/Log.h"
+#include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
 #include "NumericalRecipe.h"
 
 #define GENERATE_FOR_NTHREADS(STEPPER_TYPE, N) \

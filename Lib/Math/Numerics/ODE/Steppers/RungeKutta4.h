@@ -12,13 +12,8 @@
 
 #include "Math/Numerics/Stepper.h"
 
-#include "Math/Numerics/ODE/Solver/BoundaryConditions.h"
 #include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
-#include "Math/Numerics/NumericalRecipe.h"
 #include "Utils/Threads.h"
-
-#include <cstring> // contains memcpy
-#include <omp.h>
 
 
 namespace Slab::Math {

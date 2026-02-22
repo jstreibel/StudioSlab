@@ -1,5 +1,7 @@
 #include "NumericTask.h"
 
+#include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
+
 #include <algorithm>
 
 #define ATTEMP_REALTIME false

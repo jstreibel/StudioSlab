@@ -96,7 +96,6 @@ set ( THERMO_SOURCES
 		Function/CommonFunctions.h
 		Function/FunctionProduct.h
 		Numerics/ODE/Odeint/OdeintSignatureHelper.h
-        ../Models/KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.cpp
 		Numerics/Metropolis/RtoR/RtoR-Metropolis-Config.cpp
 		Numerics/Metropolis/RtoR/RtoR-Metropolis-Config.h
 )
