@@ -94,8 +94,9 @@ namespace Slab::Math::Numerics::V2 {
     auto FNumericTaskV2::BuildEvent(const EEventReasonV2 reason, const bool bRealtimeBestEffort) const -> FSimulationEventV2 {
         FSimulationEventV2 event;
         if (Session != nullptr) {
-            event.Cursor = Session->GetCursor();
-            event.State = Session->GetCurrentState();
+            auto lease = Session->AcquireReadLease();
+            event.Cursor = lease.GetCursor();
+            event.State = lease.GetState();
         }
         event.Reason = reason;
         event.bIsRealtimeBestEffort = bRealtimeBestEffort;

@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <cmath>
+#include <condition_variable>
 #include <functional>
 #include <thread>
 
@@ -42,21 +43,91 @@ namespace {
         auto InitializeForCurrentThread() -> void override {
         }
 
-        auto Step(UIntBig nSteps) -> void override {
+    protected:
+        auto StepUnsafe(UIntBig nSteps) -> bool override {
             Cursor.Step += nSteps;
             if (Dt.has_value() && Cursor.SimulationTime.has_value()) {
                 *Cursor.SimulationTime += *Dt * static_cast<DevFloat>(nSteps);
             }
+            return nSteps > 0;
         }
 
-        [[nodiscard]] auto GetCursor() const -> FSimulationCursorV2 override {
+        [[nodiscard]] auto GetCursorUnsafe() const -> FSimulationCursorV2 override {
             return Cursor;
         }
 
-        [[nodiscard]] auto GetCurrentState() const -> Math::Base::EquationState_constptr override {
+        [[nodiscard]] auto GetCurrentStateUnsafe() const -> Math::Base::EquationState_constptr override {
             return nullptr;
         }
 
+    public:
+        [[nodiscard]] auto SupportsSimulationTime() const -> bool override {
+            return Dt.has_value();
+        }
+    };
+
+    class FBlockingLeaseProbeSessionV2 final : public FSimulationSessionV2 {
+        FSimulationCursorV2 Cursor;
+        std::optional<DevFloat> Dt;
+
+        mutable std::mutex GateMutex;
+        std::condition_variable GateCV;
+        bool bInsideStep = false;
+        bool bAllowStepFinish = false;
+
+    public:
+        explicit FBlockingLeaseProbeSessionV2(std::optional<DevFloat> dt = 0.25)
+        : Dt(dt) {
+            Cursor.Step = 0;
+            Cursor.SimulationTime = dt.has_value() ? std::optional<DevFloat>(0.0) : std::nullopt;
+        }
+
+        auto InitializeForCurrentThread() -> void override {
+        }
+
+        auto WaitUntilStepEntered(std::chrono::milliseconds timeout = std::chrono::milliseconds(250)) -> bool {
+            std::unique_lock lock(GateMutex);
+            return GateCV.wait_for(lock, timeout, [this] { return bInsideStep; });
+        }
+
+        auto AllowStepToFinish() -> void {
+            {
+                std::lock_guard lock(GateMutex);
+                bAllowStepFinish = true;
+            }
+            GateCV.notify_all();
+        }
+
+    protected:
+        auto StepUnsafe(UIntBig nSteps) -> bool override {
+            {
+                std::lock_guard lock(GateMutex);
+                bInsideStep = true;
+            }
+            GateCV.notify_all();
+
+            {
+                std::unique_lock lock(GateMutex);
+                GateCV.wait(lock, [this] { return bAllowStepFinish; });
+            }
+
+            Cursor.Step += nSteps;
+            if (Dt.has_value() && Cursor.SimulationTime.has_value()) {
+                *Cursor.SimulationTime += *Dt * static_cast<DevFloat>(nSteps);
+            }
+
+            return nSteps > 0;
+        }
+
+        [[nodiscard]] auto GetCursorUnsafe() const -> FSimulationCursorV2 override {
+            return Cursor;
+        }
+
+        [[nodiscard]] auto GetCurrentStateUnsafe() const -> Math::Base::EquationState_constptr override {
+            return nullptr;
+        }
+
+    public:
         [[nodiscard]] auto SupportsSimulationTime() const -> bool override {
             return Dt.has_value();
         }
@@ -506,4 +577,47 @@ TEST_CASE("PhaseC5 V2 - SPI recipe runs with simulation-time cursor semantics", 
     CAPTURE(phiAbs);
     CHECK(std::isfinite(phiAbs));
     CHECK(phiAbs > 0.0);
+}
+
+TEST_CASE("PhaseD V2 - Session try-read lease is best-effort under active writer", "[V2][PhaseD][Session][Lease]") {
+    using namespace Slab::Math::Numerics::V2;
+
+    FBlockingLeaseProbeSessionV2 session(0.5);
+
+    std::thread writer([&session] { session.Step(1); });
+
+    REQUIRE(session.WaitUntilStepEntered());
+
+    const auto whileWriting = session.TryAcquireReadLease();
+    CHECK_FALSE(whileWriting.has_value());
+
+    session.AllowStepToFinish();
+    writer.join();
+
+    const auto afterWrite = session.TryAcquireReadLease();
+    REQUIRE(afterWrite.has_value());
+    CHECK(afterWrite->OwnsLock());
+    CHECK(afterWrite->GetPublishedVersion() == 1);
+    CHECK(afterWrite->GetState() == nullptr);
+    CHECK(afterWrite->GetCursor().Step == 1);
+    REQUIRE(afterWrite->GetCursor().SimulationTime.has_value());
+    CHECK(*afterWrite->GetCursor().SimulationTime == Catch::Approx(0.5).margin(1e-12));
+}
+
+TEST_CASE("PhaseD V2 - Session blocking read lease captures coherent cursor and version", "[V2][PhaseD][Session][Lease]") {
+    using namespace Slab::Math::Numerics::V2;
+
+    FCountingSessionV2 session(0.125);
+
+    CHECK(session.GetPublishedVersion() == 0);
+    session.Step(4);
+    CHECK(session.GetPublishedVersion() == 1);
+
+    auto lease = session.AcquireReadLease();
+    REQUIRE(lease.OwnsLock());
+    CHECK(lease.GetPublishedVersion() == 1);
+    CHECK(lease.GetState() == nullptr);
+    CHECK(lease.GetCursor().Step == 4);
+    REQUIRE(lease.GetCursor().SimulationTime.has_value());
+    CHECK(*lease.GetCursor().SimulationTime == Catch::Approx(0.5).margin(1e-12));
 }

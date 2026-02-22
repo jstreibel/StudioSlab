@@ -19,11 +19,13 @@ namespace Slab::Math::Numerics::V2 {
                                    std::optional<DevFloat> initialSimulationTime = std::nullopt);
 
         auto InitializeForCurrentThread() -> void override;
-        auto Step(UIntBig nSteps) -> void override;
 
-        [[nodiscard]] auto GetCursor() const -> FSimulationCursorV2 override;
-        [[nodiscard]] auto GetCurrentState() const -> Base::EquationState_constptr override;
         [[nodiscard]] auto SupportsSimulationTime() const -> bool override;
+
+    protected:
+        auto StepUnsafe(UIntBig nSteps) -> bool override;
+        [[nodiscard]] auto GetCursorUnsafe() const -> FSimulationCursorV2 override;
+        [[nodiscard]] auto GetCurrentStateUnsafe() const -> Base::EquationState_constptr override;
     };
 
 } // namespace Slab::Math::Numerics::V2

@@ -16,8 +16,8 @@ namespace Slab::Math::Numerics::V2 {
         // Nothing to do for the generic stepper wrapper in Phase A.
     }
 
-    auto FStepperSessionV2::Step(const UIntBig nSteps) -> void {
-        if (Stepper == nullptr || nSteps == 0) return;
+    auto FStepperSessionV2::StepUnsafe(const UIntBig nSteps) -> bool {
+        if (Stepper == nullptr || nSteps == 0) return false;
 
         Stepper->Step(static_cast<size_t>(nSteps));
         Cursor.Step += nSteps;
@@ -26,18 +26,21 @@ namespace Slab::Math::Numerics::V2 {
             if (!Cursor.SimulationTime.has_value()) Cursor.SimulationTime = 0.0;
             *Cursor.SimulationTime += *Dt * static_cast<DevFloat>(nSteps);
         }
+
+        return true;
     }
 
-    auto FStepperSessionV2::GetCursor() const -> FSimulationCursorV2 {
+    auto FStepperSessionV2::GetCursorUnsafe() const -> FSimulationCursorV2 {
         return Cursor;
     }
 
-    auto FStepperSessionV2::GetCurrentState() const -> Base::EquationState_constptr {
+    auto FStepperSessionV2::GetCurrentStateUnsafe() const -> Base::EquationState_constptr {
         return Stepper != nullptr ? Stepper->GetCurrentState() : nullptr;
     }
 
     auto FStepperSessionV2::SupportsSimulationTime() const -> bool {
-        return Dt.has_value() || Cursor.SimulationTime.has_value();
+        if (Dt.has_value()) return true;
+        return GetCursor().SimulationTime.has_value();
     }
 
 } // namespace Slab::Math::Numerics::V2
