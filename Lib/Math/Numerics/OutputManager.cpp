@@ -29,7 +29,7 @@ namespace Slab::Math {
             if (const size_t NextRecStep = Channel->ComputeNextRecStep(CurrStep); NextRecStep < nSteps) nSteps = NextRecStep;
         }
 
-        return nSteps < CurrStep ? 1 : nSteps - CurrStep;
+        return nSteps <= CurrStep ? 1 : nSteps - CurrStep;
     }
 
     void FOutputManager::AddOutputChannel(FOutputChannel_ptr out) {

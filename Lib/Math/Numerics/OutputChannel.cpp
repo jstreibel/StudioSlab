@@ -9,23 +9,24 @@
 namespace Slab::Math {
 
     FOutputChannel::FOutputChannel(Str name, int nStepsInterval, Str Description)
-            : IntervalStepsBetweenOutputs(nStepsInterval), Name(name), Description(Description),
-              NextRecStep(1) {}
+            : IntervalStepsBetweenOutputs(nStepsInterval >= 1 ? nStepsInterval : 1), Name(name),
+              Description(Description), NextRecStep(0) {}
 
     auto FOutputChannel::Get_nSteps() const -> int { return IntervalStepsBetweenOutputs; }
 
     auto FOutputChannel::Set_nSteps(int n) -> void {
         IntervalStepsBetweenOutputs = n >= 1 ? n : 1;
+        NextRecStep = 0;
     }
 
     auto FOutputChannel::ComputeNextRecStep(UInt currStep) -> size_t {
         if (NextRecStep > currStep)
             return NextRecStep;
 
-        fix n = (DevFloat) IntervalStepsBetweenOutputs;
-        fix m = (DevFloat) (currStep + 1);
+        const auto interval = static_cast<size_t>(IntervalStepsBetweenOutputs);
+        const auto nextStep = ((static_cast<size_t>(currStep) / interval) + 1) * interval;
 
-        NextRecStep = (int) (n * std::ceil(m / n));
+        NextRecStep = nextStep;
 
         return NextRecStep;
     }

@@ -11,7 +11,7 @@
 
 namespace Slab::Math {
     class FOutputChannel {
-        int NextRecStep = -1;
+        size_t NextRecStep = 0;
         int IntervalStepsBetweenOutputs; // Number of steps between recordings.
 
     protected:

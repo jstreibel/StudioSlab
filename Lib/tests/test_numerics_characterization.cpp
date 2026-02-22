@@ -301,6 +301,27 @@ namespace {
         : FOutputSnapshot("wave3-dummy-snapshot", 4) {}
     };
 
+    class FNoopOutputChannel : public Slab::Math::FOutputChannel {
+    protected:
+        void HandleOutput(const Slab::Math::FOutputPacket &packet) override {
+            (void) packet;
+        }
+
+    public:
+        explicit FNoopOutputChannel(int intervalSteps)
+        : FOutputChannel("Wave4 noop output", intervalSteps, "No-op output for scheduling tests") {}
+    };
+
+    class FCurrentStepOutputChannel final : public FNoopOutputChannel {
+    public:
+        FCurrentStepOutputChannel()
+        : FNoopOutputChannel(1) {}
+
+        auto ComputeNextRecStep(Slab::UInt currStep) -> size_t override {
+            return currStep;
+        }
+    };
+
     auto RunTaskAndWait(Slab::Math::FNumericTask &task) -> Slab::Core::ETaskStatus {
         std::thread worker([&task] { task.Start(); });
 
@@ -646,4 +667,27 @@ TEST_CASE("Wave3 regression - Snapshot output handles empty schedule", "[Wave3][
 
     CHECK(snapshotOutput->ComputeNextRecStep(0) > 0);
     CHECK(snapshotOutput->ComputeNextRecStep(123) > 123);
+}
+
+TEST_CASE("Wave4 regression - Output channel resets schedule on interval changes", "[Wave4][Numerics][Output]") {
+    using namespace Slab;
+
+    auto channel = New<FNoopOutputChannel>(10);
+
+    CHECK(channel->ComputeNextRecStep(0) == 10);
+
+    channel->Set_nSteps(3);
+
+    CHECK(channel->ComputeNextRecStep(0) == 3);
+    CHECK(channel->ComputeNextRecStep(3) == 6);
+}
+
+TEST_CASE("Wave4 regression - Output manager never returns zero cycles", "[Wave4][Numerics][Output]") {
+    using namespace Slab;
+
+    auto outputManager = New<Math::FOutputManager>(200);
+    outputManager->AddOutputChannel(New<FCurrentStepOutputChannel>());
+
+    CHECK(outputManager->ComputeNStepsToNextOutput(0) == 1);
+    CHECK(outputManager->ComputeNStepsToNextOutput(75) == 1);
 }
