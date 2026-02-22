@@ -327,7 +327,7 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/LegacyGL/LegacyMode.cpp
 		OpenGL/LegacyGL/LegacyMode.h
 		Backend/Events/KeyboardState.cpp
-		IDrawBackend2D.h
+		Interfaces/IDrawBackend2D.h
 		Interfaces/IDrawBackend2DProvider.cpp
 		Interfaces/IDrawBackend2DProvider.h
 )

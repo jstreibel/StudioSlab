@@ -5,9 +5,14 @@ enable_testing()
 add_executable(testsuite
         test.cpp
         test_result.cpp
+        test_numerics_characterization.cpp
         ../Utils/StringFormatting.cpp
 )
-target_link_libraries(testsuite PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(testsuite PRIVATE
+        Catch2::Catch2WithMain
+        Slab-Math
+        Slab-Models
+)
 
 # tell CTest about it:
 include(CTest)
