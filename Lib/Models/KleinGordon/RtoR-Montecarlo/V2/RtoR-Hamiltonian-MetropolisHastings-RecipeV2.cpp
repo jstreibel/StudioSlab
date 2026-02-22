@@ -115,8 +115,8 @@ namespace Slab::Models::KGRtoR::Metropolis::V2 {
         return New<FMontecarloStepper<FRandomSite, FNewValue>>(metropolis);
     }
 
-    auto FRtoRHamiltonianMetropolisHastingsRecipeV2::BuildSession() -> TUnique<FSimulationSessionV2> {
-        return std::make_unique<FStepperSessionV2>(BuildStepper());
+    auto FRtoRHamiltonianMetropolisHastingsRecipeV2::BuildSession() -> TPointer<FSimulationSessionV2> {
+        return New<FStepperSessionV2>(BuildStepper());
     }
 
     auto FRtoRHamiltonianMetropolisHastingsRecipeV2::BuildDefaultSubscriptions() -> Vector<FSubscriptionV2> {

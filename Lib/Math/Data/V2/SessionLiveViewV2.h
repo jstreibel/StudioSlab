@@ -20,11 +20,11 @@ namespace Slab::Math::LiveData::V2 {
     class FSessionLiveViewV2 {
         mutable std::mutex Mutex;
 
-        const Numerics::V2::FSimulationSessionV2 *Session = nullptr;
+        TVolatile<const Numerics::V2::FSimulationSessionV2> Session;
         std::optional<FSessionTelemetryV2> LastTelemetry = std::nullopt;
 
     public:
-        auto BindSession(const Numerics::V2::FSimulationSessionV2 *session) -> void;
+        auto BindSession(const TVolatile<const Numerics::V2::FSimulationSessionV2> &session) -> void;
         auto InvalidateSessionBinding() -> void;
 
         auto PublishEvent(const Numerics::V2::FSimulationEventV2 &event) -> void;

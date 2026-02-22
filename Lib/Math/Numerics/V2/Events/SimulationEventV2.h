@@ -52,7 +52,7 @@ namespace Slab::Math::Numerics::V2 {
         FSimulationCursorV2 Cursor;
         EEventReasonV2 Reason = EEventReasonV2::Scheduled;
         Base::EquationState_constptr State = nullptr;
-        const FSimulationSessionV2 *Session = nullptr;
+        TVolatile<const FSimulationSessionV2> SessionRef;
         UIntBig PublishedVersion = 0;
         bool bIsRealtimeBestEffort = false;
     };

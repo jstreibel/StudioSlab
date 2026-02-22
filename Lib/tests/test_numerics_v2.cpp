@@ -195,12 +195,12 @@ namespace {
     };
 
     class FTestRecipeV2 final : public FSimulationRecipeV2 {
-        std::function<TUnique<FSimulationSessionV2>()> SessionBuilder;
+        std::function<TPointer<FSimulationSessionV2>()> SessionBuilder;
         Vector<FSubscriptionV2> Subscriptions;
         FRunLimitsV2 Limits;
 
     public:
-        FTestRecipeV2(std::function<TUnique<FSimulationSessionV2>()> sessionBuilder,
+        FTestRecipeV2(std::function<TPointer<FSimulationSessionV2>()> sessionBuilder,
                       Vector<FSubscriptionV2> subscriptions,
                       FRunLimitsV2 limits)
         : SessionBuilder(std::move(sessionBuilder))
@@ -208,7 +208,7 @@ namespace {
         , Limits(std::move(limits)) {
         }
 
-        auto BuildSession() -> TUnique<FSimulationSessionV2> override {
+        auto BuildSession() -> TPointer<FSimulationSessionV2> override {
             return SessionBuilder();
         }
 
@@ -325,7 +325,7 @@ TEST_CASE("PhaseA V2 - NumericTask finite run dispatches initial scheduled final
     limits.MaxSteps = 10;
 
     auto recipe = New<FTestRecipeV2>(
-        []() -> TUnique<FSimulationSessionV2> { return std::make_unique<FCountingSessionV2>(); },
+        []() -> TPointer<FSimulationSessionV2> { return New<FCountingSessionV2>(); },
         subscriptions,
         limits);
 
@@ -367,7 +367,7 @@ TEST_CASE("PhaseA V2 - NumericTask open-ended runs until abort", "[V2][PhaseA][T
     limits.Mode = ERunModeV2::OpenEnded;
 
     auto recipe = New<FTestRecipeV2>(
-        []() -> TUnique<FSimulationSessionV2> { return std::make_unique<FCountingSessionV2>(); },
+        []() -> TPointer<FSimulationSessionV2> { return New<FCountingSessionV2>(); },
         subscriptions,
         limits);
 
@@ -439,7 +439,7 @@ TEST_CASE("PhaseB V2 - NumericTask supports final-only subscriptions without tri
     limits.MaxSteps = 7;
 
     auto recipe = New<FTestRecipeV2>(
-        []() -> TUnique<FSimulationSessionV2> { return std::make_unique<FCountingSessionV2>(); },
+        []() -> TPointer<FSimulationSessionV2> { return New<FCountingSessionV2>(); },
         subscriptions,
         limits);
 
@@ -468,7 +468,7 @@ TEST_CASE("PhaseB V2 - Windowed trigger integrates with task and console listene
     limits.MaxSteps = 15;
 
     auto recipe = New<FTestRecipeV2>(
-        []() -> TUnique<FSimulationSessionV2> { return std::make_unique<FCountingSessionV2>(); },
+        []() -> TPointer<FSimulationSessionV2> { return New<FCountingSessionV2>(); },
         subscriptions,
         limits);
 
@@ -630,16 +630,16 @@ TEST_CASE("PhaseE V2 - Live view exposes lease while active and invalidates on f
 
     auto liveView = New<FSessionLiveViewV2>();
     auto publisher = New<FSessionLiveViewPublisherListenerV2>(liveView, "test-live-view");
-    FCountingSessionV2 session(0.25);
+    auto session = New<FCountingSessionV2>(0.25);
 
-    session.Step(5);
-    auto sessionLease = session.AcquireReadLease();
+    session->Step(5);
+    auto sessionLease = session->AcquireReadLease();
 
     FSimulationEventV2 event;
     event.Cursor = sessionLease.GetCursor();
     event.State = sessionLease.GetState();
     event.Reason = EEventReasonV2::Scheduled;
-    event.Session = &session;
+    event.SessionRef = TPointer<const FSimulationSessionV2>(session);
     event.PublishedVersion = sessionLease.GetPublishedVersion();
 
     publisher->OnSample(event);

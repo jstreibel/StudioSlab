@@ -14,7 +14,7 @@ namespace Slab::Math::Numerics::V2 {
 
     class FNumericTaskV2 : public Core::FTask {
         TPointer<FSimulationRecipeV2> Recipe;
-        TUnique<FSimulationSessionV2> Session;
+        TPointer<FSimulationSessionV2> Session;
 
         Vector<FSubscriptionV2> Subscriptions;
         FRunLimitsV2 RunLimits;

@@ -20,7 +20,7 @@ namespace Slab::Models::KGRtoR::Metropolis::V2 {
         explicit FRtoRHamiltonianMetropolisHastingsRecipeV2(UIntBig maxSteps,
                                                             UIntBig consoleIntervalSteps = 1000);
 
-        auto BuildSession() -> TUnique<Math::Numerics::V2::FSimulationSessionV2> override;
+        auto BuildSession() -> TPointer<Math::Numerics::V2::FSimulationSessionV2> override;
         auto BuildDefaultSubscriptions() -> Vector<Math::Numerics::V2::FSubscriptionV2> override;
 
         [[nodiscard]] auto GetRunLimits() const -> Math::Numerics::V2::FRunLimitsV2 override;

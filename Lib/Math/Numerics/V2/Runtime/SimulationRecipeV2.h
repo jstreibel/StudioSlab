@@ -12,7 +12,7 @@ namespace Slab::Math::Numerics::V2 {
 
         virtual auto SetupForCurrentThread() -> void {}
 
-        virtual auto BuildSession() -> TUnique<FSimulationSessionV2> = 0;
+        virtual auto BuildSession() -> TPointer<FSimulationSessionV2> = 0;
         virtual auto BuildDefaultSubscriptions() -> Vector<FSubscriptionV2> = 0;
 
         [[nodiscard]] virtual auto GetRunLimits() const -> FRunLimitsV2 = 0;

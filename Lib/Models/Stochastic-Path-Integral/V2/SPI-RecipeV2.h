@@ -21,7 +21,7 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
                               UIntBig consoleIntervalSteps = 100,
                               const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr);
 
-        auto BuildSession() -> TUnique<Math::Numerics::V2::FSimulationSessionV2> override;
+        auto BuildSession() -> TPointer<Math::Numerics::V2::FSimulationSessionV2> override;
         auto BuildDefaultSubscriptions() -> Vector<Math::Numerics::V2::FSubscriptionV2> override;
 
         [[nodiscard]] auto GetRunLimits() const -> Math::Numerics::V2::FRunLimitsV2 override;

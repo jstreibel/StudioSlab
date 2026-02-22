@@ -98,7 +98,7 @@ namespace Slab::Math::Numerics::V2 {
             event.Cursor = lease.GetCursor();
             event.State = lease.GetState();
             event.PublishedVersion = lease.GetPublishedVersion();
-            event.Session = Session.get();
+            event.SessionRef = TPointer<const FSimulationSessionV2>(Session);
         }
         event.Reason = reason;
         event.bIsRealtimeBestEffort = bRealtimeBestEffort;

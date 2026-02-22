@@ -51,13 +51,13 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
         return New<FEuler>(solver, dT);
     }
 
-    auto FSPIRecipeV2::BuildSession() -> TUnique<FSimulationSessionV2> {
+    auto FSPIRecipeV2::BuildSession() -> TPointer<FSimulationSessionV2> {
         if (NumericConfig == nullptr) throw Exception("FSPIRecipeV2 requires a numeric config.");
 
-        return std::make_unique<FStepperSessionV2>(BuildStepper(),
-                                                   NumericConfig->getdT(),
-                                                   0,
-                                                   DevFloat(0.0));
+        return New<FStepperSessionV2>(BuildStepper(),
+                                      NumericConfig->getdT(),
+                                      0,
+                                      DevFloat(0.0));
     }
 
     auto FSPIRecipeV2::BuildDefaultSubscriptions() -> Vector<FSubscriptionV2> {
