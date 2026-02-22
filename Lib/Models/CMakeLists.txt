@@ -130,6 +130,8 @@ add_library( ${LIB_LOCAL_NAME} STATIC
 		KleinGordon/R2toR/Output/KG2DSnapshotOutput.h
 		Stochastic-Path-Integral/SPI-Recipe.cpp
 		Stochastic-Path-Integral/SPI-Recipe.h
+		Stochastic-Path-Integral/V2/SPI-RecipeV2.cpp
+		Stochastic-Path-Integral/V2/SPI-RecipeV2.h
 		Stochastic-Path-Integral/SPI-State.cpp
 		Stochastic-Path-Integral/SPI-State.h
 		Stochastic-Path-Integral/SPI-Solver.cpp

@@ -14,6 +14,8 @@
 #include "Math/Numerics/V2/Scheduling/WindowedEveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 #include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
+#include "Models/Stochastic-Path-Integral/SPI-State.h"
+#include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
 
 namespace {
 
@@ -23,6 +25,7 @@ namespace {
     struct FRecordedEventV2 {
         UIntBig Step = 0;
         EEventReasonV2 Reason = EEventReasonV2::Scheduled;
+        std::optional<DevFloat> SimulationTime = std::nullopt;
     };
 
     class FCountingSessionV2 final : public FSimulationSessionV2 {
@@ -65,7 +68,7 @@ namespace {
         Str Name;
 
         auto Record(const FSimulationEventV2 &event) -> void {
-            Events.push_back({event.Cursor.Step, event.Reason});
+            Events.push_back({event.Cursor.Step, event.Reason, event.Cursor.SimulationTime});
         }
 
     public:
@@ -446,4 +449,61 @@ TEST_CASE("PhaseC0 V2 - Metropolis Hamiltonian recipe runs through NumericTaskV2
 
     CHECK(phiAbs > 0.0);
     CHECK(piAbs > 0.0);
+}
+
+TEST_CASE("PhaseC5 V2 - SPI recipe runs with simulation-time cursor semantics", "[V2][PhaseC5][SPI][Task]") {
+    using namespace Slab;
+    using namespace Slab::Core;
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::StochasticPathIntegrals;
+    using namespace Slab::Models::StochasticPathIntegrals::V2;
+
+    auto numericConfig = New<SPINumericConfig>();
+    auto iface = numericConfig->GetInterface();
+
+    auto pL = DynamicPointerCast<RealParameter>(iface->GetParameter("length"));
+    auto pT = DynamicPointerCast<RealParameter>(iface->GetParameter("time"));
+    auto pN = DynamicPointerCast<IntegerParameter>(iface->GetParameter("site_count"));
+    auto pDT = DynamicPointerCast<RealParameter>(iface->GetParameter("dT"));
+    auto pNT = DynamicPointerCast<IntegerParameter>(iface->GetParameter("stochastic_time_steps"));
+
+    REQUIRE(pL != nullptr);
+    REQUIRE(pT != nullptr);
+    REQUIRE(pN != nullptr);
+    REQUIRE(pDT != nullptr);
+    REQUIRE(pNT != nullptr);
+
+    pL->SetValue(1.0);
+    pT->SetValue(0.5);
+    pN->SetValue(16);
+    pDT->SetValue(0.125);
+    pNT->SetValue(4);
+
+    auto recipe = New<FSPIRecipeV2>(numericConfig, 2);
+    auto task = New<FNumericTaskV2>(recipe, false, 8);
+
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    const auto cursor = task->GetCursor();
+    CHECK(cursor.Step == 4);
+    REQUIRE(cursor.SimulationTime.has_value());
+    CHECK(*cursor.SimulationTime == Catch::Approx(0.5).margin(1e-12));
+
+    const auto progress = task->GetProgress01();
+    REQUIRE(progress.has_value());
+    CHECK(*progress == Catch::Approx(1.0f).margin(1e-6f));
+
+    const auto *session = task->GetSession();
+    REQUIRE(session != nullptr);
+
+    const auto state = session->GetCurrentState();
+    REQUIRE(state != nullptr);
+
+    auto spiState = std::dynamic_pointer_cast<const SPIState>(state);
+    REQUIRE(spiState != nullptr);
+
+    const auto phiAbs = SumAbsValues(spiState->getPhi()->getSpace().getHostData(true));
+    CAPTURE(phiAbs);
+    CHECK(std::isfinite(phiAbs));
+    CHECK(phiAbs > 0.0);
 }
