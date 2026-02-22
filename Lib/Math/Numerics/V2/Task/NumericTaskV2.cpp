@@ -97,6 +97,8 @@ namespace Slab::Math::Numerics::V2 {
             auto lease = Session->AcquireReadLease();
             event.Cursor = lease.GetCursor();
             event.State = lease.GetState();
+            event.PublishedVersion = lease.GetPublishedVersion();
+            event.Session = Session.get();
         }
         event.Reason = reason;
         event.bIsRealtimeBestEffort = bRealtimeBestEffort;

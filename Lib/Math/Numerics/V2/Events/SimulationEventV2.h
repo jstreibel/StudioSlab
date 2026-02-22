@@ -7,6 +7,8 @@
 
 namespace Slab::Math::Numerics::V2 {
 
+    class FSimulationSessionV2;
+
     enum class ERunModeV2 {
         FiniteSteps,
         FiniteSimulationTime,
@@ -50,6 +52,8 @@ namespace Slab::Math::Numerics::V2 {
         FSimulationCursorV2 Cursor;
         EEventReasonV2 Reason = EEventReasonV2::Scheduled;
         Base::EquationState_constptr State = nullptr;
+        const FSimulationSessionV2 *Session = nullptr;
+        UIntBig PublishedVersion = 0;
         bool bIsRealtimeBestEffort = false;
     };
 

@@ -5,6 +5,7 @@
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Numerics/ODE/Steppers/Euler.h"
 #include "Math/Numerics/V2/Listeners/ConsoleProgressListenerV2.h"
+#include "Math/Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.h"
 #include "Math/Numerics/V2/Runtime/StepperSessionV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 
@@ -21,9 +22,11 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
     using namespace Slab::Math::Numerics::V2;
 
     FSPIRecipeV2::FSPIRecipeV2(const TPointer<SPINumericConfig> &numericConfig,
-                               const UIntBig consoleIntervalSteps)
+                               const UIntBig consoleIntervalSteps,
+                               const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
     : NumericConfig(numericConfig != nullptr ? numericConfig : New<SPINumericConfig>())
-    , ConsoleIntervalSteps(std::max<UIntBig>(1, consoleIntervalSteps)) {
+    , ConsoleIntervalSteps(std::max<UIntBig>(1, consoleIntervalSteps))
+    , LiveView(liveView) {
     }
 
     auto FSPIRecipeV2::BuildStepper() const -> TPointer<FStepper> {
@@ -60,14 +63,26 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
     auto FSPIRecipeV2::BuildDefaultSubscriptions() -> Vector<FSubscriptionV2> {
         const auto totalSteps = NumericConfig != nullptr ? NumericConfig->Get_n() : UIntBig(0);
         auto console = New<FConsoleProgressListenerV2>(totalSteps, "SPI Console V2");
-
-        return {{
+        Vector<FSubscriptionV2> subscriptions = {{
             New<FEveryNStepsTriggerV2>(ConsoleIntervalSteps),
             console,
             EDeliveryModeV2::Synchronous,
             true,
             true
         }};
+
+        if (LiveView != nullptr) {
+            auto publisher = New<FSessionLiveViewPublisherListenerV2>(LiveView, "SPI Live View Publisher V2");
+            subscriptions.push_back({
+                New<FEveryNStepsTriggerV2>(ConsoleIntervalSteps),
+                publisher,
+                EDeliveryModeV2::Synchronous,
+                true,
+                true
+            });
+        }
+
+        return subscriptions;
     }
 
     auto FSPIRecipeV2::GetRunLimits() const -> FRunLimitsV2 {
@@ -81,6 +96,10 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
 
     auto FSPIRecipeV2::GetNumericConfig() const -> TPointer<SPINumericConfig> {
         return NumericConfig;
+    }
+
+    auto FSPIRecipeV2::GetLiveView() const -> TPointer<Math::LiveData::V2::FSessionLiveViewV2> {
+        return LiveView;
     }
 
 } // namespace Slab::Models::StochasticPathIntegrals::V2

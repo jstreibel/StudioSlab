@@ -8,8 +8,10 @@
 
 #include "Utils/RandUtils.h"
 
+#include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Numerics/V2/Listeners/ConsoleProgressListenerV2.h"
 #include "Math/Numerics/V2/Listeners/DummyListenerV2.h"
+#include "Math/Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Scheduling/OutputSchedulerV2.h"
 #include "Math/Numerics/V2/Scheduling/WindowedEveryNStepsTriggerV2.h"
@@ -620,4 +622,101 @@ TEST_CASE("PhaseD V2 - Session blocking read lease captures coherent cursor and 
     CHECK(lease.GetCursor().Step == 4);
     REQUIRE(lease.GetCursor().SimulationTime.has_value());
     CHECK(*lease.GetCursor().SimulationTime == Catch::Approx(0.5).margin(1e-12));
+}
+
+TEST_CASE("PhaseE V2 - Live view publisher captures telemetry and zero-copy lease", "[V2][PhaseE][LiveData]") {
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Math::LiveData::V2;
+
+    auto liveView = New<FSessionLiveViewV2>();
+    auto publisher = New<FSessionLiveViewPublisherListenerV2>(liveView, "test-live-view");
+
+    Vector<FSubscriptionV2> subscriptions = {
+        {New<FEveryNStepsTriggerV2>(2), publisher, EDeliveryModeV2::Synchronous, true, true}
+    };
+
+    FRunLimitsV2 limits;
+    limits.Mode = ERunModeV2::FiniteSteps;
+    limits.MaxSteps = 5;
+
+    auto recipe = New<FTestRecipeV2>(
+        []() -> TUnique<FSimulationSessionV2> { return std::make_unique<FCountingSessionV2>(0.25); },
+        subscriptions,
+        limits);
+
+    auto task = New<FNumericTaskV2>(recipe, false, 16);
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    REQUIRE(liveView->HasBoundSession());
+
+    const auto telemetry = liveView->TryGetTelemetry();
+    REQUIRE(telemetry.has_value());
+    CHECK(telemetry->LastReason == EEventReasonV2::Final);
+    CHECK(telemetry->Cursor.Step == 5);
+    REQUIRE(telemetry->Cursor.SimulationTime.has_value());
+    CHECK(*telemetry->Cursor.SimulationTime == Catch::Approx(1.25).margin(1e-12));
+    CHECK(telemetry->PublishedVersion == 3);
+    CHECK_FALSE(telemetry->bRealtimeBestEffort);
+
+    const auto leaseOpt = liveView->AcquireReadLease();
+    REQUIRE(leaseOpt.has_value());
+    CHECK(leaseOpt->OwnsLock());
+    CHECK(leaseOpt->GetCursor().Step == telemetry->Cursor.Step);
+    CHECK(leaseOpt->GetPublishedVersion() == telemetry->PublishedVersion);
+}
+
+TEST_CASE("PhaseE V2 - SPI recipe can publish a live session view", "[V2][PhaseE][SPI][LiveData]") {
+    using namespace Slab;
+    using namespace Slab::Core;
+    using namespace Slab::Math::LiveData::V2;
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::StochasticPathIntegrals;
+    using namespace Slab::Models::StochasticPathIntegrals::V2;
+
+    auto numericConfig = New<SPINumericConfig>();
+    auto iface = numericConfig->GetInterface();
+
+    auto pL = DynamicPointerCast<RealParameter>(iface->GetParameter("length"));
+    auto pT = DynamicPointerCast<RealParameter>(iface->GetParameter("time"));
+    auto pN = DynamicPointerCast<IntegerParameter>(iface->GetParameter("site_count"));
+    auto pDT = DynamicPointerCast<RealParameter>(iface->GetParameter("dT"));
+    auto pNT = DynamicPointerCast<IntegerParameter>(iface->GetParameter("stochastic_time_steps"));
+
+    REQUIRE(pL != nullptr);
+    REQUIRE(pT != nullptr);
+    REQUIRE(pN != nullptr);
+    REQUIRE(pDT != nullptr);
+    REQUIRE(pNT != nullptr);
+
+    pL->SetValue(1.0);
+    pT->SetValue(0.5);
+    pN->SetValue(16);
+    pDT->SetValue(0.125);
+    pNT->SetValue(4);
+
+    auto liveView = New<FSessionLiveViewV2>();
+    auto recipe = New<FSPIRecipeV2>(numericConfig, 2, liveView);
+    auto task = New<FNumericTaskV2>(recipe, false, 8);
+
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    const auto telemetry = liveView->TryGetTelemetry();
+    REQUIRE(telemetry.has_value());
+    CHECK(telemetry->LastReason == EEventReasonV2::Final);
+    CHECK(telemetry->Cursor.Step == 4);
+    CHECK(telemetry->bHasState);
+    CHECK(telemetry->PublishedVersion >= 1);
+
+    const auto leaseOpt = liveView->AcquireReadLease();
+    REQUIRE(leaseOpt.has_value());
+    CHECK(leaseOpt->GetCursor().Step == 4);
+    CHECK(leaseOpt->GetPublishedVersion() == telemetry->PublishedVersion);
+
+    auto spiState = std::dynamic_pointer_cast<const SPIState>(leaseOpt->GetState());
+    REQUIRE(spiState != nullptr);
+
+    const auto phiAbs = SumAbsValues(spiState->getPhi()->getSpace().getHostData(true));
+    CAPTURE(phiAbs);
+    CHECK(std::isfinite(phiAbs));
+    CHECK(phiAbs > 0.0);
 }

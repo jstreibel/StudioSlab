@@ -59,6 +59,7 @@ set ( NUMERICS_SOURCES
 		Numerics/V2/Listeners/ConsoleProgressListenerV2.cpp
 		Numerics/V2/Listeners/DummyListenerV2.cpp
 		Numerics/V2/Listeners/OutputDispatcherV2.cpp
+		Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.cpp
 		Numerics/V2/Scheduling/OutputSchedulerV2.cpp
 		Numerics/V2/Scheduling/EveryNStepsTriggerV2.cpp
 		Numerics/V2/Scheduling/WindowedEveryNStepsTriggerV2.cpp
@@ -83,6 +84,8 @@ set ( NUMERICS_SOURCES
 		Function/NativeFunction.h
 		Data/DataManager.cpp
 		Data/DataManager.h
+		Data/V2/SessionLiveViewV2.cpp
+		Data/V2/SessionLiveViewV2.h
 		Numerics/ODE/Solver/LinearStepSolver.cpp
 		Numerics/ODE/Solver/EquationState.cpp
 		Numerics/ODE/Solver/BoundaryConditions.cpp
