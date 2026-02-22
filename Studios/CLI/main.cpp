@@ -2,20 +2,202 @@
 
 #include "Core/Controller/CommandLine/CommandLineParserDefs.h"
 #include "Core/Controller/Parameter/BuiltinParameters.h"
+#include "Core/SlabCore.h"
 
+#include "Graphics/Plot2D/Artists/R2SectionArtist.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
+#include "Graphics/SlabGraphics.h"
+#include "Graphics/Window/GUIWindow.h"
+#include "Graphics/Window/SlabWindowManager.h"
+#include "Graphics/Window/WindowContainer/WindowPanel.h"
+
+#include "Math/Data/V2/SessionLiveViewV2.h"
+#include "Math/Function/RtoR2/StraightLine.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
 #include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
 #include "Models/Stochastic-Path-Integral/SPINumericConfig.h"
+#include "Models/Stochastic-Path-Integral/SPI-State.h"
 #include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
+
+#include "StudioSlab.h"
 
 #include <chrono>
 #include <iostream>
+#include <mutex>
 #include <thread>
 
 namespace {
 
     using namespace Slab;
+
+    struct FSPIExecutionConfig;
+
+    auto ExitCodeFromTaskStatus(Slab::Core::ETaskStatus status) -> int;
+    auto PrintTaskSummary(const Math::Numerics::V2::FNumericTaskV2 &task) -> void;
+    auto ConfigureSPINumericConfig(const TPointer<Slab::Models::StochasticPathIntegrals::SPINumericConfig> &config,
+                                   DevFloat L,
+                                   DevFloat Time,
+                                   UInt N,
+                                   DevFloat Dt,
+                                   UInt Steps) -> void;
+
+    class FSPIPassiveMonitorWindowV2 final : public Graphics::FWindowPanel {
+        TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView;
+        TPointer<Graphics::FGUIWindow> GuiWindow;
+        Graphics::FPlot2DWindow SectionWindow;
+        Graphics::R2SectionArtist SectionArtist;
+
+        std::optional<Math::LiveData::V2::FSessionTelemetryV2> LastTelemetry = std::nullopt;
+        bool bLastLeaseAcquired = false;
+        UIntBig MaxSteps = 0;
+
+        auto EnsureSectionConfigured(const TPointer<Math::R2toR::FNumericFunction> &phi) -> void {
+            if (phi == nullptr) return;
+            if (!SectionArtist.getSections().empty()) return;
+
+            const auto yMin = phi->getDomain().yMin;
+            const auto yMax = phi->getDomain().yMax;
+
+            auto line = New<Math::RtoR2::StraightLine>(Math::Real2D{0, yMin}, Math::Real2D{0, yMax}, yMin, yMax);
+            auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
+            SectionArtist.addSection(line, style, "x=0 section");
+        }
+
+        auto UpdateStatsWindow() -> void {
+            if (GuiWindow == nullptr) return;
+
+            GuiWindow->AddVolatileStat("SPI V2 passive monitor");
+            GuiWindow->AddVolatileStat("");
+
+            if (!LastTelemetry.has_value()) {
+                GuiWindow->AddVolatileStat("Waiting for telemetry...");
+                return;
+            }
+
+            const auto &telemetry = *LastTelemetry;
+
+            GuiWindow->AddVolatileStat("Step: " + ToStr(telemetry.Cursor.Step));
+            if (telemetry.Cursor.SimulationTime.has_value()) {
+                GuiWindow->AddVolatileStat("t: " + ToStr(*telemetry.Cursor.SimulationTime, 6, true));
+            }
+
+            GuiWindow->AddVolatileStat("Version: " + ToStr(telemetry.PublishedVersion));
+            GuiWindow->AddVolatileStat("Reason: " + ToStr(static_cast<int>(telemetry.LastReason)));
+            GuiWindow->AddVolatileStat(Str("Bound session: ") + (LiveView->HasBoundSession() ? "yes" : "no"));
+            GuiWindow->AddVolatileStat(Str("Lease this frame: ") + (bLastLeaseAcquired ? "yes" : "no"));
+            GuiWindow->AddVolatileStat(Str("State present: ") + (telemetry.bHasState ? "yes" : "no"));
+
+            if (MaxSteps > 0) {
+                const auto progress = static_cast<DevFloat>(
+                    std::min<UIntBig>(telemetry.Cursor.Step, MaxSteps)) / static_cast<DevFloat>(MaxSteps);
+                GuiWindow->AddVolatileStat("Progress: " + ToStr(progress * 100.0, 2, true) + "%");
+            }
+        }
+
+    public:
+        explicit FSPIPassiveMonitorWindowV2(const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+                                            const UIntBig maxSteps)
+        : FWindowPanel(Graphics::FSlabWindowConfig("SPI V2 GL Monitor"))
+        , LiveView(liveView)
+        , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("SPI V2 Telemetry")))
+        , SectionWindow("SPI field section")
+        , MaxSteps(maxSteps) {
+            if (LiveView == nullptr) throw Exception("SPI passive monitor requires a live view.");
+
+            AddWindow(GuiWindow, false, 0.25f);
+            AddWindow(Naked(SectionWindow), true, 0.75f);
+            SetColumnRelativeWidth(0, 0.25f);
+
+            SectionWindow.AddArtist(Naked(SectionArtist));
+        }
+
+        auto ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void override {
+            auto telemetry = LiveView->TryGetTelemetry();
+            if (telemetry.has_value()) LastTelemetry = telemetry;
+
+            auto leaseOpt = LiveView->TryAcquireReadLease();
+            bLastLeaseAcquired = leaseOpt.has_value();
+
+            if (leaseOpt.has_value()) {
+                auto spiState = std::dynamic_pointer_cast<const Models::StochasticPathIntegrals::SPIState>(leaseOpt->GetState());
+                if (spiState != nullptr) {
+                    auto phi = spiState->getPhi();
+                    EnsureSectionConfigured(phi);
+                    SectionArtist.setFunction(phi);
+                } else {
+                    SectionArtist.setFunction(nullptr);
+                }
+            } else {
+                // Avoid rendering through a stale pointer after lease release or session invalidation.
+                SectionArtist.setFunction(nullptr);
+            }
+
+            UpdateStatsWindow();
+            FWindowPanel::ImmediateDraw(platformWindow);
+        }
+    };
+
+    struct FSPIExecutionConfig {
+        UInt Steps = 20;
+        DevFloat Dt = 0.05;
+        DevFloat Time = 1.0;
+        DevFloat L = 1.0;
+        UInt N = 64;
+        UIntBig Interval = 10;
+        UIntBig Batch = 2048;
+        bool bEnableGLMonitor = false;
+    };
+
+    auto RunTaskWithPassiveSPIGLMonitor(const FSPIExecutionConfig &cfg) -> int {
+        using namespace Slab::Math::Numerics::V2;
+        using namespace Slab::Models::StochasticPathIntegrals;
+        using namespace Slab::Models::StochasticPathIntegrals::V2;
+
+        Slab::Startup();
+        Core::StartBackend("GLFW");
+        Core::LoadModule("ModernOpenGL");
+        Graphics::FPlotThemeManager::GetInstance();
+
+        auto backend = Graphics::GetGraphicsBackend();
+        auto platformWindow = backend->GetMainSystemWindow();
+        platformWindow->SetupGUIContext();
+        platformWindow->SetSystemWindowTitle("Studios SPI V2 Monitor");
+
+        auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
+
+        auto numericConfig = New<SPINumericConfig>();
+        ConfigureSPINumericConfig(numericConfig, cfg.L, cfg.Time, cfg.N, cfg.Dt, cfg.Steps);
+
+        auto recipe = New<FSPIRecipeV2>(numericConfig, cfg.Interval, liveView);
+        auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
+
+        auto wm = New<Graphics::FSlabWindowManager>();
+        auto monitor = New<FSPIPassiveMonitorWindowV2>(liveView, static_cast<UIntBig>(cfg.Steps));
+        wm->AddSlabWindow(monitor, false);
+        platformWindow->AddAndOwnEventListener(wm);
+
+        std::thread worker([&task] { task->Start(); });
+
+        const auto cleanupTaskThread = [&task, &worker]() {
+            task->Abort();
+            task->Release();
+            if (worker.joinable()) worker.join();
+        };
+
+        try {
+            backend->Run();
+        } catch (...) {
+            cleanupTaskThread();
+            throw;
+        }
+
+        cleanupTaskThread();
+
+        PrintTaskSummary(*task);
+        return ExitCodeFromTaskStatus(task->GetStatus());
+    }
 
     auto RunTaskAndWait(Slab::Core::FTask &task) -> Slab::Core::ETaskStatus {
         std::thread worker([&task] { task.Start(); });
@@ -72,6 +254,7 @@ namespace {
                 << "Examples:\n"
                 << "  Studios metropolis --steps 5000 --interval 500\n"
                 << "  Studios spi --steps 8 --dt 0.125 --time 0.5 --N 16 --interval 2\n"
+                << "  Studios spi --gl --steps 2000 --interval 5\n"
                 << "  Studios spi --help\n";
     }
 
@@ -178,6 +361,7 @@ namespace {
         CLOptionsDescription options("Studios spi", "Run the native V2 SPI slice.");
         options.add_options()
             ("h,help", "Show this help")
+            ("gl", "Run with passive OpenGL monitor (real app loop)")
             ("steps", "Stochastic integration steps", cxxopts::value<UInt>()->default_value("20"))
             ("dt", "Stochastic timestep", cxxopts::value<DevFloat>()->default_value("0.05"))
             ("time", "Physical time extent", cxxopts::value<DevFloat>()->default_value("1.0"))
@@ -199,6 +383,21 @@ namespace {
         const auto N = result["N"].as<UInt>();
         const auto interval = result["interval"].as<UIntBig>();
         const auto batch = result["batch"].as<UIntBig>();
+        const auto useGL = result.count("gl") > 0;
+
+        FSPIExecutionConfig cfg;
+        cfg.Steps = steps;
+        cfg.Dt = dt;
+        cfg.Time = time;
+        cfg.L = L;
+        cfg.N = N;
+        cfg.Interval = interval;
+        cfg.Batch = batch;
+        cfg.bEnableGLMonitor = useGL;
+
+        if (cfg.bEnableGLMonitor) {
+            return RunTaskWithPassiveSPIGLMonitor(cfg);
+        }
 
         auto numericConfig = New<SPINumericConfig>();
         ConfigureSPINumericConfig(numericConfig, L, time, N, dt, steps);
