@@ -691,3 +691,24 @@ TEST_CASE("Wave4 regression - Output manager never returns zero cycles", "[Wave4
     CHECK(outputManager->ComputeNStepsToNextOutput(0) == 1);
     CHECK(outputManager->ComputeNStepsToNextOutput(75) == 1);
 }
+
+TEST_CASE("Wave5 regression - NumericTask zero-step runs report full progress", "[Wave5][Numerics][Task]") {
+    using namespace Slab;
+
+    constexpr size_t totalSteps = 0;
+    auto recipe = New<FCountingRecipe>(totalSteps);
+    auto outputRecorder = New<FRecordingOutputChannel>(5);
+
+    auto outputManager = New<Math::FOutputManager>(totalSteps);
+    outputManager->AddOutputChannel(outputRecorder);
+
+    auto task = New<Math::FNumericTask>(recipe, false);
+    task->SetOutputManager(outputManager);
+
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+    CHECK(task->GetSteps() == 0);
+    CHECK(task->GetProgress() == Catch::Approx(1.0f).margin(1e-6f));
+
+    const Vector<size_t> expectedOutputs = {0};
+    CHECK(outputRecorder->GetOutputSteps() == expectedOutputs);
+}

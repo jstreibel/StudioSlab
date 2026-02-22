@@ -25,7 +25,9 @@ namespace Slab::Math {
     }
 
     FNumericTask::~FNumericTask() {
-        FLog::Note() << "Avg. integration time: " << BenchmarkData << FLog::Flush;
+        if (BenchmarkData == nullptr) return;
+
+        FLog::Note() << "Avg. integration time: " << *BenchmarkData << FLog::Flush;
     }
 
     void FNumericTask::Init() {
@@ -131,6 +133,8 @@ namespace Slab::Math {
 
     float FNumericTask::GetProgress() const
     {
+        if (TotalSteps == 0) return 1.0f;
+
         return static_cast<float>(StepsConcluded) / static_cast<float>(TotalSteps);
     }
 
