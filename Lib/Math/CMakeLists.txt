@@ -56,6 +56,11 @@ set ( NUMERICS_SOURCES
 		Numerics/OutputManager.cpp
 
         Numerics/OutputChannel.cpp
+		Numerics/V2/Listeners/OutputDispatcherV2.cpp
+		Numerics/V2/Scheduling/OutputSchedulerV2.cpp
+		Numerics/V2/Scheduling/EveryNStepsTriggerV2.cpp
+		Numerics/V2/Runtime/StepperSessionV2.cpp
+		Numerics/V2/Task/NumericTaskV2.cpp
 		Numerics/ODE/Output/Sockets/OutputConsoleMonitor.cpp
 		Numerics/ODE/Output/Sockets/HistoryKeeper.cpp
 		Numerics/ODE/Output/Sockets/OutputHistoryToFile.cpp

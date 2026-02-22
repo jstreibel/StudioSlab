@@ -6,6 +6,7 @@ add_executable(testsuite
         test.cpp
         test_result.cpp
         test_numerics_characterization.cpp
+        test_numerics_v2.cpp
         ../Utils/StringFormatting.cpp
 )
 target_link_libraries(testsuite PRIVATE
