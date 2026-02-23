@@ -138,6 +138,12 @@ namespace Slab::Graphics {
         }
     }
 
+    void FWindowColumn::RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) {
+        for (auto &Win : Windows) {
+            Win->RegisterDeferredDrawCalls(PlatformWindow);
+        }
+    }
+
     void FWindowColumn::NotifyReshape(int newWinW, int newWinH) {
         FSlabWindow::NotifyReshape(newWinW, newWinH);
 

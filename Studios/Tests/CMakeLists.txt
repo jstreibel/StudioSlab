@@ -20,6 +20,12 @@ add_executable ( Tests
 target_link_libraries ( Tests ${SlabLibs} Slab )
 message(NOTICE "Added executable Tests")
 
+add_executable(SlabTests
+		SlabTestsMain.cpp
+)
+target_link_libraries(SlabTests ${SlabLibs} Slab)
+message(NOTICE "Added executable SlabTests")
+
 add_executable(OdeintInteropTest SlabOdeintInteropTest.cpp)
 target_link_libraries ( OdeintInteropTest ${SlabLibs} Slab )
 message(NOTICE "Added executable OdeintInteropTest")

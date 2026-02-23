@@ -106,18 +106,21 @@ namespace {
         , MaxSteps(maxSteps) {
             if (LiveView == nullptr) throw Exception("SPI passive monitor requires a live view.");
 
+            SectionArtist.SetAffectGraphRanges(true);
             AddWindow(GuiWindow, false, 0.25f);
             AddWindow(Naked(SectionWindow), true, 0.75f);
             SetColumnRelativeWidth(0, 0.25f);
 
             SectionWindow.AddArtist(Naked(SectionArtist));
+            SectionWindow.SetAutoReviewGraphRanges(true);
         }
 
         auto ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void override {
             auto telemetry = LiveView->TryGetTelemetry();
             if (telemetry.has_value()) LastTelemetry = telemetry;
 
-            auto leaseOpt = LiveView->TryAcquireReadLease();
+            // For local GL monitoring, prefer a coherent lease over best-effort skipping.
+            auto leaseOpt = LiveView->AcquireReadLease();
             bLastLeaseAcquired = leaseOpt.has_value();
 
             if (leaseOpt.has_value()) {

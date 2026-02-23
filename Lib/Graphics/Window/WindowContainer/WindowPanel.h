@@ -51,6 +51,7 @@ namespace Slab::Graphics {
 
 
         void ImmediateDraw(const FPlatformWindow&) override;
+        auto RegisterDeferredDrawCalls(const FPlatformWindow&) -> void override;
 
         void NotifyReshape(int newWinW, int newWinH) override;
 

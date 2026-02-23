@@ -112,6 +112,12 @@ namespace Slab::Graphics {
             column.ImmediateDraw(PlatformWindow);
     }
 
+    void FWindowPanel::RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) {
+        for (auto &column: columns) {
+            column.RegisterDeferredDrawCalls(PlatformWindow);
+        }
+    }
+
     float FWindowPanel::computeReservedWidth() const {
         auto val = .0f;
         for (auto w: widths) val += w >= 0 ? w : 0;
