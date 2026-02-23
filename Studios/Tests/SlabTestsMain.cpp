@@ -26,6 +26,7 @@
 #include <atomic>
 #include <chrono>
 #include <cmath>
+#include <functional>
 #include <iostream>
 #include <numbers>
 #include <optional>
@@ -338,10 +339,8 @@ auto ParseCommonVisualRunConfig(const int argc, const char **argv, const Str &pr
 }
 
 auto RunSingleWindowVisualTest(const FVisualRunConfig &cfg,
-                               const TPointer<Graphics::FSlabWindow> &rootWindow,
+                               const std::function<TPointer<Graphics::FSlabWindow>()> &makeRootWindow,
                                const Str &title) -> int {
-    if (rootWindow == nullptr) throw Exception("Visual test root window is null.");
-
     Slab::Startup();
     Core::StartBackend("GLFW");
     Core::LoadModule("ModernOpenGL");
@@ -351,6 +350,9 @@ auto RunSingleWindowVisualTest(const FVisualRunConfig &cfg,
     auto platformWindow = backend->GetMainSystemWindow();
     platformWindow->SetupGUIContext();
     platformWindow->SetSystemWindowTitle(title);
+
+    auto rootWindow = makeRootWindow();
+    if (rootWindow == nullptr) throw Exception("Visual test root window is null.");
 
     auto wm = New<Graphics::FSlabWindowManager>();
     wm->AddSlabWindow(rootWindow, false);
@@ -369,7 +371,7 @@ auto RunWindowPanelGuiTest(const int argc, const char **argv) -> int {
         argc, argv, "SlabTests window-panel-gui", "Panel+GUI deferred render propagation test.");
     if (wantsHelp) return 0;
 
-    return RunSingleWindowVisualTest(cfg, New<FSimplePanelWithGUI>(), "SlabTests: window-panel-gui");
+    return RunSingleWindowVisualTest(cfg, [] { return New<FSimplePanelWithGUI>(); }, "SlabTests: window-panel-gui");
 }
 
 auto RunPlot2DBasicTest(const int argc, const char **argv) -> int {
@@ -377,7 +379,7 @@ auto RunPlot2DBasicTest(const int argc, const char **argv) -> int {
         argc, argv, "SlabTests plot2d-basic", "Basic Plot2D visual test.");
     if (wantsHelp) return 0;
 
-    return RunSingleWindowVisualTest(cfg, MakePlot2DBasicWindow(), "SlabTests: plot2d-basic");
+    return RunSingleWindowVisualTest(cfg, [] { return MakePlot2DBasicWindow(); }, "SlabTests: plot2d-basic");
 }
 
 auto RunPanelPlotAndGuiTest(const int argc, const char **argv) -> int {
@@ -385,7 +387,7 @@ auto RunPanelPlotAndGuiTest(const int argc, const char **argv) -> int {
         argc, argv, "SlabTests panel-plot-and-gui", "Composite panel with GUI+plot visual test.");
     if (wantsHelp) return 0;
 
-    return RunSingleWindowVisualTest(cfg, New<FPanelPlotAndGUIWindow>(), "SlabTests: panel-plot-and-gui");
+    return RunSingleWindowVisualTest(cfg, [] { return New<FPanelPlotAndGUIWindow>(); }, "SlabTests: panel-plot-and-gui");
 }
 
 auto RunSPILiveMonitorMockTest(const int argc, const char **argv) -> int {
