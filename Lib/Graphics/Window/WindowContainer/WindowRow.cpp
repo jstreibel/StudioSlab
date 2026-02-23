@@ -201,11 +201,17 @@ namespace Slab::Graphics {
     }
 
     bool FWindowRow::NotifyMouseMotion(int x, int y, int dx, int dy) {
+        auto Responded = false;
         for (auto & [Window, Width]: WindowsList)
         {
-            if (Window->IsMouseInside() && Window->NotifyMouseMotion(x, y, dx, dy))
-                return true;
+            if (Window->IsPointWithin(FPoint2D{DevFloat(x), DevFloat(y)})) {
+                Responded = Window->NotifyMouseMotion(x, y, dx, dy);
+            }
         }
+
+        if (Responded) return true;
+
+        return FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
 
         //auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
         //if(mouseState.leftPressed){
@@ -214,8 +220,6 @@ namespace Slab::Graphics {
 //
         //    }
         //}
-
-        return false;
     }
 
     bool FWindowRow::NotifyMouseButton(EMouseButton button, EKeyState state,
