@@ -42,6 +42,21 @@ namespace {
                                    UInt N,
                                    DevFloat Dt,
                                    UInt Steps) -> void;
+    auto ToDisplayString(Math::Numerics::V2::EEventReasonV2 reason) -> Str;
+
+    auto ToDisplayString(const Math::Numerics::V2::EEventReasonV2 reason) -> Str {
+        using EReason = Math::Numerics::V2::EEventReasonV2;
+
+        switch (reason) {
+        case EReason::Initial: return "Initial";
+        case EReason::Scheduled: return "Scheduled";
+        case EReason::Forced: return "Forced";
+        case EReason::Final: return "Final";
+        case EReason::AbortFinal: return "AbortFinal";
+        }
+
+        return "Unknown";
+    }
 
     class FSPIPassiveMonitorWindowV2 final : public Graphics::FWindowPanel {
         TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView;
@@ -84,7 +99,7 @@ namespace {
             }
 
             GuiWindow->AddVolatileStat("Version: " + ToStr(telemetry.PublishedVersion));
-            GuiWindow->AddVolatileStat("Reason: " + ToStr(static_cast<int>(telemetry.LastReason)));
+            GuiWindow->AddVolatileStat("Reason: " + ToDisplayString(telemetry.LastReason));
             GuiWindow->AddVolatileStat(Str("Bound session: ") + (LiveView->HasBoundSession() ? "yes" : "no"));
             GuiWindow->AddVolatileStat(Str("Lease this frame: ") + (bLastLeaseAcquired ? "yes" : "no"));
             GuiWindow->AddVolatileStat(Str("State present: ") + (telemetry.bHasState ? "yes" : "no"));
@@ -149,6 +164,7 @@ namespace {
         DevFloat L = 1.0;
         UInt N = 64;
         UIntBig Interval = 10;
+        UIntBig MonitorInterval = 10;
         UIntBig Batch = 2048;
         bool bEnableGLMonitor = false;
     };
@@ -174,6 +190,7 @@ namespace {
         ConfigureSPINumericConfig(numericConfig, cfg.L, cfg.Time, cfg.N, cfg.Dt, cfg.Steps);
 
         auto recipe = New<FSPIRecipeV2>(numericConfig, cfg.Interval, liveView);
+        recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
 
         auto wm = New<Graphics::FSlabWindowManager>();
@@ -257,7 +274,7 @@ namespace {
                 << "Examples:\n"
                 << "  Studios metropolis --steps 5000 --interval 500\n"
                 << "  Studios spi --steps 8 --dt 0.125 --time 0.5 --N 16 --interval 2\n"
-                << "  Studios spi --gl --steps 2000 --interval 5\n"
+                << "  Studios spi --gl --steps 2000 --interval 50 --monitor-interval 2\n"
                 << "  Studios spi --help\n";
     }
 
@@ -371,6 +388,9 @@ namespace {
             ("L", "Spatial length", cxxopts::value<DevFloat>()->default_value("1.0"))
             ("N", "Spatial site count", cxxopts::value<UInt>()->default_value("64"))
             ("interval", "Output/listener interval (steps)", cxxopts::value<UIntBig>()->default_value("10"))
+            ("monitor-interval",
+             "Live-view publish interval (steps) for --gl; defaults to --interval",
+             cxxopts::value<UIntBig>())
             ("batch", "Max integration batch size", cxxopts::value<UIntBig>()->default_value("2048"));
 
         const auto result = ParseSubcommandOptions(argc, argv, options);
@@ -385,6 +405,9 @@ namespace {
         const auto L = result["L"].as<DevFloat>();
         const auto N = result["N"].as<UInt>();
         const auto interval = result["interval"].as<UIntBig>();
+        const auto monitorInterval = result.count("monitor-interval") > 0
+            ? result["monitor-interval"].as<UIntBig>()
+            : interval;
         const auto batch = result["batch"].as<UIntBig>();
         const auto useGL = result.count("gl") > 0;
 
@@ -395,6 +418,7 @@ namespace {
         cfg.L = L;
         cfg.N = N;
         cfg.Interval = interval;
+        cfg.MonitorInterval = monitorInterval;
         cfg.Batch = batch;
         cfg.bEnableGLMonitor = useGL;
 

@@ -12,6 +12,7 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
     class FSPIRecipeV2 final : public Math::Numerics::V2::FSimulationRecipeV2 {
         TPointer<SPINumericConfig> NumericConfig;
         UIntBig ConsoleIntervalSteps = 1;
+        UIntBig LiveViewIntervalSteps = 0; // 0 => follow ConsoleIntervalSteps
         TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView = nullptr;
 
         auto BuildStepper() const -> TPointer<Math::FStepper>;
@@ -23,6 +24,8 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
 
         auto BuildSession() -> TPointer<Math::Numerics::V2::FSimulationSessionV2> override;
         auto BuildDefaultSubscriptions() -> Vector<Math::Numerics::V2::FSubscriptionV2> override;
+
+        auto SetLiveViewIntervalSteps(UIntBig liveViewIntervalSteps) -> void;
 
         [[nodiscard]] auto GetRunLimits() const -> Math::Numerics::V2::FRunLimitsV2 override;
         [[nodiscard]] auto GetNumericConfig() const -> TPointer<SPINumericConfig>;

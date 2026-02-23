@@ -36,6 +36,20 @@ namespace {
 
 using namespace Slab;
 
+auto ToDisplayString(const Math::Numerics::V2::EEventReasonV2 reason) -> Str {
+    using EReason = Math::Numerics::V2::EEventReasonV2;
+
+    switch (reason) {
+    case EReason::Initial: return "Initial";
+    case EReason::Scheduled: return "Scheduled";
+    case EReason::Forced: return "Forced";
+    case EReason::Final: return "Final";
+    case EReason::AbortFinal: return "AbortFinal";
+    }
+
+    return "Unknown";
+}
+
 struct FVisualRunConfig {
     std::optional<UInt> MaxFrames = std::nullopt;
     std::optional<double> MaxSeconds = std::nullopt;
@@ -151,6 +165,70 @@ public:
     }
 };
 
+class FColumnHeavyPanelLayoutWindow final : public Graphics::FWindowPanel {
+    TPointer<Graphics::FGUIWindow> LeftTop;
+    TPointer<Graphics::FGUIWindow> LeftBottom;
+    TPointer<Graphics::FPlot2DWindow> MidPlot;
+    TPointer<Graphics::FGUIWindow> MidBottom;
+    TPointer<Graphics::FGUIWindow> RightTop;
+    TPointer<Graphics::FGUIWindow> RightBottom;
+    TPointer<Graphics::RtoRFunctionArtist> MidArtist;
+    UInt Frame = 0;
+
+public:
+    FColumnHeavyPanelLayoutWindow()
+    : FWindowPanel(Graphics::FSlabWindowConfig("Column-heavy panel layout"))
+    , LeftTop(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("Left Top")))
+    , LeftBottom(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("Left Bottom")))
+    , MidPlot(New<Graphics::FPlot2DWindow>("Mid Plot"))
+    , MidBottom(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("Mid Bottom")))
+    , RightTop(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("Right Top")))
+    , RightBottom(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("Right Bottom"))) {
+        auto func = New<Math::RtoR::FSine>(1.0, 5.0);
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        MidArtist = New<Graphics::RtoRFunctionArtist>(func, style, 2048);
+        MidArtist->SetLabel("sin(5x)");
+        MidArtist->SetAffectGraphRanges(true);
+        MidPlot->AddArtist(MidArtist);
+        MidPlot->SetAutoReviewGraphRanges(true);
+
+        AddWindow(LeftTop, false, 0.25f);
+        AddWindow(LeftBottom, false);
+
+        AddWindow(MidPlot, true, 0.50f);
+        AddWindow(MidBottom, false);
+
+        AddWindow(RightTop, true, 0.25f);
+        AddWindow(RightBottom, false);
+
+        SetColumnRelativeWidth(0, 0.25f);
+        SetColumnRelativeWidth(1, 0.50f);
+        SetColumnRelativeWidth(2, 0.25f);
+    }
+
+    auto ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void override {
+        ++Frame;
+
+        LeftTop->AddVolatileStat("SlabTests: column-heavy-panel");
+        LeftTop->AddVolatileStat("Frame: " + ToStr(Frame));
+        LeftTop->AddVolatileStat("Expect symmetric pane insets");
+
+        LeftBottom->AddVolatileStat("Column 1 / Row 2");
+        LeftBottom->AddVolatileStat("Pane border should be visible");
+
+        MidBottom->AddVolatileStat("Column 2 / Row 2");
+        MidBottom->AddVolatileStat("Plot above + GUI here");
+
+        RightTop->AddVolatileStat("Column 3 / Row 1");
+        RightTop->AddVolatileStat("Nested content pane frame");
+
+        RightBottom->AddVolatileStat("Column 3 / Row 2");
+        RightBottom->AddVolatileStat("No clipped borders");
+
+        FWindowPanel::ImmediateDraw(platformWindow);
+    }
+};
+
 class FSPILiveViewMonitorWindowMock final : public Graphics::FWindowPanel {
     TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView;
     TPointer<Graphics::FGUIWindow> GuiWindow;
@@ -222,7 +300,7 @@ public:
                 GuiWindow->AddVolatileStat("Sim time: " + ToStr(*t.Cursor.SimulationTime, 4, true));
             }
             GuiWindow->AddVolatileStat("Version: " + ToStr(t.PublishedVersion));
-            GuiWindow->AddVolatileStat("Reason: " + ToStr(static_cast<int>(t.LastReason)));
+            GuiWindow->AddVolatileStat("Reason: " + ToDisplayString(t.LastReason));
             GuiWindow->AddVolatileStat(Str("Bound: ") + (LiveView->HasBoundSession() ? "yes" : "no"));
             GuiWindow->AddVolatileStat(Str("Lease: ") + (bLastLeaseAcquired ? "yes" : "no"));
         }
@@ -390,6 +468,18 @@ auto RunPanelPlotAndGuiTest(const int argc, const char **argv) -> int {
     return RunSingleWindowVisualTest(cfg, [] { return New<FPanelPlotAndGUIWindow>(); }, "SlabTests: panel-plot-and-gui");
 }
 
+auto RunColumnHeavyPanelTest(const int argc, const char **argv) -> int {
+    const auto [cfg, wantsHelp] = ParseCommonVisualRunConfig(
+        argc, argv, "SlabTests column-heavy-panel",
+        "Column-heavy composite panel for pane framing/inset visual regression checks.");
+    if (wantsHelp) return 0;
+
+    return RunSingleWindowVisualTest(
+        cfg,
+        [] { return New<FColumnHeavyPanelLayoutWindow>(); },
+        "SlabTests: column-heavy-panel");
+}
+
 auto RunSPILiveMonitorMockTest(const int argc, const char **argv) -> int {
     CLOptionsDescription options(
         "SlabTests spi-live-monitor-mock",
@@ -490,6 +580,7 @@ auto GetCommands() -> const Vector<FCommandEntry> & {
         {"window-panel-gui", "Panel with FGUIWindow (deferred ImGui render path test)", &RunWindowPanelGuiTest},
         {"plot2d-basic", "Basic Plot2D window with sine artist", &RunPlot2DBasicTest},
         {"panel-plot-and-gui", "Composite panel containing GUI and Plot2D", &RunPanelPlotAndGuiTest},
+        {"column-heavy-panel", "Column-heavy panel layout to inspect pane framing/insets", &RunColumnHeavyPanelTest},
         {"spi-live-monitor-mock", "Passive V2 SPI-like monitor with mock live publisher", &RunSPILiveMonitorMockTest},
     };
     return Commands;
@@ -518,6 +609,7 @@ auto PrintRootUsage() -> void {
         << "  SlabTests run <test-name> [test-options]\n\n"
         << "Examples:\n"
         << "  SlabTests panel-plot-and-gui --seconds 5\n"
+        << "  SlabTests column-heavy-panel --seconds 5\n"
         << "  SlabTests window-panel-gui --frames 300\n"
         << "  SlabTests spi-live-monitor-mock --seconds 8\n";
 }

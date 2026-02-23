@@ -62,6 +62,7 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
 
     auto FSPIRecipeV2::BuildDefaultSubscriptions() -> Vector<FSubscriptionV2> {
         const auto totalSteps = NumericConfig != nullptr ? NumericConfig->Get_n() : UIntBig(0);
+        const auto liveViewInterval = LiveViewIntervalSteps > 0 ? LiveViewIntervalSteps : ConsoleIntervalSteps;
         auto console = New<FConsoleProgressListenerV2>(totalSteps, "SPI Console V2");
         Vector<FSubscriptionV2> subscriptions = {{
             New<FEveryNStepsTriggerV2>(ConsoleIntervalSteps),
@@ -74,7 +75,7 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
         if (LiveView != nullptr) {
             auto publisher = New<FSessionLiveViewPublisherListenerV2>(LiveView, "SPI Live View Publisher V2");
             subscriptions.push_back({
-                New<FEveryNStepsTriggerV2>(ConsoleIntervalSteps),
+                New<FEveryNStepsTriggerV2>(liveViewInterval),
                 publisher,
                 EDeliveryModeV2::Synchronous,
                 true,
@@ -83,6 +84,10 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
         }
 
         return subscriptions;
+    }
+
+    auto FSPIRecipeV2::SetLiveViewIntervalSteps(const UIntBig liveViewIntervalSteps) -> void {
+        LiveViewIntervalSteps = liveViewIntervalSteps == 0 ? UIntBig(0) : std::max<UIntBig>(1, liveViewIntervalSteps);
     }
 
     auto FSPIRecipeV2::GetRunLimits() const -> FRunLimitsV2 {
