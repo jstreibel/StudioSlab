@@ -11,6 +11,7 @@
 #include "Graphics/Window/GUIWindow.h"
 #include "Graphics/Window/SlabWindowManager.h"
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
+#include "Graphics/Window/WindowContainer/WindowRow.h"
 
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
@@ -21,6 +22,7 @@
 #include "Models/Stochastic-Path-Integral/SPI-State.h"
 
 #include "StudioSlab.h"
+#include "../Common/VisualHost.h"
 
 #include <algorithm>
 #include <atomic>
@@ -55,39 +57,6 @@ struct FVisualRunConfig {
     std::optional<double> MaxSeconds = std::nullopt;
     Int Width = 1600;
     Int Height = 900;
-};
-
-class FAutoCloseListener final : public Graphics::FPlatformWindowEventListener {
-    std::optional<UInt> MaxFrames;
-    std::optional<double> MaxSeconds;
-    UInt FrameCount = 0;
-    std::optional<std::chrono::steady_clock::time_point> StartTime = std::nullopt;
-
-public:
-    explicit FAutoCloseListener(const FVisualRunConfig &cfg)
-    : MaxFrames(cfg.MaxFrames)
-    , MaxSeconds(cfg.MaxSeconds) {
-    }
-
-    auto NotifyRender(const Graphics::FPlatformWindow &platformWindow) -> bool override {
-        const auto now = std::chrono::steady_clock::now();
-        if (!StartTime.has_value()) StartTime = now;
-
-        ++FrameCount;
-
-        bool shouldClose = false;
-        if (MaxFrames.has_value() && FrameCount >= *MaxFrames) shouldClose = true;
-        if (MaxSeconds.has_value()) {
-            const auto elapsed = std::chrono::duration<double>(now - *StartTime).count();
-            if (elapsed >= *MaxSeconds) shouldClose = true;
-        }
-
-        if (shouldClose) {
-            const_cast<Graphics::FPlatformWindow &>(platformWindow).SignalClose();
-        }
-
-        return false;
-    }
 };
 
 class FSimplePanelWithGUI final : public Graphics::FWindowPanel {
@@ -162,6 +131,52 @@ public:
         Gui->AddVolatileStat("Frame: " + ToStr(Frame));
         Gui->AddVolatileStat("Expected: GUI + plot visible simultaneously");
         FWindowPanel::ImmediateDraw(platformWindow);
+    }
+};
+
+class FRowHeavyLayoutWindow final : public Graphics::FWindowRow {
+    TPointer<Graphics::FGUIWindow> LeftPane;
+    TPointer<Graphics::FGUIWindow> MidPane;
+    TPointer<Graphics::FPlot2DWindow> PlotPane;
+    TPointer<Graphics::FGUIWindow> RightPane;
+    TPointer<Graphics::RtoRFunctionArtist> PlotArtist;
+    UInt Frame = 0;
+
+public:
+    FRowHeavyLayoutWindow()
+    : FWindowRow("Row-heavy layout")
+    , LeftPane(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("Left")))
+    , MidPane(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("Mid")))
+    , PlotPane(New<Graphics::FPlot2DWindow>("Plot"))
+    , RightPane(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("Right"))) {
+        auto func = New<Math::RtoR::FSine>(1.0, 7.0);
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        PlotArtist = New<Graphics::RtoRFunctionArtist>(func, style, 2048);
+        PlotArtist->SetLabel("sin(7x)");
+        PlotArtist->SetAffectGraphRanges(true);
+        PlotPane->AddArtist(PlotArtist);
+        PlotPane->SetAutoReviewGraphRanges(true);
+
+        AddWindow(LeftPane, Graphics::FWindowRow::Left, 0.18f);
+        AddWindow(MidPane, Graphics::FWindowRow::Right, 0.22f);
+        AddWindow(PlotPane, Graphics::FWindowRow::Right, 0.42f);
+        AddWindow(RightPane, Graphics::FWindowRow::Right, -1.0f);
+    }
+
+    auto ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void override {
+        ++Frame;
+
+        LeftPane->AddVolatileStat("SlabTests: row-heavy-layout");
+        LeftPane->AddVolatileStat("Frame: " + ToStr(Frame));
+        LeftPane->AddVolatileStat("Row pane frames visible");
+
+        MidPane->AddVolatileStat("Mixed GUI + plot in row");
+        MidPane->AddVolatileStat("Check symmetric horizontal gaps");
+
+        RightPane->AddVolatileStat("Right pane");
+        RightPane->AddVolatileStat("No clipped border lines");
+
+        FWindowRow::ImmediateDraw(platformWindow);
     }
 };
 
@@ -419,28 +434,16 @@ auto ParseCommonVisualRunConfig(const int argc, const char **argv, const Str &pr
 auto RunSingleWindowVisualTest(const FVisualRunConfig &cfg,
                                const std::function<TPointer<Graphics::FSlabWindow>()> &makeRootWindow,
                                const Str &title) -> int {
-    Slab::Startup();
-    Core::StartBackend("GLFW");
-    Core::LoadModule("ModernOpenGL");
-    Graphics::FPlotThemeManager::GetInstance();
-
-    auto backend = Graphics::GetGraphicsBackend();
-    auto platformWindow = backend->GetMainSystemWindow();
-    platformWindow->SetupGUIContext();
-    platformWindow->SetSystemWindowTitle(title);
+    auto host = Slab::Studios::Common::CreateGLFWVisualHost(title);
 
     auto rootWindow = makeRootWindow();
     if (rootWindow == nullptr) throw Exception("Visual test root window is null.");
 
-    auto wm = New<Graphics::FSlabWindowManager>();
-    wm->AddSlabWindow(rootWindow, false);
-    platformWindow->AddAndOwnEventListener(wm);
-
-    if (cfg.MaxFrames.has_value() || cfg.MaxSeconds.has_value()) {
-        platformWindow->AddAndOwnEventListener(New<FAutoCloseListener>(cfg));
-    }
-
-    backend->Run();
+    Slab::Studios::Common::AddRootSlabWindow(host, rootWindow, false);
+    Slab::Studios::Common::AttachAutoCloseOnRenderBudget(
+        host,
+        {.MaxFrames = cfg.MaxFrames, .MaxSeconds = cfg.MaxSeconds});
+    Slab::Studios::Common::RunVisualHost(host);
     return 0;
 }
 
@@ -466,6 +469,18 @@ auto RunPanelPlotAndGuiTest(const int argc, const char **argv) -> int {
     if (wantsHelp) return 0;
 
     return RunSingleWindowVisualTest(cfg, [] { return New<FPanelPlotAndGUIWindow>(); }, "SlabTests: panel-plot-and-gui");
+}
+
+auto RunRowHeavyLayoutTest(const int argc, const char **argv) -> int {
+    const auto [cfg, wantsHelp] = ParseCommonVisualRunConfig(
+        argc, argv, "SlabTests row-heavy-layout",
+        "Row-heavy composite for pane framing/inset visual regression checks.");
+    if (wantsHelp) return 0;
+
+    return RunSingleWindowVisualTest(
+        cfg,
+        [] { return New<FRowHeavyLayoutWindow>(); },
+        "SlabTests: row-heavy-layout");
 }
 
 auto RunColumnHeavyPanelTest(const int argc, const char **argv) -> int {
@@ -508,27 +523,16 @@ auto RunSPILiveMonitorMockTest(const int argc, const char **argv) -> int {
     const auto maxSteps = result["steps"].as<UIntBig>();
     const auto periodMs = std::max(1, result["period-ms"].as<int>());
 
-    Slab::Startup();
-    Core::StartBackend("GLFW");
-    Core::LoadModule("ModernOpenGL");
-    Graphics::FPlotThemeManager::GetInstance();
-
-    auto backend = Graphics::GetGraphicsBackend();
-    auto platformWindow = backend->GetMainSystemWindow();
-    platformWindow->SetupGUIContext();
-    platformWindow->SetSystemWindowTitle("SlabTests: spi-live-monitor-mock");
+    auto host = Slab::Studios::Common::CreateGLFWVisualHost("SlabTests: spi-live-monitor-mock");
 
     auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
     auto session = New<FMockSPISessionV2>();
     liveView->BindSession(session);
 
-    auto wm = New<Graphics::FSlabWindowManager>();
-    wm->AddSlabWindow(New<FSPILiveViewMonitorWindowMock>(liveView), false);
-    platformWindow->AddAndOwnEventListener(wm);
-
-    if (cfg.MaxFrames.has_value() || cfg.MaxSeconds.has_value()) {
-        platformWindow->AddAndOwnEventListener(New<FAutoCloseListener>(cfg));
-    }
+    Slab::Studios::Common::AddRootSlabWindow(host, New<FSPILiveViewMonitorWindowMock>(liveView), false);
+    Slab::Studios::Common::AttachAutoCloseOnRenderBudget(
+        host,
+        {.MaxFrames = cfg.MaxFrames, .MaxSeconds = cfg.MaxSeconds});
 
     std::atomic_bool stop{false};
     std::thread producer([&]() {
@@ -554,7 +558,7 @@ auto RunSPILiveMonitorMockTest(const int argc, const char **argv) -> int {
     });
 
     try {
-        backend->Run();
+        Slab::Studios::Common::RunVisualHost(host);
     } catch (...) {
         stop.store(true);
         if (producer.joinable()) producer.join();
@@ -580,6 +584,7 @@ auto GetCommands() -> const Vector<FCommandEntry> & {
         {"window-panel-gui", "Panel with FGUIWindow (deferred ImGui render path test)", &RunWindowPanelGuiTest},
         {"plot2d-basic", "Basic Plot2D window with sine artist", &RunPlot2DBasicTest},
         {"panel-plot-and-gui", "Composite panel containing GUI and Plot2D", &RunPanelPlotAndGuiTest},
+        {"row-heavy-layout", "Row-heavy layout to inspect pane framing/insets", &RunRowHeavyLayoutTest},
         {"column-heavy-panel", "Column-heavy panel layout to inspect pane framing/insets", &RunColumnHeavyPanelTest},
         {"spi-live-monitor-mock", "Passive V2 SPI-like monitor with mock live publisher", &RunSPILiveMonitorMockTest},
     };
@@ -609,6 +614,7 @@ auto PrintRootUsage() -> void {
         << "  SlabTests run <test-name> [test-options]\n\n"
         << "Examples:\n"
         << "  SlabTests panel-plot-and-gui --seconds 5\n"
+        << "  SlabTests row-heavy-layout --seconds 5\n"
         << "  SlabTests column-heavy-panel --seconds 5\n"
         << "  SlabTests window-panel-gui --frames 300\n"
         << "  SlabTests spi-live-monitor-mock --seconds 8\n";

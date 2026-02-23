@@ -28,10 +28,13 @@ This is a small internal contract note to keep the window/plot/GUI stack coheren
 
 3. Visual tests should verify composite layouts with mixed GUI + plot panes.
 
+4. Visual apps/tests should prefer the shared host setup path (`Studios/Common/VisualHost.*`) so backend/GUI/window-manager initialization stays consistent.
+
 ## Current Visual Regression Coverage (`SlabTests`)
 
 - `window-panel-gui` : deferred GUI propagation in a panel
 - `panel-plot-and-gui` : mixed GUI + plot visibility in one composite
+- `row-heavy-layout` : row pane framing/inset regression check (mixed GUI + plot)
 - `column-heavy-panel` : pane framing/inset regression check (multi-column, multi-row)
 - `spi-live-monitor-mock` : passive V2 monitor layout + live telemetry/plot updates
 

@@ -22,6 +22,7 @@ message(NOTICE "Added executable Tests")
 
 add_executable(SlabTests
 		SlabTestsMain.cpp
+		../Common/VisualHost.cpp
 )
 target_link_libraries(SlabTests ${SlabLibs} Slab)
 message(NOTICE "Added executable SlabTests")

@@ -22,6 +22,7 @@
 #include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
 
 #include "StudioSlab.h"
+#include "../Common/VisualHost.h"
 
 #include <chrono>
 #include <iostream>
@@ -174,15 +175,7 @@ namespace {
         using namespace Slab::Models::StochasticPathIntegrals;
         using namespace Slab::Models::StochasticPathIntegrals::V2;
 
-        Slab::Startup();
-        Core::StartBackend("GLFW");
-        Core::LoadModule("ModernOpenGL");
-        Graphics::FPlotThemeManager::GetInstance();
-
-        auto backend = Graphics::GetGraphicsBackend();
-        auto platformWindow = backend->GetMainSystemWindow();
-        platformWindow->SetupGUIContext();
-        platformWindow->SetSystemWindowTitle("Studios SPI V2 Monitor");
+        auto host = Slab::Studios::Common::CreateGLFWVisualHost("Studios SPI V2 Monitor");
 
         auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
 
@@ -193,10 +186,8 @@ namespace {
         recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
 
-        auto wm = New<Graphics::FSlabWindowManager>();
         auto monitor = New<FSPIPassiveMonitorWindowV2>(liveView, static_cast<UIntBig>(cfg.Steps));
-        wm->AddSlabWindow(monitor, false);
-        platformWindow->AddAndOwnEventListener(wm);
+        Slab::Studios::Common::AddRootSlabWindow(host, monitor, false);
 
         std::thread worker([&task] { task->Start(); });
 
@@ -207,7 +198,7 @@ namespace {
         };
 
         try {
-            backend->Run();
+            Slab::Studios::Common::RunVisualHost(host);
         } catch (...) {
             cleanupTaskThread();
             throw;
