@@ -8,9 +8,9 @@
 #include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
 
 #include "StudioSlab.h"
-#include "../Common/NumericsV2TaskUtils.h"
-#include "../Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.h"
-#include "../Common/Simulations/V2/SPISliceV2.h"
+#include "../../Slab/Studios/Common/NumericsV2TaskUtils.h"
+#include "../../Slab/Studios/Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.h"
+#include "../../Slab/Studios/Common/Simulations/V2/SPISliceV2.h"
 
 #include <iostream>
 

@@ -22,7 +22,7 @@
 #include "Models/Stochastic-Path-Integral/SPI-State.h"
 
 #include "StudioSlab.h"
-#include "../Common/VisualHost.h"
+#include "../../Slab/Studios/Common/VisualHost.h"
 
 #include <algorithm>
 #include <atomic>

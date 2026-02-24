@@ -111,11 +111,14 @@ Graphics host improvements already in place:
 
 Current direction:
 - `Studios/CLI/main.cpp` handles parsing and subcommand dispatch
-- `Studios/Common/Simulations/V2/*` owns slice-specific config finalization, recipe building, and execution flows
-- `Studios/Common/Monitors/V2/*` owns passive monitor windows
-- `Studios/Common/*` owns shared host/task/telemetry helpers
+- `Slab/Studios/Common/Simulations/V2/*` owns slice-specific config finalization, recipe building, and execution flows
+- `Slab/Studios/Common/Monitors/V2/*` owns passive monitor windows
+- `Slab/Studios/Common/*` owns shared host/task/telemetry helpers
 
 This keeps CLI logic readable while preventing monitor/runtime duplication across subcommands.
+
+Migration note (active):
+- shared Studios-side V2 infrastructure has started moving to root `Slab/Studios/Common` (physical layout only; no namespace churn in the same wave)
 
 ## Legacy vs V2 Policy
 
@@ -220,8 +223,8 @@ AI should report:
 - `Studios` V2 consolidation helpers:
   - task runner helpers (`NumericsV2TaskUtils`)
   - monitored GLFW runner (`V2SimulationRunners`)
-  - passive monitor windows under `Studios/Common/Monitors/V2`
-  - slice builders/execution flows under `Studios/Common/Simulations/V2`
+  - passive monitor windows under `Slab/Studios/Common/Monitors/V2`
+  - slice builders/execution flows under `Slab/Studios/Common/Simulations/V2`
 - Numerics V2 real-time baseline:
   - wall-clock triggers
   - `LatestOnly` delivery (baseline implementation)
@@ -262,8 +265,8 @@ AI should report:
 
 6. **`Studios` CLI should remain orchestration-focused**
 - parsing/dispatch in `main.cpp`
-- slice construction/execution in `Studios/Common/Simulations/V2`
-- monitor rendering in `Studios/Common/Monitors/V2`
+- slice construction/execution in `Slab/Studios/Common/Simulations/V2`
+- monitor rendering in `Slab/Studios/Common/Monitors/V2`
 
 ## Decision Guidance (When in Doubt)
 
@@ -282,3 +285,4 @@ If a change requires broad coupling across numerics + data + graphics, split it 
 
 - `AGENTS.md` (repo-specific workflow and constraints)
 - `Docs/graphics-composition-contract.md` (render/composition rules)
+- `Docs/slab-root-migration-policy.md` (root `Slab/` migration rules)

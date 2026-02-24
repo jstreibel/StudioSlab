@@ -28,7 +28,7 @@ This is a small internal contract note to keep the window/plot/GUI stack coheren
 
 3. Visual tests should verify composite layouts with mixed GUI + plot panes.
 
-4. Visual apps/tests should prefer the shared host setup path (`Studios/Common/VisualHost.*`) so backend/GUI/window-manager initialization stays consistent.
+4. Visual apps/tests should prefer the shared host setup path (`Slab/Studios/Common/VisualHost.*`) so backend/GUI/window-manager initialization stays consistent.
 
 ## Current Visual Regression Coverage (`SlabTests`)
 
