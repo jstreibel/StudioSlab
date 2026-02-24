@@ -40,6 +40,8 @@ namespace Slab::Studios::Common::Simulations::V2 {
         const FRtoRPlaneWavesExecutionConfig &cfg,
         const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView) -> TPointer<Graphics::FSlabWindow>;
 
+    auto RunRtoRPlaneWavesV2(const FRtoRPlaneWavesExecutionConfig &cfg) -> int;
+
 } // namespace Slab::Studios::Common::Simulations::V2
 
 #endif // STUDIOSLAB_STUDIOS_COMMON_SIMULATIONS_V2_KG_RTOR_PLANEWAVES_SLICE_V2_H

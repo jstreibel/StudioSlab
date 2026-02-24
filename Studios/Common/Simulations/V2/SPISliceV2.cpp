@@ -1,8 +1,13 @@
 #include "SPISliceV2.h"
 
 #include "../../Monitors/V2/SPIPassiveMonitorWindowV2.h"
+#include "../../NumericsV2TaskUtils.h"
+#include "../../V2SimulationRunners.h"
 
 #include "Core/Controller/Parameter/BuiltinParameters.h"
+
+#include "Math/Data/V2/SessionLiveViewV2.h"
+#include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
 #include "Models/Stochastic-Path-Integral/SPINumericConfig.h"
 #include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
@@ -66,6 +71,24 @@ namespace Slab::Studios::Common::Simulations::V2 {
         if (liveView == nullptr) throw Exception("SPI passive monitor requires a live view.");
         return New<Slab::Studios::Common::Monitors::V2::FSPIPassiveMonitorWindowV2>(
             liveView, static_cast<UIntBig>(cfg.Steps));
+    }
+
+    auto RunSPIV2(const FSPIExecutionConfig &cfg) -> int {
+        using namespace Slab::Math::Numerics::V2;
+
+        if (cfg.bEnableGLMonitor) {
+            auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
+            auto recipe = BuildSPIRecipeV2(cfg, liveView);
+            auto monitor = BuildSPIPassiveMonitorWindowV2(cfg, liveView);
+            return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
+                "Studios SPI V2 Monitor", recipe, monitor, static_cast<size_t>(cfg.Batch));
+        }
+
+        auto recipe = BuildSPIRecipeV2(cfg);
+        auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
+        const auto status = Slab::Studios::Common::RunTaskAndWait(*task);
+        Slab::Studios::Common::PrintNumericTaskSummary(*task);
+        return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
     }
 
 } // namespace Slab::Studios::Common::Simulations::V2

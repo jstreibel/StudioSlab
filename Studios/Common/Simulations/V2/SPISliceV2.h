@@ -36,6 +36,8 @@ namespace Slab::Studios::Common::Simulations::V2 {
                                         const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
         -> TPointer<Graphics::FSlabWindow>;
 
+    auto RunSPIV2(const FSPIExecutionConfig &cfg) -> int;
+
 } // namespace Slab::Studios::Common::Simulations::V2
 
 #endif // STUDIOSLAB_STUDIOS_COMMON_SIMULATIONS_V2_SPI_SLICE_V2_H

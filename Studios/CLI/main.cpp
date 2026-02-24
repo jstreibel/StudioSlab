@@ -11,7 +11,6 @@
 #include "../Common/NumericsV2TaskUtils.h"
 #include "../Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.h"
 #include "../Common/Simulations/V2/SPISliceV2.h"
-#include "../Common/V2SimulationRunners.h"
 
 #include <iostream>
 
@@ -21,22 +20,6 @@ namespace {
     namespace StudiosSimV2 = Slab::Studios::Common::Simulations::V2;
     using StudiosSimV2::FRtoRPlaneWavesExecutionConfig;
     using StudiosSimV2::FSPIExecutionConfig;
-
-    auto RunTaskWithPassiveSPIGLMonitor(const FSPIExecutionConfig &cfg) -> int {
-        auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
-        auto recipe = StudiosSimV2::BuildSPIRecipeV2(cfg, liveView);
-        auto monitor = StudiosSimV2::BuildSPIPassiveMonitorWindowV2(cfg, liveView);
-        return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
-            "Studios SPI V2 Monitor", recipe, monitor, static_cast<size_t>(cfg.Batch));
-    }
-
-    auto RunTaskWithPassiveRtoRGLMonitor(const FRtoRPlaneWavesExecutionConfig &cfg) -> int {
-        auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
-        auto recipe = StudiosSimV2::BuildRtoRPlaneWavesRecipeV2(cfg, liveView);
-        auto monitor = StudiosSimV2::BuildRtoRPlaneWavesPassiveMonitorWindowV2(cfg, liveView);
-        return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
-            "Studios KGRtoR Plane Waves V2 Monitor", recipe, monitor, static_cast<size_t>(cfg.Batch));
-    }
 
     auto PrintRootUsage() -> void {
         std::cout
@@ -177,16 +160,7 @@ namespace {
         cfg.Batch = batch;
         cfg.bEnableGLMonitor = useGL;
 
-        if (cfg.bEnableGLMonitor) {
-            return RunTaskWithPassiveSPIGLMonitor(cfg);
-        }
-
-        auto recipe = StudiosSimV2::BuildSPIRecipeV2(cfg);
-        auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(batch));
-
-        const auto status = Slab::Studios::Common::RunTaskAndWait(*task);
-        Slab::Studios::Common::PrintNumericTaskSummary(*task);
-        return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
+        return StudiosSimV2::RunSPIV2(cfg);
     }
 
     auto RunRtoRCommand(const int argc, const char **argv) -> int {
@@ -232,18 +206,7 @@ namespace {
         if (result.count("dt") > 0) {
             cfg.Dt = result["dt"].as<DevFloat>();
         }
-        StudiosSimV2::FinalizeRtoRPlaneWavesExecutionConfigV2(cfg);
-
-        if (cfg.bEnableGLMonitor) {
-            return RunTaskWithPassiveRtoRGLMonitor(cfg);
-        }
-
-        auto recipe = StudiosSimV2::BuildRtoRPlaneWavesRecipeV2(cfg);
-        auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
-
-        const auto status = Slab::Studios::Common::RunTaskAndWait(*task);
-        Slab::Studios::Common::PrintNumericTaskSummary(*task);
-        return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
+        return StudiosSimV2::RunRtoRPlaneWavesV2(cfg);
     }
 
     auto IsMetropolisCommand(const Str &name) -> bool {
