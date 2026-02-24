@@ -62,6 +62,7 @@ set ( NUMERICS_SOURCES
 		Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.cpp
 		Numerics/V2/Scheduling/OutputSchedulerV2.cpp
 		Numerics/V2/Scheduling/EveryNStepsTriggerV2.cpp
+		Numerics/V2/Scheduling/EveryWallClockTriggerV2.cpp
 		Numerics/V2/Scheduling/WindowedEveryNStepsTriggerV2.cpp
 		Numerics/V2/Runtime/StepperSessionV2.cpp
 		Numerics/V2/Task/NumericTaskV2.cpp

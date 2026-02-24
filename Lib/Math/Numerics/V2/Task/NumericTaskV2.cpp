@@ -148,7 +148,7 @@ namespace Slab::Math::Numerics::V2 {
             auto dueCursor = Session->GetCursor();
             dueCursor.WallClockSeconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - taskStart).count();
 
-            const auto due = Scheduler.CollectDueSubscriptions(Subscriptions, dueCursor);
+            const auto due = Scheduler.CollectDueSubscriptionsBetween(Subscriptions, cursor, dueCursor);
             if (!due.empty()) {
                 auto event = BuildEvent(EEventReasonV2::Scheduled);
                 event.Cursor.WallClockSeconds = dueCursor.WallClockSeconds;

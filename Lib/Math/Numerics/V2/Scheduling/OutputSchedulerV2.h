@@ -18,6 +18,11 @@ namespace Slab::Math::Numerics::V2 {
 
         [[nodiscard]] auto CollectDueSubscriptions(const Vector<FSubscriptionV2> &subscriptions,
                                                    const FSimulationCursorV2 &cursor) const -> Vector<size_t>;
+
+        [[nodiscard]] auto CollectDueSubscriptionsBetween(const Vector<FSubscriptionV2> &subscriptions,
+                                                          const FSimulationCursorV2 &prevCursor,
+                                                          const FSimulationCursorV2 &currCursor) const
+                -> Vector<size_t>;
     };
 
 } // namespace Slab::Math::Numerics::V2

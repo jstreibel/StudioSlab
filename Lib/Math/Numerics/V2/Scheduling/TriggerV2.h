@@ -22,6 +22,12 @@ namespace Slab::Math::Numerics::V2 {
         [[nodiscard]] virtual auto GetNextDueStepAfter(const FSimulationCursorV2 &currentCursor)
                 -> std::optional<UIntBig> = 0;
 
+        [[nodiscard]] virtual auto GetNextDueWallClockAfter(const FSimulationCursorV2 &currentCursor)
+                -> std::optional<double> {
+            (void) currentCursor;
+            return std::nullopt;
+        }
+
         [[nodiscard]] virtual auto IsDue(const FSimulationCursorV2 &cursor) const -> bool = 0;
     };
 

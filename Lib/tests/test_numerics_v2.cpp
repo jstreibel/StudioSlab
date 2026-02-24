@@ -14,6 +14,7 @@
 #include "Math/Numerics/V2/Listeners/DummyListenerV2.h"
 #include "Math/Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
+#include "Math/Numerics/V2/Scheduling/EveryWallClockTriggerV2.h"
 #include "Math/Numerics/V2/Scheduling/OutputSchedulerV2.h"
 #include "Math/Numerics/V2/Scheduling/WindowedEveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
@@ -136,6 +137,42 @@ namespace {
         }
     };
 
+    class FSleepingCountingSessionV2 final : public FSimulationSessionV2 {
+        FSimulationCursorV2 Cursor;
+        std::chrono::milliseconds StepSleep;
+
+    public:
+        explicit FSleepingCountingSessionV2(const std::chrono::milliseconds stepSleep = std::chrono::milliseconds(5))
+        : StepSleep(stepSleep) {
+            Cursor.Step = 0;
+            Cursor.SimulationTime = std::nullopt;
+        }
+
+        auto InitializeForCurrentThread() -> void override {
+        }
+
+    protected:
+        auto StepUnsafe(const UIntBig nSteps) -> bool override {
+            if (nSteps == 0) return false;
+            std::this_thread::sleep_for(StepSleep);
+            Cursor.Step += nSteps;
+            return true;
+        }
+
+        [[nodiscard]] auto GetCursorUnsafe() const -> FSimulationCursorV2 override {
+            return Cursor;
+        }
+
+        [[nodiscard]] auto GetCurrentStateUnsafe() const -> Math::Base::EquationState_constptr override {
+            return nullptr;
+        }
+
+    public:
+        [[nodiscard]] auto SupportsSimulationTime() const -> bool override {
+            return false;
+        }
+    };
+
     class FRecordingListenerV2 : public IListenerV2 {
     protected:
         Vector<FRecordedEventV2> Events;
@@ -192,6 +229,59 @@ namespace {
             if (Task != nullptr && event.Cursor.Step >= AbortStep) {
                 Task->Abort();
             }
+        }
+    };
+
+    class FAbortAfterNSamplesListenerV2 final : public FRecordingListenerV2 {
+        size_t MaxSamples;
+        size_t SeenSamples = 0;
+        FNumericTaskV2 *Task = nullptr;
+
+    public:
+        explicit FAbortAfterNSamplesListenerV2(const size_t maxSamples)
+        : FRecordingListenerV2("V2 Abort After N Samples Listener")
+        , MaxSamples(maxSamples) {
+        }
+
+        auto SetTask(FNumericTaskV2 *task) -> void {
+            Task = task;
+        }
+
+        auto OnSample(const FSimulationEventV2 &event) -> void override {
+            FRecordingListenerV2::OnSample(event);
+            ++SeenSamples;
+            if (Task != nullptr && SeenSamples >= MaxSamples) Task->Abort();
+        }
+    };
+
+    class FSlowLatestOnlyListenerV2 final : public IListenerV2 {
+        mutable std::mutex Mutex;
+        Vector<UIntBig> SampleSteps;
+        std::chrono::milliseconds Delay;
+
+    public:
+        explicit FSlowLatestOnlyListenerV2(std::chrono::milliseconds delay = std::chrono::milliseconds(10))
+        : Delay(delay) {
+        }
+
+        auto OnSample(const FSimulationEventV2 &event) -> void override {
+            std::this_thread::sleep_for(Delay);
+            std::lock_guard lock(Mutex);
+            SampleSteps.push_back(event.Cursor.Step);
+        }
+
+        [[nodiscard]] auto OnRunFinished(const FSimulationEventV2 &finalEvent) -> bool override {
+            (void) finalEvent;
+            return true;
+        }
+
+        [[nodiscard]] auto GetName() const -> Str override {
+            return "Slow LatestOnly Listener";
+        }
+
+        [[nodiscard]] auto GetSampleSteps() const -> Vector<UIntBig> {
+            std::lock_guard lock(Mutex);
+            return SampleSteps;
         }
     };
 
@@ -779,4 +869,87 @@ TEST_CASE("PhaseF V2 - SessionLiveView facade remains compatible on top of gener
     event.Reason = EEventReasonV2::Final;
     liveView->PublishEvent(event);
     CHECK_FALSE(liveView->HasBoundSession());
+}
+
+TEST_CASE("PhaseG V2 - OutputScheduler detects wall-clock trigger crossings", "[V2][PhaseG][Scheduler][WallClock]") {
+    using namespace Slab::Math::Numerics::V2;
+
+    auto listener = New<FRecordingListenerV2>("wall-clock");
+    Vector<FSubscriptionV2> subscriptions = {
+        {New<FEveryWallClockTriggerV2>(0.1), listener, EDeliveryModeV2::Synchronous, false, false}
+    };
+
+    FOutputSchedulerV2 scheduler;
+    scheduler.Reset(subscriptions, FSimulationCursorV2{.Step = 0, .WallClockSeconds = 0.0});
+
+    CHECK(scheduler.CollectDueSubscriptionsBetween(
+        subscriptions,
+        FSimulationCursorV2{.Step = 1, .WallClockSeconds = 0.05},
+        FSimulationCursorV2{.Step = 2, .WallClockSeconds = 0.09}).empty());
+
+    const auto due = scheduler.CollectDueSubscriptionsBetween(
+        subscriptions,
+        FSimulationCursorV2{.Step = 2, .WallClockSeconds = 0.09},
+        FSimulationCursorV2{.Step = 3, .WallClockSeconds = 0.12});
+    REQUIRE(due.size() == 1);
+    CHECK(due[0] == 0);
+}
+
+TEST_CASE("PhaseG V2 - LatestOnly delivery coalesces pending samples and flushes before final", "[V2][PhaseG][Dispatcher][LatestOnly]") {
+    using namespace Slab::Math::Numerics::V2;
+
+    auto listener = New<FSlowLatestOnlyListenerV2>(std::chrono::milliseconds(15));
+    Vector<FSubscriptionV2> subscriptions = {
+        {New<FEveryNStepsTriggerV2>(1), listener, EDeliveryModeV2::LatestOnly, false, true}
+    };
+
+    FOutputDispatcherV2 dispatcher;
+    const Vector<size_t> dueIndices = {0};
+
+    for (UIntBig step = 1; step <= 20; ++step) {
+        FSimulationEventV2 sample;
+        sample.Cursor.Step = step;
+        sample.Reason = EEventReasonV2::Scheduled;
+        dispatcher.DispatchScheduled(subscriptions, dueIndices, sample);
+    }
+
+    FSimulationEventV2 finalEvent;
+    finalEvent.Cursor.Step = 20;
+    finalEvent.Reason = EEventReasonV2::Final;
+    CHECK(dispatcher.DispatchRunFinished(subscriptions, finalEvent));
+
+    const auto steps = listener->GetSampleSteps();
+    REQUIRE_FALSE(steps.empty());
+    CHECK(steps.back() == 20);
+    CHECK(steps.size() < 20);
+}
+
+TEST_CASE("PhaseG V2 - NumericTask can drive wall-clock triggers in open-ended runs", "[V2][PhaseG][Task][WallClock]") {
+    using namespace Slab::Math::Numerics::V2;
+
+    auto listener = New<FAbortAfterNSamplesListenerV2>(3);
+    Vector<FSubscriptionV2> subscriptions = {
+        {New<FEveryWallClockTriggerV2>(0.01), listener, EDeliveryModeV2::Synchronous, false, true}
+    };
+
+    FRunLimitsV2 limits;
+    limits.Mode = ERunModeV2::OpenEnded;
+
+    auto recipe = New<FTestRecipeV2>(
+        []() -> TPointer<FSimulationSessionV2> { return New<FSleepingCountingSessionV2>(std::chrono::milliseconds(5)); },
+        subscriptions,
+        limits);
+
+    auto task = New<FNumericTaskV2>(recipe, false, 1);
+    listener->SetTask(task.get());
+
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskAborted);
+
+    const auto events = listener->GetEvents();
+    REQUIRE_FALSE(events.empty());
+    CHECK(events.back().Reason == EEventReasonV2::AbortFinal);
+
+    size_t scheduledCount = 0;
+    for (const auto &event : events) if (event.Reason == EEventReasonV2::Scheduled) ++scheduledCount;
+    CHECK(scheduledCount >= 3);
 }
