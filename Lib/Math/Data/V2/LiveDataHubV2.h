@@ -16,6 +16,7 @@ namespace Slab::Math::LiveData::V2 {
         struct FSessionStreamEntry {
             TPointer<FSessionViewTopicV2> SessionTopic = nullptr;
             TPointer<FSessionTelemetryTopicV2> TelemetryTopic = nullptr;
+            TPointer<FSessionStatusTopicV2> StatusTopic = nullptr;
             TPointer<FSessionLiveViewV2> LiveViewFacade = nullptr;
         };
 

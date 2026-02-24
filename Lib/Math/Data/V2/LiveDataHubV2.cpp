@@ -14,8 +14,11 @@ namespace Slab::Math::LiveData::V2 {
         if (entry.TelemetryTopic == nullptr) {
             entry.TelemetryTopic = New<FSessionTelemetryTopicV2>(topicName + "/telemetry");
         }
+        if (entry.StatusTopic == nullptr) {
+            entry.StatusTopic = New<FSessionStatusTopicV2>(topicName + "/status");
+        }
         if (entry.LiveViewFacade == nullptr) {
-            entry.LiveViewFacade = New<FSessionLiveViewV2>(entry.SessionTopic, entry.TelemetryTopic);
+            entry.LiveViewFacade = New<FSessionLiveViewV2>(entry.SessionTopic, entry.TelemetryTopic, entry.StatusTopic);
         }
 
         return entry.LiveViewFacade;

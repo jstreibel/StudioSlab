@@ -18,6 +18,18 @@ namespace Slab::Studios::Common {
         return "Unknown";
     }
 
+    auto ToDisplayString(const Math::LiveData::V2::ESessionRunStateV2 runState) -> Str {
+        using ERunState = Math::LiveData::V2::ESessionRunStateV2;
+
+        switch (runState) {
+        case ERunState::Running: return "Running";
+        case ERunState::Finished: return "Finished";
+        case ERunState::Aborted: return "Aborted";
+        }
+
+        return "Unknown";
+    }
+
     auto AppendSessionLiveViewStats(
         const TPointer<Graphics::FGUIWindow> &guiWindow,
         const Str &title,

@@ -11,14 +11,22 @@
 namespace Slab::Studios::Common::Monitors::V2 {
 
     auto FRtoRPlaneWavesPassiveMonitorWindowV2::UpdateStatsWindow() -> void {
+        std::optional<Str> extraLine = Str("Display mode: copied phi");
+        const bool bHasBoundSession = LastStatus.has_value()
+            ? LastStatus->bHasBoundSession
+            : (SessionTopic != nullptr && SessionTopic->HasBoundSession());
+        if (LastStatus.has_value()) {
+            extraLine = *extraLine + " | Run: " + Slab::Studios::Common::ToDisplayString(LastStatus->RunState);
+        }
+
         Slab::Studios::Common::AppendSessionLiveViewStats(
             GuiWindow,
             "KGRtoR Plane Waves V2 passive monitor",
             LastTelemetry,
-            LiveView->HasBoundSession(),
+            bHasBoundSession,
             bLastLeaseAcquired,
             MaxSteps,
-            Str("Display mode: copied phi"));
+            extraLine);
     }
 
     auto FRtoRPlaneWavesPassiveMonitorWindowV2::SetPlotFromState(
@@ -84,10 +92,16 @@ namespace Slab::Studios::Common::Monitors::V2 {
             const UIntBig maxSteps)
     : FWindowPanel(Graphics::FSlabWindowConfig("KGRtoR Plane Waves V2 GL Monitor"))
     , LiveView(liveView)
+    , SessionTopic(liveView != nullptr ? liveView->GetSessionTopic() : nullptr)
+    , TelemetryTopic(liveView != nullptr ? liveView->GetTelemetryTopic() : nullptr)
+    , StatusTopic(liveView != nullptr ? liveView->GetStatusTopic() : nullptr)
     , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("KGRtoR Telemetry")))
     , PhiWindow("KGRtoR phi(x)")
     , MaxSteps(maxSteps) {
         if (LiveView == nullptr) throw Exception("KGRtoR passive monitor requires a live view.");
+        if (SessionTopic == nullptr || TelemetryTopic == nullptr) {
+            throw Exception("KGRtoR passive monitor requires session/telemetry topics.");
+        }
 
         auto style = *Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
         PhiArtist = New<Graphics::RtoRFunctionArtist>(nullptr, style, 2048);
@@ -103,10 +117,15 @@ namespace Slab::Studios::Common::Monitors::V2 {
     }
 
     auto FRtoRPlaneWavesPassiveMonitorWindowV2::ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void {
-        const auto telemetry = LiveView->TryGetTelemetry();
+        const auto telemetry = TelemetryTopic->TryGetTelemetry();
         if (telemetry.has_value()) LastTelemetry = telemetry;
+        if (StatusTopic != nullptr) {
+            const auto status = StatusTopic->TryGetStatus();
+            if (status.has_value()) LastStatus = status;
+        }
 
-        auto leaseOpt = LiveView->AcquireReadLease();
+        // Use the generic session topic path (consumer-facing V2 API), not only the facade helpers.
+        auto leaseOpt = SessionTopic->AcquireReadLease();
         bLastLeaseAcquired = leaseOpt.has_value();
 
         if (leaseOpt.has_value()) SetPlotFromState(leaseOpt->GetState());

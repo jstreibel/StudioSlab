@@ -82,4 +82,37 @@ namespace Slab::Math::LiveData::V2 {
         return session->TryAcquireReadLease();
     }
 
+    auto FSessionStatusTopicV2::PublishEvent(const Numerics::V2::FSimulationEventV2 &event) -> void {
+        std::lock_guard lock(Mutex);
+
+        FSessionStatusV2 status;
+        status.LastReason = event.Reason;
+        status.PublishedVersion = event.PublishedVersion;
+
+        switch (event.Reason) {
+        case Numerics::V2::EEventReasonV2::Final:
+            status.RunState = ESessionRunStateV2::Finished;
+            status.bTerminal = true;
+            break;
+        case Numerics::V2::EEventReasonV2::AbortFinal:
+            status.RunState = ESessionRunStateV2::Aborted;
+            status.bTerminal = true;
+            break;
+        case Numerics::V2::EEventReasonV2::Initial:
+        case Numerics::V2::EEventReasonV2::Scheduled:
+        case Numerics::V2::EEventReasonV2::Forced:
+            status.RunState = ESessionRunStateV2::Running;
+            status.bTerminal = false;
+            break;
+        }
+
+        status.bHasBoundSession = !event.SessionRef.expired() && !status.bTerminal;
+        LastStatus = status;
+    }
+
+    auto FSessionStatusTopicV2::TryGetStatus() const -> std::optional<FSessionStatusV2> {
+        std::lock_guard lock(Mutex);
+        return LastStatus;
+    }
+
 } // namespace Slab::Math::LiveData::V2

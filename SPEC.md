@@ -101,6 +101,21 @@ Graphics host improvements already in place:
 - shared visual host loop for `Studios` and `SlabTests`
 - render-pass propagation fixes for composite windows
 - visual regression app (`SlabTests`)
+- passive GL monitor flows proven in `Studios` for:
+  - `spi`
+  - `rtor` (KGRtoR plane waves)
+
+### 5. Studios V2 Integration Pattern (Implemented direction)
+
+`Studios` CLI is being kept as the command-line entrypoint, while slice-specific orchestration moves into reusable modules.
+
+Current direction:
+- `Studios/CLI/main.cpp` handles parsing and subcommand dispatch
+- `Studios/Common/Simulations/V2/*` owns slice-specific config finalization, recipe building, and execution flows
+- `Studios/Common/Monitors/V2/*` owns passive monitor windows
+- `Studios/Common/*` owns shared host/task/telemetry helpers
+
+This keeps CLI logic readable while preventing monitor/runtime duplication across subcommands.
 
 ## Legacy vs V2 Policy
 
@@ -158,6 +173,9 @@ For visual/graphics changes (when applicable):
 - `SlabTests` scenario(s), e.g.
   - `./Build/bin/SlabTests list`
   - `./Build/bin/SlabTests panel-plot-and-gui --seconds 5`
+- local visual smoke on a display-enabled machine when relevant (this environment may be headless), e.g.
+  - `./Build/bin/Studios spi --gl ...`
+  - `./Build/bin/Studios rtor --gl ...`
 
 ## AI Work Protocol (Spec-Driven)
 
@@ -192,10 +210,18 @@ AI should report:
 - Session-wide read lease locking
 - Live data V2 minimal generalization (topics + hub)
 - `Studios` CLI V2 subcommands (`spi`, `metropolis`)
+- `Studios` CLI V2 subcommands (`spi`, `metropolis`, `rtor`)
 - `Studios spi --gl` passive monitor prototype
+- `Studios rtor --gl` passive monitor prototype (KGRtoR plane waves)
 - `SlabTests` visual test runner
 - graphics render-pass propagation fixes
 - row/column pane framing and event routing fixes
+- shared graphics visual host for `Studios` + `SlabTests`
+- `Studios` V2 consolidation helpers:
+  - task runner helpers (`NumericsV2TaskUtils`)
+  - monitored GLFW runner (`V2SimulationRunners`)
+  - passive monitor windows under `Studios/Common/Monitors/V2`
+  - slice builders/execution flows under `Studios/Common/Simulations/V2`
 - Numerics V2 real-time baseline:
   - wall-clock triggers
   - `LatestOnly` delivery (baseline implementation)
@@ -207,10 +233,11 @@ AI should report:
 ### Still expected (next waves)
 
 - Data V2 expansion beyond session/telemetry topics
-- monitor-oriented reusable passive UI components
+- monitor-oriented reusable passive UI components (beyond current SPI/KGRtoR windows)
 - more V2 outputs/listeners (snapshots/history/DFT model-specific adapters/listeners)
 - deeper graphics composition cleanup (`Row/Column/Panel` unification path)
 - optional async/buffered delivery refinements and TCP-facing publishers
+- additional `Studios` V2 simulation slices using the extracted `Common/Simulations/V2` pattern
 
 ## Key Architectural Invariants (Must Preserve)
 
@@ -233,6 +260,11 @@ AI should report:
 5. **Visual fixes must be backed by runnable scenarios**
 - use `SlabTests` for graphics/monitor regressions
 
+6. **`Studios` CLI should remain orchestration-focused**
+- parsing/dispatch in `main.cpp`
+- slice construction/execution in `Studios/Common/Simulations/V2`
+- monitor rendering in `Studios/Common/Monitors/V2`
+
 ## Decision Guidance (When in Doubt)
 
 Prefer the option that:
@@ -250,4 +282,3 @@ If a change requires broad coupling across numerics + data + graphics, split it 
 
 - `AGENTS.md` (repo-specific workflow and constraints)
 - `Docs/graphics-composition-contract.md` (render/composition rules)
-

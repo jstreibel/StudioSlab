@@ -8,11 +8,15 @@ namespace Slab::Math::LiveData::V2 {
     class FSessionLiveViewV2 {
         TPointer<FSessionViewTopicV2> SessionTopic;
         TPointer<FSessionTelemetryTopicV2> TelemetryTopic;
+        TPointer<FSessionStatusTopicV2> StatusTopic;
 
     public:
         FSessionLiveViewV2();
         FSessionLiveViewV2(TPointer<FSessionViewTopicV2> sessionTopic,
                            TPointer<FSessionTelemetryTopicV2> telemetryTopic);
+        FSessionLiveViewV2(TPointer<FSessionViewTopicV2> sessionTopic,
+                           TPointer<FSessionTelemetryTopicV2> telemetryTopic,
+                           TPointer<FSessionStatusTopicV2> statusTopic);
 
         auto BindSession(const TVolatile<const Numerics::V2::FSimulationSessionV2> &session) -> void;
         auto InvalidateSessionBinding() -> void;
@@ -21,9 +25,14 @@ namespace Slab::Math::LiveData::V2 {
 
         [[nodiscard]] auto HasBoundSession() const -> bool;
         [[nodiscard]] auto TryGetTelemetry() const -> std::optional<FSessionTelemetryV2>;
+        [[nodiscard]] auto TryGetStatus() const -> std::optional<FSessionStatusV2>;
 
         [[nodiscard]] auto AcquireReadLease() const -> std::optional<Numerics::V2::FSessionReadLeaseV2>;
         [[nodiscard]] auto TryAcquireReadLease() const -> std::optional<Numerics::V2::FSessionReadLeaseV2>;
+
+        [[nodiscard]] auto GetSessionTopic() const -> TPointer<FSessionViewTopicV2> { return SessionTopic; }
+        [[nodiscard]] auto GetTelemetryTopic() const -> TPointer<FSessionTelemetryTopicV2> { return TelemetryTopic; }
+        [[nodiscard]] auto GetStatusTopic() const -> TPointer<FSessionStatusTopicV2> { return StatusTopic; }
     };
 
     DefinePointers(FSessionLiveViewV2)

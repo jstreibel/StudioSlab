@@ -896,7 +896,8 @@ TEST_CASE("PhaseF V2 - SessionLiveView facade remains compatible on top of gener
 
     auto sessionTopic = New<FSessionViewTopicV2>("topic/session");
     auto telemetryTopic = New<FSessionTelemetryTopicV2>("topic/telemetry");
-    auto liveView = New<FSessionLiveViewV2>(sessionTopic, telemetryTopic);
+    auto statusTopic = New<FSessionStatusTopicV2>("topic/status");
+    auto liveView = New<FSessionLiveViewV2>(sessionTopic, telemetryTopic, statusTopic);
     auto session = New<FCountingSessionV2>(0.5);
 
     session->Step(2);
@@ -918,6 +919,12 @@ TEST_CASE("PhaseF V2 - SessionLiveView facade remains compatible on top of gener
     CHECK(telemetry->Cursor.Step == 2);
     CHECK(telemetry->PublishedVersion == 1);
 
+    const auto status = statusTopic->TryGetStatus();
+    REQUIRE(status.has_value());
+    CHECK(status->RunState == ESessionRunStateV2::Running);
+    CHECK(status->bHasBoundSession);
+    CHECK(status->PublishedVersion == 1);
+
     auto liveLease = sessionTopic->AcquireReadLease();
     REQUIRE(liveLease.has_value());
     CHECK(liveLease->GetCursor().Step == 2);
@@ -925,6 +932,12 @@ TEST_CASE("PhaseF V2 - SessionLiveView facade remains compatible on top of gener
     event.Reason = EEventReasonV2::Final;
     liveView->PublishEvent(event);
     CHECK_FALSE(liveView->HasBoundSession());
+
+    const auto finalStatus = liveView->TryGetStatus();
+    REQUIRE(finalStatus.has_value());
+    CHECK(finalStatus->RunState == ESessionRunStateV2::Finished);
+    CHECK(finalStatus->bTerminal);
+    CHECK_FALSE(finalStatus->bHasBoundSession);
 }
 
 TEST_CASE("PhaseG V2 - OutputScheduler detects wall-clock trigger crossings", "[V2][PhaseG][Scheduler][WallClock]") {

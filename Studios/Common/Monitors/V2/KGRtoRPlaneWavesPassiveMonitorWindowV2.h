@@ -15,6 +15,9 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
     class FRtoRPlaneWavesPassiveMonitorWindowV2 final : public Graphics::FWindowPanel {
         TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView;
+        TPointer<Math::LiveData::V2::FSessionViewTopicV2> SessionTopic;
+        TPointer<Math::LiveData::V2::FSessionTelemetryTopicV2> TelemetryTopic;
+        TPointer<Math::LiveData::V2::FSessionStatusTopicV2> StatusTopic;
         TPointer<Graphics::FGUIWindow> GuiWindow;
         Graphics::FPlot2DWindow PhiWindow;
         TPointer<Graphics::RtoRFunctionArtist> PhiArtist = nullptr;
@@ -22,6 +25,7 @@ namespace Slab::Studios::Common::Monitors::V2 {
         bool bPlotRegionInitialized = false;
 
         std::optional<Math::LiveData::V2::FSessionTelemetryV2> LastTelemetry = std::nullopt;
+        std::optional<Math::LiveData::V2::FSessionStatusV2> LastStatus = std::nullopt;
         bool bLastLeaseAcquired = false;
         UIntBig MaxSteps = 0;
 

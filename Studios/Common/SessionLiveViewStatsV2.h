@@ -11,6 +11,7 @@
 namespace Slab::Studios::Common {
 
     [[nodiscard]] auto ToDisplayString(Math::Numerics::V2::EEventReasonV2 reason) -> Str;
+    [[nodiscard]] auto ToDisplayString(Math::LiveData::V2::ESessionRunStateV2 runState) -> Str;
 
     auto AppendSessionLiveViewStats(
         const TPointer<Graphics::FGUIWindow> &guiWindow,
