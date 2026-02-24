@@ -5,6 +5,7 @@
 #include "SlabWindowManager.h"
 #include "Decorator.h"
 #include "WindowStyles.h"
+#include "Graphics/Backend/PlatformWindow.h"
 #include "Graphics/SlabGraphics.h"
 
 #include "Core/SlabCore.h"
@@ -215,6 +216,7 @@ namespace Slab::Graphics {
 
     bool FSlabWindowManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
         Decorator.SetSystemWindowShape(WidthSysWin, HeightSysWin);
+        PlatformWindow.Clear(WindowStyle::PlatformWindow_BackgroundColor);
 
         for (IN MetaSlabWindow : std::ranges::reverse_view(SlabWindows)) {
             Decorator.BeginDecoration(*MetaSlabWindow->Window, MouseState->x, MouseState->y);

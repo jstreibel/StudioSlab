@@ -172,6 +172,7 @@ namespace {
         Graphics::FPlot2DWindow PhiWindow;
         TPointer<Graphics::RtoRFunctionArtist> PhiArtist = nullptr;
         TPointer<Math::RtoR::NumericFunction_CPU> DisplayPhi = nullptr;
+        bool bPlotRegionInitialized = false;
 
         std::optional<Math::LiveData::V2::FSessionTelemetryV2> LastTelemetry = std::nullopt;
         bool bLastLeaseAcquired = false;
@@ -224,10 +225,13 @@ namespace {
                 return;
             }
 
-            if (DisplayPhi == nullptr ||
+            const bool bGeometryChanged =
+                DisplayPhi == nullptr ||
                 DisplayPhi->N != phiNumeric->N ||
                 DisplayPhi->xMin != phiNumeric->xMin ||
-                DisplayPhi->xMax != phiNumeric->xMax) {
+                DisplayPhi->xMax != phiNumeric->xMax;
+
+            if (bGeometryChanged) {
                 DisplayPhi = New<Math::RtoR::NumericFunction_CPU>(*phiNumeric);
             } else {
                 DisplayPhi->Set(phiNumeric->getSpace().getHostData(true));
@@ -255,7 +259,11 @@ namespace {
                 yMax += pad;
             }
 
-            PhiWindow.GetRegion().setLimits(phiNumeric->xMin, phiNumeric->xMax, yMin, yMax);
+            // Do not reset the view on every frame; it prevents mouse zoom/pan.
+            if (!bPlotRegionInitialized || bGeometryChanged) {
+                PhiWindow.GetRegion().setLimits(phiNumeric->xMin, phiNumeric->xMax, yMin, yMax);
+                bPlotRegionInitialized = true;
+            }
         }
 
     public:
@@ -290,7 +298,7 @@ namespace {
             bLastLeaseAcquired = leaseOpt.has_value();
 
             if (leaseOpt.has_value()) SetPlotFromState(leaseOpt->GetState());
-            else if (PhiArtist != nullptr) PhiArtist->setFunction(nullptr);
+            // On lease miss or terminal invalidation, keep the last copied display frame.
 
             UpdateStatsWindow();
             FWindowPanel::ImmediateDraw(platformWindow);
@@ -311,7 +319,7 @@ namespace {
 
     struct FRtoRPlaneWavesExecutionConfig {
         UIntBig Steps = 200;
-        DevFloat Dt = 0.01;
+        DevFloat Dt = -1.0;
         DevFloat L = 10.0;
         UInt N = 256;
         DevFloat XCenter = 0.0;
@@ -643,7 +651,7 @@ namespace {
             ("h,help", "Show this help")
             ("gl", "Run with passive OpenGL monitor (real app loop)")
             ("steps", "Integration steps", cxxopts::value<UIntBig>()->default_value("200"))
-            ("dt", "Timestep", cxxopts::value<DevFloat>()->default_value("0.01"))
+            ("dt", "Timestep override; if omitted, uses legacy dt = 0.1*(L/N)", cxxopts::value<DevFloat>())
             ("L", "Spatial length", cxxopts::value<DevFloat>()->default_value("10.0"))
             ("N", "Spatial site count", cxxopts::value<UInt>()->default_value("256"))
             ("x-center", "Space center", cxxopts::value<DevFloat>()->default_value("0.0"))
@@ -663,7 +671,6 @@ namespace {
 
         FRtoRPlaneWavesExecutionConfig cfg;
         cfg.Steps = result["steps"].as<UIntBig>();
-        cfg.Dt = result["dt"].as<DevFloat>();
         cfg.L = result["L"].as<DevFloat>();
         cfg.N = result["N"].as<UInt>();
         cfg.XCenter = result["x-center"].as<DevFloat>();
@@ -675,6 +682,15 @@ namespace {
             : cfg.Interval;
         cfg.Batch = result["batch"].as<UIntBig>();
         cfg.bEnableGLMonitor = result.count("gl") > 0;
+
+        if (cfg.N == 0) throw Exception("RtoR requires N > 0.");
+
+        if (result.count("dt") > 0) {
+            cfg.Dt = result["dt"].as<DevFloat>();
+        } else {
+            const auto h = cfg.L / static_cast<DevFloat>(cfg.N);
+            cfg.Dt = static_cast<DevFloat>(0.1) * h; // Legacy KG default: dt/h = r = 0.1
+        }
 
         if (cfg.bEnableGLMonitor) {
             return RunTaskWithPassiveRtoRGLMonitor(cfg);
