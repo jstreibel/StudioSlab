@@ -3,6 +3,8 @@ add_executable(Studios
         ../Common/VisualHost.cpp
         ../Common/NumericsV2TaskUtils.cpp
         ../Common/SessionLiveViewStatsV2.cpp
+        ../Common/Monitors/V2/SPIPassiveMonitorWindowV2.cpp
+        ../Common/Monitors/V2/KGRtoRPlaneWavesPassiveMonitorWindowV2.cpp
 )
 
 target_link_libraries(Studios Slab)

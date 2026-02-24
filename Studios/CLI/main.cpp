@@ -4,37 +4,21 @@
 #include "Core/Controller/Parameter/BuiltinParameters.h"
 #include "Core/SlabCore.h"
 
-#include "Graphics/Plot2D/Artists/R2SectionArtist.h"
-#include "Graphics/Plot2D/Artists/RtoRFunctionArtist.h"
-#include "Graphics/Plot2D/Plot2DWindow.h"
-#include "Graphics/Plot2D/PlotThemeManager.h"
-#include "Graphics/SlabGraphics.h"
-#include "Graphics/Window/GUIWindow.h"
-#include "Graphics/Window/SlabWindowManager.h"
-#include "Graphics/Window/WindowContainer/WindowPanel.h"
-
 #include "Math/Data/V2/SessionLiveViewV2.h"
-#include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
-#include "Math/Function/RtoR2/StraightLine.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
 #include "Models/KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PlaneWaves-RecipeV2.h"
-#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.h"
 #include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
 #include "Models/Stochastic-Path-Integral/SPINumericConfig.h"
-#include "Models/Stochastic-Path-Integral/SPI-State.h"
 #include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
 
 #include "StudioSlab.h"
+#include "../Common/Monitors/V2/KGRtoRPlaneWavesPassiveMonitorWindowV2.h"
+#include "../Common/Monitors/V2/SPIPassiveMonitorWindowV2.h"
 #include "../Common/NumericsV2TaskUtils.h"
-#include "../Common/SessionLiveViewStatsV2.h"
 #include "../Common/VisualHost.h"
 
-#include <chrono>
-#include <cmath>
 #include <iostream>
-#include <mutex>
-#include <thread>
 
 namespace {
 
@@ -51,203 +35,6 @@ namespace {
                                    UInt Steps) -> void;
     auto BuildRtoRPlaneWavesRecipeConfig(const FRtoRPlaneWavesExecutionConfig &cfg)
         -> Slab::Models::KGRtoR::PlaneWaves::V2::FKGRtoRPlaneWavesConfigV2;
-
-    class FSPIPassiveMonitorWindowV2 final : public Graphics::FWindowPanel {
-        TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView;
-        TPointer<Graphics::FGUIWindow> GuiWindow;
-        Graphics::FPlot2DWindow SectionWindow;
-        Graphics::R2SectionArtist SectionArtist;
-
-        std::optional<Math::LiveData::V2::FSessionTelemetryV2> LastTelemetry = std::nullopt;
-        bool bLastLeaseAcquired = false;
-        UIntBig MaxSteps = 0;
-
-        auto EnsureSectionConfigured(const TPointer<Math::R2toR::FNumericFunction> &phi) -> void {
-            if (phi == nullptr) return;
-            if (!SectionArtist.getSections().empty()) return;
-
-            const auto yMin = phi->getDomain().yMin;
-            const auto yMax = phi->getDomain().yMax;
-
-            auto line = New<Math::RtoR2::StraightLine>(Math::Real2D{0, yMin}, Math::Real2D{0, yMax}, yMin, yMax);
-            auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
-            SectionArtist.addSection(line, style, "x=0 section");
-        }
-
-        auto UpdateStatsWindow() -> void {
-            Slab::Studios::Common::AppendSessionLiveViewStats(
-                GuiWindow,
-                "SPI V2 passive monitor",
-                LastTelemetry,
-                LiveView->HasBoundSession(),
-                bLastLeaseAcquired,
-                MaxSteps);
-        }
-
-    public:
-        explicit FSPIPassiveMonitorWindowV2(const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-                                            const UIntBig maxSteps)
-        : FWindowPanel(Graphics::FSlabWindowConfig("SPI V2 GL Monitor"))
-        , LiveView(liveView)
-        , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("SPI V2 Telemetry")))
-        , SectionWindow("SPI field section")
-        , MaxSteps(maxSteps) {
-            if (LiveView == nullptr) throw Exception("SPI passive monitor requires a live view.");
-
-            SectionArtist.SetAffectGraphRanges(true);
-            AddWindow(GuiWindow, false, 0.25f);
-            AddWindow(Naked(SectionWindow), true, 0.75f);
-            SetColumnRelativeWidth(0, 0.25f);
-
-            SectionWindow.AddArtist(Naked(SectionArtist));
-            SectionWindow.SetAutoReviewGraphRanges(true);
-        }
-
-        auto ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void override {
-            auto telemetry = LiveView->TryGetTelemetry();
-            if (telemetry.has_value()) LastTelemetry = telemetry;
-
-            // For local GL monitoring, prefer a coherent lease over best-effort skipping.
-            auto leaseOpt = LiveView->AcquireReadLease();
-            bLastLeaseAcquired = leaseOpt.has_value();
-
-            if (leaseOpt.has_value()) {
-                auto spiState = std::dynamic_pointer_cast<const Models::StochasticPathIntegrals::SPIState>(leaseOpt->GetState());
-                if (spiState != nullptr) {
-                    auto phi = spiState->getPhi();
-                    EnsureSectionConfigured(phi);
-                    SectionArtist.setFunction(phi);
-                } else {
-                    SectionArtist.setFunction(nullptr);
-                }
-            } else {
-                // Avoid rendering through a stale pointer after lease release or session invalidation.
-                SectionArtist.setFunction(nullptr);
-            }
-
-            UpdateStatsWindow();
-            FWindowPanel::ImmediateDraw(platformWindow);
-        }
-    };
-
-    class FRtoRPlaneWavesPassiveMonitorWindowV2 final : public Graphics::FWindowPanel {
-        TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView;
-        TPointer<Graphics::FGUIWindow> GuiWindow;
-        Graphics::FPlot2DWindow PhiWindow;
-        TPointer<Graphics::RtoRFunctionArtist> PhiArtist = nullptr;
-        TPointer<Math::RtoR::NumericFunction_CPU> DisplayPhi = nullptr;
-        bool bPlotRegionInitialized = false;
-
-        std::optional<Math::LiveData::V2::FSessionTelemetryV2> LastTelemetry = std::nullopt;
-        bool bLastLeaseAcquired = false;
-        UIntBig MaxSteps = 0;
-
-        auto UpdateStatsWindow() -> void {
-            Slab::Studios::Common::AppendSessionLiveViewStats(
-                GuiWindow,
-                "KGRtoR Plane Waves V2 passive monitor",
-                LastTelemetry,
-                LiveView->HasBoundSession(),
-                bLastLeaseAcquired,
-                MaxSteps,
-                Str("Display mode: copied phi"));
-        }
-
-        auto SetPlotFromState(const TPointer<const Math::Base::EquationState> &state) -> void {
-            if (PhiArtist == nullptr) return;
-
-            auto kgState = std::dynamic_pointer_cast<const Models::KGRtoR::FEquationState>(state);
-            if (kgState == nullptr) {
-                PhiArtist->setFunction(nullptr);
-                return;
-            }
-
-            auto *phiBase = &kgState->getPhi();
-            auto *phiNumeric = dynamic_cast<Math::RtoR::NumericFunction *>(phiBase);
-            if (phiNumeric == nullptr) {
-                PhiArtist->setFunction(nullptr);
-                return;
-            }
-
-            const bool bGeometryChanged =
-                DisplayPhi == nullptr ||
-                DisplayPhi->N != phiNumeric->N ||
-                DisplayPhi->xMin != phiNumeric->xMin ||
-                DisplayPhi->xMax != phiNumeric->xMax;
-
-            if (bGeometryChanged) {
-                DisplayPhi = New<Math::RtoR::NumericFunction_CPU>(*phiNumeric);
-            } else {
-                DisplayPhi->Set(phiNumeric->getSpace().getHostData(true));
-            }
-
-            PhiArtist->setFunction(DisplayPhi);
-
-            DevFloat yMin = 0.0;
-            DevFloat yMax = 0.0;
-            try {
-                yMin = phiNumeric->min();
-                yMax = phiNumeric->max();
-            } catch (...) {
-                yMin = -1.0;
-                yMax = 1.0;
-            }
-
-            if (!std::isfinite(yMin) || !std::isfinite(yMax)) {
-                yMin = -1.0;
-                yMax = 1.0;
-            }
-            if (Common::AreEqual(yMin, yMax)) {
-                const auto pad = Common::AreEqual(yMin, 0.0) ? DevFloat(1.0) : std::abs(yMin) * DevFloat(0.1);
-                yMin -= pad;
-                yMax += pad;
-            }
-
-            // Do not reset the view on every frame; it prevents mouse zoom/pan.
-            if (!bPlotRegionInitialized || bGeometryChanged) {
-                PhiWindow.GetRegion().setLimits(phiNumeric->xMin, phiNumeric->xMax, yMin, yMax);
-                bPlotRegionInitialized = true;
-            }
-        }
-
-    public:
-        explicit FRtoRPlaneWavesPassiveMonitorWindowV2(const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-                                                       const UIntBig maxSteps)
-        : FWindowPanel(Graphics::FSlabWindowConfig("KGRtoR Plane Waves V2 GL Monitor"))
-        , LiveView(liveView)
-        , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("KGRtoR Telemetry")))
-        , PhiWindow("KGRtoR phi(x)") {
-            if (LiveView == nullptr) throw Exception("KGRtoR passive monitor requires a live view.");
-
-            auto style = *Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
-            PhiArtist = New<Graphics::RtoRFunctionArtist>(nullptr, style, 2048);
-            PhiArtist->SetAffectGraphRanges(false);
-
-            MaxSteps = maxSteps;
-
-            AddWindow(GuiWindow, false, 0.25f);
-            AddWindow(Naked(PhiWindow), true, 0.75f);
-            SetColumnRelativeWidth(0, 0.25f);
-
-            PhiWindow.AddArtist(PhiArtist);
-            PhiWindow.SetAutoReviewGraphRanges(false);
-            PhiWindow.GetRegion().setLimits(-1.0, 1.0, -1.0, 1.0);
-        }
-
-        auto ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void override {
-            const auto telemetry = LiveView->TryGetTelemetry();
-            if (telemetry.has_value()) LastTelemetry = telemetry;
-
-            auto leaseOpt = LiveView->AcquireReadLease();
-            bLastLeaseAcquired = leaseOpt.has_value();
-
-            if (leaseOpt.has_value()) SetPlotFromState(leaseOpt->GetState());
-            // On lease miss or terminal invalidation, keep the last copied display frame.
-
-            UpdateStatsWindow();
-            FWindowPanel::ImmediateDraw(platformWindow);
-        }
-    };
 
     struct FSPIExecutionConfig {
         UInt Steps = 20;
@@ -291,7 +78,8 @@ namespace {
         recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
 
-        auto monitor = New<FSPIPassiveMonitorWindowV2>(liveView, static_cast<UIntBig>(cfg.Steps));
+        auto monitor = New<Slab::Studios::Common::Monitors::V2::FSPIPassiveMonitorWindowV2>(
+            liveView, static_cast<UIntBig>(cfg.Steps));
         Slab::Studios::Common::AddRootSlabWindow(host, monitor, false);
 
         const auto status = Slab::Studios::Common::RunTaskWithVisualHost(host, *task);
@@ -310,7 +98,8 @@ namespace {
         recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
 
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
-        auto monitor = New<FRtoRPlaneWavesPassiveMonitorWindowV2>(liveView, cfg.Steps);
+        auto monitor = New<Slab::Studios::Common::Monitors::V2::FRtoRPlaneWavesPassiveMonitorWindowV2>(
+            liveView, cfg.Steps);
         Slab::Studios::Common::AddRootSlabWindow(host, monitor, false);
 
         const auto status = Slab::Studios::Common::RunTaskWithVisualHost(host, *task);
