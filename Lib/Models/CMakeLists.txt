@@ -16,6 +16,8 @@ set ( KG_SOURCES
         KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.cpp
         KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.cpp
         KleinGordon/RtoR/LinearStepping/KG-RtoRBoundaryCondition.cpp
+        KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PlaneWaves-RecipeV2.cpp
+        KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PlaneWaves-RecipeV2.h
         KleinGordon/RtoR/LinearStepping/Output/SimHistory.h KleinGordon/RtoR/LinearStepping/Output/SimHistory.cpp
         KleinGordon/RtoR/LinearStepping/Output/SimHistory_Fourier.h KleinGordon/RtoR/LinearStepping/Output/SimHistory_Fourier.cpp
         KleinGordon/RtoR/LinearStepping/Output/SnapshotOutput.h KleinGordon/RtoR/LinearStepping/Output/SnapshotOutput.cpp

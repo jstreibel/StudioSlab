@@ -21,7 +21,9 @@
 #include "Math/Numerics/V2/Scheduling/OutputSchedulerV2.h"
 #include "Math/Numerics/V2/Scheduling/WindowedEveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PlaneWaves-RecipeV2.h"
 #include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.h"
 #include "Models/Stochastic-Path-Integral/SPI-State.h"
 #include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
 
@@ -673,6 +675,57 @@ TEST_CASE("PhaseC5 V2 - SPI recipe runs with simulation-time cursor semantics", 
     CAPTURE(phiAbs);
     CHECK(std::isfinite(phiAbs));
     CHECK(phiAbs > 0.0);
+}
+
+TEST_CASE("PhaseR0 V2 - KGRtoR plane waves recipe runs with finite time cursor semantics", "[V2][PhaseR0][KGRtoR][RtoR][Task]") {
+    using namespace Slab;
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::KGRtoR::PlaneWaves::V2;
+
+    FKGRtoRPlaneWavesConfigV2 config;
+    config.N = 64;
+    config.L = 10.0;
+    config.Dt = 0.01;
+    config.Steps = 6;
+    config.XCenter = 0.0;
+    config.Q = 0.2;
+    config.Harmonic = 2;
+
+    auto recipe = New<FKGRtoRPlaneWavesRecipeV2>(config, 1000);
+    auto task = New<FNumericTaskV2>(recipe, false, 8);
+
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    const auto cursor = task->GetCursor();
+    CHECK(cursor.Step == config.Steps);
+    REQUIRE(cursor.SimulationTime.has_value());
+    CHECK(*cursor.SimulationTime == Catch::Approx(config.Dt * static_cast<DevFloat>(config.Steps)).margin(1e-12));
+
+    const auto progress = task->GetProgress01();
+    REQUIRE(progress.has_value());
+    CHECK(*progress == Catch::Approx(1.0f).margin(1e-6f));
+
+    const auto *session = task->GetSession();
+    REQUIRE(session != nullptr);
+
+    auto lease = session->AcquireReadLease();
+    REQUIRE(lease.OwnsLock());
+    REQUIRE(lease.GetState() != nullptr);
+
+    auto kgState = std::dynamic_pointer_cast<const Slab::Models::KGRtoR::FEquationState>(lease.GetState());
+    REQUIRE(kgState != nullptr);
+
+    const auto &phiData = kgState->getPhi().getSpace().getHostData(true);
+    const auto &dPhiDtData = kgState->getDPhiDt().getSpace().getHostData(true);
+
+    const auto phiAbs = SumAbsValues(phiData);
+    const auto dPhiDtAbs = SumAbsValues(dPhiDtData);
+
+    CAPTURE(phiAbs, dPhiDtAbs);
+    CHECK(std::isfinite(phiAbs));
+    CHECK(std::isfinite(dPhiDtAbs));
+    CHECK(phiAbs > 0.0);
+    CHECK(dPhiDtAbs > 0.0);
 }
 
 TEST_CASE("PhaseD V2 - Session try-read lease is best-effort under active writer", "[V2][PhaseD][Session][Lease]") {

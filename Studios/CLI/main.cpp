@@ -16,6 +16,7 @@
 #include "Math/Function/RtoR2/StraightLine.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
+#include "Models/KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PlaneWaves-RecipeV2.h"
 #include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
 #include "Models/Stochastic-Path-Integral/SPINumericConfig.h"
 #include "Models/Stochastic-Path-Integral/SPI-State.h"
@@ -34,6 +35,7 @@ namespace {
     using namespace Slab;
 
     struct FSPIExecutionConfig;
+    struct FRtoRPlaneWavesExecutionConfig;
 
     auto ExitCodeFromTaskStatus(Slab::Core::ETaskStatus status) -> int;
     auto PrintTaskSummary(const Math::Numerics::V2::FNumericTaskV2 &task) -> void;
@@ -43,6 +45,8 @@ namespace {
                                    UInt N,
                                    DevFloat Dt,
                                    UInt Steps) -> void;
+    auto BuildRtoRPlaneWavesRecipeConfig(const FRtoRPlaneWavesExecutionConfig &cfg)
+        -> Slab::Models::KGRtoR::PlaneWaves::V2::FKGRtoRPlaneWavesConfigV2;
     auto ToDisplayString(Math::Numerics::V2::EEventReasonV2 reason) -> Str;
 
     auto ToDisplayString(const Math::Numerics::V2::EEventReasonV2 reason) -> Str {
@@ -170,6 +174,20 @@ namespace {
         bool bEnableGLMonitor = false;
     };
 
+    struct FRtoRPlaneWavesExecutionConfig {
+        UIntBig Steps = 200;
+        DevFloat Dt = 0.01;
+        DevFloat L = 10.0;
+        UInt N = 256;
+        DevFloat XCenter = 0.0;
+        DevFloat Q = 1.0;
+        UInt Harmonic = 2;
+        UIntBig Interval = 20;
+        UIntBig MonitorInterval = 20;
+        UIntBig Batch = 2048;
+        bool bEnableGLMonitor = false;
+    };
+
     auto RunTaskWithPassiveSPIGLMonitor(const FSPIExecutionConfig &cfg) -> int {
         using namespace Slab::Math::Numerics::V2;
         using namespace Slab::Models::StochasticPathIntegrals;
@@ -258,25 +276,29 @@ namespace {
                 << "  Studios run <subprogram> [options]\n\n"
                 << "Subprograms:\n"
                 << "  metropolis   Run V2 Hamiltonian RtoR Metropolis slice\n"
-                << "  spi          Run V2 SPI ODE/time-aware slice\n\n"
+                << "  spi          Run V2 SPI ODE/time-aware slice\n"
+                << "  rtor         Run V2 KGRtoR plane-waves slice\n\n"
                 << "Aliases:\n"
                 << "  metropolis-v2, v2-metropolis\n"
-                << "  spi-v2, v2-spi\n\n"
+                << "  spi-v2, v2-spi\n"
+                << "  rtor-v2, rtor-plane-waves, v2-rtor\n\n"
                 << "Examples:\n"
                 << "  Studios metropolis --steps 5000 --interval 500\n"
                 << "  Studios spi --steps 8 --dt 0.125 --time 0.5 --N 16 --interval 2\n"
                 << "  Studios spi --gl --steps 2000 --interval 50 --monitor-interval 2\n"
+                << "  Studios rtor --steps 500 --dt 0.01 --L 10 --N 256 --Q 1 --harmonic 2\n"
                 << "  Studios spi --help\n";
     }
 
     auto PrintList() -> void {
-        std::cout << "metropolis\nspi\n";
+        std::cout << "metropolis\nspi\nrtor\n";
     }
 
     auto NormalizeShortLongSingleLetterOption(const Str &arg) -> Str {
         // cxxopts naturally handles `-N`, while existing local habits often use `--N`.
         if (arg == "--N") return "-N";
         if (arg == "--L") return "-L";
+        if (arg == "--Q") return "-Q";
         return arg;
     }
 
@@ -428,12 +450,71 @@ namespace {
         return ExitCodeFromTaskStatus(status);
     }
 
+    auto BuildRtoRPlaneWavesRecipeConfig(const FRtoRPlaneWavesExecutionConfig &cfg)
+        -> Slab::Models::KGRtoR::PlaneWaves::V2::FKGRtoRPlaneWavesConfigV2 {
+        Slab::Models::KGRtoR::PlaneWaves::V2::FKGRtoRPlaneWavesConfigV2 recipeCfg;
+        recipeCfg.N = cfg.N;
+        recipeCfg.L = cfg.L;
+        recipeCfg.Dt = cfg.Dt;
+        recipeCfg.Steps = cfg.Steps;
+        recipeCfg.XCenter = cfg.XCenter;
+        recipeCfg.Q = cfg.Q;
+        recipeCfg.Harmonic = cfg.Harmonic;
+        return recipeCfg;
+    }
+
+    auto RunRtoRCommand(const int argc, const char **argv) -> int {
+        using namespace Slab::Math::Numerics::V2;
+        using namespace Slab::Models::KGRtoR::PlaneWaves::V2;
+
+        CLOptionsDescription options("Studios rtor", "Run the native V2 KGRtoR plane-waves slice.");
+        options.add_options()
+            ("h,help", "Show this help")
+            ("steps", "Integration steps", cxxopts::value<UIntBig>()->default_value("200"))
+            ("dt", "Timestep", cxxopts::value<DevFloat>()->default_value("0.01"))
+            ("L", "Spatial length", cxxopts::value<DevFloat>()->default_value("10.0"))
+            ("N", "Spatial site count", cxxopts::value<UInt>()->default_value("256"))
+            ("x-center", "Space center", cxxopts::value<DevFloat>()->default_value("0.0"))
+            ("Q", "Plane-wave scale-invariant Q", cxxopts::value<DevFloat>()->default_value("1.0"))
+            ("harmonic", "Plane-wave harmonic n (k=2*pi*n/L)", cxxopts::value<UInt>()->default_value("2"))
+            ("interval", "Output/listener interval (steps)", cxxopts::value<UIntBig>()->default_value("20"))
+            ("batch", "Max integration batch size", cxxopts::value<UIntBig>()->default_value("2048"));
+
+        const auto result = ParseSubcommandOptions(argc, argv, options);
+        if (result.count("help") > 0) {
+            std::cout << options.help() << '\n';
+            return 0;
+        }
+
+        FRtoRPlaneWavesExecutionConfig cfg;
+        cfg.Steps = result["steps"].as<UIntBig>();
+        cfg.Dt = result["dt"].as<DevFloat>();
+        cfg.L = result["L"].as<DevFloat>();
+        cfg.N = result["N"].as<UInt>();
+        cfg.XCenter = result["x-center"].as<DevFloat>();
+        cfg.Q = result["Q"].as<DevFloat>();
+        cfg.Harmonic = result["harmonic"].as<UInt>();
+        cfg.Interval = result["interval"].as<UIntBig>();
+        cfg.Batch = result["batch"].as<UIntBig>();
+
+        auto recipe = New<FKGRtoRPlaneWavesRecipeV2>(BuildRtoRPlaneWavesRecipeConfig(cfg), cfg.Interval);
+        auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
+
+        const auto status = RunTaskAndWait(*task);
+        PrintTaskSummary(*task);
+        return ExitCodeFromTaskStatus(status);
+    }
+
     auto IsMetropolisCommand(const Str &name) -> bool {
         return name == "metropolis" || name == "metropolis-v2" || name == "v2-metropolis";
     }
 
     auto IsSPICommand(const Str &name) -> bool {
         return name == "spi" || name == "spi-v2" || name == "v2-spi";
+    }
+
+    auto IsRtoRCommand(const Str &name) -> bool {
+        return name == "rtor" || name == "rtor-v2" || name == "rtor-plane-waves" || name == "v2-rtor";
     }
 
     auto DispatchRoot(const int argc, const char **argv) -> int {
@@ -461,12 +542,14 @@ namespace {
             const Str sub = argv[2];
             if (IsMetropolisCommand(sub)) return RunMetropolisCommand(argc - 2, argv + 2);
             if (IsSPICommand(sub)) return RunSPICommand(argc - 2, argv + 2);
+            if (IsRtoRCommand(sub)) return RunRtoRCommand(argc - 2, argv + 2);
 
             throw Exception("Unknown subprogram '" + sub + "'. Use 'Studios list'.");
         }
 
         if (IsMetropolisCommand(first)) return RunMetropolisCommand(argc - 1, argv + 1);
         if (IsSPICommand(first)) return RunSPICommand(argc - 1, argv + 1);
+        if (IsRtoRCommand(first)) return RunRtoRCommand(argc - 1, argv + 1);
 
         throw Exception("Unknown subprogram '" + first + "'. Use 'Studios list'.");
     }
