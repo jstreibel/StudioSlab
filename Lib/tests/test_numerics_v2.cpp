@@ -11,8 +11,11 @@
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Data/V2/LiveDataHubV2.h"
 #include "Math/Numerics/V2/Listeners/ConsoleProgressListenerV2.h"
+#include "Math/Numerics/V2/Listeners/CursorHistoryListenerV2.h"
 #include "Math/Numerics/V2/Listeners/DummyListenerV2.h"
+#include "Math/Numerics/V2/Listeners/ScalarTimeDFTListenerV2.h"
 #include "Math/Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.h"
+#include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryWallClockTriggerV2.h"
 #include "Math/Numerics/V2/Scheduling/OutputSchedulerV2.h"
@@ -952,4 +955,110 @@ TEST_CASE("PhaseG V2 - NumericTask can drive wall-clock triggers in open-ended r
     size_t scheduledCount = 0;
     for (const auto &event : events) if (event.Reason == EEventReasonV2::Scheduled) ++scheduledCount;
     CHECK(scheduledCount >= 3);
+}
+
+TEST_CASE("PhaseH V2 - CursorHistoryListener records scheduled and terminal cursors", "[V2][PhaseH][Listener][History]") {
+    using namespace Slab::Math::Numerics::V2;
+
+    auto history = New<FCursorHistoryListenerV2>();
+    Vector<FSubscriptionV2> subscriptions = {
+        {New<FEveryNStepsTriggerV2>(3), history, EDeliveryModeV2::Synchronous, true, true}
+    };
+
+    FRunLimitsV2 limits;
+    limits.Mode = ERunModeV2::FiniteSteps;
+    limits.MaxSteps = 10;
+
+    auto recipe = New<FTestRecipeV2>(
+        []() -> TPointer<FSimulationSessionV2> { return New<FCountingSessionV2>(0.25); },
+        subscriptions,
+        limits);
+
+    auto task = New<FNumericTaskV2>(recipe, false, 16);
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    const auto &samples = history->GetSamples();
+    REQUIRE(samples.size() == 5);
+    CHECK(samples.front().Reason == EEventReasonV2::Initial);
+    CHECK(samples.front().Cursor.Step == 0);
+    CHECK(samples[1].Cursor.Step == 3);
+    CHECK(samples[2].Cursor.Step == 6);
+    CHECK(samples[3].Cursor.Step == 9);
+    CHECK(samples.back().Reason == EEventReasonV2::Final);
+    CHECK(samples.back().Cursor.Step == 10);
+}
+
+TEST_CASE("PhaseH V2 - StateSnapshotListener captures copied final SPI state", "[V2][PhaseH][Listener][Snapshot][SPI]") {
+    using namespace Slab;
+    using namespace Slab::Core;
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::StochasticPathIntegrals;
+    using namespace Slab::Models::StochasticPathIntegrals::V2;
+
+    auto numericConfig = New<SPINumericConfig>();
+    auto iface = numericConfig->GetInterface();
+    DynamicPointerCast<RealParameter>(iface->GetParameter("length"))->SetValue(1.0);
+    DynamicPointerCast<RealParameter>(iface->GetParameter("time"))->SetValue(0.5);
+    DynamicPointerCast<IntegerParameter>(iface->GetParameter("site_count"))->SetValue(16);
+    DynamicPointerCast<RealParameter>(iface->GetParameter("dT"))->SetValue(0.125);
+    DynamicPointerCast<IntegerParameter>(iface->GetParameter("stochastic_time_steps"))->SetValue(4);
+
+    auto snapshot = New<FStateSnapshotListenerV2>("SPI Snapshot");
+    auto recipe = New<FSPIRecipeV2>(numericConfig, 1000);
+
+    // Add snapshot listener manually on top of recipe defaults by wrapping recipe outputs into test recipe.
+    auto baseSubs = recipe->BuildDefaultSubscriptions();
+    baseSubs.push_back({nullptr, snapshot, EDeliveryModeV2::Synchronous, false, true});
+
+    auto wrapperRecipe = New<FTestRecipeV2>(
+        [recipe]() -> TPointer<FSimulationSessionV2> { return recipe->BuildSession(); },
+        baseSubs,
+        recipe->GetRunLimits());
+
+    auto task = New<FNumericTaskV2>(wrapperRecipe, false, 8);
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    REQUIRE(snapshot->HasSnapshot());
+    CHECK(snapshot->GetSnapshotReason() == EEventReasonV2::Final);
+    CHECK(snapshot->GetSnapshotCursor().Step == 4);
+
+    const auto *session = task->GetSession();
+    REQUIRE(session != nullptr);
+    auto currentState = std::dynamic_pointer_cast<const SPIState>(session->GetCurrentState());
+    auto snapState = std::dynamic_pointer_cast<const SPIState>(snapshot->GetSnapshot());
+    REQUIRE(currentState != nullptr);
+    REQUIRE(snapState != nullptr);
+    CHECK(currentState.get() != snapState.get());
+
+    const auto currentAbs = SumAbsValues(currentState->getPhi()->getSpace().getHostData(true));
+    const auto snapAbs = SumAbsValues(snapState->getPhi()->getSpace().getHostData(true));
+    CHECK(snapAbs == Catch::Approx(currentAbs).epsilon(1e-9));
+}
+
+TEST_CASE("PhaseH V2 - ScalarTimeDFTListener computes DFT magnitudes from sampled series", "[V2][PhaseH][Listener][DFT]") {
+    using namespace Slab::Math::Numerics::V2;
+
+    constexpr auto w = DevFloat(6.0);
+    auto dft = New<FScalarTimeDFTListenerV2>(
+        [w](const FSimulationEventV2 &event) -> std::optional<DevFloat> {
+            if (!event.Cursor.SimulationTime.has_value()) return std::nullopt;
+            return std::sin(w * *event.Cursor.SimulationTime);
+        });
+
+    for (int i = 0; i < 128; ++i) {
+        FSimulationEventV2 event;
+        event.Reason = EEventReasonV2::Scheduled;
+        event.Cursor.Step = static_cast<UIntBig>(i);
+        event.Cursor.SimulationTime = DevFloat(i) * DevFloat(0.01);
+        dft->OnSample(event);
+    }
+
+    FSimulationEventV2 finalEvent;
+    finalEvent.Reason = EEventReasonV2::Final;
+    finalEvent.Cursor.Step = 128;
+    finalEvent.Cursor.SimulationTime = DevFloat(1.28);
+    REQUIRE(dft->OnRunFinished(finalEvent));
+
+    CHECK(dft->GetSampleCount() == 128);
+    REQUIRE(dft->GetDFTMagnitudes() != nullptr);
 }

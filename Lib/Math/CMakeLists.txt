@@ -57,9 +57,12 @@ set ( NUMERICS_SOURCES
 
         Numerics/OutputChannel.cpp
 		Numerics/V2/Listeners/ConsoleProgressListenerV2.cpp
+		Numerics/V2/Listeners/CursorHistoryListenerV2.cpp
 		Numerics/V2/Listeners/DummyListenerV2.cpp
 		Numerics/V2/Listeners/OutputDispatcherV2.cpp
+		Numerics/V2/Listeners/ScalarTimeDFTListenerV2.cpp
 		Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.cpp
+		Numerics/V2/Listeners/StateSnapshotListenerV2.cpp
 		Numerics/V2/Scheduling/OutputSchedulerV2.cpp
 		Numerics/V2/Scheduling/EveryNStepsTriggerV2.cpp
 		Numerics/V2/Scheduling/EveryWallClockTriggerV2.cpp
