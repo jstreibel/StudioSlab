@@ -4,6 +4,8 @@ add_executable(Studios
         ../Common/NumericsV2TaskUtils.cpp
         ../Common/V2SimulationRunners.cpp
         ../Common/SessionLiveViewStatsV2.cpp
+        ../Common/Simulations/V2/SPISliceV2.cpp
+        ../Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.cpp
         ../Common/Monitors/V2/SPIPassiveMonitorWindowV2.cpp
         ../Common/Monitors/V2/KGRtoRPlaneWavesPassiveMonitorWindowV2.cpp
 )

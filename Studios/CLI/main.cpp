@@ -1,21 +1,16 @@
 #include "CrashPad.h"
 
 #include "Core/Controller/CommandLine/CommandLineParserDefs.h"
-#include "Core/Controller/Parameter/BuiltinParameters.h"
 #include "Core/SlabCore.h"
 
-#include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
-#include "Models/KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PlaneWaves-RecipeV2.h"
 #include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
-#include "Models/Stochastic-Path-Integral/SPINumericConfig.h"
-#include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
 
 #include "StudioSlab.h"
-#include "../Common/Monitors/V2/KGRtoRPlaneWavesPassiveMonitorWindowV2.h"
-#include "../Common/Monitors/V2/SPIPassiveMonitorWindowV2.h"
 #include "../Common/NumericsV2TaskUtils.h"
+#include "../Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.h"
+#include "../Common/Simulations/V2/SPISliceV2.h"
 #include "../Common/V2SimulationRunners.h"
 
 #include <iostream>
@@ -23,71 +18,22 @@
 namespace {
 
     using namespace Slab;
-
-    struct FSPIExecutionConfig;
-    struct FRtoRPlaneWavesExecutionConfig;
-
-    auto ConfigureSPINumericConfig(const TPointer<Slab::Models::StochasticPathIntegrals::SPINumericConfig> &config,
-                                   DevFloat L,
-                                   DevFloat Time,
-                                   UInt N,
-                                   DevFloat Dt,
-                                   UInt Steps) -> void;
-    auto BuildRtoRPlaneWavesRecipeConfig(const FRtoRPlaneWavesExecutionConfig &cfg)
-        -> Slab::Models::KGRtoR::PlaneWaves::V2::FKGRtoRPlaneWavesConfigV2;
-
-    struct FSPIExecutionConfig {
-        UInt Steps = 20;
-        DevFloat Dt = 0.05;
-        DevFloat Time = 1.0;
-        DevFloat L = 1.0;
-        UInt N = 64;
-        UIntBig Interval = 10;
-        UIntBig MonitorInterval = 10;
-        UIntBig Batch = 2048;
-        bool bEnableGLMonitor = false;
-    };
-
-    struct FRtoRPlaneWavesExecutionConfig {
-        UIntBig Steps = 200;
-        DevFloat Dt = -1.0;
-        DevFloat L = 10.0;
-        UInt N = 256;
-        DevFloat XCenter = 0.0;
-        DevFloat Q = 1.0;
-        UInt Harmonic = 2;
-        UIntBig Interval = 20;
-        UIntBig MonitorInterval = 20;
-        UIntBig Batch = 2048;
-        bool bEnableGLMonitor = false;
-    };
+    namespace StudiosSimV2 = Slab::Studios::Common::Simulations::V2;
+    using StudiosSimV2::FRtoRPlaneWavesExecutionConfig;
+    using StudiosSimV2::FSPIExecutionConfig;
 
     auto RunTaskWithPassiveSPIGLMonitor(const FSPIExecutionConfig &cfg) -> int {
-        using namespace Slab::Models::StochasticPathIntegrals;
-        using namespace Slab::Models::StochasticPathIntegrals::V2;
-
         auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
-
-        auto numericConfig = New<SPINumericConfig>();
-        ConfigureSPINumericConfig(numericConfig, cfg.L, cfg.Time, cfg.N, cfg.Dt, cfg.Steps);
-
-        auto recipe = New<FSPIRecipeV2>(numericConfig, cfg.Interval, liveView);
-        recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
-        auto monitor = New<Slab::Studios::Common::Monitors::V2::FSPIPassiveMonitorWindowV2>(
-            liveView, static_cast<UIntBig>(cfg.Steps));
+        auto recipe = StudiosSimV2::BuildSPIRecipeV2(cfg, liveView);
+        auto monitor = StudiosSimV2::BuildSPIPassiveMonitorWindowV2(cfg, liveView);
         return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
             "Studios SPI V2 Monitor", recipe, monitor, static_cast<size_t>(cfg.Batch));
     }
 
     auto RunTaskWithPassiveRtoRGLMonitor(const FRtoRPlaneWavesExecutionConfig &cfg) -> int {
-        using namespace Slab::Models::KGRtoR::PlaneWaves::V2;
-
         auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
-        auto recipe = New<FKGRtoRPlaneWavesRecipeV2>(BuildRtoRPlaneWavesRecipeConfig(cfg), cfg.Interval, liveView);
-        recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
-
-        auto monitor = New<Slab::Studios::Common::Monitors::V2::FRtoRPlaneWavesPassiveMonitorWindowV2>(
-            liveView, cfg.Steps);
+        auto recipe = StudiosSimV2::BuildRtoRPlaneWavesRecipeV2(cfg, liveView);
+        auto monitor = StudiosSimV2::BuildRtoRPlaneWavesPassiveMonitorWindowV2(cfg, liveView);
         return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
             "Studios KGRtoR Plane Waves V2 Monitor", recipe, monitor, static_cast<size_t>(cfg.Batch));
     }
@@ -184,38 +130,8 @@ namespace {
         return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
     }
 
-    auto ConfigureSPINumericConfig(const TPointer<Slab::Models::StochasticPathIntegrals::SPINumericConfig> &config,
-                                   const DevFloat L,
-                                   const DevFloat Time,
-                                   const UInt N,
-                                   const DevFloat Dt,
-                                   const UInt Steps) -> void {
-        using namespace Slab::Core;
-
-        const auto iface = config->GetInterface();
-        if (iface == nullptr) throw Exception("SPI config interface is null.");
-
-        auto pL = DynamicPointerCast<RealParameter>(iface->GetParameter("length"));
-        auto pT = DynamicPointerCast<RealParameter>(iface->GetParameter("time"));
-        auto pN = DynamicPointerCast<IntegerParameter>(iface->GetParameter("site_count"));
-        auto pDT = DynamicPointerCast<RealParameter>(iface->GetParameter("dT"));
-        auto pNT = DynamicPointerCast<IntegerParameter>(iface->GetParameter("stochastic_time_steps"));
-
-        if (pL == nullptr || pT == nullptr || pN == nullptr || pDT == nullptr || pNT == nullptr) {
-            throw Exception("SPI config parameters are incomplete.");
-        }
-
-        pL->SetValue(L);
-        pT->SetValue(Time);
-        pN->SetValue(static_cast<int>(N));
-        pDT->SetValue(Dt);
-        pNT->SetValue(static_cast<int>(Steps));
-    }
-
     auto RunSPICommand(const int argc, const char **argv) -> int {
         using namespace Slab::Math::Numerics::V2;
-        using namespace Slab::Models::StochasticPathIntegrals;
-        using namespace Slab::Models::StochasticPathIntegrals::V2;
 
         CLOptionsDescription options("Studios spi", "Run the native V2 SPI slice.");
         options.add_options()
@@ -265,10 +181,7 @@ namespace {
             return RunTaskWithPassiveSPIGLMonitor(cfg);
         }
 
-        auto numericConfig = New<SPINumericConfig>();
-        ConfigureSPINumericConfig(numericConfig, L, time, N, dt, steps);
-
-        auto recipe = New<FSPIRecipeV2>(numericConfig, interval);
+        auto recipe = StudiosSimV2::BuildSPIRecipeV2(cfg);
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(batch));
 
         const auto status = Slab::Studios::Common::RunTaskAndWait(*task);
@@ -276,22 +189,8 @@ namespace {
         return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
     }
 
-    auto BuildRtoRPlaneWavesRecipeConfig(const FRtoRPlaneWavesExecutionConfig &cfg)
-        -> Slab::Models::KGRtoR::PlaneWaves::V2::FKGRtoRPlaneWavesConfigV2 {
-        Slab::Models::KGRtoR::PlaneWaves::V2::FKGRtoRPlaneWavesConfigV2 recipeCfg;
-        recipeCfg.N = cfg.N;
-        recipeCfg.L = cfg.L;
-        recipeCfg.Dt = cfg.Dt;
-        recipeCfg.Steps = cfg.Steps;
-        recipeCfg.XCenter = cfg.XCenter;
-        recipeCfg.Q = cfg.Q;
-        recipeCfg.Harmonic = cfg.Harmonic;
-        return recipeCfg;
-    }
-
     auto RunRtoRCommand(const int argc, const char **argv) -> int {
         using namespace Slab::Math::Numerics::V2;
-        using namespace Slab::Models::KGRtoR::PlaneWaves::V2;
 
         CLOptionsDescription options("Studios rtor", "Run the native V2 KGRtoR plane-waves slice.");
         options.add_options()
@@ -330,20 +229,16 @@ namespace {
         cfg.Batch = result["batch"].as<UIntBig>();
         cfg.bEnableGLMonitor = result.count("gl") > 0;
 
-        if (cfg.N == 0) throw Exception("RtoR requires N > 0.");
-
         if (result.count("dt") > 0) {
             cfg.Dt = result["dt"].as<DevFloat>();
-        } else {
-            const auto h = cfg.L / static_cast<DevFloat>(cfg.N);
-            cfg.Dt = static_cast<DevFloat>(0.1) * h; // Legacy KG default: dt/h = r = 0.1
         }
+        StudiosSimV2::FinalizeRtoRPlaneWavesExecutionConfigV2(cfg);
 
         if (cfg.bEnableGLMonitor) {
             return RunTaskWithPassiveRtoRGLMonitor(cfg);
         }
 
-        auto recipe = New<FKGRtoRPlaneWavesRecipeV2>(BuildRtoRPlaneWavesRecipeConfig(cfg), cfg.Interval);
+        auto recipe = StudiosSimV2::BuildRtoRPlaneWavesRecipeV2(cfg);
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
 
         const auto status = Slab::Studios::Common::RunTaskAndWait(*task);
