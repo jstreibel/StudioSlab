@@ -5,6 +5,7 @@
 #include "Core/SlabCore.h"
 
 #include "Graphics/Plot2D/Artists/R2SectionArtist.h"
+#include "Graphics/Plot2D/Artists/RtoRFunctionArtist.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/SlabGraphics.h"
@@ -13,10 +14,12 @@
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 
 #include "Math/Data/V2/SessionLiveViewV2.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 #include "Math/Function/RtoR2/StraightLine.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
 #include "Models/KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PlaneWaves-RecipeV2.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.h"
 #include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
 #include "Models/Stochastic-Path-Integral/SPINumericConfig.h"
 #include "Models/Stochastic-Path-Integral/SPI-State.h"
@@ -26,6 +29,7 @@
 #include "../Common/VisualHost.h"
 
 #include <chrono>
+#include <cmath>
 #include <iostream>
 #include <mutex>
 #include <thread>
@@ -162,6 +166,137 @@ namespace {
         }
     };
 
+    class FRtoRPlaneWavesPassiveMonitorWindowV2 final : public Graphics::FWindowPanel {
+        TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView;
+        TPointer<Graphics::FGUIWindow> GuiWindow;
+        Graphics::FPlot2DWindow PhiWindow;
+        TPointer<Graphics::RtoRFunctionArtist> PhiArtist = nullptr;
+        TPointer<Math::RtoR::NumericFunction_CPU> DisplayPhi = nullptr;
+
+        std::optional<Math::LiveData::V2::FSessionTelemetryV2> LastTelemetry = std::nullopt;
+        bool bLastLeaseAcquired = false;
+        UIntBig MaxSteps = 0;
+
+        auto UpdateStatsWindow() -> void {
+            if (GuiWindow == nullptr) return;
+
+            GuiWindow->AddVolatileStat("KGRtoR Plane Waves V2 passive monitor");
+            GuiWindow->AddVolatileStat("");
+
+            if (!LastTelemetry.has_value()) {
+                GuiWindow->AddVolatileStat("Waiting for telemetry...");
+                return;
+            }
+
+            const auto &telemetry = *LastTelemetry;
+            GuiWindow->AddVolatileStat("Step: " + ToStr(telemetry.Cursor.Step));
+            if (telemetry.Cursor.SimulationTime.has_value()) {
+                GuiWindow->AddVolatileStat("t: " + ToStr(*telemetry.Cursor.SimulationTime, 6, true));
+            }
+
+            GuiWindow->AddVolatileStat("Version: " + ToStr(telemetry.PublishedVersion));
+            GuiWindow->AddVolatileStat("Reason: " + ToDisplayString(telemetry.LastReason));
+            GuiWindow->AddVolatileStat(Str("Bound session: ") + (LiveView->HasBoundSession() ? "yes" : "no"));
+            GuiWindow->AddVolatileStat(Str("Lease this frame: ") + (bLastLeaseAcquired ? "yes" : "no"));
+            GuiWindow->AddVolatileStat(Str("State present: ") + (telemetry.bHasState ? "yes" : "no"));
+            GuiWindow->AddVolatileStat("Display mode: copied phi");
+
+            if (MaxSteps > 0) {
+                const auto progress = static_cast<DevFloat>(
+                    std::min<UIntBig>(telemetry.Cursor.Step, MaxSteps)) / static_cast<DevFloat>(MaxSteps);
+                GuiWindow->AddVolatileStat("Progress: " + ToStr(progress * 100.0, 2, true) + "%");
+            }
+        }
+
+        auto SetPlotFromState(const TPointer<const Math::Base::EquationState> &state) -> void {
+            if (PhiArtist == nullptr) return;
+
+            auto kgState = std::dynamic_pointer_cast<const Models::KGRtoR::FEquationState>(state);
+            if (kgState == nullptr) {
+                PhiArtist->setFunction(nullptr);
+                return;
+            }
+
+            auto *phiBase = &kgState->getPhi();
+            auto *phiNumeric = dynamic_cast<Math::RtoR::NumericFunction *>(phiBase);
+            if (phiNumeric == nullptr) {
+                PhiArtist->setFunction(nullptr);
+                return;
+            }
+
+            if (DisplayPhi == nullptr ||
+                DisplayPhi->N != phiNumeric->N ||
+                DisplayPhi->xMin != phiNumeric->xMin ||
+                DisplayPhi->xMax != phiNumeric->xMax) {
+                DisplayPhi = New<Math::RtoR::NumericFunction_CPU>(*phiNumeric);
+            } else {
+                DisplayPhi->Set(phiNumeric->getSpace().getHostData(true));
+            }
+
+            PhiArtist->setFunction(DisplayPhi);
+
+            DevFloat yMin = 0.0;
+            DevFloat yMax = 0.0;
+            try {
+                yMin = phiNumeric->min();
+                yMax = phiNumeric->max();
+            } catch (...) {
+                yMin = -1.0;
+                yMax = 1.0;
+            }
+
+            if (!std::isfinite(yMin) || !std::isfinite(yMax)) {
+                yMin = -1.0;
+                yMax = 1.0;
+            }
+            if (Common::AreEqual(yMin, yMax)) {
+                const auto pad = Common::AreEqual(yMin, 0.0) ? DevFloat(1.0) : std::abs(yMin) * DevFloat(0.1);
+                yMin -= pad;
+                yMax += pad;
+            }
+
+            PhiWindow.GetRegion().setLimits(phiNumeric->xMin, phiNumeric->xMax, yMin, yMax);
+        }
+
+    public:
+        explicit FRtoRPlaneWavesPassiveMonitorWindowV2(const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+                                                       const UIntBig maxSteps)
+        : FWindowPanel(Graphics::FSlabWindowConfig("KGRtoR Plane Waves V2 GL Monitor"))
+        , LiveView(liveView)
+        , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("KGRtoR Telemetry")))
+        , PhiWindow("KGRtoR phi(x)") {
+            if (LiveView == nullptr) throw Exception("KGRtoR passive monitor requires a live view.");
+
+            auto style = *Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
+            PhiArtist = New<Graphics::RtoRFunctionArtist>(nullptr, style, 2048);
+            PhiArtist->SetAffectGraphRanges(false);
+
+            MaxSteps = maxSteps;
+
+            AddWindow(GuiWindow, false, 0.25f);
+            AddWindow(Naked(PhiWindow), true, 0.75f);
+            SetColumnRelativeWidth(0, 0.25f);
+
+            PhiWindow.AddArtist(PhiArtist);
+            PhiWindow.SetAutoReviewGraphRanges(false);
+            PhiWindow.GetRegion().setLimits(-1.0, 1.0, -1.0, 1.0);
+        }
+
+        auto ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void override {
+            const auto telemetry = LiveView->TryGetTelemetry();
+            if (telemetry.has_value()) LastTelemetry = telemetry;
+
+            auto leaseOpt = LiveView->AcquireReadLease();
+            bLastLeaseAcquired = leaseOpt.has_value();
+
+            if (leaseOpt.has_value()) SetPlotFromState(leaseOpt->GetState());
+            else if (PhiArtist != nullptr) PhiArtist->setFunction(nullptr);
+
+            UpdateStatsWindow();
+            FWindowPanel::ImmediateDraw(platformWindow);
+        }
+    };
+
     struct FSPIExecutionConfig {
         UInt Steps = 20;
         DevFloat Dt = 0.05;
@@ -205,6 +340,41 @@ namespace {
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
 
         auto monitor = New<FSPIPassiveMonitorWindowV2>(liveView, static_cast<UIntBig>(cfg.Steps));
+        Slab::Studios::Common::AddRootSlabWindow(host, monitor, false);
+
+        std::thread worker([&task] { task->Start(); });
+
+        const auto cleanupTaskThread = [&task, &worker]() {
+            task->Abort();
+            task->Release();
+            if (worker.joinable()) worker.join();
+        };
+
+        try {
+            Slab::Studios::Common::RunVisualHost(host);
+        } catch (...) {
+            cleanupTaskThread();
+            throw;
+        }
+
+        cleanupTaskThread();
+
+        PrintTaskSummary(*task);
+        return ExitCodeFromTaskStatus(task->GetStatus());
+    }
+
+    auto RunTaskWithPassiveRtoRGLMonitor(const FRtoRPlaneWavesExecutionConfig &cfg) -> int {
+        using namespace Slab::Math::Numerics::V2;
+        using namespace Slab::Models::KGRtoR::PlaneWaves::V2;
+
+        auto host = Slab::Studios::Common::CreateGLFWVisualHost("Studios KGRtoR Plane Waves V2 Monitor");
+
+        auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
+        auto recipe = New<FKGRtoRPlaneWavesRecipeV2>(BuildRtoRPlaneWavesRecipeConfig(cfg), cfg.Interval, liveView);
+        recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
+
+        auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
+        auto monitor = New<FRtoRPlaneWavesPassiveMonitorWindowV2>(liveView, cfg.Steps);
         Slab::Studios::Common::AddRootSlabWindow(host, monitor, false);
 
         std::thread worker([&task] { task->Start(); });
@@ -287,6 +457,7 @@ namespace {
                 << "  Studios spi --steps 8 --dt 0.125 --time 0.5 --N 16 --interval 2\n"
                 << "  Studios spi --gl --steps 2000 --interval 50 --monitor-interval 2\n"
                 << "  Studios rtor --steps 500 --dt 0.01 --L 10 --N 256 --Q 1 --harmonic 2\n"
+                << "  Studios rtor --gl --steps 2000 --interval 50 --monitor-interval 2\n"
                 << "  Studios spi --help\n";
     }
 
@@ -470,6 +641,7 @@ namespace {
         CLOptionsDescription options("Studios rtor", "Run the native V2 KGRtoR plane-waves slice.");
         options.add_options()
             ("h,help", "Show this help")
+            ("gl", "Run with passive OpenGL monitor (real app loop)")
             ("steps", "Integration steps", cxxopts::value<UIntBig>()->default_value("200"))
             ("dt", "Timestep", cxxopts::value<DevFloat>()->default_value("0.01"))
             ("L", "Spatial length", cxxopts::value<DevFloat>()->default_value("10.0"))
@@ -478,6 +650,9 @@ namespace {
             ("Q", "Plane-wave scale-invariant Q", cxxopts::value<DevFloat>()->default_value("1.0"))
             ("harmonic", "Plane-wave harmonic n (k=2*pi*n/L)", cxxopts::value<UInt>()->default_value("2"))
             ("interval", "Output/listener interval (steps)", cxxopts::value<UIntBig>()->default_value("20"))
+            ("monitor-interval",
+             "Live-view publish interval (steps) for --gl; defaults to --interval",
+             cxxopts::value<UIntBig>())
             ("batch", "Max integration batch size", cxxopts::value<UIntBig>()->default_value("2048"));
 
         const auto result = ParseSubcommandOptions(argc, argv, options);
@@ -495,7 +670,15 @@ namespace {
         cfg.Q = result["Q"].as<DevFloat>();
         cfg.Harmonic = result["harmonic"].as<UInt>();
         cfg.Interval = result["interval"].as<UIntBig>();
+        cfg.MonitorInterval = result.count("monitor-interval") > 0
+            ? result["monitor-interval"].as<UIntBig>()
+            : cfg.Interval;
         cfg.Batch = result["batch"].as<UIntBig>();
+        cfg.bEnableGLMonitor = result.count("gl") > 0;
+
+        if (cfg.bEnableGLMonitor) {
+            return RunTaskWithPassiveRtoRGLMonitor(cfg);
+        }
 
         auto recipe = New<FKGRtoRPlaneWavesRecipeV2>(BuildRtoRPlaneWavesRecipeConfig(cfg), cfg.Interval);
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
