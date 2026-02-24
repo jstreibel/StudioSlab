@@ -26,6 +26,8 @@
 #include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
 
 #include "StudioSlab.h"
+#include "../Common/NumericsV2TaskUtils.h"
+#include "../Common/SessionLiveViewStatsV2.h"
 #include "../Common/VisualHost.h"
 
 #include <chrono>
@@ -41,8 +43,6 @@ namespace {
     struct FSPIExecutionConfig;
     struct FRtoRPlaneWavesExecutionConfig;
 
-    auto ExitCodeFromTaskStatus(Slab::Core::ETaskStatus status) -> int;
-    auto PrintTaskSummary(const Math::Numerics::V2::FNumericTaskV2 &task) -> void;
     auto ConfigureSPINumericConfig(const TPointer<Slab::Models::StochasticPathIntegrals::SPINumericConfig> &config,
                                    DevFloat L,
                                    DevFloat Time,
@@ -51,21 +51,6 @@ namespace {
                                    UInt Steps) -> void;
     auto BuildRtoRPlaneWavesRecipeConfig(const FRtoRPlaneWavesExecutionConfig &cfg)
         -> Slab::Models::KGRtoR::PlaneWaves::V2::FKGRtoRPlaneWavesConfigV2;
-    auto ToDisplayString(Math::Numerics::V2::EEventReasonV2 reason) -> Str;
-
-    auto ToDisplayString(const Math::Numerics::V2::EEventReasonV2 reason) -> Str {
-        using EReason = Math::Numerics::V2::EEventReasonV2;
-
-        switch (reason) {
-        case EReason::Initial: return "Initial";
-        case EReason::Scheduled: return "Scheduled";
-        case EReason::Forced: return "Forced";
-        case EReason::Final: return "Final";
-        case EReason::AbortFinal: return "AbortFinal";
-        }
-
-        return "Unknown";
-    }
 
     class FSPIPassiveMonitorWindowV2 final : public Graphics::FWindowPanel {
         TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView;
@@ -90,34 +75,13 @@ namespace {
         }
 
         auto UpdateStatsWindow() -> void {
-            if (GuiWindow == nullptr) return;
-
-            GuiWindow->AddVolatileStat("SPI V2 passive monitor");
-            GuiWindow->AddVolatileStat("");
-
-            if (!LastTelemetry.has_value()) {
-                GuiWindow->AddVolatileStat("Waiting for telemetry...");
-                return;
-            }
-
-            const auto &telemetry = *LastTelemetry;
-
-            GuiWindow->AddVolatileStat("Step: " + ToStr(telemetry.Cursor.Step));
-            if (telemetry.Cursor.SimulationTime.has_value()) {
-                GuiWindow->AddVolatileStat("t: " + ToStr(*telemetry.Cursor.SimulationTime, 6, true));
-            }
-
-            GuiWindow->AddVolatileStat("Version: " + ToStr(telemetry.PublishedVersion));
-            GuiWindow->AddVolatileStat("Reason: " + ToDisplayString(telemetry.LastReason));
-            GuiWindow->AddVolatileStat(Str("Bound session: ") + (LiveView->HasBoundSession() ? "yes" : "no"));
-            GuiWindow->AddVolatileStat(Str("Lease this frame: ") + (bLastLeaseAcquired ? "yes" : "no"));
-            GuiWindow->AddVolatileStat(Str("State present: ") + (telemetry.bHasState ? "yes" : "no"));
-
-            if (MaxSteps > 0) {
-                const auto progress = static_cast<DevFloat>(
-                    std::min<UIntBig>(telemetry.Cursor.Step, MaxSteps)) / static_cast<DevFloat>(MaxSteps);
-                GuiWindow->AddVolatileStat("Progress: " + ToStr(progress * 100.0, 2, true) + "%");
-            }
+            Slab::Studios::Common::AppendSessionLiveViewStats(
+                GuiWindow,
+                "SPI V2 passive monitor",
+                LastTelemetry,
+                LiveView->HasBoundSession(),
+                bLastLeaseAcquired,
+                MaxSteps);
         }
 
     public:
@@ -179,34 +143,14 @@ namespace {
         UIntBig MaxSteps = 0;
 
         auto UpdateStatsWindow() -> void {
-            if (GuiWindow == nullptr) return;
-
-            GuiWindow->AddVolatileStat("KGRtoR Plane Waves V2 passive monitor");
-            GuiWindow->AddVolatileStat("");
-
-            if (!LastTelemetry.has_value()) {
-                GuiWindow->AddVolatileStat("Waiting for telemetry...");
-                return;
-            }
-
-            const auto &telemetry = *LastTelemetry;
-            GuiWindow->AddVolatileStat("Step: " + ToStr(telemetry.Cursor.Step));
-            if (telemetry.Cursor.SimulationTime.has_value()) {
-                GuiWindow->AddVolatileStat("t: " + ToStr(*telemetry.Cursor.SimulationTime, 6, true));
-            }
-
-            GuiWindow->AddVolatileStat("Version: " + ToStr(telemetry.PublishedVersion));
-            GuiWindow->AddVolatileStat("Reason: " + ToDisplayString(telemetry.LastReason));
-            GuiWindow->AddVolatileStat(Str("Bound session: ") + (LiveView->HasBoundSession() ? "yes" : "no"));
-            GuiWindow->AddVolatileStat(Str("Lease this frame: ") + (bLastLeaseAcquired ? "yes" : "no"));
-            GuiWindow->AddVolatileStat(Str("State present: ") + (telemetry.bHasState ? "yes" : "no"));
-            GuiWindow->AddVolatileStat("Display mode: copied phi");
-
-            if (MaxSteps > 0) {
-                const auto progress = static_cast<DevFloat>(
-                    std::min<UIntBig>(telemetry.Cursor.Step, MaxSteps)) / static_cast<DevFloat>(MaxSteps);
-                GuiWindow->AddVolatileStat("Progress: " + ToStr(progress * 100.0, 2, true) + "%");
-            }
+            Slab::Studios::Common::AppendSessionLiveViewStats(
+                GuiWindow,
+                "KGRtoR Plane Waves V2 passive monitor",
+                LastTelemetry,
+                LiveView->HasBoundSession(),
+                bLastLeaseAcquired,
+                MaxSteps,
+                Str("Display mode: copied phi"));
         }
 
         auto SetPlotFromState(const TPointer<const Math::Base::EquationState> &state) -> void {
@@ -350,25 +294,9 @@ namespace {
         auto monitor = New<FSPIPassiveMonitorWindowV2>(liveView, static_cast<UIntBig>(cfg.Steps));
         Slab::Studios::Common::AddRootSlabWindow(host, monitor, false);
 
-        std::thread worker([&task] { task->Start(); });
-
-        const auto cleanupTaskThread = [&task, &worker]() {
-            task->Abort();
-            task->Release();
-            if (worker.joinable()) worker.join();
-        };
-
-        try {
-            Slab::Studios::Common::RunVisualHost(host);
-        } catch (...) {
-            cleanupTaskThread();
-            throw;
-        }
-
-        cleanupTaskThread();
-
-        PrintTaskSummary(*task);
-        return ExitCodeFromTaskStatus(task->GetStatus());
+        const auto status = Slab::Studios::Common::RunTaskWithVisualHost(host, *task);
+        Slab::Studios::Common::PrintNumericTaskSummary(*task);
+        return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
     }
 
     auto RunTaskWithPassiveRtoRGLMonitor(const FRtoRPlaneWavesExecutionConfig &cfg) -> int {
@@ -385,64 +313,9 @@ namespace {
         auto monitor = New<FRtoRPlaneWavesPassiveMonitorWindowV2>(liveView, cfg.Steps);
         Slab::Studios::Common::AddRootSlabWindow(host, monitor, false);
 
-        std::thread worker([&task] { task->Start(); });
-
-        const auto cleanupTaskThread = [&task, &worker]() {
-            task->Abort();
-            task->Release();
-            if (worker.joinable()) worker.join();
-        };
-
-        try {
-            Slab::Studios::Common::RunVisualHost(host);
-        } catch (...) {
-            cleanupTaskThread();
-            throw;
-        }
-
-        cleanupTaskThread();
-
-        PrintTaskSummary(*task);
-        return ExitCodeFromTaskStatus(task->GetStatus());
-    }
-
-    auto RunTaskAndWait(Slab::Core::FTask &task) -> Slab::Core::ETaskStatus {
-        std::thread worker([&task] { task.Start(); });
-
-        while (true) {
-            const auto status = task.GetStatus();
-            if (status != Slab::Core::TaskNotInitialized && status != Slab::Core::TaskRunning) {
-                task.Release();
-                worker.join();
-                return status;
-            }
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        }
-    }
-
-    auto ExitCodeFromTaskStatus(const Slab::Core::ETaskStatus status) -> int {
-        switch (status) {
-        case Slab::Core::TaskSuccess:
-            return 0;
-        case Slab::Core::TaskAborted:
-            return 130;
-        case Slab::Core::TaskError:
-        case Slab::Core::TaskNotInitialized:
-        case Slab::Core::TaskRunning:
-            return 2;
-        }
-
-        return 2;
-    }
-
-    auto PrintTaskSummary(const Math::Numerics::V2::FNumericTaskV2 &task) -> void {
-        const auto cursor = task.GetCursor();
-        std::cout << '\n' << "Finished at step=" << cursor.Step;
-        if (cursor.SimulationTime.has_value()) {
-            std::cout << " t=" << *cursor.SimulationTime;
-        }
-        std::cout << '\n';
+        const auto status = Slab::Studios::Common::RunTaskWithVisualHost(host, *task);
+        Slab::Studios::Common::PrintNumericTaskSummary(*task);
+        return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
     }
 
     auto PrintRootUsage() -> void {
@@ -532,9 +405,9 @@ namespace {
         auto recipe = New<FRtoRHamiltonianMetropolisHastingsRecipeV2>(steps, interval);
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(batch));
 
-        const auto status = RunTaskAndWait(*task);
-        PrintTaskSummary(*task);
-        return ExitCodeFromTaskStatus(status);
+        const auto status = Slab::Studios::Common::RunTaskAndWait(*task);
+        Slab::Studios::Common::PrintNumericTaskSummary(*task);
+        return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
     }
 
     auto ConfigureSPINumericConfig(const TPointer<Slab::Models::StochasticPathIntegrals::SPINumericConfig> &config,
@@ -624,9 +497,9 @@ namespace {
         auto recipe = New<FSPIRecipeV2>(numericConfig, interval);
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(batch));
 
-        const auto status = RunTaskAndWait(*task);
-        PrintTaskSummary(*task);
-        return ExitCodeFromTaskStatus(status);
+        const auto status = Slab::Studios::Common::RunTaskAndWait(*task);
+        Slab::Studios::Common::PrintNumericTaskSummary(*task);
+        return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
     }
 
     auto BuildRtoRPlaneWavesRecipeConfig(const FRtoRPlaneWavesExecutionConfig &cfg)
@@ -699,9 +572,9 @@ namespace {
         auto recipe = New<FKGRtoRPlaneWavesRecipeV2>(BuildRtoRPlaneWavesRecipeConfig(cfg), cfg.Interval);
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
 
-        const auto status = RunTaskAndWait(*task);
-        PrintTaskSummary(*task);
-        return ExitCodeFromTaskStatus(status);
+        const auto status = Slab::Studios::Common::RunTaskAndWait(*task);
+        Slab::Studios::Common::PrintNumericTaskSummary(*task);
+        return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
     }
 
     auto IsMetropolisCommand(const Str &name) -> bool {
