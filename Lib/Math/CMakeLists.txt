@@ -84,6 +84,10 @@ set ( NUMERICS_SOURCES
 		Function/NativeFunction.h
 		Data/DataManager.cpp
 		Data/DataManager.h
+		Data/V2/LiveTopicsV2.cpp
+		Data/V2/LiveTopicsV2.h
+		Data/V2/LiveDataHubV2.cpp
+		Data/V2/LiveDataHubV2.h
 		Data/V2/SessionLiveViewV2.cpp
 		Data/V2/SessionLiveViewV2.h
 		Numerics/ODE/Solver/LinearStepSolver.cpp

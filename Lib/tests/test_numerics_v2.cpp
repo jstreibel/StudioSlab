@@ -9,6 +9,7 @@
 #include "Utils/RandUtils.h"
 
 #include "Math/Data/V2/SessionLiveViewV2.h"
+#include "Math/Data/V2/LiveDataHubV2.h"
 #include "Math/Numerics/V2/Listeners/ConsoleProgressListenerV2.h"
 #include "Math/Numerics/V2/Listeners/DummyListenerV2.h"
 #include "Math/Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.h"
@@ -717,4 +718,65 @@ TEST_CASE("PhaseE V2 - SPI recipe can publish a live session view", "[V2][PhaseE
     CHECK_FALSE(liveView->HasBoundSession());
 
     CHECK_FALSE(liveView->AcquireReadLease().has_value());
+}
+
+TEST_CASE("PhaseF V2 - LiveDataHub returns stable named session live views", "[V2][PhaseF][LiveData][Hub]") {
+    using namespace Slab::Math::LiveData::V2;
+
+    FLiveDataHubV2 hub;
+
+    auto a1 = hub.GetOrCreateSessionLiveView("spi/main");
+    auto a2 = hub.GetOrCreateSessionLiveView("spi/main");
+    auto b = hub.GetOrCreateSessionLiveView("spi/aux");
+
+    REQUIRE(a1 != nullptr);
+    REQUIRE(a2 != nullptr);
+    REQUIRE(b != nullptr);
+
+    CHECK(a1 == a2);
+    CHECK(a1 != b);
+
+    CHECK(hub.FindSessionLiveView("spi/main") == a1);
+    CHECK(hub.FindSessionLiveView("missing") == nullptr);
+
+    const auto topics = hub.ListSessionLiveViewTopics();
+    CHECK(std::find(topics.begin(), topics.end(), "spi/main") != topics.end());
+    CHECK(std::find(topics.begin(), topics.end(), "spi/aux") != topics.end());
+}
+
+TEST_CASE("PhaseF V2 - SessionLiveView facade remains compatible on top of generic topics", "[V2][PhaseF][LiveData]") {
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Math::LiveData::V2;
+
+    auto sessionTopic = New<FSessionViewTopicV2>("topic/session");
+    auto telemetryTopic = New<FSessionTelemetryTopicV2>("topic/telemetry");
+    auto liveView = New<FSessionLiveViewV2>(sessionTopic, telemetryTopic);
+    auto session = New<FCountingSessionV2>(0.5);
+
+    session->Step(2);
+    auto lease = session->AcquireReadLease();
+
+    FSimulationEventV2 event;
+    event.Cursor = lease.GetCursor();
+    event.State = lease.GetState();
+    event.Reason = EEventReasonV2::Scheduled;
+    event.SessionRef = TPointer<const FSimulationSessionV2>(session);
+    event.PublishedVersion = lease.GetPublishedVersion();
+
+    liveView->PublishEvent(event);
+
+    REQUIRE(liveView->HasBoundSession());
+
+    const auto telemetry = telemetryTopic->TryGetTelemetry();
+    REQUIRE(telemetry.has_value());
+    CHECK(telemetry->Cursor.Step == 2);
+    CHECK(telemetry->PublishedVersion == 1);
+
+    auto liveLease = sessionTopic->AcquireReadLease();
+    REQUIRE(liveLease.has_value());
+    CHECK(liveLease->GetCursor().Step == 2);
+
+    event.Reason = EEventReasonV2::Final;
+    liveView->PublishEvent(event);
+    CHECK_FALSE(liveView->HasBoundSession());
 }

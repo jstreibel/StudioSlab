@@ -1,29 +1,19 @@
 #ifndef STUDIOSLAB_SESSION_LIVE_VIEW_V2_H
 #define STUDIOSLAB_SESSION_LIVE_VIEW_V2_H
 
-#include "Math/Numerics/V2/Events/SimulationEventV2.h"
-#include "Math/Numerics/V2/Runtime/SimulationSessionV2.h"
-
-#include <mutex>
-#include <optional>
+#include "LiveTopicsV2.h"
 
 namespace Slab::Math::LiveData::V2 {
 
-    struct FSessionTelemetryV2 {
-        Numerics::V2::FSimulationCursorV2 Cursor;
-        Numerics::V2::EEventReasonV2 LastReason = Numerics::V2::EEventReasonV2::Initial;
-        UIntBig PublishedVersion = 0;
-        bool bHasState = false;
-        bool bRealtimeBestEffort = false;
-    };
-
     class FSessionLiveViewV2 {
-        mutable std::mutex Mutex;
-
-        TVolatile<const Numerics::V2::FSimulationSessionV2> Session;
-        std::optional<FSessionTelemetryV2> LastTelemetry = std::nullopt;
+        TPointer<FSessionViewTopicV2> SessionTopic;
+        TPointer<FSessionTelemetryTopicV2> TelemetryTopic;
 
     public:
+        FSessionLiveViewV2();
+        FSessionLiveViewV2(TPointer<FSessionViewTopicV2> sessionTopic,
+                           TPointer<FSessionTelemetryTopicV2> telemetryTopic);
+
         auto BindSession(const TVolatile<const Numerics::V2::FSimulationSessionV2> &session) -> void;
         auto InvalidateSessionBinding() -> void;
 
