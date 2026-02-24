@@ -16,7 +16,7 @@
 #include "../Common/Monitors/V2/KGRtoRPlaneWavesPassiveMonitorWindowV2.h"
 #include "../Common/Monitors/V2/SPIPassiveMonitorWindowV2.h"
 #include "../Common/NumericsV2TaskUtils.h"
-#include "../Common/VisualHost.h"
+#include "../Common/V2SimulationRunners.h"
 
 #include <iostream>
 
@@ -63,11 +63,8 @@ namespace {
     };
 
     auto RunTaskWithPassiveSPIGLMonitor(const FSPIExecutionConfig &cfg) -> int {
-        using namespace Slab::Math::Numerics::V2;
         using namespace Slab::Models::StochasticPathIntegrals;
         using namespace Slab::Models::StochasticPathIntegrals::V2;
-
-        auto host = Slab::Studios::Common::CreateGLFWVisualHost("Studios SPI V2 Monitor");
 
         auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
 
@@ -76,35 +73,23 @@ namespace {
 
         auto recipe = New<FSPIRecipeV2>(numericConfig, cfg.Interval, liveView);
         recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
-        auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
-
         auto monitor = New<Slab::Studios::Common::Monitors::V2::FSPIPassiveMonitorWindowV2>(
             liveView, static_cast<UIntBig>(cfg.Steps));
-        Slab::Studios::Common::AddRootSlabWindow(host, monitor, false);
-
-        const auto status = Slab::Studios::Common::RunTaskWithVisualHost(host, *task);
-        Slab::Studios::Common::PrintNumericTaskSummary(*task);
-        return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
+        return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
+            "Studios SPI V2 Monitor", recipe, monitor, static_cast<size_t>(cfg.Batch));
     }
 
     auto RunTaskWithPassiveRtoRGLMonitor(const FRtoRPlaneWavesExecutionConfig &cfg) -> int {
-        using namespace Slab::Math::Numerics::V2;
         using namespace Slab::Models::KGRtoR::PlaneWaves::V2;
-
-        auto host = Slab::Studios::Common::CreateGLFWVisualHost("Studios KGRtoR Plane Waves V2 Monitor");
 
         auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
         auto recipe = New<FKGRtoRPlaneWavesRecipeV2>(BuildRtoRPlaneWavesRecipeConfig(cfg), cfg.Interval, liveView);
         recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
 
-        auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
         auto monitor = New<Slab::Studios::Common::Monitors::V2::FRtoRPlaneWavesPassiveMonitorWindowV2>(
             liveView, cfg.Steps);
-        Slab::Studios::Common::AddRootSlabWindow(host, monitor, false);
-
-        const auto status = Slab::Studios::Common::RunTaskWithVisualHost(host, *task);
-        Slab::Studios::Common::PrintNumericTaskSummary(*task);
-        return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
+        return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
+            "Studios KGRtoR Plane Waves V2 Monitor", recipe, monitor, static_cast<size_t>(cfg.Batch));
     }
 
     auto PrintRootUsage() -> void {
