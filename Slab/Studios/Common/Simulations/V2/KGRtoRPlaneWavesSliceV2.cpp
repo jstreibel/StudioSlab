@@ -5,11 +5,11 @@
 #include "../../SessionLiveViewStatsV2.h"
 #include "../../V2SimulationRunners.h"
 
+#include "Analysis/AnalysisAttachmentV2.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Numerics/V2/Listeners/CursorHistoryListenerV2.h"
 #include "Math/Numerics/V2/Listeners/ScalarTimeDFTListenerV2.h"
 #include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
-#include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 
@@ -205,14 +205,14 @@ namespace Slab::Studios::Common::Simulations::V2 {
             PrintDFTSummary(handles);
         }
 
-        auto BuildRecipeWithOptionalAnalysis(const FRtoRPlaneWavesExecutionConfig &cfg,
-                                             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-                                             FRtoRPlaneWavesAnalysisHandlesV2 &handles)
-            -> TPointer<Math::Numerics::V2::FSimulationRecipeV2> {
-            auto recipe = BuildRtoRPlaneWavesRecipeV2(cfg, liveView);
-            auto extras = BuildAnalysisSubscriptions(cfg, handles);
-            if (extras.empty()) return recipe;
-            return New<Math::Numerics::V2::FAppendedSubscriptionsRecipeV2>(recipe, std::move(extras));
+        auto BuildAnalysisAttachment(const FRtoRPlaneWavesExecutionConfig &cfg,
+                                     FRtoRPlaneWavesAnalysisHandlesV2 &handles) -> FAnalysisAttachmentV2 {
+            FAnalysisAttachmentV2 attachment;
+            attachment.ExtraSubscriptions = BuildAnalysisSubscriptions(cfg, handles);
+            if (handles.HasAny()) {
+                attachment.PostRunSummary = [&handles] { PrintAnalysisSummary(handles); };
+            }
+            return attachment;
         }
 
     } // namespace
@@ -258,24 +258,27 @@ namespace Slab::Studios::Common::Simulations::V2 {
         auto runCfg = cfg;
         FinalizeRtoRPlaneWavesExecutionConfigV2(runCfg);
         FRtoRPlaneWavesAnalysisHandlesV2 analysisHandles;
+        const auto analysisAttachment = BuildAnalysisAttachment(runCfg, analysisHandles);
 
         if (runCfg.bEnableGLMonitor) {
             auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
-            auto recipe = BuildRecipeWithOptionalAnalysis(runCfg, liveView, analysisHandles);
+            auto recipe = WrapRecipeWithAnalysisAttachmentV2(
+                BuildRtoRPlaneWavesRecipeV2(runCfg, liveView),
+                analysisAttachment);
             auto monitor = BuildRtoRPlaneWavesPassiveMonitorWindowV2(runCfg, liveView);
             return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
                 "Studios KGRtoR Plane Waves V2 Monitor",
                 recipe,
                 monitor,
                 static_cast<size_t>(runCfg.Batch),
-                [&](const FNumericTaskV2 &) { PrintAnalysisSummary(analysisHandles); });
+                [&](const FNumericTaskV2 &) { InvokePostRunSummaryV2(analysisAttachment); });
         }
 
-        auto recipe = BuildRecipeWithOptionalAnalysis(runCfg, nullptr, analysisHandles);
+        auto recipe = WrapRecipeWithAnalysisAttachmentV2(BuildRtoRPlaneWavesRecipeV2(runCfg), analysisAttachment);
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(runCfg.Batch));
         const auto status = Slab::Studios::Common::RunTaskAndWait(*task);
         Slab::Studios::Common::PrintNumericTaskSummary(*task);
-        PrintAnalysisSummary(analysisHandles);
+        InvokePostRunSummaryV2(analysisAttachment);
         return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
     }
 

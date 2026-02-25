@@ -16,6 +16,7 @@
 #include "Math/Numerics/V2/Listeners/ScalarTimeDFTListenerV2.h"
 #include "Math/Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.h"
 #include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
+#include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryWallClockTriggerV2.h"
 #include "Math/Numerics/V2/Scheduling/OutputSchedulerV2.h"
@@ -309,6 +310,43 @@ namespace {
         }
 
         auto BuildDefaultSubscriptions() -> Vector<FSubscriptionV2> override {
+            return Subscriptions;
+        }
+
+        [[nodiscard]] auto GetRunLimits() const -> FRunLimitsV2 override {
+            return Limits;
+        }
+    };
+
+    class FProbeDelegatingRecipeV2 final : public FSimulationRecipeV2 {
+        TPointer<FSimulationSessionV2> SessionToReturn;
+        Vector<FSubscriptionV2> Subscriptions;
+        FRunLimitsV2 Limits;
+
+    public:
+        bool bSetupCalled = false;
+        size_t BuildSessionCalls = 0;
+        size_t BuildSubscriptionsCalls = 0;
+
+        FProbeDelegatingRecipeV2(TPointer<FSimulationSessionV2> sessionToReturn,
+                                 Vector<FSubscriptionV2> subscriptions,
+                                 FRunLimitsV2 limits)
+        : SessionToReturn(std::move(sessionToReturn))
+        , Subscriptions(std::move(subscriptions))
+        , Limits(std::move(limits)) {
+        }
+
+        auto SetupForCurrentThread() -> void override {
+            bSetupCalled = true;
+        }
+
+        auto BuildSession() -> TPointer<FSimulationSessionV2> override {
+            ++BuildSessionCalls;
+            return SessionToReturn;
+        }
+
+        auto BuildDefaultSubscriptions() -> Vector<FSubscriptionV2> override {
+            ++BuildSubscriptionsCalls;
             return Subscriptions;
         }
 
@@ -1127,4 +1165,96 @@ TEST_CASE("PhaseH V2 - ScalarTimeDFTListener computes DFT magnitudes from sample
 
     CHECK(dft->GetSampleCount() == 128);
     REQUIRE(dft->GetDFTMagnitudes() != nullptr);
+}
+
+TEST_CASE("PhaseI V2 - AppendedSubscriptionsRecipe delegates and preserves run limits", "[V2][PhaseI][Recipe][Wrapper]") {
+    using namespace Slab::Math::Numerics::V2;
+
+    auto session = New<FCountingSessionV2>(0.25);
+    auto baseListener = New<FRecordingListenerV2>("base");
+    auto extraListener = New<FRecordingListenerV2>("extra");
+
+    Vector<FSubscriptionV2> baseSubscriptions = {{
+        New<FEveryNStepsTriggerV2>(3),
+        baseListener,
+        EDeliveryModeV2::Synchronous,
+        true,
+        true
+    }};
+    Vector<FSubscriptionV2> extraSubscriptions = {{
+        New<FEveryNStepsTriggerV2>(5),
+        extraListener,
+        EDeliveryModeV2::LatestOnly,
+        false,
+        true
+    }};
+
+    FRunLimitsV2 limits;
+    limits.Mode = ERunModeV2::FiniteSteps;
+    limits.MaxSteps = 42;
+
+    auto inner = New<FProbeDelegatingRecipeV2>(session, baseSubscriptions, limits);
+    FAppendedSubscriptionsRecipeV2 wrapped(inner, extraSubscriptions);
+
+    wrapped.SetupForCurrentThread();
+    CHECK(inner->bSetupCalled);
+
+    const auto builtSession = wrapped.BuildSession();
+    CHECK(inner->BuildSessionCalls == 1);
+    CHECK(builtSession == session);
+
+    const auto merged = wrapped.BuildDefaultSubscriptions();
+    CHECK(inner->BuildSubscriptionsCalls == 1);
+    REQUIRE(merged.size() == 2);
+    CHECK(merged[0].Listener == baseListener);
+    CHECK(merged[1].Listener == extraListener);
+    CHECK(merged[1].DeliveryMode == EDeliveryModeV2::LatestOnly);
+    CHECK_FALSE(merged[1].bWantsInitialEvent);
+    CHECK(merged[1].bWantsFinalEvent);
+
+    const auto wrappedLimits = wrapped.GetRunLimits();
+    CHECK(wrappedLimits.Mode == ERunModeV2::FiniteSteps);
+    REQUIRE(wrappedLimits.MaxSteps.has_value());
+    CHECK(*wrappedLimits.MaxSteps == 42);
+}
+
+TEST_CASE("PhaseI V2 - AppendedSubscriptionsRecipe integrates extra listeners in task flow", "[V2][PhaseI][Recipe][Task]") {
+    using namespace Slab::Math::Numerics::V2;
+
+    auto baseListener = New<FRecordingListenerV2>("base");
+    auto extraListener = New<FRecordingListenerV2>("extra");
+
+    FRunLimitsV2 limits;
+    limits.Mode = ERunModeV2::FiniteSteps;
+    limits.MaxSteps = 6;
+
+    auto inner = New<FTestRecipeV2>(
+        [] { return New<FCountingSessionV2>(0.5); },
+        Vector<FSubscriptionV2>{{
+            New<FEveryNStepsTriggerV2>(3),
+            baseListener,
+            EDeliveryModeV2::Synchronous,
+            true,
+            true
+        }},
+        limits);
+
+    auto wrappedRecipe = New<FAppendedSubscriptionsRecipeV2>(
+        inner,
+        Vector<FSubscriptionV2>{{
+            New<FEveryNStepsTriggerV2>(2),
+            extraListener,
+            EDeliveryModeV2::Synchronous,
+            true,
+            true
+        }});
+
+    FNumericTaskV2 task(wrappedRecipe, false, 16);
+    const auto status = RunTaskAndWait(task);
+
+    CHECK(status == Core::TaskSuccess);
+    CHECK(EventSteps(baseListener->GetEvents()) == Vector<UIntBig>{0, 3, 6, 6});
+    CHECK(EventSteps(extraListener->GetEvents()) == Vector<UIntBig>{0, 2, 4, 6, 6});
+    CHECK(EventReasons(extraListener->GetEvents()).front() == EEventReasonV2::Initial);
+    CHECK(EventReasons(extraListener->GetEvents()).back() == EEventReasonV2::Final);
 }
