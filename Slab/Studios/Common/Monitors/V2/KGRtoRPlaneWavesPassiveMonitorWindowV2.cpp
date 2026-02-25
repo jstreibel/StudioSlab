@@ -107,12 +107,13 @@ namespace Slab::Studios::Common::Monitors::V2 {
         PhiArtist = New<Graphics::RtoRFunctionArtist>(nullptr, style, 2048);
         PhiArtist->SetAffectGraphRanges(false);
 
-        AddWindow(GuiWindow, false, 0.25f);
-        AddWindow(Naked(PhiWindow), true, 0.75f);
-        SetColumnRelativeWidth(0, 0.25f);
+        AddWindow(GuiWindow, false, 0.30f);
+        AddWindow(Naked(PhiWindow), true, 0.70f);
+        SetColumnRelativeWidth(0, 0.30f);
 
         PhiWindow.AddArtist(PhiArtist);
         PhiWindow.SetAutoReviewGraphRanges(false);
+        PhiWindow.SetNoGUI(); // Passive monitor keeps the plot clean; no floating Plot Detail window by default.
         PhiWindow.GetRegion().setLimits(-1.0, 1.0, -1.0, 1.0);
     }
 

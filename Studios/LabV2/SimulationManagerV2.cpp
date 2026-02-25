@@ -1,10 +1,13 @@
 #include "SimulationManagerV2.h"
+#include "StudioConfigV2.h"
 
 #include "imgui.h"
 
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Core/SlabCore.h"
 #include "Core/Tools/Log.h"
+
+#include "Graphics/Window/WindowStyles.h"
 
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.h"
@@ -127,6 +130,13 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
 
 auto FSimulationManagerV2::DrawLauncherWindow() -> void {
     if (!bShowLauncherWindow) return;
+
+    ImGui::SetNextWindowPos(
+        ImVec2(
+            static_cast<float>(FStudioConfigV2::SidePaneWidth + 24),
+            static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight + 24)),
+        ImGuiCond_Appearing);
+    ImGui::SetNextWindowSize(ImVec2(520, 560), ImGuiCond_Appearing);
 
     bool bOpen = true;
     if (ImGui::Begin("Lab V2 - Simulation Launcher", &bOpen)) {

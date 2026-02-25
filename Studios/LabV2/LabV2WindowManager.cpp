@@ -131,13 +131,18 @@ namespace {
             return;
         }
 
-        if (ImGui::BeginTable("LabV2LiveDataTopics", 6, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
-            ImGui::TableSetupColumn("Topic");
+        constexpr auto tableFlags =
+            ImGuiTableFlags_Borders |
+            ImGuiTableFlags_RowBg |
+            ImGuiTableFlags_ScrollX |
+            ImGuiTableFlags_SizingFixedFit;
+        if (ImGui::BeginTable("LabV2LiveDataTopics", 6, tableFlags)) {
+            ImGui::TableSetupColumn("Topic", ImGuiTableColumnFlags_WidthStretch, 1.0f);
             ImGui::TableSetupColumn("Run");
             ImGui::TableSetupColumn("Step");
             ImGui::TableSetupColumn("t");
-            ImGui::TableSetupColumn("Version");
-            ImGui::TableSetupColumn("Bound");
+            ImGui::TableSetupColumn("Ver");
+            ImGui::TableSetupColumn("Bnd");
             ImGui::TableHeadersRow();
 
             for (const auto &name : names) {
@@ -152,7 +157,16 @@ namespace {
                 ImGui::Text("%s", name.c_str());
 
                 ImGui::TableSetColumnIndex(1);
-                if (status.has_value()) ImGui::Text("%s", ToStatusString(status->RunState).c_str());
+                if (status.has_value()) {
+                    const auto runString = ToStatusString(status->RunState);
+                    const auto color =
+                        status->RunState == Slab::Math::LiveData::V2::ESessionRunStateV2::Running
+                            ? ImVec4(0.2f, 0.9f, 0.2f, 1.0f)
+                        : status->RunState == Slab::Math::LiveData::V2::ESessionRunStateV2::Finished
+                            ? ImVec4(0.5f, 0.9f, 1.0f, 1.0f)
+                            : ImVec4(1.0f, 0.6f, 0.2f, 1.0f);
+                    ImGui::TextColored(color, "%s", runString.c_str());
+                }
                 else ImGui::TextDisabled("n/a");
 
                 ImGui::TableSetColumnIndex(2);

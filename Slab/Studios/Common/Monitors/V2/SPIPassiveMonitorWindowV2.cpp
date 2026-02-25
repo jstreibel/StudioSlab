@@ -43,12 +43,13 @@ namespace Slab::Studios::Common::Monitors::V2 {
         if (LiveView == nullptr) throw Exception("SPI passive monitor requires a live view.");
 
         SectionArtist.SetAffectGraphRanges(true);
-        AddWindow(GuiWindow, false, 0.25f);
-        AddWindow(Naked(SectionWindow), true, 0.75f);
-        SetColumnRelativeWidth(0, 0.25f);
+        AddWindow(GuiWindow, false, 0.30f);
+        AddWindow(Naked(SectionWindow), true, 0.70f);
+        SetColumnRelativeWidth(0, 0.30f);
 
         SectionWindow.AddArtist(Naked(SectionArtist));
         SectionWindow.SetAutoReviewGraphRanges(true);
+        SectionWindow.SetNoGUI(); // Passive monitor default: no extra Plot Detail inspector overlay.
     }
 
     auto FSPIPassiveMonitorWindowV2::ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void {
