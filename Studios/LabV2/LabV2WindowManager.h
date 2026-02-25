@@ -38,6 +38,7 @@ private:
 
     auto FlushPendingSlabWindows() -> void;
     auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
+    auto ArrangeTopLevelSlabWindows() -> void;
 };
 
 #endif // STUDIOSLAB_LAB_V2_WINDOW_MANAGER_H

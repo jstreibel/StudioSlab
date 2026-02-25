@@ -9,10 +9,12 @@
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "Graphics/SlabGraphics.h"
+#include "Graphics/Window/WindowStyles.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Numerics/NumericTask.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
+#include <cmath>
 #include <utility>
 
 namespace {
@@ -229,8 +231,63 @@ auto FLabV2WindowManager::FlushPendingSlabWindows() -> void {
     for (const auto &window : pending) AddSlabWindow(window, false);
 }
 
+auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> void {
+    if (SlabWindows.empty()) return;
+
+    constexpr int MinTileWidth = 420;
+
+    const int gap = Slab::Graphics::WindowStyle::TilingGapSize;
+    const int menuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
+
+    const int xWorkspace = SidePaneWidth + gap;
+    const int yWorkspace = menuHeight + gap;
+    const int wWorkspace = std::max(0, WidthSysWin - xWorkspace - gap);
+    const int hWorkspace = std::max(0, HeightSysWin - yWorkspace - gap);
+
+    if (wWorkspace <= 0 || hWorkspace <= 0) return;
+
+    const int nWindows = static_cast<int>(SlabWindows.size());
+
+    auto canFitCols = [&](const int nColsCandidate) {
+        if (nColsCandidate <= 0) return false;
+        const int wTilesCandidate = std::max(1, wWorkspace - (nColsCandidate + 1) * gap);
+        return (wTilesCandidate / nColsCandidate) >= MinTileWidth;
+    };
+
+    int nCols = std::max(1, std::min(2, nWindows));
+    while (nCols > 1 && !canFitCols(nCols)) --nCols;
+
+    const int nRows = std::max(1, static_cast<int>(std::ceil(static_cast<double>(nWindows) / nCols)));
+    const int wTiles = std::max(1, wWorkspace - (nCols + 1) * gap);
+    const int hTiles = std::max(1, hWorkspace - (nRows + 1) * gap);
+    const int tileW = std::max(1, wTiles / nCols);
+    const int tileH = std::max(1, hTiles / nRows);
+
+    int iWindow = 0;
+    for (const auto &window : SlabWindows) {
+        if (window == nullptr) continue;
+
+        const int iCol = iWindow % nCols;
+        const int iRow = iWindow / nCols;
+
+        const int x = xWorkspace + gap + iCol * (tileW + gap);
+        const int y = yWorkspace + gap + iRow * (tileH + gap);
+
+        const int w = std::max(1, std::min(tileW, WidthSysWin - x - gap));
+        const int h = std::max(1, std::min(tileH, HeightSysWin - y - gap));
+
+        window->Set_x(x);
+        window->Set_y(y);
+        window->NotifyReshape(w, h);
+
+        ++iWindow;
+    }
+}
+
 bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &platformWindow) {
     FlushPendingSlabWindows();
+
+    platformWindow.Clear(Slab::Graphics::WindowStyle::PlatformWindow_BackgroundColor);
 
     ImGuiContext->NewFrame();
     ImGuiContext->SetupOptionalMenuItems();
@@ -274,7 +331,9 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
 bool FLabV2WindowManager::NotifySystemWindowReshape(const int w, const int h) {
     WidthSysWin = w;
     HeightSysWin = h;
-    return FWindowManager::NotifySystemWindowReshape(w, h);
+    const auto responded = FWindowManager::NotifySystemWindowReshape(w, h);
+    ArrangeTopLevelSlabWindows();
+    return responded;
 }
 
 auto FLabV2WindowManager::GetImGuiContext() const -> Slab::TPointer<Slab::Graphics::FImGuiContext> {
