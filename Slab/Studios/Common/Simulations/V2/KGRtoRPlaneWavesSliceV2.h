@@ -7,6 +7,8 @@
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Numerics/V2/Runtime/SimulationRecipeV2.h"
 
+#include <optional>
+
 namespace Slab::Models::KGRtoR::PlaneWaves::V2 {
     struct FKGRtoRPlaneWavesConfigV2;
 }
@@ -23,8 +25,12 @@ namespace Slab::Studios::Common::Simulations::V2 {
         UInt Harmonic = 2;
         UIntBig Interval = 20;
         UIntBig MonitorInterval = 20;
+        UIntBig DFTInterval = 0; // 0 => follow Interval
         UIntBig Batch = 2048;
         bool bEnableGLMonitor = false;
+        bool bHistorySummary = false;
+        bool bSnapshotSummary = false;
+        std::optional<UInt> DFTProbeIndex = std::nullopt;
     };
 
     auto FinalizeRtoRPlaneWavesExecutionConfigV2(FRtoRPlaneWavesExecutionConfig &cfg) -> void;

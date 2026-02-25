@@ -181,6 +181,14 @@ namespace {
             ("monitor-interval",
              "Live-view publish interval (steps) for --gl; defaults to --interval",
              cxxopts::value<UIntBig>())
+            ("history-summary", "Attach V2 cursor history listener and print a run summary")
+            ("snapshot-summary", "Attach V2 final snapshot listener and print snapshot summary")
+            ("dft-probe-index",
+             "Attach V2 scalar time DFT listener sampling phi[index] (headless or --gl)",
+             cxxopts::value<UInt>())
+            ("dft-interval",
+             "DFT sampling interval (steps); defaults to --interval",
+             cxxopts::value<UIntBig>())
             ("batch", "Max integration batch size", cxxopts::value<UIntBig>()->default_value("2048"));
 
         const auto result = ParseSubcommandOptions(argc, argv, options);
@@ -200,11 +208,19 @@ namespace {
         cfg.MonitorInterval = result.count("monitor-interval") > 0
             ? result["monitor-interval"].as<UIntBig>()
             : cfg.Interval;
+        cfg.DFTInterval = result.count("dft-interval") > 0
+            ? result["dft-interval"].as<UIntBig>()
+            : UIntBig(0);
         cfg.Batch = result["batch"].as<UIntBig>();
         cfg.bEnableGLMonitor = result.count("gl") > 0;
+        cfg.bHistorySummary = result.count("history-summary") > 0;
+        cfg.bSnapshotSummary = result.count("snapshot-summary") > 0;
 
         if (result.count("dt") > 0) {
             cfg.Dt = result["dt"].as<DevFloat>();
+        }
+        if (result.count("dft-probe-index") > 0) {
+            cfg.DFTProbeIndex = result["dft-probe-index"].as<UInt>();
         }
         return StudiosSimV2::RunRtoRPlaneWavesV2(cfg);
     }
