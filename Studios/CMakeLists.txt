@@ -2,7 +2,7 @@
 #set ( SlabLibs		Slab-Utils		Slab-Core		Slab-Math		Slab-Models		Slab-Graphics		)
 
 
-include_directories(../Lib)
+include_directories(../Lib ../Slab)
 
 add_subdirectory(CLI)
 add_subdirectory(MolecularDynamics)

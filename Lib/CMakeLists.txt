@@ -1,7 +1,7 @@
 
 set( STUDIOSLAB_BASE_LIB_NAME Slab )
 
-include_directories(./ ./3rdParty/imgui /usr/include/freetype2/)
+include_directories(./ ../Slab ./3rdParty/imgui /usr/include/freetype2/)
 
 # in order of dependency:
 add_subdirectory(3rdParty)
