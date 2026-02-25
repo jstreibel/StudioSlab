@@ -1,8 +1,8 @@
-# Domain Model and UX Surfaces Spec (Draft v0.1)
+# Domain Model and Editor Tool Surfaces (UI Modules) Spec (Draft v0.1)
 
 ## Purpose
 
-Define the core domain entities and the editor/workbench surfaces (`LabV2` direction) that expose them.
+Define the core domain entities and the editor tool surfaces (UI modules, `LabV2` direction) that expose them.
 
 This document is the bridge between:
 - product vision (`Docs/product-direction.md`)
@@ -14,7 +14,7 @@ This document is the bridge between:
 In scope:
 - canonical entities and relations
 - primary workflows
-- editor surfaces
+- editor tool surfaces (UI modules)
 - mapping to current V2 architecture
 
 Out of scope:
@@ -68,9 +68,14 @@ Out of scope:
 - Typed connection rule
 - Declares compatibility/adapter requirements
 
-## UX Surfaces (Lab / Editor)
+## Editor Tool Surfaces (UI Modules, Lab/Editor Context)
 
-These should become stable editor surfaces over time.
+In this document:
+- **Lab/Editor context** means the `LabV2`-side authoring/control environment (not numerics runtime or CLI apps).
+- **Editor tool surface (UI module)** means a user-facing functional area (for example: Run Manager, Data Browser, Launcher, Viewports).
+- It does **not** mean a graphics/render surface.
+
+These should become stable editor tool surfaces (UI modules) over time.
 
 ### 1. `Content Browser`
 Purpose:
@@ -188,5 +193,4 @@ Purpose:
 
 3. Avoid direct ad hoc coupling between model code and UI where a view or binding layer can hold the responsibility.
 
-4. Prefer reusable editor surfaces over one-off launcher windows when a feature repeats.
-
+4. Prefer reusable editor tool surfaces (UI modules) over one-off launcher windows when a feature repeats.
