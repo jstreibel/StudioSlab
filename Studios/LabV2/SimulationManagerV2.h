@@ -1,0 +1,69 @@
+#ifndef STUDIOSLAB_LAB_V2_SIMULATION_MANAGER_V2_H
+#define STUDIOSLAB_LAB_V2_SIMULATION_MANAGER_V2_H
+
+#include "Graphics/Backend/Events/SystemWindowEventListener.h"
+#include "Graphics/Modules/ImGui/ImGuiContext.h"
+#include "Graphics/Window/SlabWindow.h"
+#include "Math/Data/V2/LiveDataHubV2.h"
+
+#include "Studios/Common/Simulations/V2/SPISliceV2.h"
+#include "Studios/Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.h"
+
+#include <functional>
+
+class FSimulationManagerV2 final : public Slab::Graphics::FPlatformWindowEventListener {
+public:
+    using FAddWindowFn = std::function<void(const Slab::TPointer<Slab::Graphics::FSlabWindow> &)>;
+
+    FSimulationManagerV2(
+        Slab::TPointer<Slab::Graphics::FImGuiContext> imGuiContext,
+        Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> liveDataHub,
+        FAddWindowFn addWindowFn);
+
+    bool NotifyRender(const Slab::Graphics::FPlatformWindow &platformWindow) override;
+
+private:
+    struct FMetropolisExecutionConfigV2 {
+        Slab::UIntBig Steps = 1000;
+        Slab::UIntBig Interval = 1000;
+        Slab::UIntBig LiveViewInterval = 1000;
+        Slab::UIntBig Batch = 2048;
+        bool bPublishLiveView = true;
+    };
+
+    Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
+    Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> LiveDataHub;
+    FAddWindowFn AddWindow;
+
+    bool bShowLauncherWindow = true;
+    bool bSPIPublishLiveViewHeadless = true;
+    bool bRtoRPublishLiveViewHeadless = true;
+
+    Slab::Studios::Common::Simulations::V2::FSPIExecutionConfig SPICfg;
+    Slab::Studios::Common::Simulations::V2::FRtoRPlaneWavesExecutionConfig RtoRCfg;
+    FMetropolisExecutionConfigV2 MetropolisCfg;
+
+    Slab::UIntBig SPIRunCounter = 0;
+    Slab::UIntBig RtoRRunCounter = 0;
+    Slab::UIntBig MetropolisRunCounter = 0;
+
+    Slab::Str LastError;
+
+    auto AddMenus(const Slab::Graphics::FPlatformWindow &platformWindow) -> void;
+    auto DrawLauncherWindow() -> void;
+
+    auto DrawSPISection() -> void;
+    auto DrawRtoRSection() -> void;
+    auto DrawMetropolisSection() -> void;
+
+    auto LaunchSPI(bool enableMonitor) -> void;
+    auto LaunchRtoR(bool enableMonitor) -> void;
+    auto LaunchMetropolis() -> void;
+
+    [[nodiscard]] auto MakeTopicName(const Slab::Str &prefix, Slab::UIntBig &counter) -> Slab::Str;
+    auto LaunchNumericTask(const Slab::TPointer<Slab::Math::Numerics::V2::FSimulationRecipeV2> &recipe,
+                           Slab::UIntBig batch,
+                           const Slab::Str &taskNameHint) -> void;
+};
+
+#endif // STUDIOSLAB_LAB_V2_SIMULATION_MANAGER_V2_H

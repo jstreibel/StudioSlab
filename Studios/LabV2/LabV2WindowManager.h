@@ -6,6 +6,8 @@
 
 #include "Math/Data/V2/LiveDataHubV2.h"
 
+#include <functional>
+
 class FLabV2WindowManager final : public Slab::Graphics::FWindowManager {
 public:
     explicit FLabV2WindowManager();
@@ -24,6 +26,7 @@ private:
     using FSlabWindowVec = Slab::Vector<FSlabWindowPtr>;
 
     FSlabWindowVec SlabWindows;
+    FSlabWindowVec PendingSlabWindows;
 
     int WidthSysWin = 200;
     int HeightSysWin = 200;
@@ -31,6 +34,10 @@ private:
 
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
     Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> LiveDataHub;
+    Slab::TPointer<class FSimulationManagerV2> SimulationManager;
+
+    auto FlushPendingSlabWindows() -> void;
+    auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
 };
 
 #endif // STUDIOSLAB_LAB_V2_WINDOW_MANAGER_H

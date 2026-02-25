@@ -1,5 +1,6 @@
 #include "LabV2WindowManager.h"
 
+#include "SimulationManagerV2.h"
 #include "StudioConfigV2.h"
 
 #include "imgui.h"
@@ -194,8 +195,13 @@ FLabV2WindowManager::FLabV2WindowManager()
     ImGuiContext->SetManualRender(true);
 
     LiveDataHub = Slab::New<Slab::Math::LiveData::V2::FLiveDataHubV2>();
+    SimulationManager = Slab::New<FSimulationManagerV2>(
+        ImGuiContext,
+        LiveDataHub,
+        [this](const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) { QueueSlabWindow(window); });
 
     AddResponder(ImGuiContext);
+    AddResponder(SimulationManager);
 }
 
 void FLabV2WindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) {
@@ -204,12 +210,28 @@ void FLabV2WindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSl
 
 void FLabV2WindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window, bool hidden) {
     (void) hidden;
+    if (window == nullptr) return;
     AddResponder(window);
     SlabWindows.emplace_back(window);
     NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
 }
 
+auto FLabV2WindowManager::QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void {
+    if (window == nullptr) return;
+    PendingSlabWindows.emplace_back(window);
+}
+
+auto FLabV2WindowManager::FlushPendingSlabWindows() -> void {
+    if (PendingSlabWindows.empty()) return;
+
+    auto pending = std::move(PendingSlabWindows);
+    PendingSlabWindows.clear();
+    for (const auto &window : pending) AddSlabWindow(window, false);
+}
+
 bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &platformWindow) {
+    FlushPendingSlabWindows();
+
     ImGuiContext->NewFrame();
     ImGuiContext->SetupOptionalMenuItems();
 
@@ -222,7 +244,7 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
     constexpr auto flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
     if (ImGui::Begin(FStudioConfigV2::SidePaneId, nullptr, flags)) {
         ImGui::SeparatorText("Lab V2");
-        ImGui::TextDisabled("Observability shell (Phase 0/1)");
+        ImGui::TextDisabled("V2 observability + launcher shell");
 
         ShowTasksPanel();
         ShowLiveDataV2Panel(LiveDataHub);
@@ -244,6 +266,7 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
     }
 
     FWindowManager::NotifyRender(platformWindow);
+    FlushPendingSlabWindows();
     ImGuiContext->Render();
     return true;
 }
