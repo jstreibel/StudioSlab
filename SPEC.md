@@ -29,6 +29,26 @@ The codebase is powerful but heterogeneous:
 
 The current strategy is to **stabilize legacy behavior**, while building **clean V2 subsystems in parallel**.
 
+## Product Direction (High Level)
+
+`StudioSlab` is evolving toward a **scientific creation environment**:
+- `Slab` = engine/platform/runtime foundation
+- `Lab` = editor/workbench (control plane)
+- `Studios` = authored studies/examples/apps
+
+Product direction is data-centric:
+- users author **Studies** (not only runs)
+- simulations are a class of transforms over mathematical data
+- views/monitors are passive
+- interaction and presentation are first-class concerns
+
+See:
+- `Docs/product-direction.md`
+- `Docs/product-vocabulary.md`
+- `Docs/domain-model-ux-surfaces-spec.md`
+- `Docs/study-model-spec.md`
+- `Docs/sequence-control-spec.md`
+
 ## Refactor Strategy (Global)
 
 ### Core Rule
@@ -104,6 +124,7 @@ Graphics host improvements already in place:
 - passive GL monitor flows proven in `Studios` for:
   - `spi`
   - `rtor` (KGRtoR plane waves)
+- `LabV2` workbench shell with V2 launcher + LiveData V2 observability + in-app passive monitors
 
 ### 5. Studios V2 Integration Pattern (Implemented direction)
 
@@ -119,6 +140,20 @@ This keeps CLI logic readable while preventing monitor/runtime duplication acros
 
 Migration note (active):
 - shared Studios-side V2 infrastructure has started moving to root `Slab/Studios/Common` (physical layout only; no namespace churn in the same wave)
+
+### 6. Broad V2 Adoption Strategy (Planned / active direction)
+
+V2 architecture should be shaped by **both**:
+- a north-star interactive/presentable study (e.g. interactive KG forcing)
+- a coverage portfolio of migrated model families (KG, SPI, MD, Monte Carlo, minimization, etc.)
+
+Reason:
+- north-star alone can overfit the platform
+- broad migration all at once creates too much entropy
+
+Recommended approach:
+- migrate representative model families incrementally as architecture probes
+- use the north-star study to drive sequence/control/presentation requirements
 
 ## Legacy vs V2 Policy
 
@@ -286,3 +321,9 @@ If a change requires broad coupling across numerics + data + graphics, split it 
 - `AGENTS.md` (repo-specific workflow and constraints)
 - `Docs/graphics-composition-contract.md` (render/composition rules)
 - `Docs/slab-root-migration-policy.md` (root `Slab/` migration rules)
+- `Docs/product-direction.md` (product vision / direction)
+- `Docs/product-vocabulary.md` (stable terminology)
+- `Docs/domain-model-ux-surfaces-spec.md` (domain entities + editor surfaces)
+- `Docs/study-model-spec.md` (Study object and reproducibility framing)
+- `Docs/sequence-control-spec.md` (sequence/control/time-domain draft)
+- `Docs/v2-model-coverage-matrix.md` (broad V2 migration planning matrix)
