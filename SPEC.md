@@ -5,7 +5,7 @@
 This document defines the project-level specification for AI-assisted work in `StudioSlab`.
 It is intended to reduce ambiguity, keep changes safe, and preserve architectural intent while the codebase evolves.
 
-This is **not** a full rewrite spec. It is a **boundary-refactor spec** for a large, mixed-era C++ physics codebase.
+This is **not** a full rewrite spec. It is a **project charter + working invariants + doc index** for a large, mixed-era C++ physics codebase undergoing a boundary-level V2 refactor.
 
 ## Project Summary
 
@@ -13,6 +13,7 @@ This is **not** a full rewrite spec. It is a **boundary-refactor spec** for a la
 
 Main repository areas:
 - `Lib/`: shared libraries (math, numerics, graphics, models, utilities, 3rd-party modules/submodules)
+- `Slab/`: root-level landing zone for shared V2 platform/editor infrastructure (namespace-aligned physical migration path)
 - `Resources/`: images, fonts, shaders, etc.
 - `Studios/`: applications / executables / experiments
 - `Docs/`: design notes and local contracts
@@ -247,14 +248,25 @@ AI should report:
 - Numerics Runtime V2 core
 - Session-wide read lease locking
 - Live data V2 minimal generalization (topics + hub)
+- root `Slab/` migration started and active for shared V2 infrastructure:
+  - `Slab/Math/Data/V2`
+  - `Slab/Math/Numerics/V2`
+  - `Slab/Studios/Common/*`
 - `Studios` CLI V2 subcommands (`spi`, `metropolis`)
 - `Studios` CLI V2 subcommands (`spi`, `metropolis`, `rtor`)
 - `Studios spi --gl` passive monitor prototype
 - `Studios rtor --gl` passive monitor prototype (KGRtoR plane waves)
+- `Studios rtor` V2 analysis listeners (history/snapshot/DFT summaries)
+- reusable V2 analysis-attachment pattern (`AppendedSubscriptionsRecipeV2` + attachment helper)
 - `SlabTests` visual test runner
 - graphics render-pass propagation fixes
 - row/column pane framing and event routing fixes
 - shared graphics visual host for `Studios` + `SlabTests`
+- `LabV2` (`StudioSlabV2`) workbench path:
+  - observability shell (tasks + LiveData V2 panel)
+  - V2 launcher for SPI / KGRtoR plane waves / Metropolis
+  - in-app passive V2 monitors
+  - render hygiene + top-level monitor tiling + UX polish
 - `Studios` V2 consolidation helpers:
   - task runner helpers (`NumericsV2TaskUtils`)
   - monitored GLFW runner (`V2SimulationRunners`)
@@ -271,11 +283,16 @@ AI should report:
 ### Still expected (next waves)
 
 - Data V2 expansion beyond session/telemetry topics
+- `LiveControl V2` (interactive input/control streams; sibling to `LiveData V2`)
+- typed control bindings into V2 models/transforms
+- sequence/presentation runtime foundations (time-domain aware control/camera/annotation tracks)
+- `Study` object model in code (after contracts stabilize)
 - monitor-oriented reusable passive UI components (beyond current SPI/KGRtoR windows)
 - more V2 outputs/listeners (snapshots/history/DFT model-specific adapters/listeners)
 - deeper graphics composition cleanup (`Row/Column/Panel` unification path)
 - optional async/buffered delivery refinements and TCP-facing publishers
 - additional `Studios` V2 simulation slices using the extracted `Common/Simulations/V2` pattern
+- coverage-driven migration of representative model families (see matrix), likely including `KG R^2->R` as a major next architecture probe
 
 ## Key Architectural Invariants (Must Preserve)
 
@@ -327,3 +344,14 @@ If a change requires broad coupling across numerics + data + graphics, split it 
 - `Docs/study-model-spec.md` (Study object and reproducibility framing)
 - `Docs/sequence-control-spec.md` (sequence/control/time-domain draft)
 - `Docs/v2-model-coverage-matrix.md` (broad V2 migration planning matrix)
+
+## Maintenance Note (SPEC.md Role)
+
+`SPEC.md` should remain concise and stable:
+- project-level intent
+- AI workflow constraints
+- architectural invariants
+- high-level V2 map
+- links to deeper specs in `Docs/`
+
+Detailed product/domain/coverage definitions should evolve primarily in the dedicated docs under `Docs/`.

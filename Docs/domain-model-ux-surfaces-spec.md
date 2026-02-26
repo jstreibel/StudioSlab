@@ -23,6 +23,14 @@ Out of scope:
 - full blueprint execution semantics
 - low-level solver internals
 
+## Terminology Clarifications (This Document)
+
+- **Direction** (for example, "`LabV2` direction") means the current architectural trajectory / intended evolution path.
+  - It is not a claim that the final implementation path is fully known.
+- **Lab** means the conceptual editor/workbench role in the product architecture (scientific control plane / authoring environment).
+- **`Studios/Lab`** refers to the legacy implementation of that workbench role.
+- **`LabV2`** refers to the current new implementation path (`Studios/LabV2`, `StudioSlabV2`) for the future `Lab` concept.
+
 ## Core Entity Graph (Conceptual)
 
 - `Study` contains `Assets`, `Models`, `Transforms`, `Views`, `Sequences`, `Bindings`
@@ -39,8 +47,23 @@ Out of scope:
 - Owns layout, references, bindings, and narrative metadata
 - Can be loaded, edited, replayed, and exported
 
-### `Model` / `Transform`
-- Defines inputs, parameters, outputs, and execution semantics
+### `Model` (physical-model centered)
+- Encodes the physical model semantics first:
+  - state type(s) / degrees of freedom
+  - physical variables / fields
+  - Hamiltonian / Lagrangian / energy / action (as applicable)
+  - admissible inputs (initial/boundary/control) and observables
+- Provides the semantic foundation that numerical realizations and runs act on
+
+### `Transform`
+- A generic data operation (broader than simulation)
+- Includes:
+  - model execution/simulation
+  - analysis
+  - filtering
+  - projection/resampling
+  - minimization / optimization steps
+- Defines inputs, outputs, and execution semantics for a concrete operation
 - Can be launched by the user or triggered by a blueprint graph
 
 ### `Run`
@@ -65,13 +88,24 @@ Out of scope:
 - May be interactive, recorded, or remote
 
 ### `Binding`
-- Typed connection rule
-- Declares compatibility/adapter requirements
+- A declared **typed connection** between a source endpoint and a target endpoint
+- Carries connection semantics, not just a pointer/reference
+- Should specify (conceptually):
+  - source endpoint
+  - target endpoint
+  - type contract (what flows)
+  - adaptation rules (if needed: resample/project/convert/copy-vs-lease)
+  - timing/update semantics (one-shot, live, sampled, control-driven)
+- Examples:
+  - `Dataset -> InitialCondition`
+  - `LiveStream -> View`
+  - `ControlSource -> external forcing term`
+  - `Transform output -> next Transform input`
 
 ## Editor Tool Surfaces (UI Modules, Lab/Editor Context)
 
 In this document:
-- **Lab/Editor context** means the `LabV2`-side authoring/control environment (not numerics runtime or CLI apps).
+- **Lab/Editor context** means the Lab-side authoring/control environment, currently implemented through the `LabV2` direction (not numerics runtime or CLI apps).
 - **Editor tool surface (UI module)** means a user-facing functional area (for example: Run Manager, Data Browser, Launcher, Viewports).
 - It does **not** mean a graphics/render surface.
 
@@ -170,7 +204,7 @@ Purpose:
 ## Current V2 Mapping (Implemented Pieces)
 
 - `FNumericTaskV2` = `Run` executor
-- `FSimulationRecipeV2` = model/transform runtime builder
+- `FSimulationRecipeV2` = numerical/runtime builder for a configured model/transform execution
 - `FSimulationSessionV2` = run/session state
 - `LiveData V2 topics/hub` = `LiveStream` foundation
 - passive GL monitor windows = `View` implementations
