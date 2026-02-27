@@ -12,6 +12,7 @@
 #include "Math/Data/V2/LiveDataHubV2.h"
 #include "Math/Data/V2/LiveControlHubV2.h"
 #include "Math/Data/V2/LiveControlTopicsV2.h"
+#include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Math/Numerics/V2/Listeners/ConsoleProgressListenerV2.h"
 #include "Math/Numerics/V2/Listeners/CursorHistoryListenerV2.h"
 #include "Math/Numerics/V2/Listeners/DummyListenerV2.h"
@@ -820,6 +821,62 @@ TEST_CASE("PhaseKG2D0 V2 - KGR2toR baseline recipe runs with finite time cursor 
     CHECK(std::isfinite(phiAbs));
     CHECK(std::isfinite(dPhiDtAbs));
     CHECK(dPhiDtAbs > 0.0);
+}
+
+TEST_CASE("PhaseKG2D1 V2 - KGR2toR baseline accepts external forcing seam",
+          "[V2][PhaseKG2D1][KGR2toR][R2toR][Task]") {
+    using namespace Slab;
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::KGR2toR::Baseline::V2;
+
+    class FConstantR2Source final : public Math::R2toR::Function {
+        DevFloat Value = 0.0;
+
+    public:
+        explicit FConstantR2Source(const DevFloat value)
+        : Value(value) {
+        }
+
+        auto operator()(Math::Real2D x) const -> DevFloat override {
+            (void) x;
+            return Value;
+        }
+    };
+
+    FKGR2toRBaselineConfigV2 config;
+    config.N = 96;
+    config.L = 12.0;
+    config.RDt = 0.1;
+    config.Steps = 8;
+    config.PulseWidth = 0.35;
+    config.PhiAmplitude = 0.0;
+    config.DPhiDtAmplitude = 0.0;
+
+    auto MeasureDPhiDtAbs = [&](const TPointer<Math::R2toR::Function> &externalSource) -> DevFloat {
+        auto recipe = New<FKGR2toRBaselineRecipeV2>(config, 1000, nullptr, externalSource);
+        auto task = New<FNumericTaskV2>(recipe, false, 16);
+        REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+        const auto *session = task->GetSession();
+        REQUIRE(session != nullptr);
+
+        auto lease = session->AcquireReadLease();
+        REQUIRE(lease.OwnsLock());
+        REQUIRE(lease.GetState() != nullptr);
+
+        auto kgState = std::dynamic_pointer_cast<const Slab::Math::R2toR::EquationState>(lease.GetState());
+        REQUIRE(kgState != nullptr);
+
+        return SumAbsValues(kgState->getDPhiDt().getSpace().getHostData(true));
+    };
+
+    const auto noSourceAbs = MeasureDPhiDtAbs(nullptr);
+    const auto withSourceAbs = MeasureDPhiDtAbs(New<FConstantR2Source>(0.2));
+
+    CAPTURE(noSourceAbs, withSourceAbs);
+    CHECK(std::isfinite(noSourceAbs));
+    CHECK(std::isfinite(withSourceAbs));
+    CHECK(withSourceAbs > noSourceAbs);
 }
 
 TEST_CASE("PhaseD V2 - Session try-read lease is best-effort under active writer", "[V2][PhaseD][Session][Lease]") {

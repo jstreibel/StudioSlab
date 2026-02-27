@@ -58,9 +58,11 @@ namespace Slab::Models {
         startStep_KG(const FieldState &state, DevFloat t, DevFloat dt) {
             if(temp1 == nullptr){
                 assert(temp2 == nullptr);
+                assert(temp3 == nullptr);
 
                 temp1 = FieldCast(state.getPhi().Clone());
                 temp2 = FieldCast(state.getPhi().Clone());
+                temp3 = FieldCast(state.getPhi().Clone());
             }
         }
 
@@ -89,14 +91,16 @@ namespace Slab::Models {
 
             if(f != nullptr) {
                 auto &fₑₓₜ = *f;
-                δₜϕₒᵤₜ += fₑₓₜ;
+                auto &fBuffer = *temp3;
+                fBuffer.Set(fₑₓₜ);
+                δₜϕₒᵤₜ.Add(fBuffer);
             }
 
             return stateOut;
         }
 
         TPointer<Operator> O;
-        TPointer<Field> temp1 = nullptr, temp2 = nullptr;
+        TPointer<Field> temp1 = nullptr, temp2 = nullptr, temp3 = nullptr;
         TPointer<Potential> V;
         TPointer<Potential> dVDPhi = nullptr;
         NonHomogenousFunc_ptr f = nullptr;
