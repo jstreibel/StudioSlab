@@ -32,7 +32,7 @@ cd "${ROOT_DIR}"
 
 cmake -S . -B "${BUILD_DIR}" \
     -DSTUDIOSLAB_CUDA_SUPPORT=OFF \
-    -DSTUDIOSLAB_IMGUI_LAYOUT_USE_FORK=ON
+    -DSTUDIOSLAB_IMGUI_LAYOUT_USE_FORK=OFF
 
 cmake --build "${BUILD_DIR}" --target Slab
 cmake --build "${BUILD_DIR}" --target Studios

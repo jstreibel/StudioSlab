@@ -34,7 +34,7 @@
   - No global ImGui regressions (menus, panels, plots).
 
 ## Automated Runtime Smoke
-- Provider matrix (fork + compat):
+- Provider matrix (upstream default + legacy-flag build):
   - `Scripts/imgui-provider-runtime-matrix.sh`
 - Upstream spike runtime smoke:
   - `Scripts/imgui-upstream-runtime-spike.sh v1.91.0`
@@ -42,9 +42,9 @@
   - `Scripts/imgui-runtime-smoke.sh`
 
 ## Provider Matrix
-- Default mode: `-DSTUDIOSLAB_IMGUI_LAYOUT_USE_FORK=ON`
-- Compat mode: `-DSTUDIOSLAB_IMGUI_LAYOUT_USE_FORK=OFF`
+- Default mode: `-DSTUDIOSLAB_IMGUI_LAYOUT_USE_FORK=OFF`
+- Legacy-flag mode: `-DSTUDIOSLAB_IMGUI_LAYOUT_USE_FORK=ON` (deprecated)
 - Minimum requirement for each wave:
   - both modes compile,
   - default mode passes full runtime checks,
-  - compat mode passes at least launch + basic interaction.
+  - legacy-flag mode passes at least launch + basic interaction.

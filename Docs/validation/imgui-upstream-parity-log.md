@@ -1,12 +1,12 @@
 # ImGui Upstream Parity Log
 
 ## Purpose
-- Track runtime parity deltas while keeping fork as default.
+- Track runtime parity deltas with upstream as default.
 - Keep findings concrete and reproducible across profiles.
 
 ## Profiles
-- `fork`: `-DSTUDIOSLAB_IMGUI_LAYOUT_USE_FORK=ON`
-- `compat`: `-DSTUDIOSLAB_IMGUI_LAYOUT_USE_FORK=OFF`
+- `upstream-default`: `-DSTUDIOSLAB_IMGUI_LAYOUT_USE_FORK=OFF`
+- `legacy-flag-on` (deprecated): `-DSTUDIOSLAB_IMGUI_LAYOUT_USE_FORK=ON`
 - `upstream-spike`: temporary upstream checkout via `Scripts/imgui-upstream-runtime-spike.sh`
 
 ## Automated Smoke Commands
@@ -31,7 +31,7 @@ Each run writes logs under `Build/logs/imgui-runtime-smoke/`.
 
 ## Baseline
 - Date: 2026-02-27
-- Profile: `fork`
+- Profile: `upstream-default`
 - Build: `Slab + Studios` green
 - Runtime tests:
   - all five smoke tests pass with `--seconds 1` and `--steps 200` for monitor tests.
@@ -43,7 +43,7 @@ Each run writes logs under `Build/logs/imgui-runtime-smoke/`.
 
 ## Recent Runs
 - Date: 2026-02-27
-- Profile: `fork`
+- Profile: `upstream-default`
 - Build: `cmake-build-debug`
 - Runtime tests:
   - all five tests pass via `Scripts/imgui-provider-runtime-matrix.sh`
@@ -53,7 +53,7 @@ Each run writes logs under `Build/logs/imgui-runtime-smoke/`.
 - Follow-up fix commit: _pending_
 
 - Date: 2026-02-27
-- Profile: `compat`
+- Profile: `legacy-flag-on`
 - Build: `cmake-build-debug-imgui-compat`
 - Runtime tests:
   - all five tests pass via `Scripts/imgui-provider-runtime-matrix.sh`
@@ -70,4 +70,21 @@ Each run writes logs under `Build/logs/imgui-runtime-smoke/`.
 - Result: `Pass`
 - Deltas observed:
   - same non-fatal font deletion warning.
+- Follow-up fix commit: _pending_
+
+- Date: 2026-02-27
+- Profile: `full validation run (all profiles)`
+- Build:
+  - `cmake-build-debug`
+  - `cmake-build-debug-imgui-compat`
+  - `cmake-build-debug-upstream-spike`
+- Runtime tests:
+  - audit + build + provider matrix + upstream runtime spike all pass
+- Result: `Pass`
+- Deltas observed:
+  - same non-fatal font deletion warning.
+- Evidence:
+  - `Build/validation-logs/upstream-default-migration-20260227-184143/summary.txt`
+  - `Build/validation-logs/upstream-default-migration-20260227-184143/status.tsv`
+  - runtime smoke logs under `Build/logs/imgui-runtime-smoke/`.
 - Follow-up fix commit: _pending_

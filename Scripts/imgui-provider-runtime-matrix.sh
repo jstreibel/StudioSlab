@@ -19,7 +19,7 @@ run_profile() {
     Scripts/imgui-runtime-smoke.sh "${ROOT_DIR}/Build/bin/SlabTests" "${label}"
 }
 
-run_profile "fork" "cmake-build-debug" "ON"
-run_profile "compat" "cmake-build-debug-imgui-compat" "OFF"
+run_profile "upstream-default" "cmake-build-debug" "OFF"
+run_profile "legacy-flag-on" "cmake-build-debug-imgui-compat" "ON"
 
 echo "[imgui-provider-runtime-matrix] PASS"
