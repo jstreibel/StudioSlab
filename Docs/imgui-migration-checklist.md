@@ -36,12 +36,13 @@
 - Wave B: `Green`
 - Wave C: `Green`
 - Wave D: `Green`
-- Wave E: `Not Started`
+- Wave E: `In Progress`
 - Wave F: `Not Started`
 - Extra hardening: Blueprint `SplitterBehavior(...)` dependency moved behind `FImGuiSplitterCompat`.
 - Extra hardening: Blueprint pane now shows active layout provider (`fork-stack-layout` vs `compat-fallback`).
 - Extra hardening: removed redundant `imgui_internal.h` includes from Blueprint widgets.
 - Extra hardening: `imgui_internal.h` use reduced to 4 include sites (tracked by audit script).
+- Spike result: upstream ImGui `v1.91.0` can compile `Slab + Studios` with the fallback layout provider (fork restored as default source).
 
 ## Wave Plan
 

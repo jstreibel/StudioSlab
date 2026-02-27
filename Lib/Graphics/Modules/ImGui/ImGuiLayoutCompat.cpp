@@ -6,6 +6,12 @@
 
 #include <vector>
 
+#if ((!defined(STUDIOSLAB_IMGUI_LAYOUT_USE_FORK) || (STUDIOSLAB_IMGUI_LAYOUT_USE_FORK != 0)) && defined(IMGUI_HAS_STACK_LAYOUT))
+#define STUDIOSLAB_IMGUI_LAYOUT_COMPILE_FORK 1
+#else
+#define STUDIOSLAB_IMGUI_LAYOUT_COMPILE_FORK 0
+#endif
+
 namespace {
 
     enum class ECompatLayoutType
@@ -115,109 +121,110 @@ namespace Slab::Graphics {
 
     const char* FImGuiLayoutCompat::GetProviderName()
     {
-        if constexpr (bUsesForkProvider) {
-            return "fork-stack-layout";
-        }
+#if STUDIOSLAB_IMGUI_LAYOUT_COMPILE_FORK
+        return "fork-stack-layout";
+#else
         return "compat-fallback";
+#endif
     }
 
     void FImGuiLayoutCompat::BeginHorizontal(const char* p_ID, const ImVec2& p_Size, float p_Align)
     {
-        if constexpr (bUsesForkProvider) {
-            ImGui::BeginHorizontal(p_ID, p_Size, p_Align);
-        } else {
-            (void)p_ID;
-            (void)p_Size;
-            (void)p_Align;
-            BeginCompatLayout(ECompatLayoutType::Horizontal);
-        }
+#if STUDIOSLAB_IMGUI_LAYOUT_COMPILE_FORK
+        ImGui::BeginHorizontal(p_ID, p_Size, p_Align);
+#else
+        (void)p_ID;
+        (void)p_Size;
+        (void)p_Align;
+        BeginCompatLayout(ECompatLayoutType::Horizontal);
+#endif
     }
 
     void FImGuiLayoutCompat::BeginHorizontal(const void* p_ID, const ImVec2& p_Size, float p_Align)
     {
-        if constexpr (bUsesForkProvider) {
-            ImGui::BeginHorizontal(p_ID, p_Size, p_Align);
-        } else {
-            (void)p_ID;
-            (void)p_Size;
-            (void)p_Align;
-            BeginCompatLayout(ECompatLayoutType::Horizontal);
-        }
+#if STUDIOSLAB_IMGUI_LAYOUT_COMPILE_FORK
+        ImGui::BeginHorizontal(p_ID, p_Size, p_Align);
+#else
+        (void)p_ID;
+        (void)p_Size;
+        (void)p_Align;
+        BeginCompatLayout(ECompatLayoutType::Horizontal);
+#endif
     }
 
     void FImGuiLayoutCompat::BeginHorizontal(int p_ID, const ImVec2& p_Size, float p_Align)
     {
-        if constexpr (bUsesForkProvider) {
-            ImGui::BeginHorizontal(p_ID, p_Size, p_Align);
-        } else {
-            (void)p_ID;
-            (void)p_Size;
-            (void)p_Align;
-            BeginCompatLayout(ECompatLayoutType::Horizontal);
-        }
+#if STUDIOSLAB_IMGUI_LAYOUT_COMPILE_FORK
+        ImGui::BeginHorizontal(p_ID, p_Size, p_Align);
+#else
+        (void)p_ID;
+        (void)p_Size;
+        (void)p_Align;
+        BeginCompatLayout(ECompatLayoutType::Horizontal);
+#endif
     }
 
     void FImGuiLayoutCompat::EndHorizontal()
     {
-        if constexpr (bUsesForkProvider) {
-            ImGui::EndHorizontal();
-        } else {
-            EndCompatLayout(ECompatLayoutType::Horizontal);
-        }
+#if STUDIOSLAB_IMGUI_LAYOUT_COMPILE_FORK
+        ImGui::EndHorizontal();
+#else
+        EndCompatLayout(ECompatLayoutType::Horizontal);
+#endif
     }
 
     void FImGuiLayoutCompat::BeginVertical(const char* p_ID, const ImVec2& p_Size, float p_Align)
     {
-        if constexpr (bUsesForkProvider) {
-            ImGui::BeginVertical(p_ID, p_Size, p_Align);
-        } else {
-            (void)p_ID;
-            (void)p_Size;
-            (void)p_Align;
-            BeginCompatLayout(ECompatLayoutType::Vertical);
-        }
+#if STUDIOSLAB_IMGUI_LAYOUT_COMPILE_FORK
+        ImGui::BeginVertical(p_ID, p_Size, p_Align);
+#else
+        (void)p_ID;
+        (void)p_Size;
+        (void)p_Align;
+        BeginCompatLayout(ECompatLayoutType::Vertical);
+#endif
     }
 
     void FImGuiLayoutCompat::BeginVertical(const void* p_ID, const ImVec2& p_Size, float p_Align)
     {
-        if constexpr (bUsesForkProvider) {
-            ImGui::BeginVertical(p_ID, p_Size, p_Align);
-        } else {
-            (void)p_ID;
-            (void)p_Size;
-            (void)p_Align;
-            BeginCompatLayout(ECompatLayoutType::Vertical);
-        }
+#if STUDIOSLAB_IMGUI_LAYOUT_COMPILE_FORK
+        ImGui::BeginVertical(p_ID, p_Size, p_Align);
+#else
+        (void)p_ID;
+        (void)p_Size;
+        (void)p_Align;
+        BeginCompatLayout(ECompatLayoutType::Vertical);
+#endif
     }
 
     void FImGuiLayoutCompat::BeginVertical(int p_ID, const ImVec2& p_Size, float p_Align)
     {
-        if constexpr (bUsesForkProvider) {
-            ImGui::BeginVertical(p_ID, p_Size, p_Align);
-        } else {
-            (void)p_ID;
-            (void)p_Size;
-            (void)p_Align;
-            BeginCompatLayout(ECompatLayoutType::Vertical);
-        }
+#if STUDIOSLAB_IMGUI_LAYOUT_COMPILE_FORK
+        ImGui::BeginVertical(p_ID, p_Size, p_Align);
+#else
+        (void)p_ID;
+        (void)p_Size;
+        (void)p_Align;
+        BeginCompatLayout(ECompatLayoutType::Vertical);
+#endif
     }
 
     void FImGuiLayoutCompat::EndVertical()
     {
-        if constexpr (bUsesForkProvider) {
-            ImGui::EndVertical();
-        } else {
-            EndCompatLayout(ECompatLayoutType::Vertical);
-        }
+#if STUDIOSLAB_IMGUI_LAYOUT_COMPILE_FORK
+        ImGui::EndVertical();
+#else
+        EndCompatLayout(ECompatLayoutType::Vertical);
+#endif
     }
 
     void FImGuiLayoutCompat::Spring(float p_Weight, float p_Spacing)
     {
-        if constexpr (bUsesForkProvider) {
-            ImGui::Spring(p_Weight, p_Spacing);
-        } else {
-            AddCompatSpring(p_Weight, p_Spacing);
-        }
+#if STUDIOSLAB_IMGUI_LAYOUT_COMPILE_FORK
+        ImGui::Spring(p_Weight, p_Spacing);
+#else
+        AddCompatSpring(p_Weight, p_Spacing);
+#endif
     }
 
 } // namespace Slab::Graphics
