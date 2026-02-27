@@ -58,24 +58,121 @@ namespace {
         imguiContext.AddMainMenuItem(Slab::Graphics::MainMenuItem{itemLocation, {entry}, action});
     }
 
-    auto ShowTasksPanel() -> void {
+    auto ShowTasksPanel(Slab::Str &nameFilter,
+                        bool &bOnlyRunning,
+                        bool &bHideSuccess,
+                        bool &bOnlyNumeric) -> void {
         const auto taskManager = Slab::Core::GetModule<Slab::Core::FTaskManager>("TaskManager");
         if (taskManager == nullptr) return;
 
         const auto jobs = taskManager->GetAllJobs();
+        ImGui::SeparatorText("Tasks");
+
+        DrawFilterField("##labv2-task-filter", "Filter task name", nameFilter);
+        ImGui::SameLine();
+        ImGui::Checkbox("Running only", &bOnlyRunning);
+        ImGui::SameLine();
+        ImGui::Checkbox("Hide success", &bHideSuccess);
+        ImGui::SameLine();
+        ImGui::Checkbox("Numeric only", &bOnlyNumeric);
+
         if (jobs.empty()) {
             ImGui::TextDisabled("No tasks.");
             return;
         }
 
-        ImGui::SeparatorText("Tasks");
+        size_t runningCount = 0;
+        size_t successCount = 0;
+        size_t errorCount = 0;
+        size_t abortedCount = 0;
+        size_t notInitCount = 0;
+
+        for (const auto &job : jobs) {
+            const auto &task = job.Task;
+            if (task == nullptr) continue;
+            switch (task->GetStatus()) {
+            case Slab::Core::TaskRunning: ++runningCount; break;
+            case Slab::Core::TaskSuccess: ++successCount; break;
+            case Slab::Core::TaskError: ++errorCount; break;
+            case Slab::Core::TaskAborted: ++abortedCount; break;
+            case Slab::Core::TaskNotInitialized: ++notInitCount; break;
+            default: break;
+            }
+        }
+
+        ImGui::Text(
+            "total=%zu running=%zu success=%zu error=%zu aborted=%zu not-init=%zu",
+            jobs.size(),
+            runningCount,
+            successCount,
+            errorCount,
+            abortedCount,
+            notInitCount);
+
+        if (ImGui::SmallButton("Clear Success")) {
+            for (const auto &job : jobs) {
+                if (job.Task != nullptr && job.Task->GetStatus() == Slab::Core::TaskSuccess) {
+                    (void) taskManager->ClearJob(job);
+                }
+            }
+        }
+        ImGui::SameLine();
+        if (ImGui::SmallButton("Clear Terminated")) {
+            for (const auto &job : jobs) {
+                if (job.Task == nullptr) continue;
+                const auto status = job.Task->GetStatus();
+                if (status == Slab::Core::TaskSuccess ||
+                    status == Slab::Core::TaskError ||
+                    status == Slab::Core::TaskAborted) {
+                    (void) taskManager->ClearJob(job);
+                }
+            }
+        }
+
+        constexpr auto tableFlags =
+            ImGuiTableFlags_Borders |
+            ImGuiTableFlags_RowBg |
+            ImGuiTableFlags_ScrollX |
+            ImGuiTableFlags_SizingFixedFit;
+
+        if (!ImGui::BeginTable("LabV2TaskTable", 6, tableFlags)) return;
+
+        ImGui::TableSetupColumn("Task", ImGuiTableColumnFlags_WidthStretch, 1.0f);
+        ImGui::TableSetupColumn("Kind");
+        ImGui::TableSetupColumn("Status");
+        ImGui::TableSetupColumn("Progress");
+        ImGui::TableSetupColumn("Cursor");
+        ImGui::TableSetupColumn("Action");
+        ImGui::TableHeadersRow();
 
         for (auto &job : jobs) {
             auto &[task, jobThread] = job;
             (void) jobThread;
+            if (task == nullptr) continue;
 
-            ImGui::Text("%s", task->GetName().c_str());
-            ImGui::SameLine();
+            const auto taskName = task->GetName();
+            if (!MatchesTopicFilter(taskName, nameFilter)) continue;
+
+            const auto *numericTaskV2 = dynamic_cast<Slab::Math::Numerics::V2::FNumericTaskV2 *>(task.get());
+            const auto *legacyNumericTask = dynamic_cast<Slab::Math::FNumericTask *>(task.get());
+            const bool bNumericTask = numericTaskV2 != nullptr || legacyNumericTask != nullptr;
+
+            if (bOnlyNumeric && !bNumericTask) continue;
+            if (bOnlyRunning && task->GetStatus() != Slab::Core::TaskRunning) continue;
+            if (bHideSuccess && task->GetStatus() == Slab::Core::TaskSuccess) continue;
+
+            ImGui::TableNextRow();
+            ImGui::PushID(task.get());
+
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(taskName.c_str());
+
+            ImGui::TableSetColumnIndex(1);
+            if (numericTaskV2 != nullptr) ImGui::TextUnformatted("NumericV2");
+            else if (legacyNumericTask != nullptr) ImGui::TextUnformatted("NumericLegacy");
+            else ImGui::TextUnformatted("Task");
+
+            ImGui::TableSetColumnIndex(2);
 
             switch (task->GetStatus()) {
             case Slab::Core::TaskRunning:
@@ -89,10 +186,6 @@ namespace {
                 break;
             case Slab::Core::TaskSuccess:
                 ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.2f, 1), "Success");
-                ImGui::SameLine();
-                if (ImGui::SmallButton(("Clear##" + task->GetName()).c_str())) {
-                    taskManager->ClearJob(job);
-                }
                 break;
             case Slab::Core::TaskNotInitialized:
                 ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.2f, 1), "NotInitialized");
@@ -102,23 +195,48 @@ namespace {
                 break;
             }
 
-            if (task->GetStatus() == Slab::Core::TaskRunning) {
-                if (const auto *numericTaskV2 =
-                        dynamic_cast<Slab::Math::Numerics::V2::FNumericTaskV2 *>(task.get())) {
-                    const auto progressOpt = numericTaskV2->GetProgress01();
-                    if (progressOpt.has_value()) {
-                        ImGui::ProgressBar(*progressOpt, ImVec2(-1.0f, 0.0f));
-                    } else {
-                        const auto cursor = numericTaskV2->GetCursor();
-                        ImGui::TextDisabled("open-ended | step=%llu",
-                                            static_cast<unsigned long long>(cursor.Step));
-                    }
-                } else if (const auto *legacyNumericTask =
-                               dynamic_cast<Slab::Math::FNumericTask *>(task.get())) {
-                    ImGui::ProgressBar(legacyNumericTask->GetProgress(), ImVec2(-1.0f, 0.0f));
+            ImGui::TableSetColumnIndex(3);
+            if (numericTaskV2 != nullptr) {
+                const auto progressOpt = numericTaskV2->GetProgress01();
+                if (progressOpt.has_value()) {
+                    ImGui::ProgressBar(*progressOpt, ImVec2(110.0f, 0.0f));
+                } else {
+                    ImGui::TextDisabled("open");
                 }
+            } else if (legacyNumericTask != nullptr) {
+                ImGui::ProgressBar(legacyNumericTask->GetProgress(), ImVec2(110.0f, 0.0f));
+            } else {
+                ImGui::TextDisabled("-");
             }
+
+            ImGui::TableSetColumnIndex(4);
+            if (numericTaskV2 != nullptr) {
+                const auto cursor = numericTaskV2->GetCursor();
+                if (cursor.SimulationTime.has_value()) {
+                    ImGui::Text("s=%llu t=%.4g",
+                        static_cast<unsigned long long>(cursor.Step),
+                        *cursor.SimulationTime);
+                } else {
+                    ImGui::Text("s=%llu",
+                        static_cast<unsigned long long>(cursor.Step));
+                }
+            } else {
+                ImGui::TextDisabled("-");
+            }
+
+            ImGui::TableSetColumnIndex(5);
+            if (task->GetStatus() != Slab::Core::TaskRunning) {
+                if (ImGui::SmallButton("Clear")) {
+                    (void) taskManager->ClearJob(job);
+                }
+            } else {
+                ImGui::TextDisabled("-");
+            }
+
+            ImGui::PopID();
         }
+
+        ImGui::EndTable();
     }
 
     auto ToStatusString(const Slab::Math::LiveData::V2::ESessionRunStateV2 runState) -> Slab::Str {
@@ -790,7 +908,7 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
         ImGui::SeparatorText("Lab V2");
         ImGui::TextDisabled("V2 observability + launcher shell");
 
-        ShowTasksPanel();
+        ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);
         ShowLiveDataV2Panel(LiveDataHub, LiveDataTopicFilter, bLiveDataOnlyBound, SelectedLiveDataTopic);
         ShowLiveControlV2Panel(LiveControlHub, LiveControlTopicFilter, bLiveControlLevelsOnly, SelectedLiveControlTopic);
         DrawViewManagerPanel();

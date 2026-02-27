@@ -49,6 +49,11 @@ private:
 
     Slab::Str SelectedViewUniqueName;
 
+    Slab::Str TaskNameFilter;
+    bool bTaskOnlyRunning = false;
+    bool bTaskHideSuccess = false;
+    bool bTaskOnlyNumeric = false;
+
     bool bPublishKG2DControlSource = true;
     Slab::DevFloat KG2DControlX = 0.0;
     Slab::DevFloat KG2DControlY = 0.0;
