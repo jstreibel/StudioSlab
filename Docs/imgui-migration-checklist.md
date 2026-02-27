@@ -29,6 +29,15 @@
   - context actions unchanged,
   - pane splitter behavior unchanged.
 - Lab/LabV2 UI still renders and interacts correctly.
+- Manual smoke script: `Docs/validation/imgui-blueprints-smoke.md`.
+
+## Current Status
+- Wave A: `Green`
+- Wave B: `Green`
+- Wave C: `Green`
+- Wave D: `Green`
+- Wave E: `Not Started`
+- Wave F: `Not Started`
 
 ## Wave Plan
 
