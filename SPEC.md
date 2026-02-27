@@ -344,6 +344,9 @@ If a change requires broad coupling across numerics + data + graphics, split it 
 - `Docs/study-model-spec.md` (Study object and reproducibility framing)
 - `Docs/sequence-control-spec.md` (sequence/control/time-domain draft)
 - `Docs/v2-model-coverage-matrix.md` (broad V2 migration planning matrix)
+- `Docs/v2-feature-backlog.md` (compact planning backlog)
+- `Docs/live-control-v2-spec.md` (minimal `LiveControl V2` foundation spec)
+- `Docs/kg-r2tor-v2-slice-scope.md` (first KG `R^2->R` V2 migration scope)
 
 ## Maintenance Note (SPEC.md Role)
 

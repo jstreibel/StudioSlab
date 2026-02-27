@@ -14,8 +14,10 @@ add_executable( StudioSlabV2
         ../../Slab/Studios/Common/SessionLiveViewStatsV2.cpp
         ../../Slab/Studios/Common/Simulations/V2/SPISliceV2.cpp
         ../../Slab/Studios/Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.cpp
+        ../../Slab/Studios/Common/Simulations/V2/KGR2toRBaselineSliceV2.cpp
         ../../Slab/Studios/Common/Monitors/V2/SPIPassiveMonitorWindowV2.cpp
         ../../Slab/Studios/Common/Monitors/V2/KGRtoRPlaneWavesPassiveMonitorWindowV2.cpp
+        ../../Slab/Studios/Common/Monitors/V2/KGR2toRBaselinePassiveMonitorWindowV2.cpp
 )
 target_link_libraries( StudioSlabV2 Slab )
 message(NOTICE "Added executable StudioSlabV2")

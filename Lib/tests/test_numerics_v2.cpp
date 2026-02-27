@@ -23,7 +23,9 @@
 #include "Math/Numerics/V2/Scheduling/WindowedEveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PlaneWaves-RecipeV2.h"
+#include "Models/KleinGordon/R2toR/V2/KG-R2toR-Baseline-RecipeV2.h"
 #include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
+#include "Models/KleinGordon/R2toR/EquationState.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.h"
 #include "Models/Stochastic-Path-Integral/SPI-State.h"
 #include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
@@ -763,6 +765,58 @@ TEST_CASE("PhaseR0 V2 - KGRtoR plane waves recipe runs with finite time cursor s
     CHECK(std::isfinite(phiAbs));
     CHECK(std::isfinite(dPhiDtAbs));
     CHECK(phiAbs > 0.0);
+    CHECK(dPhiDtAbs > 0.0);
+}
+
+TEST_CASE("PhaseKG2D0 V2 - KGR2toR baseline recipe runs with finite time cursor semantics",
+          "[V2][PhaseKG2D0][KGR2toR][R2toR][Task]") {
+    using namespace Slab;
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::KGR2toR::Baseline::V2;
+
+    FKGR2toRBaselineConfigV2 config;
+    config.N = 96;
+    config.L = 12.0;
+    config.RDt = 0.1;
+    config.Steps = 8;
+    config.PulseWidth = 0.35;
+    config.PhiAmplitude = 0.0;
+    config.DPhiDtAmplitude = 0.8;
+
+    auto recipe = New<FKGR2toRBaselineRecipeV2>(config, 1000);
+    auto task = New<FNumericTaskV2>(recipe, false, 16);
+
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    const auto cursor = task->GetCursor();
+    CHECK(cursor.Step == config.Steps);
+    REQUIRE(cursor.SimulationTime.has_value());
+    const auto expectedDt = config.RDt * (config.L / static_cast<DevFloat>(config.N));
+    CHECK(*cursor.SimulationTime == Catch::Approx(expectedDt * static_cast<DevFloat>(config.Steps)).margin(1e-12));
+
+    const auto progress = task->GetProgress01();
+    REQUIRE(progress.has_value());
+    CHECK(*progress == Catch::Approx(1.0f).margin(1e-6f));
+
+    const auto *session = task->GetSession();
+    REQUIRE(session != nullptr);
+
+    auto lease = session->AcquireReadLease();
+    REQUIRE(lease.OwnsLock());
+    REQUIRE(lease.GetState() != nullptr);
+
+    auto kgState = std::dynamic_pointer_cast<const Slab::Math::R2toR::EquationState>(lease.GetState());
+    REQUIRE(kgState != nullptr);
+
+    const auto &phiData = kgState->getPhi().getSpace().getHostData(true);
+    const auto &dPhiDtData = kgState->getDPhiDt().getSpace().getHostData(true);
+
+    const auto phiAbs = SumAbsValues(phiData);
+    const auto dPhiDtAbs = SumAbsValues(dPhiDtData);
+
+    CAPTURE(phiAbs, dPhiDtAbs);
+    CHECK(std::isfinite(phiAbs));
+    CHECK(std::isfinite(dPhiDtAbs));
     CHECK(dPhiDtAbs > 0.0);
 }
 

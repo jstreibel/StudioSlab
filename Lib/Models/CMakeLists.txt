@@ -41,6 +41,8 @@ set ( KG_SOURCES
 		KleinGordon/R2toR/R2toRBuilder.h
 		KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.cpp
         KleinGordon/R2toR/EquationState.cpp
+        KleinGordon/R2toR/V2/KG-R2toR-Baseline-RecipeV2.cpp
+        KleinGordon/R2toR/V2/KG-R2toR-Baseline-RecipeV2.h
 
 		KleinGordon/KG-LangevinSolver.h KleinGordon/KG-LangevinSolver.cpp
 

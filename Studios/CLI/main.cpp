@@ -9,6 +9,7 @@
 
 #include "StudioSlab.h"
 #include "../../Slab/Studios/Common/NumericsV2TaskUtils.h"
+#include "../../Slab/Studios/Common/Simulations/V2/KGR2toRBaselineSliceV2.h"
 #include "../../Slab/Studios/Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.h"
 #include "../../Slab/Studios/Common/Simulations/V2/SPISliceV2.h"
 
@@ -18,6 +19,7 @@ namespace {
 
     using namespace Slab;
     namespace StudiosSimV2 = Slab::Studios::Common::Simulations::V2;
+    using StudiosSimV2::FR2toRBaselineExecutionConfig;
     using StudiosSimV2::FRtoRPlaneWavesExecutionConfig;
     using StudiosSimV2::FSPIExecutionConfig;
 
@@ -32,21 +34,25 @@ namespace {
                 << "  metropolis   Run V2 Hamiltonian RtoR Metropolis slice\n"
                 << "  spi          Run V2 SPI ODE/time-aware slice\n"
                 << "  rtor         Run V2 KGRtoR plane-waves slice\n\n"
+                << "  kg2d         Run V2 KGR2toR baseline slice\n\n"
                 << "Aliases:\n"
                 << "  metropolis-v2, v2-metropolis\n"
                 << "  spi-v2, v2-spi\n"
                 << "  rtor-v2, rtor-plane-waves, v2-rtor\n\n"
+                << "  kg2d-v2, r2tor-v2, v2-kg2d\n\n"
                 << "Examples:\n"
                 << "  Studios metropolis --steps 5000 --interval 500\n"
                 << "  Studios spi --steps 8 --dt 0.125 --time 0.5 --N 16 --interval 2\n"
                 << "  Studios spi --gl --steps 2000 --interval 50 --monitor-interval 2\n"
                 << "  Studios rtor --steps 500 --dt 0.01 --L 10 --N 256 --Q 1 --harmonic 2\n"
                 << "  Studios rtor --gl --steps 2000 --interval 50 --monitor-interval 2\n"
+                << "  Studios kg2d --steps 300 --L 12 --N 128 --rdt 0.1 --pulse-width 0.35\n"
+                << "  Studios kg2d --gl --steps 500 --interval 20 --monitor-interval 2\n"
                 << "  Studios spi --help\n";
     }
 
     auto PrintList() -> void {
-        std::cout << "metropolis\nspi\nrtor\n";
+        std::cout << "metropolis\nspi\nrtor\nkg2d\n";
     }
 
     auto NormalizeShortLongSingleLetterOption(const Str &arg) -> Str {
@@ -225,6 +231,52 @@ namespace {
         return StudiosSimV2::RunRtoRPlaneWavesV2(cfg);
     }
 
+    auto RunKG2DCommand(const int argc, const char **argv) -> int {
+        CLOptionsDescription options("Studios kg2d", "Run the native V2 KGR2toR baseline slice.");
+        options.add_options()
+            ("h,help", "Show this help")
+            ("gl", "Run with passive OpenGL monitor (real app loop)")
+            ("steps", "Integration steps", cxxopts::value<UIntBig>()->default_value("200"))
+            ("L", "Spatial length", cxxopts::value<DevFloat>()->default_value("12.0"))
+            ("N", "Grid side size", cxxopts::value<UInt>()->default_value("128"))
+            ("rdt", "Legacy CFL ratio r_dt with dt = r_dt*(L/N)", cxxopts::value<DevFloat>()->default_value("0.1"))
+            ("x-center", "Pulse center x", cxxopts::value<DevFloat>()->default_value("0.0"))
+            ("y-center", "Pulse center y", cxxopts::value<DevFloat>()->default_value("0.0"))
+            ("pulse-width", "Regularized delta width", cxxopts::value<DevFloat>()->default_value("0.35"))
+            ("phi-amplitude", "Initial phi pulse amplitude", cxxopts::value<DevFloat>()->default_value("0.0"))
+            ("dphi-dt-amplitude", "Initial dphi/dt pulse amplitude", cxxopts::value<DevFloat>()->default_value("1.0"))
+            ("interval", "Console/listener interval (steps)", cxxopts::value<UIntBig>()->default_value("20"))
+            ("monitor-interval",
+             "Live-view publish interval (steps) for --gl; defaults to --interval",
+             cxxopts::value<UIntBig>())
+            ("batch", "Max integration batch size", cxxopts::value<UIntBig>()->default_value("2048"));
+
+        const auto result = ParseSubcommandOptions(argc, argv, options);
+        if (result.count("help") > 0) {
+            std::cout << options.help() << '\n';
+            return 0;
+        }
+
+        FR2toRBaselineExecutionConfig cfg;
+        cfg.Steps = result["steps"].as<UIntBig>();
+        cfg.L = result["L"].as<DevFloat>();
+        cfg.N = result["N"].as<UInt>();
+        cfg.RDt = result["rdt"].as<DevFloat>();
+        cfg.XCenter = result["x-center"].as<DevFloat>();
+        cfg.YCenter = result["y-center"].as<DevFloat>();
+        cfg.PulseWidth = result["pulse-width"].as<DevFloat>();
+        cfg.PhiAmplitude = result["phi-amplitude"].as<DevFloat>();
+        cfg.DPhiDtAmplitude = result["dphi-dt-amplitude"].as<DevFloat>();
+        cfg.Interval = result["interval"].as<UIntBig>();
+        cfg.MonitorInterval = result.count("monitor-interval") > 0
+            ? result["monitor-interval"].as<UIntBig>()
+            : cfg.Interval;
+        cfg.Batch = result["batch"].as<UIntBig>();
+        cfg.bEnableGLMonitor = result.count("gl") > 0;
+
+        return StudiosSimV2::RunR2toRBaselineV2(cfg);
+    }
+
     auto IsMetropolisCommand(const Str &name) -> bool {
         return name == "metropolis" || name == "metropolis-v2" || name == "v2-metropolis";
     }
@@ -235,6 +287,10 @@ namespace {
 
     auto IsRtoRCommand(const Str &name) -> bool {
         return name == "rtor" || name == "rtor-v2" || name == "rtor-plane-waves" || name == "v2-rtor";
+    }
+
+    auto IsKG2DCommand(const Str &name) -> bool {
+        return name == "kg2d" || name == "kg2d-v2" || name == "r2tor-v2" || name == "v2-kg2d";
     }
 
     auto DispatchRoot(const int argc, const char **argv) -> int {
@@ -263,6 +319,7 @@ namespace {
             if (IsMetropolisCommand(sub)) return RunMetropolisCommand(argc - 2, argv + 2);
             if (IsSPICommand(sub)) return RunSPICommand(argc - 2, argv + 2);
             if (IsRtoRCommand(sub)) return RunRtoRCommand(argc - 2, argv + 2);
+            if (IsKG2DCommand(sub)) return RunKG2DCommand(argc - 2, argv + 2);
 
             throw Exception("Unknown subprogram '" + sub + "'. Use 'Studios list'.");
         }
@@ -270,6 +327,7 @@ namespace {
         if (IsMetropolisCommand(first)) return RunMetropolisCommand(argc - 1, argv + 1);
         if (IsSPICommand(first)) return RunSPICommand(argc - 1, argv + 1);
         if (IsRtoRCommand(first)) return RunRtoRCommand(argc - 1, argv + 1);
+        if (IsKG2DCommand(first)) return RunKG2DCommand(argc - 1, argv + 1);
 
         throw Exception("Unknown subprogram '" + first + "'. Use 'Studios list'.");
     }

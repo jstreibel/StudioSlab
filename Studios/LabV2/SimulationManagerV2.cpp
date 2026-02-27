@@ -64,6 +64,10 @@ FSimulationManagerV2::FSimulationManagerV2(
     RtoRCfg.Batch = 256;
     RtoRCfg.bHistorySummary = true;
 
+    R2toRCfg.Interval = 20;
+    R2toRCfg.MonitorInterval = 5;
+    R2toRCfg.Batch = 256;
+
     MetropolisCfg.Interval = 1000;
     MetropolisCfg.LiveViewInterval = 200;
     MetropolisCfg.Batch = 2048;
@@ -104,6 +108,8 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
                 {"SPI (GL Monitor)"},
                 {"KGRtoR Plane Waves (Headless)"},
                 {"KGRtoR Plane Waves (GL Monitor)"},
+                {"KGR2toR Baseline (Headless)"},
+                {"KGR2toR Baseline (GL Monitor)"},
                 {Slab::Graphics::MainMenuSeparator},
                 {"Metropolis RtoR (Headless)"},
                 {Slab::Graphics::MainMenuSeparator},
@@ -116,6 +122,8 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
                     if (itemString == "SPI (GL Monitor)") { LaunchSPI(true); return; }
                     if (itemString == "KGRtoR Plane Waves (Headless)") { LaunchRtoR(false); return; }
                     if (itemString == "KGRtoR Plane Waves (GL Monitor)") { LaunchRtoR(true); return; }
+                    if (itemString == "KGR2toR Baseline (Headless)") { LaunchR2toR(false); return; }
+                    if (itemString == "KGR2toR Baseline (GL Monitor)") { LaunchR2toR(true); return; }
                     if (itemString == "Metropolis RtoR (Headless)") { LaunchMetropolis(); return; }
                     if (itemString == "Open Launcher") { bShowLauncherWindow = true; return; }
                 } catch (const std::exception &e) {
@@ -149,6 +157,7 @@ auto FSimulationManagerV2::DrawLauncherWindow() -> void {
 
         DrawSPISection();
         DrawRtoRSection();
+        DrawR2toRSection();
         DrawMetropolisSection();
     }
     ImGui::End();
@@ -215,6 +224,35 @@ auto FSimulationManagerV2::DrawRtoRSection() -> void {
     }
 }
 
+auto FSimulationManagerV2::DrawR2toRSection() -> void {
+    if (!ImGui::CollapsingHeader("KGR2toR Baseline (V2)", ImGuiTreeNodeFlags_DefaultOpen)) return;
+
+    DragUIntLike("KG2D Steps", R2toRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
+    DragDevFloat("KG2D L", R2toRCfg.L, 0.01, 1e-6, 1e6);
+    DragUIntLike("KG2D N", R2toRCfg.N, 8u, 200000u, 1.0f);
+    DragDevFloat("KG2D r_dt", R2toRCfg.RDt, 0.001, 1e-8, 10.0, "%.6g");
+    ImGui::TextDisabled("dt auto = r_dt * (L / N)");
+
+    DragDevFloat("KG2D x-center", R2toRCfg.XCenter, 0.01, -1e6, 1e6);
+    DragDevFloat("KG2D y-center", R2toRCfg.YCenter, 0.01, -1e6, 1e6);
+    DragDevFloat("KG2D pulse width", R2toRCfg.PulseWidth, 0.001, 1e-8, 1e6, "%.6g");
+    DragDevFloat("KG2D phi amplitude", R2toRCfg.PhiAmplitude, 0.01, -1e6, 1e6);
+    DragDevFloat("KG2D dphi/dt amplitude", R2toRCfg.DPhiDtAmplitude, 0.01, -1e6, 1e6);
+    DragUIntLike("KG2D Interval", R2toRCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
+    DragUIntLike("KG2D Monitor Interval", R2toRCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
+    DragUIntLike("KG2D Batch", R2toRCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
+
+    ImGui::Checkbox("Publish LiveData when headless##kg2d", &bR2toRPublishLiveViewHeadless);
+
+    if (ImGui::Button("Run KG2D Headless")) {
+        try { LaunchR2toR(false); } catch (const std::exception &e) { LastError = e.what(); }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Run KG2D + GL Monitor")) {
+        try { LaunchR2toR(true); } catch (const std::exception &e) { LastError = e.what(); }
+    }
+}
+
 auto FSimulationManagerV2::DrawMetropolisSection() -> void {
     if (!ImGui::CollapsingHeader("Metropolis RtoR (V2)")) return;
 
@@ -273,6 +311,29 @@ auto FSimulationManagerV2::LaunchRtoR(const bool enableMonitor) -> void {
     }
 
     LaunchNumericTask(recipe, cfg.Batch, "KGRtoR Plane Waves V2");
+}
+
+auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
+    using namespace Slab::Studios::Common::Simulations::V2;
+
+    auto cfg = R2toRCfg;
+    cfg.bEnableGLMonitor = enableMonitor;
+    FinalizeR2toRBaselineExecutionConfigV2(cfg);
+
+    const bool bNeedLiveView = enableMonitor || bR2toRPublishLiveViewHeadless;
+    Slab::TPointer<Slab::Math::LiveData::V2::FSessionLiveViewV2> liveView = nullptr;
+    if (bNeedLiveView && LiveDataHub != nullptr) {
+        liveView = LiveDataHub->GetOrCreateSessionLiveView(MakeTopicName("kg2d", R2toRRunCounter));
+    }
+
+    auto recipe = BuildR2toRBaselineRecipeV2(cfg, liveView);
+    if (enableMonitor) {
+        if (liveView == nullptr) throw Exception("KGR2toR GL monitor requires a live view.");
+        if (!AddWindow) throw Exception("LabV2 cannot attach monitor window.");
+        AddWindow(BuildR2toRBaselinePassiveMonitorWindowV2(cfg, liveView));
+    }
+
+    LaunchNumericTask(recipe, cfg.Batch, "KGR2toR Baseline V2");
 }
 
 auto FSimulationManagerV2::LaunchMetropolis() -> void {
