@@ -39,6 +39,16 @@ private:
     Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> LiveControlHub;
     Slab::TPointer<class FSimulationManagerV2> SimulationManager;
 
+    Slab::Str LiveDataTopicFilter;
+    bool bLiveDataOnlyBound = false;
+    Slab::Str SelectedLiveDataTopic;
+
+    Slab::Str LiveControlTopicFilter;
+    bool bLiveControlLevelsOnly = false;
+    Slab::Str SelectedLiveControlTopic;
+
+    Slab::Str SelectedViewUniqueName;
+
     bool bPublishKG2DControlSource = true;
     Slab::DevFloat KG2DControlX = 0.0;
     Slab::DevFloat KG2DControlY = 0.0;
@@ -49,7 +59,12 @@ private:
 
     auto FlushPendingSlabWindows() -> void;
     auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
+    auto PruneClosedSlabWindows() -> bool;
     auto ArrangeTopLevelSlabWindows() -> void;
+    auto DrawViewManagerPanel() -> void;
+    auto FocusWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
+    [[nodiscard]] auto FindWindowByUniqueName(const Slab::Str &uniqueName) const
+        -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
 };
 
 #endif // STUDIOSLAB_LAB_V2_WINDOW_MANAGER_H
