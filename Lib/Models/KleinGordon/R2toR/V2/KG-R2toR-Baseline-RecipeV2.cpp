@@ -76,10 +76,12 @@ namespace Slab::Models::KGR2toR::Baseline::V2 {
 
     FKGR2toRBaselineRecipeV2::FKGR2toRBaselineRecipeV2(FKGR2toRBaselineConfigV2 config,
                                                        const UIntBig consoleIntervalSteps,
-                                                       const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
+                                                       const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+                                                       const TPointer<Math::R2toR::Function> &externalSource)
     : Config(std::move(config))
     , ConsoleIntervalSteps(std::max<UIntBig>(1, consoleIntervalSteps))
-    , LiveView(liveView) {
+    , LiveView(liveView)
+    , ExternalSource(externalSource) {
         ValidateConfig();
     }
 
@@ -114,7 +116,7 @@ namespace Slab::Models::KGR2toR::Baseline::V2 {
 
         auto laplacian = New<Math::R2toR::R2toRLaplacian>();
         auto potential = New<RtoR::AbsFunction>();
-        auto solver = New<KGR2toRSolver>(boundary, laplacian, potential);
+        auto solver = New<KGR2toRSolver>(boundary, laplacian, potential, ExternalSource);
 
         return New<FRungeKutta4>(solver, ComputeDt());
     }
@@ -168,6 +170,10 @@ namespace Slab::Models::KGR2toR::Baseline::V2 {
 
     auto FKGR2toRBaselineRecipeV2::GetLiveView() const -> TPointer<Math::LiveData::V2::FSessionLiveViewV2> {
         return LiveView;
+    }
+
+    auto FKGR2toRBaselineRecipeV2::GetExternalSource() const -> TPointer<Math::R2toR::Function> {
+        return ExternalSource;
     }
 
     auto FKGR2toRBaselineRecipeV2::GetDt() const -> DevFloat {

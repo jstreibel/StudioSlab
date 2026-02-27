@@ -15,6 +15,8 @@
 #include "Math/Numerics/NumericTask.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
+#include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <utility>
 
@@ -328,6 +330,61 @@ namespace {
         }
     }
 
+    auto ShowKG2DControlSourcePanelAndPublish(
+        const Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> &hub,
+        bool &bPublish,
+        Slab::DevFloat &xCenter,
+        Slab::DevFloat &yCenter,
+        Slab::DevFloat &width,
+        Slab::DevFloat &amplitude,
+        bool &bEnabled,
+        const Slab::Str &topicPrefix) -> void {
+        using namespace Slab::Math::LiveControl::V2;
+
+        ImGui::SeparatorText("KG2D Control Source");
+        ImGui::Checkbox("Publish KG2D forcing controls", &bPublish);
+        ImGui::TextDisabled("Topic prefix: %s", topicPrefix.c_str());
+
+        ImGui::DragScalar("KG2D ctrl x", ImGuiDataType_Double, &xCenter, 0.01, nullptr, nullptr, "%.6g");
+        ImGui::DragScalar("KG2D ctrl y", ImGuiDataType_Double, &yCenter, 0.01, nullptr, nullptr, "%.6g");
+        ImGui::DragScalar("KG2D ctrl width", ImGuiDataType_Double, &width, 0.001, nullptr, nullptr, "%.6g");
+        ImGui::DragScalar("KG2D ctrl amplitude", ImGuiDataType_Double, &amplitude, 0.01, nullptr, nullptr, "%.6g");
+        ImGui::Checkbox("KG2D ctrl enabled", &bEnabled);
+
+        if (!bPublish || hub == nullptr) return;
+
+        const auto now = std::chrono::duration<Slab::DevFloat>(
+            std::chrono::steady_clock::now().time_since_epoch()).count();
+
+        FControlTimestampV2 stamp;
+        stamp.Domain = EControlTimeDomainV2::WallClockTime;
+        stamp.WallClockSeconds = now;
+
+        FControlSampleV2 centerSample;
+        centerSample.Value = Slab::Math::Real2D{xCenter, yCenter};
+        centerSample.Semantic = EControlSemanticV2::Level;
+        centerSample.Timestamp = stamp;
+        hub->GetOrCreateTopic(topicPrefix + "/forcing/center")->Publish(centerSample);
+
+        FControlSampleV2 amplitudeSample;
+        amplitudeSample.Value = amplitude;
+        amplitudeSample.Semantic = EControlSemanticV2::Level;
+        amplitudeSample.Timestamp = stamp;
+        hub->GetOrCreateTopic(topicPrefix + "/forcing/amplitude")->Publish(amplitudeSample);
+
+        FControlSampleV2 widthSample;
+        widthSample.Value = std::max<Slab::DevFloat>(width, 1e-9);
+        widthSample.Semantic = EControlSemanticV2::Level;
+        widthSample.Timestamp = stamp;
+        hub->GetOrCreateTopic(topicPrefix + "/forcing/width")->Publish(widthSample);
+
+        FControlSampleV2 enabledSample;
+        enabledSample.Value = bEnabled;
+        enabledSample.Semantic = EControlSemanticV2::Level;
+        enabledSample.Timestamp = stamp;
+        hub->GetOrCreateTopic(topicPrefix + "/forcing/enabled")->Publish(enabledSample);
+    }
+
 } // namespace
 
 FLabV2WindowManager::FLabV2WindowManager()
@@ -343,6 +400,7 @@ FLabV2WindowManager::FLabV2WindowManager()
     SimulationManager = Slab::New<FSimulationManagerV2>(
         ImGuiContext,
         LiveDataHub,
+        LiveControlHub,
         [this](const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) { QueueSlabWindow(window); });
 
     AddResponder(ImGuiContext);
@@ -449,6 +507,15 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
         ShowTasksPanel();
         ShowLiveDataV2Panel(LiveDataHub);
         ShowLiveControlV2Panel(LiveControlHub);
+        ShowKG2DControlSourcePanelAndPublish(
+            LiveControlHub,
+            bPublishKG2DControlSource,
+            KG2DControlX,
+            KG2DControlY,
+            KG2DControlWidth,
+            KG2DControlAmplitude,
+            bKG2DControlEnabled,
+            KG2DControlTopicPrefix);
 
         if (const auto windowWidth = static_cast<int>(ImGui::GetWindowWidth()); SidePaneWidth != windowWidth) {
             SidePaneWidth = windowWidth;

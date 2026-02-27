@@ -5,6 +5,7 @@
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 #include "Graphics/Window/SlabWindow.h"
 #include "Math/Data/V2/LiveDataHubV2.h"
+#include "Math/Data/V2/LiveControlHubV2.h"
 
 #include "Studios/Common/Simulations/V2/SPISliceV2.h"
 #include "Studios/Common/Simulations/V2/KGR2toRBaselineSliceV2.h"
@@ -19,6 +20,7 @@ public:
     FSimulationManagerV2(
         Slab::TPointer<Slab::Graphics::FImGuiContext> imGuiContext,
         Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> liveDataHub,
+        Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> liveControlHub,
         FAddWindowFn addWindowFn);
 
     bool NotifyRender(const Slab::Graphics::FPlatformWindow &platformWindow) override;
@@ -34,6 +36,7 @@ private:
 
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
     Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> LiveDataHub;
+    Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> LiveControlHub;
     FAddWindowFn AddWindow;
 
     bool bShowLauncherWindow = true;

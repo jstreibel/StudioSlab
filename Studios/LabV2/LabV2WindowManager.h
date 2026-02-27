@@ -39,6 +39,14 @@ private:
     Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> LiveControlHub;
     Slab::TPointer<class FSimulationManagerV2> SimulationManager;
 
+    bool bPublishKG2DControlSource = true;
+    Slab::DevFloat KG2DControlX = 0.0;
+    Slab::DevFloat KG2DControlY = 0.0;
+    Slab::DevFloat KG2DControlWidth = 0.35;
+    Slab::DevFloat KG2DControlAmplitude = 0.0;
+    bool bKG2DControlEnabled = false;
+    Slab::Str KG2DControlTopicPrefix = "labv2/control/kg2d";
+
     auto FlushPendingSlabWindows() -> void;
     auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
     auto ArrangeTopLevelSlabWindows() -> void;

@@ -17,6 +17,13 @@ Use together with:
 
 Goal: enable the first north-star interaction loop (field + monitor + live control).
 
+## Progress Notes (2026-02-27)
+
+- `KG2D-01` done: `KGR2toR` baseline V2 headless slice (`Studios kg2d` + tests).
+- `KG2D-02` done: passive GL monitor path for `KGR2toR` baseline V2.
+- `LC-01` foundation done: `LiveControl V2` topics/hub + LabV2 visibility panel.
+- `KG2D-03` started: first control binding prototype (LabV2 control source -> hub topics -> KG2D external forcing source).
+
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
 
@@ -66,4 +73,3 @@ Keep at most:
 - 1 editor/tooling item active
 
 If ambiguity grows, stop and resolve spec/contracts before continuing implementation.
-

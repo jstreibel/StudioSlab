@@ -51,9 +51,11 @@ namespace {
 FSimulationManagerV2::FSimulationManagerV2(
     Slab::TPointer<Slab::Graphics::FImGuiContext> imGuiContext,
     Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> liveDataHub,
+    Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> liveControlHub,
     FAddWindowFn addWindowFn)
 : ImGuiContext(std::move(imGuiContext))
 , LiveDataHub(std::move(liveDataHub))
+, LiveControlHub(std::move(liveControlHub))
 , AddWindow(std::move(addWindowFn)) {
     SPICfg.Interval = 10;
     SPICfg.MonitorInterval = 2;
@@ -67,6 +69,12 @@ FSimulationManagerV2::FSimulationManagerV2(
     R2toRCfg.Interval = 20;
     R2toRCfg.MonitorInterval = 5;
     R2toRCfg.Batch = 256;
+    R2toRCfg.bEnableLiveControlForcing = true;
+    R2toRCfg.ControlSampleInterval = 1;
+    R2toRCfg.ControlTopicPrefix = "labv2/control/kg2d";
+    R2toRCfg.ForcingWidth = 0.35;
+    R2toRCfg.ForcingAmplitude = 0.0;
+    R2toRCfg.bForcingEnabled = false;
 
     MetropolisCfg.Interval = 1000;
     MetropolisCfg.LiveViewInterval = 200;
@@ -241,6 +249,16 @@ auto FSimulationManagerV2::DrawR2toRSection() -> void {
     DragUIntLike("KG2D Interval", R2toRCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
     DragUIntLike("KG2D Monitor Interval", R2toRCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
     DragUIntLike("KG2D Batch", R2toRCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
+    ImGui::Checkbox("Enable LiveControl forcing binding##kg2d-bind", &R2toRCfg.bEnableLiveControlForcing);
+    if (R2toRCfg.bEnableLiveControlForcing) {
+        DragUIntLike("KG2D control sample interval", R2toRCfg.ControlSampleInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
+        DragDevFloat("KG2D forcing x", R2toRCfg.ForcingXCenter, 0.01, -1e6, 1e6);
+        DragDevFloat("KG2D forcing y", R2toRCfg.ForcingYCenter, 0.01, -1e6, 1e6);
+        DragDevFloat("KG2D forcing width", R2toRCfg.ForcingWidth, 0.001, 1e-8, 1e6, "%.6g");
+        DragDevFloat("KG2D forcing amplitude", R2toRCfg.ForcingAmplitude, 0.01, -1e6, 1e6);
+        ImGui::Checkbox("KG2D forcing enabled", &R2toRCfg.bForcingEnabled);
+        ImGui::TextDisabled("Control topic prefix: %s", R2toRCfg.ControlTopicPrefix.c_str());
+    }
 
     ImGui::Checkbox("Publish LiveData when headless##kg2d", &bR2toRPublishLiveViewHeadless);
 
@@ -318,6 +336,7 @@ auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
 
     auto cfg = R2toRCfg;
     cfg.bEnableGLMonitor = enableMonitor;
+    cfg.ControlHub = LiveControlHub;
     FinalizeR2toRBaselineExecutionConfigV2(cfg);
 
     const bool bNeedLiveView = enableMonitor || bR2toRPublishLiveViewHeadless;

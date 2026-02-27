@@ -11,6 +11,10 @@ namespace Slab::Models::KGR2toR::Baseline::V2 {
     struct FKGR2toRBaselineConfigV2;
 }
 
+namespace Slab::Math::LiveControl::V2 {
+    class FLiveControlHubV2;
+}
+
 namespace Slab::Studios::Common::Simulations::V2 {
 
     struct FR2toRBaselineExecutionConfig {
@@ -29,6 +33,17 @@ namespace Slab::Studios::Common::Simulations::V2 {
         UIntBig MonitorInterval = 20;
         UIntBig Batch = 2048;
         bool bEnableGLMonitor = false;
+
+        bool bEnableLiveControlForcing = false;
+        Str ControlTopicPrefix = "labv2/control/kg2d";
+        UIntBig ControlSampleInterval = 1;
+        TPointer<Math::LiveControl::V2::FLiveControlHubV2> ControlHub = nullptr;
+
+        DevFloat ForcingXCenter = 0.0;
+        DevFloat ForcingYCenter = 0.0;
+        DevFloat ForcingWidth = 0.35;
+        DevFloat ForcingAmplitude = 0.0;
+        bool bForcingEnabled = false;
     };
 
     auto FinalizeR2toRBaselineExecutionConfigV2(FR2toRBaselineExecutionConfig &cfg) -> void;
