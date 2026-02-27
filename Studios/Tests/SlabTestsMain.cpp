@@ -25,6 +25,8 @@
 #include "../../Slab/Studios/Common/NumericsV2TaskUtils.h"
 #include "../../Slab/Studios/Common/Simulations/V2/MolecularDynamicsSliceV2.h"
 #include "../../Slab/Studios/Common/Simulations/V2/MetropolisSliceV2.h"
+#include "../../Slab/Studios/Common/Simulations/V2/IsingSliceV2.h"
+#include "../../Slab/Studios/Common/Simulations/V2/XYSliceV2.h"
 #include "../../Slab/Studios/Common/VisualHost.h"
 
 #include <algorithm>
@@ -707,6 +709,132 @@ auto RunMolecularDynamicsMonitorSmokeTest(const int argc, const char **argv) -> 
     return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
 }
 
+auto RunXYMonitorSmokeTest(const int argc, const char **argv) -> int {
+    CLOptionsDescription options(
+        "SlabTests xy-monitor-smoke",
+        "XY V2 passive monitor smoke test (real NumericTaskV2).");
+    options.add_options()
+        ("h,help", "Show this help")
+        ("frames", "Auto-close after N render frames", cxxopts::value<UInt>())
+        ("seconds", "Auto-close after seconds", cxxopts::value<double>()->default_value("8.0"))
+        ("L", "Lattice side length", cxxopts::value<UInt>()->default_value("64"))
+        ("steps", "XY sweeps", cxxopts::value<UIntBig>()->default_value("2000"))
+        ("temperature", "Bath temperature", cxxopts::value<DevFloat>()->default_value("0.7"))
+        ("h-field", "External field", cxxopts::value<DevFloat>()->default_value("0.0"))
+        ("delta-theta", "Proposal angle range", cxxopts::value<DevFloat>()->default_value("6.283185307179586"))
+        ("ferromagnetic", "Use ferromagnetic initial state")
+        ("interval", "Console interval in steps", cxxopts::value<UIntBig>()->default_value("200"))
+        ("monitor-interval", "Snapshot/monitor interval in steps", cxxopts::value<UIntBig>()->default_value("20"))
+        ("batch", "Task max batch steps", cxxopts::value<UIntBig>()->default_value("1024"))
+        ("width", "Initial window width", cxxopts::value<Int>()->default_value("1600"))
+        ("height", "Initial window height", cxxopts::value<Int>()->default_value("900"));
+
+    const auto result = options.parse(argc, argv);
+    if (result.count("help") > 0) {
+        std::cout << options.help() << '\n';
+        return 0;
+    }
+
+    FVisualRunConfig visualCfg;
+    if (result.count("frames") > 0) visualCfg.MaxFrames = result["frames"].as<UInt>();
+    if (result.count("seconds") > 0) visualCfg.MaxSeconds = result["seconds"].as<double>();
+    visualCfg.Width = result["width"].as<Int>();
+    visualCfg.Height = result["height"].as<Int>();
+
+    Slab::Studios::Common::Simulations::V2::FXYExecutionConfigV2 cfg;
+    cfg.L = result["L"].as<UInt>();
+    cfg.Steps = result["steps"].as<UIntBig>();
+    cfg.Temperature = result["temperature"].as<DevFloat>();
+    cfg.ExternalField = result["h-field"].as<DevFloat>();
+    cfg.DeltaTheta = result["delta-theta"].as<DevFloat>();
+    cfg.bFerromagneticInitial = result.count("ferromagnetic") > 0;
+    cfg.Interval = result["interval"].as<UIntBig>();
+    cfg.MonitorInterval = result["monitor-interval"].as<UIntBig>();
+    cfg.Batch = result["batch"].as<UIntBig>();
+    cfg.bEnableGLMonitor = true;
+    Slab::Studios::Common::Simulations::V2::FinalizeXYExecutionConfigV2(cfg);
+
+    auto host = Slab::Studios::Common::CreateGLFWVisualHost("SlabTests: xy-monitor-smoke");
+    auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
+    auto recipe = Slab::Studios::Common::Simulations::V2::BuildXYRecipeV2(cfg, liveView);
+    auto monitor = Slab::Studios::Common::Simulations::V2::BuildXYPassiveMonitorWindowV2(cfg, liveView);
+    if (recipe == nullptr || monitor == nullptr) {
+        throw Exception("Failed to build XY monitor bundle.");
+    }
+
+    Slab::Studios::Common::AddRootSlabWindow(host, monitor, false);
+    Slab::Studios::Common::AttachAutoCloseOnRenderBudget(
+        host,
+        {.MaxFrames = visualCfg.MaxFrames, .MaxSeconds = visualCfg.MaxSeconds});
+
+    auto task = New<Math::Numerics::V2::FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
+    const auto status = Slab::Studios::Common::RunTaskWithVisualHost(host, *task);
+    Slab::Studios::Common::PrintNumericTaskSummary(*task);
+    return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
+}
+
+auto RunIsingMonitorSmokeTest(const int argc, const char **argv) -> int {
+    CLOptionsDescription options(
+        "SlabTests ising-monitor-smoke",
+        "Ising V2 passive monitor smoke test (real NumericTaskV2).");
+    options.add_options()
+        ("h,help", "Show this help")
+        ("frames", "Auto-close after N render frames", cxxopts::value<UInt>())
+        ("seconds", "Auto-close after seconds", cxxopts::value<double>()->default_value("8.0"))
+        ("L", "Lattice side length", cxxopts::value<UInt>()->default_value("64"))
+        ("steps", "Ising sweeps", cxxopts::value<UIntBig>()->default_value("2000"))
+        ("temperature", "Bath temperature", cxxopts::value<DevFloat>()->default_value("2.269185314"))
+        ("h-field", "External field", cxxopts::value<DevFloat>()->default_value("0.0"))
+        ("ferromagnetic", "Use ferromagnetic initial state")
+        ("interval", "Console interval in steps", cxxopts::value<UIntBig>()->default_value("200"))
+        ("monitor-interval", "Snapshot/monitor interval in steps", cxxopts::value<UIntBig>()->default_value("20"))
+        ("batch", "Task max batch steps", cxxopts::value<UIntBig>()->default_value("1024"))
+        ("width", "Initial window width", cxxopts::value<Int>()->default_value("1600"))
+        ("height", "Initial window height", cxxopts::value<Int>()->default_value("900"));
+
+    const auto result = options.parse(argc, argv);
+    if (result.count("help") > 0) {
+        std::cout << options.help() << '\n';
+        return 0;
+    }
+
+    FVisualRunConfig visualCfg;
+    if (result.count("frames") > 0) visualCfg.MaxFrames = result["frames"].as<UInt>();
+    if (result.count("seconds") > 0) visualCfg.MaxSeconds = result["seconds"].as<double>();
+    visualCfg.Width = result["width"].as<Int>();
+    visualCfg.Height = result["height"].as<Int>();
+
+    Slab::Studios::Common::Simulations::V2::FIsingExecutionConfigV2 cfg;
+    cfg.L = result["L"].as<UInt>();
+    cfg.Steps = result["steps"].as<UIntBig>();
+    cfg.Temperature = result["temperature"].as<DevFloat>();
+    cfg.ExternalField = result["h-field"].as<DevFloat>();
+    cfg.bFerromagneticInitial = result.count("ferromagnetic") > 0;
+    cfg.Interval = result["interval"].as<UIntBig>();
+    cfg.MonitorInterval = result["monitor-interval"].as<UIntBig>();
+    cfg.Batch = result["batch"].as<UIntBig>();
+    cfg.bEnableGLMonitor = true;
+    Slab::Studios::Common::Simulations::V2::FinalizeIsingExecutionConfigV2(cfg);
+
+    auto host = Slab::Studios::Common::CreateGLFWVisualHost("SlabTests: ising-monitor-smoke");
+    auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
+    auto recipe = Slab::Studios::Common::Simulations::V2::BuildIsingRecipeV2(cfg, liveView);
+    auto monitor = Slab::Studios::Common::Simulations::V2::BuildIsingPassiveMonitorWindowV2(cfg, liveView);
+    if (recipe == nullptr || monitor == nullptr) {
+        throw Exception("Failed to build Ising monitor bundle.");
+    }
+
+    Slab::Studios::Common::AddRootSlabWindow(host, monitor, false);
+    Slab::Studios::Common::AttachAutoCloseOnRenderBudget(
+        host,
+        {.MaxFrames = visualCfg.MaxFrames, .MaxSeconds = visualCfg.MaxSeconds});
+
+    auto task = New<Math::Numerics::V2::FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
+    const auto status = Slab::Studios::Common::RunTaskWithVisualHost(host, *task);
+    Slab::Studios::Common::PrintNumericTaskSummary(*task);
+    return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
+}
+
 using FCommandRunner = int(*)(int, const char**);
 
 struct FCommandEntry {
@@ -725,6 +853,8 @@ auto GetCommands() -> const Vector<FCommandEntry> & {
         {"spi-live-monitor-mock", "Passive V2 SPI-like monitor with mock live publisher", &RunSPILiveMonitorMockTest},
         {"metropolis-monitor-smoke", "Passive V2 Metropolis monitor smoke test", &RunMetropolisMonitorSmokeTest},
         {"moldyn-monitor-smoke", "Passive V2 Molecular Dynamics monitor smoke test", &RunMolecularDynamicsMonitorSmokeTest},
+        {"xy-monitor-smoke", "Passive V2 XY monitor smoke test", &RunXYMonitorSmokeTest},
+        {"ising-monitor-smoke", "Passive V2 Ising monitor smoke test", &RunIsingMonitorSmokeTest},
     };
     return Commands;
 }
@@ -757,7 +887,9 @@ auto PrintRootUsage() -> void {
         << "  SlabTests window-panel-gui --frames 300\n"
         << "  SlabTests spi-live-monitor-mock --seconds 8\n"
         << "  SlabTests metropolis-monitor-smoke --seconds 8 --steps 2000\n"
-        << "  SlabTests moldyn-monitor-smoke --seconds 8 --steps 2000 --N 128 --L 20\n";
+        << "  SlabTests moldyn-monitor-smoke --seconds 8 --steps 2000 --N 128 --L 20\n"
+        << "  SlabTests xy-monitor-smoke --seconds 8 --steps 2000 --L 64\n"
+        << "  SlabTests ising-monitor-smoke --seconds 8 --steps 2000 --L 64\n";
 }
 
 auto DispatchRoot(const int argc, const char **argv) -> int {
