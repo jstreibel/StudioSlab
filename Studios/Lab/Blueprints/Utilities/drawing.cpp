@@ -1,17 +1,20 @@
 # define IMGUI_DEFINE_MATH_OPERATORS
 # include "drawing.h"
-# include <imgui_internal.h>
 
 void ax::Drawing::DrawIcon(ImDrawList* drawList, const ImVec2& a, const ImVec2& b, IconType type, bool filled, ImU32 color, ImU32 innerColor)
 {
-          auto rect           = ImRect(a, b);
-          auto rect_x         = rect.Min.x;
-          auto rect_y         = rect.Min.y;
-          auto rect_w         = rect.Max.x - rect.Min.x;
-          auto rect_h         = rect.Max.y - rect.Min.y;
-          auto rect_center_x  = (rect.Min.x + rect.Max.x) * 0.5f;
-          auto rect_center_y  = (rect.Min.y + rect.Max.y) * 0.5f;
-          auto rect_center    = ImVec2(rect_center_x, rect_center_y);
+    float rectMinX = a.x;
+    float rectMinY = a.y;
+    float rectMaxX = b.x;
+    float rectMaxY = b.y;
+
+    auto rect_x = rectMinX;
+    auto rect_y = rectMinY;
+    auto rect_w = rectMaxX - rectMinX;
+    auto rect_h = rectMaxY - rectMinY;
+    auto rect_center_x = (rectMinX + rectMaxX) * 0.5f;
+    auto rect_center_y = (rectMinY + rectMaxY) * 0.5f;
+    auto rect_center = ImVec2(rect_center_x, rect_center_y);
     const auto outline_scale  = rect_w / 24.0f;
     const auto extra_segments = static_cast<int>(2 * outline_scale); // for full circle
 
@@ -25,15 +28,10 @@ void ax::Drawing::DrawIcon(ImDrawList* drawList, const ImVec2& a, const ImVec2& 
         const auto rounding   = 0.1f * origin_scale;
         const auto tip_round  = 0.7f; // percentage of triangle edge (for tip)
         //const auto edge_round = 0.7f; // percentage of triangle edge (for corner)
-        const auto canvas = ImRect(
-            rect.Min.x + margin + offset_x,
-            rect.Min.y + margin + offset_y,
-            rect.Max.x - margin + offset_x,
-            rect.Max.y - margin + offset_y);
-        const auto canvas_x = canvas.Min.x;
-        const auto canvas_y = canvas.Min.y;
-        const auto canvas_w = canvas.Max.x - canvas.Min.x;
-        const auto canvas_h = canvas.Max.y - canvas.Min.y;
+        const auto canvas_x = rectMinX + margin + offset_x;
+        const auto canvas_y = rectMinY + margin + offset_y;
+        const auto canvas_w = (rectMaxX - margin + offset_x) - canvas_x;
+        const auto canvas_h = (rectMaxY - margin + offset_y) - canvas_y;
 
         const auto left   = canvas_x + canvas_w            * 0.5f * 0.3f;
         const auto right  = canvas_x + canvas_w - canvas_w * 0.5f * 0.3f;
@@ -80,8 +78,8 @@ void ax::Drawing::DrawIcon(ImDrawList* drawList, const ImVec2& a, const ImVec2& 
 
         auto rect_offset = -static_cast<int>(rect_w * 0.25f * 0.25f);
 
-        rect.Min.x    += rect_offset;
-        rect.Max.x    += rect_offset;
+        rectMinX      += rect_offset;
+        rectMaxX      += rect_offset;
         rect_x        += rect_offset;
         rect_center_x += rect_offset * 0.5f;
         rect_center.x += rect_offset * 0.5f;

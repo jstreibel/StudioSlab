@@ -6,12 +6,12 @@
 
 #include <utility>
 
-#include "imgui_internal.h"
 #include "3rdParty/ImGui.h"
 #include "../../Core/Controller/InterfaceManager.h"
 #include "Core/Backend/BackendManager.h"
 
 #include "Math/SlabMath.h"
+#include "Graphics/Modules/ImGui/ImGuiFrameCompat.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "StudioSlab.h"
 
@@ -122,8 +122,7 @@ namespace Slab::Graphics {
     }
 
     void FGUIWindow::Begin() const {
-        if (GImGui == nullptr) return;
-        if (!GImGui->WithinFrameScope) return;
+        if (!FImGuiFrameCompat::CanIssueDrawCommands()) return;
 
         fix WinSize = ImVec2(static_cast<float>(this->GetWidth()), static_cast<float>(this->GetHeight()));
         fix WinPos  = ImVec2(static_cast<float>(this->Get_x()), static_cast<float>(this->Get_y()));
@@ -142,8 +141,7 @@ namespace Slab::Graphics {
 
     void FGUIWindow::End() const
     {
-        if (GImGui == nullptr) return;
-        if (!GImGui->WithinFrameScope) return;
+        if (!FImGuiFrameCompat::CanIssueDrawCommands()) return;
 
         ImGui::EndChild();
         ImGui::End();
@@ -151,8 +149,7 @@ namespace Slab::Graphics {
 
     void FGUIWindow::AddExternalDraw(const FDrawCall& Draw) const
     {
-        if (GImGui == nullptr) return;
-        if (!GImGui->WithinFrameScope) return;
+        if (!FImGuiFrameCompat::CanIssueDrawCommands()) return;
 
         this->Begin();
         Draw();
