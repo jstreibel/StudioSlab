@@ -23,11 +23,13 @@
 
 #include "StudioSlab.h"
 #include "../../Slab/Studios/Common/NumericsV2TaskUtils.h"
+#include "../../Slab/Studios/Common/Simulations/V2/MolecularDynamicsSliceV2.h"
 #include "../../Slab/Studios/Common/Simulations/V2/MetropolisSliceV2.h"
 #include "../../Slab/Studios/Common/VisualHost.h"
 
 #include <algorithm>
 #include <atomic>
+#include <cctype>
 #include <chrono>
 #include <cmath>
 #include <functional>
@@ -626,6 +628,85 @@ auto RunMetropolisMonitorSmokeTest(const int argc, const char **argv) -> int {
     return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
 }
 
+auto RunMolecularDynamicsMonitorSmokeTest(const int argc, const char **argv) -> int {
+    CLOptionsDescription options(
+        "SlabTests moldyn-monitor-smoke",
+        "Molecular Dynamics V2 passive monitor smoke test (real NumericTaskV2).");
+    options.add_options()
+        ("h,help", "Show this help")
+        ("frames", "Auto-close after N render frames", cxxopts::value<UInt>())
+        ("seconds", "Auto-close after seconds", cxxopts::value<double>()->default_value("8.0"))
+        ("N", "Particle count", cxxopts::value<UInt>()->default_value("128"))
+        ("L", "Box length", cxxopts::value<DevFloat>()->default_value("20.0"))
+        ("time", "Total simulation time", cxxopts::value<DevFloat>()->default_value("5.0"))
+        ("steps", "Molecular dynamics steps", cxxopts::value<UIntBig>()->default_value("2000"))
+        ("temperature", "Initial temperature", cxxopts::value<DevFloat>()->default_value("0.0"))
+        ("gamma", "Dissipation coefficient", cxxopts::value<DevFloat>()->default_value("0.0"))
+        ("model", "Interaction model: softdisk|lj", cxxopts::value<Str>()->default_value("softdisk"))
+        ("interval", "Console interval in steps", cxxopts::value<UIntBig>()->default_value("200"))
+        ("monitor-interval", "Snapshot/monitor interval in steps", cxxopts::value<UIntBig>()->default_value("20"))
+        ("batch", "Task max batch steps", cxxopts::value<UIntBig>()->default_value("1024"))
+        ("width", "Initial window width", cxxopts::value<Int>()->default_value("1600"))
+        ("height", "Initial window height", cxxopts::value<Int>()->default_value("900"));
+
+    const auto result = options.parse(argc, argv);
+    if (result.count("help") > 0) {
+        std::cout << options.help() << '\n';
+        return 0;
+    }
+
+    FVisualRunConfig visualCfg;
+    if (result.count("frames") > 0) visualCfg.MaxFrames = result["frames"].as<UInt>();
+    if (result.count("seconds") > 0) visualCfg.MaxSeconds = result["seconds"].as<double>();
+    visualCfg.Width = result["width"].as<Int>();
+    visualCfg.Height = result["height"].as<Int>();
+
+    Slab::Studios::Common::Simulations::V2::FMolecularDynamicsExecutionConfigV2 cfg;
+    cfg.N = result["N"].as<UInt>();
+    cfg.L = result["L"].as<DevFloat>();
+    cfg.TotalTime = result["time"].as<DevFloat>();
+    cfg.Steps = result["steps"].as<UIntBig>();
+    cfg.Temperature = result["temperature"].as<DevFloat>();
+    cfg.Dissipation = result["gamma"].as<DevFloat>();
+    cfg.Interval = result["interval"].as<UIntBig>();
+    cfg.MonitorInterval = result["monitor-interval"].as<UIntBig>();
+    cfg.Batch = result["batch"].as<UIntBig>();
+    cfg.bEnableGLMonitor = true;
+
+    auto interactionModel = result["model"].as<Str>();
+    std::transform(interactionModel.begin(), interactionModel.end(), interactionModel.begin(), [](const unsigned char c) {
+        return static_cast<char>(std::tolower(c));
+    });
+
+    if (interactionModel == "softdisk" || interactionModel == "soft") {
+        cfg.InteractionModel = Slab::Studios::Common::Simulations::V2::EMDInteractionModelV2::SoftDisk;
+    } else if (interactionModel == "lennard-jones" || interactionModel == "lj") {
+        cfg.InteractionModel = Slab::Studios::Common::Simulations::V2::EMDInteractionModelV2::LennardJones;
+    } else {
+        throw Exception("Unknown interaction model '" + interactionModel + "'. Expected softdisk|lj.");
+    }
+
+    Slab::Studios::Common::Simulations::V2::FinalizeMolecularDynamicsExecutionConfigV2(cfg);
+
+    auto host = Slab::Studios::Common::CreateGLFWVisualHost("SlabTests: moldyn-monitor-smoke");
+    auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
+    auto recipe = Slab::Studios::Common::Simulations::V2::BuildMolecularDynamicsRecipeV2(cfg, liveView);
+    auto monitor = Slab::Studios::Common::Simulations::V2::BuildMolecularDynamicsPassiveMonitorWindowV2(cfg, liveView);
+    if (recipe == nullptr || monitor == nullptr) {
+        throw Exception("Failed to build MolecularDynamics monitor bundle.");
+    }
+
+    Slab::Studios::Common::AddRootSlabWindow(host, monitor, false);
+    Slab::Studios::Common::AttachAutoCloseOnRenderBudget(
+        host,
+        {.MaxFrames = visualCfg.MaxFrames, .MaxSeconds = visualCfg.MaxSeconds});
+
+    auto task = New<Math::Numerics::V2::FNumericTaskV2>(recipe, false, static_cast<size_t>(cfg.Batch));
+    const auto status = Slab::Studios::Common::RunTaskWithVisualHost(host, *task);
+    Slab::Studios::Common::PrintNumericTaskSummary(*task);
+    return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
+}
+
 using FCommandRunner = int(*)(int, const char**);
 
 struct FCommandEntry {
@@ -643,6 +724,7 @@ auto GetCommands() -> const Vector<FCommandEntry> & {
         {"column-heavy-panel", "Column-heavy panel layout to inspect pane framing/insets", &RunColumnHeavyPanelTest},
         {"spi-live-monitor-mock", "Passive V2 SPI-like monitor with mock live publisher", &RunSPILiveMonitorMockTest},
         {"metropolis-monitor-smoke", "Passive V2 Metropolis monitor smoke test", &RunMetropolisMonitorSmokeTest},
+        {"moldyn-monitor-smoke", "Passive V2 Molecular Dynamics monitor smoke test", &RunMolecularDynamicsMonitorSmokeTest},
     };
     return Commands;
 }
@@ -674,7 +756,8 @@ auto PrintRootUsage() -> void {
         << "  SlabTests column-heavy-panel --seconds 5\n"
         << "  SlabTests window-panel-gui --frames 300\n"
         << "  SlabTests spi-live-monitor-mock --seconds 8\n"
-        << "  SlabTests metropolis-monitor-smoke --seconds 8 --steps 2000\n";
+        << "  SlabTests metropolis-monitor-smoke --seconds 8 --steps 2000\n"
+        << "  SlabTests moldyn-monitor-smoke --seconds 8 --steps 2000 --N 128 --L 20\n";
 }
 
 auto DispatchRoot(const int argc, const char **argv) -> int {
