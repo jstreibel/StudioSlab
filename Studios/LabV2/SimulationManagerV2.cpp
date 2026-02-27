@@ -67,6 +67,7 @@ FSimulationManagerV2::FSimulationManagerV2(
     R2toRCfg.bEnableLiveControlForcing = true;
     R2toRCfg.ControlSampleInterval = 1;
     R2toRCfg.ControlTopicPrefix = "labv2/control/kg2d";
+    R2toRCfg.bEnableMonitorControlPublisher = false;
     R2toRCfg.ForcingWidth = 0.35;
     R2toRCfg.ForcingAmplitude = 0.0;
     R2toRCfg.bForcingEnabled = false;
@@ -247,6 +248,11 @@ auto FSimulationManagerV2::DrawR2toRSection() -> void {
     DragUIntLike("KG2D Monitor Interval", R2toRCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
     DragUIntLike("KG2D Batch", R2toRCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
     ImGui::Checkbox("Enable LiveControl forcing binding##kg2d-bind", &R2toRCfg.bEnableLiveControlForcing);
+    if (ImGui::Checkbox("Enable monitor control source UI (GL)##kg2d-monitor-ctrl", &R2toRCfg.bEnableMonitorControlPublisher)) {
+        if (R2toRCfg.bEnableMonitorControlPublisher) {
+            R2toRCfg.bEnableLiveControlForcing = true;
+        }
+    }
     if (R2toRCfg.bEnableLiveControlForcing) {
         DragUIntLike("KG2D control sample interval", R2toRCfg.ControlSampleInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
         DragDevFloat("KG2D forcing x", R2toRCfg.ForcingXCenter, 0.01, -1e6, 1e6);
@@ -255,6 +261,9 @@ auto FSimulationManagerV2::DrawR2toRSection() -> void {
         DragDevFloat("KG2D forcing amplitude", R2toRCfg.ForcingAmplitude, 0.01, -1e6, 1e6);
         ImGui::Checkbox("KG2D forcing enabled", &R2toRCfg.bForcingEnabled);
         ImGui::TextDisabled("Control topic prefix: %s", R2toRCfg.ControlTopicPrefix.c_str());
+    }
+    if (R2toRCfg.bEnableMonitorControlPublisher) {
+        ImGui::TextDisabled("GL monitor will expose a control source panel for topic-driven forcing.");
     }
 
     ImGui::Checkbox("Publish LiveData when headless##kg2d", &bR2toRPublishLiveViewHeadless);

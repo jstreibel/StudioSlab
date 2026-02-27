@@ -192,9 +192,21 @@ namespace Slab::Studios::Common::Simulations::V2 {
         if (cfg.N == 0) throw Exception("KGR2toR baseline requires N > 0.");
         if (cfg.Interval == 0) cfg.Interval = 1;
         if (cfg.MonitorInterval == 0) cfg.MonitorInterval = cfg.Interval;
+        if (cfg.bEnableMonitorControlPublisher) {
+            cfg.bEnableLiveControlForcing = true;
+        }
+
         if (cfg.bEnableLiveControlForcing || cfg.bForcingEnabled || !Slab::Common::AreEqual(cfg.ForcingAmplitude, 0.0)) {
             if (cfg.ControlSampleInterval == 0) cfg.ControlSampleInterval = 1;
             if (cfg.ForcingWidth <= 0.0) throw Exception("KGR2toR control forcing width must be > 0.");
+        }
+
+        if ((cfg.bEnableLiveControlForcing || cfg.bEnableMonitorControlPublisher) && cfg.ControlHub == nullptr) {
+            cfg.ControlHub = New<Math::LiveControl::V2::FLiveControlHubV2>();
+        }
+
+        if ((cfg.bEnableLiveControlForcing || cfg.bEnableMonitorControlPublisher) && cfg.ControlTopicPrefix.empty()) {
+            throw Exception("KGR2toR control binding requires a non-empty topic prefix.");
         }
     }
 
@@ -238,7 +250,21 @@ namespace Slab::Studios::Common::Simulations::V2 {
             const FR2toRBaselineExecutionConfig &cfg,
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView) -> TPointer<Graphics::FSlabWindow> {
         if (liveView == nullptr) throw Exception("KGR2toR passive monitor requires a live view.");
-        return New<Slab::Studios::Common::Monitors::V2::FR2toRBaselinePassiveMonitorWindowV2>(liveView, cfg.Steps);
+        if (cfg.bEnableMonitorControlPublisher && cfg.ControlHub == nullptr) {
+            throw Exception("KGR2toR monitor control publisher requires a LiveControl hub.");
+        }
+
+        return New<Slab::Studios::Common::Monitors::V2::FR2toRBaselinePassiveMonitorWindowV2>(
+            liveView,
+            cfg.Steps,
+            cfg.ControlHub,
+            cfg.ControlTopicPrefix,
+            cfg.bEnableMonitorControlPublisher,
+            cfg.ForcingXCenter,
+            cfg.ForcingYCenter,
+            cfg.ForcingWidth,
+            cfg.ForcingAmplitude,
+            cfg.bForcingEnabled);
     }
 
     auto RunR2toRBaselineV2(const FR2toRBaselineExecutionConfig &cfg) -> int {

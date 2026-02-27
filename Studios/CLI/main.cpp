@@ -46,6 +46,7 @@ namespace {
                 << "  Studios rtor --gl --steps 2000 --interval 50 --monitor-interval 2\n"
                 << "  Studios kg2d --steps 300 --L 12 --N 128 --rdt 0.1 --pulse-width 0.35\n"
                 << "  Studios kg2d --gl --steps 500 --interval 20 --monitor-interval 2\n"
+                << "  Studios kg2d --gl --monitor-control-source --steps 500 --forcing-enabled --forcing-amplitude 0.2\n"
                 << "  Studios kg2d --steps 500 --forcing-enabled --forcing-amplitude 0.2 --forcing-width 0.25\n"
                 << "  Studios spi --help\n";
     }
@@ -249,6 +250,15 @@ namespace {
             ("forcing-width", "External forcing width", cxxopts::value<DevFloat>()->default_value("0.35"))
             ("forcing-x-center", "External forcing center x", cxxopts::value<DevFloat>()->default_value("0.0"))
             ("forcing-y-center", "External forcing center y", cxxopts::value<DevFloat>()->default_value("0.0"))
+            ("live-control-forcing", "Enable LiveControl forcing binding (topic-driven forcing values)")
+            ("control-topic-prefix",
+             "LiveControl topic prefix (e.g. labv2/control/kg2d)",
+             cxxopts::value<Str>()->default_value("labv2/control/kg2d"))
+            ("control-sample-interval",
+             "LiveControl sample interval (steps)",
+             cxxopts::value<UIntBig>()->default_value("1"))
+            ("monitor-control-source",
+             "For --gl, open in-monitor control source UI and publish forcing values to LiveControl")
             ("interval", "Console/listener interval (steps)", cxxopts::value<UIntBig>()->default_value("20"))
             ("monitor-interval",
              "Live-view publish interval (steps) for --gl; defaults to --interval",
@@ -275,6 +285,10 @@ namespace {
         cfg.ForcingWidth = result["forcing-width"].as<DevFloat>();
         cfg.ForcingXCenter = result["forcing-x-center"].as<DevFloat>();
         cfg.ForcingYCenter = result["forcing-y-center"].as<DevFloat>();
+        cfg.ControlTopicPrefix = result["control-topic-prefix"].as<Str>();
+        cfg.ControlSampleInterval = result["control-sample-interval"].as<UIntBig>();
+        cfg.bEnableMonitorControlPublisher = result.count("monitor-control-source") > 0;
+        cfg.bEnableLiveControlForcing = result.count("live-control-forcing") > 0 || cfg.bEnableMonitorControlPublisher;
         cfg.bForcingEnabled = result.count("forcing-enabled") > 0 ||
             !Slab::Common::AreEqual(cfg.ForcingAmplitude, 0.0);
         cfg.Interval = result["interval"].as<UIntBig>();
@@ -283,6 +297,9 @@ namespace {
             : cfg.Interval;
         cfg.Batch = result["batch"].as<UIntBig>();
         cfg.bEnableGLMonitor = result.count("gl") > 0;
+        if (cfg.bEnableMonitorControlPublisher && !cfg.bEnableGLMonitor) {
+            throw Exception("--monitor-control-source requires --gl.");
+        }
 
         return StudiosSimV2::RunR2toRBaselineV2(cfg);
     }

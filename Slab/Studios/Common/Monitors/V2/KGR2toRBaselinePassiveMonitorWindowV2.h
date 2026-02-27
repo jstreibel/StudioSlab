@@ -9,6 +9,7 @@
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 
 #include "Math/Data/V2/SessionLiveViewV2.h"
+#include "Math/Data/V2/LiveControlHubV2.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 
 namespace Slab::Studios::Common::Monitors::V2 {
@@ -18,6 +19,15 @@ namespace Slab::Studios::Common::Monitors::V2 {
         TPointer<Math::LiveData::V2::FSessionViewTopicV2> SessionTopic;
         TPointer<Math::LiveData::V2::FSessionTelemetryTopicV2> TelemetryTopic;
         TPointer<Math::LiveData::V2::FSessionStatusTopicV2> StatusTopic;
+        TPointer<Math::LiveControl::V2::FLiveControlHubV2> ControlHub = nullptr;
+        Str ControlTopicPrefix = "labv2/control/kg2d";
+        bool bEnableControlPublisher = false;
+        bool bPublishControlSource = true;
+        DevFloat ControlXCenter = 0.0;
+        DevFloat ControlYCenter = 0.0;
+        DevFloat ControlWidth = 0.35;
+        DevFloat ControlAmplitude = 0.0;
+        bool bControlEnabled = false;
         TPointer<Graphics::FGUIWindow> GuiWindow;
         Graphics::FPlot2DWindow FieldWindow;
         TPointer<Graphics::R2toRFunctionArtist> FieldArtist = nullptr;
@@ -31,11 +41,21 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
         auto UpdateStatsWindow() -> void;
         auto SetPlotFromState(const TPointer<const Math::Base::EquationState> &state) -> void;
+        auto PublishControlSource() -> void;
+        auto DrawControlWindow() -> void;
 
     public:
         explicit FR2toRBaselinePassiveMonitorWindowV2(
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-            UIntBig maxSteps);
+            UIntBig maxSteps,
+            const TPointer<Math::LiveControl::V2::FLiveControlHubV2> &controlHub = nullptr,
+            const Str &controlTopicPrefix = "labv2/control/kg2d",
+            bool bEnableControlPublisher = false,
+            DevFloat controlXCenter = 0.0,
+            DevFloat controlYCenter = 0.0,
+            DevFloat controlWidth = 0.35,
+            DevFloat controlAmplitude = 0.0,
+            bool bControlEnabled = false);
 
         auto ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void override;
     };

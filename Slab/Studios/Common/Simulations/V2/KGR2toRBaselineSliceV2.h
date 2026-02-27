@@ -38,6 +38,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
         Str ControlTopicPrefix = "labv2/control/kg2d";
         UIntBig ControlSampleInterval = 1;
         TPointer<Math::LiveControl::V2::FLiveControlHubV2> ControlHub = nullptr;
+        bool bEnableMonitorControlPublisher = false;
 
         DevFloat ForcingXCenter = 0.0;
         DevFloat ForcingYCenter = 0.0;
