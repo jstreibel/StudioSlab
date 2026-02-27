@@ -211,6 +211,7 @@ namespace Slab::Blueprints {
         ImGui::BeginChild("Selection", ImVec2(paneWidth, 0));
 
         paneWidth = ImGui::GetContentRegionAvail().x;
+        ImGui::TextDisabled("Layout provider: %s", Layout::GetProviderName());
 
         static bool showStyleEditor = false;
         Layout::BeginHorizontal("Style Editor", ImVec2(paneWidth, 0));
