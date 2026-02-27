@@ -77,6 +77,7 @@
 ### Wave E - Upstream Bring-Up
 - Point ImGui to upstream.
 - Resolve API drifts (`imgui_internal.h` touches, node editor compatibility).
+- Keep an automated spike path for repeatability (`Scripts/imgui-upstream-spike.sh`).
 - Exit criteria:
   - upstream provider reaches parity gates.
 
