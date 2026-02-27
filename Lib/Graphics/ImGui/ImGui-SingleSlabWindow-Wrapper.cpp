@@ -13,7 +13,6 @@
 #include <utility>
 #include <Graphics/Modules/ImGui/ImGuiModule.h>
 
-#include "imgui_internal.h"
 #include "3rdParty/freetype-gl/vertex-attribute.h"
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/GLStateGuard.h"
@@ -83,7 +82,7 @@ namespace Slab::Graphics {
                 fix &IO = ImGui::GetIO();
 
                 if (fix Wheel = IO.MouseWheel; Wheel != 0.0f) {
-                    ImGui::SetItemUsingMouseWheel(); // tells ImGui we used the wheel
+                    ImGui::SetNextFrameWantCaptureMouse(true);
 
                     // SlabWindow->NotifyMouseWheel(0.0, Wheel);
                 }

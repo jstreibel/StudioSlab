@@ -9,8 +9,6 @@
 
 #include <utility>
 
-#include "imgui_internal.h"
-
 namespace Slab::Graphics {
 
     FMainViewer::FMainViewer(TPointer<Math::R2toR::FNumericFunction> baseFunction)
@@ -75,7 +73,7 @@ namespace Slab::Graphics {
                 }
             };
 
-        if (GImGui != nullptr) GUICall();
+        if (ImGui::GetCurrentContext() != nullptr) GUICall();
 
         FWindowRow::ImmediateDraw(PlatformWindow);
     }

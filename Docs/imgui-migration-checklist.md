@@ -41,6 +41,7 @@
 - Extra hardening: Blueprint `SplitterBehavior(...)` dependency moved behind `FImGuiSplitterCompat`.
 - Extra hardening: Blueprint pane now shows active layout provider (`fork-stack-layout` vs `compat-fallback`).
 - Extra hardening: removed redundant `imgui_internal.h` includes from Blueprint widgets.
+- Extra hardening: `imgui_internal.h` use reduced to 4 include sites (tracked by audit script).
 
 ## Wave Plan
 
