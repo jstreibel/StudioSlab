@@ -33,6 +33,14 @@
   - Main UI renders and remains interactive.
   - No global ImGui regressions (menus, panels, plots).
 
+## Automated Runtime Smoke
+- Provider matrix (fork + compat):
+  - `Scripts/imgui-provider-runtime-matrix.sh`
+- Upstream spike runtime smoke:
+  - `Scripts/imgui-upstream-runtime-spike.sh v1.91.0`
+- Test-only smoke on current binary:
+  - `Scripts/imgui-runtime-smoke.sh`
+
 ## Provider Matrix
 - Default mode: `-DSTUDIOSLAB_IMGUI_LAYOUT_USE_FORK=ON`
 - Compat mode: `-DSTUDIOSLAB_IMGUI_LAYOUT_USE_FORK=OFF`
