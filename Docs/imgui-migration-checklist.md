@@ -40,6 +40,7 @@
 - Wave F: `Not Started`
 - Extra hardening: Blueprint `SplitterBehavior(...)` dependency moved behind `FImGuiSplitterCompat`.
 - Extra hardening: Blueprint pane now shows active layout provider (`fork-stack-layout` vs `compat-fallback`).
+- Extra hardening: removed redundant `imgui_internal.h` includes from Blueprint widgets.
 
 ## Wave Plan
 
