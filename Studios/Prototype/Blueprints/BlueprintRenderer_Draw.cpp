@@ -9,6 +9,8 @@
 #include "Graphics/OpenGL/Images.h"
 
 namespace Slab::Blueprints {
+    using Layout = Slab::Graphics::FImGuiLayoutCompat;
+
     static inline ImRect ImGui_GetItemRect()
     {
         return {ImGui::GetItemRectMin(), ImGui::GetItemRectMax()};
@@ -132,13 +134,13 @@ namespace Slab::Blueprints {
                     builder.Begin(node.ID);
                     if (!isSimple) {
                         builder.Header(node.Color);
-                        ImGui::Spring(0);
+                        Layout::Spring(0);
                         ImGui::TextUnformatted(node.Name.c_str());
-                        ImGui::Spring(1);
+                        Layout::Spring(1);
                         ImGui::Dummy(ImVec2(0, 28));
                         if (hasOutputDelegates) {
-                            ImGui::BeginVertical("delegates", ImVec2(0, 28));
-                            ImGui::Spring(1, 0);
+                            Layout::BeginVertical("delegates", ImVec2(0, 28));
+                            Layout::Spring(1, 0);
                             for (auto &output: node.Outputs) {
                                 if (output.Type != PinType::Delegate)
                                     continue;
@@ -150,25 +152,25 @@ namespace Slab::Blueprints {
                                 ed::BeginPin(output.ID, ed::PinKind::Output);
                                 ed::PinPivotAlignment(ImVec2(1.0f, 0.5f));
                                 ed::PinPivotSize(ImVec2(0, 0));
-                                ImGui::BeginHorizontal(output.ID.AsPointer());
+                                Layout::BeginHorizontal(output.ID.AsPointer());
                                 ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
                                 if (!output.Name.empty()) {
                                     ImGui::TextUnformatted(output.Name.c_str());
-                                    ImGui::Spring(0);
+                                    Layout::Spring(0);
                                 }
                                 DrawPinIcon(output, IsPinLinked(output.ID), (int) (alpha * 255));
-                                ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
-                                ImGui::EndHorizontal();
+                                Layout::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
+                                Layout::EndHorizontal();
                                 ImGui::PopStyleVar();
                                 ed::EndPin();
 
                                 //DrawItemRect(ImColor(255, 0, 0));
                             }
-                            ImGui::Spring(1, 0);
-                            ImGui::EndVertical();
-                            ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
+                            Layout::Spring(1, 0);
+                            Layout::EndVertical();
+                            Layout::Spring(0, ImGui::GetStyle().ItemSpacing.x / 2);
                         } else
-                            ImGui::Spring(0);
+                            Layout::Spring(0);
                         builder.EndHeader();
                     }
 
@@ -180,14 +182,14 @@ namespace Slab::Blueprints {
                         builder.Input(input.ID);
                         ImGui::PushStyleVar(ImGuiStyleVar_Alpha, alpha);
                         DrawPinIcon(input, IsPinLinked(input.ID), (int) (alpha * 255));
-                        ImGui::Spring(0);
+                        Layout::Spring(0);
                         if (!input.Name.empty()) {
                             ImGui::TextUnformatted(input.Name.c_str());
-                            ImGui::Spring(0);
+                            Layout::Spring(0);
                         }
                         if (input.Type == PinType::Bool) {
                             ImGui::Button("Hello");
-                            ImGui::Spring(0);
+                            Layout::Spring(0);
                         }
                         ImGui::PopStyleVar();
                         builder.EndInput();
@@ -196,9 +198,9 @@ namespace Slab::Blueprints {
                     if (isSimple) {
                         builder.Middle();
 
-                        ImGui::Spring(1, 0);
+                        Layout::Spring(1, 0);
                         ImGui::TextUnformatted(node.Name.c_str());
-                        ImGui::Spring(1, 0);
+                        Layout::Spring(1, 0);
                     }
 
                     for (auto &output: node.Outputs) {
@@ -225,13 +227,13 @@ namespace Slab::Blueprints {
                                 ed::EnableShortcuts(true);
                                 wasActive = false;
                             }
-                            ImGui::Spring(0);
+                            Layout::Spring(0);
                         }
                         if (!output.Name.empty()) {
-                            ImGui::Spring(0);
+                            Layout::Spring(0);
                             ImGui::TextUnformatted(output.Name.c_str());
                         }
-                        ImGui::Spring(0);
+                        Layout::Spring(0);
                         DrawPinIcon(output, IsPinLinked(output.ID), (int) (alpha * 255));
                         ImGui::PopStyleVar();
                         builder.EndOutput();
@@ -264,16 +266,16 @@ namespace Slab::Blueprints {
                     ed::PushStyleVar(ed::StyleVar_PinRadius, 5.0f);
                     ed::BeginNode(node.ID);
 
-                    ImGui::BeginVertical(node.ID.AsPointer());
-                    ImGui::BeginHorizontal("inputs");
-                    ImGui::Spring(0, padding * 2);
+                    Layout::BeginVertical(node.ID.AsPointer());
+                    Layout::BeginHorizontal("inputs");
+                    Layout::Spring(0, padding * 2);
 
                     ImRect inputsRect;
                     int inputAlpha = 200;
                     if (!node.Inputs.empty()) {
                         auto &pin = node.Inputs[0];
                         ImGui::Dummy(ImVec2(0, padding));
-                        ImGui::Spring(1, 0);
+                        Layout::Spring(1, 0);
                         inputsRect = ImGui_GetItemRect();
 
                         ed::PushStyleVar(ed::StyleVar_PinArrowSize, 10.0f);
@@ -294,32 +296,32 @@ namespace Slab::Blueprints {
                     } else
                         ImGui::Dummy(ImVec2(0, padding));
 
-                    ImGui::Spring(0, padding * 2);
-                    ImGui::EndHorizontal();
+                    Layout::Spring(0, padding * 2);
+                    Layout::EndHorizontal();
 
-                    ImGui::BeginHorizontal("content_frame");
-                    ImGui::Spring(1, padding);
+                    Layout::BeginHorizontal("content_frame");
+                    Layout::Spring(1, padding);
 
-                    ImGui::BeginVertical("content", ImVec2(0.0f, 0.0f));
+                    Layout::BeginVertical("content", ImVec2(0.0f, 0.0f));
                     ImGui::Dummy(ImVec2(160, 0));
-                    ImGui::Spring(1);
+                    Layout::Spring(1);
                     ImGui::TextUnformatted(node.Name.c_str());
-                    ImGui::Spring(1);
-                    ImGui::EndVertical();
+                    Layout::Spring(1);
+                    Layout::EndVertical();
                     auto contentRect = ImGui_GetItemRect();
 
-                    ImGui::Spring(1, padding);
-                    ImGui::EndHorizontal();
+                    Layout::Spring(1, padding);
+                    Layout::EndHorizontal();
 
-                    ImGui::BeginHorizontal("outputs");
-                    ImGui::Spring(0, padding * 2);
+                    Layout::BeginHorizontal("outputs");
+                    Layout::Spring(0, padding * 2);
 
                     ImRect outputsRect;
                     int outputAlpha = 200;
                     if (!node.Outputs.empty()) {
                         auto &pin = node.Outputs[0];
                         ImGui::Dummy(ImVec2(0, padding));
-                        ImGui::Spring(1, 0);
+                        Layout::Spring(1, 0);
                         outputsRect = ImGui_GetItemRect();
 
 #if IMGUI_VERSION_NUM > 18101
@@ -338,10 +340,10 @@ namespace Slab::Blueprints {
                     } else
                         ImGui::Dummy(ImVec2(0, padding));
 
-                    ImGui::Spring(0, padding * 2);
-                    ImGui::EndHorizontal();
+                    Layout::Spring(0, padding * 2);
+                    Layout::EndHorizontal();
 
-                    ImGui::EndVertical();
+                    Layout::EndVertical();
 
                     ed::EndNode();
                     ed::PopStyleVar(7);
@@ -423,17 +425,17 @@ namespace Slab::Blueprints {
                     ed::PushStyleVar(ed::StyleVar_PinRadius, 6.0f);
                     ed::BeginNode(node.ID);
 
-                    ImGui::BeginVertical(node.ID.AsPointer());
+                    Layout::BeginVertical(node.ID.AsPointer());
                     if (!node.Inputs.empty()) {
-                        ImGui::BeginHorizontal("inputs");
-                        ImGui::Spring(1, 0);
+                        Layout::BeginHorizontal("inputs");
+                        Layout::Spring(1, 0);
 
                         ImRect inputsRect;
                         int inputAlpha = 200;
                         for (auto &pin: node.Inputs) {
                             ImGui::Dummy(ImVec2(padding, padding));
                             inputsRect = ImGui_GetItemRect();
-                            ImGui::Spring(1, 0);
+                            Layout::Spring(1, 0);
                             inputsRect.Min.y -= padding;
                             inputsRect.Max.y -= padding;
 
@@ -468,36 +470,36 @@ namespace Slab::Blueprints {
                                 inputAlpha = (int) (255 * ImGui::GetStyle().Alpha * (48.0f / 255.0f));
                         }
 
-                        //ImGui::Spring(1, 0);
-                        ImGui::EndHorizontal();
+                        //Layout::Spring(1, 0);
+                        Layout::EndHorizontal();
                     }
 
-                    ImGui::BeginHorizontal("content_frame");
-                    ImGui::Spring(1, padding);
+                    Layout::BeginHorizontal("content_frame");
+                    Layout::Spring(1, padding);
 
-                    ImGui::BeginVertical("content", ImVec2(0.0f, 0.0f));
+                    Layout::BeginVertical("content", ImVec2(0.0f, 0.0f));
                     ImGui::Dummy(ImVec2(160, 0));
-                    ImGui::Spring(1);
+                    Layout::Spring(1);
                     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
                     ImGui::TextUnformatted(node.Name.c_str());
                     ImGui::PopStyleColor();
-                    ImGui::Spring(1);
-                    ImGui::EndVertical();
+                    Layout::Spring(1);
+                    Layout::EndVertical();
                     auto contentRect = ImGui_GetItemRect();
 
-                    ImGui::Spring(1, padding);
-                    ImGui::EndHorizontal();
+                    Layout::Spring(1, padding);
+                    Layout::EndHorizontal();
 
                     if (!node.Outputs.empty()) {
-                        ImGui::BeginHorizontal("outputs");
-                        ImGui::Spring(1, 0);
+                        Layout::BeginHorizontal("outputs");
+                        Layout::Spring(1, 0);
 
                         ImRect outputsRect;
                         int outputAlpha = 200;
                         for (auto &pin: node.Outputs) {
                             ImGui::Dummy(ImVec2(padding, padding));
                             outputsRect = ImGui_GetItemRect();
-                            ImGui::Spring(1, 0);
+                            Layout::Spring(1, 0);
                             outputsRect.Min.y += padding;
                             outputsRect.Max.y += padding;
 
@@ -533,10 +535,10 @@ namespace Slab::Blueprints {
                                 outputAlpha = (int) (255 * ImGui::GetStyle().Alpha * (48.0f / 255.0f));
                         }
 
-                        ImGui::EndHorizontal();
+                        Layout::EndHorizontal();
                     }
 
-                    ImGui::EndVertical();
+                    Layout::EndVertical();
 
                     ed::EndNode();
                     ed::PopStyleVar(7);
@@ -588,14 +590,14 @@ namespace Slab::Blueprints {
                     ed::PushStyleColor(ed::StyleColor_NodeBorder, ImColor(255, 255, 255, 64));
                     ed::BeginNode(node.ID);
                     ImGui::PushID(node.ID.AsPointer());
-                    ImGui::BeginVertical("content");
-                    ImGui::BeginHorizontal("horizontal");
-                    ImGui::Spring(1);
+                    Layout::BeginVertical("content");
+                    Layout::BeginHorizontal("horizontal");
+                    Layout::Spring(1);
                     ImGui::TextUnformatted(node.Name.c_str());
-                    ImGui::Spring(1);
-                    ImGui::EndHorizontal();
+                    Layout::Spring(1);
+                    Layout::EndHorizontal();
                     ed::Group(node.Size);
-                    ImGui::EndVertical();
+                    Layout::EndVertical();
                     ImGui::PopID();
                     ed::EndNode();
                     ed::PopStyleColor(2);

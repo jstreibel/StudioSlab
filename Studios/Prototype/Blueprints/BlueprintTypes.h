@@ -9,6 +9,7 @@
 #include "Utils/Arrays.h"
 
 #include "3rdParty/ImGui.h"
+#include "Graphics/Modules/ImGui/ImGuiLayoutCompat.h"
 #include "3rdParty/imgui/imgui_internal.h"
 
 #include "Utilities/builders.h"
