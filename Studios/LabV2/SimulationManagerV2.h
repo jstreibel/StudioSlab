@@ -13,6 +13,7 @@
 #include "Studios/Common/Simulations/V2/MolecularDynamicsSliceV2.h"
 #include "Studios/Common/Simulations/V2/MetropolisSliceV2.h"
 #include "Studios/Common/Simulations/V2/XYSliceV2.h"
+#include "Studios/Common/Simulations/V2/IsingSliceV2.h"
 
 #include <functional>
 
@@ -40,6 +41,7 @@ private:
     bool bR2toRPublishLiveViewHeadless = true;
     bool bMolecularDynamicsPublishLiveViewHeadless = true;
     bool bXYPublishLiveViewHeadless = true;
+    bool bIsingPublishLiveViewHeadless = true;
 
     Slab::Studios::Common::Simulations::V2::FSPIExecutionConfig SPICfg;
     Slab::Studios::Common::Simulations::V2::FRtoRPlaneWavesExecutionConfig RtoRCfg;
@@ -47,12 +49,14 @@ private:
     Slab::Studios::Common::Simulations::V2::FMolecularDynamicsExecutionConfigV2 MolecularDynamicsCfg;
     Slab::Studios::Common::Simulations::V2::FMetropolisExecutionConfigV2 MetropolisCfg;
     Slab::Studios::Common::Simulations::V2::FXYExecutionConfigV2 XYCfg;
+    Slab::Studios::Common::Simulations::V2::FIsingExecutionConfigV2 IsingCfg;
 
     Slab::UIntBig SPIRunCounter = 0;
     Slab::UIntBig RtoRRunCounter = 0;
     Slab::UIntBig R2toRRunCounter = 0;
     Slab::UIntBig MolecularDynamicsRunCounter = 0;
     Slab::UIntBig XYRunCounter = 0;
+    Slab::UIntBig IsingRunCounter = 0;
 
     Slab::Str LastError;
 
@@ -65,6 +69,7 @@ private:
     auto DrawMolecularDynamicsSection() -> void;
     auto DrawMetropolisSection() -> void;
     auto DrawXYSection() -> void;
+    auto DrawIsingSection() -> void;
 
     auto LaunchSPI(bool enableMonitor) -> void;
     auto LaunchRtoR(bool enableMonitor) -> void;
@@ -72,6 +77,7 @@ private:
     auto LaunchMolecularDynamics(bool enableMonitor) -> void;
     auto LaunchMetropolis(bool enableMonitor) -> void;
     auto LaunchXY(bool enableMonitor) -> void;
+    auto LaunchIsing(bool enableMonitor) -> void;
 
     [[nodiscard]] auto MakeTopicName(const Slab::Str &prefix, Slab::UIntBig &counter) -> Slab::Str;
     auto LaunchNumericTask(const Slab::TPointer<Slab::Math::Numerics::V2::FSimulationRecipeV2> &recipe,

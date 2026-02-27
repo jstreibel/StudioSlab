@@ -30,7 +30,7 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `LAB-02` done: Run Manager improvements baseline (task filters, grouped counters, progress/cursor table, clear actions).
 - `CVG-01` done: MD V2 scoping draft captured in `Docs/md-v2-slice-scope.md`.
 - `CVG-02` done: MD baseline `V2-H` and `V2-M` paths now wired in CLI/LabV2 (`Studios moldyn`, `Studios moldyn --gl`).
-- `CVG-03` active: XY/Ising V2 lattice migration wave started; XY `V2-H` + `V2-M` now wired in CLI/LabV2 (`Studios xy`, `Studios xy --gl`).
+- `CVG-03` done: XY and Ising V2 lattice slices now have `V2-H` + `V2-M` paths in CLI/LabV2 (`Studios xy|ising`, optional `--gl` passive monitors).
 
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
@@ -71,7 +71,7 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 ### Coverage Portfolio
 - `P1` `CVG-01` — MD V2 scoping — done
 - `P1` `CVG-02` — MD `V2-H` -> `V2-M` — done
-- `P1` `CVG-03` — XY/Ising V2 scoping
+- `P1` `CVG-03` — XY/Ising V2 lattice slices (`V2-H` -> `V2-M`) — done
 - `P2` `CVG-04` — Functional minimization V2 slice
 
 ## Working Rule (Entropy Control)

@@ -34,6 +34,7 @@
 #include "Models/MolecularDynamics/V2/MolecularDynamics-Baseline-RecipeV2.h"
 #include "Models/Stochastic-Path-Integral/SPI-State.h"
 #include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
+#include "Models/Ising/V2/Ising-Metropolis-RecipeV2.h"
 #include "Models/XY/V2/XY-Metropolis-RecipeV2.h"
 
 namespace {
@@ -1583,5 +1584,37 @@ TEST_CASE("PhaseJ V2 - XY Metropolis recipe runs and exposes lattice diagnostics
     CHECK(state->GetAcceptanceRatio() >= 0.0);
     CHECK(state->GetAcceptanceRatio() <= 1.0);
     CHECK(state->GetMagnetization() >= 0.0);
+    CHECK(state->GetMagnetization() <= 1.0);
+}
+
+TEST_CASE("PhaseJ V2 - Ising Metropolis recipe runs and exposes lattice diagnostics", "[V2][PhaseJ][Ising][Recipe]") {
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::Ising::V2;
+
+    FIsingMetropolisConfigV2 cfg;
+    cfg.L = 24;
+    cfg.Steps = 80;
+    cfg.Temperature = 2.3;
+    cfg.ExternalField = 0.1;
+    cfg.bFerromagneticInitial = false;
+
+    auto recipe = New<FIsingMetropolisRecipeV2>(cfg, 10);
+    FNumericTaskV2 task(recipe, false, 64);
+    REQUIRE(RunTaskAndWait(task) == Core::TaskSuccess);
+
+    const auto *session = task.GetSession();
+    REQUIRE(session != nullptr);
+    auto state = std::dynamic_pointer_cast<const FIsingLatticeStateV2>(session->GetCurrentState());
+    REQUIRE(state != nullptr);
+
+    const auto spins = state->GetSpinField();
+    REQUIRE(spins != nullptr);
+    CHECK(spins->getN() == cfg.L);
+    CHECK(spins->getM() == cfg.L);
+    CHECK(spins->getSpace().getHostData().size() == static_cast<size_t>(cfg.L) * static_cast<size_t>(cfg.L));
+
+    CHECK(state->GetAcceptanceRatio() >= 0.0);
+    CHECK(state->GetAcceptanceRatio() <= 1.0);
+    CHECK(state->GetMagnetization() >= -1.0);
     CHECK(state->GetMagnetization() <= 1.0);
 }

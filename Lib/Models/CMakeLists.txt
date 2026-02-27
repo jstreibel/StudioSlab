@@ -93,6 +93,11 @@ set ( XY_SOURCES
 
 )
 
+set ( ISING_SOURCES
+        Ising/V2/Ising-Metropolis-RecipeV2.h
+        Ising/V2/Ising-Metropolis-RecipeV2.cpp
+)
+
 set ( MOLDYN_SOURCES
 		MolecularDynamics/MolDynNumericConfig.cpp
 
@@ -129,6 +134,7 @@ add_library( ${LIB_LOCAL_NAME} STATIC
 		${KG_SOURCES}
 		${KG_SOURCES_CUDA}
 		${XY_SOURCES}
+        ${ISING_SOURCES}
 		${MOLDYN_SOURCES}
 
 		${MODELS_VTK_SOURCES}

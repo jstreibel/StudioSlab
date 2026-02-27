@@ -92,6 +92,14 @@ FSimulationManagerV2::FSimulationManagerV2(
     XYCfg.MonitorInterval = 20;
     XYCfg.Batch = 1024;
 
+    IsingCfg.L = 64;
+    IsingCfg.Steps = 2000;
+    IsingCfg.Temperature = 2.269185314;
+    IsingCfg.ExternalField = 0.0;
+    IsingCfg.Interval = 100;
+    IsingCfg.MonitorInterval = 20;
+    IsingCfg.Batch = 1024;
+
     MetropolisCfg.Interval = 1000;
     MetropolisCfg.MonitorInterval = 100;
     MetropolisCfg.Batch = 2048;
@@ -141,6 +149,9 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
                 {"XY Metropolis (Headless)"},
                 {"XY Metropolis (GL Monitor)"},
                 {Slab::Graphics::MainMenuSeparator},
+                {"Ising Metropolis (Headless)"},
+                {"Ising Metropolis (GL Monitor)"},
+                {Slab::Graphics::MainMenuSeparator},
                 {"Metropolis RtoR (Headless)"},
                 {"Metropolis RtoR (GL Monitor)"},
                 {Slab::Graphics::MainMenuSeparator},
@@ -159,6 +170,8 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
                     if (itemString == "Molecular Dynamics (GL Monitor)") { LaunchMolecularDynamics(true); return; }
                     if (itemString == "XY Metropolis (Headless)") { LaunchXY(false); return; }
                     if (itemString == "XY Metropolis (GL Monitor)") { LaunchXY(true); return; }
+                    if (itemString == "Ising Metropolis (Headless)") { LaunchIsing(false); return; }
+                    if (itemString == "Ising Metropolis (GL Monitor)") { LaunchIsing(true); return; }
                     if (itemString == "Metropolis RtoR (Headless)") { LaunchMetropolis(false); return; }
                     if (itemString == "Metropolis RtoR (GL Monitor)") { LaunchMetropolis(true); return; }
                     if (itemString == "Open Launcher") { bShowLauncherWindow = true; return; }
@@ -196,6 +209,7 @@ auto FSimulationManagerV2::DrawLauncherWindow() -> void {
         DrawR2toRSection();
         DrawMolecularDynamicsSection();
         DrawXYSection();
+        DrawIsingSection();
         DrawMetropolisSection();
     }
     ImGui::End();
@@ -387,6 +401,30 @@ auto FSimulationManagerV2::DrawXYSection() -> void {
     }
 }
 
+auto FSimulationManagerV2::DrawIsingSection() -> void {
+    if (!ImGui::CollapsingHeader("Ising Metropolis (V2)")) return;
+
+    DragUIntLike("Ising Steps", IsingCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
+    DragUIntLike("Ising L", IsingCfg.L, 2u, 8192u, 1.0f);
+    DragDevFloat("Ising Temperature", IsingCfg.Temperature, 0.005, 0.0, 1e6, "%.6g");
+    DragDevFloat("Ising h-field", IsingCfg.ExternalField, 0.005, -1e6, 1e6, "%.6g");
+    ImGui::Checkbox("Ising ferromagnetic initial", &IsingCfg.bFerromagneticInitial);
+    DragUIntLike("Ising Interval", IsingCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
+    DragUIntLike("Ising Monitor Interval", IsingCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
+    DragUIntLike("Ising Batch", IsingCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
+    ImGui::Checkbox("Publish LiveData when headless##ising", &bIsingPublishLiveViewHeadless);
+
+    ImGui::TextDisabled("Passive GL monitor shows spin field + MC diagnostics.");
+
+    if (ImGui::Button("Run Ising Headless")) {
+        try { LaunchIsing(false); } catch (const std::exception &e) { LastError = e.what(); }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Run Ising + GL Monitor")) {
+        try { LaunchIsing(true); } catch (const std::exception &e) { LastError = e.what(); }
+    }
+}
+
 auto FSimulationManagerV2::LaunchSPI(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
 
@@ -522,6 +560,29 @@ auto FSimulationManagerV2::LaunchXY(const bool enableMonitor) -> void {
     }
 
     LaunchNumericTask(recipe, cfg.Batch, "XY Metropolis V2");
+}
+
+auto FSimulationManagerV2::LaunchIsing(const bool enableMonitor) -> void {
+    using namespace Slab::Studios::Common::Simulations::V2;
+
+    auto cfg = IsingCfg;
+    cfg.bEnableGLMonitor = enableMonitor;
+    FinalizeIsingExecutionConfigV2(cfg);
+
+    const bool bNeedLiveView = enableMonitor || bIsingPublishLiveViewHeadless;
+    Slab::TPointer<Slab::Math::LiveData::V2::FSessionLiveViewV2> liveView = nullptr;
+    if (bNeedLiveView && LiveDataHub != nullptr) {
+        liveView = LiveDataHub->GetOrCreateSessionLiveView(MakeTopicName("ising", IsingRunCounter));
+    }
+
+    auto recipe = BuildIsingRecipeV2(cfg, liveView);
+    if (enableMonitor) {
+        if (liveView == nullptr) throw Exception("Ising GL monitor requires a live view.");
+        if (!AddWindow) throw Exception("LabV2 cannot attach monitor window.");
+        AddWindow(BuildIsingPassiveMonitorWindowV2(cfg, liveView));
+    }
+
+    LaunchNumericTask(recipe, cfg.Batch, "Ising Metropolis V2");
 }
 
 auto FSimulationManagerV2::MakeTopicName(const Slab::Str &prefix, Slab::UIntBig &counter) -> Slab::Str {

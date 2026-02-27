@@ -10,6 +10,7 @@ add_executable(Studios
         ../../Slab/Studios/Common/Simulations/V2/KGR2toRBaselineSliceV2.cpp
         ../../Slab/Studios/Common/Simulations/V2/MolecularDynamicsSliceV2.cpp
         ../../Slab/Studios/Common/Simulations/V2/XYSliceV2.cpp
+        ../../Slab/Studios/Common/Simulations/V2/IsingSliceV2.cpp
         ../../Slab/Studios/Common/Monitors/V2/MetropolisFieldSnapshotListenerV2.cpp
         ../../Slab/Studios/Common/Monitors/V2/MetropolisPassiveMonitorWindowV2.cpp
         ../../Slab/Studios/Common/Monitors/V2/SPIPassiveMonitorWindowV2.cpp
@@ -17,6 +18,7 @@ add_executable(Studios
         ../../Slab/Studios/Common/Monitors/V2/KGR2toRBaselinePassiveMonitorWindowV2.cpp
         ../../Slab/Studios/Common/Monitors/V2/MolecularDynamicsPassiveMonitorWindowV2.cpp
         ../../Slab/Studios/Common/Monitors/V2/XYMetropolisPassiveMonitorWindowV2.cpp
+        ../../Slab/Studios/Common/Monitors/V2/IsingMetropolisPassiveMonitorWindowV2.cpp
 )
 
 target_link_libraries(Studios Slab)
