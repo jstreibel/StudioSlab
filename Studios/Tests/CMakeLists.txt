@@ -23,6 +23,12 @@ message(NOTICE "Added executable Tests")
 add_executable(SlabTests
 		SlabTestsMain.cpp
 		../../Slab/Studios/Common/VisualHost.cpp
+		../../Slab/Studios/Common/NumericsV2TaskUtils.cpp
+		../../Slab/Studios/Common/V2SimulationRunners.cpp
+		../../Slab/Studios/Common/SessionLiveViewStatsV2.cpp
+		../../Slab/Studios/Common/Simulations/V2/MetropolisSliceV2.cpp
+		../../Slab/Studios/Common/Monitors/V2/MetropolisFieldSnapshotListenerV2.cpp
+		../../Slab/Studios/Common/Monitors/V2/MetropolisPassiveMonitorWindowV2.cpp
 )
 target_link_libraries(SlabTests ${SlabLibs} Slab)
 message(NOTICE "Added executable SlabTests")

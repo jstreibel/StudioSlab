@@ -22,6 +22,8 @@
 #include "Models/Stochastic-Path-Integral/SPI-State.h"
 
 #include "StudioSlab.h"
+#include "../../Slab/Studios/Common/NumericsV2TaskUtils.h"
+#include "../../Slab/Studios/Common/Simulations/V2/MetropolisSliceV2.h"
 #include "../../Slab/Studios/Common/VisualHost.h"
 
 #include <algorithm>
@@ -571,6 +573,59 @@ auto RunSPILiveMonitorMockTest(const int argc, const char **argv) -> int {
     return 0;
 }
 
+auto RunMetropolisMonitorSmokeTest(const int argc, const char **argv) -> int {
+    CLOptionsDescription options(
+        "SlabTests metropolis-monitor-smoke",
+        "Metropolis V2 passive monitor smoke test (real NumericTaskV2).");
+    options.add_options()
+        ("h,help", "Show this help")
+        ("frames", "Auto-close after N render frames", cxxopts::value<UInt>())
+        ("seconds", "Auto-close after seconds", cxxopts::value<double>()->default_value("8.0"))
+        ("steps", "Metropolis steps", cxxopts::value<UIntBig>()->default_value("2000"))
+        ("interval", "Console interval in steps", cxxopts::value<UIntBig>()->default_value("200"))
+        ("monitor-interval", "Snapshot/monitor interval in steps", cxxopts::value<UIntBig>()->default_value("20"))
+        ("batch", "Task max batch steps", cxxopts::value<UIntBig>()->default_value("1024"))
+        ("width", "Initial window width", cxxopts::value<Int>()->default_value("1600"))
+        ("height", "Initial window height", cxxopts::value<Int>()->default_value("900"));
+
+    const auto result = options.parse(argc, argv);
+    if (result.count("help") > 0) {
+        std::cout << options.help() << '\n';
+        return 0;
+    }
+
+    FVisualRunConfig visualCfg;
+    if (result.count("frames") > 0) visualCfg.MaxFrames = result["frames"].as<UInt>();
+    if (result.count("seconds") > 0) visualCfg.MaxSeconds = result["seconds"].as<double>();
+    visualCfg.Width = result["width"].as<Int>();
+    visualCfg.Height = result["height"].as<Int>();
+
+    Slab::Studios::Common::Simulations::V2::FMetropolisExecutionConfigV2 cfg;
+    cfg.Steps = result["steps"].as<UIntBig>();
+    cfg.Interval = result["interval"].as<UIntBig>();
+    cfg.MonitorInterval = result["monitor-interval"].as<UIntBig>();
+    cfg.Batch = result["batch"].as<UIntBig>();
+    cfg.bEnableGLMonitor = true;
+    Slab::Studios::Common::Simulations::V2::FinalizeMetropolisExecutionConfigV2(cfg);
+
+    auto host = Slab::Studios::Common::CreateGLFWVisualHost("SlabTests: metropolis-monitor-smoke");
+
+    const auto bundle = Slab::Studios::Common::Simulations::V2::BuildMetropolisMonitorBundleV2(cfg);
+    if (bundle.Recipe == nullptr || bundle.MonitorWindow == nullptr) {
+        throw Exception("Failed to build Metropolis monitor bundle.");
+    }
+
+    Slab::Studios::Common::AddRootSlabWindow(host, bundle.MonitorWindow, false);
+    Slab::Studios::Common::AttachAutoCloseOnRenderBudget(
+        host,
+        {.MaxFrames = visualCfg.MaxFrames, .MaxSeconds = visualCfg.MaxSeconds});
+
+    auto task = New<Math::Numerics::V2::FNumericTaskV2>(bundle.Recipe, false, static_cast<size_t>(cfg.Batch));
+    const auto status = Slab::Studios::Common::RunTaskWithVisualHost(host, *task);
+    Slab::Studios::Common::PrintNumericTaskSummary(*task);
+    return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
+}
+
 using FCommandRunner = int(*)(int, const char**);
 
 struct FCommandEntry {
@@ -587,6 +642,7 @@ auto GetCommands() -> const Vector<FCommandEntry> & {
         {"row-heavy-layout", "Row-heavy layout to inspect pane framing/insets", &RunRowHeavyLayoutTest},
         {"column-heavy-panel", "Column-heavy panel layout to inspect pane framing/insets", &RunColumnHeavyPanelTest},
         {"spi-live-monitor-mock", "Passive V2 SPI-like monitor with mock live publisher", &RunSPILiveMonitorMockTest},
+        {"metropolis-monitor-smoke", "Passive V2 Metropolis monitor smoke test", &RunMetropolisMonitorSmokeTest},
     };
     return Commands;
 }
@@ -617,7 +673,8 @@ auto PrintRootUsage() -> void {
         << "  SlabTests row-heavy-layout --seconds 5\n"
         << "  SlabTests column-heavy-panel --seconds 5\n"
         << "  SlabTests window-panel-gui --frames 300\n"
-        << "  SlabTests spi-live-monitor-mock --seconds 8\n";
+        << "  SlabTests spi-live-monitor-mock --seconds 8\n"
+        << "  SlabTests metropolis-monitor-smoke --seconds 8 --steps 2000\n";
 }
 
 auto DispatchRoot(const int argc, const char **argv) -> int {
