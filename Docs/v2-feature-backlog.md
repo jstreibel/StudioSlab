@@ -31,6 +31,7 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `CVG-01` done: MD V2 scoping draft captured in `Docs/md-v2-slice-scope.md`.
 - `CVG-02` done: MD baseline `V2-H` and `V2-M` paths now wired in CLI/LabV2 (`Studios moldyn`, `Studios moldyn --gl`).
 - `CVG-03` done: XY and Ising V2 lattice slices now have `V2-H` + `V2-M` paths in CLI/LabV2 (`Studios xy|ising`, optional `--gl` passive monitors).
+- `CVG-03.5` done: SlabTests visual smoke commands now include XY/Ising monitor paths (`xy-monitor-smoke`, `ising-monitor-smoke`).
 
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
