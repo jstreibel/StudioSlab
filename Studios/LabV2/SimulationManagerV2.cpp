@@ -10,12 +10,7 @@
 #include "Graphics/Window/WindowStyles.h"
 
 #include "Math/Data/V2/SessionLiveViewV2.h"
-#include "Math/Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.h"
-#include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
-#include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
-
-#include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
 
 #include <algorithm>
 #include <type_traits>
@@ -77,7 +72,7 @@ FSimulationManagerV2::FSimulationManagerV2(
     R2toRCfg.bForcingEnabled = false;
 
     MetropolisCfg.Interval = 1000;
-    MetropolisCfg.LiveViewInterval = 200;
+    MetropolisCfg.MonitorInterval = 100;
     MetropolisCfg.Batch = 2048;
 }
 
@@ -120,6 +115,7 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
                 {"KGR2toR Baseline (GL Monitor)"},
                 {Slab::Graphics::MainMenuSeparator},
                 {"Metropolis RtoR (Headless)"},
+                {"Metropolis RtoR (GL Monitor)"},
                 {Slab::Graphics::MainMenuSeparator},
                 {"Open Launcher"}
             },
@@ -132,7 +128,8 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
                     if (itemString == "KGRtoR Plane Waves (GL Monitor)") { LaunchRtoR(true); return; }
                     if (itemString == "KGR2toR Baseline (Headless)") { LaunchR2toR(false); return; }
                     if (itemString == "KGR2toR Baseline (GL Monitor)") { LaunchR2toR(true); return; }
-                    if (itemString == "Metropolis RtoR (Headless)") { LaunchMetropolis(); return; }
+                    if (itemString == "Metropolis RtoR (Headless)") { LaunchMetropolis(false); return; }
+                    if (itemString == "Metropolis RtoR (GL Monitor)") { LaunchMetropolis(true); return; }
                     if (itemString == "Open Launcher") { bShowLauncherWindow = true; return; }
                 } catch (const std::exception &e) {
                     LastError = e.what();
@@ -276,13 +273,16 @@ auto FSimulationManagerV2::DrawMetropolisSection() -> void {
 
     DragUIntLike("Metropolis Steps", MetropolisCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 100.0f);
     DragUIntLike("Metropolis Interval", MetropolisCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
-    DragUIntLike("Metropolis LiveView Interval", MetropolisCfg.LiveViewInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
+    DragUIntLike("Metropolis Monitor Interval", MetropolisCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
     DragUIntLike("Metropolis Batch", MetropolisCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
-    ImGui::Checkbox("Publish LiveData##metro", &MetropolisCfg.bPublishLiveView);
-    ImGui::TextDisabled("No passive GL monitor yet (headless + console/live telemetry only).");
+    ImGui::TextDisabled("GL monitor shows phi(x), pi(x), and cursor telemetry.");
 
     if (ImGui::Button("Run Metropolis Headless")) {
-        try { LaunchMetropolis(); } catch (const std::exception &e) { LastError = e.what(); }
+        try { LaunchMetropolis(false); } catch (const std::exception &e) { LastError = e.what(); }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Run Metropolis + GL Monitor")) {
+        try { LaunchMetropolis(true); } catch (const std::exception &e) { LastError = e.what(); }
     }
 }
 
@@ -355,27 +355,26 @@ auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
     LaunchNumericTask(recipe, cfg.Batch, "KGR2toR Baseline V2");
 }
 
-auto FSimulationManagerV2::LaunchMetropolis() -> void {
-    using namespace Slab::Math::Numerics::V2;
-    using namespace Slab::Models::KGRtoR::Metropolis::V2;
+auto FSimulationManagerV2::LaunchMetropolis(const bool enableMonitor) -> void {
+    using namespace Slab::Studios::Common::Simulations::V2;
 
-    Slab::TPointer<FSimulationRecipeV2> recipe = Slab::New<FRtoRHamiltonianMetropolisHastingsRecipeV2>(
-        MetropolisCfg.Steps,
-        std::max<Slab::UIntBig>(Slab::UIntBig(1), MetropolisCfg.Interval));
+    auto cfg = MetropolisCfg;
+    cfg.bEnableGLMonitor = enableMonitor;
+    FinalizeMetropolisExecutionConfigV2(cfg);
 
-    if (MetropolisCfg.bPublishLiveView && LiveDataHub != nullptr) {
-        auto liveView = LiveDataHub->GetOrCreateSessionLiveView(MakeTopicName("metropolis", MetropolisRunCounter));
-        Slab::Vector<FSubscriptionV2> extras = {{
-            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), MetropolisCfg.LiveViewInterval)),
-            Slab::New<FSessionLiveViewPublisherListenerV2>(liveView, "Metropolis Live View Publisher V2"),
-            EDeliveryModeV2::Synchronous,
-            true,
-            true
-        }};
-        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(extras));
+    if (enableMonitor) {
+        const auto bundle = BuildMetropolisMonitorBundleV2(cfg);
+        if (bundle.Recipe == nullptr || bundle.MonitorWindow == nullptr) {
+            throw Exception("LabV2 failed to build Metropolis monitor bundle.");
+        }
+        if (!AddWindow) throw Exception("LabV2 cannot attach monitor window.");
+        AddWindow(bundle.MonitorWindow);
+        LaunchNumericTask(bundle.Recipe, cfg.Batch, "Metropolis RtoR V2");
+        return;
     }
 
-    LaunchNumericTask(recipe, MetropolisCfg.Batch, "Metropolis RtoR V2");
+    auto recipe = BuildMetropolisRecipeV2(cfg);
+    LaunchNumericTask(recipe, cfg.Batch, "Metropolis RtoR V2");
 }
 
 auto FSimulationManagerV2::MakeTopicName(const Slab::Str &prefix, Slab::UIntBig &counter) -> Slab::Str {

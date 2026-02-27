@@ -3,12 +3,8 @@
 #include "Core/Controller/CommandLine/CommandLineParserDefs.h"
 #include "Core/SlabCore.h"
 
-#include "Math/Numerics/V2/Task/NumericTaskV2.h"
-
-#include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
-
 #include "StudioSlab.h"
-#include "../../Slab/Studios/Common/NumericsV2TaskUtils.h"
+#include "../../Slab/Studios/Common/Simulations/V2/MetropolisSliceV2.h"
 #include "../../Slab/Studios/Common/Simulations/V2/KGR2toRBaselineSliceV2.h"
 #include "../../Slab/Studios/Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.h"
 #include "../../Slab/Studios/Common/Simulations/V2/SPISliceV2.h"
@@ -19,6 +15,7 @@ namespace {
 
     using namespace Slab;
     namespace StudiosSimV2 = Slab::Studios::Common::Simulations::V2;
+    using StudiosSimV2::FMetropolisExecutionConfigV2;
     using StudiosSimV2::FR2toRBaselineExecutionConfig;
     using StudiosSimV2::FRtoRPlaneWavesExecutionConfig;
     using StudiosSimV2::FSPIExecutionConfig;
@@ -42,6 +39,7 @@ namespace {
                 << "  kg2d-v2, r2tor-v2, v2-kg2d\n\n"
                 << "Examples:\n"
                 << "  Studios metropolis --steps 5000 --interval 500\n"
+                << "  Studios metropolis --gl --steps 5000 --interval 500 --monitor-interval 100\n"
                 << "  Studios spi --steps 8 --dt 0.125 --time 0.5 --N 16 --interval 2\n"
                 << "  Studios spi --gl --steps 2000 --interval 50 --monitor-interval 2\n"
                 << "  Studios rtor --steps 500 --dt 0.01 --L 10 --N 256 --Q 1 --harmonic 2\n"
@@ -92,14 +90,15 @@ namespace {
     }
 
     auto RunMetropolisCommand(const int argc, const char **argv) -> int {
-        using namespace Slab::Math::Numerics::V2;
-        using namespace Slab::Models::KGRtoR::Metropolis::V2;
-
         CLOptionsDescription options("Studios metropolis", "Run the native V2 Metropolis RtoR slice.");
         options.add_options()
             ("h,help", "Show this help")
+            ("gl", "Run with passive OpenGL monitor (real app loop)")
             ("steps", "Total Monte Carlo steps", cxxopts::value<UIntBig>()->default_value("1000"))
             ("interval", "Output/listener interval (steps)", cxxopts::value<UIntBig>()->default_value("1000"))
+            ("monitor-interval",
+             "Snapshot/monitor interval (steps) for --gl; defaults to --interval",
+             cxxopts::value<UIntBig>())
             ("batch", "Max integration batch size", cxxopts::value<UIntBig>()->default_value("2048"));
 
         const auto result = ParseSubcommandOptions(argc, argv, options);
@@ -108,16 +107,15 @@ namespace {
             return 0;
         }
 
-        const auto steps = result["steps"].as<UIntBig>();
-        const auto interval = result["interval"].as<UIntBig>();
-        const auto batch = result["batch"].as<UIntBig>();
-
-        auto recipe = New<FRtoRHamiltonianMetropolisHastingsRecipeV2>(steps, interval);
-        auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(batch));
-
-        const auto status = Slab::Studios::Common::RunTaskAndWait(*task);
-        Slab::Studios::Common::PrintNumericTaskSummary(*task);
-        return Slab::Studios::Common::ExitCodeFromTaskStatus(status);
+        FMetropolisExecutionConfigV2 cfg;
+        cfg.Steps = result["steps"].as<UIntBig>();
+        cfg.Interval = result["interval"].as<UIntBig>();
+        cfg.MonitorInterval = result.count("monitor-interval") > 0
+            ? result["monitor-interval"].as<UIntBig>()
+            : cfg.Interval;
+        cfg.Batch = result["batch"].as<UIntBig>();
+        cfg.bEnableGLMonitor = result.count("gl") > 0;
+        return StudiosSimV2::RunMetropolisV2(cfg);
     }
 
     auto RunSPICommand(const int argc, const char **argv) -> int {

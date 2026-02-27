@@ -10,6 +10,7 @@
 #include "Studios/Common/Simulations/V2/SPISliceV2.h"
 #include "Studios/Common/Simulations/V2/KGR2toRBaselineSliceV2.h"
 #include "Studios/Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.h"
+#include "Studios/Common/Simulations/V2/MetropolisSliceV2.h"
 
 #include <functional>
 
@@ -26,14 +27,6 @@ public:
     bool NotifyRender(const Slab::Graphics::FPlatformWindow &platformWindow) override;
 
 private:
-    struct FMetropolisExecutionConfigV2 {
-        Slab::UIntBig Steps = 1000;
-        Slab::UIntBig Interval = 1000;
-        Slab::UIntBig LiveViewInterval = 1000;
-        Slab::UIntBig Batch = 2048;
-        bool bPublishLiveView = true;
-    };
-
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
     Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> LiveDataHub;
     Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> LiveControlHub;
@@ -47,12 +40,11 @@ private:
     Slab::Studios::Common::Simulations::V2::FSPIExecutionConfig SPICfg;
     Slab::Studios::Common::Simulations::V2::FRtoRPlaneWavesExecutionConfig RtoRCfg;
     Slab::Studios::Common::Simulations::V2::FR2toRBaselineExecutionConfig R2toRCfg;
-    FMetropolisExecutionConfigV2 MetropolisCfg;
+    Slab::Studios::Common::Simulations::V2::FMetropolisExecutionConfigV2 MetropolisCfg;
 
     Slab::UIntBig SPIRunCounter = 0;
     Slab::UIntBig RtoRRunCounter = 0;
     Slab::UIntBig R2toRRunCounter = 0;
-    Slab::UIntBig MetropolisRunCounter = 0;
 
     Slab::Str LastError;
 
@@ -67,7 +59,7 @@ private:
     auto LaunchSPI(bool enableMonitor) -> void;
     auto LaunchRtoR(bool enableMonitor) -> void;
     auto LaunchR2toR(bool enableMonitor) -> void;
-    auto LaunchMetropolis() -> void;
+    auto LaunchMetropolis(bool enableMonitor) -> void;
 
     [[nodiscard]] auto MakeTopicName(const Slab::Str &prefix, Slab::UIntBig &counter) -> Slab::Str;
     auto LaunchNumericTask(const Slab::TPointer<Slab::Math::Numerics::V2::FSimulationRecipeV2> &recipe,

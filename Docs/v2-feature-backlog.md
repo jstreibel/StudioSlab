@@ -23,6 +23,7 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `KG2D-02` done: passive GL monitor path for `KGR2toR` baseline V2.
 - `LC-01` foundation done: `LiveControl V2` topics/hub + LabV2 visibility panel.
 - `KG2D-03` started: first control binding prototype (LabV2 control source -> hub topics -> KG2D external forcing source).
+- `CVG-00` done: Metropolis V2 now has a passive monitor path (`Studios metropolis --gl`, LabV2 launcher).
 
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
