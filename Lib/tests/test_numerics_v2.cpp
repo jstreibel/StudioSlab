@@ -10,6 +10,8 @@
 
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Data/V2/LiveDataHubV2.h"
+#include "Math/Data/V2/LiveControlHubV2.h"
+#include "Math/Data/V2/LiveControlTopicsV2.h"
 #include "Math/Numerics/V2/Listeners/ConsoleProgressListenerV2.h"
 #include "Math/Numerics/V2/Listeners/CursorHistoryListenerV2.h"
 #include "Math/Numerics/V2/Listeners/DummyListenerV2.h"
@@ -1030,6 +1032,80 @@ TEST_CASE("PhaseF V2 - SessionLiveView facade remains compatible on top of gener
     CHECK(finalStatus->RunState == ESessionRunStateV2::Finished);
     CHECK(finalStatus->bTerminal);
     CHECK_FALSE(finalStatus->bHasBoundSession);
+}
+
+TEST_CASE("PhaseH V2 - LiveControl topic keeps latest typed sample and version", "[V2][PhaseH][LiveControl][Topic]") {
+    using namespace Slab::Math::LiveControl::V2;
+
+    FControlTopicV2 topic("labv2/input/mouse/world-pos");
+    CHECK(topic.GetName() == "labv2/input/mouse/world-pos");
+    CHECK_FALSE(topic.HasSample());
+    CHECK_FALSE(topic.TryGetLatestSample().has_value());
+
+    FControlSampleV2 sample;
+    sample.Value = Slab::Math::Real2D{1.5, -0.25};
+    sample.Semantic = EControlSemanticV2::Level;
+    sample.Timestamp.Domain = EControlTimeDomainV2::WallClockTime;
+    sample.Timestamp.WallClockSeconds = 0.25;
+
+    topic.Publish(sample);
+
+    REQUIRE(topic.HasSample());
+    const auto latest = topic.TryGetLatestSample();
+    REQUIRE(latest.has_value());
+    CHECK(latest->PublishedVersion == 1);
+    CHECK(latest->Semantic == EControlSemanticV2::Level);
+    CHECK(latest->Timestamp.Domain == EControlTimeDomainV2::WallClockTime);
+    REQUIRE(latest->Timestamp.WallClockSeconds.has_value());
+    CHECK(*latest->Timestamp.WallClockSeconds == Catch::Approx(0.25).margin(1e-12));
+
+    const auto point = topic.TryGetLatestPoint2D();
+    REQUIRE(point.has_value());
+    CHECK(point->x == Catch::Approx(1.5).margin(1e-12));
+    CHECK(point->y == Catch::Approx(-0.25).margin(1e-12));
+    CHECK_FALSE(topic.TryGetLatestBool().has_value());
+
+    FControlSampleV2 event;
+    event.Value = true;
+    event.Semantic = EControlSemanticV2::Event;
+    event.Timestamp.Domain = EControlTimeDomainV2::StepIndex;
+    event.Timestamp.Step = 42;
+    topic.Publish(event);
+
+    const auto latestEvent = topic.TryGetLatestSample();
+    REQUIRE(latestEvent.has_value());
+    CHECK(latestEvent->PublishedVersion == 2);
+    CHECK(latestEvent->Semantic == EControlSemanticV2::Event);
+    CHECK(latestEvent->Timestamp.Domain == EControlTimeDomainV2::StepIndex);
+    REQUIRE(latestEvent->Timestamp.Step.has_value());
+    CHECK(*latestEvent->Timestamp.Step == 42);
+    REQUIRE(topic.TryGetLatestBool().has_value());
+    CHECK(*topic.TryGetLatestBool());
+    CHECK_FALSE(topic.TryGetLatestPoint2D().has_value());
+}
+
+TEST_CASE("PhaseH V2 - LiveControlHub returns stable named topics", "[V2][PhaseH][LiveControl][Hub]") {
+    using namespace Slab::Math::LiveControl::V2;
+
+    FLiveControlHubV2 hub;
+
+    auto a1 = hub.GetOrCreateTopic("labv2/control/a");
+    auto a2 = hub.GetOrCreateTopic("labv2/control/a");
+    auto b = hub.GetOrCreateTopic("labv2/control/b");
+
+    REQUIRE(a1 != nullptr);
+    REQUIRE(a2 != nullptr);
+    REQUIRE(b != nullptr);
+
+    CHECK(a1 == a2);
+    CHECK(a1 != b);
+
+    CHECK(hub.FindTopic("labv2/control/a") == a1);
+    CHECK(hub.FindTopic("missing") == nullptr);
+
+    const auto names = hub.ListTopics();
+    CHECK(std::find(names.begin(), names.end(), "labv2/control/a") != names.end());
+    CHECK(std::find(names.begin(), names.end(), "labv2/control/b") != names.end());
 }
 
 TEST_CASE("PhaseG V2 - OutputScheduler detects wall-clock trigger crossings", "[V2][PhaseG][Scheduler][WallClock]") {

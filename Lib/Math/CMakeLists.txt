@@ -94,6 +94,10 @@ set ( NUMERICS_SOURCES
 		../../Slab/Math/Data/V2/LiveDataHubV2.h
 		../../Slab/Math/Data/V2/SessionLiveViewV2.cpp
 		../../Slab/Math/Data/V2/SessionLiveViewV2.h
+		../../Slab/Math/Data/V2/LiveControlTopicsV2.cpp
+		../../Slab/Math/Data/V2/LiveControlTopicsV2.h
+		../../Slab/Math/Data/V2/LiveControlHubV2.cpp
+		../../Slab/Math/Data/V2/LiveControlHubV2.h
 		Numerics/ODE/Solver/LinearStepSolver.cpp
 		Numerics/ODE/Solver/EquationState.cpp
 		Numerics/ODE/Solver/BoundaryConditions.cpp

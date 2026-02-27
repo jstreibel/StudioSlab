@@ -5,6 +5,7 @@
 #include "Graphics/Window/WindowManager.h"
 
 #include "Math/Data/V2/LiveDataHubV2.h"
+#include "Math/Data/V2/LiveControlHubV2.h"
 
 #include <functional>
 
@@ -20,6 +21,7 @@ public:
 
     [[nodiscard]] auto GetImGuiContext() const -> Slab::TPointer<Slab::Graphics::FImGuiContext>;
     [[nodiscard]] auto GetLiveDataHub() const -> Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2>;
+    [[nodiscard]] auto GetLiveControlHub() const -> Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2>;
 
 private:
     using FSlabWindowPtr = Slab::TPointer<Slab::Graphics::FSlabWindow>;
@@ -34,6 +36,7 @@ private:
 
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
     Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> LiveDataHub;
+    Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> LiveControlHub;
     Slab::TPointer<class FSimulationManagerV2> SimulationManager;
 
     auto FlushPendingSlabWindows() -> void;

@@ -11,6 +11,7 @@
 #include "Graphics/SlabGraphics.h"
 #include "Graphics/Window/WindowStyles.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
+#include "Math/Data/V2/LiveControlTopicsV2.h"
 #include "Math/Numerics/NumericTask.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
@@ -200,6 +201,133 @@ namespace {
         }
     }
 
+    auto ToControlSemanticString(const Slab::Math::LiveControl::V2::EControlSemanticV2 semantic) -> Slab::Str {
+        using ESemantic = Slab::Math::LiveControl::V2::EControlSemanticV2;
+        switch (semantic) {
+        case ESemantic::Level: return "Level";
+        case ESemantic::Event: return "Event";
+        }
+        return "Unknown";
+    }
+
+    auto ToControlTimeDomainString(const Slab::Math::LiveControl::V2::EControlTimeDomainV2 domain) -> Slab::Str {
+        using EDomain = Slab::Math::LiveControl::V2::EControlTimeDomainV2;
+        switch (domain) {
+        case EDomain::WallClockTime: return "WallClock";
+        case EDomain::SimulationTime: return "Simulation";
+        case EDomain::StepIndex: return "Step";
+        }
+        return "Unknown";
+    }
+
+    auto ToControlValueTypeString(const Slab::Math::LiveControl::V2::FControlValueV2 &value) -> Slab::Str {
+        if (std::holds_alternative<bool>(value)) return "bool";
+        if (std::holds_alternative<Slab::DevFloat>(value)) return "scalar";
+        if (std::holds_alternative<Slab::Math::Real2D>(value)) return "point2d";
+        return "unknown";
+    }
+
+    auto ToControlValueString(const Slab::Math::LiveControl::V2::FControlValueV2 &value) -> Slab::Str {
+        if (std::holds_alternative<bool>(value)) {
+            return std::get<bool>(value) ? "true" : "false";
+        }
+
+        if (std::holds_alternative<Slab::DevFloat>(value)) {
+            return Slab::ToStr(std::get<Slab::DevFloat>(value), 6, true);
+        }
+
+        if (std::holds_alternative<Slab::Math::Real2D>(value)) {
+            const auto point = std::get<Slab::Math::Real2D>(value);
+            return "(" + Slab::ToStr(point.x, 4, true) + ", " + Slab::ToStr(point.y, 4, true) + ")";
+        }
+
+        return "<unknown>";
+    }
+
+    auto ToControlTimeString(const Slab::Math::LiveControl::V2::FControlTimestampV2 &timestamp) -> Slab::Str {
+        using EDomain = Slab::Math::LiveControl::V2::EControlTimeDomainV2;
+
+        switch (timestamp.Domain) {
+        case EDomain::WallClockTime:
+            if (timestamp.WallClockSeconds.has_value()) return Slab::ToStr(*timestamp.WallClockSeconds, 6, true);
+            return "-";
+        case EDomain::SimulationTime:
+            if (timestamp.SimulationSeconds.has_value()) return Slab::ToStr(*timestamp.SimulationSeconds, 6, true);
+            return "-";
+        case EDomain::StepIndex:
+            if (timestamp.Step.has_value()) return Slab::ToStr(*timestamp.Step);
+            return "-";
+        }
+
+        return "-";
+    }
+
+    auto ShowLiveControlV2Panel(const Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> &hub) -> void {
+        ImGui::SeparatorText("Live Control V2");
+
+        if (hub == nullptr) {
+            ImGui::TextColored(ImVec4(1, 0, 0, 1), "LiveControlHubV2 unavailable.");
+            return;
+        }
+
+        const auto topicNames = hub->ListTopics();
+        if (topicNames.empty()) {
+            ImGui::TextDisabled("No control streams registered.");
+            return;
+        }
+
+        constexpr auto tableFlags =
+            ImGuiTableFlags_Borders |
+            ImGuiTableFlags_RowBg |
+            ImGuiTableFlags_ScrollX |
+            ImGuiTableFlags_SizingFixedFit;
+        if (ImGui::BeginTable("LabV2LiveControlTopics", 7, tableFlags)) {
+            ImGui::TableSetupColumn("Topic", ImGuiTableColumnFlags_WidthStretch, 1.0f);
+            ImGui::TableSetupColumn("Semantic");
+            ImGui::TableSetupColumn("Type");
+            ImGui::TableSetupColumn("Value");
+            ImGui::TableSetupColumn("Domain");
+            ImGui::TableSetupColumn("Time");
+            ImGui::TableSetupColumn("Ver");
+            ImGui::TableHeadersRow();
+
+            for (const auto &topicName : topicNames) {
+                const auto topic = hub->FindTopic(topicName);
+                const auto sample = topic != nullptr ? topic->TryGetLatestSample() : std::nullopt;
+
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0);
+                ImGui::Text("%s", topicName.c_str());
+
+                ImGui::TableSetColumnIndex(1);
+                if (sample.has_value()) ImGui::Text("%s", ToControlSemanticString(sample->Semantic).c_str());
+                else ImGui::TextDisabled("-");
+
+                ImGui::TableSetColumnIndex(2);
+                if (sample.has_value()) ImGui::Text("%s", ToControlValueTypeString(sample->Value).c_str());
+                else ImGui::TextDisabled("-");
+
+                ImGui::TableSetColumnIndex(3);
+                if (sample.has_value()) ImGui::Text("%s", ToControlValueString(sample->Value).c_str());
+                else ImGui::TextDisabled("-");
+
+                ImGui::TableSetColumnIndex(4);
+                if (sample.has_value()) ImGui::Text("%s", ToControlTimeDomainString(sample->Timestamp.Domain).c_str());
+                else ImGui::TextDisabled("-");
+
+                ImGui::TableSetColumnIndex(5);
+                if (sample.has_value()) ImGui::Text("%s", ToControlTimeString(sample->Timestamp).c_str());
+                else ImGui::TextDisabled("-");
+
+                ImGui::TableSetColumnIndex(6);
+                if (sample.has_value()) ImGui::Text("%llu", static_cast<unsigned long long>(sample->PublishedVersion));
+                else ImGui::TextDisabled("-");
+            }
+
+            ImGui::EndTable();
+        }
+    }
+
 } // namespace
 
 FLabV2WindowManager::FLabV2WindowManager()
@@ -211,6 +339,7 @@ FLabV2WindowManager::FLabV2WindowManager()
     ImGuiContext->SetManualRender(true);
 
     LiveDataHub = Slab::New<Slab::Math::LiveData::V2::FLiveDataHubV2>();
+    LiveControlHub = Slab::New<Slab::Math::LiveControl::V2::FLiveControlHubV2>();
     SimulationManager = Slab::New<FSimulationManagerV2>(
         ImGuiContext,
         LiveDataHub,
@@ -319,6 +448,7 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
 
         ShowTasksPanel();
         ShowLiveDataV2Panel(LiveDataHub);
+        ShowLiveControlV2Panel(LiveControlHub);
 
         if (const auto windowWidth = static_cast<int>(ImGui::GetWindowWidth()); SidePaneWidth != windowWidth) {
             SidePaneWidth = windowWidth;
@@ -356,4 +486,8 @@ auto FLabV2WindowManager::GetImGuiContext() const -> Slab::TPointer<Slab::Graphi
 
 auto FLabV2WindowManager::GetLiveDataHub() const -> Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> {
     return LiveDataHub;
+}
+
+auto FLabV2WindowManager::GetLiveControlHub() const -> Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> {
+    return LiveControlHub;
 }
