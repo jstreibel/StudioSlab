@@ -38,6 +38,7 @@
 - Wave D: `Green`
 - Wave E: `Not Started`
 - Wave F: `Not Started`
+- Extra hardening: Blueprint `SplitterBehavior(...)` dependency moved behind `FImGuiSplitterCompat`.
 
 ## Wave Plan
 

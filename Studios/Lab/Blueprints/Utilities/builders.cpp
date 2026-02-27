@@ -10,7 +10,6 @@
 # define IMGUI_DEFINE_MATH_OPERATORS
 # include "builders.h"
 # include "Graphics/Modules/ImGui/ImGuiLayoutCompat.h"
-# include <imgui_internal.h>
 
 
 //------------------------------------------------------------------------------
