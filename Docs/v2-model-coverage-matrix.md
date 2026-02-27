@@ -37,10 +37,10 @@ This complements:
 | Family / Example | Current | Priority | Time | Space | Stoch | Ctrl | View | Det | Data | Why It Matters Architecturally |
 |---|---:|---:|---|---|---|---|---|---|---|---|
 | KG `R->R` linear stepping (plane waves) | `V2-M` | `P0` | sim-time | `R->R` | no | medium | plot | high | snap/hist/spec | Already in V2; good base for analysis, control injection, sequencing |
-| KG `R^2->R` field evolution | `Legacy` | `P0` | sim-time + open | `R^2->R` | no / optional | **high** | field render + plots | high | snap/hist/diag | Best target for interactive forcing `J(x^μ)` and presentation workflows |
+| KG `R^2->R` field evolution | `V2-I` | `P0` | sim-time + open | `R^2->R` | no / optional | **high** | field render + plots | high | snap/hist/diag | Now has V2 headless + monitor + first live-control forcing prototype |
 | SPI (Stochastic Path Integral) | `V2-M` | `P0` | sim-time | `R^2->R` | solver-specific | low/medium | section + field | medium | snap/hist/diag | Exercises ODE/time-aware V2 and 2D field visualization with lower UX entropy than KG2D |
-| KG `R->R` Monte Carlo (Metropolis) | `V2-H` | `P1` | step / pseudo-time | state-only / `R->R` state | **yes** | low | telemetry / derived plots | high (RNG) | hist/diag | Validates non-ODE semantics, RNG determinism, headless pipelines |
-| Molecular Dynamics (LJ / SoftDisk) | `Legacy` | `P1` | sim-time + open | particles | optional (Langevin) | high | particle scene + plots | high | traj/hist/diag | Strong probe for interactive scenes, control, thermostats, and performance |
+| KG `R->R` Monte Carlo (Metropolis) | `V2-M` | `P1` | step / pseudo-time | state-only / `R->R` state | **yes** | low | telemetry / derived plots | high (RNG) | hist/diag | V2 monitored path now available via CLI and LabV2 |
+| Molecular Dynamics (LJ / SoftDisk) | `V2-M` | `P1` | sim-time + open | particles | optional (Langevin) | high | particle scene + plots | high | traj/hist/diag | Baseline V2 headless + passive monitor now in CLI/LabV2; good foundation for controls and thermostats |
 | Molecular Dynamics (Langevin / thermal baths) | `Legacy` | `P1` | sim-time + open | particles | **yes** | medium | particle scene + diagnostics | high | hist/diag | Combines stochasticity + real-time particle rendering + reproducibility pressure |
 | XY / Ising lattice Monte Carlo | `Legacy` (XY tooling exists) | `P1` | step / pseudo-time | lattice | **yes** | low/medium | lattice field + stats | high (RNG) | hist/diag/spec | Exercises lattice data, MC semantics, aggregate stats, many histories |
 | XY with kinetic term (time evolution prototype) | `Legacy/proto` | `P2` | sim-time | lattice | maybe | medium | lattice + spectra | medium/high | hist/spec | Hybrid semantics (lattice + time) useful once V2 control/sequence matures |
@@ -104,4 +104,4 @@ Minimum useful milestones:
 - Final name for the primary authored artifact (`Study`) is currently the recommended internal/product term.
 - “Model” remains the scientific system/transform term.
 - This matrix should be updated as new V2 slices land and as `LiveControl V2` and sequencing mature.
-
+- MD V2 first-slice scope is captured in `Docs/md-v2-slice-scope.md`.

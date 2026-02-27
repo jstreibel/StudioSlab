@@ -30,6 +30,8 @@
 #include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
 #include "Models/KleinGordon/R2toR/EquationState.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.h"
+#include "Models/MolecularDynamics/Hamiltonians/MoleculesState.h"
+#include "Models/MolecularDynamics/V2/MolecularDynamics-Baseline-RecipeV2.h"
 #include "Models/Stochastic-Path-Integral/SPI-State.h"
 #include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
 
@@ -778,7 +780,7 @@ TEST_CASE("PhaseKG2D0 V2 - KGR2toR baseline recipe runs with finite time cursor 
     using namespace Slab::Models::KGR2toR::Baseline::V2;
 
     FKGR2toRBaselineConfigV2 config;
-    config.N = 96;
+    config.N = 128;
     config.L = 12.0;
     config.RDt = 0.1;
     config.Steps = 8;
@@ -877,6 +879,110 @@ TEST_CASE("PhaseKG2D1 V2 - KGR2toR baseline accepts external forcing seam",
     CHECK(std::isfinite(noSourceAbs));
     CHECK(std::isfinite(withSourceAbs));
     CHECK(withSourceAbs > noSourceAbs);
+}
+
+TEST_CASE("PhaseMD0 V2 - MolecularDynamics baseline recipe runs with finite cursor semantics",
+          "[V2][PhaseMD0][MolDyn][Task]") {
+    using namespace Slab;
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::MolecularDynamics::V2;
+
+    RandUtils::SeedUniformReal(131);
+    RandUtils::SeedUniformUInt(137);
+    RandUtils::SeedGaussianNoise(139);
+
+    FMolecularDynamicsBaselineConfigV2 config;
+    config.N = 128;
+    config.L = 24.0;
+    config.TotalTime = 12.0;
+    config.Steps = 30;
+    config.Temperature = 0.0;
+    config.Dissipation = 0.01;
+    config.InteractionModel = EInteractionModelV2::SoftDisk;
+
+    auto recipe = New<FMolecularDynamicsBaselineRecipeV2>(config, 5);
+    auto task = New<FNumericTaskV2>(recipe, false, 16);
+
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    const auto cursor = task->GetCursor();
+    CHECK(cursor.Step == config.Steps);
+    REQUIRE(cursor.SimulationTime.has_value());
+    CHECK(*cursor.SimulationTime == Catch::Approx(config.TotalTime).margin(1e-10));
+
+    const auto progress = task->GetProgress01();
+    REQUIRE(progress.has_value());
+    CHECK(*progress == Catch::Approx(1.0f).margin(1e-6f));
+
+    const auto *session = task->GetSession();
+    REQUIRE(session != nullptr);
+
+    auto lease = session->AcquireReadLease();
+    REQUIRE(lease.OwnsLock());
+    REQUIRE(lease.GetState() != nullptr);
+
+    auto moleculesState = std::dynamic_pointer_cast<const Slab::Models::MolecularDynamics::FMoleculesState>(lease.GetState());
+    REQUIRE(moleculesState != nullptr);
+
+    const auto &q = moleculesState->first();
+    const auto &p = moleculesState->second();
+    REQUIRE(q.size() == config.N);
+    REQUIRE(p.size() == config.N);
+
+    DevFloat meanRadius = 0.0;
+    DevFloat kinetic = 0.0;
+    for (UInt i = 0; i < config.N; ++i) {
+        const auto &qi = q[i];
+        const auto &pi = p[i];
+        meanRadius += std::sqrt(qi.x * qi.x + qi.y * qi.y);
+        kinetic += 0.5 * (pi.x * pi.x + pi.y * pi.y);
+    }
+    meanRadius /= static_cast<DevFloat>(config.N);
+
+    CAPTURE(meanRadius, kinetic);
+    CHECK(std::isfinite(meanRadius));
+    CHECK(std::isfinite(kinetic));
+    CHECK(meanRadius > 0.0);
+    CHECK(kinetic >= 0.0);
+}
+
+TEST_CASE("PhaseMD1 V2 - MolecularDynamics baseline publishes LiveView telemetry/status",
+          "[V2][PhaseMD1][MolDyn][LiveData]") {
+    using namespace Slab;
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::MolecularDynamics::V2;
+
+    RandUtils::SeedUniformReal(149);
+    RandUtils::SeedUniformUInt(151);
+    RandUtils::SeedGaussianNoise(157);
+
+    FMolecularDynamicsBaselineConfigV2 config;
+    config.N = 128;
+    config.L = 20.0;
+    config.TotalTime = 4.0;
+    config.Steps = 12;
+    config.InteractionModel = EInteractionModelV2::LennardJones;
+
+    auto liveView = New<Slab::Math::LiveData::V2::FSessionLiveViewV2>();
+    auto recipe = New<FMolecularDynamicsBaselineRecipeV2>(config, 2, liveView);
+    recipe->SetLiveViewIntervalSteps(1);
+
+    auto task = New<FNumericTaskV2>(recipe, false, 16);
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+
+    const auto telemetry = liveView->TryGetTelemetry();
+    REQUIRE(telemetry.has_value());
+    CHECK(telemetry->Cursor.Step == config.Steps);
+    REQUIRE(telemetry->Cursor.SimulationTime.has_value());
+    CHECK(*telemetry->Cursor.SimulationTime == Catch::Approx(config.TotalTime).margin(1e-9));
+
+    const auto status = liveView->TryGetStatus();
+    REQUIRE(status.has_value());
+    CHECK(status->RunState == Slab::Math::LiveData::V2::ESessionRunStateV2::Finished);
+    CHECK(status->bTerminal);
+
+    CHECK_FALSE(liveView->HasBoundSession());
+    CHECK_FALSE(liveView->AcquireReadLease().has_value());
 }
 
 TEST_CASE("PhaseD V2 - Session try-read lease is best-effort under active writer", "[V2][PhaseD][Session][Lease]") {

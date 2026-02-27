@@ -10,6 +10,7 @@
 #include "Studios/Common/Simulations/V2/SPISliceV2.h"
 #include "Studios/Common/Simulations/V2/KGR2toRBaselineSliceV2.h"
 #include "Studios/Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.h"
+#include "Studios/Common/Simulations/V2/MolecularDynamicsSliceV2.h"
 #include "Studios/Common/Simulations/V2/MetropolisSliceV2.h"
 
 #include <functional>
@@ -36,15 +37,18 @@ private:
     bool bSPIPublishLiveViewHeadless = true;
     bool bRtoRPublishLiveViewHeadless = true;
     bool bR2toRPublishLiveViewHeadless = true;
+    bool bMolecularDynamicsPublishLiveViewHeadless = true;
 
     Slab::Studios::Common::Simulations::V2::FSPIExecutionConfig SPICfg;
     Slab::Studios::Common::Simulations::V2::FRtoRPlaneWavesExecutionConfig RtoRCfg;
     Slab::Studios::Common::Simulations::V2::FR2toRBaselineExecutionConfig R2toRCfg;
+    Slab::Studios::Common::Simulations::V2::FMolecularDynamicsExecutionConfigV2 MolecularDynamicsCfg;
     Slab::Studios::Common::Simulations::V2::FMetropolisExecutionConfigV2 MetropolisCfg;
 
     Slab::UIntBig SPIRunCounter = 0;
     Slab::UIntBig RtoRRunCounter = 0;
     Slab::UIntBig R2toRRunCounter = 0;
+    Slab::UIntBig MolecularDynamicsRunCounter = 0;
 
     Slab::Str LastError;
 
@@ -54,11 +58,13 @@ private:
     auto DrawSPISection() -> void;
     auto DrawRtoRSection() -> void;
     auto DrawR2toRSection() -> void;
+    auto DrawMolecularDynamicsSection() -> void;
     auto DrawMetropolisSection() -> void;
 
     auto LaunchSPI(bool enableMonitor) -> void;
     auto LaunchRtoR(bool enableMonitor) -> void;
     auto LaunchR2toR(bool enableMonitor) -> void;
+    auto LaunchMolecularDynamics(bool enableMonitor) -> void;
     auto LaunchMetropolis(bool enableMonitor) -> void;
 
     [[nodiscard]] auto MakeTopicName(const Slab::Str &prefix, Slab::UIntBig &counter) -> Slab::Str;

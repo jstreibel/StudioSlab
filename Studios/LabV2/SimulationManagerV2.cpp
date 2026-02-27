@@ -72,6 +72,16 @@ FSimulationManagerV2::FSimulationManagerV2(
     R2toRCfg.ForcingAmplitude = 0.0;
     R2toRCfg.bForcingEnabled = false;
 
+    MolecularDynamicsCfg.N = 256;
+    MolecularDynamicsCfg.L = 50.0;
+    MolecularDynamicsCfg.TotalTime = 20.0;
+    MolecularDynamicsCfg.Steps = 400;
+    MolecularDynamicsCfg.Temperature = 0.0;
+    MolecularDynamicsCfg.Dissipation = 0.0;
+    MolecularDynamicsCfg.Interval = 20;
+    MolecularDynamicsCfg.MonitorInterval = 5;
+    MolecularDynamicsCfg.Batch = 256;
+
     MetropolisCfg.Interval = 1000;
     MetropolisCfg.MonitorInterval = 100;
     MetropolisCfg.Batch = 2048;
@@ -115,6 +125,9 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
                 {"KGR2toR Baseline (Headless)"},
                 {"KGR2toR Baseline (GL Monitor)"},
                 {Slab::Graphics::MainMenuSeparator},
+                {"Molecular Dynamics (Headless)"},
+                {"Molecular Dynamics (GL Monitor)"},
+                {Slab::Graphics::MainMenuSeparator},
                 {"Metropolis RtoR (Headless)"},
                 {"Metropolis RtoR (GL Monitor)"},
                 {Slab::Graphics::MainMenuSeparator},
@@ -129,6 +142,8 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
                     if (itemString == "KGRtoR Plane Waves (GL Monitor)") { LaunchRtoR(true); return; }
                     if (itemString == "KGR2toR Baseline (Headless)") { LaunchR2toR(false); return; }
                     if (itemString == "KGR2toR Baseline (GL Monitor)") { LaunchR2toR(true); return; }
+                    if (itemString == "Molecular Dynamics (Headless)") { LaunchMolecularDynamics(false); return; }
+                    if (itemString == "Molecular Dynamics (GL Monitor)") { LaunchMolecularDynamics(true); return; }
                     if (itemString == "Metropolis RtoR (Headless)") { LaunchMetropolis(false); return; }
                     if (itemString == "Metropolis RtoR (GL Monitor)") { LaunchMetropolis(true); return; }
                     if (itemString == "Open Launcher") { bShowLauncherWindow = true; return; }
@@ -164,6 +179,7 @@ auto FSimulationManagerV2::DrawLauncherWindow() -> void {
         DrawSPISection();
         DrawRtoRSection();
         DrawR2toRSection();
+        DrawMolecularDynamicsSection();
         DrawMetropolisSection();
     }
     ImGui::End();
@@ -277,6 +293,41 @@ auto FSimulationManagerV2::DrawR2toRSection() -> void {
     }
 }
 
+auto FSimulationManagerV2::DrawMolecularDynamicsSection() -> void {
+    if (!ImGui::CollapsingHeader("Molecular Dynamics (V2)")) return;
+
+    DragUIntLike("MD Steps", MolecularDynamicsCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
+    DragDevFloat("MD Total time", MolecularDynamicsCfg.TotalTime, 0.01, 1e-6, 1e8);
+    DragDevFloat("MD L", MolecularDynamicsCfg.L, 0.01, 1e-6, 1e8);
+    DragUIntLike("MD N", MolecularDynamicsCfg.N, 128u, 200000u, 1.0f);
+    DragDevFloat("MD temperature", MolecularDynamicsCfg.Temperature, 0.01, 0.0, 1e6);
+    DragDevFloat("MD dissipation", MolecularDynamicsCfg.Dissipation, 0.001, 0.0, 1e6);
+    DragUIntLike("MD Interval", MolecularDynamicsCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
+    DragUIntLike("MD Monitor Interval", MolecularDynamicsCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
+    DragUIntLike("MD Batch", MolecularDynamicsCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
+    ImGui::Checkbox("Publish LiveData when headless##moldyn", &bMolecularDynamicsPublishLiveViewHeadless);
+
+    const bool bSoftDisk = MolecularDynamicsCfg.InteractionModel ==
+        Slab::Studios::Common::Simulations::V2::EMDInteractionModelV2::SoftDisk;
+    if (ImGui::RadioButton("SoftDisk", bSoftDisk)) {
+        MolecularDynamicsCfg.InteractionModel = Slab::Studios::Common::Simulations::V2::EMDInteractionModelV2::SoftDisk;
+    }
+    ImGui::SameLine();
+    if (ImGui::RadioButton("Lennard-Jones", !bSoftDisk)) {
+        MolecularDynamicsCfg.InteractionModel = Slab::Studios::Common::Simulations::V2::EMDInteractionModelV2::LennardJones;
+    }
+
+    ImGui::TextDisabled("Passive GL monitor shows particle cloud + telemetry.");
+
+    if (ImGui::Button("Run MD Headless")) {
+        try { LaunchMolecularDynamics(false); } catch (const std::exception &e) { LastError = e.what(); }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Run MD + GL Monitor")) {
+        try { LaunchMolecularDynamics(true); } catch (const std::exception &e) { LastError = e.what(); }
+    }
+}
+
 auto FSimulationManagerV2::DrawMetropolisSection() -> void {
     if (!ImGui::CollapsingHeader("Metropolis RtoR (V2)")) return;
 
@@ -362,6 +413,29 @@ auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
     }
 
     LaunchNumericTask(recipe, cfg.Batch, "KGR2toR Baseline V2");
+}
+
+auto FSimulationManagerV2::LaunchMolecularDynamics(const bool enableMonitor) -> void {
+    using namespace Slab::Studios::Common::Simulations::V2;
+
+    auto cfg = MolecularDynamicsCfg;
+    cfg.bEnableGLMonitor = enableMonitor;
+    FinalizeMolecularDynamicsExecutionConfigV2(cfg);
+
+    const bool bNeedLiveView = enableMonitor || bMolecularDynamicsPublishLiveViewHeadless;
+    Slab::TPointer<Slab::Math::LiveData::V2::FSessionLiveViewV2> liveView = nullptr;
+    if (bNeedLiveView && LiveDataHub != nullptr) {
+        liveView = LiveDataHub->GetOrCreateSessionLiveView(MakeTopicName("moldyn", MolecularDynamicsRunCounter));
+    }
+
+    auto recipe = BuildMolecularDynamicsRecipeV2(cfg, liveView);
+    if (enableMonitor) {
+        if (liveView == nullptr) throw Exception("MolecularDynamics GL monitor requires a live view.");
+        if (!AddWindow) throw Exception("LabV2 cannot attach monitor window.");
+        AddWindow(BuildMolecularDynamicsPassiveMonitorWindowV2(cfg, liveView));
+    }
+
+    LaunchNumericTask(recipe, cfg.Batch, "Molecular Dynamics V2");
 }
 
 auto FSimulationManagerV2::LaunchMetropolis(const bool enableMonitor) -> void {

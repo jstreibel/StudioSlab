@@ -7,8 +7,11 @@
 #include "../../Slab/Studios/Common/Simulations/V2/MetropolisSliceV2.h"
 #include "../../Slab/Studios/Common/Simulations/V2/KGR2toRBaselineSliceV2.h"
 #include "../../Slab/Studios/Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.h"
+#include "../../Slab/Studios/Common/Simulations/V2/MolecularDynamicsSliceV2.h"
 #include "../../Slab/Studios/Common/Simulations/V2/SPISliceV2.h"
 
+#include <algorithm>
+#include <cctype>
 #include <iostream>
 
 namespace {
@@ -18,6 +21,7 @@ namespace {
     using StudiosSimV2::FMetropolisExecutionConfigV2;
     using StudiosSimV2::FR2toRBaselineExecutionConfig;
     using StudiosSimV2::FRtoRPlaneWavesExecutionConfig;
+    using StudiosSimV2::FMolecularDynamicsExecutionConfigV2;
     using StudiosSimV2::FSPIExecutionConfig;
 
     auto PrintRootUsage() -> void {
@@ -32,11 +36,13 @@ namespace {
                 << "  spi          Run V2 SPI ODE/time-aware slice\n"
                 << "  rtor         Run V2 KGRtoR plane-waves slice\n\n"
                 << "  kg2d         Run V2 KGR2toR baseline slice\n\n"
+                << "  moldyn       Run V2 Molecular Dynamics baseline slice\n\n"
                 << "Aliases:\n"
                 << "  metropolis-v2, v2-metropolis\n"
                 << "  spi-v2, v2-spi\n"
                 << "  rtor-v2, rtor-plane-waves, v2-rtor\n\n"
                 << "  kg2d-v2, r2tor-v2, v2-kg2d\n\n"
+                << "  md-v2, molecular-dynamics, v2-moldyn\n\n"
                 << "Examples:\n"
                 << "  Studios metropolis --steps 5000 --interval 500\n"
                 << "  Studios metropolis --gl --steps 5000 --interval 500 --monitor-interval 100\n"
@@ -48,11 +54,13 @@ namespace {
                 << "  Studios kg2d --gl --steps 500 --interval 20 --monitor-interval 2\n"
                 << "  Studios kg2d --gl --monitor-control-source --steps 500 --forcing-enabled --forcing-amplitude 0.2\n"
                 << "  Studios kg2d --steps 500 --forcing-enabled --forcing-amplitude 0.2 --forcing-width 0.25\n"
+                << "  Studios moldyn --steps 400 --time 20 --N 256 --L 50 --model softdisk\n"
+                << "  Studios moldyn --gl --steps 400 --time 20 --N 256 --L 50 --interval 20 --monitor-interval 5\n"
                 << "  Studios spi --help\n";
     }
 
     auto PrintList() -> void {
-        std::cout << "metropolis\nspi\nrtor\nkg2d\n";
+        std::cout << "metropolis\nspi\nrtor\nkg2d\nmoldyn\n";
     }
 
     auto NormalizeShortLongSingleLetterOption(const Str &arg) -> Str {
@@ -304,6 +312,67 @@ namespace {
         return StudiosSimV2::RunR2toRBaselineV2(cfg);
     }
 
+    auto NormalizeMDModelName(const Str &raw) -> Str {
+        Str lowered = raw;
+        std::transform(lowered.begin(), lowered.end(), lowered.begin(), [](const unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+        });
+        return lowered;
+    }
+
+    auto ParseMDModel(const Str &raw) -> StudiosSimV2::EMDInteractionModelV2 {
+        const auto value = NormalizeMDModelName(raw);
+        if (value == "softdisk" || value == "soft-disk" || value == "soft_disk") {
+            return StudiosSimV2::EMDInteractionModelV2::SoftDisk;
+        }
+        if (value == "lennardjones" || value == "lennard-jones" || value == "lj") {
+            return StudiosSimV2::EMDInteractionModelV2::LennardJones;
+        }
+        throw Exception("Unknown moldyn model '" + raw + "'. Expected softdisk or lennard-jones.");
+    }
+
+    auto RunMolecularDynamicsCommand(const int argc, const char **argv) -> int {
+        CLOptionsDescription options("Studios moldyn", "Run the native V2 Molecular Dynamics baseline slice.");
+        options.add_options()
+            ("h,help", "Show this help")
+            ("gl", "Run with passive OpenGL monitor (real app loop)")
+            ("steps", "Integration steps", cxxopts::value<UIntBig>()->default_value("1000"))
+            ("time", "Total simulation time", cxxopts::value<DevFloat>()->default_value("50.0"))
+            ("L", "Spatial box length", cxxopts::value<DevFloat>()->default_value("50.0"))
+            ("N", "Particle count (N >= 128)", cxxopts::value<UInt>()->default_value("256"))
+            ("temperature", "Langevin temperature parameter", cxxopts::value<DevFloat>()->default_value("0.0"))
+            ("dissipation", "Dissipation coefficient", cxxopts::value<DevFloat>()->default_value("0.0"))
+            ("model", "Interaction model: softdisk | lennard-jones", cxxopts::value<Str>()->default_value("softdisk"))
+            ("interval", "Console/listener interval (steps)", cxxopts::value<UIntBig>()->default_value("100"))
+            ("monitor-interval",
+             "Live-view publish interval; defaults to --interval",
+             cxxopts::value<UIntBig>())
+            ("batch", "Max integration batch size", cxxopts::value<UIntBig>()->default_value("512"));
+
+        const auto result = ParseSubcommandOptions(argc, argv, options);
+        if (result.count("help") > 0) {
+            std::cout << options.help() << '\n';
+            return 0;
+        }
+
+        FMolecularDynamicsExecutionConfigV2 cfg;
+        cfg.Steps = result["steps"].as<UIntBig>();
+        cfg.TotalTime = result["time"].as<DevFloat>();
+        cfg.L = result["L"].as<DevFloat>();
+        cfg.N = result["N"].as<UInt>();
+        cfg.Temperature = result["temperature"].as<DevFloat>();
+        cfg.Dissipation = result["dissipation"].as<DevFloat>();
+        cfg.InteractionModel = ParseMDModel(result["model"].as<Str>());
+        cfg.Interval = result["interval"].as<UIntBig>();
+        cfg.MonitorInterval = result.count("monitor-interval") > 0
+            ? result["monitor-interval"].as<UIntBig>()
+            : cfg.Interval;
+        cfg.Batch = result["batch"].as<UIntBig>();
+        cfg.bEnableGLMonitor = result.count("gl") > 0;
+
+        return StudiosSimV2::RunMolecularDynamicsV2(cfg);
+    }
+
     auto IsMetropolisCommand(const Str &name) -> bool {
         return name == "metropolis" || name == "metropolis-v2" || name == "v2-metropolis";
     }
@@ -318,6 +387,10 @@ namespace {
 
     auto IsKG2DCommand(const Str &name) -> bool {
         return name == "kg2d" || name == "kg2d-v2" || name == "r2tor-v2" || name == "v2-kg2d";
+    }
+
+    auto IsMolecularDynamicsCommand(const Str &name) -> bool {
+        return name == "moldyn" || name == "md-v2" || name == "molecular-dynamics" || name == "v2-moldyn";
     }
 
     auto DispatchRoot(const int argc, const char **argv) -> int {
@@ -347,6 +420,7 @@ namespace {
             if (IsSPICommand(sub)) return RunSPICommand(argc - 2, argv + 2);
             if (IsRtoRCommand(sub)) return RunRtoRCommand(argc - 2, argv + 2);
             if (IsKG2DCommand(sub)) return RunKG2DCommand(argc - 2, argv + 2);
+            if (IsMolecularDynamicsCommand(sub)) return RunMolecularDynamicsCommand(argc - 2, argv + 2);
 
             throw Exception("Unknown subprogram '" + sub + "'. Use 'Studios list'.");
         }
@@ -355,6 +429,7 @@ namespace {
         if (IsSPICommand(first)) return RunSPICommand(argc - 1, argv + 1);
         if (IsRtoRCommand(first)) return RunRtoRCommand(argc - 1, argv + 1);
         if (IsKG2DCommand(first)) return RunKG2DCommand(argc - 1, argv + 1);
+        if (IsMolecularDynamicsCommand(first)) return RunMolecularDynamicsCommand(argc - 1, argv + 1);
 
         throw Exception("Unknown subprogram '" + first + "'. Use 'Studios list'.");
     }

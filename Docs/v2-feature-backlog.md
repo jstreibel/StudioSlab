@@ -28,6 +28,8 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `LAB-00` done: Data Browser polish (topic filters, selected-topic details for LiveData/LiveControl).
 - `LAB-01` done: View management surface baseline (list/select/focus/close/retile).
 - `LAB-02` done: Run Manager improvements baseline (task filters, grouped counters, progress/cursor table, clear actions).
+- `CVG-01` done: MD V2 scoping draft captured in `Docs/md-v2-slice-scope.md`.
+- `CVG-02` done: MD baseline `V2-H` and `V2-M` paths now wired in CLI/LabV2 (`Studios moldyn`, `Studios moldyn --gl`).
 
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
@@ -66,8 +68,8 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `P1` `LAB-02` — Run Manager improvements (grouping/error clarity) — done
 
 ### Coverage Portfolio
-- `P1` `CVG-01` — MD V2 scoping
-- `P1` `CVG-02` — MD `V2-H` -> `V2-M`
+- `P1` `CVG-01` — MD V2 scoping — done
+- `P1` `CVG-02` — MD `V2-H` -> `V2-M` — done
 - `P1` `CVG-03` — XY/Ising V2 scoping
 - `P2` `CVG-04` — Functional minimization V2 slice
 
