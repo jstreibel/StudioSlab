@@ -22,8 +22,12 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `KG2D-01` done: `KGR2toR` baseline V2 headless slice (`Studios kg2d` + tests).
 - `KG2D-02` done: passive GL monitor path for `KGR2toR` baseline V2.
 - `LC-01` foundation done: `LiveControl V2` topics/hub + LabV2 visibility panel.
-- `KG2D-03` started: first control binding prototype (LabV2 control source -> hub topics -> KG2D external forcing source).
+- `KG2D-03` done: first control binding prototype (LabV2 control source -> hub topics -> KG2D external forcing source).
+- `KG2D-03.5` done: KG2D monitor-side control source publisher (GL monitor UI publishes control topics directly).
 - `CVG-00` done: Metropolis V2 now has a passive monitor path (`Studios metropolis --gl`, LabV2 launcher).
+- `LAB-00` done: Data Browser polish (topic filters, selected-topic details for LiveData/LiveControl).
+- `LAB-01` done: View management surface baseline (list/select/focus/close/retile).
+- `LAB-02` done: Run Manager improvements baseline (task filters, grouped counters, progress/cursor table, clear actions).
 
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
@@ -42,6 +46,7 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 
 ### `P0` `KG2D-03` — First control binding prototype (“poke field”)
 - Mouse/UI control -> external forcing `J(x^\\mu)` (best-effort wall-clock path).
+- done (`LabV2` sidepane source + monitor-side source + CLI flags for KG2D).
 
 ## Parallel Track (keep one item active max)
 
@@ -56,9 +61,9 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `P1` `ST-00` — In-memory `Study` object skeleton
 
 ### LabV2 Editor Tool Surfaces
-- `P1` `LAB-00` — Data Browser polish (filtering, grouping, row details)
-- `P1` `LAB-01` — View management surface (focus/close/retile)
-- `P1` `LAB-02` — Run Manager improvements (grouping/error clarity)
+- `P1` `LAB-00` — Data Browser polish (filtering, grouping, row details) — done
+- `P1` `LAB-01` — View management surface (focus/close/retile) — done
+- `P1` `LAB-02` — Run Manager improvements (grouping/error clarity) — done
 
 ### Coverage Portfolio
 - `P1` `CVG-01` — MD V2 scoping
