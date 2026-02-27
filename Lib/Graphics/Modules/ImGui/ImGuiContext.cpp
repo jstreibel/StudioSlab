@@ -9,8 +9,6 @@
 
 #include "Utils/Exception.h"
 
-#include "3rdParty/imgui/imgui_internal.h"
-
 #include "Core/Tools/Log.h"
 #include "Core/Tools/Resources.h"
 

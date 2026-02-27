@@ -46,6 +46,7 @@
 ### Wave A - Baseline and Safety Net
 - Freeze baseline visual scenarios for Blueprints and Lab/LabV2.
 - Keep a short manual validation script for repeated checks.
+- Keep a migration audit script for dependency tracking (`Scripts/imgui-migration-audit.sh`).
 - Exit criteria:
   - baseline scenarios documented and reproducible.
 
