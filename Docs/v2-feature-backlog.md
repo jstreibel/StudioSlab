@@ -30,6 +30,7 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `LAB-02` done: Run Manager improvements baseline (task filters, grouped counters, progress/cursor table, clear actions).
 - `CVG-01` done: MD V2 scoping draft captured in `Docs/md-v2-slice-scope.md`.
 - `CVG-02` done: MD baseline `V2-H` and `V2-M` paths now wired in CLI/LabV2 (`Studios moldyn`, `Studios moldyn --gl`).
+- `CVG-03` active: XY/Ising V2 lattice migration wave started; XY `V2-H` + `V2-M` now wired in CLI/LabV2 (`Studios xy`, `Studios xy --gl`).
 
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.

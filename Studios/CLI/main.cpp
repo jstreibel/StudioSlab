@@ -9,6 +9,7 @@
 #include "../../Slab/Studios/Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.h"
 #include "../../Slab/Studios/Common/Simulations/V2/MolecularDynamicsSliceV2.h"
 #include "../../Slab/Studios/Common/Simulations/V2/SPISliceV2.h"
+#include "../../Slab/Studios/Common/Simulations/V2/XYSliceV2.h"
 
 #include <algorithm>
 #include <cctype>
@@ -23,6 +24,7 @@ namespace {
     using StudiosSimV2::FRtoRPlaneWavesExecutionConfig;
     using StudiosSimV2::FMolecularDynamicsExecutionConfigV2;
     using StudiosSimV2::FSPIExecutionConfig;
+    using StudiosSimV2::FXYExecutionConfigV2;
 
     auto PrintRootUsage() -> void {
         std::cout
@@ -37,12 +39,14 @@ namespace {
                 << "  rtor         Run V2 KGRtoR plane-waves slice\n\n"
                 << "  kg2d         Run V2 KGR2toR baseline slice\n\n"
                 << "  moldyn       Run V2 Molecular Dynamics baseline slice\n\n"
+                << "  xy           Run V2 XY Metropolis lattice slice\n\n"
                 << "Aliases:\n"
                 << "  metropolis-v2, v2-metropolis\n"
                 << "  spi-v2, v2-spi\n"
                 << "  rtor-v2, rtor-plane-waves, v2-rtor\n\n"
                 << "  kg2d-v2, r2tor-v2, v2-kg2d\n\n"
                 << "  md-v2, molecular-dynamics, v2-moldyn\n\n"
+                << "  xy-v2, v2-xy\n\n"
                 << "Examples:\n"
                 << "  Studios metropolis --steps 5000 --interval 500\n"
                 << "  Studios metropolis --gl --steps 5000 --interval 500 --monitor-interval 100\n"
@@ -56,11 +60,13 @@ namespace {
                 << "  Studios kg2d --steps 500 --forcing-enabled --forcing-amplitude 0.2 --forcing-width 0.25\n"
                 << "  Studios moldyn --steps 400 --time 20 --N 256 --L 50 --model softdisk\n"
                 << "  Studios moldyn --gl --steps 400 --time 20 --N 256 --L 50 --interval 20 --monitor-interval 5\n"
+                << "  Studios xy --steps 2000 --L 64 --temperature 0.7\n"
+                << "  Studios xy --gl --steps 4000 --L 128 --temperature 0.75 --monitor-interval 10\n"
                 << "  Studios spi --help\n";
     }
 
     auto PrintList() -> void {
-        std::cout << "metropolis\nspi\nrtor\nkg2d\nmoldyn\n";
+        std::cout << "metropolis\nspi\nrtor\nkg2d\nmoldyn\nxy\n";
     }
 
     auto NormalizeShortLongSingleLetterOption(const Str &arg) -> Str {
@@ -373,6 +379,46 @@ namespace {
         return StudiosSimV2::RunMolecularDynamicsV2(cfg);
     }
 
+    auto RunXYCommand(const int argc, const char **argv) -> int {
+        CLOptionsDescription options("Studios xy", "Run the native V2 XY Metropolis lattice slice.");
+        options.add_options()
+            ("h,help", "Show this help")
+            ("gl", "Run with passive OpenGL monitor (real app loop)")
+            ("steps", "Monte Carlo sweeps", cxxopts::value<UIntBig>()->default_value("2000"))
+            ("L", "Lattice side length", cxxopts::value<UInt>()->default_value("64"))
+            ("temperature", "Thermal bath temperature", cxxopts::value<DevFloat>()->default_value("0.7"))
+            ("h-field", "External field coefficient", cxxopts::value<DevFloat>()->default_value("0.0"))
+            ("delta-theta", "Proposal angle range", cxxopts::value<DevFloat>()->default_value("6.283185307179586"))
+            ("ferromagnetic", "Start from ferromagnetic initial condition")
+            ("interval", "Console/listener interval (steps)", cxxopts::value<UIntBig>()->default_value("100"))
+            ("monitor-interval",
+             "Live-view publish interval; defaults to --interval",
+             cxxopts::value<UIntBig>())
+            ("batch", "Max integration batch size", cxxopts::value<UIntBig>()->default_value("1024"));
+
+        const auto result = ParseSubcommandOptions(argc, argv, options);
+        if (result.count("help") > 0) {
+            std::cout << options.help() << '\n';
+            return 0;
+        }
+
+        FXYExecutionConfigV2 cfg;
+        cfg.Steps = result["steps"].as<UIntBig>();
+        cfg.L = result["L"].as<UInt>();
+        cfg.Temperature = result["temperature"].as<DevFloat>();
+        cfg.ExternalField = result["h-field"].as<DevFloat>();
+        cfg.DeltaTheta = result["delta-theta"].as<DevFloat>();
+        cfg.bFerromagneticInitial = result.count("ferromagnetic") > 0;
+        cfg.Interval = result["interval"].as<UIntBig>();
+        cfg.MonitorInterval = result.count("monitor-interval") > 0
+            ? result["monitor-interval"].as<UIntBig>()
+            : cfg.Interval;
+        cfg.Batch = result["batch"].as<UIntBig>();
+        cfg.bEnableGLMonitor = result.count("gl") > 0;
+
+        return StudiosSimV2::RunXYV2(cfg);
+    }
+
     auto IsMetropolisCommand(const Str &name) -> bool {
         return name == "metropolis" || name == "metropolis-v2" || name == "v2-metropolis";
     }
@@ -391,6 +437,10 @@ namespace {
 
     auto IsMolecularDynamicsCommand(const Str &name) -> bool {
         return name == "moldyn" || name == "md-v2" || name == "molecular-dynamics" || name == "v2-moldyn";
+    }
+
+    auto IsXYCommand(const Str &name) -> bool {
+        return name == "xy" || name == "xy-v2" || name == "v2-xy";
     }
 
     auto DispatchRoot(const int argc, const char **argv) -> int {
@@ -421,6 +471,7 @@ namespace {
             if (IsRtoRCommand(sub)) return RunRtoRCommand(argc - 2, argv + 2);
             if (IsKG2DCommand(sub)) return RunKG2DCommand(argc - 2, argv + 2);
             if (IsMolecularDynamicsCommand(sub)) return RunMolecularDynamicsCommand(argc - 2, argv + 2);
+            if (IsXYCommand(sub)) return RunXYCommand(argc - 2, argv + 2);
 
             throw Exception("Unknown subprogram '" + sub + "'. Use 'Studios list'.");
         }
@@ -430,6 +481,7 @@ namespace {
         if (IsRtoRCommand(first)) return RunRtoRCommand(argc - 1, argv + 1);
         if (IsKG2DCommand(first)) return RunKG2DCommand(argc - 1, argv + 1);
         if (IsMolecularDynamicsCommand(first)) return RunMolecularDynamicsCommand(argc - 1, argv + 1);
+        if (IsXYCommand(first)) return RunXYCommand(argc - 1, argv + 1);
 
         throw Exception("Unknown subprogram '" + first + "'. Use 'Studios list'.");
     }

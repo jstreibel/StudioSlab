@@ -13,6 +13,7 @@
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
 #include <algorithm>
+#include <numbers>
 #include <type_traits>
 #include <utility>
 
@@ -82,6 +83,15 @@ FSimulationManagerV2::FSimulationManagerV2(
     MolecularDynamicsCfg.MonitorInterval = 5;
     MolecularDynamicsCfg.Batch = 256;
 
+    XYCfg.L = 64;
+    XYCfg.Steps = 2000;
+    XYCfg.Temperature = 0.7;
+    XYCfg.ExternalField = 0.0;
+    XYCfg.DeltaTheta = 2.0 * std::numbers::pi_v<Slab::DevFloat>;
+    XYCfg.Interval = 100;
+    XYCfg.MonitorInterval = 20;
+    XYCfg.Batch = 1024;
+
     MetropolisCfg.Interval = 1000;
     MetropolisCfg.MonitorInterval = 100;
     MetropolisCfg.Batch = 2048;
@@ -128,6 +138,9 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
                 {"Molecular Dynamics (Headless)"},
                 {"Molecular Dynamics (GL Monitor)"},
                 {Slab::Graphics::MainMenuSeparator},
+                {"XY Metropolis (Headless)"},
+                {"XY Metropolis (GL Monitor)"},
+                {Slab::Graphics::MainMenuSeparator},
                 {"Metropolis RtoR (Headless)"},
                 {"Metropolis RtoR (GL Monitor)"},
                 {Slab::Graphics::MainMenuSeparator},
@@ -144,6 +157,8 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
                     if (itemString == "KGR2toR Baseline (GL Monitor)") { LaunchR2toR(true); return; }
                     if (itemString == "Molecular Dynamics (Headless)") { LaunchMolecularDynamics(false); return; }
                     if (itemString == "Molecular Dynamics (GL Monitor)") { LaunchMolecularDynamics(true); return; }
+                    if (itemString == "XY Metropolis (Headless)") { LaunchXY(false); return; }
+                    if (itemString == "XY Metropolis (GL Monitor)") { LaunchXY(true); return; }
                     if (itemString == "Metropolis RtoR (Headless)") { LaunchMetropolis(false); return; }
                     if (itemString == "Metropolis RtoR (GL Monitor)") { LaunchMetropolis(true); return; }
                     if (itemString == "Open Launcher") { bShowLauncherWindow = true; return; }
@@ -180,6 +195,7 @@ auto FSimulationManagerV2::DrawLauncherWindow() -> void {
         DrawRtoRSection();
         DrawR2toRSection();
         DrawMolecularDynamicsSection();
+        DrawXYSection();
         DrawMetropolisSection();
     }
     ImGui::End();
@@ -346,6 +362,31 @@ auto FSimulationManagerV2::DrawMetropolisSection() -> void {
     }
 }
 
+auto FSimulationManagerV2::DrawXYSection() -> void {
+    if (!ImGui::CollapsingHeader("XY Metropolis (V2)")) return;
+
+    DragUIntLike("XY Steps", XYCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
+    DragUIntLike("XY L", XYCfg.L, 2u, 8192u, 1.0f);
+    DragDevFloat("XY Temperature", XYCfg.Temperature, 0.005, 0.0, 1e6, "%.6g");
+    DragDevFloat("XY h-field", XYCfg.ExternalField, 0.005, -1e6, 1e6, "%.6g");
+    DragDevFloat("XY delta-theta", XYCfg.DeltaTheta, 0.005, 1e-8, 1e6, "%.6g");
+    ImGui::Checkbox("XY ferromagnetic initial", &XYCfg.bFerromagneticInitial);
+    DragUIntLike("XY Interval", XYCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
+    DragUIntLike("XY Monitor Interval", XYCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
+    DragUIntLike("XY Batch", XYCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
+    ImGui::Checkbox("Publish LiveData when headless##xy", &bXYPublishLiveViewHeadless);
+
+    ImGui::TextDisabled("Passive GL monitor shows theta field + MC diagnostics.");
+
+    if (ImGui::Button("Run XY Headless")) {
+        try { LaunchXY(false); } catch (const std::exception &e) { LastError = e.what(); }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Run XY + GL Monitor")) {
+        try { LaunchXY(true); } catch (const std::exception &e) { LastError = e.what(); }
+    }
+}
+
 auto FSimulationManagerV2::LaunchSPI(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
 
@@ -458,6 +499,29 @@ auto FSimulationManagerV2::LaunchMetropolis(const bool enableMonitor) -> void {
 
     auto recipe = BuildMetropolisRecipeV2(cfg);
     LaunchNumericTask(recipe, cfg.Batch, "Metropolis RtoR V2");
+}
+
+auto FSimulationManagerV2::LaunchXY(const bool enableMonitor) -> void {
+    using namespace Slab::Studios::Common::Simulations::V2;
+
+    auto cfg = XYCfg;
+    cfg.bEnableGLMonitor = enableMonitor;
+    FinalizeXYExecutionConfigV2(cfg);
+
+    const bool bNeedLiveView = enableMonitor || bXYPublishLiveViewHeadless;
+    Slab::TPointer<Slab::Math::LiveData::V2::FSessionLiveViewV2> liveView = nullptr;
+    if (bNeedLiveView && LiveDataHub != nullptr) {
+        liveView = LiveDataHub->GetOrCreateSessionLiveView(MakeTopicName("xy", XYRunCounter));
+    }
+
+    auto recipe = BuildXYRecipeV2(cfg, liveView);
+    if (enableMonitor) {
+        if (liveView == nullptr) throw Exception("XY GL monitor requires a live view.");
+        if (!AddWindow) throw Exception("LabV2 cannot attach monitor window.");
+        AddWindow(BuildXYPassiveMonitorWindowV2(cfg, liveView));
+    }
+
+    LaunchNumericTask(recipe, cfg.Batch, "XY Metropolis V2");
 }
 
 auto FSimulationManagerV2::MakeTopicName(const Slab::Str &prefix, Slab::UIntBig &counter) -> Slab::Str {

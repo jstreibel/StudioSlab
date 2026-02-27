@@ -88,6 +88,9 @@ set ( XY_SOURCES
 	XY/ManyHistories/QuenchViewController.cpp
 	XY/ManyHistories/HistoryViewController.cpp
 
+    XY/V2/XY-Metropolis-RecipeV2.h
+    XY/V2/XY-Metropolis-RecipeV2.cpp
+
 )
 
 set ( MOLDYN_SOURCES

@@ -12,6 +12,7 @@
 #include "Studios/Common/Simulations/V2/KGRtoRPlaneWavesSliceV2.h"
 #include "Studios/Common/Simulations/V2/MolecularDynamicsSliceV2.h"
 #include "Studios/Common/Simulations/V2/MetropolisSliceV2.h"
+#include "Studios/Common/Simulations/V2/XYSliceV2.h"
 
 #include <functional>
 
@@ -38,17 +39,20 @@ private:
     bool bRtoRPublishLiveViewHeadless = true;
     bool bR2toRPublishLiveViewHeadless = true;
     bool bMolecularDynamicsPublishLiveViewHeadless = true;
+    bool bXYPublishLiveViewHeadless = true;
 
     Slab::Studios::Common::Simulations::V2::FSPIExecutionConfig SPICfg;
     Slab::Studios::Common::Simulations::V2::FRtoRPlaneWavesExecutionConfig RtoRCfg;
     Slab::Studios::Common::Simulations::V2::FR2toRBaselineExecutionConfig R2toRCfg;
     Slab::Studios::Common::Simulations::V2::FMolecularDynamicsExecutionConfigV2 MolecularDynamicsCfg;
     Slab::Studios::Common::Simulations::V2::FMetropolisExecutionConfigV2 MetropolisCfg;
+    Slab::Studios::Common::Simulations::V2::FXYExecutionConfigV2 XYCfg;
 
     Slab::UIntBig SPIRunCounter = 0;
     Slab::UIntBig RtoRRunCounter = 0;
     Slab::UIntBig R2toRRunCounter = 0;
     Slab::UIntBig MolecularDynamicsRunCounter = 0;
+    Slab::UIntBig XYRunCounter = 0;
 
     Slab::Str LastError;
 
@@ -60,12 +64,14 @@ private:
     auto DrawR2toRSection() -> void;
     auto DrawMolecularDynamicsSection() -> void;
     auto DrawMetropolisSection() -> void;
+    auto DrawXYSection() -> void;
 
     auto LaunchSPI(bool enableMonitor) -> void;
     auto LaunchRtoR(bool enableMonitor) -> void;
     auto LaunchR2toR(bool enableMonitor) -> void;
     auto LaunchMolecularDynamics(bool enableMonitor) -> void;
     auto LaunchMetropolis(bool enableMonitor) -> void;
+    auto LaunchXY(bool enableMonitor) -> void;
 
     [[nodiscard]] auto MakeTopicName(const Slab::Str &prefix, Slab::UIntBig &counter) -> Slab::Str;
     auto LaunchNumericTask(const Slab::TPointer<Slab::Math::Numerics::V2::FSimulationRecipeV2> &recipe,

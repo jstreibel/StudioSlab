@@ -34,6 +34,7 @@
 #include "Models/MolecularDynamics/V2/MolecularDynamics-Baseline-RecipeV2.h"
 #include "Models/Stochastic-Path-Integral/SPI-State.h"
 #include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
+#include "Models/XY/V2/XY-Metropolis-RecipeV2.h"
 
 namespace {
 
@@ -1550,4 +1551,37 @@ TEST_CASE("PhaseI V2 - AppendedSubscriptionsRecipe integrates extra listeners in
     CHECK(EventSteps(extraListener->GetEvents()) == Vector<UIntBig>{0, 2, 4, 6, 6});
     CHECK(EventReasons(extraListener->GetEvents()).front() == EEventReasonV2::Initial);
     CHECK(EventReasons(extraListener->GetEvents()).back() == EEventReasonV2::Final);
+}
+
+TEST_CASE("PhaseJ V2 - XY Metropolis recipe runs and exposes lattice diagnostics", "[V2][PhaseJ][XY][Recipe]") {
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::XY::V2;
+
+    FXYMetropolisConfigV2 cfg;
+    cfg.L = 24;
+    cfg.Steps = 80;
+    cfg.Temperature = 0.7;
+    cfg.ExternalField = 0.05;
+    cfg.DeltaTheta = 1.2;
+    cfg.bFerromagneticInitial = false;
+
+    auto recipe = New<FXYMetropolisRecipeV2>(cfg, 10);
+    FNumericTaskV2 task(recipe, false, 64);
+    REQUIRE(RunTaskAndWait(task) == Core::TaskSuccess);
+
+    const auto *session = task.GetSession();
+    REQUIRE(session != nullptr);
+    auto state = std::dynamic_pointer_cast<const FXYLatticeStateV2>(session->GetCurrentState());
+    REQUIRE(state != nullptr);
+
+    const auto theta = state->GetThetaField();
+    REQUIRE(theta != nullptr);
+    CHECK(theta->getN() == cfg.L);
+    CHECK(theta->getM() == cfg.L);
+    CHECK(theta->getSpace().getHostData().size() == static_cast<size_t>(cfg.L) * static_cast<size_t>(cfg.L));
+
+    CHECK(state->GetAcceptanceRatio() >= 0.0);
+    CHECK(state->GetAcceptanceRatio() <= 1.0);
+    CHECK(state->GetMagnetization() >= 0.0);
+    CHECK(state->GetMagnetization() <= 1.0);
 }
