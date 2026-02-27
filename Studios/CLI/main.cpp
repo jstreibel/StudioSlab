@@ -48,6 +48,7 @@ namespace {
                 << "  Studios rtor --gl --steps 2000 --interval 50 --monitor-interval 2\n"
                 << "  Studios kg2d --steps 300 --L 12 --N 128 --rdt 0.1 --pulse-width 0.35\n"
                 << "  Studios kg2d --gl --steps 500 --interval 20 --monitor-interval 2\n"
+                << "  Studios kg2d --steps 500 --forcing-enabled --forcing-amplitude 0.2 --forcing-width 0.25\n"
                 << "  Studios spi --help\n";
     }
 
@@ -245,6 +246,11 @@ namespace {
             ("pulse-width", "Regularized delta width", cxxopts::value<DevFloat>()->default_value("0.35"))
             ("phi-amplitude", "Initial phi pulse amplitude", cxxopts::value<DevFloat>()->default_value("0.0"))
             ("dphi-dt-amplitude", "Initial dphi/dt pulse amplitude", cxxopts::value<DevFloat>()->default_value("1.0"))
+            ("forcing-enabled", "Enable external forcing source during integration")
+            ("forcing-amplitude", "External forcing amplitude", cxxopts::value<DevFloat>()->default_value("0.0"))
+            ("forcing-width", "External forcing width", cxxopts::value<DevFloat>()->default_value("0.35"))
+            ("forcing-x-center", "External forcing center x", cxxopts::value<DevFloat>()->default_value("0.0"))
+            ("forcing-y-center", "External forcing center y", cxxopts::value<DevFloat>()->default_value("0.0"))
             ("interval", "Console/listener interval (steps)", cxxopts::value<UIntBig>()->default_value("20"))
             ("monitor-interval",
              "Live-view publish interval (steps) for --gl; defaults to --interval",
@@ -267,6 +273,12 @@ namespace {
         cfg.PulseWidth = result["pulse-width"].as<DevFloat>();
         cfg.PhiAmplitude = result["phi-amplitude"].as<DevFloat>();
         cfg.DPhiDtAmplitude = result["dphi-dt-amplitude"].as<DevFloat>();
+        cfg.ForcingAmplitude = result["forcing-amplitude"].as<DevFloat>();
+        cfg.ForcingWidth = result["forcing-width"].as<DevFloat>();
+        cfg.ForcingXCenter = result["forcing-x-center"].as<DevFloat>();
+        cfg.ForcingYCenter = result["forcing-y-center"].as<DevFloat>();
+        cfg.bForcingEnabled = result.count("forcing-enabled") > 0 ||
+            !Slab::Common::AreEqual(cfg.ForcingAmplitude, 0.0);
         cfg.Interval = result["interval"].as<UIntBig>();
         cfg.MonitorInterval = result.count("monitor-interval") > 0
             ? result["monitor-interval"].as<UIntBig>()

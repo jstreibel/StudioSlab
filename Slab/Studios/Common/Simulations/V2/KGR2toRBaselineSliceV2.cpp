@@ -151,10 +151,9 @@ namespace {
         using namespace Slab::Math::Numerics::V2;
 
         externalSourceOut = nullptr;
-        if (!cfg.bEnableLiveControlForcing) return {};
-
-        if (cfg.ControlHub == nullptr) throw Exception("KGR2toR control binding requires a LiveControl hub.");
-        if (cfg.ControlTopicPrefix.empty()) throw Exception("KGR2toR control binding requires a non-empty topic prefix.");
+        const auto bHasStaticForcing = cfg.bForcingEnabled || !Slab::Common::AreEqual(cfg.ForcingAmplitude, 0.0);
+        const auto bNeedsForcingSource = cfg.bEnableLiveControlForcing || bHasStaticForcing;
+        if (!bNeedsForcingSource) return {};
 
         auto forcingSource = Slab::New<FThreadSafeGaussianForcingV2>(
             cfg.ForcingXCenter,
@@ -163,6 +162,11 @@ namespace {
             cfg.ForcingAmplitude,
             cfg.bForcingEnabled);
         externalSourceOut = forcingSource;
+
+        if (!cfg.bEnableLiveControlForcing) return {};
+
+        if (cfg.ControlHub == nullptr) throw Exception("KGR2toR control binding requires a LiveControl hub.");
+        if (cfg.ControlTopicPrefix.empty()) throw Exception("KGR2toR control binding requires a non-empty topic prefix.");
 
         auto bindingListener = Slab::New<FLiveControlForcingBindingListenerV2>(
             cfg.ControlHub,
@@ -188,7 +192,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
         if (cfg.N == 0) throw Exception("KGR2toR baseline requires N > 0.");
         if (cfg.Interval == 0) cfg.Interval = 1;
         if (cfg.MonitorInterval == 0) cfg.MonitorInterval = cfg.Interval;
-        if (cfg.bEnableLiveControlForcing) {
+        if (cfg.bEnableLiveControlForcing || cfg.bForcingEnabled || !Slab::Common::AreEqual(cfg.ForcingAmplitude, 0.0)) {
             if (cfg.ControlSampleInterval == 0) cfg.ControlSampleInterval = 1;
             if (cfg.ForcingWidth <= 0.0) throw Exception("KGR2toR control forcing width must be > 0.");
         }
