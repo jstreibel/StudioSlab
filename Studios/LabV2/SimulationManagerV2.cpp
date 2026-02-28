@@ -201,20 +201,26 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
 auto FSimulationManagerV2::DrawLauncherWindow() -> void {
     if (!bShowLauncherWindow) return;
 
-    if (bRequestLauncherInitialDock && LauncherInitialDockId != 0) {
+    const bool bDockingEnabled = (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) != 0;
+
+    if (bDockingEnabled && bRequestLauncherInitialDock && LauncherInitialDockId != 0) {
         ImGui::SetNextWindowDockID(static_cast<ImGuiID>(LauncherInitialDockId), ImGuiCond_Always);
     }
 
-    ImGui::SetNextWindowPos(
-        ImVec2(
-            static_cast<float>(FStudioConfigV2::SidePaneWidth + 24),
-            static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight + 24)),
-        ImGuiCond_Appearing);
-    ImGui::SetNextWindowSize(ImVec2(520, 560), ImGuiCond_Appearing);
+    if (!bDockingEnabled || !bRequestLauncherInitialDock || LauncherInitialDockId == 0) {
+        ImGui::SetNextWindowPos(
+            ImVec2(
+                static_cast<float>(FStudioConfigV2::SidePaneWidth + 24),
+                static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight + 24)),
+            ImGuiCond_Appearing);
+        ImGui::SetNextWindowSize(ImVec2(520, 560), ImGuiCond_Appearing);
+    }
 
     bool bOpen = true;
     if (ImGui::Begin("Simulation Launcher", &bOpen)) {
-        if (bRequestLauncherInitialDock) {
+        // Keep forcing the initial dock request until the launcher reports as docked.
+        // This avoids a one-frame race when the dockspace tree is not yet fully ready.
+        if (bRequestLauncherInitialDock && (!bDockingEnabled || ImGui::IsWindowDocked())) {
             bRequestLauncherInitialDock = false;
         }
 
