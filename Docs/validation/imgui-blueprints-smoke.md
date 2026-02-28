@@ -12,8 +12,8 @@
 
 ## Runtime Checks
 
-### 1) Blueprint Prototype App
-- Run: `./Build/bin/Blueprints-prototype`
+### 1) Lab Blueprint App
+- Run: `./Build/bin/StudioSlab`
 - Validate:
   - Node panels render without overlap corruption.
   - Nodes can be selected and moved.

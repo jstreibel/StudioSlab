@@ -16,7 +16,7 @@
   - `ImGui::BeginHorizontal`, `ImGui::EndHorizontal`
   - `ImGui::BeginVertical`, `ImGui::EndVertical`
   - `ImGui::Spring`
-- Current call sites: `222` (Lab + Prototype Blueprints trees).
+- Current call sites: `111` (`Layout::*` adapter calls in Lab Blueprints tree).
 - Internal API coupling:
   - `imgui_internal.h` usage in Blueprints and graphics modules.
   - Blueprint splitter helper depends on `SplitterBehavior(...)`.
@@ -31,6 +31,9 @@
   - pane splitter behavior unchanged.
 - Lab/LabV2 UI still renders and interacts correctly.
 - Manual smoke script: `Docs/validation/imgui-blueprints-smoke.md`.
+- Aggregated gate script:
+  - `Scripts/quality-gate.sh`
+  - `Scripts/quality-gate.sh --with-runtime` (extended)
 
 ## Current Status
 - Wave A: `Green`
@@ -47,6 +50,9 @@
 - Submodule migration complete:
   - `.gitmodules` points to `https://github.com/ocornut/imgui.git`
   - `Lib/3rdParty/imgui` pinned to upstream `v1.91.0` (`8199457a7`)
+- Blueprint ownership cleanup:
+  - removed `Studios/Prototype/Blueprints`
+  - Lab Blueprint tree is the single maintained path.
 - Runtime parity tooling added:
   - `Scripts/imgui-runtime-smoke.sh`
   - `Scripts/imgui-provider-runtime-matrix.sh`
