@@ -119,10 +119,6 @@ auto FSimulationManagerV2::SetLauncherVisible(const bool visible) -> void {
     bShowLauncherWindow = visible;
 }
 
-auto FSimulationManagerV2::SetLauncherPreferredDockId(const unsigned int dockId) -> void {
-    PreferredLauncherDockId = dockId;
-}
-
 auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platformWindow) -> void {
     if (ImGuiContext == nullptr) return;
 
@@ -200,16 +196,12 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
 auto FSimulationManagerV2::DrawLauncherWindow() -> void {
     if (!bShowLauncherWindow) return;
 
-    if (PreferredLauncherDockId != 0) {
-        ImGui::SetNextWindowDockID(static_cast<ImGuiID>(PreferredLauncherDockId), ImGuiCond_Always);
-    } else {
-        ImGui::SetNextWindowPos(
-            ImVec2(
-                static_cast<float>(FStudioConfigV2::SidePaneWidth + 24),
-                static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight + 24)),
-            ImGuiCond_Appearing);
-        ImGui::SetNextWindowSize(ImVec2(520, 560), ImGuiCond_Appearing);
-    }
+    ImGui::SetNextWindowPos(
+        ImVec2(
+            static_cast<float>(FStudioConfigV2::SidePaneWidth + 24),
+            static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight + 24)),
+        ImGuiCond_Appearing);
+    ImGui::SetNextWindowSize(ImVec2(520, 560), ImGuiCond_Appearing);
 
     bool bOpen = true;
     if (ImGui::Begin("Simulation Launcher", &bOpen)) {

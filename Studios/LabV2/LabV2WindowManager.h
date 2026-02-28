@@ -85,6 +85,7 @@ private:
     bool bPendingViewRetile = true;
     unsigned int DockspaceId = 0;
     EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Simulations;
+    bool bWorkspaceLayoutsBootstrapped = false;
     std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
         FWorkspacePanelVisibility{false, true, false, false, false, false, false},

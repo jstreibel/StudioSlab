@@ -1095,9 +1095,6 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
     if (workspace == EWorkspaceTab::Simulations) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.24f, nullptr, &dockMain);
         const auto dockLeftBottom = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.42f, nullptr, nullptr);
-        if (SimulationManager != nullptr) {
-            SimulationManager->SetLauncherPreferredDockId(static_cast<unsigned int>(dockLeft));
-        }
 
         ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleTasks, dockLeftBottom);
@@ -1152,13 +1149,31 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
     if (ImGui::Begin(DockspaceHostName, nullptr, hostFlags)) {
+        const auto dockspaceIdSimulations =
+            static_cast<unsigned int>(ImGui::GetID(DockspaceNameSimulations));
+        const auto dockspaceIdMonitor =
+            static_cast<unsigned int>(ImGui::GetID(DockspaceNameMonitor));
+        const auto dockspaceIdSchemes =
+            static_cast<unsigned int>(ImGui::GetID(DockspaceNameSchemes));
+
+        if (!bWorkspaceLayoutsBootstrapped) {
+            BuildDefaultDockLayout(dockspaceIdSimulations, EWorkspaceTab::Simulations);
+            BuildDefaultDockLayout(dockspaceIdMonitor, EWorkspaceTab::Monitor);
+            BuildDefaultDockLayout(dockspaceIdSchemes, EWorkspaceTab::Schemes);
+            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Simulations)] = true;
+            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Monitor)] = true;
+            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Schemes)] = true;
+            bWorkspaceLayoutsBootstrapped = true;
+            bPendingViewRetile = true;
+        }
+
         const char *dockspaceName = DockspaceNameSimulations;
         if (ActiveWorkspace == EWorkspaceTab::Monitor) dockspaceName = DockspaceNameMonitor;
         else if (ActiveWorkspace == EWorkspaceTab::Schemes) dockspaceName = DockspaceNameSchemes;
 
         DockspaceId = static_cast<unsigned int>(ImGui::GetID(dockspaceName));
         const auto workspaceIndex = static_cast<std::size_t>(ActiveWorkspace);
-        if (!WorkspaceLayoutInitialized[workspaceIndex] || bResetDockLayoutRequested) {
+        if (bResetDockLayoutRequested) {
             BuildDefaultDockLayout(DockspaceId, ActiveWorkspace);
             WorkspaceLayoutInitialized[workspaceIndex] = true;
             bResetDockLayoutRequested = false;
