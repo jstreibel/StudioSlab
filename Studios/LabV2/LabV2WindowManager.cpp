@@ -1399,19 +1399,45 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
         ImGui::SeparatorText("Lab V2");
         ImGui::TextDisabled("V2 observability + launcher shell");
 
-        ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);
-        ShowLiveDataV2Panel(LiveDataHub, LiveDataTopicFilter, bLiveDataOnlyBound, SelectedLiveDataTopic);
-        ShowLiveControlV2Panel(LiveControlHub, LiveControlTopicFilter, bLiveControlLevelsOnly, SelectedLiveControlTopic);
-        DrawViewManagerPanel();
-        ShowKG2DControlSourcePanelAndPublish(
-            LiveControlHub,
-            bPublishKG2DControlSource,
-            KG2DControlX,
-            KG2DControlY,
-            KG2DControlWidth,
-            KG2DControlAmplitude,
-            bKG2DControlEnabled,
-            KG2DControlTopicPrefix);
+        ImGui::SeparatorText("Panels");
+        ImGui::Checkbox("Simulation Launcher", &bShowWindowSimulationLauncher);
+        ImGui::Checkbox("Tasks", &bShowWindowTasks);
+        ImGui::Checkbox("Live Data", &bShowWindowLiveData);
+        ImGui::Checkbox("Live Control", &bShowWindowLiveControl);
+        ImGui::Checkbox("Views", &bShowWindowViews);
+        ImGui::Checkbox("KG2D Control", &bShowWindowKG2DControl);
+
+        if (bShowWindowTasks) {
+            ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);
+        }
+
+        if (bShowWindowLiveData) {
+            ShowLiveDataV2Panel(LiveDataHub, LiveDataTopicFilter, bLiveDataOnlyBound, SelectedLiveDataTopic);
+        }
+
+        if (bShowWindowLiveControl) {
+            ShowLiveControlV2Panel(
+                LiveControlHub,
+                LiveControlTopicFilter,
+                bLiveControlLevelsOnly,
+                SelectedLiveControlTopic);
+        }
+
+        if (bShowWindowViews) {
+            DrawViewManagerPanel();
+        }
+
+        if (bShowWindowKG2DControl) {
+            ShowKG2DControlSourcePanelAndPublish(
+                LiveControlHub,
+                bPublishKG2DControlSource,
+                KG2DControlX,
+                KG2DControlY,
+                KG2DControlWidth,
+                KG2DControlAmplitude,
+                bKG2DControlEnabled,
+                KG2DControlTopicPrefix);
+        }
 
         if (const auto windowWidth = static_cast<int>(ImGui::GetWindowWidth()); SidePaneWidth != windowWidth) {
             SidePaneWidth = windowWidth;
@@ -1419,6 +1445,8 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
         }
     }
     ImGui::End();
+
+    SaveWorkspacePanelVisibility(ActiveWorkspace);
 }
 
 bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &platformWindow) {
