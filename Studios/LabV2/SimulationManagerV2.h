@@ -30,6 +30,7 @@ public:
     bool NotifyRender(const Slab::Graphics::FPlatformWindow &platformWindow) override;
     auto EnsureLauncherVisible() -> void;
     auto SetLauncherVisible(bool visible) -> void;
+    auto RequestLauncherInitialDock(unsigned int dockId) -> void;
 
 private:
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
@@ -38,6 +39,8 @@ private:
     FAddWindowFn AddWindow;
 
     bool bShowLauncherWindow = true;
+    bool bRequestLauncherInitialDock = false;
+    unsigned int LauncherInitialDockId = 0;
     bool bSPIPublishLiveViewHeadless = true;
     bool bRtoRPublishLiveViewHeadless = true;
     bool bR2toRPublishLiveViewHeadless = true;

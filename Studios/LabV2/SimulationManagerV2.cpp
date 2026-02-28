@@ -119,6 +119,11 @@ auto FSimulationManagerV2::SetLauncherVisible(const bool visible) -> void {
     bShowLauncherWindow = visible;
 }
 
+auto FSimulationManagerV2::RequestLauncherInitialDock(const unsigned int dockId) -> void {
+    LauncherInitialDockId = dockId;
+    bRequestLauncherInitialDock = dockId != 0;
+}
+
 auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platformWindow) -> void {
     if (ImGuiContext == nullptr) return;
 
@@ -196,6 +201,10 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
 auto FSimulationManagerV2::DrawLauncherWindow() -> void {
     if (!bShowLauncherWindow) return;
 
+    if (bRequestLauncherInitialDock && LauncherInitialDockId != 0) {
+        ImGui::SetNextWindowDockID(static_cast<ImGuiID>(LauncherInitialDockId), ImGuiCond_Always);
+    }
+
     ImGui::SetNextWindowPos(
         ImVec2(
             static_cast<float>(FStudioConfigV2::SidePaneWidth + 24),
@@ -205,6 +214,10 @@ auto FSimulationManagerV2::DrawLauncherWindow() -> void {
 
     bool bOpen = true;
     if (ImGui::Begin("Simulation Launcher", &bOpen)) {
+        if (bRequestLauncherInitialDock) {
+            bRequestLauncherInitialDock = false;
+        }
+
         ImGui::TextDisabled("V2 examples launcher (Phase 2/3)");
         if (!LastError.empty()) {
             ImGui::SeparatorText("Last Error");
