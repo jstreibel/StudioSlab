@@ -1,7 +1,6 @@
 #ifndef STUDIOSLAB_LAB_V2_SIMULATION_MANAGER_V2_H
 #define STUDIOSLAB_LAB_V2_SIMULATION_MANAGER_V2_H
 
-#include "Graphics/Backend/Events/SystemWindowEventListener.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 #include "Graphics/Window/SlabWindow.h"
 #include "Math/Data/V2/LiveDataHubV2.h"
@@ -17,30 +16,28 @@
 
 #include <functional>
 
-class FSimulationManagerV2 final : public Slab::Graphics::FPlatformWindowEventListener {
+class FSimulationManagerV2 final {
 public:
     using FAddWindowFn = std::function<void(const Slab::TPointer<Slab::Graphics::FSlabWindow> &)>;
+    using FRequestLauncherVisibilityFn = std::function<void(void)>;
 
     FSimulationManagerV2(
         Slab::TPointer<Slab::Graphics::FImGuiContext> imGuiContext,
         Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> liveDataHub,
         Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> liveControlHub,
-        FAddWindowFn addWindowFn);
+        FAddWindowFn addWindowFn,
+        FRequestLauncherVisibilityFn requestLauncherVisibilityFn);
 
-    bool NotifyRender(const Slab::Graphics::FPlatformWindow &platformWindow) override;
-    auto EnsureLauncherVisible() -> void;
-    auto SetLauncherVisible(bool visible) -> void;
-    auto RequestLauncherInitialDock(unsigned int dockId) -> void;
+    auto AddMenus(const Slab::Graphics::FPlatformWindow &platformWindow) -> void;
+    auto DrawLauncherContents() -> void;
 
 private:
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
     Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> LiveDataHub;
     Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> LiveControlHub;
     FAddWindowFn AddWindow;
+    FRequestLauncherVisibilityFn RequestLauncherVisibility;
 
-    bool bShowLauncherWindow = true;
-    bool bRequestLauncherInitialDock = false;
-    unsigned int LauncherInitialDockId = 0;
     bool bSPIPublishLiveViewHeadless = true;
     bool bRtoRPublishLiveViewHeadless = true;
     bool bR2toRPublishLiveViewHeadless = true;
@@ -64,9 +61,6 @@ private:
     Slab::UIntBig IsingRunCounter = 0;
 
     Slab::Str LastError;
-
-    auto AddMenus(const Slab::Graphics::FPlatformWindow &platformWindow) -> void;
-    auto DrawLauncherWindow() -> void;
 
     auto DrawSPISection() -> void;
     auto DrawRtoRSection() -> void;

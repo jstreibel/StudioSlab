@@ -33,6 +33,7 @@ private:
 
     struct FWorkspacePanelVisibility {
         bool bShowWindowLab = false;
+        bool bShowWindowSimulationLauncher = true;
         bool bShowWindowTasks = true;
         bool bShowWindowLiveData = true;
         bool bShowWindowLiveControl = true;
@@ -83,17 +84,20 @@ private:
     bool bUseDockspaceLayout = true;
     bool bResetDockLayoutRequested = false;
     bool bPendingViewRetile = true;
+    bool bRequestLauncherInitialDock = false;
+    unsigned int LauncherInitialDockId = 0;
     unsigned int DockspaceId = 0;
     EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Simulations;
     bool bWorkspaceLayoutsBootstrapped = false;
     std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{false, true, false, false, false, false, false},
-        FWorkspacePanelVisibility{false, false, true, true, true, true, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, true}
+        FWorkspacePanelVisibility{false, true, true, false, false, false, false, false},
+        FWorkspacePanelVisibility{false, false, false, true, true, true, true, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true}
     };
     float WorkspaceTabsHeight = 0.0f;
     bool bShowWindowLab = true;
+    bool bShowWindowSimulationLauncher = true;
     bool bShowWindowTasks = true;
     bool bShowWindowLiveData = true;
     bool bShowWindowLiveControl = true;
@@ -110,6 +114,7 @@ private:
     auto DrawDockedToolWindows() -> void;
     auto DrawLegacySidePane() -> void;
     auto BuildDefaultDockLayout(unsigned int dockspaceId, EWorkspaceTab workspace) -> void;
+    auto RequestSimulationLauncherVisible() -> void;
     auto SaveWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
     auto LoadWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
     auto SetActiveWorkspace(EWorkspaceTab workspace) -> void;

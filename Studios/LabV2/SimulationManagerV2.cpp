@@ -1,13 +1,10 @@
 #include "SimulationManagerV2.h"
-#include "StudioConfigV2.h"
 
 #include "imgui.h"
 
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Core/SlabCore.h"
 #include "Core/Tools/Log.h"
-
-#include "Graphics/Window/WindowStyles.h"
 
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
@@ -48,11 +45,13 @@ FSimulationManagerV2::FSimulationManagerV2(
     Slab::TPointer<Slab::Graphics::FImGuiContext> imGuiContext,
     Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> liveDataHub,
     Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> liveControlHub,
-    FAddWindowFn addWindowFn)
+    FAddWindowFn addWindowFn,
+    FRequestLauncherVisibilityFn requestLauncherVisibilityFn)
 : ImGuiContext(std::move(imGuiContext))
 , LiveDataHub(std::move(liveDataHub))
 , LiveControlHub(std::move(liveControlHub))
-, AddWindow(std::move(addWindowFn)) {
+, AddWindow(std::move(addWindowFn))
+, RequestLauncherVisibility(std::move(requestLauncherVisibilityFn)) {
     SPICfg.Interval = 10;
     SPICfg.MonitorInterval = 2;
     SPICfg.Batch = 512;
@@ -105,25 +104,6 @@ FSimulationManagerV2::FSimulationManagerV2(
     MetropolisCfg.Batch = 2048;
 }
 
-auto FSimulationManagerV2::NotifyRender(const Slab::Graphics::FPlatformWindow &platformWindow) -> bool {
-    AddMenus(platformWindow);
-    DrawLauncherWindow();
-    return FPlatformWindowEventListener::NotifyRender(platformWindow);
-}
-
-auto FSimulationManagerV2::EnsureLauncherVisible() -> void {
-    bShowLauncherWindow = true;
-}
-
-auto FSimulationManagerV2::SetLauncherVisible(const bool visible) -> void {
-    bShowLauncherWindow = visible;
-}
-
-auto FSimulationManagerV2::RequestLauncherInitialDock(const unsigned int dockId) -> void {
-    LauncherInitialDockId = dockId;
-    bRequestLauncherInitialDock = dockId != 0;
-}
-
 auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platformWindow) -> void {
     if (ImGuiContext == nullptr) return;
 
@@ -136,7 +116,7 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
             },
             [this](const Slab::Str &itemString) {
                 if (itemString == "Launcher") {
-                    bShowLauncherWindow = true;
+                    if (RequestLauncherVisibility != nullptr) RequestLauncherVisibility();
                     return;
                 }
             }
@@ -187,7 +167,10 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
                     if (itemString == "Ising Metropolis (GL Monitor)") { LaunchIsing(true); return; }
                     if (itemString == "Metropolis RtoR (Headless)") { LaunchMetropolis(false); return; }
                     if (itemString == "Metropolis RtoR (GL Monitor)") { LaunchMetropolis(true); return; }
-                    if (itemString == "Open Launcher") { bShowLauncherWindow = true; return; }
+                    if (itemString == "Open Launcher") {
+                        if (RequestLauncherVisibility != nullptr) RequestLauncherVisibility();
+                        return;
+                    }
                 } catch (const std::exception &e) {
                     LastError = e.what();
                     Slab::Core::Log::Error() << "LabV2 launch failed: " << e.what() << Slab::Core::Log::Flush;
@@ -198,50 +181,21 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
     }
 }
 
-auto FSimulationManagerV2::DrawLauncherWindow() -> void {
-    if (!bShowLauncherWindow) return;
-
-    const bool bDockingEnabled = (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) != 0;
-
-    if (bDockingEnabled && bRequestLauncherInitialDock && LauncherInitialDockId != 0) {
-        ImGui::SetNextWindowDockID(static_cast<ImGuiID>(LauncherInitialDockId), ImGuiCond_Always);
+auto FSimulationManagerV2::DrawLauncherContents() -> void {
+    ImGui::TextDisabled("V2 examples launcher (Phase 2/3)");
+    if (!LastError.empty()) {
+        ImGui::SeparatorText("Last Error");
+        ImGui::TextWrapped("%s", LastError.c_str());
+        if (ImGui::Button("Clear Error")) LastError.clear();
     }
 
-    if (!bDockingEnabled || !bRequestLauncherInitialDock || LauncherInitialDockId == 0) {
-        ImGui::SetNextWindowPos(
-            ImVec2(
-                static_cast<float>(FStudioConfigV2::SidePaneWidth + 24),
-                static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight + 24)),
-            ImGuiCond_Appearing);
-        ImGui::SetNextWindowSize(ImVec2(520, 560), ImGuiCond_Appearing);
-    }
-
-    bool bOpen = true;
-    if (ImGui::Begin("Simulation Launcher", &bOpen)) {
-        // Keep forcing the initial dock request until the launcher reports as docked.
-        // This avoids a one-frame race when the dockspace tree is not yet fully ready.
-        if (bRequestLauncherInitialDock && (!bDockingEnabled || ImGui::IsWindowDocked())) {
-            bRequestLauncherInitialDock = false;
-        }
-
-        ImGui::TextDisabled("V2 examples launcher (Phase 2/3)");
-        if (!LastError.empty()) {
-            ImGui::SeparatorText("Last Error");
-            ImGui::TextWrapped("%s", LastError.c_str());
-            if (ImGui::Button("Clear Error")) LastError.clear();
-        }
-
-        DrawSPISection();
-        DrawRtoRSection();
-        DrawR2toRSection();
-        DrawMolecularDynamicsSection();
-        DrawXYSection();
-        DrawIsingSection();
-        DrawMetropolisSection();
-    }
-    ImGui::End();
-
-    bShowLauncherWindow = bOpen;
+    DrawSPISection();
+    DrawRtoRSection();
+    DrawR2toRSection();
+    DrawMolecularDynamicsSection();
+    DrawXYSection();
+    DrawIsingSection();
+    DrawMetropolisSection();
 }
 
 auto FSimulationManagerV2::DrawSPISection() -> void {

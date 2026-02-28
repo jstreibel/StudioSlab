@@ -682,10 +682,10 @@ FLabV2WindowManager::FLabV2WindowManager()
         ImGuiContext,
         LiveDataHub,
         LiveControlHub,
-        [this](const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) { QueueSlabWindow(window); });
+        [this](const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) { QueueSlabWindow(window); },
+        [this]() { RequestSimulationLauncherVisible(); });
 
     AddResponder(ImGuiContext);
-    AddResponder(SimulationManager);
     LoadWorkspacePanelVisibility(ActiveWorkspace);
 
     {
@@ -975,6 +975,7 @@ auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab works
     const auto index = static_cast<std::size_t>(workspace);
     WorkspacePanels[index] = FWorkspacePanelVisibility{
         bShowWindowLab,
+        bShowWindowSimulationLauncher,
         bShowWindowTasks,
         bShowWindowLiveData,
         bShowWindowLiveControl,
@@ -988,6 +989,7 @@ auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab works
     const auto index = static_cast<std::size_t>(workspace);
     const auto &cfg = WorkspacePanels[index];
     bShowWindowLab = cfg.bShowWindowLab;
+    bShowWindowSimulationLauncher = cfg.bShowWindowSimulationLauncher;
     bShowWindowTasks = cfg.bShowWindowTasks;
     bShowWindowLiveData = cfg.bShowWindowLiveData;
     bShowWindowLiveControl = cfg.bShowWindowLiveControl;
@@ -996,19 +998,22 @@ auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab works
     bShowWindowBlueprints = cfg.bShowWindowBlueprints;
 }
 
+auto FLabV2WindowManager::RequestSimulationLauncherVisible() -> void {
+    if (ActiveWorkspace != EWorkspaceTab::Simulations) {
+        SetActiveWorkspace(EWorkspaceTab::Simulations);
+    }
+    bShowWindowSimulationLauncher = true;
+    if (LauncherInitialDockId != 0) {
+        bRequestLauncherInitialDock = true;
+    }
+}
+
 auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> void {
     if (ActiveWorkspace == workspace) return;
     const auto previousWorkspace = ActiveWorkspace;
     SaveWorkspacePanelVisibility(ActiveWorkspace);
     ActiveWorkspace = workspace;
     LoadWorkspacePanelVisibility(ActiveWorkspace);
-    if (SimulationManager != nullptr) {
-        if (ActiveWorkspace == EWorkspaceTab::Simulations) {
-            SimulationManager->EnsureLauncherVisible();
-        } else {
-            SimulationManager->SetLauncherVisible(false);
-        }
-    }
     if (previousWorkspace == EWorkspaceTab::Monitor || ActiveWorkspace == EWorkspaceTab::Monitor) {
         bPendingViewRetile = true;
     }
@@ -1096,9 +1101,8 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.24f, nullptr, &dockMain);
         const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.24f, nullptr, &dockMain);
 
-        if (SimulationManager != nullptr) {
-            SimulationManager->RequestLauncherInitialDock(static_cast<unsigned int>(dockLeft));
-        }
+        LauncherInitialDockId = static_cast<unsigned int>(dockLeft);
+        bRequestLauncherInitialDock = LauncherInitialDockId != 0;
 
         ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleTasks, dockRight);
@@ -1235,12 +1239,36 @@ auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
             }
 
             ImGui::SeparatorText("Panels");
+            if (ActiveWorkspace == EWorkspaceTab::Simulations) {
+                ImGui::Checkbox("Simulation Launcher", &bShowWindowSimulationLauncher);
+            }
             ImGui::Checkbox("Tasks", &bShowWindowTasks);
             ImGui::Checkbox("Live Data", &bShowWindowLiveData);
             ImGui::Checkbox("Live Control", &bShowWindowLiveControl);
             ImGui::Checkbox("Views", &bShowWindowViews);
             ImGui::Checkbox("KG2D Control", &bShowWindowKG2DControl);
             ImGui::Checkbox("Blueprints", &bShowWindowBlueprints);
+        }
+        ImGui::End();
+    }
+
+    if (ActiveWorkspace == EWorkspaceTab::Simulations && bShowWindowSimulationLauncher) {
+#ifdef IMGUI_HAS_DOCK
+        if (bRequestLauncherInitialDock && LauncherInitialDockId != 0) {
+            ImGui::SetNextWindowDockID(static_cast<ImGuiID>(LauncherInitialDockId), ImGuiCond_Always);
+        }
+#endif
+        if (ImGui::Begin(WindowTitleSimulationLauncher, &bShowWindowSimulationLauncher)) {
+            if (SimulationManager != nullptr) {
+                SimulationManager->DrawLauncherContents();
+            }
+#ifdef IMGUI_HAS_DOCK
+            if (bRequestLauncherInitialDock && ImGui::IsWindowDocked()) {
+                bRequestLauncherInitialDock = false;
+            }
+#else
+            bRequestLauncherInitialDock = false;
+#endif
         }
         ImGui::End();
     }
@@ -1347,6 +1375,9 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
 
     ImGuiContext->NewFrame();
     ImGuiContext->SetupOptionalMenuItems();
+    if (SimulationManager != nullptr) {
+        SimulationManager->AddMenus(platformWindow);
+    }
 
     if (IsDockingEnabled()) {
         DrawWorkspaceTabs();
@@ -1355,6 +1386,20 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
     } else {
         WorkspaceTabsHeight = 0.0f;
         DrawLegacySidePane();
+        if (bShowWindowSimulationLauncher) {
+            ImGui::SetNextWindowPos(
+                ImVec2(
+                    static_cast<float>(FStudioConfigV2::SidePaneWidth + 24),
+                    static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight + 24)),
+                ImGuiCond_Appearing);
+            ImGui::SetNextWindowSize(ImVec2(520, 560), ImGuiCond_Appearing);
+            if (ImGui::Begin(WindowTitleSimulationLauncher, &bShowWindowSimulationLauncher)) {
+                if (SimulationManager != nullptr) {
+                    SimulationManager->DrawLauncherContents();
+                }
+            }
+            ImGui::End();
+        }
     }
 
     AddExitMenuEntry(platformWindow, *ImGuiContext);
