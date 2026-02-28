@@ -909,6 +909,16 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> void {
 
     const int nWindows = static_cast<int>(SlabWindows.size());
 
+    if (bDockingMode && ActiveWorkspace != EWorkspaceTab::Monitor) {
+        for (const auto &window : SlabWindows) {
+            if (window == nullptr) continue;
+            window->Set_x(-10000);
+            window->Set_y(-10000);
+            window->NotifyReshape(1, 1);
+        }
+        return;
+    }
+
     if (bDockingMode && ActiveWorkspace == EWorkspaceTab::Monitor && nWindows == 1) {
         if (const auto &window = SlabWindows.front(); window != nullptr) {
             window->Set_x(xWorkspace);
@@ -988,10 +998,13 @@ auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab works
 
 auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> void {
     if (ActiveWorkspace == workspace) return;
+    const auto previousWorkspace = ActiveWorkspace;
     SaveWorkspacePanelVisibility(ActiveWorkspace);
     ActiveWorkspace = workspace;
     LoadWorkspacePanelVisibility(ActiveWorkspace);
-    bPendingViewRetile = true;
+    if (previousWorkspace == EWorkspaceTab::Monitor || ActiveWorkspace == EWorkspaceTab::Monitor) {
+        bPendingViewRetile = true;
+    }
 }
 
 auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
@@ -1030,9 +1043,7 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
             ImGuiTabBarFlags_FittingPolicyResizeDown | ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
 
             const auto drawTab = [&selected](const EWorkspaceTab workspace, const char *label) {
-                const auto tabFlags =
-                    selected == workspace ? ImGuiTabItemFlags_SetSelected : ImGuiTabItemFlags_None;
-                if (ImGui::BeginTabItem(label, nullptr, tabFlags)) {
+                if (ImGui::BeginTabItem(label)) {
                     selected = workspace;
                     ImGui::EndTabItem();
                 }
@@ -1076,16 +1087,10 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
     ImGuiID dockMain = dockId;
     if (workspace == EWorkspaceTab::Simulations) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.24f, nullptr, &dockMain);
-        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.30f, nullptr, &dockMain);
         const auto dockLeftBottom = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.42f, nullptr, nullptr);
 
         ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleTasks, dockLeftBottom);
-        ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockRight);
-        ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockRight);
-        ImGui::DockBuilderDockWindow(WindowTitleKG2DControl, dockRight);
-        ImGui::DockBuilderDockWindow(WindowTitleLab, dockRight);
-        ImGui::DockBuilderDockWindow(WindowTitleViews, dockMain);
     } else if (workspace == EWorkspaceTab::Monitor) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.22f, nullptr, &dockMain);
         const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.26f, nullptr, &dockMain);

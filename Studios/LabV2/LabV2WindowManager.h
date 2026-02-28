@@ -87,7 +87,7 @@ private:
     EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Simulations;
     std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{false, true, true, true, true, true, false},
+        FWorkspacePanelVisibility{false, true, false, false, false, false, false},
         FWorkspacePanelVisibility{false, false, true, true, true, true, false},
         FWorkspacePanelVisibility{false, false, false, false, false, false, true}
     };
