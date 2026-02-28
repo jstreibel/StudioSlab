@@ -5,14 +5,11 @@
 #include "ImGuiContext.h"
 
 #include <utility>
-#include <filesystem>
-
-#include "Utils/Exception.h"
 
 #include "Core/Tools/Log.h"
-#include "Core/Tools/Resources.h"
 
 #include "ImGuiModule.h"
+#include "ImGuiColorAndStyles.h"
 #include "StudioSlab.h"
 
 #include "Graphics/SlabGraphics.h"
@@ -21,68 +18,9 @@
 #include "Slab-ImGui-Interop.h"
 
 namespace Slab::Graphics {
-    // Touch
-    fix FONT_INDEX_FOR_IMGUI = 10; //6;
     #define FONT_SIZE_PIXELS Slab::Graphics::WindowStyle::font_size
 
     constexpr auto SHOW_DEAR_IMGUI_DEBUG_METRICS = false;
-
-    void BuildFonts()
-    {
-        static const ImWchar WideCharacterRanges[] =
-                {
-                        0x0020, 0x007F, // Basic Latin
-                        0x00B0, 0x00BF, // Superscript / subscript
-                        0x0391, 0x03C9, // Greek
-                        0x03D0, 0x03F6,
-                        0x2000, 0x2311, // Math stuff
-                        /*0x2070, 0x209F, // Superscript / subscript
-                        0x21A6, 0x21A6 + 1,
-                        ImWchar("ℑ"[0]), ImWchar("ℜ"[0]),
-                        ImWchar("ℱ"[0]), ImWchar("𝒵"[0]),
-                        ImWchar("𝔸"[0]), ImWchar("ℤ"[0]),
-                        0x2200, 0x22FF, // Mathematical operators
-                        0x2A00, 0x2AFF, // Supplemental mathematical operators */
-                        0x1D400, 0x1D7FF, // Mathematical alphanumeric symbols
-                        0,
-                };
-        ImFontGlyphRangesBuilder GlyphRangesBuilder;
-        GlyphRangesBuilder.AddRanges(WideCharacterRanges);
-        for (ImWchar c: {ImWchar(0x1D62) /* subscript 'i'*/,
-                         ImWchar(0x21A6),
-                /*ImWchar("⟨"[0]),
-                ImWchar("⟩"[0])*/}
-                ) GlyphRangesBuilder.AddChar(c);
-        static ImVector<ImWchar> vRanges;
-        GlyphRangesBuilder.BuildRanges(&vRanges);
-
-        auto &Log = Core::FLog::Debug() << "ImGui loading glyph ranges: ";
-        int i = 0;
-        for (auto &v: vRanges) {
-            if (v == 0) break;
-            Log << std::hex << v << (++i % 2 ? "-" : " ");
-        }
-        Log << std::dec << Core::FLog::Flush;
-
-        ImGuiIO &io = ImGui::GetIO();
-        auto FontName = Core::Resources::GetIndexedFontFileName(FONT_INDEX_FOR_IMGUI);
-
-        if (!std::filesystem::exists(FontName)) throw Exception(Str("Font ") + FontName + " does not exist.");
-
-        ImFontConfig FontConfig;
-        FontConfig.OversampleH = 4;
-        FontConfig.OversampleV = 4;
-        FontConfig.PixelSnapH = false;
-        auto font = io.Fonts->AddFontFromFileTTF(FontName.c_str(), WindowStyle::font_size, &FontConfig, &vRanges[0]);
-
-        io.FontDefault = font;
-
-        io.Fonts->Build();
-
-        Core::FLog::Info() << "ImGui using font '" << Core::Resources::ExportedFonts[FONT_INDEX_FOR_IMGUI] << "'." << Core::FLog::Flush;
-
-        // ImGui::PushFont(font);
-    }
 
     FImGuiContext::FImGuiContext(FImplementationCallSet calls)
     : ImplementationCalls(std::move(calls)) {
@@ -98,8 +36,7 @@ namespace Slab::Graphics {
         ImGui::GetIO().FontGlobalScale = 1;
 
         ImplementationCalls.Init(ImplementationCalls);
-
-        BuildFonts();
+        BuildImGuiThemeFontAtlas(WindowStyle::font_size);
 
         Core::FLog::Info() << "Created ImGui context." << Core::FLog::Flush;
     }

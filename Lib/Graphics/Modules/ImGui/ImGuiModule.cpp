@@ -30,15 +30,36 @@ namespace Slab::Graphics {
     // ** THEMES everybody **
     // https://github.com/ocornut/imgui/issues/707
 
-    Str CurrentTheme = "Dark";
-    std::map<Str, void(*)()> ColorThemes = {
-            {"Native Light", SetColorThemeNativeLight},
-            {"Native Dark",  SetColorThemeNativeDark},
-            {"Dark Red",     SetColorThemeDarkRed},
-            {"Dark",         SetStyleDark},
-            {"Light",        SetStyleLight},
-            {"StudioSlab",   SetStyleStudioSlab}
+    struct FImGuiThemeDescriptor
+    {
+        void (*ApplyStyle)() = nullptr;
+        Str FontName;
     };
+
+    Str CurrentTheme = "StudioSlab";
+    std::map<Str, FImGuiThemeDescriptor> ImGuiThemes = {
+            {"Native Light",      {SetColorThemeNativeLight, "Roboto"}},
+            {"Native Dark",       {SetColorThemeNativeDark, "Roboto"}},
+            {"Dark Red",          {SetColorThemeDarkRed, "Inconsolata"}},
+            {"Dark",              {SetStyleDark, "Julia Mono"}},
+            {"Light",             {SetStyleLight, "Roboto"}},
+            {"StudioSlab",        {SetStyleStudioSlab, "Julia Mono"}},
+            {"Scientific Slate",  {SetStyleScientificSlate, "DejaVu Sans"}},
+            {"Scientific Paper",  {SetStyleScientificPaper, "New Computer Modern"}},
+            {"Blueprint Night",   {SetStyleBlueprintNight, "Cousine"}},
+    };
+
+    auto ApplyTheme(const Str& themeName) -> bool
+    {
+        const auto it = ImGuiThemes.find(themeName);
+        if (it == ImGuiThemes.end()) return false;
+        if (it->second.ApplyStyle != nullptr) it->second.ApplyStyle();
+        if (!it->second.FontName.empty()) {
+            (void) SetImGuiThemeFont(it->second.FontName);
+        }
+        CurrentTheme = themeName;
+        return true;
+    }
 
     FImGuiModule::FImGuiModule(FImplementationCallSet calls)
     : FGUIModule("ImGui")
@@ -81,27 +102,40 @@ namespace Slab::Graphics {
     void FImGuiModule::SetupOptionalMenuItems(FImGuiContext& Context)
     {
         Vector<MainMenuLeafEntry> Entries;
-        for (const auto& Name : ColorThemes | std::views::keys)
+        for (const auto& Name : ImGuiThemes | std::views::keys)
         {
             const bool bSelected = Name == CurrentTheme;
             Entries.emplace_back(MainMenuLeafEntry{Name, "", bSelected, true});
         }
         const MainMenuItem Item({"System", "ImGui"}, Entries, [](const Str& LeafEntry)
         {
-            SetStyleStudioSlab();
-            ColorThemes[LeafEntry]();
-            CurrentTheme = LeafEntry;
+            (void) ApplyTheme(LeafEntry);
         });
 
         Context.AddMainMenuItem(Item);
+
+        const auto& fontNames = ListImGuiThemeFonts();
+        if (!fontNames.empty()) {
+            Vector<MainMenuLeafEntry> fontEntries;
+            const auto currentFont = GetCurrentImGuiThemeFont();
+            for (const auto& fontName : fontNames) {
+                const bool bSelected = fontName == currentFont;
+                fontEntries.emplace_back(MainMenuLeafEntry{fontName, "", bSelected, true});
+            }
+
+            const MainMenuItem fontItem({"System", "ImGui", "Font"}, fontEntries, [](const Str& leafEntry) {
+                (void) SetImGuiThemeFont(leafEntry);
+            });
+            Context.AddMainMenuItem(fontItem);
+        }
     }
 
     TPointer<FGUIContext> FImGuiModule::CreateContext(FOwnerPlatformWindow ParentSystemWindow) {
         auto NewContext = New<FImGuiContext>(ImplCallSet);
 
-        // Setup Dear ImGui style
-        SetStyleStudioSlab();   // For sizes
-        ColorThemes[CurrentTheme]();
+        if (!ApplyTheme(CurrentTheme)) {
+            (void) ApplyTheme("StudioSlab");
+        }
 
         Contexts.emplace_back(NewContext);
 
