@@ -20,7 +20,7 @@
 #include "Math/Data/V2/LiveControlTopicsV2.h"
 #include "Math/Numerics/NumericTask.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
-#include "Math/Function/RtoR/Model/FunctionsCollection/Sine.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
 #include <algorithm>
 #include <cctype>
