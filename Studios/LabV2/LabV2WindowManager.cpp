@@ -26,6 +26,7 @@
 #include <cctype>
 #include <chrono>
 #include <cmath>
+#include <cfloat>
 #include <cstring>
 #include <cstdio>
 #include <utility>
@@ -691,7 +692,7 @@ FLabV2WindowManager::FLabV2WindowManager()
 
     {
         const auto plotWindow = Slab::New<Slab::Graphics::FPlot2DWindow>("Monitor Plot");
-        plotWindow->SetAutoReviewGraphRanges(true);
+        plotWindow->SetAutoReviewGraphRanges(false);
         if (const auto theme = Slab::Graphics::FPlotThemeManager::GetCurrent();
             theme != nullptr && !theme->FuncPlotStyles.empty()) {
             const auto sine = Slab::New<Slab::Math::RtoR::FSine>(1.0, 2.0);
@@ -795,6 +796,47 @@ auto FLabV2WindowManager::FocusWindow(const Slab::TPointer<Slab::Graphics::FSlab
     }
 
     SelectedViewUniqueName = window->GetUniqueName();
+}
+
+auto FLabV2WindowManager::FindTopWindowAtPoint(const int x, const int y) const
+    -> Slab::TPointer<Slab::Graphics::FSlabWindow> {
+    const auto point = Slab::Graphics::FPoint2D{
+        static_cast<Slab::DevFloat>(x),
+        static_cast<Slab::DevFloat>(y)};
+
+    for (auto it = SlabWindows.rbegin(); it != SlabWindows.rend(); ++it) {
+        const auto &window = *it;
+        if (window == nullptr) continue;
+        if (window->WantsClose()) continue;
+        if (window->GetWidth() <= 0 || window->GetHeight() <= 0) continue;
+        if (window->IsPointWithin(point)) return window;
+    }
+
+    return nullptr;
+}
+
+auto FLabV2WindowManager::FindKeyboardTargetWindow() const -> Slab::TPointer<Slab::Graphics::FSlabWindow> {
+    if (const auto selected = FindWindowByUniqueName(SelectedViewUniqueName); selected != nullptr) {
+        return selected;
+    }
+
+    for (auto it = SlabWindows.rbegin(); it != SlabWindows.rend(); ++it) {
+        if (*it != nullptr && !(*it)->WantsClose()) return *it;
+    }
+
+    return nullptr;
+}
+
+auto FLabV2WindowManager::SyncMousePositionFromImGui() -> void {
+    if (ImGuiContext == nullptr) return;
+
+    ImGuiContext->Bind();
+    const auto &io = ImGui::GetIO();
+    if (io.MousePos.x <= -FLT_MAX || io.MousePos.y <= -FLT_MAX) return;
+
+    bHasLastMousePosition = true;
+    LastMouseX = static_cast<int>(io.MousePos.x);
+    LastMouseY = static_cast<int>(io.MousePos.y);
 }
 
 auto FLabV2WindowManager::DrawViewManagerPanel() -> void {
@@ -1506,6 +1548,105 @@ bool FLabV2WindowManager::NotifySystemWindowReshape(const int w, const int h) {
     const auto responded = FWindowManager::NotifySystemWindowReshape(w, h);
     bPendingViewRetile = true;
     return responded;
+}
+
+bool FLabV2WindowManager::NotifyKeyboard(const Slab::Graphics::EKeyMap key,
+                                         const Slab::Graphics::EKeyState state,
+                                         const Slab::Graphics::EModKeys modKeys) {
+    const bool bGuiHandled =
+        ImGuiContext != nullptr &&
+        ImGuiContext->NotifyKeyboard(key, state, modKeys);
+
+    if (bGuiHandled) return true;
+
+    const auto target = FindKeyboardTargetWindow();
+    if (target == nullptr) return false;
+    return target->NotifyKeyboard(key, state, modKeys);
+}
+
+bool FLabV2WindowManager::NotifyCharacter(const Slab::UInt codepoint) {
+    const bool bGuiHandled =
+        ImGuiContext != nullptr &&
+        ImGuiContext->NotifyCharacter(codepoint);
+
+    if (bGuiHandled) return true;
+
+    const auto target = FindKeyboardTargetWindow();
+    if (target == nullptr) return false;
+    return target->NotifyCharacter(codepoint);
+}
+
+bool FLabV2WindowManager::NotifyMouseButton(const Slab::Graphics::EMouseButton button,
+                                            const Slab::Graphics::EKeyState state,
+                                            const Slab::Graphics::EModKeys modKeys) {
+    SyncMousePositionFromImGui();
+
+    const bool bGuiHandled =
+        ImGuiContext != nullptr &&
+        ImGuiContext->NotifyMouseButton(button, state, modKeys);
+
+    Slab::TPointer<Slab::Graphics::FSlabWindow> target = nullptr;
+
+    if (state == Slab::Graphics::EKeyState::Release) {
+        target = CapturedMouseWindow.lock();
+        if (target == nullptr && bHasLastMousePosition) {
+            target = FindTopWindowAtPoint(LastMouseX, LastMouseY);
+        }
+        CapturedMouseWindow.reset();
+    } else {
+        if (bHasLastMousePosition) {
+            target = FindTopWindowAtPoint(LastMouseX, LastMouseY);
+        }
+        if (target != nullptr) {
+            CapturedMouseWindow = target;
+        }
+    }
+
+    const bool bWindowHandled =
+        target != nullptr &&
+        target->NotifyMouseButton(button, state, modKeys);
+
+    return bGuiHandled || bWindowHandled;
+}
+
+bool FLabV2WindowManager::NotifyMouseMotion(const int x, const int y, const int dx, const int dy) {
+    bHasLastMousePosition = true;
+    LastMouseX = x;
+    LastMouseY = y;
+
+    const bool bGuiHandled =
+        ImGuiContext != nullptr &&
+        ImGuiContext->NotifyMouseMotion(x, y, dx, dy);
+
+    auto target = CapturedMouseWindow.lock();
+    if (target == nullptr) {
+        target = FindTopWindowAtPoint(x, y);
+    }
+
+    const bool bWindowHandled =
+        target != nullptr &&
+        target->NotifyMouseMotion(x, y, dx, dy);
+
+    return bGuiHandled || bWindowHandled;
+}
+
+bool FLabV2WindowManager::NotifyMouseWheel(const double dx, const double dy) {
+    SyncMousePositionFromImGui();
+
+    const bool bGuiHandled =
+        ImGuiContext != nullptr &&
+        ImGuiContext->NotifyMouseWheel(dx, dy);
+
+    auto target = CapturedMouseWindow.lock();
+    if (target == nullptr && bHasLastMousePosition) {
+        target = FindTopWindowAtPoint(LastMouseX, LastMouseY);
+    }
+
+    const bool bWindowHandled =
+        target != nullptr &&
+        target->NotifyMouseWheel(dx, dy);
+
+    return bGuiHandled || bWindowHandled;
 }
 
 auto FLabV2WindowManager::GetImGuiContext() const -> Slab::TPointer<Slab::Graphics::FImGuiContext> {

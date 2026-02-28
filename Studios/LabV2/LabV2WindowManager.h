@@ -20,6 +20,15 @@ public:
 
     bool NotifyRender(const Slab::Graphics::FPlatformWindow &) override;
     bool NotifySystemWindowReshape(int w, int h) override;
+    bool NotifyKeyboard(Slab::Graphics::EKeyMap key,
+                        Slab::Graphics::EKeyState state,
+                        Slab::Graphics::EModKeys modKeys) override;
+    bool NotifyCharacter(Slab::UInt codepoint) override;
+    bool NotifyMouseButton(Slab::Graphics::EMouseButton button,
+                           Slab::Graphics::EKeyState state,
+                           Slab::Graphics::EModKeys modKeys) override;
+    bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
+    bool NotifyMouseWheel(double dx, double dy) override;
 
     [[nodiscard]] auto GetImGuiContext() const -> Slab::TPointer<Slab::Graphics::FImGuiContext>;
     [[nodiscard]] auto GetLiveDataHub() const -> Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2>;
@@ -113,6 +122,10 @@ private:
     bool bShowWindowViews = true;
     bool bShowWindowKG2DControl = true;
     bool bShowWindowBlueprints = false;
+    bool bHasLastMousePosition = false;
+    int LastMouseX = 0;
+    int LastMouseY = 0;
+    Slab::TVolatile<Slab::Graphics::FSlabWindow> CapturedMouseWindow;
 
     auto FlushPendingSlabWindows() -> void;
     auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
@@ -132,6 +145,9 @@ private:
     [[nodiscard]] auto IsDockingEnabled() const -> bool;
     auto DrawViewManagerPanel() -> void;
     auto FocusWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
+    [[nodiscard]] auto FindTopWindowAtPoint(int x, int y) const -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
+    [[nodiscard]] auto FindKeyboardTargetWindow() const -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
+    auto SyncMousePositionFromImGui() -> void;
     [[nodiscard]] auto FindWindowByUniqueName(const Slab::Str &uniqueName) const
         -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
 };
