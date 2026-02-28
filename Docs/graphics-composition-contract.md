@@ -65,3 +65,11 @@ This is a small internal contract note to keep the window/plot/GUI stack coheren
 
 3. Wrapper bridges should persist last known mouse position and last canvas bounds.
 - this keeps routing consistent across the platform-event phase and ImGui frame phase.
+
+## Plot Window Controls Contract (V2 Direction)
+
+1. `FPlot2DWindow` controls should be viewport-attached.
+- prefer in-canvas toolbar + attached detail inspector over detached floating windows.
+
+2. The inspector keeps legacy control parity.
+- auto adjust, fit, save, layer visibility, layer z-order, and artist GUI remain available.

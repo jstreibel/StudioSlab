@@ -144,99 +144,181 @@ namespace Slab::Graphics {
     void FPlot2DWindow::RegisterGUIDraws() {
         auto DrawCall = [this]
         {
-            auto popupName = AddUniqueIdToString(Title + Str(" window popup"));
-
-            if (PopupOn && !POPUP_ON_MOUSE_CALL) {
-
-                ImGui::OpenPopup(AddUniqueIdToString(popupName).c_str());
-                PopupOn = false;
-            }
-
-            if (ImGui::BeginPopup(AddUniqueIdToString(popupName).c_str())) {
-                if(ImGui::MenuItem("Auto adjust", nullptr, AutoReviewGraphRanges)) {
-                    AutoReviewGraphRanges = !AutoReviewGraphRanges;
-                }
-                else if (ImGui::MenuItem(AddUniqueIdToString("Show interface").c_str(), nullptr, ShowInterface)) {
-                    ShowInterface = !ShowInterface;
-                } else if (ImGui::MenuItem(AddUniqueIdToString("Save graph").c_str())) {
-
-                    auto w = Printing::GetTotalHorizontalDots(.5);
-                    auto h = w * .5;
-                    auto fileName = Title + " " +
-                                    Core::FInterfaceManager::GetInstance().RenderParametersToString({"N", "L"}) +
-                                    ".png";
-
-                    OpenGL::OutputToPNG(this, fileName, w, (int) h);
-                }
-
-                ImGui::EndPopup();
-            }
-
             const auto Viewport = GetViewport();
+            if (Viewport.GetWidth() <= 0 || Viewport.GetHeight() <= 0) return;
+
+            auto SaveGraphToDisk = [this]() {
+                auto w = Printing::GetTotalHorizontalDots(.5);
+                auto h = w * .5;
+                auto fileName = Title + " " +
+                                Core::FInterfaceManager::GetInstance().RenderParametersToString({"N", "L"}) +
+                                ".png";
+
+                OpenGL::OutputToPNG(this, fileName, w, (int) h);
+            };
+
+            const auto popupName = AddUniqueIdToString(Title + Str(" window popup"));
+            const bool bOpenPopupFromMouseCall = PopupOn && !POPUP_ON_MOUSE_CALL;
+            PopupOn = false;
+
+            constexpr float Margin = 8.0f;
+            constexpr float ToolbarMinHeight = 28.0f;
+
+            float toolbarHeight = ToolbarMinHeight;
+
             ImGui::SetNextWindowPos(
-                {
-                    static_cast<float>(Viewport.xMin),
-                    static_cast<float>(Viewport.yMin)
+                ImVec2{
+                    static_cast<float>(Viewport.xMin) + Margin,
+                    static_cast<float>(Viewport.yMin) + Margin
                 },
-                ImGuiCond_Appearing);
-            ImGui::SetNextWindowSize(
-                {
-                    static_cast<float>(Viewport.GetWidth()),
-                    static_cast<float>(Viewport.GetHeight())
-                },
-                ImGuiCond_Appearing);
+                ImGuiCond_Always);
+            ImGui::SetNextWindowBgAlpha(0.82f);
 
-            ImGui::SetNextWindowBgAlpha(0.85);
+            constexpr auto ToolbarFlags =
+                ImGuiWindowFlags_NoDecoration |
+                ImGuiWindowFlags_NoMove |
+                ImGuiWindowFlags_NoSavedSettings |
+                ImGuiWindowFlags_NoDocking |
+                ImGuiWindowFlags_AlwaysAutoResize;
 
-            constexpr auto Flags = 0x0;
-                // ImGuiWindowFlags_NoCollapse |
-                // ImGuiWindowFlags_NoResize;  |
-                // ImGuiWindowFlags_NoMove     |
-                // ImGuiWindowFlags_NoTitleBar |
-                // ImGuiWindowFlags_NoBringToFrontOnFocus;
+            if (ImGui::Begin(AddUniqueIdToString("Plot Toolbar").c_str(), nullptr, ToolbarFlags)) {
+                if (ImGui::SmallButton("Fit")) {
+                    ReviewGraphRanges();
+                }
+                ImGui::SameLine();
+                ImGui::Checkbox("Auto", &AutoReviewGraphRanges);
+                ImGui::SameLine();
+                if (ImGui::SmallButton(ShowInterface ? "Hide UI" : "Show UI")) {
+                    ShowInterface = !ShowInterface;
+                }
+                ImGui::SameLine();
+                if (ImGui::SmallButton("Save")) {
+                    SaveGraphToDisk();
+                }
+                ImGui::SameLine();
+                if (ImGui::SmallButton("...")) {
+                    ImGui::OpenPopup(popupName.c_str());
+                }
+                if (bOpenPopupFromMouseCall) {
+                    ImGui::OpenPopup(popupName.c_str());
+                }
 
-            if (ImGui::Begin(AddUniqueIdToString("Plot Detail").c_str(), nullptr, Flags))
+                if (ImGui::BeginPopup(popupName.c_str())) {
+                    if (ImGui::MenuItem("Auto adjust", nullptr, AutoReviewGraphRanges)) {
+                        AutoReviewGraphRanges = !AutoReviewGraphRanges;
+                    }
+                    if (ImGui::MenuItem("Show interface", nullptr, ShowInterface)) {
+                        ShowInterface = !ShowInterface;
+                    }
+                    if (ImGui::MenuItem("Fit now")) {
+                        ReviewGraphRanges();
+                    }
+                    if (ImGui::MenuItem("Save graph")) {
+                        SaveGraphToDisk();
+                    }
+                    ImGui::EndPopup();
+                }
+
+                toolbarHeight = std::max(toolbarHeight, ImGui::GetWindowHeight());
+            }
+            ImGui::End();
+
+            if (!ShowInterface) return;
+
+            const float panelWidth = std::clamp(
+                static_cast<float>(Viewport.GetWidth()) * 0.30f,
+                300.0f,
+                460.0f);
+            const float panelHeight = std::max(
+                200.0f,
+                static_cast<float>(Viewport.GetHeight()) - toolbarHeight - (3.0f * Margin));
+            const float panelX = static_cast<float>(Viewport.xMax) - panelWidth - Margin;
+            const float panelY = static_cast<float>(Viewport.yMin) + toolbarHeight + (2.0f * Margin);
+
+            ImGui::SetNextWindowPos(ImVec2{panelX, panelY}, ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2{panelWidth, panelHeight}, ImGuiCond_Always);
+            ImGui::SetNextWindowBgAlpha(0.88f);
+
+            constexpr auto DetailFlags =
+                ImGuiWindowFlags_NoDocking |
+                ImGuiWindowFlags_NoCollapse |
+                ImGuiWindowFlags_NoMove |
+                ImGuiWindowFlags_NoResize |
+                ImGuiWindowFlags_NoSavedSettings;
+
+            if (ImGui::Begin(AddUniqueIdToString("Plot Detail").c_str(), nullptr, DetailFlags))
             {
-                for (auto it = Content.begin(); it!=Content.end(); )
+                if (ImGui::CollapsingHeader("View", ImGuiTreeNodeFlags_DefaultOpen))
                 {
-                    IN artie = it->second;
-
-                    bool increment_iterator = true;
-
-                    auto label = artie->GetLabel();
-                    if (ImGui::ArrowButton((label + "##up").c_str(), ImGuiDir_Up)){
-                        increment_iterator = !z_order_up(Content, it);
+                    ImGui::Checkbox("Auto adjust", &AutoReviewGraphRanges);
+                    ImGui::SameLine();
+                    if (ImGui::SmallButton("Fit now")) {
+                        ReviewGraphRanges();
                     }
                     ImGui::SameLine();
-                    ImGui::Text("z=%i", it->first);
-                    ImGui::SameLine();
-                    if (ImGui::ArrowButton((label + "##down").c_str(), ImGuiDir_Down)) {
-                        increment_iterator = !z_order_down(Content, it);
-                    }
-                    ImGui::SameLine();
-
-                    bool visible = artie->IsVisible();
-                    if (ImGui::Checkbox((AddUniqueIdToString(artie->GetLabel())+"_checkbox").c_str() , &visible)) {
-                        artie->SetVisibility(visible);
+                    if (ImGui::SmallButton("Save graph")) {
+                        SaveGraphToDisk();
                     }
 
-                    if(increment_iterator) ++it;
+                    const auto regionRect = Region.getRect();
+                    ImGui::Text("x:[%.4g, %.4g]  y:[%.4g, %.4g]",
+                        regionRect.xMin,
+                        regionRect.xMax,
+                        regionRect.yMin,
+                        regionRect.yMax);
+                    ImGui::Text("w=%.4g  h=%.4g", regionRect.GetWidth(), regionRect.GetHeight());
                 }
 
-                auto avail_region = ImGui::GetContentRegionAvail();
-                ImGui::BeginChild(AddUniqueIdToString(Title + " :)").c_str(), {avail_region.x, 0},
-                                  ImGuiChildFlags_Border);
+                if (ImGui::CollapsingHeader("Layers", ImGuiTreeNodeFlags_DefaultOpen))
+                {
+                    for (auto it = Content.begin(); it!=Content.end(); )
+                    {
+                        IN artie = it->second;
+                        bool incrementIterator = true;
 
-                for (IN cont: Content) {
-                    IN artie = cont.second;
+                        ImGui::PushID(artie.get());
+                        if (ImGui::ArrowButton("##up", ImGuiDir_Up)) {
+                            incrementIterator = !z_order_up(Content, it);
+                        }
+                        ImGui::SameLine();
+                        if (ImGui::ArrowButton("##down", ImGuiDir_Down)) {
+                            incrementIterator = !z_order_down(Content, it);
+                        }
+                        ImGui::SameLine();
+                        bool visible = artie->IsVisible();
+                        if (ImGui::Checkbox("##visible", &visible)) {
+                            artie->SetVisibility(visible);
+                        }
+                        ImGui::SameLine();
+                        ImGui::TextUnformatted(artie->GetLabel().c_str());
+                        ImGui::SameLine();
+                        ImGui::TextDisabled("(z=%i)", it->first);
+                        ImGui::PopID();
 
-                    if (artie->IsVisible() && artie->HasGUI()) {
-                        if (ImGui::CollapsingHeader((AddUniqueIdToString(artie->GetLabel())).c_str()))
-                            artie->DrawGUI();
+                        if (incrementIterator) ++it;
                     }
                 }
 
-                ImGui::EndChild();
+                if (ImGui::CollapsingHeader("Artist Controls", ImGuiTreeNodeFlags_DefaultOpen))
+                {
+                    const auto availRegion = ImGui::GetContentRegionAvail();
+                    ImGui::BeginChild(
+                        AddUniqueIdToString(Title + " details").c_str(),
+                        ImVec2{availRegion.x, 0},
+                        ImGuiChildFlags_Border);
+
+                    for (IN cont: Content) {
+                        IN artie = cont.second;
+
+                        if (artie->IsVisible() && artie->HasGUI()) {
+                            if (ImGui::CollapsingHeader(AddUniqueIdToString(artie->GetLabel()).c_str())) {
+                                artie->DrawGUI();
+                            }
+                        }
+                    }
+
+                    ImGui::EndChild();
+                }
             }
 
             ImGui::End();

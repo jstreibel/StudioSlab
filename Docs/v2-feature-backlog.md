@@ -35,6 +35,7 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `CVG-04` active: Functional minimization V2 first-slice scope drafted in `Docs/functional-minimization-v2-slice-scope.md`.
 - `LAB-03` done: LabV2 top-level panel/window orchestration centralized in `FLabV2WindowManager` with registry-driven panel surfaces.
 - `LAB-04` done: ImGui-wrapped Slab canvas event routing hardened (mouse hit-test routing, keyboard focus routing, persisted bounds/last-mouse bridge).
+- `LAB-05` done: Plot window controls moved to viewport-attached toolbar + attached detail inspector (`Docs/plot-window-ux-contract.md`).
 
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
@@ -73,6 +74,7 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `P1` `LAB-02` — Run Manager improvements (grouping/error clarity) — done
 - `P1` `LAB-03` — Centralized panel/window orchestration contract — done
 - `P1` `LAB-04` — Sub-window event routing contract and wrapper hardening — done
+- `P1` `LAB-05` — Plot window control surface UX hardening — done
 
 ### Coverage Portfolio
 - `P1` `CVG-01` — MD V2 scoping — done

@@ -98,7 +98,7 @@ namespace Slab::Graphics {
     private:
         ContentMap Content;
 
-        bool ShowInterface = false;
+        bool ShowInterface = true;
 
         bool PopupOn = false;
         bool AutoReviewGraphRanges=false;

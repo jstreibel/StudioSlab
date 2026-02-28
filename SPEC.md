@@ -271,6 +271,7 @@ AI should report:
   - `SimulationManagerV2` reduced to launcher/menu/simulation logic (no top-level `Begin/End`)
   - registry-driven panel surface ordering for docked workspaces
   - event-routing hardening for ImGui-wrapped Slab canvases (mouse hit-test routing over focus-only gating)
+  - plot-window UX hardening baseline (viewport-attached toolbar + attached detail inspector)
 - `Studios` V2 consolidation helpers:
   - task runner helpers (`NumericsV2TaskUtils`)
   - monitored GLFW runner (`V2SimulationRunners`)
@@ -341,6 +342,7 @@ If a change requires broad coupling across numerics + data + graphics, split it 
 
 - `AGENTS.md` (repo-specific workflow and constraints)
 - `Docs/graphics-composition-contract.md` (render/composition rules)
+- `Docs/plot-window-ux-contract.md` (plot control surface contract)
 - `Docs/slab-root-migration-policy.md` (root `Slab/` migration rules)
 - `Docs/product-direction.md` (product vision / direction)
 - `Docs/product-vocabulary.md` (stable terminology)
