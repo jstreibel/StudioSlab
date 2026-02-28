@@ -43,3 +43,14 @@ This is a small internal contract note to keep the window/plot/GUI stack coheren
 - Unify container layout/padding logic (`FWindowRow` / `FWindowColumn` / `FWindowPanel`)
 - Make frame pipeline explicit at host level (`BeginFrame`, canvas draw, GUI build, `EndFrame`)
 - Separate plot canvas / plot scene / plot inspector responsibilities
+
+## LabV2 Docking Addendum (Current V2 Practice)
+
+1. `FLabV2WindowManager` is the single owner of top-level LabV2 panel window submission.
+- top-level `ImGui::Begin/End` for `Simulation Launcher`, `Tasks`, `Live Data`, `Live Control`, `Views`, `KG2D Control`, and `Blueprints` are centralized there.
+
+2. `FSimulationManagerV2` is feature logic only.
+- it may register menus and draw launcher contents, but it should not own top-level window/dock placement.
+
+3. Docked panel ordering should be registry-driven.
+- keep one explicit, deterministic panel registry per frame/workspace instead of scattered `Begin/End` calls across multiple listeners.

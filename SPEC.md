@@ -267,6 +267,9 @@ AI should report:
   - V2 launcher for SPI / KGRtoR plane waves / Metropolis
   - in-app passive V2 monitors
   - render hygiene + top-level monitor tiling + UX polish
+  - centralized top-level panel submission in `FLabV2WindowManager`
+  - `SimulationManagerV2` reduced to launcher/menu/simulation logic (no top-level `Begin/End`)
+  - registry-driven panel surface ordering for docked workspaces
 - `Studios` V2 consolidation helpers:
   - task runner helpers (`NumericsV2TaskUtils`)
   - monitored GLFW runner (`V2SimulationRunners`)
