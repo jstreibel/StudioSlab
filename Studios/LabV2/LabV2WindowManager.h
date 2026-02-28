@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <array>
+#include <vector>
 
 class FLabV2WindowManager final : public Slab::Graphics::FWindowManager {
 public:
@@ -29,6 +30,14 @@ private:
         Simulations = 0,
         Monitor,
         Schemes
+    };
+
+    struct FPanelSurfaceRegistration {
+        const char *WindowTitle = nullptr;
+        EWorkspaceTab Workspace = EWorkspaceTab::Simulations;
+        bool *bVisible = nullptr;
+        bool bForceVisibleInWorkspace = false;
+        std::function<void()> DrawContents;
     };
 
     struct FWorkspacePanelVisibility {
@@ -112,6 +121,8 @@ private:
     auto DrawWorkspaceTabs() -> void;
     auto DrawDockspaceHost() -> void;
     auto DrawDockedToolWindows() -> void;
+    auto BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfaceRegistration>;
+    auto DrawPanelSurface(const FPanelSurfaceRegistration &registration) -> void;
     auto DrawLegacySidePane() -> void;
     auto BuildDefaultDockLayout(unsigned int dockspaceId, EWorkspaceTab workspace) -> void;
     auto RequestSimulationLauncherVisible() -> void;

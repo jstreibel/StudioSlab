@@ -26,6 +26,7 @@
 #include <cctype>
 #include <chrono>
 #include <cmath>
+#include <cstring>
 #include <cstdio>
 #include <utility>
 
@@ -1211,22 +1212,16 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
     ImGui::PopStyleVar(3);
 }
 
-auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
-    if (ActiveWorkspace == EWorkspaceTab::Schemes) {
-        if (ImGui::Begin(WindowTitleBlueprints)) {
-            ImGui::TextDisabled("Blueprints demo placeholder");
-            ImGui::Separator();
-            ImGui::TextWrapped(
-                "This workspace is reserved for node/scheme authoring. "
-                "A full Blueprint renderer can be attached here incrementally.");
-        }
-        ImGui::End();
-        SaveWorkspacePanelVisibility(ActiveWorkspace);
-        return;
-    }
+auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfaceRegistration> {
+    std::vector<FPanelSurfaceRegistration> registry;
+    registry.reserve(9);
 
-    if (bShowWindowLab) {
-        if (ImGui::Begin(WindowTitleLab, &bShowWindowLab)) {
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleLab,
+        EWorkspaceTab::Monitor,
+        &bShowWindowLab,
+        false,
+        [this]() {
             ImGui::TextDisabled("V2 observability + launcher shell");
             ImGui::SeparatorText("Workspace");
             ImGui::Checkbox("Enable dockspace layout", &bUseDockspaceLayout);
@@ -1249,64 +1244,70 @@ auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
             ImGui::Checkbox("KG2D Control", &bShowWindowKG2DControl);
             ImGui::Checkbox("Blueprints", &bShowWindowBlueprints);
         }
-        ImGui::End();
-    }
+    });
 
-    if (ActiveWorkspace == EWorkspaceTab::Simulations && bShowWindowSimulationLauncher) {
-#ifdef IMGUI_HAS_DOCK
-        if (bRequestLauncherInitialDock && LauncherInitialDockId != 0) {
-            ImGui::SetNextWindowDockID(static_cast<ImGuiID>(LauncherInitialDockId), ImGuiCond_Always);
-        }
-#endif
-        if (ImGui::Begin(WindowTitleSimulationLauncher, &bShowWindowSimulationLauncher)) {
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleSimulationLauncher,
+        EWorkspaceTab::Simulations,
+        &bShowWindowSimulationLauncher,
+        false,
+        [this]() {
             if (SimulationManager != nullptr) {
                 SimulationManager->DrawLauncherContents();
             }
-#ifdef IMGUI_HAS_DOCK
-            if (bRequestLauncherInitialDock && ImGui::IsWindowDocked()) {
-                bRequestLauncherInitialDock = false;
-            }
-#else
-            bRequestLauncherInitialDock = false;
-#endif
         }
-        ImGui::End();
-    }
+    });
 
-    if (bShowWindowTasks) {
-        if (ImGui::Begin(WindowTitleTasks, &bShowWindowTasks)) {
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleTasks,
+        EWorkspaceTab::Simulations,
+        &bShowWindowTasks,
+        false,
+        [this]() {
             ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);
         }
-        ImGui::End();
-    }
+    });
 
-    if (bShowWindowLiveData) {
-        if (ImGui::Begin(WindowTitleLiveData, &bShowWindowLiveData)) {
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleLiveData,
+        EWorkspaceTab::Monitor,
+        &bShowWindowLiveData,
+        false,
+        [this]() {
             ShowLiveDataV2Panel(LiveDataHub, LiveDataTopicFilter, bLiveDataOnlyBound, SelectedLiveDataTopic);
         }
-        ImGui::End();
-    }
+    });
 
-    if (bShowWindowLiveControl) {
-        if (ImGui::Begin(WindowTitleLiveControl, &bShowWindowLiveControl)) {
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleLiveControl,
+        EWorkspaceTab::Monitor,
+        &bShowWindowLiveControl,
+        false,
+        [this]() {
             ShowLiveControlV2Panel(
                 LiveControlHub,
                 LiveControlTopicFilter,
                 bLiveControlLevelsOnly,
                 SelectedLiveControlTopic);
         }
-        ImGui::End();
-    }
+    });
 
-    if (bShowWindowViews) {
-        if (ImGui::Begin(WindowTitleViews, &bShowWindowViews)) {
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleViews,
+        EWorkspaceTab::Monitor,
+        &bShowWindowViews,
+        false,
+        [this]() {
             DrawViewManagerPanel();
         }
-        ImGui::End();
-    }
+    });
 
-    if (bShowWindowKG2DControl) {
-        if (ImGui::Begin(WindowTitleKG2DControl, &bShowWindowKG2DControl)) {
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleKG2DControl,
+        EWorkspaceTab::Monitor,
+        &bShowWindowKG2DControl,
+        false,
+        [this]() {
             ShowKG2DControlSourcePanelAndPublish(
                 LiveControlHub,
                 bPublishKG2DControlSource,
@@ -1317,20 +1318,72 @@ auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
                 bKG2DControlEnabled,
                 KG2DControlTopicPrefix);
         }
-        ImGui::End();
-    }
+    });
 
-    if (bShowWindowBlueprints) {
-        if (ImGui::Begin(WindowTitleBlueprints, &bShowWindowBlueprints)) {
-            ImGui::TextDisabled("Blueprints demo placeholder");
-            ImGui::Separator();
-            ImGui::TextWrapped(
-                "This workspace is reserved for node/scheme authoring. "
-                "A full Blueprint renderer can be attached here incrementally.");
+    const auto drawBlueprintsPlaceholder = []() {
+        ImGui::TextDisabled("Blueprints demo placeholder");
+        ImGui::Separator();
+        ImGui::TextWrapped(
+            "This workspace is reserved for node/scheme authoring. "
+            "A full Blueprint renderer can be attached here incrementally.");
+    };
+
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleBlueprints,
+        EWorkspaceTab::Monitor,
+        &bShowWindowBlueprints,
+        false,
+        drawBlueprintsPlaceholder
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleBlueprints,
+        EWorkspaceTab::Schemes,
+        &bShowWindowBlueprints,
+        true,
+        drawBlueprintsPlaceholder
+    });
+
+    return registry;
+}
+
+auto FLabV2WindowManager::DrawPanelSurface(const FPanelSurfaceRegistration &registration) -> void {
+    if (registration.Workspace != ActiveWorkspace) return;
+
+    const bool bVisible = registration.bForceVisibleInWorkspace ||
+        (registration.bVisible != nullptr && *registration.bVisible);
+    if (!bVisible) return;
+
+    if (std::strcmp(registration.WindowTitle, WindowTitleSimulationLauncher) == 0) {
+#ifdef IMGUI_HAS_DOCK
+        if (bRequestLauncherInitialDock && LauncherInitialDockId != 0) {
+            ImGui::SetNextWindowDockID(static_cast<ImGuiID>(LauncherInitialDockId), ImGuiCond_Always);
         }
-        ImGui::End();
+#endif
     }
 
+    const auto openPtr = registration.bForceVisibleInWorkspace ? nullptr : registration.bVisible;
+    if (ImGui::Begin(registration.WindowTitle, openPtr)) {
+        if (registration.DrawContents) registration.DrawContents();
+
+        if (std::strcmp(registration.WindowTitle, WindowTitleSimulationLauncher) == 0) {
+#ifdef IMGUI_HAS_DOCK
+            if (bRequestLauncherInitialDock && ImGui::IsWindowDocked()) {
+                bRequestLauncherInitialDock = false;
+            }
+#else
+            bRequestLauncherInitialDock = false;
+#endif
+        }
+    }
+    ImGui::End();
+}
+
+auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
+    const auto registry = BuildPanelSurfaceRegistry();
+    for (const auto &registration : registry) {
+        DrawPanelSurface(registration);
+    }
     SaveWorkspacePanelVisibility(ActiveWorkspace);
 }
 
