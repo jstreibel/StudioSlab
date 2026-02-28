@@ -12,11 +12,15 @@
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "Graphics/SlabGraphics.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Plot2D/Plotter.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/Window/WindowStyles.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Data/V2/LiveControlTopicsV2.h"
 #include "Math/Numerics/NumericTask.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Sine.h"
 
 #include <algorithm>
 #include <cctype>
@@ -67,14 +71,15 @@ namespace {
     constexpr auto WindowTitleLiveControl = "Live Control";
     constexpr auto WindowTitleViews = "Views";
     constexpr auto WindowTitleKG2DControl = "KG2D Control";
-    constexpr auto WindowTitleSimulationLauncher = "Lab V2 - Simulation Launcher";
+    constexpr auto WindowTitleSimulationLauncher = "Simulation Launcher";
+    constexpr auto WindowTitleBlueprints = "Blueprints";
     constexpr auto DockspaceHostName = "##LabV2DockspaceHost";
-    constexpr auto DockspaceNameLab = "##LabV2Dockspace-Lab";
     constexpr auto DockspaceNameSimulations = "##LabV2Dockspace-Simulations";
     constexpr auto DockspaceNameMonitor = "##LabV2Dockspace-Monitor";
-    constexpr auto WorkspaceTabLab = "Lab";
+    constexpr auto DockspaceNameSchemes = "##LabV2Dockspace-Schemes";
     constexpr auto WorkspaceTabSimulations = "Simulations";
     constexpr auto WorkspaceTabMonitor = "Monitor";
+    constexpr auto WorkspaceTabSchemes = "Schemes";
 
     auto ShowTasksPanel(Slab::Str &nameFilter,
                         bool &bOnlyRunning,
@@ -682,6 +687,22 @@ FLabV2WindowManager::FLabV2WindowManager()
     AddResponder(ImGuiContext);
     AddResponder(SimulationManager);
     LoadWorkspacePanelVisibility(ActiveWorkspace);
+
+    {
+        const auto plotWindow = Slab::New<Slab::Graphics::FPlot2DWindow>("Monitor Plot");
+        plotWindow->SetAutoReviewGraphRanges(true);
+        if (const auto theme = Slab::Graphics::FPlotThemeManager::GetCurrent();
+            theme != nullptr && !theme->FuncPlotStyles.empty()) {
+            const auto sine = Slab::New<Slab::Math::RtoR::FSine>(1.0, 2.0);
+            Slab::Graphics::FPlotter::AddRtoRFunction(
+                plotWindow,
+                sine,
+                theme->FuncPlotStyles.front(),
+                "sin(2x)",
+                2048);
+        }
+        AddSlabWindow(plotWindow, false);
+    }
 }
 
 void FLabV2WindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) {
@@ -948,7 +969,8 @@ auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab works
         bShowWindowLiveData,
         bShowWindowLiveControl,
         bShowWindowViews,
-        bShowWindowKG2DControl
+        bShowWindowKG2DControl,
+        bShowWindowBlueprints
     };
 }
 
@@ -961,6 +983,7 @@ auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab works
     bShowWindowLiveControl = cfg.bShowWindowLiveControl;
     bShowWindowViews = cfg.bShowWindowViews;
     bShowWindowKG2DControl = cfg.bShowWindowKG2DControl;
+    bShowWindowBlueprints = cfg.bShowWindowBlueprints;
 }
 
 auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> void {
@@ -1015,9 +1038,9 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
                 }
             };
 
-            drawTab(EWorkspaceTab::Lab, WorkspaceTabLab);
             drawTab(EWorkspaceTab::Simulations, WorkspaceTabSimulations);
             drawTab(EWorkspaceTab::Monitor, WorkspaceTabMonitor);
+            drawTab(EWorkspaceTab::Schemes, WorkspaceTabSchemes);
 
             ImGui::EndTabBar();
         }
@@ -1051,42 +1074,30 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
     ImGui::DockBuilderSetNodeSize(dockId, dockSize);
 
     ImGuiID dockMain = dockId;
-    if (workspace == EWorkspaceTab::Lab) {
-        const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.30f, nullptr, &dockMain);
-        const auto dockLeftBottom = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.45f, nullptr, nullptr);
-        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.30f, nullptr, &dockMain);
-
-        ImGui::DockBuilderDockWindow(WindowTitleLab, dockLeft);
-        ImGui::DockBuilderDockWindow(WindowTitleTasks, dockLeft);
-        ImGui::DockBuilderDockWindow(WindowTitleViews, dockLeft);
-        ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockLeftBottom);
-        ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockLeftBottom);
-        ImGui::DockBuilderDockWindow(WindowTitleKG2DControl, dockRight);
-        ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockRight);
-    } else if (workspace == EWorkspaceTab::Simulations) {
+    if (workspace == EWorkspaceTab::Simulations) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.24f, nullptr, &dockMain);
         const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.30f, nullptr, &dockMain);
         const auto dockLeftBottom = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.42f, nullptr, nullptr);
 
         ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleTasks, dockLeftBottom);
-        ImGui::DockBuilderDockWindow(WindowTitleLab, dockLeftBottom);
         ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockRight);
         ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockRight);
         ImGui::DockBuilderDockWindow(WindowTitleKG2DControl, dockRight);
+        ImGui::DockBuilderDockWindow(WindowTitleLab, dockRight);
         ImGui::DockBuilderDockWindow(WindowTitleViews, dockMain);
-    } else {
+    } else if (workspace == EWorkspaceTab::Monitor) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.22f, nullptr, &dockMain);
         const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.26f, nullptr, &dockMain);
         const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.28f, nullptr, &dockMain);
 
         ImGui::DockBuilderDockWindow(WindowTitleViews, dockLeft);
-        ImGui::DockBuilderDockWindow(WindowTitleTasks, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockBottom);
         ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockBottom);
         ImGui::DockBuilderDockWindow(WindowTitleKG2DControl, dockRight);
-        ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockRight);
         ImGui::DockBuilderDockWindow(WindowTitleLab, dockRight);
+    } else {
+        ImGui::DockBuilderDockWindow(WindowTitleBlueprints, dockMain);
     }
 
     ImGui::DockBuilderFinish(dockId);
@@ -1126,9 +1137,9 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
     if (ImGui::Begin(DockspaceHostName, nullptr, hostFlags)) {
-        const char *dockspaceName = DockspaceNameLab;
-        if (ActiveWorkspace == EWorkspaceTab::Simulations) dockspaceName = DockspaceNameSimulations;
-        else if (ActiveWorkspace == EWorkspaceTab::Monitor) dockspaceName = DockspaceNameMonitor;
+        const char *dockspaceName = DockspaceNameSimulations;
+        if (ActiveWorkspace == EWorkspaceTab::Monitor) dockspaceName = DockspaceNameMonitor;
+        else if (ActiveWorkspace == EWorkspaceTab::Schemes) dockspaceName = DockspaceNameSchemes;
 
         DockspaceId = static_cast<unsigned int>(ImGui::GetID(dockspaceName));
         const auto workspaceIndex = static_cast<std::size_t>(ActiveWorkspace);
@@ -1151,6 +1162,19 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
 }
 
 auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
+    if (ActiveWorkspace == EWorkspaceTab::Schemes) {
+        if (ImGui::Begin(WindowTitleBlueprints)) {
+            ImGui::TextDisabled("Blueprints demo placeholder");
+            ImGui::Separator();
+            ImGui::TextWrapped(
+                "This workspace is reserved for node/scheme authoring. "
+                "A full Blueprint renderer can be attached here incrementally.");
+        }
+        ImGui::End();
+        SaveWorkspacePanelVisibility(ActiveWorkspace);
+        return;
+    }
+
     if (bShowWindowLab) {
         if (ImGui::Begin(WindowTitleLab, &bShowWindowLab)) {
             ImGui::TextDisabled("V2 observability + launcher shell");
@@ -1170,6 +1194,7 @@ auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
             ImGui::Checkbox("Live Control", &bShowWindowLiveControl);
             ImGui::Checkbox("Views", &bShowWindowViews);
             ImGui::Checkbox("KG2D Control", &bShowWindowKG2DControl);
+            ImGui::Checkbox("Blueprints", &bShowWindowBlueprints);
         }
         ImGui::End();
     }
@@ -1217,6 +1242,17 @@ auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
                 KG2DControlAmplitude,
                 bKG2DControlEnabled,
                 KG2DControlTopicPrefix);
+        }
+        ImGui::End();
+    }
+
+    if (bShowWindowBlueprints) {
+        if (ImGui::Begin(WindowTitleBlueprints, &bShowWindowBlueprints)) {
+            ImGui::TextDisabled("Blueprints demo placeholder");
+            ImGui::Separator();
+            ImGui::TextWrapped(
+                "This workspace is reserved for node/scheme authoring. "
+                "A full Blueprint renderer can be attached here incrementally.");
         }
         ImGui::End();
     }

@@ -26,18 +26,19 @@ public:
 
 private:
     enum class EWorkspaceTab : unsigned char {
-        Lab = 0,
-        Simulations,
-        Monitor
+        Simulations = 0,
+        Monitor,
+        Schemes
     };
 
     struct FWorkspacePanelVisibility {
-        bool bShowWindowLab = true;
+        bool bShowWindowLab = false;
         bool bShowWindowTasks = true;
         bool bShowWindowLiveData = true;
         bool bShowWindowLiveControl = true;
         bool bShowWindowViews = true;
         bool bShowWindowKG2DControl = true;
+        bool bShowWindowBlueprints = false;
     };
 
     static constexpr std::size_t WorkspaceCount = 3;
@@ -83,12 +84,12 @@ private:
     bool bResetDockLayoutRequested = false;
     bool bPendingViewRetile = true;
     unsigned int DockspaceId = 0;
-    EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Lab;
+    EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Simulations;
     std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{true, true, true, true, true, true},
-        FWorkspacePanelVisibility{true, true, true, true, false, false},
-        FWorkspacePanelVisibility{true, true, true, true, true, true}
+        FWorkspacePanelVisibility{false, true, true, true, true, true, false},
+        FWorkspacePanelVisibility{false, false, true, true, true, true, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, true}
     };
     float WorkspaceTabsHeight = 0.0f;
     bool bShowWindowLab = true;
@@ -97,6 +98,7 @@ private:
     bool bShowWindowLiveControl = true;
     bool bShowWindowViews = true;
     bool bShowWindowKG2DControl = true;
+    bool bShowWindowBlueprints = false;
 
     auto FlushPendingSlabWindows() -> void;
     auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;

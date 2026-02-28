@@ -196,7 +196,7 @@ auto FSimulationManagerV2::DrawLauncherWindow() -> void {
     ImGui::SetNextWindowSize(ImVec2(520, 560), ImGuiCond_Appearing);
 
     bool bOpen = true;
-    if (ImGui::Begin("Lab V2 - Simulation Launcher", &bOpen)) {
+    if (ImGui::Begin("Simulation Launcher", &bOpen)) {
         ImGui::TextDisabled("V2 examples launcher (Phase 2/3)");
         if (!LastError.empty()) {
             ImGui::SeparatorText("Last Error");
