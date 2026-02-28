@@ -920,8 +920,8 @@ auto FLabV2WindowManager::DrawViewManagerPanel() -> void {
     }
 }
 
-auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> void {
-    if (SlabWindows.empty()) return;
+auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> bool {
+    if (SlabWindows.empty()) return true;
 
     constexpr int MinTileWidth = 420;
 
@@ -940,15 +940,20 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> void {
     if (bDockingMode && DockspaceId != 0) {
         if (const auto *centralNode = ImGui::DockBuilderGetCentralNode(static_cast<ImGuiID>(DockspaceId));
             centralNode != nullptr) {
+            if (centralNode->Size.x <= 1.0f || centralNode->Size.y <= 1.0f) {
+                return false;
+            }
             xWorkspace = static_cast<int>(std::floor(centralNode->Pos.x)) + gap;
             yWorkspace = static_cast<int>(std::floor(centralNode->Pos.y)) + gap;
             wWorkspace = std::max(0, static_cast<int>(std::ceil(centralNode->Size.x)) - 2 * gap);
             hWorkspace = std::max(0, static_cast<int>(std::ceil(centralNode->Size.y)) - 2 * gap);
+        } else {
+            return false;
         }
     }
 #endif
 
-    if (wWorkspace <= 0 || hWorkspace <= 0) return;
+    if (wWorkspace <= 0 || hWorkspace <= 0) return false;
 
     const int nWindows = static_cast<int>(SlabWindows.size());
 
@@ -959,7 +964,7 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> void {
             window->Set_y(-10000);
             window->NotifyReshape(1, 1);
         }
-        return;
+        return true;
     }
 
     if (bDockingMode && ActiveWorkspace == EWorkspaceTab::Monitor && nWindows == 1) {
@@ -968,7 +973,7 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> void {
             window->Set_y(yWorkspace);
             window->NotifyReshape(wWorkspace, hWorkspace);
         }
-        return;
+        return true;
     }
 
     auto canFitCols = [&](const int nColsCandidate) {
@@ -1005,6 +1010,8 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> void {
 
         ++iWindow;
     }
+
+    return true;
 }
 
 auto FLabV2WindowManager::IsDockingEnabled() const -> bool {
@@ -1532,8 +1539,9 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
     }
 
     if (bPendingViewRetile) {
-        ArrangeTopLevelSlabWindows();
-        bPendingViewRetile = false;
+        if (ArrangeTopLevelSlabWindows()) {
+            bPendingViewRetile = false;
+        }
     }
 
     FWindowManager::NotifyRender(platformWindow);

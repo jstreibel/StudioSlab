@@ -130,7 +130,7 @@ private:
     auto FlushPendingSlabWindows() -> void;
     auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
     auto PruneClosedSlabWindows() -> bool;
-    auto ArrangeTopLevelSlabWindows() -> void;
+    auto ArrangeTopLevelSlabWindows() -> bool;
     auto DrawWorkspaceTabs() -> void;
     auto DrawDockspaceHost() -> void;
     auto DrawDockedToolWindows() -> void;
