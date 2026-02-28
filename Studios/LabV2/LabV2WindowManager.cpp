@@ -1002,8 +1002,12 @@ auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> v
     SaveWorkspacePanelVisibility(ActiveWorkspace);
     ActiveWorkspace = workspace;
     LoadWorkspacePanelVisibility(ActiveWorkspace);
-    if (ActiveWorkspace == EWorkspaceTab::Simulations && SimulationManager != nullptr) {
-        SimulationManager->EnsureLauncherVisible();
+    if (SimulationManager != nullptr) {
+        if (ActiveWorkspace == EWorkspaceTab::Simulations) {
+            SimulationManager->EnsureLauncherVisible();
+        } else {
+            SimulationManager->SetLauncherVisible(false);
+        }
     }
     if (previousWorkspace == EWorkspaceTab::Monitor || ActiveWorkspace == EWorkspaceTab::Monitor) {
         bPendingViewRetile = true;

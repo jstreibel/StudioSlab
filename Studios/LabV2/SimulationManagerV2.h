@@ -29,6 +29,7 @@ public:
 
     bool NotifyRender(const Slab::Graphics::FPlatformWindow &platformWindow) override;
     auto EnsureLauncherVisible() -> void;
+    auto SetLauncherVisible(bool visible) -> void;
     auto SetLauncherPreferredDockId(unsigned int dockId) -> void;
 
 private:
