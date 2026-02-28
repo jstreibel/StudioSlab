@@ -102,6 +102,7 @@ private:
     bool bUseDockspaceLayout = true;
     bool bResetDockLayoutRequested = false;
     bool bPendingViewRetile = true;
+    int RetileStabilizationFramesRemaining = 0;
     bool bRequestLauncherInitialDock = false;
     unsigned int LauncherInitialDockId = 0;
     unsigned int DockspaceId = 0;
@@ -145,6 +146,7 @@ private:
     [[nodiscard]] auto IsDockingEnabled() const -> bool;
     auto DrawViewManagerPanel() -> void;
     auto FocusWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
+    auto RequestViewRetile(int stabilizationFrames = 3) -> void;
     [[nodiscard]] auto FindTopWindowAtPoint(int x, int y) const -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
     [[nodiscard]] auto FindKeyboardTargetWindow() const -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
     auto SyncMousePositionFromImGui() -> void;

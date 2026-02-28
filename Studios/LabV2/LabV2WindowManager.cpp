@@ -719,7 +719,7 @@ void FLabV2WindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSl
     if (SelectedViewUniqueName.empty()) {
         SelectedViewUniqueName = window->GetUniqueName();
     }
-    bPendingViewRetile = true;
+    RequestViewRetile();
     NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
 }
 
@@ -798,6 +798,13 @@ auto FLabV2WindowManager::FocusWindow(const Slab::TPointer<Slab::Graphics::FSlab
     SelectedViewUniqueName = window->GetUniqueName();
 }
 
+auto FLabV2WindowManager::RequestViewRetile(const int stabilizationFrames) -> void {
+    bPendingViewRetile = true;
+    RetileStabilizationFramesRemaining = std::max(
+        RetileStabilizationFramesRemaining,
+        std::max(1, stabilizationFrames));
+}
+
 auto FLabV2WindowManager::FindTopWindowAtPoint(const int x, const int y) const
     -> Slab::TPointer<Slab::Graphics::FSlabWindow> {
     const auto point = Slab::Graphics::FPoint2D{
@@ -847,7 +854,7 @@ auto FLabV2WindowManager::DrawViewManagerPanel() -> void {
     }
 
     if (ImGui::Button("Retile Views")) {
-        bPendingViewRetile = true;
+        RequestViewRetile();
     }
 
     const auto selected = FindWindowByUniqueName(SelectedViewUniqueName);
@@ -1065,7 +1072,7 @@ auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> v
     ActiveWorkspace = workspace;
     LoadWorkspacePanelVisibility(ActiveWorkspace);
     if (previousWorkspace == EWorkspaceTab::Monitor || ActiveWorkspace == EWorkspaceTab::Monitor) {
-        bPendingViewRetile = true;
+        RequestViewRetile();
     }
 }
 
@@ -1124,7 +1131,7 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
     ImGui::PopStyleVar(3);
 
     if (std::abs(previousHeight - WorkspaceTabsHeight) > 0.5f) {
-        bPendingViewRetile = true;
+        RequestViewRetile();
     }
 }
 
@@ -1222,7 +1229,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Monitor)] = true;
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Schemes)] = true;
             bWorkspaceLayoutsBootstrapped = true;
-            bPendingViewRetile = true;
+            RequestViewRetile();
         }
 
         const auto dockspaceIdFor = [dockspaceIdSimulations, dockspaceIdMonitor, dockspaceIdSchemes]
@@ -1238,7 +1245,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
             BuildDefaultDockLayout(DockspaceId, ActiveWorkspace);
             WorkspaceLayoutInitialized[workspaceIndex] = true;
             bResetDockLayoutRequested = false;
-            bPendingViewRetile = true;
+            RequestViewRetile();
         }
 #ifdef IMGUI_HAS_DOCK
         const auto drawWorkspaceDockspace = [this](const unsigned int id, const EWorkspaceTab workspace) {
@@ -1279,7 +1286,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
             }
             ImGui::SameLine();
             if (ImGui::Button("Retile Views")) {
-                bPendingViewRetile = true;
+                RequestViewRetile();
             }
 
             ImGui::SeparatorText("Panels");
@@ -1535,12 +1542,21 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
     AddExitMenuEntry(platformWindow, *ImGuiContext);
 
     if (PruneClosedSlabWindows()) {
-        bPendingViewRetile = true;
+        RequestViewRetile();
     }
 
-    if (bPendingViewRetile) {
+    if (bPendingViewRetile || RetileStabilizationFramesRemaining > 0) {
         if (ArrangeTopLevelSlabWindows()) {
-            bPendingViewRetile = false;
+            if (RetileStabilizationFramesRemaining > 0) {
+                --RetileStabilizationFramesRemaining;
+            }
+
+            if (RetileStabilizationFramesRemaining == 0) {
+                bPendingViewRetile = false;
+            }
+        } else {
+            bPendingViewRetile = true;
+            RetileStabilizationFramesRemaining = std::max(RetileStabilizationFramesRemaining, 1);
         }
     }
 
@@ -1554,7 +1570,7 @@ bool FLabV2WindowManager::NotifySystemWindowReshape(const int w, const int h) {
     WidthSysWin = w;
     HeightSysWin = h;
     const auto responded = FWindowManager::NotifySystemWindowReshape(w, h);
-    bPendingViewRetile = true;
+    RequestViewRetile();
     return responded;
 }
 
