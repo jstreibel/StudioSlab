@@ -54,3 +54,14 @@ This is a small internal contract note to keep the window/plot/GUI stack coheren
 
 3. Docked panel ordering should be registry-driven.
 - keep one explicit, deterministic panel registry per frame/workspace instead of scattered `Begin/End` calls across multiple listeners.
+
+## Event Routing Contract (V2 Direction)
+
+1. Mouse event routing for ImGui-wrapped Slab canvases should be hit-test based, not focus-only.
+- route mouse button/motion/wheel when pointer is in canvas bounds, or while canvas is active/dragging.
+
+2. Keyboard routing remains focus-based.
+- avoid global key hijacking when multiple editor tool surfaces are visible.
+
+3. Wrapper bridges should persist last known mouse position and last canvas bounds.
+- this keeps routing consistent across the platform-event phase and ImGui frame phase.

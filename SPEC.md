@@ -270,6 +270,7 @@ AI should report:
   - centralized top-level panel submission in `FLabV2WindowManager`
   - `SimulationManagerV2` reduced to launcher/menu/simulation logic (no top-level `Begin/End`)
   - registry-driven panel surface ordering for docked workspaces
+  - event-routing hardening for ImGui-wrapped Slab canvases (mouse hit-test routing over focus-only gating)
 - `Studios` V2 consolidation helpers:
   - task runner helpers (`NumericsV2TaskUtils`)
   - monitored GLFW runner (`V2SimulationRunners`)

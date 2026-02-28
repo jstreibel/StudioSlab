@@ -33,6 +33,8 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `CVG-03` done: XY and Ising V2 lattice slices now have `V2-H` + `V2-M` paths in CLI/LabV2 (`Studios xy|ising`, optional `--gl` passive monitors).
 - `CVG-03.5` done: SlabTests visual smoke commands now include XY/Ising monitor paths (`xy-monitor-smoke`, `ising-monitor-smoke`).
 - `CVG-04` active: Functional minimization V2 first-slice scope drafted in `Docs/functional-minimization-v2-slice-scope.md`.
+- `LAB-03` done: LabV2 top-level panel/window orchestration centralized in `FLabV2WindowManager` with registry-driven panel surfaces.
+- `LAB-04` done: ImGui-wrapped Slab canvas event routing hardened (mouse hit-test routing, keyboard focus routing, persisted bounds/last-mouse bridge).
 
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
@@ -69,6 +71,8 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `P1` `LAB-00` — Data Browser polish (filtering, grouping, row details) — done
 - `P1` `LAB-01` — View management surface (focus/close/retile) — done
 - `P1` `LAB-02` — Run Manager improvements (grouping/error clarity) — done
+- `P1` `LAB-03` — Centralized panel/window orchestration contract — done
+- `P1` `LAB-04` — Sub-window event routing contract and wrapper hardening — done
 
 ### Coverage Portfolio
 - `P1` `CVG-01` — MD V2 scoping — done
