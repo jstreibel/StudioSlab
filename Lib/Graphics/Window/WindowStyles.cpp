@@ -25,5 +25,6 @@ namespace Slab::Graphics::WindowStyle {
     // Color windowBGColor = {246/255., 245/255., 244/255., 1};
     FColor WindowBGColor = {192/255., 181/255., 181/255., 1};
 
-    FColor PlatformWindow_BackgroundColor = {21./255,34./255,51./255};
+    // Warmer/lighter neutral backdrop for the main system window.
+    FColor PlatformWindow_BackgroundColor = {43./255, 38./255, 33./255};
 }
