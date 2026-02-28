@@ -92,6 +92,7 @@ namespace Slab::Graphics {
 
         ImGuiIO &io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable docking controls
 
         // ImGui::GetStyle().ScaleAllSizes(1.25);
         ImGui::GetIO().FontGlobalScale = 1;

@@ -62,10 +62,26 @@ private:
     bool bKG2DControlEnabled = false;
     Slab::Str KG2DControlTopicPrefix = "labv2/control/kg2d";
 
+    bool bUseDockspaceLayout = true;
+    bool bDockLayoutInitialized = false;
+    bool bResetDockLayoutRequested = false;
+    unsigned int DockspaceId = 0;
+    bool bShowWindowLab = true;
+    bool bShowWindowTasks = true;
+    bool bShowWindowLiveData = true;
+    bool bShowWindowLiveControl = true;
+    bool bShowWindowViews = true;
+    bool bShowWindowKG2DControl = true;
+
     auto FlushPendingSlabWindows() -> void;
     auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
     auto PruneClosedSlabWindows() -> bool;
     auto ArrangeTopLevelSlabWindows() -> void;
+    auto DrawDockspaceHost() -> void;
+    auto DrawDockedToolWindows() -> void;
+    auto DrawLegacySidePane() -> void;
+    auto BuildDefaultDockLayout(unsigned int dockspaceId) -> void;
+    [[nodiscard]] auto IsDockingEnabled() const -> bool;
     auto DrawViewManagerPanel() -> void;
     auto FocusWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
     [[nodiscard]] auto FindWindowByUniqueName(const Slab::Str &uniqueName) const

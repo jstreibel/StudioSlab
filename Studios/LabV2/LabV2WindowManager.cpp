@@ -4,6 +4,9 @@
 #include "StudioConfigV2.h"
 
 #include "imgui.h"
+#ifdef IMGUI_HAS_DOCK
+#include "imgui_internal.h"
+#endif
 
 #include "Core/SlabCore.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
@@ -57,6 +60,16 @@ namespace {
 
         imguiContext.AddMainMenuItem(Slab::Graphics::MainMenuItem{itemLocation, {entry}, action});
     }
+
+    constexpr auto WindowTitleLab = "Lab V2 | Lab";
+    constexpr auto WindowTitleTasks = "Lab V2 | Tasks";
+    constexpr auto WindowTitleLiveData = "Lab V2 | Live Data";
+    constexpr auto WindowTitleLiveControl = "Lab V2 | Live Control";
+    constexpr auto WindowTitleViews = "Lab V2 | Views";
+    constexpr auto WindowTitleKG2DControl = "Lab V2 | KG2D Control";
+    constexpr auto WindowTitleSimulationLauncher = "Lab V2 - Simulation Launcher";
+    constexpr auto DockspaceHostName = "##LabV2DockspaceHost";
+    constexpr auto DockspaceName = "##LabV2Dockspace";
 
     auto ShowTasksPanel(Slab::Str &nameFilter,
                         bool &bOnlyRunning,
@@ -889,14 +902,166 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> void {
     }
 }
 
-bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &platformWindow) {
-    FlushPendingSlabWindows();
+auto FLabV2WindowManager::IsDockingEnabled() const -> bool {
+    if (!bUseDockspaceLayout) return false;
+    if (ImGui::GetCurrentContext() == nullptr) return false;
+    const auto &io = ImGui::GetIO();
+    return (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) != 0;
+}
 
-    platformWindow.Clear(Slab::Graphics::WindowStyle::PlatformWindow_BackgroundColor);
+auto FLabV2WindowManager::BuildDefaultDockLayout(unsigned int dockspaceId) -> void {
+#ifdef IMGUI_HAS_DOCK
+    const auto dockId = static_cast<ImGuiID>(dockspaceId);
+    if (dockId == 0) return;
 
-    ImGuiContext->NewFrame();
-    ImGuiContext->SetupOptionalMenuItems();
+    const auto *viewport = ImGui::GetMainViewport();
+    if (viewport == nullptr) return;
 
+    const auto menuHeight = static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight);
+    const auto dockSize = ImVec2(viewport->Size.x, std::max(0.0f, viewport->Size.y - menuHeight));
+
+    ImGui::DockBuilderRemoveNode(dockId);
+    ImGui::DockBuilderAddNode(dockId, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_PassthruCentralNode);
+    ImGui::DockBuilderSetNodeSize(dockId, dockSize);
+
+    ImGuiID dockMain = dockId;
+    const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.30f, nullptr, &dockMain);
+    const auto dockLeftBottom = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.45f, nullptr, nullptr);
+    const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.30f, nullptr, &dockMain);
+
+    ImGui::DockBuilderDockWindow(WindowTitleLab, dockLeft);
+    ImGui::DockBuilderDockWindow(WindowTitleTasks, dockLeft);
+    ImGui::DockBuilderDockWindow(WindowTitleViews, dockLeft);
+    ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockLeftBottom);
+    ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockLeftBottom);
+    ImGui::DockBuilderDockWindow(WindowTitleKG2DControl, dockRight);
+    ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockRight);
+
+    ImGui::DockBuilderFinish(dockId);
+#else
+    (void) dockspaceId;
+#endif
+}
+
+auto FLabV2WindowManager::DrawDockspaceHost() -> void {
+    if (!IsDockingEnabled()) return;
+
+    const auto menuHeight = static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight);
+    const auto *viewport = ImGui::GetMainViewport();
+    if (viewport == nullptr) return;
+
+    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuHeight), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(
+        ImVec2(viewport->Size.x, std::max(0.0f, viewport->Size.y - menuHeight)),
+        ImGuiCond_Always);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    constexpr auto hostFlags =
+        ImGuiWindowFlags_NoDocking |
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoBringToFrontOnFocus |
+        ImGuiWindowFlags_NoNavFocus |
+        ImGuiWindowFlags_NoBackground;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+    if (ImGui::Begin(DockspaceHostName, nullptr, hostFlags)) {
+        DockspaceId = static_cast<unsigned int>(ImGui::GetID(DockspaceName));
+        if (!bDockLayoutInitialized || bResetDockLayoutRequested) {
+            BuildDefaultDockLayout(DockspaceId);
+            bDockLayoutInitialized = true;
+            bResetDockLayoutRequested = false;
+        }
+#ifdef IMGUI_HAS_DOCK
+        ImGui::DockSpace(
+            static_cast<ImGuiID>(DockspaceId),
+            ImVec2(0.0f, 0.0f),
+            ImGuiDockNodeFlags_PassthruCentralNode);
+#endif
+    }
+    ImGui::End();
+
+    ImGui::PopStyleVar(3);
+}
+
+auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
+    if (bShowWindowLab) {
+        if (ImGui::Begin(WindowTitleLab, &bShowWindowLab)) {
+            ImGui::TextDisabled("V2 observability + launcher shell");
+            ImGui::SeparatorText("Workspace");
+            ImGui::Checkbox("Enable dockspace layout", &bUseDockspaceLayout);
+            if (ImGui::Button("Reset Dock Layout")) {
+                bResetDockLayoutRequested = true;
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Retile Views")) {
+                ArrangeTopLevelSlabWindows();
+            }
+
+            ImGui::SeparatorText("Panels");
+            ImGui::Checkbox("Tasks", &bShowWindowTasks);
+            ImGui::Checkbox("Live Data", &bShowWindowLiveData);
+            ImGui::Checkbox("Live Control", &bShowWindowLiveControl);
+            ImGui::Checkbox("Views", &bShowWindowViews);
+            ImGui::Checkbox("KG2D Control", &bShowWindowKG2DControl);
+        }
+        ImGui::End();
+    }
+
+    if (bShowWindowTasks) {
+        if (ImGui::Begin(WindowTitleTasks, &bShowWindowTasks)) {
+            ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);
+        }
+        ImGui::End();
+    }
+
+    if (bShowWindowLiveData) {
+        if (ImGui::Begin(WindowTitleLiveData, &bShowWindowLiveData)) {
+            ShowLiveDataV2Panel(LiveDataHub, LiveDataTopicFilter, bLiveDataOnlyBound, SelectedLiveDataTopic);
+        }
+        ImGui::End();
+    }
+
+    if (bShowWindowLiveControl) {
+        if (ImGui::Begin(WindowTitleLiveControl, &bShowWindowLiveControl)) {
+            ShowLiveControlV2Panel(
+                LiveControlHub,
+                LiveControlTopicFilter,
+                bLiveControlLevelsOnly,
+                SelectedLiveControlTopic);
+        }
+        ImGui::End();
+    }
+
+    if (bShowWindowViews) {
+        if (ImGui::Begin(WindowTitleViews, &bShowWindowViews)) {
+            DrawViewManagerPanel();
+        }
+        ImGui::End();
+    }
+
+    if (bShowWindowKG2DControl) {
+        if (ImGui::Begin(WindowTitleKG2DControl, &bShowWindowKG2DControl)) {
+            ShowKG2DControlSourcePanelAndPublish(
+                LiveControlHub,
+                bPublishKG2DControlSource,
+                KG2DControlX,
+                KG2DControlY,
+                KG2DControlWidth,
+                KG2DControlAmplitude,
+                bKG2DControlEnabled,
+                KG2DControlTopicPrefix);
+        }
+        ImGui::End();
+    }
+}
+
+auto FLabV2WindowManager::DrawLegacySidePane() -> void {
     const auto menuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
     ImGui::SetNextWindowPos(ImVec2(0, static_cast<float>(menuHeight)));
     ImGui::SetNextWindowSize(
@@ -928,6 +1093,22 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
         }
     }
     ImGui::End();
+}
+
+bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &platformWindow) {
+    FlushPendingSlabWindows();
+
+    platformWindow.Clear(Slab::Graphics::WindowStyle::PlatformWindow_BackgroundColor);
+
+    ImGuiContext->NewFrame();
+    ImGuiContext->SetupOptionalMenuItems();
+
+    if (IsDockingEnabled()) {
+        DrawDockspaceHost();
+        DrawDockedToolWindows();
+    } else {
+        DrawLegacySidePane();
+    }
 
     AddExitMenuEntry(platformWindow, *ImGuiContext);
 
