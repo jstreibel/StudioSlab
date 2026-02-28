@@ -71,10 +71,10 @@ namespace {
     constexpr auto DockspaceHostName = "##LabV2DockspaceHost";
     constexpr auto DockspaceNameLab = "##LabV2Dockspace-Lab";
     constexpr auto DockspaceNameSimulations = "##LabV2Dockspace-Simulations";
-    constexpr auto DockspaceNameSequence = "##LabV2Dockspace-Sequence";
+    constexpr auto DockspaceNameMonitor = "##LabV2Dockspace-Monitor";
     constexpr auto WorkspaceTabLab = "Lab";
     constexpr auto WorkspaceTabSimulations = "Simulations";
-    constexpr auto WorkspaceTabSequence = "Sequence";
+    constexpr auto WorkspaceTabMonitor = "Monitor";
 
     auto ShowTasksPanel(Slab::Str &nameFilter,
                         bool &bOnlyRunning,
@@ -696,6 +696,7 @@ void FLabV2WindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSl
     if (SelectedViewUniqueName.empty()) {
         SelectedViewUniqueName = window->GetUniqueName();
     }
+    bPendingViewRetile = true;
     NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
 }
 
@@ -782,7 +783,7 @@ auto FLabV2WindowManager::DrawViewManagerPanel() -> void {
     }
 
     if (ImGui::Button("Retile Views")) {
-        ArrangeTopLevelSlabWindows();
+        bPendingViewRetile = true;
     }
 
     const auto selected = FindWindowByUniqueName(SelectedViewUniqueName);
@@ -866,14 +867,35 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> void {
     const int sidePaneInset = bDockingMode ? 0 : SidePaneWidth;
     const int tabsHeight = bDockingMode ? static_cast<int>(std::ceil(WorkspaceTabsHeight)) : 0;
 
-    const int xWorkspace = sidePaneInset + gap;
-    const int yWorkspace = menuHeight + tabsHeight + gap;
-    const int wWorkspace = std::max(0, WidthSysWin - xWorkspace - gap);
-    const int hWorkspace = std::max(0, HeightSysWin - yWorkspace - gap);
+    int xWorkspace = sidePaneInset + gap;
+    int yWorkspace = menuHeight + tabsHeight + gap;
+    int wWorkspace = std::max(0, WidthSysWin - xWorkspace - gap);
+    int hWorkspace = std::max(0, HeightSysWin - yWorkspace - gap);
+
+#ifdef IMGUI_HAS_DOCK
+    if (bDockingMode && DockspaceId != 0) {
+        if (const auto *centralNode = ImGui::DockBuilderGetCentralNode(static_cast<ImGuiID>(DockspaceId));
+            centralNode != nullptr) {
+            xWorkspace = static_cast<int>(std::floor(centralNode->Pos.x)) + gap;
+            yWorkspace = static_cast<int>(std::floor(centralNode->Pos.y)) + gap;
+            wWorkspace = std::max(0, static_cast<int>(std::ceil(centralNode->Size.x)) - 2 * gap);
+            hWorkspace = std::max(0, static_cast<int>(std::ceil(centralNode->Size.y)) - 2 * gap);
+        }
+    }
+#endif
 
     if (wWorkspace <= 0 || hWorkspace <= 0) return;
 
     const int nWindows = static_cast<int>(SlabWindows.size());
+
+    if (bDockingMode && ActiveWorkspace == EWorkspaceTab::Monitor && nWindows == 1) {
+        if (const auto &window = SlabWindows.front(); window != nullptr) {
+            window->Set_x(xWorkspace);
+            window->Set_y(yWorkspace);
+            window->NotifyReshape(wWorkspace, hWorkspace);
+        }
+        return;
+    }
 
     auto canFitCols = [&](const int nColsCandidate) {
         if (nColsCandidate <= 0) return false;
@@ -946,7 +968,7 @@ auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> v
     SaveWorkspacePanelVisibility(ActiveWorkspace);
     ActiveWorkspace = workspace;
     LoadWorkspacePanelVisibility(ActiveWorkspace);
-    ArrangeTopLevelSlabWindows();
+    bPendingViewRetile = true;
 }
 
 auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
@@ -978,6 +1000,7 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 3.0f));
 
     const auto previousHeight = WorkspaceTabsHeight;
+    WorkspaceTabsHeight = estimatedHeight;
     if (ImGui::Begin("##LabV2WorkspaceTabs", nullptr, flags)) {
         auto selected = ActiveWorkspace;
         if (ImGui::BeginTabBar("##WorkspaceTabBar",
@@ -994,19 +1017,18 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
 
             drawTab(EWorkspaceTab::Lab, WorkspaceTabLab);
             drawTab(EWorkspaceTab::Simulations, WorkspaceTabSimulations);
-            drawTab(EWorkspaceTab::Sequence, WorkspaceTabSequence);
+            drawTab(EWorkspaceTab::Monitor, WorkspaceTabMonitor);
 
             ImGui::EndTabBar();
         }
 
         if (selected != ActiveWorkspace) SetActiveWorkspace(selected);
-        WorkspaceTabsHeight = std::max(0.0f, ImGui::GetWindowHeight());
     }
     ImGui::End();
     ImGui::PopStyleVar(3);
 
     if (std::abs(previousHeight - WorkspaceTabsHeight) > 0.5f) {
-        ArrangeTopLevelSlabWindows();
+        bPendingViewRetile = true;
     }
 }
 
@@ -1055,8 +1077,8 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
         ImGui::DockBuilderDockWindow(WindowTitleViews, dockMain);
     } else {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.22f, nullptr, &dockMain);
-        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.33f, nullptr, &dockMain);
-        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.28f, nullptr, &dockMain);
+        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.26f, nullptr, &dockMain);
+        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.28f, nullptr, &dockMain);
 
         ImGui::DockBuilderDockWindow(WindowTitleViews, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleTasks, dockLeft);
@@ -1064,7 +1086,7 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
         ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockBottom);
         ImGui::DockBuilderDockWindow(WindowTitleKG2DControl, dockRight);
         ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockRight);
-        ImGui::DockBuilderDockWindow(WindowTitleLab, dockMain);
+        ImGui::DockBuilderDockWindow(WindowTitleLab, dockRight);
     }
 
     ImGui::DockBuilderFinish(dockId);
@@ -1106,7 +1128,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
     if (ImGui::Begin(DockspaceHostName, nullptr, hostFlags)) {
         const char *dockspaceName = DockspaceNameLab;
         if (ActiveWorkspace == EWorkspaceTab::Simulations) dockspaceName = DockspaceNameSimulations;
-        else if (ActiveWorkspace == EWorkspaceTab::Sequence) dockspaceName = DockspaceNameSequence;
+        else if (ActiveWorkspace == EWorkspaceTab::Monitor) dockspaceName = DockspaceNameMonitor;
 
         DockspaceId = static_cast<unsigned int>(ImGui::GetID(dockspaceName));
         const auto workspaceIndex = static_cast<std::size_t>(ActiveWorkspace);
@@ -1114,7 +1136,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
             BuildDefaultDockLayout(DockspaceId, ActiveWorkspace);
             WorkspaceLayoutInitialized[workspaceIndex] = true;
             bResetDockLayoutRequested = false;
-            ArrangeTopLevelSlabWindows();
+            bPendingViewRetile = true;
         }
 #ifdef IMGUI_HAS_DOCK
         ImGui::DockSpace(
@@ -1139,7 +1161,7 @@ auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
             }
             ImGui::SameLine();
             if (ImGui::Button("Retile Views")) {
-                ArrangeTopLevelSlabWindows();
+                bPendingViewRetile = true;
             }
 
             ImGui::SeparatorText("Panels");
@@ -1256,7 +1278,12 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
     AddExitMenuEntry(platformWindow, *ImGuiContext);
 
     if (PruneClosedSlabWindows()) {
+        bPendingViewRetile = true;
+    }
+
+    if (bPendingViewRetile) {
         ArrangeTopLevelSlabWindows();
+        bPendingViewRetile = false;
     }
 
     FWindowManager::NotifyRender(platformWindow);
@@ -1269,7 +1296,7 @@ bool FLabV2WindowManager::NotifySystemWindowReshape(const int w, const int h) {
     WidthSysWin = w;
     HeightSysWin = h;
     const auto responded = FWindowManager::NotifySystemWindowReshape(w, h);
-    ArrangeTopLevelSlabWindows();
+    bPendingViewRetile = true;
     return responded;
 }
 

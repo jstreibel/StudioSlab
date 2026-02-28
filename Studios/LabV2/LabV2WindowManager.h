@@ -28,7 +28,7 @@ private:
     enum class EWorkspaceTab : unsigned char {
         Lab = 0,
         Simulations,
-        Sequence
+        Monitor
     };
 
     struct FWorkspacePanelVisibility {
@@ -81,13 +81,14 @@ private:
 
     bool bUseDockspaceLayout = true;
     bool bResetDockLayoutRequested = false;
+    bool bPendingViewRetile = true;
     unsigned int DockspaceId = 0;
     EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Lab;
     std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
         FWorkspacePanelVisibility{true, true, true, true, true, true},
         FWorkspacePanelVisibility{true, true, true, true, false, false},
-        FWorkspacePanelVisibility{true, true, false, false, true, true}
+        FWorkspacePanelVisibility{true, true, true, true, true, true}
     };
     float WorkspaceTabsHeight = 0.0f;
     bool bShowWindowLab = true;
