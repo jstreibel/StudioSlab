@@ -1002,6 +1002,9 @@ auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> v
     SaveWorkspacePanelVisibility(ActiveWorkspace);
     ActiveWorkspace = workspace;
     LoadWorkspacePanelVisibility(ActiveWorkspace);
+    if (ActiveWorkspace == EWorkspaceTab::Simulations && SimulationManager != nullptr) {
+        SimulationManager->EnsureLauncherVisible();
+    }
     if (previousWorkspace == EWorkspaceTab::Monitor || ActiveWorkspace == EWorkspaceTab::Monitor) {
         bPendingViewRetile = true;
     }
@@ -1088,6 +1091,9 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
     if (workspace == EWorkspaceTab::Simulations) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.24f, nullptr, &dockMain);
         const auto dockLeftBottom = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.42f, nullptr, nullptr);
+        if (SimulationManager != nullptr) {
+            SimulationManager->SetLauncherPreferredDockId(static_cast<unsigned int>(dockLeft));
+        }
 
         ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleTasks, dockLeftBottom);

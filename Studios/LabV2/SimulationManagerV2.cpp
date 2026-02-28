@@ -111,6 +111,14 @@ auto FSimulationManagerV2::NotifyRender(const Slab::Graphics::FPlatformWindow &p
     return FPlatformWindowEventListener::NotifyRender(platformWindow);
 }
 
+auto FSimulationManagerV2::EnsureLauncherVisible() -> void {
+    bShowLauncherWindow = true;
+}
+
+auto FSimulationManagerV2::SetLauncherPreferredDockId(const unsigned int dockId) -> void {
+    PreferredLauncherDockId = dockId;
+}
+
 auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platformWindow) -> void {
     if (ImGuiContext == nullptr) return;
 
@@ -188,6 +196,9 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
 auto FSimulationManagerV2::DrawLauncherWindow() -> void {
     if (!bShowLauncherWindow) return;
 
+    if (PreferredLauncherDockId != 0) {
+        ImGui::SetNextWindowDockID(static_cast<ImGuiID>(PreferredLauncherDockId), ImGuiCond_Appearing);
+    }
     ImGui::SetNextWindowPos(
         ImVec2(
             static_cast<float>(FStudioConfigV2::SidePaneWidth + 24),
