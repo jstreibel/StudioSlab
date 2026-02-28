@@ -1171,11 +1171,14 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
             bPendingViewRetile = true;
         }
 
-        const char *dockspaceName = DockspaceNameSimulations;
-        if (ActiveWorkspace == EWorkspaceTab::Monitor) dockspaceName = DockspaceNameMonitor;
-        else if (ActiveWorkspace == EWorkspaceTab::Schemes) dockspaceName = DockspaceNameSchemes;
+        const auto dockspaceIdFor = [dockspaceIdSimulations, dockspaceIdMonitor, dockspaceIdSchemes]
+            (const EWorkspaceTab workspace) -> unsigned int {
+                if (workspace == EWorkspaceTab::Monitor) return dockspaceIdMonitor;
+                if (workspace == EWorkspaceTab::Schemes) return dockspaceIdSchemes;
+                return dockspaceIdSimulations;
+            };
 
-        DockspaceId = static_cast<unsigned int>(ImGui::GetID(dockspaceName));
+        DockspaceId = dockspaceIdFor(ActiveWorkspace);
         const auto workspaceIndex = static_cast<std::size_t>(ActiveWorkspace);
         if (bResetDockLayoutRequested) {
             BuildDefaultDockLayout(DockspaceId, ActiveWorkspace);
@@ -1184,10 +1187,19 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
             bPendingViewRetile = true;
         }
 #ifdef IMGUI_HAS_DOCK
-        ImGui::DockSpace(
-            static_cast<ImGuiID>(DockspaceId),
-            ImVec2(0.0f, 0.0f),
-            ImGuiDockNodeFlags_PassthruCentralNode);
+        const auto drawWorkspaceDockspace = [this](const unsigned int id, const EWorkspaceTab workspace) {
+            ImGuiDockNodeFlags dockFlags = ImGuiDockNodeFlags_PassthruCentralNode;
+            if (workspace != ActiveWorkspace) {
+                // Keep inactive workspaces alive so docked windows don't detach on tab switch.
+                dockFlags = ImGuiDockNodeFlags_KeepAliveOnly;
+            }
+
+            ImGui::DockSpace(static_cast<ImGuiID>(id), ImVec2(0.0f, 0.0f), dockFlags);
+        };
+
+        drawWorkspaceDockspace(dockspaceIdSimulations, EWorkspaceTab::Simulations);
+        drawWorkspaceDockspace(dockspaceIdMonitor, EWorkspaceTab::Monitor);
+        drawWorkspaceDockspace(dockspaceIdSchemes, EWorkspaceTab::Schemes);
 #endif
     }
     ImGui::End();
