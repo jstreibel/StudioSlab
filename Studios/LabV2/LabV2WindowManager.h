@@ -8,6 +8,7 @@
 #include "Math/Data/V2/LiveControlHubV2.h"
 
 #include <functional>
+#include <array>
 
 class FLabV2WindowManager final : public Slab::Graphics::FWindowManager {
 public:
@@ -24,6 +25,22 @@ public:
     [[nodiscard]] auto GetLiveControlHub() const -> Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2>;
 
 private:
+    enum class EWorkspaceTab : unsigned char {
+        Lab = 0,
+        Simulations,
+        Sequence
+    };
+
+    struct FWorkspacePanelVisibility {
+        bool bShowWindowLab = true;
+        bool bShowWindowTasks = true;
+        bool bShowWindowLiveData = true;
+        bool bShowWindowLiveControl = true;
+        bool bShowWindowViews = true;
+        bool bShowWindowKG2DControl = true;
+    };
+
+    static constexpr std::size_t WorkspaceCount = 3;
     using FSlabWindowPtr = Slab::TPointer<Slab::Graphics::FSlabWindow>;
     using FSlabWindowVec = Slab::Vector<FSlabWindowPtr>;
 
@@ -63,9 +80,16 @@ private:
     Slab::Str KG2DControlTopicPrefix = "labv2/control/kg2d";
 
     bool bUseDockspaceLayout = true;
-    bool bDockLayoutInitialized = false;
     bool bResetDockLayoutRequested = false;
     unsigned int DockspaceId = 0;
+    EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Lab;
+    std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false};
+    std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
+        FWorkspacePanelVisibility{true, true, true, true, true, true},
+        FWorkspacePanelVisibility{true, true, true, true, false, false},
+        FWorkspacePanelVisibility{true, true, false, false, true, true}
+    };
+    float WorkspaceTabsHeight = 0.0f;
     bool bShowWindowLab = true;
     bool bShowWindowTasks = true;
     bool bShowWindowLiveData = true;
@@ -77,10 +101,14 @@ private:
     auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
     auto PruneClosedSlabWindows() -> bool;
     auto ArrangeTopLevelSlabWindows() -> void;
+    auto DrawWorkspaceTabs() -> void;
     auto DrawDockspaceHost() -> void;
     auto DrawDockedToolWindows() -> void;
     auto DrawLegacySidePane() -> void;
-    auto BuildDefaultDockLayout(unsigned int dockspaceId) -> void;
+    auto BuildDefaultDockLayout(unsigned int dockspaceId, EWorkspaceTab workspace) -> void;
+    auto SaveWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
+    auto LoadWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
+    auto SetActiveWorkspace(EWorkspaceTab workspace) -> void;
     [[nodiscard]] auto IsDockingEnabled() const -> bool;
     auto DrawViewManagerPanel() -> void;
     auto FocusWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;

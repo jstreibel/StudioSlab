@@ -61,15 +61,20 @@ namespace {
         imguiContext.AddMainMenuItem(Slab::Graphics::MainMenuItem{itemLocation, {entry}, action});
     }
 
-    constexpr auto WindowTitleLab = "Lab V2 | Lab";
-    constexpr auto WindowTitleTasks = "Lab V2 | Tasks";
-    constexpr auto WindowTitleLiveData = "Lab V2 | Live Data";
-    constexpr auto WindowTitleLiveControl = "Lab V2 | Live Control";
-    constexpr auto WindowTitleViews = "Lab V2 | Views";
-    constexpr auto WindowTitleKG2DControl = "Lab V2 | KG2D Control";
+    constexpr auto WindowTitleLab = "Lab";
+    constexpr auto WindowTitleTasks = "Tasks";
+    constexpr auto WindowTitleLiveData = "Live Data";
+    constexpr auto WindowTitleLiveControl = "Live Control";
+    constexpr auto WindowTitleViews = "Views";
+    constexpr auto WindowTitleKG2DControl = "KG2D Control";
     constexpr auto WindowTitleSimulationLauncher = "Lab V2 - Simulation Launcher";
     constexpr auto DockspaceHostName = "##LabV2DockspaceHost";
-    constexpr auto DockspaceName = "##LabV2Dockspace";
+    constexpr auto DockspaceNameLab = "##LabV2Dockspace-Lab";
+    constexpr auto DockspaceNameSimulations = "##LabV2Dockspace-Simulations";
+    constexpr auto DockspaceNameSequence = "##LabV2Dockspace-Sequence";
+    constexpr auto WorkspaceTabLab = "Lab";
+    constexpr auto WorkspaceTabSimulations = "Simulations";
+    constexpr auto WorkspaceTabSequence = "Sequence";
 
     auto ShowTasksPanel(Slab::Str &nameFilter,
                         bool &bOnlyRunning,
@@ -676,6 +681,7 @@ FLabV2WindowManager::FLabV2WindowManager()
 
     AddResponder(ImGuiContext);
     AddResponder(SimulationManager);
+    LoadWorkspacePanelVisibility(ActiveWorkspace);
 }
 
 void FLabV2WindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) {
@@ -856,9 +862,12 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> void {
 
     const int gap = Slab::Graphics::WindowStyle::TilingGapSize;
     const int menuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
+    const bool bDockingMode = IsDockingEnabled();
+    const int sidePaneInset = bDockingMode ? 0 : SidePaneWidth;
+    const int tabsHeight = bDockingMode ? static_cast<int>(std::ceil(WorkspaceTabsHeight)) : 0;
 
-    const int xWorkspace = SidePaneWidth + gap;
-    const int yWorkspace = menuHeight + gap;
+    const int xWorkspace = sidePaneInset + gap;
+    const int yWorkspace = menuHeight + tabsHeight + gap;
     const int wWorkspace = std::max(0, WidthSysWin - xWorkspace - gap);
     const int hWorkspace = std::max(0, HeightSysWin - yWorkspace - gap);
 
@@ -909,7 +918,100 @@ auto FLabV2WindowManager::IsDockingEnabled() const -> bool {
     return (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) != 0;
 }
 
-auto FLabV2WindowManager::BuildDefaultDockLayout(unsigned int dockspaceId) -> void {
+auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab workspace) -> void {
+    const auto index = static_cast<std::size_t>(workspace);
+    WorkspacePanels[index] = FWorkspacePanelVisibility{
+        bShowWindowLab,
+        bShowWindowTasks,
+        bShowWindowLiveData,
+        bShowWindowLiveControl,
+        bShowWindowViews,
+        bShowWindowKG2DControl
+    };
+}
+
+auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab workspace) -> void {
+    const auto index = static_cast<std::size_t>(workspace);
+    const auto &cfg = WorkspacePanels[index];
+    bShowWindowLab = cfg.bShowWindowLab;
+    bShowWindowTasks = cfg.bShowWindowTasks;
+    bShowWindowLiveData = cfg.bShowWindowLiveData;
+    bShowWindowLiveControl = cfg.bShowWindowLiveControl;
+    bShowWindowViews = cfg.bShowWindowViews;
+    bShowWindowKG2DControl = cfg.bShowWindowKG2DControl;
+}
+
+auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> void {
+    if (ActiveWorkspace == workspace) return;
+    SaveWorkspacePanelVisibility(ActiveWorkspace);
+    ActiveWorkspace = workspace;
+    LoadWorkspacePanelVisibility(ActiveWorkspace);
+    ArrangeTopLevelSlabWindows();
+}
+
+auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
+    if (!IsDockingEnabled()) return;
+
+    const auto *viewport = ImGui::GetMainViewport();
+    if (viewport == nullptr) return;
+
+    const auto menuHeight = static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight);
+    const float estimatedHeight = ImGui::GetFrameHeightWithSpacing() + 8.0f;
+
+    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuHeight), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, estimatedHeight), ImGuiCond_Always);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    constexpr auto flags =
+        ImGuiWindowFlags_NoDocking |
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoScrollWithMouse |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoNavFocus;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 3.0f));
+
+    const auto previousHeight = WorkspaceTabsHeight;
+    if (ImGui::Begin("##LabV2WorkspaceTabs", nullptr, flags)) {
+        auto selected = ActiveWorkspace;
+        if (ImGui::BeginTabBar("##WorkspaceTabBar",
+            ImGuiTabBarFlags_FittingPolicyResizeDown | ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
+
+            const auto drawTab = [&selected](const EWorkspaceTab workspace, const char *label) {
+                const auto tabFlags =
+                    selected == workspace ? ImGuiTabItemFlags_SetSelected : ImGuiTabItemFlags_None;
+                if (ImGui::BeginTabItem(label, nullptr, tabFlags)) {
+                    selected = workspace;
+                    ImGui::EndTabItem();
+                }
+            };
+
+            drawTab(EWorkspaceTab::Lab, WorkspaceTabLab);
+            drawTab(EWorkspaceTab::Simulations, WorkspaceTabSimulations);
+            drawTab(EWorkspaceTab::Sequence, WorkspaceTabSequence);
+
+            ImGui::EndTabBar();
+        }
+
+        if (selected != ActiveWorkspace) SetActiveWorkspace(selected);
+        WorkspaceTabsHeight = std::max(0.0f, ImGui::GetWindowHeight());
+    }
+    ImGui::End();
+    ImGui::PopStyleVar(3);
+
+    if (std::abs(previousHeight - WorkspaceTabsHeight) > 0.5f) {
+        ArrangeTopLevelSlabWindows();
+    }
+}
+
+auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
+                                                 const EWorkspaceTab workspace) -> void {
 #ifdef IMGUI_HAS_DOCK
     const auto dockId = static_cast<ImGuiID>(dockspaceId);
     if (dockId == 0) return;
@@ -918,28 +1020,57 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(unsigned int dockspaceId) -> vo
     if (viewport == nullptr) return;
 
     const auto menuHeight = static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight);
-    const auto dockSize = ImVec2(viewport->Size.x, std::max(0.0f, viewport->Size.y - menuHeight));
+    const auto dockSize = ImVec2(
+        viewport->Size.x,
+        std::max(0.0f, viewport->Size.y - menuHeight - WorkspaceTabsHeight));
 
     ImGui::DockBuilderRemoveNode(dockId);
     ImGui::DockBuilderAddNode(dockId, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_PassthruCentralNode);
     ImGui::DockBuilderSetNodeSize(dockId, dockSize);
 
     ImGuiID dockMain = dockId;
-    const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.30f, nullptr, &dockMain);
-    const auto dockLeftBottom = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.45f, nullptr, nullptr);
-    const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.30f, nullptr, &dockMain);
+    if (workspace == EWorkspaceTab::Lab) {
+        const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.30f, nullptr, &dockMain);
+        const auto dockLeftBottom = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.45f, nullptr, nullptr);
+        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.30f, nullptr, &dockMain);
 
-    ImGui::DockBuilderDockWindow(WindowTitleLab, dockLeft);
-    ImGui::DockBuilderDockWindow(WindowTitleTasks, dockLeft);
-    ImGui::DockBuilderDockWindow(WindowTitleViews, dockLeft);
-    ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockLeftBottom);
-    ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockLeftBottom);
-    ImGui::DockBuilderDockWindow(WindowTitleKG2DControl, dockRight);
-    ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockRight);
+        ImGui::DockBuilderDockWindow(WindowTitleLab, dockLeft);
+        ImGui::DockBuilderDockWindow(WindowTitleTasks, dockLeft);
+        ImGui::DockBuilderDockWindow(WindowTitleViews, dockLeft);
+        ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockLeftBottom);
+        ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockLeftBottom);
+        ImGui::DockBuilderDockWindow(WindowTitleKG2DControl, dockRight);
+        ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockRight);
+    } else if (workspace == EWorkspaceTab::Simulations) {
+        const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.24f, nullptr, &dockMain);
+        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.30f, nullptr, &dockMain);
+        const auto dockLeftBottom = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.42f, nullptr, nullptr);
+
+        ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockLeft);
+        ImGui::DockBuilderDockWindow(WindowTitleTasks, dockLeftBottom);
+        ImGui::DockBuilderDockWindow(WindowTitleLab, dockLeftBottom);
+        ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockRight);
+        ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockRight);
+        ImGui::DockBuilderDockWindow(WindowTitleKG2DControl, dockRight);
+        ImGui::DockBuilderDockWindow(WindowTitleViews, dockMain);
+    } else {
+        const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.22f, nullptr, &dockMain);
+        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.33f, nullptr, &dockMain);
+        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.28f, nullptr, &dockMain);
+
+        ImGui::DockBuilderDockWindow(WindowTitleViews, dockLeft);
+        ImGui::DockBuilderDockWindow(WindowTitleTasks, dockLeft);
+        ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockBottom);
+        ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockBottom);
+        ImGui::DockBuilderDockWindow(WindowTitleKG2DControl, dockRight);
+        ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockRight);
+        ImGui::DockBuilderDockWindow(WindowTitleLab, dockMain);
+    }
 
     ImGui::DockBuilderFinish(dockId);
 #else
     (void) dockspaceId;
+    (void) workspace;
 #endif
 }
 
@@ -950,9 +1081,11 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
     const auto *viewport = ImGui::GetMainViewport();
     if (viewport == nullptr) return;
 
-    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuHeight), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(
+        ImVec2(viewport->Pos.x, viewport->Pos.y + menuHeight + WorkspaceTabsHeight),
+        ImGuiCond_Always);
     ImGui::SetNextWindowSize(
-        ImVec2(viewport->Size.x, std::max(0.0f, viewport->Size.y - menuHeight)),
+        ImVec2(viewport->Size.x, std::max(0.0f, viewport->Size.y - menuHeight - WorkspaceTabsHeight)),
         ImGuiCond_Always);
     ImGui::SetNextWindowViewport(viewport->ID);
 
@@ -971,11 +1104,17 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
     if (ImGui::Begin(DockspaceHostName, nullptr, hostFlags)) {
-        DockspaceId = static_cast<unsigned int>(ImGui::GetID(DockspaceName));
-        if (!bDockLayoutInitialized || bResetDockLayoutRequested) {
-            BuildDefaultDockLayout(DockspaceId);
-            bDockLayoutInitialized = true;
+        const char *dockspaceName = DockspaceNameLab;
+        if (ActiveWorkspace == EWorkspaceTab::Simulations) dockspaceName = DockspaceNameSimulations;
+        else if (ActiveWorkspace == EWorkspaceTab::Sequence) dockspaceName = DockspaceNameSequence;
+
+        DockspaceId = static_cast<unsigned int>(ImGui::GetID(dockspaceName));
+        const auto workspaceIndex = static_cast<std::size_t>(ActiveWorkspace);
+        if (!WorkspaceLayoutInitialized[workspaceIndex] || bResetDockLayoutRequested) {
+            BuildDefaultDockLayout(DockspaceId, ActiveWorkspace);
+            WorkspaceLayoutInitialized[workspaceIndex] = true;
             bResetDockLayoutRequested = false;
+            ArrangeTopLevelSlabWindows();
         }
 #ifdef IMGUI_HAS_DOCK
         ImGui::DockSpace(
@@ -1059,6 +1198,8 @@ auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
         }
         ImGui::End();
     }
+
+    SaveWorkspacePanelVisibility(ActiveWorkspace);
 }
 
 auto FLabV2WindowManager::DrawLegacySidePane() -> void {
@@ -1104,9 +1245,11 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
     ImGuiContext->SetupOptionalMenuItems();
 
     if (IsDockingEnabled()) {
+        DrawWorkspaceTabs();
         DrawDockspaceHost();
         DrawDockedToolWindows();
     } else {
+        WorkspaceTabsHeight = 0.0f;
         DrawLegacySidePane();
     }
 
