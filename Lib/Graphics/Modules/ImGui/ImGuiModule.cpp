@@ -36,7 +36,7 @@ namespace Slab::Graphics {
         Str FontName;
     };
 
-    Str CurrentTheme = "StudioSlab";
+    Str CurrentTheme = "Scientific Paper";
     std::map<Str, FImGuiThemeDescriptor> ImGuiThemes = {
             {"Native Light",      {SetColorThemeNativeLight, "Roboto"}},
             {"Native Dark",       {SetColorThemeNativeDark, "Roboto"}},

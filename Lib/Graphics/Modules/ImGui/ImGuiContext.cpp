@@ -22,6 +22,66 @@ namespace Slab::Graphics {
 
     constexpr auto SHOW_DEAR_IMGUI_DEBUG_METRICS = false;
 
+    struct FMenuNode {
+        Str Label;
+        Vector<FMenuNode> Children;
+        Vector<std::pair<MainMenuLeafEntry, MainMenuAction>> Entries;
+    };
+
+    auto FindOrAddChild(FMenuNode &parent, const Str &label) -> FMenuNode* {
+        for (auto &child : parent.Children) {
+            if (child.Label == label) {
+                return &child;
+            }
+        }
+        parent.Children.push_back(FMenuNode{label});
+        return &parent.Children.back();
+    }
+
+    auto BuildMenuTree(const Vector<MainMenuItem> &items) -> FMenuNode {
+        FMenuNode root{"__root__"};
+        for (const auto &item : items) {
+            if (item.Location.empty()) continue;
+
+            auto *node = &root;
+            for (const auto &locationLevel : item.Location) {
+                node = FindOrAddChild(*node, locationLevel);
+            }
+
+            for (const auto &subItem : item.SubItems) {
+                node->Entries.emplace_back(subItem, item.Action);
+            }
+        }
+        return root;
+    }
+
+    void DrawMenuNode(const FMenuNode &node) {
+        for (const auto &child : node.Children) {
+            if (!ImGui::BeginMenu(child.Label.c_str())) continue;
+
+            DrawMenuNode(child);
+            if (!child.Children.empty() && !child.Entries.empty()) {
+                ImGui::Separator();
+            }
+
+            for (const auto &[entry, action] : child.Entries) {
+                if (entry.Label == MainMenuSeparator) {
+                    ImGui::Separator();
+                    continue;
+                }
+                if (ImGui::MenuItem(
+                        entry.Label.c_str(),
+                        entry.shortcut.c_str(),
+                        entry.selected,
+                        entry.enabled)) {
+                    action(entry.Label);
+                }
+            }
+
+            ImGui::EndMenu();
+        }
+    }
+
     FImGuiContext::FImGuiContext(FImplementationCallSet calls)
     : ImplementationCalls(std::move(calls)) {
         r_Context = ImGui::CreateContext();
@@ -56,9 +116,13 @@ namespace Slab::Graphics {
 
         ImplementationCalls.NewFrame();
         ImGui::NewFrame();
+        PendingMainMenuItems.clear();
     }
 
     void FImGuiContext::Render() {
+        if (MainMenuPresentation == EMainMenuPresentation::MainMenuBar) {
+            DrawMainMenuBar();
+        }
         FlushDrawCalls();
 
         ImGui::Render();
@@ -185,39 +249,68 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void AddItem(const int CurrentDepth, const MainMenuItem& Item)
-    {
-        fix& Location = Item.Location;
-        fix MaxDepth = Location.size();
-
-        if (ImGui::BeginMenu(Location[CurrentDepth].c_str())) {
-            if (CurrentDepth < MaxDepth-1)
-                AddItem(CurrentDepth+1, Item);
-            else {
-                const auto Action = Item.Action;
-                for(const auto & [Label, Shortcut, Selected, Enabled] : Item.SubItems) {
-                    if (Label == MainMenuSeparator)
-                    {
-                        ImGui::Separator();
-                        continue;
-                    }
-                    if (ImGui::MenuItem(Label.c_str(), Shortcut.c_str(), Selected, Enabled))
-                        Action(Label);
-                }
-            }
-
-            ImGui::EndMenu();
-        }
-    };
-
     void FImGuiContext::AddMainMenuItem(MainMenuItem item) {
-        AddDrawCall([item](){
-            if(ImGui::BeginMainMenuBar()) {
-                AddItem(0, item);
+        PendingMainMenuItems.emplace_back(std::move(item));
+    }
 
-                ImGui::EndMainMenuBar();
+    void FImGuiContext::DrawMainMenuBar() {
+        if (PendingMainMenuItems.empty()) return;
+        if (!ImGui::BeginMainMenuBar()) return;
+
+        const auto menuRoot = BuildMenuTree(PendingMainMenuItems);
+        DrawMenuNode(menuRoot);
+
+        ImGui::EndMainMenuBar();
+    }
+
+    void FImGuiContext::SetMainMenuPresentation(const EMainMenuPresentation presentation) {
+        MainMenuPresentation = presentation;
+    }
+
+    auto FImGuiContext::GetMainMenuPresentation() const -> EMainMenuPresentation {
+        return MainMenuPresentation;
+    }
+
+    auto FImGuiContext::DrawMainMenuLauncher(const char *id, const ImVec2 &size) -> bool {
+        const auto launcherSize = ImVec2(
+            (size.x > 0.0f) ? size.x : (ImGui::GetFrameHeight() + 8.0f),
+            (size.y > 0.0f) ? size.y : ImGui::GetFrameHeight());
+
+        ImGui::PushID(id);
+        const bool clicked = ImGui::Button("##MainMenuLauncher", launcherSize);
+
+        const auto rectMin = ImGui::GetItemRectMin();
+        const auto rectMax = ImGui::GetItemRectMax();
+        const auto width = rectMax.x - rectMin.x;
+        const auto height = rectMax.y - rectMin.y;
+        const auto left = rectMin.x + 0.27f * width;
+        const auto right = rectMax.x - 0.27f * width;
+        const auto y0 = rectMin.y + 0.32f * height;
+        const auto y1 = rectMin.y + 0.50f * height;
+        const auto y2 = rectMin.y + 0.68f * height;
+        const auto color = ImGui::GetColorU32(ImGuiCol_Text);
+        const auto thickness = 2.0f;
+        auto *drawList = ImGui::GetWindowDrawList();
+        drawList->AddLine(ImVec2(left, y0), ImVec2(right, y0), color, thickness);
+        drawList->AddLine(ImVec2(left, y1), ImVec2(right, y1), color, thickness);
+        drawList->AddLine(ImVec2(left, y2), ImVec2(right, y2), color, thickness);
+
+        if (clicked) {
+            ImGui::OpenPopup("##MainMenuLauncherPopup");
+        }
+
+        if (ImGui::BeginPopup("##MainMenuLauncherPopup")) {
+            if (PendingMainMenuItems.empty()) {
+                ImGui::TextDisabled("No menu entries");
+            } else {
+                const auto menuRoot = BuildMenuTree(PendingMainMenuItems);
+                DrawMenuNode(menuRoot);
             }
-        });
+            ImGui::EndPopup();
+        }
+
+        ImGui::PopID();
+        return clicked;
     }
 
     void *FImGuiContext::GetContextPointer() {

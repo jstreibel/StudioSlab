@@ -31,8 +31,17 @@ namespace Slab::Graphics {
     };
 
     class FImGuiContext final : public FGUIContext {
+    public:
+        enum class EMainMenuPresentation : unsigned char {
+            MainMenuBar = 0,
+            Hidden
+        };
+
+    private:
         ImGuiContext *r_Context = nullptr;
         FImplementationCallSet ImplementationCalls;
+        Vector<MainMenuItem> PendingMainMenuItems;
+        EMainMenuPresentation MainMenuPresentation = EMainMenuPresentation::MainMenuBar;
 
         // bool bShowDemo = false;
         // bool bShowStyleEditor = false;
@@ -43,6 +52,8 @@ namespace Slab::Graphics {
         bool bShowMetricsWindow = false;
         // bool bShowDemoWindow = false;
         // bool bShowStyleEditorWindow = false;
+
+        void DrawMainMenuBar();
 
     public:
         explicit FImGuiContext(FImplementationCallSet);
@@ -74,6 +85,9 @@ namespace Slab::Graphics {
         void NewFrame() override;
         void Render() override;
         void SetupOptionalMenuItems();
+        void SetMainMenuPresentation(EMainMenuPresentation presentation);
+        [[nodiscard]] auto GetMainMenuPresentation() const -> EMainMenuPresentation;
+        [[nodiscard]] auto DrawMainMenuLauncher(const char *id, const ImVec2 &size = ImVec2(0.0f, 0.0f)) -> bool;
     };
 
 } // Slab::Graphics

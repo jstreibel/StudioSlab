@@ -677,6 +677,7 @@ FLabV2WindowManager::FLabV2WindowManager()
 
     ImGuiContext = Slab::DynamicPointerCast<Slab::Graphics::FImGuiContext>(imGuiModule->CreateContext(platformWindow));
     ImGuiContext->SetManualRender(true);
+    ImGuiContext->SetMainMenuPresentation(Slab::Graphics::FImGuiContext::EMainMenuPresentation::Hidden);
 
     LiveDataHub = Slab::New<Slab::Math::LiveData::V2::FLiveDataHubV2>();
     LiveControlHub = Slab::New<Slab::Math::LiveControl::V2::FLiveControlHubV2>();
@@ -933,13 +934,14 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> bool {
     constexpr int MinTileWidth = 420;
 
     const int gap = Slab::Graphics::WindowStyle::TilingGapSize;
-    const int menuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
+    const int menuHeight = static_cast<int>(std::ceil(GetTopMenuInset()));
     const bool bDockingMode = IsDockingEnabled();
     const int sidePaneInset = bDockingMode ? 0 : SidePaneWidth;
     const int tabsHeight = bDockingMode ? static_cast<int>(std::ceil(WorkspaceTabsHeight)) : 0;
+    const int stripHeight = bDockingMode ? static_cast<int>(std::ceil(WorkspaceStripHeight)) : 0;
 
     int xWorkspace = sidePaneInset + gap;
-    int yWorkspace = menuHeight + tabsHeight + gap;
+    int yWorkspace = menuHeight + tabsHeight + stripHeight + gap;
     int wWorkspace = std::max(0, WidthSysWin - xWorkspace - gap);
     int hWorkspace = std::max(0, HeightSysWin - yWorkspace - gap);
 
@@ -1076,17 +1078,81 @@ auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> v
     }
 }
 
+auto FLabV2WindowManager::GetTopMenuInset() const -> float {
+    if (ImGuiContext == nullptr) {
+        return static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight);
+    }
+
+    if (ImGuiContext->GetMainMenuPresentation() == Slab::Graphics::FImGuiContext::EMainMenuPresentation::Hidden) {
+        return 0.0f;
+    }
+
+    const auto measured = ImGui::GetFrameHeight();
+    if (measured > 1.0f) return measured;
+    return static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight);
+}
+
+auto FLabV2WindowManager::DrawWorkspaceLauncher() -> void {
+    if (!IsDockingEnabled()) return;
+    if (ImGuiContext == nullptr) return;
+
+    const auto *viewport = ImGui::GetMainViewport();
+    if (viewport == nullptr) return;
+
+    const auto menuHeight = GetTopMenuInset();
+    const auto tabsHeight = ImGui::GetFrameHeight() + 8.0f;
+    const auto stripHeight = ImGui::GetFrameHeight() + 8.0f;
+    const auto totalHeight = tabsHeight + stripHeight;
+    const auto desiredWidth = std::max(44.0f, totalHeight);
+
+    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuHeight), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(desiredWidth, totalHeight), ImGuiCond_Always);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    constexpr auto flags =
+        ImGuiWindowFlags_NoDocking |
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoNavFocus;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.0f, 4.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0.0f, 0.0f));
+
+    const auto previousWidth = WorkspaceLauncherWidth;
+    if (ImGui::Begin("##LabV2WorkspaceLauncher", nullptr, flags)) {
+        const auto buttonSize = ImVec2(
+            std::max(16.0f, ImGui::GetContentRegionAvail().x),
+            std::max(16.0f, ImGui::GetContentRegionAvail().y));
+        (void) ImGuiContext->DrawMainMenuLauncher("LabV2MainMenuLauncher", buttonSize);
+        WorkspaceLauncherWidth = std::max(0.0f, ImGui::GetWindowWidth());
+    }
+    ImGui::End();
+
+    ImGui::PopStyleVar(4);
+
+    if (std::abs(previousWidth - WorkspaceLauncherWidth) > 0.5f) {
+        RequestViewRetile();
+    }
+}
+
 auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
     if (!IsDockingEnabled()) return;
 
     const auto *viewport = ImGui::GetMainViewport();
     if (viewport == nullptr) return;
 
-    const auto menuHeight = static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight);
-    const float estimatedHeight = ImGui::GetFrameHeightWithSpacing() + 8.0f;
+    const auto menuHeight = GetTopMenuInset();
+    const float estimatedHeight = ImGui::GetFrameHeight() + 8.0f;
+    const auto leftInset = std::max(0.0f, WorkspaceLauncherWidth);
 
-    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuHeight), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(viewport->Size.x, estimatedHeight), ImGuiCond_Always);
+    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x + leftInset, viewport->Pos.y + menuHeight), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(std::max(0.0f, viewport->Size.x - leftInset), estimatedHeight), ImGuiCond_Always);
     ImGui::SetNextWindowViewport(viewport->ID);
 
     constexpr auto flags =
@@ -1103,6 +1169,7 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 3.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0.0f, 0.0f));
 
     const auto previousHeight = WorkspaceTabsHeight;
     WorkspaceTabsHeight = estimatedHeight;
@@ -1128,9 +1195,85 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
         if (selected != ActiveWorkspace) SetActiveWorkspace(selected);
     }
     ImGui::End();
-    ImGui::PopStyleVar(3);
+    ImGui::PopStyleVar(4);
 
     if (std::abs(previousHeight - WorkspaceTabsHeight) > 0.5f) {
+        RequestViewRetile();
+    }
+}
+
+auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
+    if (!IsDockingEnabled()) return;
+
+    const auto *viewport = ImGui::GetMainViewport();
+    if (viewport == nullptr) return;
+
+    const auto menuHeight = GetTopMenuInset();
+    const float estimatedHeight = ImGui::GetFrameHeight() + 8.0f;
+    const auto yOffset = menuHeight + WorkspaceTabsHeight;
+    const auto leftInset = std::max(0.0f, WorkspaceLauncherWidth);
+
+    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x + leftInset, viewport->Pos.y + yOffset), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(std::max(0.0f, viewport->Size.x - leftInset), estimatedHeight), ImGuiCond_Always);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    constexpr auto flags =
+        ImGuiWindowFlags_NoDocking |
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoScrollbar |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoNavFocus;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 2.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0.0f, 0.0f));
+
+    const auto previousHeight = WorkspaceStripHeight;
+    WorkspaceStripHeight = estimatedHeight;
+    if (ImGui::Begin("##LabV2WorkspaceStrip", nullptr, flags)) {
+        const char *workspaceLabel = WorkspaceTabSimulations;
+        if (ActiveWorkspace == EWorkspaceTab::Monitor) workspaceLabel = WorkspaceTabMonitor;
+        else if (ActiveWorkspace == EWorkspaceTab::Schemes) workspaceLabel = WorkspaceTabSchemes;
+
+        ImGui::TextDisabled("%s", workspaceLabel);
+        ImGui::SameLine();
+        ImGui::TextDisabled("|");
+        ImGui::SameLine();
+
+        const auto drawToggle = [](const char *label, bool *value) {
+            ImGui::Checkbox(label, value);
+            ImGui::SameLine();
+        };
+
+        if (ActiveWorkspace == EWorkspaceTab::Simulations) {
+            drawToggle("Launcher", &bShowWindowSimulationLauncher);
+            drawToggle("Tasks", &bShowWindowTasks);
+        } else if (ActiveWorkspace == EWorkspaceTab::Monitor) {
+            drawToggle("Views", &bShowWindowViews);
+            drawToggle("Live Data", &bShowWindowLiveData);
+            drawToggle("Live Control", &bShowWindowLiveControl);
+            drawToggle("KG2D", &bShowWindowKG2DControl);
+        } else {
+            drawToggle("Blueprints", &bShowWindowBlueprints);
+        }
+
+        if (ImGui::Button("Retile")) {
+            RequestViewRetile();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Reset Layout")) {
+            bResetDockLayoutRequested = true;
+        }
+    }
+    ImGui::End();
+
+    ImGui::PopStyleVar(4);
+
+    if (std::abs(previousHeight - WorkspaceStripHeight) > 0.5f) {
         RequestViewRetile();
     }
 }
@@ -1144,13 +1287,18 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
     const auto *viewport = ImGui::GetMainViewport();
     if (viewport == nullptr) return;
 
-    const auto menuHeight = static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight);
+    const auto menuHeight = GetTopMenuInset();
+    const auto topChromeHeight = menuHeight + WorkspaceTabsHeight + WorkspaceStripHeight;
     const auto dockSize = ImVec2(
         viewport->Size.x,
-        std::max(0.0f, viewport->Size.y - menuHeight - WorkspaceTabsHeight));
+        std::max(0.0f, viewport->Size.y - topChromeHeight));
 
     ImGui::DockBuilderRemoveNode(dockId);
-    ImGui::DockBuilderAddNode(dockId, ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_PassthruCentralNode);
+    ImGui::DockBuilderAddNode(
+        dockId,
+        ImGuiDockNodeFlags_DockSpace |
+        ImGuiDockNodeFlags_PassthruCentralNode |
+        static_cast<ImGuiDockNodeFlags>(ImGuiDockNodeFlags_AutoHideTabBar));
     ImGui::DockBuilderSetNodeSize(dockId, dockSize);
 
     ImGuiID dockMain = dockId;
@@ -1187,15 +1335,16 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
 auto FLabV2WindowManager::DrawDockspaceHost() -> void {
     if (!IsDockingEnabled()) return;
 
-    const auto menuHeight = static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight);
+    const auto menuHeight = GetTopMenuInset();
+    const auto topChromeHeight = menuHeight + WorkspaceTabsHeight + WorkspaceStripHeight;
     const auto *viewport = ImGui::GetMainViewport();
     if (viewport == nullptr) return;
 
     ImGui::SetNextWindowPos(
-        ImVec2(viewport->Pos.x, viewport->Pos.y + menuHeight + WorkspaceTabsHeight),
+        ImVec2(viewport->Pos.x, viewport->Pos.y + topChromeHeight),
         ImGuiCond_Always);
     ImGui::SetNextWindowSize(
-        ImVec2(viewport->Size.x, std::max(0.0f, viewport->Size.y - menuHeight - WorkspaceTabsHeight)),
+        ImVec2(viewport->Size.x, std::max(0.0f, viewport->Size.y - topChromeHeight)),
         ImGuiCond_Always);
     ImGui::SetNextWindowViewport(viewport->ID);
 
@@ -1249,10 +1398,14 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
         }
 #ifdef IMGUI_HAS_DOCK
         const auto drawWorkspaceDockspace = [this](const unsigned int id, const EWorkspaceTab workspace) {
-            ImGuiDockNodeFlags dockFlags = ImGuiDockNodeFlags_PassthruCentralNode;
+            ImGuiDockNodeFlags dockFlags =
+                ImGuiDockNodeFlags_PassthruCentralNode |
+                static_cast<ImGuiDockNodeFlags>(ImGuiDockNodeFlags_AutoHideTabBar);
             if (workspace != ActiveWorkspace) {
                 // Keep inactive workspaces alive so docked windows don't detach on tab switch.
-                dockFlags = ImGuiDockNodeFlags_KeepAliveOnly;
+                dockFlags =
+                    ImGuiDockNodeFlags_KeepAliveOnly |
+                    static_cast<ImGuiDockNodeFlags>(ImGuiDockNodeFlags_AutoHideTabBar);
             }
 
             ImGui::DockSpace(static_cast<ImGuiID>(id), ImVec2(0.0f, 0.0f), dockFlags);
@@ -1277,6 +1430,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         EWorkspaceTab::Monitor,
         &bShowWindowLab,
         false,
+        true,
         [this]() {
             ImGui::TextDisabled("V2 observability + launcher shell");
             ImGui::SeparatorText("Workspace");
@@ -1307,6 +1461,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         EWorkspaceTab::Simulations,
         &bShowWindowSimulationLauncher,
         false,
+        false,
         [this]() {
             if (SimulationManager != nullptr) {
                 SimulationManager->DrawLauncherContents();
@@ -1319,6 +1474,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         EWorkspaceTab::Simulations,
         &bShowWindowTasks,
         false,
+        false,
         [this]() {
             ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);
         }
@@ -1329,6 +1485,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         EWorkspaceTab::Monitor,
         &bShowWindowLiveData,
         false,
+        true,
         [this]() {
             ShowLiveDataV2Panel(LiveDataHub, LiveDataTopicFilter, bLiveDataOnlyBound, SelectedLiveDataTopic);
         }
@@ -1339,6 +1496,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         EWorkspaceTab::Monitor,
         &bShowWindowLiveControl,
         false,
+        true,
         [this]() {
             ShowLiveControlV2Panel(
                 LiveControlHub,
@@ -1353,6 +1511,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         EWorkspaceTab::Monitor,
         &bShowWindowViews,
         false,
+        true,
         [this]() {
             DrawViewManagerPanel();
         }
@@ -1363,6 +1522,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         EWorkspaceTab::Monitor,
         &bShowWindowKG2DControl,
         false,
+        true,
         [this]() {
             ShowKG2DControlSourcePanelAndPublish(
                 LiveControlHub,
@@ -1389,6 +1549,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         EWorkspaceTab::Monitor,
         &bShowWindowBlueprints,
         false,
+        true,
         drawBlueprintsPlaceholder
     });
 
@@ -1397,6 +1558,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         EWorkspaceTab::Schemes,
         &bShowWindowBlueprints,
         true,
+        false,
         drawBlueprintsPlaceholder
     });
 
@@ -1419,7 +1581,12 @@ auto FLabV2WindowManager::DrawPanelSurface(const FPanelSurfaceRegistration &regi
     }
 
     const auto openPtr = registration.bForceVisibleInWorkspace ? nullptr : registration.bVisible;
-    if (ImGui::Begin(registration.WindowTitle, openPtr)) {
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
+    if (IsDockingEnabled() && registration.bHideTitleBarWhenDocked) {
+        windowFlags |= ImGuiWindowFlags_NoTitleBar;
+    }
+
+    if (ImGui::Begin(registration.WindowTitle, openPtr, windowFlags)) {
         if (registration.DrawContents) registration.DrawContents();
 
         if (std::strcmp(registration.WindowTitle, WindowTitleSimulationLauncher) == 0) {
@@ -1444,10 +1611,10 @@ auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
 }
 
 auto FLabV2WindowManager::DrawLegacySidePane() -> void {
-    const auto menuHeight = Slab::Graphics::WindowStyle::GlobalMenuHeight;
-    ImGui::SetNextWindowPos(ImVec2(0, static_cast<float>(menuHeight)));
+    const auto menuHeight = GetTopMenuInset();
+    ImGui::SetNextWindowPos(ImVec2(0, menuHeight));
     ImGui::SetNextWindowSize(
-        ImVec2(static_cast<float>(SidePaneWidth), static_cast<float>(HeightSysWin - menuHeight)),
+        ImVec2(static_cast<float>(SidePaneWidth), std::max(0.0f, static_cast<float>(HeightSysWin) - menuHeight)),
         ImGuiCond_Appearing);
 
     constexpr auto flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
@@ -1515,19 +1682,24 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
     if (SimulationManager != nullptr) {
         SimulationManager->AddMenus(platformWindow);
     }
+    AddExitMenuEntry(platformWindow, *ImGuiContext);
 
     if (IsDockingEnabled()) {
+        DrawWorkspaceLauncher();
         DrawWorkspaceTabs();
+        DrawWorkspaceStrip();
         DrawDockspaceHost();
         DrawDockedToolWindows();
     } else {
         WorkspaceTabsHeight = 0.0f;
+        WorkspaceStripHeight = 0.0f;
+        WorkspaceLauncherWidth = 52.0f;
         DrawLegacySidePane();
         if (bShowWindowSimulationLauncher) {
             ImGui::SetNextWindowPos(
                 ImVec2(
                     static_cast<float>(FStudioConfigV2::SidePaneWidth + 24),
-                    static_cast<float>(Slab::Graphics::WindowStyle::GlobalMenuHeight + 24)),
+                    GetTopMenuInset() + 24.0f),
                 ImGuiCond_Appearing);
             ImGui::SetNextWindowSize(ImVec2(520, 560), ImGuiCond_Appearing);
             if (ImGui::Begin(WindowTitleSimulationLauncher, &bShowWindowSimulationLauncher)) {
@@ -1538,8 +1710,6 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
             ImGui::End();
         }
     }
-
-    AddExitMenuEntry(platformWindow, *ImGuiContext);
 
     if (PruneClosedSlabWindows()) {
         RequestViewRetile();

@@ -46,6 +46,7 @@ private:
         EWorkspaceTab Workspace = EWorkspaceTab::Simulations;
         bool *bVisible = nullptr;
         bool bForceVisibleInWorkspace = false;
+        bool bHideTitleBarWhenDocked = false;
         std::function<void()> DrawContents;
     };
 
@@ -115,6 +116,8 @@ private:
         FWorkspacePanelVisibility{false, false, false, false, false, false, false, true}
     };
     float WorkspaceTabsHeight = 0.0f;
+    float WorkspaceStripHeight = 0.0f;
+    float WorkspaceLauncherWidth = 52.0f;
     bool bShowWindowLab = true;
     bool bShowWindowSimulationLauncher = true;
     bool bShowWindowTasks = true;
@@ -132,13 +135,16 @@ private:
     auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
     auto PruneClosedSlabWindows() -> bool;
     auto ArrangeTopLevelSlabWindows() -> bool;
+    auto DrawWorkspaceLauncher() -> void;
     auto DrawWorkspaceTabs() -> void;
+    auto DrawWorkspaceStrip() -> void;
     auto DrawDockspaceHost() -> void;
     auto DrawDockedToolWindows() -> void;
     auto BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfaceRegistration>;
     auto DrawPanelSurface(const FPanelSurfaceRegistration &registration) -> void;
     auto DrawLegacySidePane() -> void;
     auto BuildDefaultDockLayout(unsigned int dockspaceId, EWorkspaceTab workspace) -> void;
+    [[nodiscard]] auto GetTopMenuInset() const -> float;
     auto RequestSimulationLauncherVisible() -> void;
     auto SaveWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
     auto LoadWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
