@@ -1,4 +1,5 @@
 #include "KGR2toRBaselineSliceV2.h"
+#include "KGR2toRControlTopicsV2.h"
 
 #include "../../Monitors/V2/KGR2toRBaselinePassiveMonitorWindowV2.h"
 #include "../../NumericsV2TaskUtils.h"
@@ -79,34 +80,32 @@ namespace {
         Slab::Str TopicPrefix;
         Slab::Str Name;
 
-        [[nodiscard]] auto TopicName(const Slab::Str &suffix) const -> Slab::Str {
-            return TopicPrefix + "/" + suffix;
-        }
-
         auto ApplyLatestControls() -> void {
             using namespace Slab::Math::LiveControl::V2;
 
             if (ControlHub == nullptr || ForcingSource == nullptr) return;
 
-            if (const auto centerTopic = ControlHub->FindTopic(TopicName("forcing/center")); centerTopic != nullptr) {
+            const auto topics = Slab::Studios::Common::Simulations::V2::BuildKG2DForcingTopicNamesV2(TopicPrefix);
+
+            if (const auto centerTopic = ControlHub->FindTopic(topics.Center); centerTopic != nullptr) {
                 if (const auto center = centerTopic->TryGetLatestPoint2D(); center.has_value()) {
                     ForcingSource->SetCenter(center->x, center->y);
                 }
             }
 
-            if (const auto ampTopic = ControlHub->FindTopic(TopicName("forcing/amplitude")); ampTopic != nullptr) {
+            if (const auto ampTopic = ControlHub->FindTopic(topics.Amplitude); ampTopic != nullptr) {
                 if (const auto amplitude = ampTopic->TryGetLatestScalar(); amplitude.has_value()) {
                     ForcingSource->SetAmplitude(*amplitude);
                 }
             }
 
-            if (const auto widthTopic = ControlHub->FindTopic(TopicName("forcing/width")); widthTopic != nullptr) {
+            if (const auto widthTopic = ControlHub->FindTopic(topics.Width); widthTopic != nullptr) {
                 if (const auto width = widthTopic->TryGetLatestScalar(); width.has_value()) {
                     ForcingSource->SetWidth(*width);
                 }
             }
 
-            if (const auto enabledTopic = ControlHub->FindTopic(TopicName("forcing/enabled")); enabledTopic != nullptr) {
+            if (const auto enabledTopic = ControlHub->FindTopic(topics.Enabled); enabledTopic != nullptr) {
                 if (const auto enabled = enabledTopic->TryGetLatestBool(); enabled.has_value()) {
                     ForcingSource->SetEnabled(*enabled);
                 }

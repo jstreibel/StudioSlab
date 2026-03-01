@@ -1,5 +1,6 @@
 #include "LabV2WindowManager.h"
 
+#include "LabV2Panels.h"
 #include "SimulationManagerV2.h"
 #include "StudioConfigV2.h"
 
@@ -9,7 +10,6 @@
 #endif
 
 #include "Core/SlabCore.h"
-#include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "Graphics/SlabGraphics.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
@@ -17,42 +17,14 @@
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/Window/WindowStyles.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
-#include "Math/Data/V2/LiveControlTopicsV2.h"
-#include "Math/Numerics/NumericTask.h"
-#include "Math/Numerics/V2/Task/NumericTaskV2.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
 #include <algorithm>
-#include <cctype>
-#include <chrono>
-#include <cmath>
 #include <cfloat>
 #include <cstring>
-#include <cstdio>
 #include <utility>
 
 namespace {
-
-    auto ToLowerAscii(Slab::Str value) -> Slab::Str {
-        std::transform(value.begin(), value.end(), value.begin(), [](const unsigned char c) {
-            return static_cast<char>(std::tolower(c));
-        });
-        return value;
-    }
-
-    auto MatchesTopicFilter(const Slab::Str &candidate, const Slab::Str &filter) -> bool {
-        if (filter.empty()) return true;
-        const auto loweredCandidate = ToLowerAscii(candidate);
-        const auto loweredFilter = ToLowerAscii(filter);
-        return loweredCandidate.find(loweredFilter) != Slab::Str::npos;
-    }
-
-    auto DrawFilterField(const char *label, const char *hint, Slab::Str &value) -> void {
-        char buffer[256];
-        std::snprintf(buffer, sizeof(buffer), "%s", value.c_str());
-        const bool changed = ImGui::InputTextWithHint(label, hint, buffer, sizeof(buffer));
-        if (changed) value = buffer;
-    }
 
     auto AddExitMenuEntry(const Slab::Graphics::FPlatformWindow &platformWindow,
                           Slab::Graphics::FImGuiContext &imguiContext) -> void {
@@ -82,591 +54,6 @@ namespace {
     constexpr auto WorkspaceTabSimulations = "Simulations";
     constexpr auto WorkspaceTabMonitor = "Monitor";
     constexpr auto WorkspaceTabSchemes = "Schemes";
-
-    auto ShowTasksPanel(Slab::Str &nameFilter,
-                        bool &bOnlyRunning,
-                        bool &bHideSuccess,
-                        bool &bOnlyNumeric) -> void {
-        const auto taskManager = Slab::Core::GetModule<Slab::Core::FTaskManager>("TaskManager");
-        if (taskManager == nullptr) return;
-
-        const auto jobs = taskManager->GetAllJobs();
-        ImGui::SeparatorText("Tasks");
-
-        DrawFilterField("##labv2-task-filter", "Filter task name", nameFilter);
-        ImGui::SameLine();
-        ImGui::Checkbox("Running only", &bOnlyRunning);
-        ImGui::SameLine();
-        ImGui::Checkbox("Hide success", &bHideSuccess);
-        ImGui::SameLine();
-        ImGui::Checkbox("Numeric only", &bOnlyNumeric);
-
-        if (jobs.empty()) {
-            ImGui::TextDisabled("No tasks.");
-            return;
-        }
-
-        size_t runningCount = 0;
-        size_t successCount = 0;
-        size_t errorCount = 0;
-        size_t abortedCount = 0;
-        size_t notInitCount = 0;
-
-        for (const auto &job : jobs) {
-            const auto &task = job.Task;
-            if (task == nullptr) continue;
-            switch (task->GetStatus()) {
-            case Slab::Core::TaskRunning: ++runningCount; break;
-            case Slab::Core::TaskSuccess: ++successCount; break;
-            case Slab::Core::TaskError: ++errorCount; break;
-            case Slab::Core::TaskAborted: ++abortedCount; break;
-            case Slab::Core::TaskNotInitialized: ++notInitCount; break;
-            default: break;
-            }
-        }
-
-        ImGui::Text(
-            "total=%zu running=%zu success=%zu error=%zu aborted=%zu not-init=%zu",
-            jobs.size(),
-            runningCount,
-            successCount,
-            errorCount,
-            abortedCount,
-            notInitCount);
-
-        if (ImGui::SmallButton("Clear Success")) {
-            for (const auto &job : jobs) {
-                if (job.Task != nullptr && job.Task->GetStatus() == Slab::Core::TaskSuccess) {
-                    (void) taskManager->ClearJob(job);
-                }
-            }
-        }
-        ImGui::SameLine();
-        if (ImGui::SmallButton("Clear Terminated")) {
-            for (const auto &job : jobs) {
-                if (job.Task == nullptr) continue;
-                const auto status = job.Task->GetStatus();
-                if (status == Slab::Core::TaskSuccess ||
-                    status == Slab::Core::TaskError ||
-                    status == Slab::Core::TaskAborted) {
-                    (void) taskManager->ClearJob(job);
-                }
-            }
-        }
-
-        constexpr auto tableFlags =
-            ImGuiTableFlags_Borders |
-            ImGuiTableFlags_RowBg |
-            ImGuiTableFlags_ScrollX |
-            ImGuiTableFlags_SizingFixedFit;
-
-        if (!ImGui::BeginTable("LabV2TaskTable", 6, tableFlags)) return;
-
-        ImGui::TableSetupColumn("Task", ImGuiTableColumnFlags_WidthStretch, 1.0f);
-        ImGui::TableSetupColumn("Kind");
-        ImGui::TableSetupColumn("Status");
-        ImGui::TableSetupColumn("Progress");
-        ImGui::TableSetupColumn("Cursor");
-        ImGui::TableSetupColumn("Action");
-        ImGui::TableHeadersRow();
-
-        for (auto &job : jobs) {
-            auto &[task, jobThread] = job;
-            (void) jobThread;
-            if (task == nullptr) continue;
-
-            const auto taskName = task->GetName();
-            if (!MatchesTopicFilter(taskName, nameFilter)) continue;
-
-            const auto *numericTaskV2 = dynamic_cast<Slab::Math::Numerics::V2::FNumericTaskV2 *>(task.get());
-            const auto *legacyNumericTask = dynamic_cast<Slab::Math::FNumericTask *>(task.get());
-            const bool bNumericTask = numericTaskV2 != nullptr || legacyNumericTask != nullptr;
-
-            if (bOnlyNumeric && !bNumericTask) continue;
-            if (bOnlyRunning && task->GetStatus() != Slab::Core::TaskRunning) continue;
-            if (bHideSuccess && task->GetStatus() == Slab::Core::TaskSuccess) continue;
-
-            ImGui::TableNextRow();
-            ImGui::PushID(task.get());
-
-            ImGui::TableSetColumnIndex(0);
-            ImGui::TextUnformatted(taskName.c_str());
-
-            ImGui::TableSetColumnIndex(1);
-            if (numericTaskV2 != nullptr) ImGui::TextUnformatted("NumericV2");
-            else if (legacyNumericTask != nullptr) ImGui::TextUnformatted("NumericLegacy");
-            else ImGui::TextUnformatted("Task");
-
-            ImGui::TableSetColumnIndex(2);
-
-            switch (task->GetStatus()) {
-            case Slab::Core::TaskRunning:
-                ImGui::TextColored(ImVec4(0.2f, 0.6f, 1.0f, 1), "Running");
-                break;
-            case Slab::Core::TaskAborted:
-                ImGui::TextColored(ImVec4(0.9f, 0.5f, 0.1f, 1), "Aborted");
-                break;
-            case Slab::Core::TaskError:
-                ImGui::TextColored(ImVec4(1.0f, 0.2f, 0.7f, 1), "Error");
-                break;
-            case Slab::Core::TaskSuccess:
-                ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.2f, 1), "Success");
-                break;
-            case Slab::Core::TaskNotInitialized:
-                ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.2f, 1), "NotInitialized");
-                break;
-            default:
-                ImGui::TextColored(ImVec4(1, 0, 0, 1), "Unknown");
-                break;
-            }
-
-            ImGui::TableSetColumnIndex(3);
-            if (numericTaskV2 != nullptr) {
-                const auto progressOpt = numericTaskV2->GetProgress01();
-                if (progressOpt.has_value()) {
-                    ImGui::ProgressBar(*progressOpt, ImVec2(110.0f, 0.0f));
-                } else {
-                    ImGui::TextDisabled("open");
-                }
-            } else if (legacyNumericTask != nullptr) {
-                ImGui::ProgressBar(legacyNumericTask->GetProgress(), ImVec2(110.0f, 0.0f));
-            } else {
-                ImGui::TextDisabled("-");
-            }
-
-            ImGui::TableSetColumnIndex(4);
-            if (numericTaskV2 != nullptr) {
-                const auto cursor = numericTaskV2->GetCursor();
-                if (cursor.SimulationTime.has_value()) {
-                    ImGui::Text("s=%llu t=%.4g",
-                        static_cast<unsigned long long>(cursor.Step),
-                        *cursor.SimulationTime);
-                } else {
-                    ImGui::Text("s=%llu",
-                        static_cast<unsigned long long>(cursor.Step));
-                }
-            } else {
-                ImGui::TextDisabled("-");
-            }
-
-            ImGui::TableSetColumnIndex(5);
-            if (task->GetStatus() != Slab::Core::TaskRunning) {
-                if (ImGui::SmallButton("Clear")) {
-                    (void) taskManager->ClearJob(job);
-                }
-            } else {
-                ImGui::TextDisabled("-");
-            }
-
-            ImGui::PopID();
-        }
-
-        ImGui::EndTable();
-    }
-
-    auto ToStatusString(const Slab::Math::LiveData::V2::ESessionRunStateV2 runState) -> Slab::Str {
-        using EState = Slab::Math::LiveData::V2::ESessionRunStateV2;
-        switch (runState) {
-        case EState::Running: return "Running";
-        case EState::Finished: return "Finished";
-        case EState::Aborted: return "Aborted";
-        }
-        return "Unknown";
-    }
-
-    auto ToReasonString(const Slab::Math::Numerics::V2::EEventReasonV2 reason) -> Slab::Str {
-        using EReason = Slab::Math::Numerics::V2::EEventReasonV2;
-        switch (reason) {
-        case EReason::Initial: return "Initial";
-        case EReason::Scheduled: return "Scheduled";
-        case EReason::Forced: return "Forced";
-        case EReason::Final: return "Final";
-        case EReason::AbortFinal: return "AbortFinal";
-        }
-        return "Unknown";
-    }
-
-    auto ShowLiveDataV2Panel(const Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> &hub,
-                             Slab::Str &topicFilter,
-                             bool &bOnlyBound,
-                             Slab::Str &selectedTopic) -> void {
-        ImGui::SeparatorText("Live Data V2");
-
-        if (hub == nullptr) {
-            ImGui::TextColored(ImVec4(1, 0, 0, 1), "LiveDataHubV2 unavailable.");
-            return;
-        }
-
-        DrawFilterField("##labv2-live-data-filter", "Filter topics", topicFilter);
-        ImGui::SameLine();
-        ImGui::Checkbox("Only bound", &bOnlyBound);
-
-        const auto names = hub->ListSessionLiveViewTopics();
-        if (names.empty()) {
-            selectedTopic.clear();
-            ImGui::TextDisabled("No session streams registered.");
-            return;
-        }
-
-        Slab::Vector<Slab::Str> filteredNames;
-        filteredNames.reserve(names.size());
-        for (const auto &name : names) {
-            if (!MatchesTopicFilter(name, topicFilter)) continue;
-            const auto view = hub->FindSessionLiveView(name);
-            const bool bBound = view != nullptr && view->HasBoundSession();
-            if (bOnlyBound && !bBound) continue;
-            filteredNames.emplace_back(name);
-        }
-
-        if (filteredNames.empty()) {
-            selectedTopic.clear();
-            ImGui::TextDisabled("No topic matched current filter.");
-            return;
-        }
-
-        constexpr auto tableFlags =
-            ImGuiTableFlags_Borders |
-            ImGuiTableFlags_RowBg |
-            ImGuiTableFlags_ScrollX |
-            ImGuiTableFlags_SizingFixedFit;
-        if (ImGui::BeginTable("LabV2LiveDataTopics", 6, tableFlags)) {
-            ImGui::TableSetupColumn("Topic", ImGuiTableColumnFlags_WidthStretch, 1.0f);
-            ImGui::TableSetupColumn("Run");
-            ImGui::TableSetupColumn("Step");
-            ImGui::TableSetupColumn("t");
-            ImGui::TableSetupColumn("Ver");
-            ImGui::TableSetupColumn("Bnd");
-            ImGui::TableHeadersRow();
-
-            for (const auto &name : filteredNames) {
-                const auto view = hub->FindSessionLiveView(name);
-                const auto telemetry = view != nullptr ? view->TryGetTelemetry() : std::nullopt;
-                const auto status = view != nullptr ? view->TryGetStatus() : std::nullopt;
-                const bool bBound = view != nullptr && view->HasBoundSession();
-
-                ImGui::TableNextRow();
-
-                ImGui::TableSetColumnIndex(0);
-                ImGui::PushID(name.c_str());
-                const bool bSelected = selectedTopic == name;
-                if (ImGui::Selectable("##row", bSelected, ImGuiSelectableFlags_SpanAllColumns)) {
-                    selectedTopic = name;
-                }
-                ImGui::SameLine();
-                ImGui::TextUnformatted(name.c_str());
-                ImGui::PopID();
-
-                ImGui::TableSetColumnIndex(1);
-                if (status.has_value()) {
-                    const auto runString = ToStatusString(status->RunState);
-                    const auto color =
-                        status->RunState == Slab::Math::LiveData::V2::ESessionRunStateV2::Running
-                            ? ImVec4(0.2f, 0.9f, 0.2f, 1.0f)
-                        : status->RunState == Slab::Math::LiveData::V2::ESessionRunStateV2::Finished
-                            ? ImVec4(0.5f, 0.9f, 1.0f, 1.0f)
-                            : ImVec4(1.0f, 0.6f, 0.2f, 1.0f);
-                    ImGui::TextColored(color, "%s", runString.c_str());
-                }
-                else ImGui::TextDisabled("n/a");
-
-                ImGui::TableSetColumnIndex(2);
-                if (telemetry.has_value()) ImGui::Text("%llu", static_cast<unsigned long long>(telemetry->Cursor.Step));
-                else ImGui::TextDisabled("-");
-
-                ImGui::TableSetColumnIndex(3);
-                if (telemetry.has_value() && telemetry->Cursor.SimulationTime.has_value()) {
-                    ImGui::Text("%.6g", *telemetry->Cursor.SimulationTime);
-                } else {
-                    ImGui::TextDisabled("-");
-                }
-
-                ImGui::TableSetColumnIndex(4);
-                if (telemetry.has_value()) ImGui::Text("%llu", static_cast<unsigned long long>(telemetry->PublishedVersion));
-                else ImGui::TextDisabled("-");
-
-                ImGui::TableSetColumnIndex(5);
-                ImGui::Text("%s", bBound ? "yes" : "no");
-
-                if (telemetry.has_value() && ImGui::IsItemHovered()) {
-                    if (ImGui::BeginTooltip()) {
-                        ImGui::Text("Reason: %s", ToReasonString(telemetry->LastReason).c_str());
-                        ImGui::Text("State present: %s", telemetry->bHasState ? "yes" : "no");
-                        ImGui::EndTooltip();
-                    }
-                }
-            }
-
-            ImGui::EndTable();
-        }
-
-        if (!selectedTopic.empty()) {
-            const auto selectedView = hub->FindSessionLiveView(selectedTopic);
-            if (selectedView == nullptr) {
-                selectedTopic.clear();
-                return;
-            }
-
-            ImGui::SeparatorText("Selected Session Topic");
-            ImGui::TextUnformatted(selectedTopic.c_str());
-            ImGui::Text("Bound session: %s", selectedView->HasBoundSession() ? "yes" : "no");
-
-            if (const auto status = selectedView->TryGetStatus(); status.has_value()) {
-                ImGui::Text("Run: %s", ToStatusString(status->RunState).c_str());
-                ImGui::Text("Last reason: %s", ToReasonString(status->LastReason).c_str());
-            } else {
-                ImGui::TextDisabled("Status: n/a");
-            }
-
-            if (const auto telemetry = selectedView->TryGetTelemetry(); telemetry.has_value()) {
-                ImGui::Text("Step: %llu", static_cast<unsigned long long>(telemetry->Cursor.Step));
-                if (telemetry->Cursor.SimulationTime.has_value()) {
-                    ImGui::Text("t: %.6g", *telemetry->Cursor.SimulationTime);
-                } else {
-                    ImGui::TextDisabled("t: n/a");
-                }
-                ImGui::Text("Version: %llu", static_cast<unsigned long long>(telemetry->PublishedVersion));
-            } else {
-                ImGui::TextDisabled("Telemetry: n/a");
-            }
-        }
-    }
-
-    auto ToControlSemanticString(const Slab::Math::LiveControl::V2::EControlSemanticV2 semantic) -> Slab::Str {
-        using ESemantic = Slab::Math::LiveControl::V2::EControlSemanticV2;
-        switch (semantic) {
-        case ESemantic::Level: return "Level";
-        case ESemantic::Event: return "Event";
-        }
-        return "Unknown";
-    }
-
-    auto ToControlTimeDomainString(const Slab::Math::LiveControl::V2::EControlTimeDomainV2 domain) -> Slab::Str {
-        using EDomain = Slab::Math::LiveControl::V2::EControlTimeDomainV2;
-        switch (domain) {
-        case EDomain::WallClockTime: return "WallClock";
-        case EDomain::SimulationTime: return "Simulation";
-        case EDomain::StepIndex: return "Step";
-        }
-        return "Unknown";
-    }
-
-    auto ToControlValueTypeString(const Slab::Math::LiveControl::V2::FControlValueV2 &value) -> Slab::Str {
-        if (std::holds_alternative<bool>(value)) return "bool";
-        if (std::holds_alternative<Slab::DevFloat>(value)) return "scalar";
-        if (std::holds_alternative<Slab::Math::Real2D>(value)) return "point2d";
-        return "unknown";
-    }
-
-    auto ToControlValueString(const Slab::Math::LiveControl::V2::FControlValueV2 &value) -> Slab::Str {
-        if (std::holds_alternative<bool>(value)) {
-            return std::get<bool>(value) ? "true" : "false";
-        }
-
-        if (std::holds_alternative<Slab::DevFloat>(value)) {
-            return Slab::ToStr(std::get<Slab::DevFloat>(value), 6, true);
-        }
-
-        if (std::holds_alternative<Slab::Math::Real2D>(value)) {
-            const auto point = std::get<Slab::Math::Real2D>(value);
-            return "(" + Slab::ToStr(point.x, 4, true) + ", " + Slab::ToStr(point.y, 4, true) + ")";
-        }
-
-        return "<unknown>";
-    }
-
-    auto ToControlTimeString(const Slab::Math::LiveControl::V2::FControlTimestampV2 &timestamp) -> Slab::Str {
-        using EDomain = Slab::Math::LiveControl::V2::EControlTimeDomainV2;
-
-        switch (timestamp.Domain) {
-        case EDomain::WallClockTime:
-            if (timestamp.WallClockSeconds.has_value()) return Slab::ToStr(*timestamp.WallClockSeconds, 6, true);
-            return "-";
-        case EDomain::SimulationTime:
-            if (timestamp.SimulationSeconds.has_value()) return Slab::ToStr(*timestamp.SimulationSeconds, 6, true);
-            return "-";
-        case EDomain::StepIndex:
-            if (timestamp.Step.has_value()) return Slab::ToStr(*timestamp.Step);
-            return "-";
-        }
-
-        return "-";
-    }
-
-    auto ShowLiveControlV2Panel(const Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> &hub,
-                                Slab::Str &topicFilter,
-                                bool &bLevelsOnly,
-                                Slab::Str &selectedTopic) -> void {
-        ImGui::SeparatorText("Live Control V2");
-
-        if (hub == nullptr) {
-            ImGui::TextColored(ImVec4(1, 0, 0, 1), "LiveControlHubV2 unavailable.");
-            return;
-        }
-
-        DrawFilterField("##labv2-live-control-filter", "Filter topics", topicFilter);
-        ImGui::SameLine();
-        ImGui::Checkbox("Levels only", &bLevelsOnly);
-
-        const auto topicNames = hub->ListTopics();
-        if (topicNames.empty()) {
-            selectedTopic.clear();
-            ImGui::TextDisabled("No control streams registered.");
-            return;
-        }
-
-        Slab::Vector<Slab::Str> filteredTopics;
-        filteredTopics.reserve(topicNames.size());
-        for (const auto &topicName : topicNames) {
-            if (!MatchesTopicFilter(topicName, topicFilter)) continue;
-            const auto topic = hub->FindTopic(topicName);
-            const auto sample = topic != nullptr ? topic->TryGetLatestSample() : std::nullopt;
-            if (bLevelsOnly && sample.has_value() &&
-                sample->Semantic != Slab::Math::LiveControl::V2::EControlSemanticV2::Level) {
-                continue;
-            }
-            filteredTopics.emplace_back(topicName);
-        }
-
-        if (filteredTopics.empty()) {
-            selectedTopic.clear();
-            ImGui::TextDisabled("No control topic matched current filter.");
-            return;
-        }
-
-        constexpr auto tableFlags =
-            ImGuiTableFlags_Borders |
-            ImGuiTableFlags_RowBg |
-            ImGuiTableFlags_ScrollX |
-            ImGuiTableFlags_SizingFixedFit;
-        if (ImGui::BeginTable("LabV2LiveControlTopics", 7, tableFlags)) {
-            ImGui::TableSetupColumn("Topic", ImGuiTableColumnFlags_WidthStretch, 1.0f);
-            ImGui::TableSetupColumn("Semantic");
-            ImGui::TableSetupColumn("Type");
-            ImGui::TableSetupColumn("Value");
-            ImGui::TableSetupColumn("Domain");
-            ImGui::TableSetupColumn("Time");
-            ImGui::TableSetupColumn("Ver");
-            ImGui::TableHeadersRow();
-
-            for (const auto &topicName : filteredTopics) {
-                const auto topic = hub->FindTopic(topicName);
-                const auto sample = topic != nullptr ? topic->TryGetLatestSample() : std::nullopt;
-
-                ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0);
-                ImGui::PushID(topicName.c_str());
-                const bool bSelected = selectedTopic == topicName;
-                if (ImGui::Selectable("##row", bSelected, ImGuiSelectableFlags_SpanAllColumns)) {
-                    selectedTopic = topicName;
-                }
-                ImGui::SameLine();
-                ImGui::TextUnformatted(topicName.c_str());
-                ImGui::PopID();
-
-                ImGui::TableSetColumnIndex(1);
-                if (sample.has_value()) ImGui::Text("%s", ToControlSemanticString(sample->Semantic).c_str());
-                else ImGui::TextDisabled("-");
-
-                ImGui::TableSetColumnIndex(2);
-                if (sample.has_value()) ImGui::Text("%s", ToControlValueTypeString(sample->Value).c_str());
-                else ImGui::TextDisabled("-");
-
-                ImGui::TableSetColumnIndex(3);
-                if (sample.has_value()) ImGui::Text("%s", ToControlValueString(sample->Value).c_str());
-                else ImGui::TextDisabled("-");
-
-                ImGui::TableSetColumnIndex(4);
-                if (sample.has_value()) ImGui::Text("%s", ToControlTimeDomainString(sample->Timestamp.Domain).c_str());
-                else ImGui::TextDisabled("-");
-
-                ImGui::TableSetColumnIndex(5);
-                if (sample.has_value()) ImGui::Text("%s", ToControlTimeString(sample->Timestamp).c_str());
-                else ImGui::TextDisabled("-");
-
-                ImGui::TableSetColumnIndex(6);
-                if (sample.has_value()) ImGui::Text("%llu", static_cast<unsigned long long>(sample->PublishedVersion));
-                else ImGui::TextDisabled("-");
-            }
-
-            ImGui::EndTable();
-        }
-
-        if (!selectedTopic.empty()) {
-            const auto selected = hub->FindTopic(selectedTopic);
-            if (selected == nullptr) {
-                selectedTopic.clear();
-                return;
-            }
-
-            ImGui::SeparatorText("Selected Control Topic");
-            ImGui::TextUnformatted(selectedTopic.c_str());
-            if (const auto sample = selected->TryGetLatestSample(); sample.has_value()) {
-                ImGui::Text("Semantic: %s", ToControlSemanticString(sample->Semantic).c_str());
-                ImGui::Text("Type: %s", ToControlValueTypeString(sample->Value).c_str());
-                ImGui::Text("Value: %s", ToControlValueString(sample->Value).c_str());
-                ImGui::Text("Time domain: %s", ToControlTimeDomainString(sample->Timestamp.Domain).c_str());
-                ImGui::Text("Time: %s", ToControlTimeString(sample->Timestamp).c_str());
-                ImGui::Text("Version: %llu", static_cast<unsigned long long>(sample->PublishedVersion));
-            } else {
-                ImGui::TextDisabled("No sample published yet.");
-            }
-        }
-    }
-
-    auto ShowKG2DControlSourcePanelAndPublish(
-        const Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> &hub,
-        bool &bPublish,
-        Slab::DevFloat &xCenter,
-        Slab::DevFloat &yCenter,
-        Slab::DevFloat &width,
-        Slab::DevFloat &amplitude,
-        bool &bEnabled,
-        const Slab::Str &topicPrefix) -> void {
-        using namespace Slab::Math::LiveControl::V2;
-
-        ImGui::SeparatorText("KG2D Control Source");
-        ImGui::Checkbox("Publish KG2D forcing controls", &bPublish);
-        ImGui::TextDisabled("Topic prefix: %s", topicPrefix.c_str());
-
-        ImGui::DragScalar("KG2D ctrl x", ImGuiDataType_Double, &xCenter, 0.01, nullptr, nullptr, "%.6g");
-        ImGui::DragScalar("KG2D ctrl y", ImGuiDataType_Double, &yCenter, 0.01, nullptr, nullptr, "%.6g");
-        ImGui::DragScalar("KG2D ctrl width", ImGuiDataType_Double, &width, 0.001, nullptr, nullptr, "%.6g");
-        ImGui::DragScalar("KG2D ctrl amplitude", ImGuiDataType_Double, &amplitude, 0.01, nullptr, nullptr, "%.6g");
-        ImGui::Checkbox("KG2D ctrl enabled", &bEnabled);
-
-        if (!bPublish || hub == nullptr) return;
-
-        const auto now = std::chrono::duration<Slab::DevFloat>(
-            std::chrono::steady_clock::now().time_since_epoch()).count();
-
-        FControlTimestampV2 stamp;
-        stamp.Domain = EControlTimeDomainV2::WallClockTime;
-        stamp.WallClockSeconds = now;
-
-        FControlSampleV2 centerSample;
-        centerSample.Value = Slab::Math::Real2D{xCenter, yCenter};
-        centerSample.Semantic = EControlSemanticV2::Level;
-        centerSample.Timestamp = stamp;
-        hub->GetOrCreateTopic(topicPrefix + "/forcing/center")->Publish(centerSample);
-
-        FControlSampleV2 amplitudeSample;
-        amplitudeSample.Value = amplitude;
-        amplitudeSample.Semantic = EControlSemanticV2::Level;
-        amplitudeSample.Timestamp = stamp;
-        hub->GetOrCreateTopic(topicPrefix + "/forcing/amplitude")->Publish(amplitudeSample);
-
-        FControlSampleV2 widthSample;
-        widthSample.Value = std::max<Slab::DevFloat>(width, 1e-9);
-        widthSample.Semantic = EControlSemanticV2::Level;
-        widthSample.Timestamp = stamp;
-        hub->GetOrCreateTopic(topicPrefix + "/forcing/width")->Publish(widthSample);
-
-        FControlSampleV2 enabledSample;
-        enabledSample.Value = bEnabled;
-        enabledSample.Semantic = EControlSemanticV2::Level;
-        enabledSample.Timestamp = stamp;
-        hub->GetOrCreateTopic(topicPrefix + "/forcing/enabled")->Publish(enabledSample);
-    }
 
 } // namespace
 
@@ -808,6 +195,8 @@ auto FLabV2WindowManager::RequestViewRetile(const int stabilizationFrames) -> vo
 
 auto FLabV2WindowManager::FindTopWindowAtPoint(const int x, const int y) const
     -> Slab::TPointer<Slab::Graphics::FSlabWindow> {
+    if (!ShouldRenderSlabWindowsInWorkspace()) return nullptr;
+
     const auto point = Slab::Graphics::FPoint2D{
         static_cast<Slab::DevFloat>(x),
         static_cast<Slab::DevFloat>(y)};
@@ -824,6 +213,8 @@ auto FLabV2WindowManager::FindTopWindowAtPoint(const int x, const int y) const
 }
 
 auto FLabV2WindowManager::FindKeyboardTargetWindow() const -> Slab::TPointer<Slab::Graphics::FSlabWindow> {
+    if (!ShouldRenderSlabWindowsInWorkspace()) return nullptr;
+
     if (const auto selected = FindWindowByUniqueName(SelectedViewUniqueName); selected != nullptr) {
         return selected;
     }
@@ -936,6 +327,10 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> bool {
     const int gap = Slab::Graphics::WindowStyle::TilingGapSize;
     const int menuHeight = static_cast<int>(std::ceil(GetTopMenuInset()));
     const bool bDockingMode = IsDockingEnabled();
+    if (!ShouldRenderSlabWindowsInWorkspace()) {
+        HideSlabWindowsOffscreen();
+        return true;
+    }
     const int sidePaneInset = bDockingMode ? 0 : SidePaneWidth;
     const int tabsHeight = bDockingMode ? static_cast<int>(std::ceil(WorkspaceTabsHeight)) : 0;
     const int stripHeight = bDockingMode ? static_cast<int>(std::ceil(WorkspaceStripHeight)) : 0;
@@ -965,16 +360,6 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> bool {
     if (wWorkspace <= 0 || hWorkspace <= 0) return false;
 
     const int nWindows = static_cast<int>(SlabWindows.size());
-
-    if (bDockingMode && ActiveWorkspace != EWorkspaceTab::Monitor) {
-        for (const auto &window : SlabWindows) {
-            if (window == nullptr) continue;
-            window->Set_x(-10000);
-            window->Set_y(-10000);
-            window->NotifyReshape(1, 1);
-        }
-        return true;
-    }
 
     if (bDockingMode && ActiveWorkspace == EWorkspaceTab::Monitor && nWindows == 1) {
         if (const auto &window = SlabWindows.front(); window != nullptr) {
@@ -1030,6 +415,22 @@ auto FLabV2WindowManager::IsDockingEnabled() const -> bool {
     return (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) != 0;
 }
 
+auto FLabV2WindowManager::ShouldRenderSlabWindowsInWorkspace() const -> bool {
+    if (!IsDockingEnabled()) return true;
+    return ActiveWorkspace == EWorkspaceTab::Monitor;
+}
+
+auto FLabV2WindowManager::HideSlabWindowsOffscreen() -> void {
+    for (const auto &window : SlabWindows) {
+        if (window == nullptr) continue;
+        window->Set_x(-10000);
+        window->Set_y(-10000);
+        // Keep non-zero dimensions so nested panel children never collapse to zero viewports.
+        window->NotifyReshape(64, 64);
+    }
+    CapturedMouseWindow.reset();
+}
+
 auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab workspace) -> void {
     const auto index = static_cast<std::size_t>(workspace);
     WorkspacePanels[index] = FWorkspacePanelVisibility{
@@ -1072,6 +473,9 @@ auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> v
     const auto previousWorkspace = ActiveWorkspace;
     SaveWorkspacePanelVisibility(ActiveWorkspace);
     ActiveWorkspace = workspace;
+    if (previousWorkspace == EWorkspaceTab::Monitor && ActiveWorkspace != EWorkspaceTab::Monitor) {
+        CapturedMouseWindow.reset();
+    }
     LoadWorkspacePanelVisibility(ActiveWorkspace);
     if (previousWorkspace == EWorkspaceTab::Monitor || ActiveWorkspace == EWorkspaceTab::Monitor) {
         RequestViewRetile();
@@ -1296,9 +700,10 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
     ImGui::DockBuilderRemoveNode(dockId);
     ImGui::DockBuilderAddNode(
         dockId,
-        ImGuiDockNodeFlags_DockSpace |
-        ImGuiDockNodeFlags_PassthruCentralNode |
-        static_cast<ImGuiDockNodeFlags>(ImGuiDockNodeFlags_AutoHideTabBar));
+        static_cast<ImGuiDockNodeFlags>(
+            static_cast<int>(ImGuiDockNodeFlags_DockSpace) |
+            static_cast<int>(ImGuiDockNodeFlags_PassthruCentralNode) |
+            static_cast<int>(ImGuiDockNodeFlags_AutoHideTabBar)));
     ImGui::DockBuilderSetNodeSize(dockId, dockSize);
 
     ImGuiID dockMain = dockId;
@@ -1398,14 +803,14 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
         }
 #ifdef IMGUI_HAS_DOCK
         const auto drawWorkspaceDockspace = [this](const unsigned int id, const EWorkspaceTab workspace) {
-            ImGuiDockNodeFlags dockFlags =
-                ImGuiDockNodeFlags_PassthruCentralNode |
-                static_cast<ImGuiDockNodeFlags>(ImGuiDockNodeFlags_AutoHideTabBar);
+            ImGuiDockNodeFlags dockFlags = static_cast<ImGuiDockNodeFlags>(
+                static_cast<int>(ImGuiDockNodeFlags_PassthruCentralNode) |
+                static_cast<int>(ImGuiDockNodeFlags_AutoHideTabBar));
             if (workspace != ActiveWorkspace) {
                 // Keep inactive workspaces alive so docked windows don't detach on tab switch.
-                dockFlags =
-                    ImGuiDockNodeFlags_KeepAliveOnly |
-                    static_cast<ImGuiDockNodeFlags>(ImGuiDockNodeFlags_AutoHideTabBar);
+                dockFlags = static_cast<ImGuiDockNodeFlags>(
+                    static_cast<int>(ImGuiDockNodeFlags_KeepAliveOnly) |
+                    static_cast<int>(ImGuiDockNodeFlags_AutoHideTabBar));
             }
 
             ImGui::DockSpace(static_cast<ImGuiID>(id), ImVec2(0.0f, 0.0f), dockFlags);
@@ -1476,7 +881,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         false,
         false,
         [this]() {
-            ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);
+            Slab::Studios::LabV2::Panels::ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);
         }
     });
 
@@ -1487,7 +892,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         false,
         true,
         [this]() {
-            ShowLiveDataV2Panel(LiveDataHub, LiveDataTopicFilter, bLiveDataOnlyBound, SelectedLiveDataTopic);
+            Slab::Studios::LabV2::Panels::ShowLiveDataV2Panel(LiveDataHub, LiveDataTopicFilter, bLiveDataOnlyBound, SelectedLiveDataTopic);
         }
     });
 
@@ -1498,7 +903,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         false,
         true,
         [this]() {
-            ShowLiveControlV2Panel(
+            Slab::Studios::LabV2::Panels::ShowLiveControlV2Panel(
                 LiveControlHub,
                 LiveControlTopicFilter,
                 bLiveControlLevelsOnly,
@@ -1524,7 +929,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         false,
         true,
         [this]() {
-            ShowKG2DControlSourcePanelAndPublish(
+            Slab::Studios::LabV2::Panels::ShowKG2DControlSourcePanelAndPublish(
                 LiveControlHub,
                 bPublishKG2DControlSource,
                 KG2DControlX,
@@ -1631,15 +1036,15 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
         ImGui::Checkbox("KG2D Control", &bShowWindowKG2DControl);
 
         if (bShowWindowTasks) {
-            ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);
+            Slab::Studios::LabV2::Panels::ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);
         }
 
         if (bShowWindowLiveData) {
-            ShowLiveDataV2Panel(LiveDataHub, LiveDataTopicFilter, bLiveDataOnlyBound, SelectedLiveDataTopic);
+            Slab::Studios::LabV2::Panels::ShowLiveDataV2Panel(LiveDataHub, LiveDataTopicFilter, bLiveDataOnlyBound, SelectedLiveDataTopic);
         }
 
         if (bShowWindowLiveControl) {
-            ShowLiveControlV2Panel(
+            Slab::Studios::LabV2::Panels::ShowLiveControlV2Panel(
                 LiveControlHub,
                 LiveControlTopicFilter,
                 bLiveControlLevelsOnly,
@@ -1651,7 +1056,7 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
         }
 
         if (bShowWindowKG2DControl) {
-            ShowKG2DControlSourcePanelAndPublish(
+            Slab::Studios::LabV2::Panels::ShowKG2DControlSourcePanelAndPublish(
                 LiveControlHub,
                 bPublishKG2DControlSource,
                 KG2DControlX,
@@ -1715,7 +1120,12 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
         RequestViewRetile();
     }
 
-    if (bPendingViewRetile || RetileStabilizationFramesRemaining > 0) {
+    const bool bRenderSlabWindows = ShouldRenderSlabWindowsInWorkspace();
+    const bool bForceMonitorDockRetile =
+        IsDockingEnabled() &&
+        ActiveWorkspace == EWorkspaceTab::Monitor;
+
+    if (bRenderSlabWindows && (bForceMonitorDockRetile || bPendingViewRetile || RetileStabilizationFramesRemaining > 0)) {
         if (ArrangeTopLevelSlabWindows()) {
             if (RetileStabilizationFramesRemaining > 0) {
                 --RetileStabilizationFramesRemaining;
@@ -1728,9 +1138,13 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
             bPendingViewRetile = true;
             RetileStabilizationFramesRemaining = std::max(RetileStabilizationFramesRemaining, 1);
         }
+    } else if (!bRenderSlabWindows) {
+        HideSlabWindowsOffscreen();
     }
 
-    FWindowManager::NotifyRender(platformWindow);
+    if (bRenderSlabWindows) {
+        FWindowManager::NotifyRender(platformWindow);
+    }
     FlushPendingSlabWindows();
     ImGuiContext->Render();
     return true;

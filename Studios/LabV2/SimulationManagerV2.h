@@ -70,6 +70,16 @@ private:
     auto DrawXYSection() -> void;
     auto DrawIsingSection() -> void;
 
+    auto HandleLaunchMenuItem(const Slab::Str &itemString) -> bool;
+    auto CaptureLaunchError(const std::exception &e) -> void;
+    auto RequestLauncherVisible() const -> void;
+    [[nodiscard]] auto GetOrCreateLiveViewIfNeeded(bool bNeedLiveView,
+                                                    const Slab::Str &prefix,
+                                                    Slab::UIntBig &counter)
+        -> Slab::TPointer<Slab::Math::LiveData::V2::FSessionLiveViewV2>;
+    auto AttachMonitorWindowOrThrow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window,
+                                    const char *context) const -> void;
+
     auto LaunchSPI(bool enableMonitor) -> void;
     auto LaunchRtoR(bool enableMonitor) -> void;
     auto LaunchR2toR(bool enableMonitor) -> void;

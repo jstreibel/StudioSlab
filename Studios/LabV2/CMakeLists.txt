@@ -4,6 +4,8 @@ add_executable( StudioSlabV2
         StudioSlabV2App.h
         LabV2WindowManager.cpp
         LabV2WindowManager.h
+        LabV2Panels.cpp
+        LabV2Panels.h
         SimulationManagerV2.cpp
         SimulationManagerV2.h
         StudioConfigV2.h

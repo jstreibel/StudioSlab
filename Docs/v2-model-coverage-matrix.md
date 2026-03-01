@@ -74,11 +74,11 @@ Rule of thumb:
 ### Wave A (stabilize current V2 portfolio)
 - KG `R->R` (`V2-M`) -> add interactive hooks + deeper analysis
 - SPI (`V2-M`) -> improve parity and reuse infrastructure
-- Metropolis (`V2-H`) -> add monitored/analysis-facing path
+- Metropolis (`V2-M`) -> extend diagnostics and control-facing hooks
 
 ### Wave B (north-star enabler)
-- KG `R^2->R` -> `V2-H` then `V2-M`
-- introduce `LiveControl V2` for interactive forcing
+- KG `R^2->R` -> deepen `V2-I` beyond first prototype
+- expand `LiveControl V2` from foundation to replay/sequence-compatible flows
 
 ### Wave C (broad dynamics coverage)
 - Molecular Dynamics core (headless + monitored)
@@ -106,3 +106,4 @@ Minimum useful milestones:
 - “Model” remains the scientific system/transform term.
 - This matrix should be updated as new V2 slices land and as `LiveControl V2` and sequencing mature.
 - MD V2 first-slice scope is captured in `Docs/md-v2-slice-scope.md`.
+- For current implementation snapshot precedence, use `Docs/status-v2.md`.

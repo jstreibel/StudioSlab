@@ -70,17 +70,14 @@ namespace Slab::Studios::Common::Monitors::V2 {
         PhiArtist->SetAffectGraphRanges(true);
         PiArtist->SetAffectGraphRanges(true);
 
-        AddWindow(GuiWindow, false, 0.28f);
-        AddWindow(Naked(PhiWindow), true, 0.36f);
-        AddWindow(Naked(PiWindow), true, 0.36f);
-        SetColumnRelativeWidth(0, 0.28f);
+        AddWindow(Naked(PhiWindow), false);
+        AddWindow(Naked(PiWindow), true, 0.50f);
+        SetColumnRelativeWidth(0, 0.50f);
 
         PhiWindow.AddArtist(PhiArtist);
         PiWindow.AddArtist(PiArtist);
         PhiWindow.SetAutoReviewGraphRanges(true);
         PiWindow.SetAutoReviewGraphRanges(true);
-        PhiWindow.SetNoGUI();
-        PiWindow.SetNoGUI();
     }
 
     auto FMetropolisPassiveMonitorWindowV2::ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void {

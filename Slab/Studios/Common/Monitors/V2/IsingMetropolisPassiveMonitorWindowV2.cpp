@@ -103,13 +103,10 @@ namespace Slab::Studios::Common::Monitors::V2 {
         LatticeArtist->SetAffectGraphRanges(false);
         LatticeArtist->setDataMutable(true);
 
-        AddWindow(GuiWindow, false, 0.30f);
-        AddWindow(Naked(LatticeWindow), true, 0.70f);
-        SetColumnRelativeWidth(0, 0.30f);
+        AddWindow(Naked(LatticeWindow));
 
         LatticeWindow.AddArtist(LatticeArtist);
         LatticeWindow.SetAutoReviewGraphRanges(false);
-        LatticeWindow.SetNoGUI();
         LatticeWindow.GetRegion().setLimits(-1.0, 1.0, -1.0, 1.0);
     }
 

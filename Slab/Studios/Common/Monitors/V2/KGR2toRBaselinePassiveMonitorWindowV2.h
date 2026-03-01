@@ -11,6 +11,7 @@
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Data/V2/LiveControlHubV2.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
+#include "Studios/Common/Simulations/V2/KGR2toRControlTopicsV2.h"
 
 namespace Slab::Studios::Common::Monitors::V2 {
 
@@ -20,7 +21,7 @@ namespace Slab::Studios::Common::Monitors::V2 {
         TPointer<Math::LiveData::V2::FSessionTelemetryTopicV2> TelemetryTopic;
         TPointer<Math::LiveData::V2::FSessionStatusTopicV2> StatusTopic;
         TPointer<Math::LiveControl::V2::FLiveControlHubV2> ControlHub = nullptr;
-        Str ControlTopicPrefix = "labv2/control/kg2d";
+        Str ControlTopicPrefix = Slab::Studios::Common::Simulations::V2::KG2DControlTopicPrefixDefaultV2;
         bool bEnableControlPublisher = false;
         bool bPublishControlSource = true;
         DevFloat ControlXCenter = 0.0;
@@ -49,7 +50,7 @@ namespace Slab::Studios::Common::Monitors::V2 {
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
             UIntBig maxSteps,
             const TPointer<Math::LiveControl::V2::FLiveControlHubV2> &controlHub = nullptr,
-            const Str &controlTopicPrefix = "labv2/control/kg2d",
+            const Str &controlTopicPrefix = Slab::Studios::Common::Simulations::V2::KG2DControlTopicPrefixDefaultV2,
             bool bEnableControlPublisher = false,
             DevFloat controlXCenter = 0.0,
             DevFloat controlYCenter = 0.0,

@@ -39,6 +39,23 @@ namespace Slab::Graphics {
     public:
         typedef std::multimap<zOrder_t, FArtist_ptr> ContentMap;
 
+        struct FOverlayControlsStyle {
+            float ToolbarButtonSizeMultiplier = 1.0f;
+            float RightButtonSizeMultiplier = 1.0f;
+            float ToolbarBackgroundAlpha = 0.82f;
+            float RightBackgroundAlpha = 0.80f;
+            float EdgeMargin = 8.0f;
+            float StripPadding = 6.0f;
+            float StripSpacing = 6.0f;
+            float RightStripTopOffset = 0.0f;
+            bool bTransparentBackground = false;
+            bool bRightStripAlignTop = false;
+            bool bRightStripAvoidDetailPanel = false;
+        };
+
+        static void SetGlobalOverlayControlsStyle(const FOverlayControlsStyle&);
+        static auto GetGlobalOverlayControlsStyle() -> FOverlayControlsStyle;
+
         explicit FPlot2DWindow(Str Title);
 
         void ImmediateDraw(const FPlatformWindow&) override;
@@ -97,6 +114,7 @@ namespace Slab::Graphics {
 
     private:
         ContentMap Content;
+        static FOverlayControlsStyle OverlayControlsStyle;
 
         bool ShowInterface = true;
 

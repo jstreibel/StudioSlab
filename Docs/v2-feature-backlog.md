@@ -5,6 +5,7 @@
 Planning-oriented task list for V2 work.
 
 Use together with:
+- `Docs/status-v2.md` (current implementation snapshot)
 - `Docs/v2-model-coverage-matrix.md` (breadth/coverage planning)
 - `Docs/study-model-spec.md` and `Docs/sequence-control-spec.md` (product/UX architecture)
 
@@ -12,6 +13,7 @@ Use together with:
 
 - Status: `todo`, `active`, `blocked`, `done`
 - Priority: `P0` (now), `P1` (next), `P2` (later)
+- Status precedence: progress notes + `Docs/status-v2.md`; seed items below include historical lineage.
 
 ## Current Recommended Milestone (`NS0`)
 
@@ -58,7 +60,7 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 
 ## Parallel Track (keep one item active max)
 
-### `P1` `CVG-00` — Metropolis `V2-M`
+### `P1` `CVG-00` — Metropolis `V2-M` — done
 - Add a monitored V2 path (telemetry/diagnostics view), not only headless.
 
 ## Follow-up Tracks (next)

@@ -91,6 +91,8 @@ This avoids overfitting the platform to one showcase while preserving a clear UX
 
 ## Current Alignment (Status)
 
+For current implementation snapshot precedence, use `Docs/status-v2.md`.
+
 Already aligned with this direction:
 - Numerics V2 runtime (`Task/Recipe/Session`)
 - Live Data V2 (topics/hub + session live views)
@@ -98,7 +100,7 @@ Already aligned with this direction:
 - `LabV2` as V2 observability + launcher shell
 
 Missing but clearly implied:
-- `LiveControl V2` (input/control streams)
+- expanded `LiveControl V2` beyond foundation (recording/replay and sequence-time integration)
 - `Study` object model
 - sequence/presentation system
 - richer data/asset model and provenance
@@ -106,4 +108,3 @@ Missing but clearly implied:
 ## Working Definition (for now)
 
 StudioSlab is a real-time, reproducible scientific studio for authoring **Studies** from mathematical data, models, simulations, controls, and visual presentations.
-

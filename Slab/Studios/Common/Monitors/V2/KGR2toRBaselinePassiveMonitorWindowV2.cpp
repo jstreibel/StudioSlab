@@ -5,6 +5,7 @@
 #include "Models/KleinGordon/R2toR/EquationState.h"
 
 #include "../../SessionLiveViewStatsV2.h"
+#include "../../Simulations/V2/KGR2toRControlTopicsV2.h"
 
 #include <algorithm>
 #include <chrono>
@@ -82,6 +83,7 @@ namespace Slab::Studios::Common::Monitors::V2 {
         if (!bEnableControlPublisher || !bPublishControlSource || ControlHub == nullptr) return;
 
         using namespace Slab::Math::LiveControl::V2;
+        using namespace Slab::Studios::Common::Simulations::V2;
 
         const auto now = std::chrono::duration<DevFloat>(
             std::chrono::steady_clock::now().time_since_epoch()).count();
@@ -94,25 +96,26 @@ namespace Slab::Studios::Common::Monitors::V2 {
         centerSample.Value = Slab::Math::Real2D{ControlXCenter, ControlYCenter};
         centerSample.Semantic = EControlSemanticV2::Level;
         centerSample.Timestamp = stamp;
-        ControlHub->GetOrCreateTopic(ControlTopicPrefix + "/forcing/center")->Publish(centerSample);
+        const auto topics = BuildKG2DForcingTopicNamesV2(ControlTopicPrefix);
+        ControlHub->GetOrCreateTopic(topics.Center)->Publish(centerSample);
 
         FControlSampleV2 amplitudeSample;
         amplitudeSample.Value = ControlAmplitude;
         amplitudeSample.Semantic = EControlSemanticV2::Level;
         amplitudeSample.Timestamp = stamp;
-        ControlHub->GetOrCreateTopic(ControlTopicPrefix + "/forcing/amplitude")->Publish(amplitudeSample);
+        ControlHub->GetOrCreateTopic(topics.Amplitude)->Publish(amplitudeSample);
 
         FControlSampleV2 widthSample;
         widthSample.Value = std::max<DevFloat>(ControlWidth, 1e-9);
         widthSample.Semantic = EControlSemanticV2::Level;
         widthSample.Timestamp = stamp;
-        ControlHub->GetOrCreateTopic(ControlTopicPrefix + "/forcing/width")->Publish(widthSample);
+        ControlHub->GetOrCreateTopic(topics.Width)->Publish(widthSample);
 
         FControlSampleV2 enabledSample;
         enabledSample.Value = bControlEnabled;
         enabledSample.Semantic = EControlSemanticV2::Level;
         enabledSample.Timestamp = stamp;
-        ControlHub->GetOrCreateTopic(ControlTopicPrefix + "/forcing/enabled")->Publish(enabledSample);
+        ControlHub->GetOrCreateTopic(topics.Enabled)->Publish(enabledSample);
     }
 
     auto FR2toRBaselinePassiveMonitorWindowV2::DrawControlWindow() -> void {
@@ -175,13 +178,10 @@ namespace Slab::Studios::Common::Monitors::V2 {
         FieldArtist->SetAffectGraphRanges(false);
         FieldArtist->setDataMutable(true);
 
-        AddWindow(GuiWindow, false, 0.30f);
-        AddWindow(Naked(FieldWindow), true, 0.70f);
-        SetColumnRelativeWidth(0, 0.30f);
+        AddWindow(Naked(FieldWindow));
 
         FieldWindow.AddArtist(FieldArtist);
         FieldWindow.SetAutoReviewGraphRanges(false);
-        FieldWindow.SetNoGUI();
         FieldWindow.GetRegion().setLimits(-1.0, 1.0, -1.0, 1.0);
     }
 

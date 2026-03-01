@@ -6,6 +6,7 @@
 
 #include "Math/Data/V2/LiveDataHubV2.h"
 #include "Math/Data/V2/LiveControlHubV2.h"
+#include "Studios/Common/Simulations/V2/KGR2toRControlTopicsV2.h"
 
 #include <functional>
 #include <array>
@@ -98,7 +99,7 @@ private:
     Slab::DevFloat KG2DControlWidth = 0.35;
     Slab::DevFloat KG2DControlAmplitude = 0.0;
     bool bKG2DControlEnabled = false;
-    Slab::Str KG2DControlTopicPrefix = "labv2/control/kg2d";
+    Slab::Str KG2DControlTopicPrefix = Slab::Studios::Common::Simulations::V2::KG2DControlTopicPrefixDefaultV2;
 
     bool bUseDockspaceLayout = true;
     bool bResetDockLayoutRequested = false;
@@ -150,6 +151,8 @@ private:
     auto LoadWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
     auto SetActiveWorkspace(EWorkspaceTab workspace) -> void;
     [[nodiscard]] auto IsDockingEnabled() const -> bool;
+    [[nodiscard]] auto ShouldRenderSlabWindowsInWorkspace() const -> bool;
+    auto HideSlabWindowsOffscreen() -> void;
     auto DrawViewManagerPanel() -> void;
     auto FocusWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
     auto RequestViewRetile(int stabilizationFrames = 3) -> void;

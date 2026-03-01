@@ -6,6 +6,7 @@
 #include "Graphics/Window/SlabWindow.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Numerics/V2/Runtime/SimulationRecipeV2.h"
+#include "Studios/Common/Simulations/V2/KGR2toRControlTopicsV2.h"
 
 namespace Slab::Models::KGR2toR::Baseline::V2 {
     struct FKGR2toRBaselineConfigV2;
@@ -35,7 +36,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
         bool bEnableGLMonitor = false;
 
         bool bEnableLiveControlForcing = false;
-        Str ControlTopicPrefix = "labv2/control/kg2d";
+        Str ControlTopicPrefix = KG2DControlTopicPrefixDefaultV2;
         UIntBig ControlSampleInterval = 1;
         TPointer<Math::LiveControl::V2::FLiveControlHubV2> ControlHub = nullptr;
         bool bEnableMonitorControlPublisher = false;

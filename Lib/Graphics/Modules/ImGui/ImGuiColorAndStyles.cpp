@@ -236,6 +236,31 @@ namespace Slab::Graphics {
             colors[ImGuiCol_TableRowBgAlt] = ImVec4(0.10f, 0.19f, 0.28f, 0.28f);
         }
 
+        auto MergeFontAwesomeIntoThemeFont(
+            ImGuiIO &io,
+            const Str& iconFontPath,
+            ImFont* baseFont,
+            const float baseFontSizePixels) -> bool
+        {
+            if (baseFont == nullptr) return false;
+            if (!std::filesystem::exists(iconFontPath)) return false;
+
+            static constexpr ImWchar IconRanges[] = {0xF000, 0xF8FF, 0};
+
+            ImFontConfig iconConfig;
+            iconConfig.MergeMode = true;
+            iconConfig.DstFont = baseFont;
+            iconConfig.PixelSnapH = true;
+            iconConfig.GlyphMinAdvanceX = baseFontSizePixels * 0.85f;
+            iconConfig.GlyphOffset = ImVec2{0.0f, 0.0f};
+
+            return io.Fonts->AddFontFromFileTTF(
+                iconFontPath.c_str(),
+                baseFontSizePixels * 0.95f,
+                &iconConfig,
+                IconRanges) != nullptr;
+        }
+
         auto RegisterThemeFonts(float fontSizePixels) -> void
         {
             ImGuiIO &io = ImGui::GetIO();
@@ -244,6 +269,15 @@ namespace Slab::Graphics {
             ThemeFontLabels.clear();
 
             const auto ranges = BuildGlyphRanges();
+            const auto iconFontPath = Core::Resources::BuiltinFonts::FontAwesome_Solid();
+            const bool haveIconFont = std::filesystem::exists(iconFontPath);
+
+            if (!haveIconFont)
+            {
+                Core::FLog::Warning() << "ImGui icon font not found at " << iconFontPath
+                    << ". Overlay icon buttons may not render as expected." << Core::FLog::Flush;
+            }
+            bool mergedIconIntoAnyFont = false;
 
             const Vector<FThemeFontSpec> fonts = {
                 {"Julia Mono", Core::Resources::BuiltinFonts::JuliaMono_Regular()},
@@ -278,6 +312,18 @@ namespace Slab::Graphics {
                     continue;
                 }
 
+                if (haveIconFont)
+                {
+                    const bool mergedIcon = MergeFontAwesomeIntoThemeFont(io, iconFontPath, font, fontSizePixels);
+                    mergedIconIntoAnyFont = mergedIconIntoAnyFont || mergedIcon;
+
+                    if (!mergedIcon)
+                    {
+                        Core::FLog::Warning() << "Could not merge Font Awesome icon font into '" << label << "'."
+                            << Core::FLog::Flush;
+                    }
+                }
+
                 ThemeFonts[label] = font;
                 ThemeFontLabels.emplace_back(label);
             }
@@ -296,7 +342,9 @@ namespace Slab::Graphics {
             io.Fonts->Build();
 
             Core::FLog::Info() << "ImGui theme fonts loaded: " << ToStr(ThemeFontLabels)
-                << ". Default: " << CurrentThemeFont << Core::FLog::Flush;
+                << ". Default: " << CurrentThemeFont
+                << ". FontAwesome merged: " << (mergedIconIntoAnyFont ? "yes" : "no")
+                << Core::FLog::Flush;
         }
     } // namespace
 

@@ -203,6 +203,8 @@ Purpose:
 
 ## Current V2 Mapping (Implemented Pieces)
 
+For current implementation snapshot precedence, use `Docs/status-v2.md`.
+
 - `FNumericTaskV2` = `Run` executor
 - `FSimulationRecipeV2` = numerical/runtime builder for a configured model/transform execution
 - `FSimulationSessionV2` = run/session state
@@ -213,7 +215,7 @@ Purpose:
 ## Current Gaps (Expected)
 
 - `Study` object model not yet formalized in code
-- `ControlSource` and `LiveControl` V2 not implemented
+- `ControlSource` / `LiveControl` V2 foundation exists (topics/hub), but recording/replay and broader binding coverage are not implemented
 - `Sequence` subsystem not implemented
 - asset management and persistence model not unified
 - blueprint integration not yet on V2 contracts

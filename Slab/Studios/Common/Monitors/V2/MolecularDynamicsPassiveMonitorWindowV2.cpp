@@ -101,13 +101,10 @@ namespace Slab::Studios::Common::Monitors::V2 {
         ParticleArtist->SetAffectGraphRanges(false);
         ParticleArtist->SetLabel("particles");
 
-        AddWindow(GuiWindow, false, 0.28f);
-        AddWindow(Naked(ParticleWindow), true, 0.72f);
-        SetColumnRelativeWidth(0, 0.28f);
+        AddWindow(Naked(ParticleWindow));
 
         ParticleWindow.AddArtist(ParticleArtist);
         ParticleWindow.SetAutoReviewGraphRanges(false);
-        ParticleWindow.SetNoGUI();
 
         const auto half = 0.5 * BoxLength;
         ParticleWindow.GetRegion().setLimits(-half, half, -half, half);

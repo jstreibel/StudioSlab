@@ -5,7 +5,7 @@
 This document defines the project-level specification for AI-assisted work in `StudioSlab`.
 It is intended to reduce ambiguity, keep changes safe, and preserve architectural intent while the codebase evolves.
 
-This is **not** a full rewrite spec. It is a **project charter + working invariants + doc index** for a large, mixed-era C++ physics codebase undergoing a boundary-level V2 refactor.
+This is **not** a full rewrite spec. It is a **project charter + working invariants + index router** for a large, mixed-era C++ physics codebase undergoing a boundary-level V2 refactor.
 
 ## Project Summary
 
@@ -43,12 +43,29 @@ Product direction is data-centric:
 - views/monitors are passive
 - interaction and presentation are first-class concerns
 
-See:
+Start with:
+- `Docs/index.md` (AI/router entrypoint)
+- `Docs/index-v2-runtime.md` (runtime/data/control work)
+- `Docs/index-labv2.md` (LabV2 shell/UI work)
+- `Docs/index-roadmap.md` (planning/status/priority)
+- `Docs/index-testing.md` (build/test/smoke)
+- `Docs/status-v2.md` (current implementation snapshot)
+
+Use detailed specs only after index routing:
 - `Docs/product-direction.md`
 - `Docs/product-vocabulary.md`
 - `Docs/domain-model-ux-surfaces-spec.md`
 - `Docs/study-model-spec.md`
 - `Docs/sequence-control-spec.md`
+
+## Documentation Navigation (AI Index Protocol)
+
+Before reading deep docs, AI should:
+1. read `AGENTS.md`
+2. read `Docs/index.md`
+3. select exactly one sub-index based on task
+4. read at most one contract/spec doc plus one roadmap/slice doc
+5. if docs conflict, prefer `Docs/status-v2.md`, then code in `Slab/` and `Studios/LabV2/`
 
 ## Refactor Strategy (Global)
 
@@ -224,6 +241,7 @@ AI should clarify:
 - target subsystem (`Lib/Math`, `Lib/Graphics`, `Studios`, etc.)
 - whether the change is legacy hardening vs V2 work
 - behavioral invariants that must remain true
+- index route used (`Docs/index-*.md`) and status source (`Docs/status-v2.md`)
 
 ### While changing code
 
@@ -341,6 +359,12 @@ If a change requires broad coupling across numerics + data + graphics, split it 
 ## Related Local Docs
 
 - `AGENTS.md` (repo-specific workflow and constraints)
+- `Docs/index.md` (docs entrypoint/router)
+- `Docs/status-v2.md` (implementation status snapshot)
+- `Docs/index-v2-runtime.md` (runtime/data/control map)
+- `Docs/index-labv2.md` (LabV2 shell/UI map)
+- `Docs/index-roadmap.md` (planning/status precedence)
+- `Docs/index-testing.md` (build/test/smoke map)
 - `Docs/graphics-composition-contract.md` (render/composition rules)
 - `Docs/plot-window-ux-contract.md` (plot control surface contract)
 - `Docs/slab-root-migration-policy.md` (root `Slab/` migration rules)
@@ -361,6 +385,6 @@ If a change requires broad coupling across numerics + data + graphics, split it 
 - AI workflow constraints
 - architectural invariants
 - high-level V2 map
-- links to deeper specs in `Docs/`
+- index routing (`Docs/index*.md`) and links to deeper specs in `Docs/`
 
 Detailed product/domain/coverage definitions should evolve primarily in the dedicated docs under `Docs/`.
