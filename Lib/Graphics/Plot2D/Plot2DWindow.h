@@ -120,6 +120,7 @@ namespace Slab::Graphics {
 
         bool PopupOn = false;
         bool AutoReviewGraphRanges=false;
+        bool LockUnitAspectRatio = false;
 
         PlottingRegion2D Region;
 
@@ -128,6 +129,7 @@ namespace Slab::Graphics {
         // FImGuiWindowContext WindowContext;
 
         void SetupOrtho() const;
+        void EnforceUnitAspectRatio(bool animate);
 
 
     };

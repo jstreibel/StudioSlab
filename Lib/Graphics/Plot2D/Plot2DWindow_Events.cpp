@@ -61,21 +61,37 @@ namespace Slab {
         }
 
         if (MouseState->IsRightPressed()) {
-            constexpr const DevFloat factor = 0.01;
-            const DevFloat dw = 1 - factor * dx;
-            const DevFloat dh = 1 + factor * dy;
+            if (LockUnitAspectRatio) {
+                constexpr const DevFloat factor = 0.01;
+                const DevFloat d = 1 - factor * (dx - dy);
+                const auto rect = Region.getRect();
+                const DevFloat x0 = rect.xCenter();
+                const DevFloat hw = .5 * rect.GetWidth() * d;
 
-            const DevFloat x0 = Region.xCenter();
-            const DevFloat y0 = Region.yCenter();
-            const DevFloat hw = .5 * Region.width()  * dw;
-            const DevFloat hh = .5 * Region.height() * dh;
-
-            Region = {
+                Region = RectR{
                     x0 - hw,
                     x0 + hw,
-                    y0 - hh,
-                    y0 + hh
-            };
+                    rect.yMin,
+                    rect.yMax
+                };
+                EnforceUnitAspectRatio(false);
+            } else {
+                constexpr const DevFloat factor = 0.01;
+                const DevFloat dw = 1 - factor * dx;
+                const DevFloat dh = 1 + factor * dy;
+
+                const DevFloat x0 = Region.xCenter();
+                const DevFloat y0 = Region.yCenter();
+                const DevFloat hw = .5 * Region.width()  * dw;
+                const DevFloat hh = .5 * Region.height() * dh;
+
+                Region = {
+                        x0 - hw,
+                        x0 + hw,
+                        y0 - hh,
+                        y0 + hh
+                };
+            }
 
             bReturnValue = true;
         }
@@ -109,6 +125,19 @@ namespace Slab {
 
         targetRegion.yMin = y0 - hh;
         targetRegion.yMax = y0 + hh;
+
+        if (LockUnitAspectRatio) {
+            const auto viewport = GetViewport();
+            const auto viewportWidth = static_cast<DevFloat>(std::max(1, viewport.GetWidth()));
+            const auto viewportHeight = static_cast<DevFloat>(std::max(1, viewport.GetHeight()));
+            const auto viewportAspect = viewportWidth / viewportHeight;
+            if (viewportAspect > 0.0) {
+                const auto halfWidth = static_cast<DevFloat>(0.5 * targetRegion.GetWidth());
+                const auto halfHeight = static_cast<DevFloat>(std::max(halfWidth / viewportAspect, DevFloat(1e-8)));
+                targetRegion.yMin = y0 - halfHeight;
+                targetRegion.yMax = y0 + halfHeight;
+            }
+        }
 
         Region.animate_yMin(targetRegion.yMin);
         Region.animate_yMax(targetRegion.yMax);

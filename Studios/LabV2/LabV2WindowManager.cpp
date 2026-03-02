@@ -1156,28 +1156,33 @@ bool FLabV2WindowManager::NotifyMouseButton(const Slab::Graphics::EMouseButton b
         ImGuiContext != nullptr &&
         ImGuiContext->NotifyMouseButton(button, state, modKeys);
 
-    Slab::TPointer<Slab::Graphics::FSlabWindow> target = nullptr;
-
+    // Always release an already captured slab window to keep button-state tracking coherent,
+    // even when an overlay ImGui window captures this release event.
     if (state == Slab::Graphics::EKeyState::Release) {
-        target = CapturedMouseWindow.lock();
-        if (target == nullptr && bHasLastMousePosition) {
-            target = FindTopWindowAtPoint(LastMouseX, LastMouseY);
-        }
+        const auto captured = CapturedMouseWindow.lock();
         CapturedMouseWindow.reset();
-    } else {
-        if (bHasLastMousePosition) {
-            target = FindTopWindowAtPoint(LastMouseX, LastMouseY);
-        }
-        if (target != nullptr) {
-            CapturedMouseWindow = target;
-        }
+
+        const bool bCapturedReleaseHandled =
+            captured != nullptr &&
+            captured->NotifyMouseButton(button, state, modKeys);
+
+        if (bGuiHandled) return true;
+        if (bCapturedReleaseHandled) return true;
+
+        if (!bHasLastMousePosition) return false;
+        const auto target = FindTopWindowAtPoint(LastMouseX, LastMouseY);
+        return target != nullptr && target->NotifyMouseButton(button, state, modKeys);
     }
 
-    const bool bWindowHandled =
-        target != nullptr &&
-        target->NotifyMouseButton(button, state, modKeys);
+    if (bGuiHandled) return true;
+    if (!bHasLastMousePosition) return false;
 
-    return bGuiHandled || bWindowHandled;
+    const auto target = FindTopWindowAtPoint(LastMouseX, LastMouseY);
+    if (target != nullptr) {
+        CapturedMouseWindow = target;
+    }
+
+    return target != nullptr && target->NotifyMouseButton(button, state, modKeys);
 }
 
 bool FLabV2WindowManager::NotifyMouseMotion(const int x, const int y, const int dx, const int dy) {
@@ -1189,6 +1194,8 @@ bool FLabV2WindowManager::NotifyMouseMotion(const int x, const int y, const int 
         ImGuiContext != nullptr &&
         ImGuiContext->NotifyMouseMotion(x, y, dx, dy);
 
+    if (bGuiHandled) return true;
+
     auto target = CapturedMouseWindow.lock();
     if (target == nullptr) {
         target = FindTopWindowAtPoint(x, y);
@@ -1198,7 +1205,7 @@ bool FLabV2WindowManager::NotifyMouseMotion(const int x, const int y, const int 
         target != nullptr &&
         target->NotifyMouseMotion(x, y, dx, dy);
 
-    return bGuiHandled || bWindowHandled;
+    return bWindowHandled;
 }
 
 bool FLabV2WindowManager::NotifyMouseWheel(const double dx, const double dy) {
@@ -1207,6 +1214,8 @@ bool FLabV2WindowManager::NotifyMouseWheel(const double dx, const double dy) {
     const bool bGuiHandled =
         ImGuiContext != nullptr &&
         ImGuiContext->NotifyMouseWheel(dx, dy);
+
+    if (bGuiHandled) return true;
 
     auto target = CapturedMouseWindow.lock();
     if (target == nullptr && bHasLastMousePosition) {
@@ -1217,7 +1226,7 @@ bool FLabV2WindowManager::NotifyMouseWheel(const double dx, const double dy) {
         target != nullptr &&
         target->NotifyMouseWheel(dx, dy);
 
-    return bGuiHandled || bWindowHandled;
+    return bWindowHandled;
 }
 
 auto FLabV2WindowManager::GetImGuiContext() const -> Slab::TPointer<Slab::Graphics::FImGuiContext> {

@@ -8,7 +8,7 @@
 namespace Slab {
     namespace Graphics {
 
-        DevFloat animationTimeSeconds = 0.2;
+        DevFloat animationTimeSeconds = 0.28;
 
         PlottingRegion2D::PlottingRegion2D(RectR rect) {
             xMin = New<DevFloat>(rect.xMin);

@@ -19,7 +19,7 @@
   - `FSessionLiveViewV2` facade path
 - Live control foundation:
   - `LiveControl V2` topics/hub
-  - first KG2D control-binding prototype paths
+  - first KG2D control-binding prototype paths (current LabV2 shell has no dedicated KG2D control-source panel)
 - LabV2 shell:
   - launcher + run manager + data browser
   - view/panel management baseline
@@ -61,6 +61,9 @@
   - XY/Ising recipes expose atomic runtime control handles for hot-loop-safe reads (`Temperature`, `ExternalField`)
   - XY/Ising slice builders now publish read-only const parameter topics and bind mutable scalar controls from `LiveControl`
   - LabV2 launcher can optionally publish XY/Ising live parameter values while tasks run
+- LabV2 shell cleanup and input routing hardening:
+  - removed KG2D control-source panel surface and default monitor-side pre-publish path from LabV2 shell
+  - mouse routing now honors ImGui capture for plot overlays (`Plot Detail` no longer propagates wheel/drag to the plot canvas behind it)
 
 ## Model Coverage Status (Current)
 

@@ -78,6 +78,7 @@ namespace Slab::Graphics {
             const Str Save = EncodeUtf8CodePoint(0xF0C7);
             const Str ZoomIn = EncodeUtf8CodePoint(0xF00E);
             const Str ZoomOut = EncodeUtf8CodePoint(0xF010);
+            const Str Aspect11 = "1:1";
         }
 
         auto ComputeFloatingStripSize(
@@ -501,6 +502,18 @@ namespace Slab::Graphics {
                     {}
                 },
                 {
+                    "aspect-11",
+                    []() { return FontAwesomeSolidIcons::Aspect11; },
+                    "Lock 1:1 unit aspect ratio",
+                    [this]() {
+                        LockUnitAspectRatio = !LockUnitAspectRatio;
+                        if (LockUnitAspectRatio) {
+                            EnforceUnitAspectRatio(true);
+                        }
+                    },
+                    [this]() { return LockUnitAspectRatio; }
+                },
+                {
                     "fit-right",
                     []() { return FontAwesomeSolidIcons::Fit; },
                     "Fit graph to visible artists",
@@ -588,6 +601,10 @@ namespace Slab::Graphics {
                         if (ImGui::MenuItem("Fit now")) {
                             ReviewGraphRanges();
                         }
+                        if (ImGui::MenuItem("Lock 1:1 ratio", nullptr, LockUnitAspectRatio)) {
+                            LockUnitAspectRatio = !LockUnitAspectRatio;
+                            if (LockUnitAspectRatio) EnforceUnitAspectRatio(true);
+                        }
                         if (ImGui::MenuItem("Save graph")) {
                             SaveGraphToDisk();
                         }
@@ -639,6 +656,7 @@ namespace Slab::Graphics {
                 {
                     ImGui::Text("Auto adjust: %s", AutoReviewGraphRanges ? "On" : "Off");
                     ImGui::Text("Detail panel: %s", ShowInterface ? "Visible" : "Hidden");
+                    ImGui::Text("1:1 lock: %s", LockUnitAspectRatio ? "On" : "Off");
 
                     const auto regionRect = Region.getRect();
                     ImGui::Text("x:[%.4g, %.4g]  y:[%.4g, %.4g]",
@@ -706,6 +724,38 @@ namespace Slab::Graphics {
         };
 
         if (b_DrawGUI) DrawCall();
+    }
+
+    void FPlot2DWindow::EnforceUnitAspectRatio(const bool animate) {
+        const auto viewport = GetViewport();
+        const auto viewportWidth = static_cast<DevFloat>(std::max(1, viewport.GetWidth()));
+        const auto viewportHeight = static_cast<DevFloat>(std::max(1, viewport.GetHeight()));
+        const auto viewportAspect = viewportWidth / viewportHeight;
+        if (viewportAspect <= 0.0) return;
+
+        const auto current = Region.getRect();
+        const auto xCenter = current.xCenter();
+        const auto yCenter = current.yCenter();
+
+        constexpr DevFloat MinHalfExtent = 1e-8;
+        const auto halfWidth = std::max(static_cast<DevFloat>(0.5 * current.GetWidth()), MinHalfExtent);
+        const auto halfHeight = std::max(halfWidth / viewportAspect, MinHalfExtent);
+
+        const RectR target{
+            xCenter - halfWidth,
+            xCenter + halfWidth,
+            yCenter - halfHeight,
+            yCenter + halfHeight
+        };
+
+        if (animate) {
+            Region.animate_xMin(target.xMin);
+            Region.animate_xMax(target.xMax);
+            Region.animate_yMin(target.yMin);
+            Region.animate_yMax(target.yMax);
+        } else {
+            Region = target;
+        }
     }
 
     void FPlot2DWindow::SetupOrtho() const {

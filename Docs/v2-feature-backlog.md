@@ -25,7 +25,7 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `KG2D-02` done: passive GL monitor path for `KGR2toR` baseline V2.
 - `LC-01` foundation done: `LiveControl V2` topics/hub + LabV2 visibility panel.
 - `KG2D-03` done: first control binding prototype (LabV2 control source -> hub topics -> KG2D external forcing source).
-- `KG2D-03.5` done: KG2D monitor-side control source publisher (GL monitor UI publishes control topics directly).
+- `KG2D-03.5` done then removed from current LabV2 shell: prior KG2D monitor-side control source publisher path is no longer exposed as a dedicated panel/pre-publish surface.
 - `CVG-00` done: Metropolis V2 now has a passive monitor path (`Studios metropolis --gl`, LabV2 launcher).
 - `LAB-00` done: Data Browser polish (topic filters, selected-topic details for LiveData/LiveControl).
 - `LAB-01` done: View management surface baseline (list/select/focus/close/retile).
@@ -55,6 +55,9 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - const launch parameters are published as read-only control topics in the same namespace
   - LabV2 launcher can optionally publish XY/Ising live parameter values while simulations run
   - tests added for generic XY/Ising runtime binding path
+- `LAB-08` done: LabV2 plot-overlay mouse routing fix and KG2D panel cleanup:
+  - mouse events captured by ImGui overlays now stop propagation to underlying plot canvases
+  - removed dedicated KG2D control-source panel and its default monitor-side pre-publish behavior from LabV2 shell
 
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
@@ -73,7 +76,7 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 
 ### `P0` `KG2D-03` — First control binding prototype (“poke field”)
 - Mouse/UI control -> external forcing `J(x^\\mu)` (best-effort wall-clock path).
-- done (`LabV2` sidepane source + monitor-side source + CLI flags for KG2D).
+- done as prototype (`LabV2`/monitor-side source + CLI flags for KG2D), with dedicated panel path later removed from current LabV2 shell.
 
 ### `P0` `LP-00` — Live runtime parameters (first slice)
 - reference: `Docs/live-parameters-v2-slice-scope.md`
