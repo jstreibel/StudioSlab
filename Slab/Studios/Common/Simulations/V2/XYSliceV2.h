@@ -5,6 +5,7 @@
 
 #include "Graphics/Window/SlabWindow.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
+#include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
 #include "Math/Numerics/V2/Runtime/SimulationRecipeV2.h"
 
 #include <numbers>
@@ -34,7 +35,8 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
     auto BuildXYPassiveMonitorWindowV2(
         const FXYExecutionConfigV2 &cfg,
-        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
+        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+        const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener)
         -> TPointer<Graphics::FSlabWindow>;
 
     auto RunXYV2(const FXYExecutionConfigV2 &cfg) -> int;

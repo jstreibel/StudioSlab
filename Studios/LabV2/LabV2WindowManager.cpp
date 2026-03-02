@@ -709,13 +709,13 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
     ImGuiID dockMain = dockId;
     if (workspace == EWorkspaceTab::Simulations) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.24f, nullptr, &dockMain);
-        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.24f, nullptr, &dockMain);
+        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.28f, nullptr, &dockMain);
 
         LauncherInitialDockId = static_cast<unsigned int>(dockLeft);
         bRequestLauncherInitialDock = LauncherInitialDockId != 0;
 
         ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockLeft);
-        ImGui::DockBuilderDockWindow(WindowTitleTasks, dockRight);
+        ImGui::DockBuilderDockWindow(WindowTitleTasks, dockBottom);
     } else if (workspace == EWorkspaceTab::Monitor) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.22f, nullptr, &dockMain);
         const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.26f, nullptr, &dockMain);

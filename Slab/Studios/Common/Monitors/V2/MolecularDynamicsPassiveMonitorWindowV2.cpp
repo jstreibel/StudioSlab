@@ -75,6 +75,7 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
     FMolecularDynamicsPassiveMonitorWindowV2::FMolecularDynamicsPassiveMonitorWindowV2(
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+            const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener,
             const UIntBig maxSteps,
             const DevFloat boxLength)
     : FWindowPanel(Graphics::FSlabWindowConfig("Molecular Dynamics V2 GL Monitor"))
@@ -82,12 +83,14 @@ namespace Slab::Studios::Common::Monitors::V2 {
     , SessionTopic(liveView != nullptr ? liveView->GetSessionTopic() : nullptr)
     , TelemetryTopic(liveView != nullptr ? liveView->GetTelemetryTopic() : nullptr)
     , StatusTopic(liveView != nullptr ? liveView->GetStatusTopic() : nullptr)
+    , SnapshotListener(snapshotListener)
     , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("Molecular Dynamics Telemetry")))
     , ParticleWindow("Molecular Dynamics Particles")
     , ParticlePoints(New<Math::FPointSet>())
     , MaxSteps(maxSteps)
     , BoxLength(std::max<DevFloat>(boxLength, 1e-6)) {
         if (LiveView == nullptr) throw Exception("MolecularDynamics passive monitor requires a live view.");
+        if (SnapshotListener == nullptr) throw Exception("MolecularDynamics passive monitor requires a snapshot listener.");
         if (SessionTopic == nullptr || TelemetryTopic == nullptr) {
             throw Exception("MolecularDynamics passive monitor requires session/telemetry topics.");
         }
@@ -118,10 +121,14 @@ namespace Slab::Studios::Common::Monitors::V2 {
             if (status.has_value()) LastStatus = status;
         }
 
-        auto leaseOpt = SessionTopic->AcquireReadLease();
-        bLastLeaseAcquired = leaseOpt.has_value();
-        if (leaseOpt.has_value()) {
-            UpdateParticlePointsFromState(leaseOpt->GetState());
+        const auto snapshotOpt = SnapshotListener != nullptr
+            ? SnapshotListener->TryGetSnapshot()
+            : std::optional<Math::Numerics::V2::FStateSnapshotEnvelopeV2>{};
+        bLastLeaseAcquired = snapshotOpt.has_value();
+        if (snapshotOpt.has_value() &&
+            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshotOpt->PublishedVersion)) {
+            LastSnapshotVersion = snapshotOpt->PublishedVersion;
+            UpdateParticlePointsFromState(snapshotOpt->State);
         }
 
         UpdateStatsWindow();

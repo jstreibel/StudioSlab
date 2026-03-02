@@ -39,6 +39,14 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `LAB-04` done: ImGui-wrapped Slab canvas event routing hardened (mouse hit-test routing, keyboard focus routing, persisted bounds/last-mouse bridge).
 - `LAB-05` done: Plot window controls moved to viewport-attached toolbar + attached detail inspector (`Docs/plot-window-ux-contract.md`).
 
+## Progress Notes (2026-03-01)
+
+- `LAB-06` done: Simulation launcher naming/tooling cleanup in LabV2 (removed `V2` naming clutter, shortened per-example labels, added launcher action tooltips).
+- `LAB-07` done: Passive monitor window UX hardening in LabV2 docking:
+  - simulation monitors now default to plot-first composition with in-window controls
+  - slab monitor windows render/input only in `Monitor` workspace
+  - tab-switch artifacts and repeated zero-viewport warnings resolved in `Simulations`/`Schemes` workspaces
+
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
 
@@ -83,6 +91,12 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `P1` `CVG-02` — MD `V2-H` -> `V2-M` — done
 - `P1` `CVG-03` — XY/Ising V2 lattice slices (`V2-H` -> `V2-M`) — done
 - `P2` `CVG-04` — Functional minimization V2 slice
+
+### Platform Targets
+- `P2` `PLAT-00` — Web/wasm feasibility spike
+  - plan reference: `Docs/platform-wasm-feasibility.md`
+  - define minimal headless/plot-only target surface
+  - document required backend and dependency split from desktop-native build graph
 
 ## Working Rule (Entropy Control)
 

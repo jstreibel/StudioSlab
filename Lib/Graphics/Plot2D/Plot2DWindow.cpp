@@ -477,13 +477,6 @@ namespace Slab::Graphics {
 
             const Vector<FOverlayIconButton> ToolbarButtons = {
                 {
-                    "auto",
-                    []() { return FontAwesomeSolidIcons::AutoAdjust; },
-                    "Toggle automatic fit",
-                    [this]() { AutoReviewGraphRanges = !AutoReviewGraphRanges; },
-                    [this]() { return AutoReviewGraphRanges; }
-                },
-                {
                     "save",
                     []() { return FontAwesomeSolidIcons::Save; },
                     "Save plot as PNG",

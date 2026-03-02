@@ -14,6 +14,7 @@ add_subdirectory(Prototype)
 add_subdirectory(Lab)
 add_subdirectory(LabV2)
 add_subdirectory(Little-Plane-Designer)
+add_subdirectory(WebGL-WASM)
 
 
 

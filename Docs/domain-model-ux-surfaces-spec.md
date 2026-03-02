@@ -75,8 +75,8 @@ Out of scope:
 - Reusable across studies and runs
 
 ### `LiveStream`
-- Pollable live state/telemetry/control endpoint
-- Latest-value semantics by default
+- Push-subscribable live state/telemetry/control endpoint
+- Latest-value semantics by default (`LatestOnly` for monitor-oriented state snapshots)
 
 ### `View`
 - Passive consumer of data

@@ -89,16 +89,19 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
     FRtoRPlaneWavesPassiveMonitorWindowV2::FRtoRPlaneWavesPassiveMonitorWindowV2(
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+            const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener,
             const UIntBig maxSteps)
     : FWindowPanel(Graphics::FSlabWindowConfig("KGRtoR Plane Waves V2 GL Monitor"))
     , LiveView(liveView)
     , SessionTopic(liveView != nullptr ? liveView->GetSessionTopic() : nullptr)
     , TelemetryTopic(liveView != nullptr ? liveView->GetTelemetryTopic() : nullptr)
     , StatusTopic(liveView != nullptr ? liveView->GetStatusTopic() : nullptr)
+    , SnapshotListener(snapshotListener)
     , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("KGRtoR Telemetry")))
     , PhiWindow("KGRtoR phi(x)")
     , MaxSteps(maxSteps) {
         if (LiveView == nullptr) throw Exception("KGRtoR passive monitor requires a live view.");
+        if (SnapshotListener == nullptr) throw Exception("KGRtoR passive monitor requires a snapshot listener.");
         if (SessionTopic == nullptr || TelemetryTopic == nullptr) {
             throw Exception("KGRtoR passive monitor requires session/telemetry topics.");
         }
@@ -122,12 +125,15 @@ namespace Slab::Studios::Common::Monitors::V2 {
             if (status.has_value()) LastStatus = status;
         }
 
-        // Use the generic session topic path (consumer-facing V2 API), not only the facade helpers.
-        auto leaseOpt = SessionTopic->AcquireReadLease();
-        bLastLeaseAcquired = leaseOpt.has_value();
-
-        if (leaseOpt.has_value()) SetPlotFromState(leaseOpt->GetState());
-        // On lease miss or terminal invalidation, keep the last copied display frame.
+        const auto snapshotOpt = SnapshotListener != nullptr
+            ? SnapshotListener->TryGetSnapshot()
+            : std::optional<Math::Numerics::V2::FStateSnapshotEnvelopeV2>{};
+        bLastLeaseAcquired = snapshotOpt.has_value();
+        if (snapshotOpt.has_value() &&
+            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshotOpt->PublishedVersion)) {
+            LastSnapshotVersion = snapshotOpt->PublishedVersion;
+            SetPlotFromState(snapshotOpt->State);
+        }
 
         UpdateStatsWindow();
         FWindowPanel::ImmediateDraw(platformWindow);

@@ -82,17 +82,20 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
     FXYMetropolisPassiveMonitorWindowV2::FXYMetropolisPassiveMonitorWindowV2(
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+            const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener,
             const UIntBig maxSteps)
     : FWindowPanel(Graphics::FSlabWindowConfig("XY Metropolis V2 GL Monitor"))
     , LiveView(liveView)
     , SessionTopic(liveView != nullptr ? liveView->GetSessionTopic() : nullptr)
     , TelemetryTopic(liveView != nullptr ? liveView->GetTelemetryTopic() : nullptr)
     , StatusTopic(liveView != nullptr ? liveView->GetStatusTopic() : nullptr)
+    , SnapshotListener(snapshotListener)
     , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("XY Metropolis Telemetry")))
     , LatticeWindow("XY theta(x,y)")
     , LatticeArtist(New<Graphics::R2toRFunctionArtist>())
     , MaxSteps(maxSteps) {
         if (LiveView == nullptr) throw Exception("XY passive monitor requires a live view.");
+        if (SnapshotListener == nullptr) throw Exception("XY passive monitor requires a snapshot listener.");
         if (SessionTopic == nullptr || TelemetryTopic == nullptr) {
             throw Exception("XY passive monitor requires session/telemetry topics.");
         }
@@ -117,9 +120,15 @@ namespace Slab::Studios::Common::Monitors::V2 {
             }
         }
 
-        auto leaseOpt = SessionTopic->AcquireReadLease();
-        bLastLeaseAcquired = leaseOpt.has_value();
-        if (leaseOpt.has_value()) SetPlotFromState(leaseOpt->GetState());
+        const auto snapshotOpt = SnapshotListener != nullptr
+            ? SnapshotListener->TryGetSnapshot()
+            : std::optional<Math::Numerics::V2::FStateSnapshotEnvelopeV2>{};
+        bLastLeaseAcquired = snapshotOpt.has_value();
+        if (snapshotOpt.has_value() &&
+            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshotOpt->PublishedVersion)) {
+            LastSnapshotVersion = snapshotOpt->PublishedVersion;
+            SetPlotFromState(snapshotOpt->State);
+        }
 
         UpdateStatsWindow();
         FWindowPanel::ImmediateDraw(platformWindow);

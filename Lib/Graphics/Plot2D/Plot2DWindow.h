@@ -116,7 +116,7 @@ namespace Slab::Graphics {
         ContentMap Content;
         static FOverlayControlsStyle OverlayControlsStyle;
 
-        bool ShowInterface = true;
+        bool ShowInterface = false;
 
         bool PopupOn = false;
         bool AutoReviewGraphRanges=false;

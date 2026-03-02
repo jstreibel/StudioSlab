@@ -4,6 +4,9 @@
 #include "../../NumericsV2TaskUtils.h"
 #include "../../V2SimulationRunners.h"
 
+#include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
+#include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
+#include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
 #include "Models/MolecularDynamics/V2/MolecularDynamics-Baseline-RecipeV2.h"
@@ -65,8 +68,19 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
         if (runCfg.bEnableGLMonitor) {
             auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
-            auto recipe = BuildMolecularDynamicsRecipeV2(runCfg, liveView);
-            auto monitor = BuildMolecularDynamicsPassiveMonitorWindowV2(runCfg, liveView);
+            auto baseRecipe = BuildMolecularDynamicsRecipeV2(runCfg, liveView);
+            auto snapshotListener = New<FStateSnapshotListenerV2>("MolecularDynamics monitor snapshot listener V2");
+
+            Vector<FSubscriptionV2> subscriptions = {{
+                New<FEveryNStepsTriggerV2>(std::max<UIntBig>(UIntBig(1), runCfg.MonitorInterval)),
+                snapshotListener,
+                EDeliveryModeV2::LatestOnly,
+                true,
+                true
+            }};
+
+            auto recipe = New<FAppendedSubscriptionsRecipeV2>(baseRecipe, std::move(subscriptions));
+            auto monitor = BuildMolecularDynamicsPassiveMonitorWindowV2(runCfg, liveView, snapshotListener);
             return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
                 "Studios MolecularDynamics V2 Monitor",
                 recipe,
@@ -83,11 +97,14 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
     auto BuildMolecularDynamicsPassiveMonitorWindowV2(
             const FMolecularDynamicsExecutionConfigV2 &cfg,
-            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
+            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+            const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener)
         -> TPointer<Graphics::FSlabWindow> {
         if (liveView == nullptr) throw Exception("MolecularDynamics passive monitor requires a live view.");
+        if (snapshotListener == nullptr) throw Exception("MolecularDynamics passive monitor requires a snapshot listener.");
         return New<Slab::Studios::Common::Monitors::V2::FMolecularDynamicsPassiveMonitorWindowV2>(
             liveView,
+            snapshotListener,
             cfg.Steps,
             cfg.L);
     }

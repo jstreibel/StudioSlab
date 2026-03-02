@@ -32,15 +32,36 @@ namespace Slab::Studios::Common::Monitors::V2 {
             MaxSteps);
     }
 
+    auto FSPIPassiveMonitorWindowV2::SetSectionFromState(
+            const TPointer<const Math::Base::EquationState> &state) -> void {
+        auto spiState = std::dynamic_pointer_cast<const Models::StochasticPathIntegrals::SPIState>(state);
+        if (spiState == nullptr) {
+            SectionArtist.setFunction(nullptr);
+            return;
+        }
+
+        auto phi = spiState->getPhi();
+        if (phi == nullptr) {
+            SectionArtist.setFunction(nullptr);
+            return;
+        }
+
+        EnsureSectionConfigured(phi);
+        SectionArtist.setFunction(phi);
+    }
+
     FSPIPassiveMonitorWindowV2::FSPIPassiveMonitorWindowV2(
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+            const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener,
             const UIntBig maxSteps)
     : FWindowPanel(Graphics::FSlabWindowConfig("SPI V2 GL Monitor"))
     , LiveView(liveView)
+    , SnapshotListener(snapshotListener)
     , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("SPI V2 Telemetry")))
     , SectionWindow("SPI field section")
     , MaxSteps(maxSteps) {
         if (LiveView == nullptr) throw Exception("SPI passive monitor requires a live view.");
+        if (SnapshotListener == nullptr) throw Exception("SPI passive monitor requires a snapshot listener.");
 
         SectionArtist.SetAffectGraphRanges(true);
         AddWindow(Naked(SectionWindow));
@@ -53,22 +74,14 @@ namespace Slab::Studios::Common::Monitors::V2 {
         auto telemetry = LiveView->TryGetTelemetry();
         if (telemetry.has_value()) LastTelemetry = telemetry;
 
-        // For local GL monitoring, prefer a coherent lease over best-effort skipping.
-        auto leaseOpt = LiveView->AcquireReadLease();
-        bLastLeaseAcquired = leaseOpt.has_value();
-
-        if (leaseOpt.has_value()) {
-            auto spiState = std::dynamic_pointer_cast<const Models::StochasticPathIntegrals::SPIState>(leaseOpt->GetState());
-            if (spiState != nullptr) {
-                auto phi = spiState->getPhi();
-                EnsureSectionConfigured(phi);
-                SectionArtist.setFunction(phi);
-            } else {
-                SectionArtist.setFunction(nullptr);
-            }
-        } else {
-            // Avoid rendering through a stale pointer after lease release or session invalidation.
-            SectionArtist.setFunction(nullptr);
+        const auto snapshotOpt = SnapshotListener != nullptr
+            ? SnapshotListener->TryGetSnapshot()
+            : std::optional<Math::Numerics::V2::FStateSnapshotEnvelopeV2>{};
+        bLastLeaseAcquired = snapshotOpt.has_value();
+        if (snapshotOpt.has_value() &&
+            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshotOpt->PublishedVersion)) {
+            LastSnapshotVersion = snapshotOpt->PublishedVersion;
+            SetSectionFromState(snapshotOpt->State);
         }
 
         UpdateStatsWindow();

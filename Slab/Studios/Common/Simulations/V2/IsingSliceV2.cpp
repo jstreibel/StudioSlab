@@ -4,6 +4,9 @@
 #include "../../NumericsV2TaskUtils.h"
 #include "../../V2SimulationRunners.h"
 
+#include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
+#include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
+#include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
 #include "Models/Ising/V2/Ising-Metropolis-RecipeV2.h"
@@ -41,11 +44,16 @@ namespace Slab::Studios::Common::Simulations::V2 {
     }
 
     auto BuildIsingPassiveMonitorWindowV2(const FIsingExecutionConfigV2 &cfg,
-                                          const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
+                                          const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+                                          const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener)
         -> TPointer<Graphics::FSlabWindow> {
         (void) cfg;
         if (liveView == nullptr) throw Exception("Ising passive monitor requires a live view.");
-        return New<Slab::Studios::Common::Monitors::V2::FIsingMetropolisPassiveMonitorWindowV2>(liveView, cfg.Steps);
+        if (snapshotListener == nullptr) throw Exception("Ising passive monitor requires a snapshot listener.");
+        return New<Slab::Studios::Common::Monitors::V2::FIsingMetropolisPassiveMonitorWindowV2>(
+            liveView,
+            snapshotListener,
+            cfg.Steps);
     }
 
     auto RunIsingV2(const FIsingExecutionConfigV2 &cfg) -> int {
@@ -56,8 +64,19 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
         if (runCfg.bEnableGLMonitor) {
             auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
-            auto recipe = BuildIsingRecipeV2(runCfg, liveView);
-            auto monitor = BuildIsingPassiveMonitorWindowV2(runCfg, liveView);
+            auto baseRecipe = BuildIsingRecipeV2(runCfg, liveView);
+            auto snapshotListener = New<FStateSnapshotListenerV2>("Ising monitor snapshot listener V2");
+
+            Vector<FSubscriptionV2> subscriptions = {{
+                New<FEveryNStepsTriggerV2>(std::max<UIntBig>(UIntBig(1), runCfg.MonitorInterval)),
+                snapshotListener,
+                EDeliveryModeV2::LatestOnly,
+                true,
+                true
+            }};
+
+            auto recipe = New<FAppendedSubscriptionsRecipeV2>(baseRecipe, std::move(subscriptions));
+            auto monitor = BuildIsingPassiveMonitorWindowV2(runCfg, liveView, snapshotListener);
             return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
                 "Studios Ising V2 Monitor",
                 recipe,

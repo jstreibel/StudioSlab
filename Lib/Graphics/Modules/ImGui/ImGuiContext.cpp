@@ -55,29 +55,45 @@ namespace Slab::Graphics {
         return root;
     }
 
+    auto FindChildNode(const FMenuNode &parent, const Str &label) -> const FMenuNode* {
+        for (const auto &child : parent.Children) {
+            if (child.Label == label) {
+                return &child;
+            }
+        }
+        return nullptr;
+    }
+
+    void DrawMenuNodeEntries(const FMenuNode &node) {
+        for (const auto &child : node.Children) {
+            if (!ImGui::BeginMenu(child.Label.c_str())) continue;
+            DrawMenuNodeEntries(child);
+            ImGui::EndMenu();
+        }
+
+        if (!node.Children.empty() && !node.Entries.empty()) {
+            ImGui::Separator();
+        }
+
+        for (const auto &[entry, action] : node.Entries) {
+            if (entry.Label == MainMenuSeparator) {
+                ImGui::Separator();
+                continue;
+            }
+            if (ImGui::MenuItem(
+                    entry.Label.c_str(),
+                    entry.shortcut.c_str(),
+                    entry.selected,
+                    entry.enabled)) {
+                action(entry.Label);
+            }
+        }
+    }
+
     void DrawMenuNode(const FMenuNode &node) {
         for (const auto &child : node.Children) {
             if (!ImGui::BeginMenu(child.Label.c_str())) continue;
-
-            DrawMenuNode(child);
-            if (!child.Children.empty() && !child.Entries.empty()) {
-                ImGui::Separator();
-            }
-
-            for (const auto &[entry, action] : child.Entries) {
-                if (entry.Label == MainMenuSeparator) {
-                    ImGui::Separator();
-                    continue;
-                }
-                if (ImGui::MenuItem(
-                        entry.Label.c_str(),
-                        entry.shortcut.c_str(),
-                        entry.selected,
-                        entry.enabled)) {
-                    action(entry.Label);
-                }
-            }
-
+            DrawMenuNodeEntries(child);
             ImGui::EndMenu();
         }
     }
@@ -304,7 +320,36 @@ namespace Slab::Graphics {
                 ImGui::TextDisabled("No menu entries");
             } else {
                 const auto menuRoot = BuildMenuTree(PendingMainMenuItems);
-                DrawMenuNode(menuRoot);
+                const auto *systemNode = FindChildNode(menuRoot, "System");
+                bool bDrawnAnyItem = false;
+
+                if (systemNode != nullptr) {
+                    if (const auto *themeNode = FindChildNode(*systemNode, "Theme");
+                        themeNode != nullptr) {
+                        if (ImGui::BeginMenu("Theme")) {
+                            DrawMenuNodeEntries(*themeNode);
+                            ImGui::EndMenu();
+                        }
+                        bDrawnAnyItem = true;
+                    }
+
+                    for (const auto &[entry, action] : systemNode->Entries) {
+                        if (entry.Label != "Exit") continue;
+
+                        if (ImGui::MenuItem(
+                                entry.Label.c_str(),
+                                entry.shortcut.c_str(),
+                                entry.selected,
+                                entry.enabled)) {
+                            action(entry.Label);
+                        }
+                        bDrawnAnyItem = true;
+                    }
+                }
+
+                if (!bDrawnAnyItem) {
+                    ImGui::TextDisabled("No menu entries");
+                }
             }
             ImGui::EndPopup();
         }

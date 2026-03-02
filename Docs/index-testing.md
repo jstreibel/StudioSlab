@@ -25,6 +25,15 @@
 - `./Build/bin/SlabTests xy-monitor-smoke --seconds 5`
 - `./Build/bin/SlabTests ising-monitor-smoke --seconds 5`
 
+## WASM Smoke (Independent Sandbox)
+
+- Configure with Emscripten:
+  - `emcmake cmake -S Studios/WebGL-WASM -B cmake-build-webgl-wasm`
+- Build sandbox:
+  - `cmake --build cmake-build-webgl-wasm --target WebGLWasmSandbox -j8`
+- Run:
+  - `emrun --no_browser cmake-build-webgl-wasm/Build/bin/webgl-wasm-sandbox.html`
+
 ## ImGui/Blueprint Validation Helpers
 
 - `Docs/validation/imgui-blueprints-smoke.md`

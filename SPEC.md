@@ -105,35 +105,42 @@ Design intent:
 - keep task generic and recipe-driven
 - support finite and open-ended runs
 
-### 2. Session Synchronization Contract (Implemented baseline)
+### 2. Session Synchronization Contract (Implemented baseline, monitor path evolving)
 
-Zero-copy publication is the default.
+Session-owned mutable run state remains single-writer (`FNumericTaskV2`) and session-boundary synchronized.
 
-To make that safe:
-- session-owned mutable state is exposed via **read leases**
-- one writer (simulation task), multiple readers (monitors/analyzers)
-- synchronization is centralized at the **session boundary**
+Current V2 direction for monitor-facing reads:
+- monitor/UI code should consume **copied immutable snapshots**, not direct session leases
+- snapshot materialization happens in listeners attached to trigger points
+- monitor delivery is best-effort via latest-state semantics (`LatestOnly`)
 
-This supports:
-- best-effort monitors (`try` read lease)
-- consistent analysis readers (blocking read lease)
+Read leases remain valid for compatibility and analysis-oriented readers, but new monitor work should prefer listener-published snapshots.
 
 ### 3. Live Data V2 (Implemented minimal generalized layer)
 
 Current V2 live data direction:
 - generic named live topics/hub (minimal)
 - telemetry topics (copied metadata)
-- session-view topics (zero-copy lease-backed access)
+- listener-published state snapshots (copied immutable state)
+- monitor-facing delivery policy: `LatestOnly`
 
 Compatibility path:
-- `FSessionLiveViewV2` remains as a facade while broader live data V2 evolves
+- `FSessionLiveViewV2` remains as a compatibility facade while broader live data V2 evolves
+- new monitor paths should consume listener-published snapshots instead of polling facade/session state
 
 ### 4. Graphics / Monitor Direction (Partially refactored)
 
 Monitor architecture direction:
 - monitors are **passive observers**
-- numerics publishes data/telemetry
-- monitor/UI consumes latest available data (best effort)
+- numerics publishes data/telemetry through listeners
+- state snapshots are pushed to live topics
+- monitor/UI consumes latest available snapshot (best effort, `LatestOnly`)
+
+Target monitor data flow:
+1. trigger decides **when** to emit
+2. snapshot listener decides **what** to copy/publish
+3. latest snapshot is kept by listener/topic bridge (`LatestOnly`)
+4. monitor renders from latest snapshot without direct session locking
 
 Graphics host improvements already in place:
 - shared visual host loop for `Studios` and `SlabTests`
@@ -264,8 +271,8 @@ AI should report:
 ### Completed / working baseline
 
 - Numerics Runtime V2 core
-- Session-wide read lease locking
 - Live data V2 minimal generalization (topics + hub)
+- push-based state snapshot publication direction for monitors (listener + `LatestOnly`)
 - root `Slab/` migration started and active for shared V2 infrastructure:
   - `Slab/Math/Data/V2`
   - `Slab/Math/Numerics/V2`
@@ -306,6 +313,7 @@ AI should report:
 ### Still expected (next waves)
 
 - Data V2 expansion beyond session/telemetry topics
+- migration of remaining monitor paths from direct session read patterns to pushed snapshot topics
 - `LiveControl V2` (interactive input/control streams; sibling to `LiveData V2`)
 - typed control bindings into V2 models/transforms
 - sequence/presentation runtime foundations (time-domain aware control/camera/annotation tracks)
@@ -322,6 +330,7 @@ AI should report:
 1. **No data races for cross-thread state reads**
 - best-effort monitors may skip frames
 - they may not read unsafely
+- monitor/UI paths should read immutable listener-published snapshots (not mutable session state directly)
 
 2. **Numerics task remains generic**
 - task orchestrates runtime

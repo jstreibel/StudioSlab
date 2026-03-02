@@ -10,6 +10,7 @@
 #include "Math/Numerics/V2/Listeners/CursorHistoryListenerV2.h"
 #include "Math/Numerics/V2/Listeners/ScalarTimeDFTListenerV2.h"
 #include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
+#include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 
@@ -142,7 +143,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
             }
 
             const auto state = handles.FinalSnapshot->GetSnapshot();
-            const auto &cursor = handles.FinalSnapshot->GetSnapshotCursor();
+            const auto cursor = handles.FinalSnapshot->GetSnapshotCursor();
             std::cout << "captured";
             if (state != nullptr) std::cout << " category=" << state->category();
             std::cout << " step=" << cursor.Step;
@@ -247,9 +248,14 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
     auto BuildRtoRPlaneWavesPassiveMonitorWindowV2(
         const FRtoRPlaneWavesExecutionConfig &cfg,
-        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView) -> TPointer<Graphics::FSlabWindow> {
+        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+        const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener) -> TPointer<Graphics::FSlabWindow> {
         if (liveView == nullptr) throw Exception("RtoR passive monitor requires a live view.");
-        return New<Slab::Studios::Common::Monitors::V2::FRtoRPlaneWavesPassiveMonitorWindowV2>(liveView, cfg.Steps);
+        if (snapshotListener == nullptr) throw Exception("RtoR passive monitor requires a snapshot listener.");
+        return New<Slab::Studios::Common::Monitors::V2::FRtoRPlaneWavesPassiveMonitorWindowV2>(
+            liveView,
+            snapshotListener,
+            cfg.Steps);
     }
 
     auto RunRtoRPlaneWavesV2(const FRtoRPlaneWavesExecutionConfig &cfg) -> int {
@@ -262,10 +268,19 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
         if (runCfg.bEnableGLMonitor) {
             auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
-            auto recipe = WrapRecipeWithAnalysisAttachmentV2(
+            auto baseRecipe = WrapRecipeWithAnalysisAttachmentV2(
                 BuildRtoRPlaneWavesRecipeV2(runCfg, liveView),
                 analysisAttachment);
-            auto monitor = BuildRtoRPlaneWavesPassiveMonitorWindowV2(runCfg, liveView);
+            auto snapshotListener = New<FStateSnapshotListenerV2>("KGRtoR plane waves monitor snapshot listener V2");
+            Vector<FSubscriptionV2> monitorSubscriptions = {{
+                New<FEveryNStepsTriggerV2>(std::max<UIntBig>(UIntBig(1), runCfg.MonitorInterval)),
+                snapshotListener,
+                EDeliveryModeV2::LatestOnly,
+                true,
+                true
+            }};
+            auto recipe = New<FAppendedSubscriptionsRecipeV2>(baseRecipe, std::move(monitorSubscriptions));
+            auto monitor = BuildRtoRPlaneWavesPassiveMonitorWindowV2(runCfg, liveView, snapshotListener);
             return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
                 "Studios KGRtoR Plane Waves V2 Monitor",
                 recipe,

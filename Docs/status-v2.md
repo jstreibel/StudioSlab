@@ -2,8 +2,10 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-03-01`
-- Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-02-27`
+- Snapshot date: `2026-03-02`
+- Last implementation update: `2026-03-02` (listener-driven monitor snapshots with `LatestOnly` across V2 slices + LabV2 launcher paths)
+- Last architecture-doc update: `2026-03-02` (monitor data-path contract update: listener-pushed snapshots, `LatestOnly`)
+- Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-01`
 - Build-target sanity check date: `2026-03-01` (`StudioSlabV2`, `SlabTests`, `testsuite` present in `cmake-build-debug`)
 
 ## Implemented Baseline
@@ -21,7 +23,39 @@
 - LabV2 shell:
   - launcher + run manager + data browser
   - view/panel management baseline
+  - registry-driven top-level panel surfaces + extracted panel draw helpers (`LabV2Panels`)
   - passive monitor hosting for V2 slices
+
+## Active Architecture Transition (Upcoming Work)
+
+- StudioSlabV2 monitor/live-data path is moving to push-based snapshot delivery:
+  - trigger -> listener copies snapshot -> monitor consumes latest (topic bridge optional)
+- Monitor snapshot delivery target is `LatestOnly` (best-effort rendering; dropped intermediate frames are acceptable).
+- New monitor-facing work should avoid direct session polling/read-lease loops in UI code.
+- `FSessionLiveViewV2`/lease-oriented read paths remain compatibility mechanisms while slices migrate.
+
+## Recent Updates (`2026-03-01`)
+
+- Launcher UX polish:
+  - removed `V2`-heavy naming from launcher labels/section headers
+  - shortened per-example control labels (e.g. `L` instead of model-prefixed labels)
+  - added tooltips for launcher action buttons
+- Passive monitor windows:
+  - V2 simulation monitor windows now default to plot-first composition (no built-in left telemetry pane)
+  - plot controls remain available in-window (no forced `SetNoGUI()` path)
+- Workspace routing hardening:
+  - in docked mode, slab monitor windows render only in `Monitor` workspace
+  - non-`Monitor` workspaces stop rendering/routing input to slab monitor windows
+  - offscreen hide path keeps non-zero viewport dimensions to avoid repeated `glViewport w=0, h=0` warnings
+
+## Recent Updates (`2026-03-02`)
+
+- V2 monitor data path migration:
+  - `FStateSnapshotListenerV2` now captures copied immutable snapshots behind a thread-safe envelope
+  - snapshot subscriptions for monitor runs use `EDeliveryModeV2::LatestOnly`
+  - passive monitor windows for SPI/KGRtoR/KGR2toR/MD/XY/Ising consume snapshot listeners instead of session lease polling in UI draw paths
+- LabV2 launcher integration:
+  - `SimulationManagerV2` monitor launches now attach snapshot subscriptions and pass snapshot listeners to monitor builders
 
 ## Model Coverage Status (Current)
 
@@ -43,6 +77,7 @@
 - Sequence/presentation runtime in code
 - LiveControl recording/replay and sequence-time integration
 - Unified persistence/provenance model across assets/runs/studies
+- Web/wasm target path (toolchain/build/backend split) is not implemented
 
 ## Conflict Rule
 

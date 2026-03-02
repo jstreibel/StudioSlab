@@ -7,6 +7,9 @@
 #include "Core/Tools/Log.h"
 
 #include "Math/Data/V2/SessionLiveViewV2.h"
+#include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
+#include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
+#include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 #include "Studios/Common/Simulations/V2/KGR2toRControlTopicsV2.h"
 
@@ -18,12 +21,27 @@
 
 namespace {
 
+    auto AddTooltipForLastItem(const char *tooltip) -> void {
+        if (tooltip == nullptr || !ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort)) return;
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 36.0f);
+        ImGui::TextUnformatted(tooltip);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+
     template<typename TInt>
-    auto DragUIntLike(const char *label, TInt &value, const TInt minVal, const TInt maxVal, const float speed = 1.0f)
+    auto DragUIntLike(const char *label,
+                      TInt &value,
+                      const TInt minVal,
+                      const TInt maxVal,
+                      const float speed = 1.0f,
+                      const char *tooltip = nullptr)
         -> bool {
         static_assert(std::is_integral_v<TInt>);
         long long tmp = static_cast<long long>(value);
         const bool changed = ImGui::DragScalar(label, ImGuiDataType_S64, &tmp, speed, nullptr, nullptr);
+        AddTooltipForLastItem(tooltip);
         if (changed) {
             tmp = std::max<long long>(static_cast<long long>(minVal), tmp);
             tmp = std::min<long long>(static_cast<long long>(maxVal), tmp);
@@ -37,19 +55,22 @@ namespace {
                       const double speed,
                       const double minVal,
                       const double maxVal,
-                      const char *format = "%.6g") -> bool {
-        return ImGui::DragScalar(label, ImGuiDataType_Double, &value, speed, &minVal, &maxVal, format);
+                      const char *format = "%.6g",
+                      const char *tooltip = nullptr) -> bool {
+        const bool changed = ImGui::DragScalar(label, ImGuiDataType_Double, &value, speed, &minVal, &maxVal, format);
+        AddTooltipForLastItem(tooltip);
+        return changed;
+    }
+
+    auto CheckboxWithTooltip(const char *label, bool *bValue, const char *tooltip) -> bool {
+        const bool changed = ImGui::Checkbox(label, bValue);
+        AddTooltipForLastItem(tooltip);
+        return changed;
     }
 
     auto ButtonWithTooltip(const char *label, const char *tooltip) -> bool {
         const bool pressed = ImGui::Button(label);
-        if (tooltip != nullptr && ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort)) {
-            ImGui::BeginTooltip();
-            ImGui::PushTextWrapPos(ImGui::GetFontSize() * 36.0f);
-            ImGui::TextUnformatted(tooltip);
-            ImGui::PopTextWrapPos();
-            ImGui::EndTooltip();
-        }
+        AddTooltipForLastItem(tooltip);
         return pressed;
     }
 
@@ -263,15 +284,15 @@ auto FSimulationManagerV2::DrawLauncherContents() -> void {
 auto FSimulationManagerV2::DrawSPISection() -> void {
     if (!ImGui::CollapsingHeader("SPI", ImGuiTreeNodeFlags_DefaultOpen)) return;
 
-    DragUIntLike("Steps##spi", SPICfg.Steps, 1u, 100000000u, 1.0f);
-    DragDevFloat("dT##spi", SPICfg.Dt, 0.0005, 1e-6, 100.0);
-    DragDevFloat("Time##spi", SPICfg.Time, 0.01, 1e-6, 1e6);
-    DragDevFloat("L##spi", SPICfg.L, 0.01, 1e-6, 1e6);
-    DragUIntLike("N##spi", SPICfg.N, 2u, 200000u, 1.0f);
-    DragUIntLike("Interval##spi", SPICfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    DragUIntLike("Monitor interval##spi", SPICfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    DragUIntLike("Batch##spi", SPICfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    ImGui::Checkbox("Publish live data when headless##spi", &bSPIPublishLiveViewHeadless);
+    DragUIntLike("Steps##spi", SPICfg.Steps, 1u, 100000000u, 1.0f, "Number of stochastic-time integration steps.");
+    DragDevFloat("dT##spi", SPICfg.Dt, 0.0005, 1e-6, 100.0, "%.6g", "Stochastic-time step size.");
+    DragDevFloat("Time##spi", SPICfg.Time, 0.01, 1e-6, 1e6, "%.6g", "Physical time horizon.");
+    DragDevFloat("L##spi", SPICfg.L, 0.01, 1e-6, 1e6, "%.6g", "Spatial domain length.");
+    DragUIntLike("N##spi", SPICfg.N, 2u, 200000u, 1.0f, "Number of lattice sites.");
+    DragUIntLike("Interval##spi", SPICfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Console/log sampling interval (steps).");
+    DragUIntLike("Monitor interval##spi", SPICfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Snapshot publishing interval for monitor/live data.");
+    DragUIntLike("Batch##spi", SPICfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Max internal steps per worker loop iteration.");
+    CheckboxWithTooltip("Publish live data when headless##spi", &bSPIPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
 
     if (ButtonWithTooltip("Run Headless##spi", "Run this simulation without opening a GL monitor window.")) {
         try { LaunchSPI(false); } catch (const std::exception &e) { LastError = e.what(); }
@@ -285,29 +306,29 @@ auto FSimulationManagerV2::DrawSPISection() -> void {
 auto FSimulationManagerV2::DrawRtoRSection() -> void {
     if (!ImGui::CollapsingHeader("KGRtoR Plane Waves", ImGuiTreeNodeFlags_DefaultOpen)) return;
 
-    DragUIntLike("Steps##rtor", RtoRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
+    DragUIntLike("Steps##rtor", RtoRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
 
     bool bUseDtOverride = RtoRCfg.Dt > 0.0;
-    if (ImGui::Checkbox("Override dT (otherwise legacy dt/h=0.1)##rtor", &bUseDtOverride)) {
+    if (CheckboxWithTooltip("Override dT (otherwise legacy dt/h=0.1)##rtor", &bUseDtOverride, "Use explicit dt instead of legacy dt/h rule.")) {
         if (!bUseDtOverride) RtoRCfg.Dt = -1.0;
         else if (RtoRCfg.Dt <= 0.0) RtoRCfg.Dt = 0.01;
     }
     if (bUseDtOverride) {
-        DragDevFloat("dT##rtor", RtoRCfg.Dt, 0.0001, 1e-8, 100.0);
+        DragDevFloat("dT##rtor", RtoRCfg.Dt, 0.0001, 1e-8, 100.0, "%.6g", "Time step for integrator.");
     } else {
         ImGui::TextDisabled("dt auto = 0.1 * (L / N)");
     }
 
-    DragDevFloat("L##rtor", RtoRCfg.L, 0.01, 1e-6, 1e6);
-    DragUIntLike("N##rtor", RtoRCfg.N, 4u, 200000u, 1.0f);
-    DragDevFloat("x-center##rtor", RtoRCfg.XCenter, 0.01, -1e6, 1e6);
-    DragDevFloat("Q##rtor", RtoRCfg.Q, 0.01, -1e6, 1e6);
-    DragUIntLike("Harmonic##rtor", RtoRCfg.Harmonic, 1u, 100000u, 1.0f);
-    DragUIntLike("Interval##rtor", RtoRCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    DragUIntLike("Monitor interval##rtor", RtoRCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    DragUIntLike("Batch##rtor", RtoRCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
+    DragDevFloat("L##rtor", RtoRCfg.L, 0.01, 1e-6, 1e6, "%.6g", "Domain length.");
+    DragUIntLike("N##rtor", RtoRCfg.N, 4u, 200000u, 1.0f, "Spatial resolution (grid points).");
+    DragDevFloat("x-center##rtor", RtoRCfg.XCenter, 0.01, -1e6, 1e6, "%.6g", "Initial wave packet center.");
+    DragDevFloat("Q##rtor", RtoRCfg.Q, 0.01, -1e6, 1e6, "%.6g", "Initial wave number / momentum.");
+    DragUIntLike("Harmonic##rtor", RtoRCfg.Harmonic, 1u, 100000u, 1.0f, "Harmonic mode index.");
+    DragUIntLike("Interval##rtor", RtoRCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Console/log sampling interval (steps).");
+    DragUIntLike("Monitor interval##rtor", RtoRCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Snapshot publishing interval for monitor/live data.");
+    DragUIntLike("Batch##rtor", RtoRCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Max internal steps per worker loop iteration.");
 
-    ImGui::Checkbox("Publish live data when headless##rtor", &bRtoRPublishLiveViewHeadless);
+    CheckboxWithTooltip("Publish live data when headless##rtor", &bRtoRPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
     ImGui::TextDisabled("Advanced analysis listeners are currently exposed via CLI (Studios rtor).");
 
     if (ButtonWithTooltip("Run Headless##rtor", "Run this simulation without opening a GL monitor window.")) {
@@ -322,40 +343,40 @@ auto FSimulationManagerV2::DrawRtoRSection() -> void {
 auto FSimulationManagerV2::DrawR2toRSection() -> void {
     if (!ImGui::CollapsingHeader("KGR2toR Baseline", ImGuiTreeNodeFlags_DefaultOpen)) return;
 
-    DragUIntLike("Steps##kg2d", R2toRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    DragDevFloat("L##kg2d", R2toRCfg.L, 0.01, 1e-6, 1e6);
-    DragUIntLike("N##kg2d", R2toRCfg.N, 8u, 200000u, 1.0f);
-    DragDevFloat("r_dt##kg2d", R2toRCfg.RDt, 0.001, 1e-8, 10.0, "%.6g");
+    DragUIntLike("Steps##kg2d", R2toRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
+    DragDevFloat("L##kg2d", R2toRCfg.L, 0.01, 1e-6, 1e6, "%.6g", "Domain size.");
+    DragUIntLike("N##kg2d", R2toRCfg.N, 8u, 200000u, 1.0f, "Grid resolution along each axis.");
+    DragDevFloat("r_dt##kg2d", R2toRCfg.RDt, 0.001, 1e-8, 10.0, "%.6g", "CFL-like ratio used to compute dt.");
     ImGui::TextDisabled("dt auto = r_dt * (L / N)");
 
-    DragDevFloat("x-center##kg2d", R2toRCfg.XCenter, 0.01, -1e6, 1e6);
-    DragDevFloat("y-center##kg2d", R2toRCfg.YCenter, 0.01, -1e6, 1e6);
-    DragDevFloat("Pulse width##kg2d", R2toRCfg.PulseWidth, 0.001, 1e-8, 1e6, "%.6g");
-    DragDevFloat("phi amplitude##kg2d", R2toRCfg.PhiAmplitude, 0.01, -1e6, 1e6);
-    DragDevFloat("dphi/dt amplitude##kg2d", R2toRCfg.DPhiDtAmplitude, 0.01, -1e6, 1e6);
-    DragUIntLike("Interval##kg2d", R2toRCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    DragUIntLike("Monitor interval##kg2d", R2toRCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    DragUIntLike("Batch##kg2d", R2toRCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    ImGui::Checkbox("Enable LiveControl forcing binding##kg2d-bind", &R2toRCfg.bEnableLiveControlForcing);
-    if (ImGui::Checkbox("Enable monitor control source UI (GL)##kg2d-monitor-ctrl", &R2toRCfg.bEnableMonitorControlPublisher)) {
+    DragDevFloat("x-center##kg2d", R2toRCfg.XCenter, 0.01, -1e6, 1e6, "%.6g", "Initial pulse center (x).");
+    DragDevFloat("y-center##kg2d", R2toRCfg.YCenter, 0.01, -1e6, 1e6, "%.6g", "Initial pulse center (y).");
+    DragDevFloat("Pulse width##kg2d", R2toRCfg.PulseWidth, 0.001, 1e-8, 1e6, "%.6g", "Initial pulse width.");
+    DragDevFloat("phi amplitude##kg2d", R2toRCfg.PhiAmplitude, 0.01, -1e6, 1e6, "%.6g", "Initial phi pulse amplitude.");
+    DragDevFloat("dphi/dt amplitude##kg2d", R2toRCfg.DPhiDtAmplitude, 0.01, -1e6, 1e6, "%.6g", "Initial time-derivative pulse amplitude.");
+    DragUIntLike("Interval##kg2d", R2toRCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Console/log sampling interval (steps).");
+    DragUIntLike("Monitor interval##kg2d", R2toRCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Snapshot publishing interval for monitor/live data.");
+    DragUIntLike("Batch##kg2d", R2toRCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Max internal steps per worker loop iteration.");
+    CheckboxWithTooltip("Enable LiveControl forcing binding##kg2d-bind", &R2toRCfg.bEnableLiveControlForcing, "Read forcing controls from LiveControl topics during run.");
+    if (CheckboxWithTooltip("Enable monitor control source UI (GL)##kg2d-monitor-ctrl", &R2toRCfg.bEnableMonitorControlPublisher, "Expose forcing controls in GL monitor and publish to LiveControl topics.")) {
         if (R2toRCfg.bEnableMonitorControlPublisher) {
             R2toRCfg.bEnableLiveControlForcing = true;
         }
     }
     if (R2toRCfg.bEnableLiveControlForcing) {
-        DragUIntLike("Control sample interval##kg2d", R2toRCfg.ControlSampleInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-        DragDevFloat("Forcing x##kg2d", R2toRCfg.ForcingXCenter, 0.01, -1e6, 1e6);
-        DragDevFloat("Forcing y##kg2d", R2toRCfg.ForcingYCenter, 0.01, -1e6, 1e6);
-        DragDevFloat("Forcing width##kg2d", R2toRCfg.ForcingWidth, 0.001, 1e-8, 1e6, "%.6g");
-        DragDevFloat("Forcing amplitude##kg2d", R2toRCfg.ForcingAmplitude, 0.01, -1e6, 1e6);
-        ImGui::Checkbox("Forcing enabled##kg2d", &R2toRCfg.bForcingEnabled);
+        DragUIntLike("Control sample interval##kg2d", R2toRCfg.ControlSampleInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "How often forcing topics are polled (steps).");
+        DragDevFloat("Forcing x##kg2d", R2toRCfg.ForcingXCenter, 0.01, -1e6, 1e6, "%.6g", "Default forcing center (x).");
+        DragDevFloat("Forcing y##kg2d", R2toRCfg.ForcingYCenter, 0.01, -1e6, 1e6, "%.6g", "Default forcing center (y).");
+        DragDevFloat("Forcing width##kg2d", R2toRCfg.ForcingWidth, 0.001, 1e-8, 1e6, "%.6g", "Default forcing Gaussian width.");
+        DragDevFloat("Forcing amplitude##kg2d", R2toRCfg.ForcingAmplitude, 0.01, -1e6, 1e6, "%.6g", "Default forcing amplitude.");
+        CheckboxWithTooltip("Forcing enabled##kg2d", &R2toRCfg.bForcingEnabled, "Enable forcing by default.");
         ImGui::TextDisabled("Control topic prefix: %s", R2toRCfg.ControlTopicPrefix.c_str());
     }
     if (R2toRCfg.bEnableMonitorControlPublisher) {
         ImGui::TextDisabled("GL monitor will expose a control source panel for topic-driven forcing.");
     }
 
-    ImGui::Checkbox("Publish live data when headless##kg2d", &bR2toRPublishLiveViewHeadless);
+    CheckboxWithTooltip("Publish live data when headless##kg2d", &bR2toRPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
 
     if (ButtonWithTooltip("Run Headless##kg2d", "Run this simulation without opening a GL monitor window.")) {
         try { LaunchR2toR(false); } catch (const std::exception &e) { LastError = e.what(); }
@@ -369,16 +390,16 @@ auto FSimulationManagerV2::DrawR2toRSection() -> void {
 auto FSimulationManagerV2::DrawMolecularDynamicsSection() -> void {
     if (!ImGui::CollapsingHeader("Molecular Dynamics")) return;
 
-    DragUIntLike("Steps##md", MolecularDynamicsCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    DragDevFloat("Total time##md", MolecularDynamicsCfg.TotalTime, 0.01, 1e-6, 1e8);
-    DragDevFloat("L##md", MolecularDynamicsCfg.L, 0.01, 1e-6, 1e8);
-    DragUIntLike("N##md", MolecularDynamicsCfg.N, 128u, 200000u, 1.0f);
-    DragDevFloat("Temperature##md", MolecularDynamicsCfg.Temperature, 0.01, 0.0, 1e6);
-    DragDevFloat("Dissipation##md", MolecularDynamicsCfg.Dissipation, 0.001, 0.0, 1e6);
-    DragUIntLike("Interval##md", MolecularDynamicsCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    DragUIntLike("Monitor interval##md", MolecularDynamicsCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    DragUIntLike("Batch##md", MolecularDynamicsCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f);
-    ImGui::Checkbox("Publish live data when headless##moldyn", &bMolecularDynamicsPublishLiveViewHeadless);
+    DragUIntLike("Steps##md", MolecularDynamicsCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
+    DragDevFloat("Total time##md", MolecularDynamicsCfg.TotalTime, 0.01, 1e-6, 1e8, "%.6g", "Physical time horizon.");
+    DragDevFloat("L##md", MolecularDynamicsCfg.L, 0.01, 1e-6, 1e8, "%.6g", "Box side length.");
+    DragUIntLike("N##md", MolecularDynamicsCfg.N, 128u, 200000u, 1.0f, "Number of particles.");
+    DragDevFloat("Temperature##md", MolecularDynamicsCfg.Temperature, 0.01, 0.0, 1e6, "%.6g", "Initial/coupled temperature.");
+    DragDevFloat("Dissipation##md", MolecularDynamicsCfg.Dissipation, 0.001, 0.0, 1e6, "%.6g", "Dissipation coefficient.");
+    DragUIntLike("Interval##md", MolecularDynamicsCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Console/log sampling interval (steps).");
+    DragUIntLike("Monitor interval##md", MolecularDynamicsCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Snapshot publishing interval for monitor/live data.");
+    DragUIntLike("Batch##md", MolecularDynamicsCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Max internal steps per worker loop iteration.");
+    CheckboxWithTooltip("Publish live data when headless##moldyn", &bMolecularDynamicsPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
 
     const bool bSoftDisk = MolecularDynamicsCfg.InteractionModel ==
         Slab::Studios::Common::Simulations::V2::EMDInteractionModelV2::SoftDisk;
@@ -404,10 +425,10 @@ auto FSimulationManagerV2::DrawMolecularDynamicsSection() -> void {
 auto FSimulationManagerV2::DrawMetropolisSection() -> void {
     if (!ImGui::CollapsingHeader("Metropolis RtoR")) return;
 
-    DragUIntLike("Steps##metropolis", MetropolisCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 100.0f);
-    DragUIntLike("Interval##metropolis", MetropolisCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
-    DragUIntLike("Monitor interval##metropolis", MetropolisCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
-    DragUIntLike("Batch##metropolis", MetropolisCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
+    DragUIntLike("Steps##metropolis", MetropolisCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 100.0f, "Number of Metropolis updates.");
+    DragUIntLike("Interval##metropolis", MetropolisCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Console/log sampling interval (steps).");
+    DragUIntLike("Monitor interval##metropolis", MetropolisCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Snapshot publishing interval for monitor/live data.");
+    DragUIntLike("Batch##metropolis", MetropolisCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Max internal steps per worker loop iteration.");
     ImGui::TextDisabled("GL monitor shows phi(x), pi(x), and cursor telemetry.");
 
     if (ButtonWithTooltip("Run Headless##metropolis", "Run this simulation without opening a GL monitor window.")) {
@@ -422,16 +443,16 @@ auto FSimulationManagerV2::DrawMetropolisSection() -> void {
 auto FSimulationManagerV2::DrawXYSection() -> void {
     if (!ImGui::CollapsingHeader("XY Metropolis")) return;
 
-    DragUIntLike("Steps##xy", XYCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
-    DragUIntLike("L##xy", XYCfg.L, 2u, 8192u, 1.0f);
-    DragDevFloat("Temperature##xy", XYCfg.Temperature, 0.005, 0.0, 1e6, "%.6g");
-    DragDevFloat("h-field##xy", XYCfg.ExternalField, 0.005, -1e6, 1e6, "%.6g");
-    DragDevFloat("delta-theta##xy", XYCfg.DeltaTheta, 0.005, 1e-8, 1e6, "%.6g");
-    ImGui::Checkbox("Ferromagnetic initial##xy", &XYCfg.bFerromagneticInitial);
-    DragUIntLike("Interval##xy", XYCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
-    DragUIntLike("Monitor interval##xy", XYCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
-    DragUIntLike("Batch##xy", XYCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
-    ImGui::Checkbox("Publish live data when headless##xy", &bXYPublishLiveViewHeadless);
+    DragUIntLike("Steps##xy", XYCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Number of Monte Carlo sweeps.");
+    DragUIntLike("L##xy", XYCfg.L, 2u, 8192u, 1.0f, "Lattice size (LxL).");
+    DragDevFloat("Temperature##xy", XYCfg.Temperature, 0.005, 0.0, 1e6, "%.6g", "Monte Carlo temperature.");
+    DragDevFloat("h-field##xy", XYCfg.ExternalField, 0.005, -1e6, 1e6, "%.6g", "External field strength.");
+    DragDevFloat("delta-theta##xy", XYCfg.DeltaTheta, 0.005, 1e-8, 1e6, "%.6g", "Proposal angle range.");
+    CheckboxWithTooltip("Ferromagnetic initial##xy", &XYCfg.bFerromagneticInitial, "Start from aligned spins instead of random phases.");
+    DragUIntLike("Interval##xy", XYCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Console/log sampling interval (steps).");
+    DragUIntLike("Monitor interval##xy", XYCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Snapshot publishing interval for monitor/live data.");
+    DragUIntLike("Batch##xy", XYCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Max internal steps per worker loop iteration.");
+    CheckboxWithTooltip("Publish live data when headless##xy", &bXYPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
 
     ImGui::TextDisabled("Passive GL monitor shows theta field + MC diagnostics.");
 
@@ -447,15 +468,15 @@ auto FSimulationManagerV2::DrawXYSection() -> void {
 auto FSimulationManagerV2::DrawIsingSection() -> void {
     if (!ImGui::CollapsingHeader("Ising Metropolis")) return;
 
-    DragUIntLike("Steps##ising", IsingCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
-    DragUIntLike("L##ising", IsingCfg.L, 2u, 8192u, 1.0f);
-    DragDevFloat("Temperature##ising", IsingCfg.Temperature, 0.005, 0.0, 1e6, "%.6g");
-    DragDevFloat("h-field##ising", IsingCfg.ExternalField, 0.005, -1e6, 1e6, "%.6g");
-    ImGui::Checkbox("Ferromagnetic initial##ising", &IsingCfg.bFerromagneticInitial);
-    DragUIntLike("Interval##ising", IsingCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
-    DragUIntLike("Monitor interval##ising", IsingCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
-    DragUIntLike("Batch##ising", IsingCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f);
-    ImGui::Checkbox("Publish live data when headless##ising", &bIsingPublishLiveViewHeadless);
+    DragUIntLike("Steps##ising", IsingCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Number of Monte Carlo sweeps.");
+    DragUIntLike("L##ising", IsingCfg.L, 2u, 8192u, 1.0f, "Lattice size (LxL).");
+    DragDevFloat("Temperature##ising", IsingCfg.Temperature, 0.005, 0.0, 1e6, "%.6g", "Monte Carlo temperature.");
+    DragDevFloat("h-field##ising", IsingCfg.ExternalField, 0.005, -1e6, 1e6, "%.6g", "External magnetic field.");
+    CheckboxWithTooltip("Ferromagnetic initial##ising", &IsingCfg.bFerromagneticInitial, "Start from aligned spins instead of random initialization.");
+    DragUIntLike("Interval##ising", IsingCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Console/log sampling interval (steps).");
+    DragUIntLike("Monitor interval##ising", IsingCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Snapshot publishing interval for monitor/live data.");
+    DragUIntLike("Batch##ising", IsingCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Max internal steps per worker loop iteration.");
+    CheckboxWithTooltip("Publish live data when headless##ising", &bIsingPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
 
     ImGui::TextDisabled("Passive GL monitor shows spin field + MC diagnostics.");
 
@@ -470,6 +491,7 @@ auto FSimulationManagerV2::DrawIsingSection() -> void {
 
 auto FSimulationManagerV2::LaunchSPI(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
+    using namespace Slab::Math::Numerics::V2;
 
     auto cfg = SPICfg;
     cfg.bEnableGLMonitor = enableMonitor;
@@ -480,7 +502,18 @@ auto FSimulationManagerV2::LaunchSPI(const bool enableMonitor) -> void {
     auto recipe = BuildSPIRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("SPI GL monitor requires a live view.");
-        AttachMonitorWindowOrThrow(BuildSPIPassiveMonitorWindowV2(cfg, liveView), "BuildSPIPassiveMonitorWindowV2");
+        auto snapshotListener = Slab::New<FStateSnapshotListenerV2>("LabV2 SPI monitor snapshot listener V2");
+        Slab::Vector<FSubscriptionV2> subscriptions = {{
+            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), cfg.MonitorInterval)),
+            snapshotListener,
+            EDeliveryModeV2::LatestOnly,
+            true,
+            true
+        }};
+        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(subscriptions));
+        AttachMonitorWindowOrThrow(
+            BuildSPIPassiveMonitorWindowV2(cfg, liveView, snapshotListener),
+            "BuildSPIPassiveMonitorWindowV2");
     }
 
     LaunchNumericTask(recipe, cfg.Batch, "SPI V2");
@@ -488,6 +521,7 @@ auto FSimulationManagerV2::LaunchSPI(const bool enableMonitor) -> void {
 
 auto FSimulationManagerV2::LaunchRtoR(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
+    using namespace Slab::Math::Numerics::V2;
 
     auto cfg = RtoRCfg;
     cfg.bEnableGLMonitor = enableMonitor;
@@ -499,8 +533,17 @@ auto FSimulationManagerV2::LaunchRtoR(const bool enableMonitor) -> void {
     auto recipe = BuildRtoRPlaneWavesRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("RtoR GL monitor requires a live view.");
+        auto snapshotListener = Slab::New<FStateSnapshotListenerV2>("LabV2 KGRtoR monitor snapshot listener V2");
+        Slab::Vector<FSubscriptionV2> subscriptions = {{
+            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), cfg.MonitorInterval)),
+            snapshotListener,
+            EDeliveryModeV2::LatestOnly,
+            true,
+            true
+        }};
+        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(subscriptions));
         AttachMonitorWindowOrThrow(
-            BuildRtoRPlaneWavesPassiveMonitorWindowV2(cfg, liveView),
+            BuildRtoRPlaneWavesPassiveMonitorWindowV2(cfg, liveView, snapshotListener),
             "BuildRtoRPlaneWavesPassiveMonitorWindowV2");
     }
 
@@ -509,6 +552,7 @@ auto FSimulationManagerV2::LaunchRtoR(const bool enableMonitor) -> void {
 
 auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
+    using namespace Slab::Math::Numerics::V2;
 
     auto cfg = R2toRCfg;
     cfg.bEnableGLMonitor = enableMonitor;
@@ -521,8 +565,17 @@ auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
     auto recipe = BuildR2toRBaselineRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("KGR2toR GL monitor requires a live view.");
+        auto snapshotListener = Slab::New<FStateSnapshotListenerV2>("LabV2 KGR2toR monitor snapshot listener V2");
+        Slab::Vector<FSubscriptionV2> subscriptions = {{
+            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), cfg.MonitorInterval)),
+            snapshotListener,
+            EDeliveryModeV2::LatestOnly,
+            true,
+            true
+        }};
+        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(subscriptions));
         AttachMonitorWindowOrThrow(
-            BuildR2toRBaselinePassiveMonitorWindowV2(cfg, liveView),
+            BuildR2toRBaselinePassiveMonitorWindowV2(cfg, liveView, snapshotListener),
             "BuildR2toRBaselinePassiveMonitorWindowV2");
     }
 
@@ -531,6 +584,7 @@ auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
 
 auto FSimulationManagerV2::LaunchMolecularDynamics(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
+    using namespace Slab::Math::Numerics::V2;
 
     auto cfg = MolecularDynamicsCfg;
     cfg.bEnableGLMonitor = enableMonitor;
@@ -542,8 +596,18 @@ auto FSimulationManagerV2::LaunchMolecularDynamics(const bool enableMonitor) -> 
     auto recipe = BuildMolecularDynamicsRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("MolecularDynamics GL monitor requires a live view.");
+        auto snapshotListener = Slab::New<FStateSnapshotListenerV2>(
+            "LabV2 MolecularDynamics monitor snapshot listener V2");
+        Slab::Vector<FSubscriptionV2> subscriptions = {{
+            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), cfg.MonitorInterval)),
+            snapshotListener,
+            EDeliveryModeV2::LatestOnly,
+            true,
+            true
+        }};
+        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(subscriptions));
         AttachMonitorWindowOrThrow(
-            BuildMolecularDynamicsPassiveMonitorWindowV2(cfg, liveView),
+            BuildMolecularDynamicsPassiveMonitorWindowV2(cfg, liveView, snapshotListener),
             "BuildMolecularDynamicsPassiveMonitorWindowV2");
     }
 
@@ -573,6 +637,7 @@ auto FSimulationManagerV2::LaunchMetropolis(const bool enableMonitor) -> void {
 
 auto FSimulationManagerV2::LaunchXY(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
+    using namespace Slab::Math::Numerics::V2;
 
     auto cfg = XYCfg;
     cfg.bEnableGLMonitor = enableMonitor;
@@ -584,7 +649,18 @@ auto FSimulationManagerV2::LaunchXY(const bool enableMonitor) -> void {
     auto recipe = BuildXYRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("XY GL monitor requires a live view.");
-        AttachMonitorWindowOrThrow(BuildXYPassiveMonitorWindowV2(cfg, liveView), "BuildXYPassiveMonitorWindowV2");
+        auto snapshotListener = Slab::New<FStateSnapshotListenerV2>("LabV2 XY monitor snapshot listener V2");
+        Slab::Vector<FSubscriptionV2> subscriptions = {{
+            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), cfg.MonitorInterval)),
+            snapshotListener,
+            EDeliveryModeV2::LatestOnly,
+            true,
+            true
+        }};
+        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(subscriptions));
+        AttachMonitorWindowOrThrow(
+            BuildXYPassiveMonitorWindowV2(cfg, liveView, snapshotListener),
+            "BuildXYPassiveMonitorWindowV2");
     }
 
     LaunchNumericTask(recipe, cfg.Batch, "XY Metropolis V2");
@@ -592,6 +668,7 @@ auto FSimulationManagerV2::LaunchXY(const bool enableMonitor) -> void {
 
 auto FSimulationManagerV2::LaunchIsing(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
+    using namespace Slab::Math::Numerics::V2;
 
     auto cfg = IsingCfg;
     cfg.bEnableGLMonitor = enableMonitor;
@@ -603,8 +680,17 @@ auto FSimulationManagerV2::LaunchIsing(const bool enableMonitor) -> void {
     auto recipe = BuildIsingRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("Ising GL monitor requires a live view.");
+        auto snapshotListener = Slab::New<FStateSnapshotListenerV2>("LabV2 Ising monitor snapshot listener V2");
+        Slab::Vector<FSubscriptionV2> subscriptions = {{
+            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), cfg.MonitorInterval)),
+            snapshotListener,
+            EDeliveryModeV2::LatestOnly,
+            true,
+            true
+        }};
+        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(subscriptions));
         AttachMonitorWindowOrThrow(
-            BuildIsingPassiveMonitorWindowV2(cfg, liveView),
+            BuildIsingPassiveMonitorWindowV2(cfg, liveView, snapshotListener),
             "BuildIsingPassiveMonitorWindowV2");
     }
 

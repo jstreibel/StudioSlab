@@ -58,7 +58,7 @@ namespace Slab::Studios::Common {
         guiWindow->AddVolatileStat("Version: " + ToStr(t.PublishedVersion));
         guiWindow->AddVolatileStat("Reason: " + ToDisplayString(t.LastReason));
         guiWindow->AddVolatileStat(Str("Bound session: ") + (bHasBoundSession ? "yes" : "no"));
-        guiWindow->AddVolatileStat(Str("Lease this frame: ") + (bLeaseAcquired ? "yes" : "no"));
+        guiWindow->AddVolatileStat(Str("State this frame: ") + (bLeaseAcquired ? "yes" : "no"));
         guiWindow->AddVolatileStat(Str("State present: ") + (t.bHasState ? "yes" : "no"));
 
         if (extraLine.has_value() && !extraLine->empty()) {

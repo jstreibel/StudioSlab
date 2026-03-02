@@ -55,6 +55,10 @@ This is a small internal contract note to keep the window/plot/GUI stack coheren
 3. Docked panel ordering should be registry-driven.
 - keep one explicit, deterministic panel registry per frame/workspace instead of scattered `Begin/End` calls across multiple listeners.
 
+4. Slab monitor windows are workspace-scoped in docked mode.
+- render and input routing for slab monitor windows is enabled only in `Monitor` workspace.
+- when switching to `Simulations`/`Schemes`, slab windows should be hidden/offscreen and excluded from render routing.
+
 ## Event Routing Contract (V2 Direction)
 
 1. Mouse event routing for ImGui-wrapped Slab canvases should be hit-test based, not focus-only.

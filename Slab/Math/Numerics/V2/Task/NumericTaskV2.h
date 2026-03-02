@@ -23,6 +23,12 @@ namespace Slab::Math::Numerics::V2 {
         FOutputDispatcherV2 Dispatcher;
 
         std::atomic<bool> bAbortFlag = false;
+        std::atomic<UIntBig> CachedStep = 0;
+        std::atomic<double> CachedSimulationTime = 0.0;
+        std::atomic<double> CachedWallClockSeconds = 0.0;
+        std::atomic<bool> bCachedHasSimulationTime = false;
+        std::atomic<float> CachedProgress01 = 0.0f;
+        std::atomic<bool> bCachedHasProgress = false;
 
         size_t MaxBatchSteps = 2048;
         bool bInitialized = false;
@@ -32,6 +38,7 @@ namespace Slab::Math::Numerics::V2 {
                                             const std::optional<UIntBig> &nextDueStep) const -> UIntBig;
         [[nodiscard]] auto BuildEvent(EEventReasonV2 reason, bool bRealtimeBestEffort = false) const
                 -> FSimulationEventV2;
+        auto UpdateCachedTelemetry(const FSimulationCursorV2 &cursor) -> void;
 
         auto EmitInitialEventIfRequested() -> void;
         auto EmitFinalEvent(EEventReasonV2 reason) -> bool;

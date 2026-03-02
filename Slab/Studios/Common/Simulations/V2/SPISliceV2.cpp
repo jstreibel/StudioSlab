@@ -7,10 +7,15 @@
 #include "Core/Controller/Parameter/BuiltinParameters.h"
 
 #include "Math/Data/V2/SessionLiveViewV2.h"
+#include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
+#include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
+#include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
 #include "Models/Stochastic-Path-Integral/SPINumericConfig.h"
 #include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
+
+#include <algorithm>
 
 namespace Slab::Studios::Common::Simulations::V2 {
 
@@ -66,11 +71,15 @@ namespace Slab::Studios::Common::Simulations::V2 {
     }
 
     auto BuildSPIPassiveMonitorWindowV2(const FSPIExecutionConfig &cfg,
-                                        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
+                                        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+                                        const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener)
         -> TPointer<Graphics::FSlabWindow> {
         if (liveView == nullptr) throw Exception("SPI passive monitor requires a live view.");
+        if (snapshotListener == nullptr) throw Exception("SPI passive monitor requires a snapshot listener.");
         return New<Slab::Studios::Common::Monitors::V2::FSPIPassiveMonitorWindowV2>(
-            liveView, static_cast<UIntBig>(cfg.Steps));
+            liveView,
+            snapshotListener,
+            static_cast<UIntBig>(cfg.Steps));
     }
 
     auto RunSPIV2(const FSPIExecutionConfig &cfg) -> int {
@@ -78,8 +87,19 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
         if (cfg.bEnableGLMonitor) {
             auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
-            auto recipe = BuildSPIRecipeV2(cfg, liveView);
-            auto monitor = BuildSPIPassiveMonitorWindowV2(cfg, liveView);
+            auto baseRecipe = BuildSPIRecipeV2(cfg, liveView);
+            auto snapshotListener = New<FStateSnapshotListenerV2>("SPI monitor snapshot listener V2");
+
+            Vector<FSubscriptionV2> subscriptions = {{
+                New<FEveryNStepsTriggerV2>(std::max<UIntBig>(UIntBig(1), cfg.MonitorInterval)),
+                snapshotListener,
+                EDeliveryModeV2::LatestOnly,
+                true,
+                true
+            }};
+
+            auto recipe = New<FAppendedSubscriptionsRecipeV2>(baseRecipe, std::move(subscriptions));
+            auto monitor = BuildSPIPassiveMonitorWindowV2(cfg, liveView, snapshotListener);
             return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
                 "Studios SPI V2 Monitor", recipe, monitor, static_cast<size_t>(cfg.Batch));
         }

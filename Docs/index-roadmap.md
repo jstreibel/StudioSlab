@@ -21,6 +21,7 @@ Use this order when docs disagree:
 - Current status snapshot: `Docs/status-v2.md`
 - Backlog and active items: `Docs/v2-feature-backlog.md`
 - Coverage breadth: `Docs/v2-model-coverage-matrix.md`
+- Platform feasibility notes: `Docs/platform-wasm-feasibility.md`
 - Active slice (current): `Docs/functional-minimization-v2-slice-scope.md`
 - Product context:
   - `Docs/product-direction.md`

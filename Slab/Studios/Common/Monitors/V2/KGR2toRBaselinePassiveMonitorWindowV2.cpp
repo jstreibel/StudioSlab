@@ -144,6 +144,7 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
     FR2toRBaselinePassiveMonitorWindowV2::FR2toRBaselinePassiveMonitorWindowV2(
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+            const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener,
             const UIntBig maxSteps,
             const TPointer<Math::LiveControl::V2::FLiveControlHubV2> &controlHub,
             const Str &controlTopicPrefix,
@@ -158,6 +159,7 @@ namespace Slab::Studios::Common::Monitors::V2 {
     , SessionTopic(liveView != nullptr ? liveView->GetSessionTopic() : nullptr)
     , TelemetryTopic(liveView != nullptr ? liveView->GetTelemetryTopic() : nullptr)
     , StatusTopic(liveView != nullptr ? liveView->GetStatusTopic() : nullptr)
+    , SnapshotListener(snapshotListener)
     , ControlHub(controlHub)
     , ControlTopicPrefix(controlTopicPrefix)
     , bEnableControlPublisher(bEnableControlPublisher)
@@ -171,6 +173,7 @@ namespace Slab::Studios::Common::Monitors::V2 {
     , FieldArtist(New<Graphics::R2toRFunctionArtist>())
     , MaxSteps(maxSteps) {
         if (LiveView == nullptr) throw Exception("KGR2toR passive monitor requires a live view.");
+        if (SnapshotListener == nullptr) throw Exception("KGR2toR passive monitor requires a snapshot listener.");
         if (SessionTopic == nullptr || TelemetryTopic == nullptr) {
             throw Exception("KGR2toR passive monitor requires session/telemetry topics.");
         }
@@ -193,10 +196,15 @@ namespace Slab::Studios::Common::Monitors::V2 {
             if (status.has_value()) LastStatus = status;
         }
 
-        auto leaseOpt = SessionTopic->AcquireReadLease();
-        bLastLeaseAcquired = leaseOpt.has_value();
-
-        if (leaseOpt.has_value()) SetPlotFromState(leaseOpt->GetState());
+        const auto snapshotOpt = SnapshotListener != nullptr
+            ? SnapshotListener->TryGetSnapshot()
+            : std::optional<Math::Numerics::V2::FStateSnapshotEnvelopeV2>{};
+        bLastLeaseAcquired = snapshotOpt.has_value();
+        if (snapshotOpt.has_value() &&
+            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshotOpt->PublishedVersion)) {
+            LastSnapshotVersion = snapshotOpt->PublishedVersion;
+            SetPlotFromState(snapshotOpt->State);
+        }
 
         UpdateStatsWindow();
         DrawControlWindow();

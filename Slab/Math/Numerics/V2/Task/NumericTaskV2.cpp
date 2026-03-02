@@ -36,20 +36,18 @@ namespace Slab::Math::Numerics::V2 {
     }
 
     auto FNumericTaskV2::GetCursor() const -> FSimulationCursorV2 {
-        if (Session == nullptr) return {};
-        return Session->GetCursor();
+        FSimulationCursorV2 cursor;
+        cursor.Step = CachedStep.load(std::memory_order_acquire);
+        cursor.WallClockSeconds = CachedWallClockSeconds.load(std::memory_order_acquire);
+        if (bCachedHasSimulationTime.load(std::memory_order_acquire)) {
+            cursor.SimulationTime = static_cast<DevFloat>(CachedSimulationTime.load(std::memory_order_acquire));
+        }
+        return cursor;
     }
 
     auto FNumericTaskV2::GetProgress01() const -> std::optional<float> {
-        if (RunLimits.Mode != ERunModeV2::FiniteSteps) return std::nullopt;
-        if (!RunLimits.MaxSteps.has_value()) return std::nullopt;
-
-        const auto maxSteps = *RunLimits.MaxSteps;
-        if (maxSteps == 0) return 1.0f;
-
-        const auto cursor = GetCursor();
-        const auto clamped = std::min<UIntBig>(cursor.Step, maxSteps);
-        return static_cast<float>(clamped) / static_cast<float>(maxSteps);
+        if (!bCachedHasProgress.load(std::memory_order_acquire)) return std::nullopt;
+        return CachedProgress01.load(std::memory_order_acquire);
     }
 
     auto FNumericTaskV2::GetSession() const -> const FSimulationSessionV2 * {
@@ -105,6 +103,28 @@ namespace Slab::Math::Numerics::V2 {
         return event;
     }
 
+    auto FNumericTaskV2::UpdateCachedTelemetry(const FSimulationCursorV2 &cursor) -> void {
+        CachedStep.store(cursor.Step, std::memory_order_release);
+        CachedWallClockSeconds.store(cursor.WallClockSeconds, std::memory_order_release);
+
+        const auto simTime = cursor.SimulationTime;
+        bCachedHasSimulationTime.store(simTime.has_value(), std::memory_order_release);
+        if (simTime.has_value()) {
+            CachedSimulationTime.store(*simTime, std::memory_order_release);
+        }
+
+        if (RunLimits.Mode == ERunModeV2::FiniteSteps && RunLimits.MaxSteps.has_value()) {
+            const auto maxSteps = *RunLimits.MaxSteps;
+            const auto progress = maxSteps == 0
+                ? 1.0f
+                : static_cast<float>(std::min<UIntBig>(cursor.Step, maxSteps)) / static_cast<float>(maxSteps);
+            CachedProgress01.store(progress, std::memory_order_release);
+            bCachedHasProgress.store(true, std::memory_order_release);
+        } else {
+            bCachedHasProgress.store(false, std::memory_order_release);
+        }
+    }
+
     auto FNumericTaskV2::EmitInitialEventIfRequested() -> void {
         Dispatcher.DispatchRunStarted(Subscriptions, BuildEvent(EEventReasonV2::Initial));
     }
@@ -129,12 +149,17 @@ namespace Slab::Math::Numerics::V2 {
 
         const auto taskStart = std::chrono::steady_clock::now();
 
-        Scheduler.Reset(Subscriptions, Session->GetCursor());
+        auto initialCursor = Session->GetCursor();
+        initialCursor.WallClockSeconds = 0.0;
+        UpdateCachedTelemetry(initialCursor);
+
+        Scheduler.Reset(Subscriptions, initialCursor);
         EmitInitialEventIfRequested();
 
         while (!bAbortFlag) {
             auto cursor = Session->GetCursor();
             cursor.WallClockSeconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - taskStart).count();
+            UpdateCachedTelemetry(cursor);
 
             if (HasReachedFiniteLimit(cursor)) break;
 
@@ -147,6 +172,7 @@ namespace Slab::Math::Numerics::V2 {
 
             auto dueCursor = Session->GetCursor();
             dueCursor.WallClockSeconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - taskStart).count();
+            UpdateCachedTelemetry(dueCursor);
 
             const auto due = Scheduler.CollectDueSubscriptionsBetween(Subscriptions, cursor, dueCursor);
             if (!due.empty()) {
@@ -157,9 +183,16 @@ namespace Slab::Math::Numerics::V2 {
         }
 
         if (bAbortFlag) {
+            auto finalCursor = Session->GetCursor();
+            finalCursor.WallClockSeconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - taskStart).count();
+            UpdateCachedTelemetry(finalCursor);
             EmitFinalEvent(EEventReasonV2::AbortFinal);
             return Core::TaskAborted;
         }
+
+        auto finalCursor = Session->GetCursor();
+        finalCursor.WallClockSeconds = std::chrono::duration<double>(std::chrono::steady_clock::now() - taskStart).count();
+        UpdateCachedTelemetry(finalCursor);
 
         if (!EmitFinalEvent(EEventReasonV2::Final)) return Core::TaskError;
 
