@@ -29,6 +29,7 @@ public:
         FRequestLauncherVisibilityFn requestLauncherVisibilityFn);
 
     auto AddMenus(const Slab::Graphics::FPlatformWindow &platformWindow) -> void;
+    auto TickLiveControlPublishers() -> void;
     auto DrawLauncherContents() -> void;
 
 private:
@@ -44,6 +45,8 @@ private:
     bool bMolecularDynamicsPublishLiveViewHeadless = true;
     bool bXYPublishLiveViewHeadless = true;
     bool bIsingPublishLiveViewHeadless = true;
+    bool bXYPublishLiveParameters = false;
+    bool bIsingPublishLiveParameters = false;
 
     Slab::Studios::Common::Simulations::V2::FSPIExecutionConfig SPICfg;
     Slab::Studios::Common::Simulations::V2::FRtoRPlaneWavesExecutionConfig RtoRCfg;

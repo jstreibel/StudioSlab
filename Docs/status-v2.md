@@ -3,7 +3,7 @@
 ## Snapshot Metadata
 
 - Snapshot date: `2026-03-02`
-- Last implementation update: `2026-03-02` (listener-driven monitor snapshots with `LatestOnly` across V2 slices + LabV2 launcher paths)
+- Last implementation update: `2026-03-02` (listener-driven monitor snapshots + first XY/Ising live runtime parameter binding slice)
 - Last architecture-doc update: `2026-03-02` (monitor data-path contract update: listener-pushed snapshots, `LatestOnly`)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-01`
 - Build-target sanity check date: `2026-03-01` (`StudioSlabV2`, `SlabTests`, `testsuite` present in `cmake-build-debug`)
@@ -56,6 +56,11 @@
   - passive monitor windows for SPI/KGRtoR/KGR2toR/MD/XY/Ising consume snapshot listeners instead of session lease polling in UI draw paths
 - LabV2 launcher integration:
   - `SimulationManagerV2` monitor launches now attach snapshot subscriptions and pass snapshot listeners to monitor builders
+- Live runtime parameter controls (first slice):
+  - added generic scalar binding helpers (`LiveParameterControlV2`) for topic publish + runtime binding subscriptions
+  - XY/Ising recipes expose atomic runtime control handles for hot-loop-safe reads (`Temperature`, `ExternalField`)
+  - XY/Ising slice builders now publish read-only const parameter topics and bind mutable scalar controls from `LiveControl`
+  - LabV2 launcher can optionally publish XY/Ising live parameter values while tasks run
 
 ## Model Coverage Status (Current)
 
@@ -63,8 +68,8 @@
 - `SPI`: `V2-M`
 - `Metropolis`: `V2-M`
 - `Molecular Dynamics`: `V2-H`, `V2-M`
-- `XY`: `V2-H`, `V2-M`
-- `Ising`: `V2-H`, `V2-M`
+- `XY`: `V2-H`, `V2-M`, partial `V2-I` (live `Temperature`/`ExternalField`)
+- `Ising`: `V2-H`, `V2-M`, partial `V2-I` (live `Temperature`/`ExternalField`)
 - Functional minimization: first V2 slice currently active in planning/implementation track
 
 ## Active Workstream

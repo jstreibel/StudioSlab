@@ -21,16 +21,6 @@ namespace Slab::Studios::LabV2::Panels {
                                 bool &bLevelsOnly,
                                 Str &selectedTopic) -> void;
 
-    auto ShowKG2DControlSourcePanelAndPublish(
-        const TPointer<Math::LiveControl::V2::FLiveControlHubV2> &hub,
-        bool &bPublish,
-        DevFloat &xCenter,
-        DevFloat &yCenter,
-        DevFloat &width,
-        DevFloat &amplitude,
-        bool &bEnabled,
-        const Str &topicPrefix) -> void;
-
 } // namespace Slab::Studios::LabV2::Panels
 
 #endif

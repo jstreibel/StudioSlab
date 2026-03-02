@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <utility>
 
 namespace Slab::Models::Ising::V2 {
 
@@ -18,6 +19,7 @@ namespace Slab::Models::Ising::V2 {
 
         class FIsingMetropolisStepperV2 final : public Math::FStepper {
             FIsingMetropolisConfigV2 Config;
+            TPointer<FIsingRuntimeControlsV2> RuntimeControls = nullptr;
             TPointer<Math::R2toR::NumericFunction_CPU> SpinField;
             TPointer<FIsingLatticeStateV2> State;
 
@@ -40,7 +42,9 @@ namespace Slab::Models::Ising::V2 {
                 }
             }
 
-            [[nodiscard]] auto DeltaEnergy(const UInt i, const UInt j) const -> DevFloat {
+            [[nodiscard]] auto DeltaEnergy(const UInt i,
+                                           const UInt j,
+                                           const DevFloat externalField) const -> DevFloat {
                 const auto s = SpinField->At(i, j);
                 const auto north = SpinField->At(i, (j + Config.L - 1) % Config.L);
                 const auto south = SpinField->At(i, (j + 1) % Config.L);
@@ -48,18 +52,20 @@ namespace Slab::Models::Ising::V2 {
                 const auto west = SpinField->At((i + Config.L - 1) % Config.L, j);
                 const auto neighborSum = north + south + east + west;
 
-                return 2.0 * s * (neighborSum + Config.ExternalField);
+                return 2.0 * s * (neighborSum + externalField);
             }
 
-            [[nodiscard]] auto ShouldAccept(const DevFloat deltaEnergy) const -> bool {
+            [[nodiscard]] auto ShouldAccept(const DevFloat deltaEnergy, const DevFloat temperature) const -> bool {
                 if (deltaEnergy <= 0.0) return true;
-                if (Config.Temperature <= 0.0) return false;
+                if (temperature <= 0.0) return false;
 
-                const auto boltzmann = std::exp(-deltaEnergy / Config.Temperature);
+                const auto boltzmann = std::exp(-deltaEnergy / temperature);
                 return RandUtils::RandomUniformReal01() < std::min<DevFloat>(1.0, boltzmann);
             }
 
-            auto MeasureAndPublishDiagnostics(const UInt accepted, const UInt rejected) -> void {
+            auto MeasureAndPublishDiagnostics(const UInt accepted,
+                                             const UInt rejected,
+                                             const DevFloat externalField) -> void {
                 const auto latticeSize = static_cast<DevFloat>(Config.L) * static_cast<DevFloat>(Config.L);
                 if (latticeSize <= 0.0) {
                     State->SetDiagnostics(0.0, 0.0, 0.0, accepted, rejected);
@@ -76,7 +82,7 @@ namespace Slab::Models::Ising::V2 {
                         const auto south = SpinField->At(i, (j + 1) % Config.L);
 
                         energy -= s * (east + south);
-                        energy -= Config.ExternalField * s;
+                        energy -= externalField * s;
                         magnetization += s;
                     }
                 }
@@ -90,14 +96,20 @@ namespace Slab::Models::Ising::V2 {
             auto RunOneSweep() -> void {
                 UInt accepted = 0;
                 UInt rejected = 0;
+                const auto externalField = RuntimeControls != nullptr
+                    ? RuntimeControls->GetExternalField()
+                    : Config.ExternalField;
+                const auto temperature = RuntimeControls != nullptr
+                    ? RuntimeControls->GetTemperature()
+                    : Config.Temperature;
 
                 const auto attempts = Config.L * Config.L;
                 for (UInt trial = 0; trial < attempts; ++trial) {
                     const auto i = static_cast<UInt>(RandUtils::RandomUniformUInt() % Config.L);
                     const auto j = static_cast<UInt>(RandUtils::RandomUniformUInt() % Config.L);
 
-                    const auto deltaEnergy = DeltaEnergy(i, j);
-                    if (ShouldAccept(deltaEnergy)) {
+                    const auto deltaEnergy = DeltaEnergy(i, j, externalField);
+                    if (ShouldAccept(deltaEnergy, temperature)) {
                         SpinField->At(i, j) = -SpinField->At(i, j);
                         ++accepted;
                     } else {
@@ -105,18 +117,23 @@ namespace Slab::Models::Ising::V2 {
                     }
                 }
 
-                MeasureAndPublishDiagnostics(accepted, rejected);
+                MeasureAndPublishDiagnostics(accepted, rejected, externalField);
             }
 
         public:
-            explicit FIsingMetropolisStepperV2(const FIsingMetropolisConfigV2 config)
-            : Config(config) {
+            explicit FIsingMetropolisStepperV2(const FIsingMetropolisConfigV2 config,
+                                               TPointer<FIsingRuntimeControlsV2> runtimeControls)
+            : Config(config)
+            , RuntimeControls(std::move(runtimeControls)) {
                 const auto xMin = -0.5 * static_cast<DevFloat>(Config.L);
                 const auto yMin = -0.5 * static_cast<DevFloat>(Config.L);
                 SpinField = New<Math::R2toR::NumericFunction_CPU>(Config.L, Config.L, xMin, yMin, 1.0, 1.0);
                 State = New<FIsingLatticeStateV2>(SpinField);
                 InitializeState();
-                MeasureAndPublishDiagnostics(0, 0);
+                const auto externalField = RuntimeControls != nullptr
+                    ? RuntimeControls->GetExternalField()
+                    : Config.ExternalField;
+                MeasureAndPublishDiagnostics(0, 0, externalField);
             }
 
             auto Step(const size_t nSteps) -> void override {
@@ -302,6 +319,7 @@ namespace Slab::Models::Ising::V2 {
                                                        const UIntBig consoleIntervalSteps,
                                                        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
     : Config(std::move(config))
+    , RuntimeControls(New<FIsingRuntimeControlsV2>(Config.Temperature, Config.ExternalField))
     , ConsoleIntervalSteps(std::max<UIntBig>(1, consoleIntervalSteps))
     , LiveView(liveView) {
         ValidateConfig();
@@ -315,7 +333,7 @@ namespace Slab::Models::Ising::V2 {
 
     auto FIsingMetropolisRecipeV2::BuildSession() -> TPointer<Math::Numerics::V2::FSimulationSessionV2> {
         ValidateConfig();
-        auto stepper = New<FIsingMetropolisStepperV2>(Config);
+        auto stepper = New<FIsingMetropolisStepperV2>(Config, RuntimeControls);
         return New<Math::Numerics::V2::FStepperSessionV2>(stepper);
     }
 
@@ -366,6 +384,10 @@ namespace Slab::Models::Ising::V2 {
 
     auto FIsingMetropolisRecipeV2::GetConfig() const -> const FIsingMetropolisConfigV2 & {
         return Config;
+    }
+
+    auto FIsingMetropolisRecipeV2::GetRuntimeControls() const -> TPointer<FIsingRuntimeControlsV2> {
+        return RuntimeControls;
     }
 
     auto FIsingMetropolisRecipeV2::GetLiveView() const -> TPointer<Math::LiveData::V2::FSessionLiveViewV2> {

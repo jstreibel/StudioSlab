@@ -5,6 +5,7 @@
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Numerics/V2/Runtime/SimulationRecipeV2.h"
 
+#include <atomic>
 #include <numbers>
 
 namespace Slab::Models::XY::V2 {
@@ -61,8 +62,37 @@ namespace Slab::Models::XY::V2 {
         auto Multiply(DevFloat a) -> Math::Base::EquationState & override;
     };
 
+    class FXYRuntimeControlsV2 final {
+        std::atomic<DevFloat> Temperature;
+        std::atomic<DevFloat> ExternalField;
+
+    public:
+        explicit FXYRuntimeControlsV2(const DevFloat temperature = 0.7,
+                                      const DevFloat externalField = 0.0)
+        : Temperature(temperature)
+        , ExternalField(externalField) {
+        }
+
+        [[nodiscard]] auto GetTemperature() const -> DevFloat {
+            return Temperature.load(std::memory_order_relaxed);
+        }
+
+        auto SetTemperature(const DevFloat temperature) -> void {
+            Temperature.store(temperature, std::memory_order_relaxed);
+        }
+
+        [[nodiscard]] auto GetExternalField() const -> DevFloat {
+            return ExternalField.load(std::memory_order_relaxed);
+        }
+
+        auto SetExternalField(const DevFloat externalField) -> void {
+            ExternalField.store(externalField, std::memory_order_relaxed);
+        }
+    };
+
     class FXYMetropolisRecipeV2 final : public Math::Numerics::V2::FSimulationRecipeV2 {
         FXYMetropolisConfigV2 Config;
+        TPointer<FXYRuntimeControlsV2> RuntimeControls = nullptr;
         UIntBig ConsoleIntervalSteps = 1;
         UIntBig LiveViewIntervalSteps = 0; // 0 => follow ConsoleIntervalSteps
         TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView = nullptr;
@@ -82,11 +112,13 @@ namespace Slab::Models::XY::V2 {
 
         [[nodiscard]] auto GetRunLimits() const -> Math::Numerics::V2::FRunLimitsV2 override;
         [[nodiscard]] auto GetConfig() const -> const FXYMetropolisConfigV2 &;
+        [[nodiscard]] auto GetRuntimeControls() const -> TPointer<FXYRuntimeControlsV2>;
         [[nodiscard]] auto GetLiveView() const -> TPointer<Math::LiveData::V2::FSessionLiveViewV2>;
     };
 
     DefinePointers(FXYMetropolisRecipeV2)
     DefinePointers(FXYLatticeStateV2)
+    DefinePointers(FXYRuntimeControlsV2)
 
 } // namespace Slab::Models::XY::V2
 

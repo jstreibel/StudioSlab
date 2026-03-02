@@ -47,6 +47,15 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - slab monitor windows render/input only in `Monitor` workspace
   - tab-switch artifacts and repeated zero-viewport warnings resolved in `Simulations`/`Schemes` workspaces
 
+## Progress Notes (2026-03-02)
+
+- `LP-00` first slice implemented:
+  - generic scalar live-parameter binding helper (`LiveParameterControlV2`)
+  - XY/Ising runtime controls now bind `Temperature` and `ExternalField` through `LiveControl` topics
+  - const launch parameters are published as read-only control topics in the same namespace
+  - LabV2 launcher can optionally publish XY/Ising live parameter values while simulations run
+  - tests added for generic XY/Ising runtime binding path
+
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
 
@@ -65,6 +74,12 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 ### `P0` `KG2D-03` — First control binding prototype (“poke field”)
 - Mouse/UI control -> external forcing `J(x^\\mu)` (best-effort wall-clock path).
 - done (`LabV2` sidepane source + monitor-side source + CLI flags for KG2D).
+
+### `P0` `LP-00` — Live runtime parameters (first slice)
+- reference: `Docs/live-parameters-v2-slice-scope.md`
+- add mutability/exposure policy for runtime parameters
+- implement generic scalar binding path to `LiveControl V2`
+- first adopters: XY + Ising (`Temperature`, `ExternalField`)
 
 ## Parallel Track (keep one item active max)
 

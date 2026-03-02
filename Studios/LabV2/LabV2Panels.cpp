@@ -9,8 +9,6 @@
 #include "Math/Numerics/NumericTask.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
-#include "Studios/Common/Simulations/V2/KGR2toRControlTopicsV2.h"
-
 #include <algorithm>
 #include <cctype>
 #include <chrono>
@@ -71,6 +69,17 @@ namespace {
         case ESemantic::Event: return "Event";
         }
         return "Unknown";
+    }
+
+    auto ToControlSemanticTooltip(const Slab::Math::LiveControl::V2::EControlSemanticV2 semantic) -> const char * {
+        using ESemantic = Slab::Math::LiveControl::V2::EControlSemanticV2;
+        switch (semantic) {
+        case ESemantic::Level:
+            return "Stateful/latest-value control.\nUse for continuously sampled setpoints like temperature or field.";
+        case ESemantic::Event:
+            return "Edge/impulse control.\nUse for triggers, pulses, and other discrete actions.";
+        }
+        return "Unknown control semantic.";
     }
 
     auto ToControlTimeDomainString(const Slab::Math::LiveControl::V2::EControlTimeDomainV2 domain) -> Slab::Str {
@@ -547,8 +556,15 @@ namespace Slab::Studios::LabV2::Panels {
                 ImGui::PopID();
 
                 ImGui::TableSetColumnIndex(1);
-                if (sample.has_value()) ImGui::Text("%s", ToControlSemanticString(sample->Semantic).c_str());
-                else ImGui::TextDisabled("-");
+                if (sample.has_value()) {
+                    ImGui::Text("%s", ToControlSemanticString(sample->Semantic).c_str());
+                    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort)) {
+                        if (ImGui::BeginTooltip()) {
+                            ImGui::TextUnformatted(ToControlSemanticTooltip(sample->Semantic));
+                            ImGui::EndTooltip();
+                        }
+                    }
+                } else ImGui::TextDisabled("-");
 
                 ImGui::TableSetColumnIndex(2);
                 if (sample.has_value()) ImGui::Text("%s", ToControlValueTypeString(sample->Value).c_str());
@@ -594,64 +610,6 @@ namespace Slab::Studios::LabV2::Panels {
                 ImGui::TextDisabled("No sample published yet.");
             }
         }
-    }
-
-    auto ShowKG2DControlSourcePanelAndPublish(
-        const TPointer<Math::LiveControl::V2::FLiveControlHubV2> &hub,
-        bool &bPublish,
-        DevFloat &xCenter,
-        DevFloat &yCenter,
-        DevFloat &width,
-        DevFloat &amplitude,
-        bool &bEnabled,
-        const Str &topicPrefix) -> void {
-        using namespace Math::LiveControl::V2;
-        using namespace Slab::Studios::Common::Simulations::V2;
-
-        ImGui::SeparatorText("KG2D Control Source");
-        ImGui::Checkbox("Publish KG2D forcing controls", &bPublish);
-        ImGui::TextDisabled("Topic prefix: %s", topicPrefix.c_str());
-
-        ImGui::DragScalar("KG2D ctrl x", ImGuiDataType_Double, &xCenter, 0.01, nullptr, nullptr, "%.6g");
-        ImGui::DragScalar("KG2D ctrl y", ImGuiDataType_Double, &yCenter, 0.01, nullptr, nullptr, "%.6g");
-        ImGui::DragScalar("KG2D ctrl width", ImGuiDataType_Double, &width, 0.001, nullptr, nullptr, "%.6g");
-        ImGui::DragScalar("KG2D ctrl amplitude", ImGuiDataType_Double, &amplitude, 0.01, nullptr, nullptr, "%.6g");
-        ImGui::Checkbox("KG2D ctrl enabled", &bEnabled);
-
-        if (!bPublish || hub == nullptr) return;
-
-        const auto now = std::chrono::duration<DevFloat>(
-            std::chrono::steady_clock::now().time_since_epoch()).count();
-
-        FControlTimestampV2 stamp;
-        stamp.Domain = EControlTimeDomainV2::WallClockTime;
-        stamp.WallClockSeconds = now;
-
-        const auto topics = BuildKG2DForcingTopicNamesV2(topicPrefix);
-
-        FControlSampleV2 centerSample;
-        centerSample.Value = Math::Real2D{xCenter, yCenter};
-        centerSample.Semantic = EControlSemanticV2::Level;
-        centerSample.Timestamp = stamp;
-        hub->GetOrCreateTopic(topics.Center)->Publish(centerSample);
-
-        FControlSampleV2 amplitudeSample;
-        amplitudeSample.Value = amplitude;
-        amplitudeSample.Semantic = EControlSemanticV2::Level;
-        amplitudeSample.Timestamp = stamp;
-        hub->GetOrCreateTopic(topics.Amplitude)->Publish(amplitudeSample);
-
-        FControlSampleV2 widthSample;
-        widthSample.Value = std::max<DevFloat>(width, 1e-9);
-        widthSample.Semantic = EControlSemanticV2::Level;
-        widthSample.Timestamp = stamp;
-        hub->GetOrCreateTopic(topics.Width)->Publish(widthSample);
-
-        FControlSampleV2 enabledSample;
-        enabledSample.Value = bEnabled;
-        enabledSample.Semantic = EControlSemanticV2::Level;
-        enabledSample.Timestamp = stamp;
-        hub->GetOrCreateTopic(topics.Enabled)->Publish(enabledSample);
     }
 
 } // namespace Slab::Studios::LabV2::Panels

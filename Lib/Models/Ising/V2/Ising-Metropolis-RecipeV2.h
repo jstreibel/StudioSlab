@@ -5,6 +5,8 @@
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Numerics/V2/Runtime/SimulationRecipeV2.h"
 
+#include <atomic>
+
 namespace Slab::Models::Ising::V2 {
 
     struct FIsingMetropolisConfigV2 {
@@ -58,8 +60,37 @@ namespace Slab::Models::Ising::V2 {
         auto Multiply(DevFloat a) -> Math::Base::EquationState & override;
     };
 
+    class FIsingRuntimeControlsV2 final {
+        std::atomic<DevFloat> Temperature;
+        std::atomic<DevFloat> ExternalField;
+
+    public:
+        explicit FIsingRuntimeControlsV2(const DevFloat temperature = 2.269185314,
+                                         const DevFloat externalField = 0.0)
+        : Temperature(temperature)
+        , ExternalField(externalField) {
+        }
+
+        [[nodiscard]] auto GetTemperature() const -> DevFloat {
+            return Temperature.load(std::memory_order_relaxed);
+        }
+
+        auto SetTemperature(const DevFloat temperature) -> void {
+            Temperature.store(temperature, std::memory_order_relaxed);
+        }
+
+        [[nodiscard]] auto GetExternalField() const -> DevFloat {
+            return ExternalField.load(std::memory_order_relaxed);
+        }
+
+        auto SetExternalField(const DevFloat externalField) -> void {
+            ExternalField.store(externalField, std::memory_order_relaxed);
+        }
+    };
+
     class FIsingMetropolisRecipeV2 final : public Math::Numerics::V2::FSimulationRecipeV2 {
         FIsingMetropolisConfigV2 Config;
+        TPointer<FIsingRuntimeControlsV2> RuntimeControls = nullptr;
         UIntBig ConsoleIntervalSteps = 1;
         UIntBig LiveViewIntervalSteps = 0; // 0 => follow ConsoleIntervalSteps
         TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView = nullptr;
@@ -79,11 +110,13 @@ namespace Slab::Models::Ising::V2 {
 
         [[nodiscard]] auto GetRunLimits() const -> Math::Numerics::V2::FRunLimitsV2 override;
         [[nodiscard]] auto GetConfig() const -> const FIsingMetropolisConfigV2 &;
+        [[nodiscard]] auto GetRuntimeControls() const -> TPointer<FIsingRuntimeControlsV2>;
         [[nodiscard]] auto GetLiveView() const -> TPointer<Math::LiveData::V2::FSessionLiveViewV2>;
     };
 
     DefinePointers(FIsingMetropolisRecipeV2)
     DefinePointers(FIsingLatticeStateV2)
+    DefinePointers(FIsingRuntimeControlsV2)
 
 } // namespace Slab::Models::Ising::V2
 

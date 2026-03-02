@@ -36,6 +36,7 @@
 #include "Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.h"
 #include "Models/Ising/V2/Ising-Metropolis-RecipeV2.h"
 #include "Models/XY/V2/XY-Metropolis-RecipeV2.h"
+#include "Studios/Common/Simulations/V2/LiveParameterControlV2.h"
 
 namespace {
 
@@ -1617,4 +1618,182 @@ TEST_CASE("PhaseJ V2 - Ising Metropolis recipe runs and exposes lattice diagnost
     CHECK(state->GetAcceptanceRatio() <= 1.0);
     CHECK(state->GetMagnetization() >= -1.0);
     CHECK(state->GetMagnetization() <= 1.0);
+}
+
+TEST_CASE("PhaseJ V2 - XY runtime controls bind through generic LiveControl path", "[V2][PhaseJ][XY][LiveControl]") {
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Math::LiveControl::V2;
+    using namespace Slab::Models::XY::V2;
+    using namespace Slab::Studios::Common::Simulations::V2;
+
+    FXYMetropolisConfigV2 cfg;
+    cfg.L = 16;
+    cfg.Steps = 20;
+    cfg.Temperature = 0.9;
+    cfg.ExternalField = 0.0;
+    cfg.DeltaTheta = 1.2;
+    constexpr auto interval = UIntBig(5);
+    constexpr auto batch = size_t(16);
+    const Str topicPrefix = "tests/live-xy";
+    auto controlHub = New<FLiveControlHubV2>();
+
+    auto recipe = New<FXYMetropolisRecipeV2>(cfg, interval);
+    const auto controls = recipe->GetRuntimeControls();
+    REQUIRE(controls != nullptr);
+
+    Vector<FLiveScalarParameterBindingV2> bindings;
+    bindings.push_back({
+        "temperature",
+        "Temperature",
+        "runtime mutable",
+        BuildLiveScalarParameterTopicV2(topicPrefix, "temperature"),
+        0.0,
+        std::nullopt,
+        ELiveParameterMutabilityV2::RuntimeMutable,
+        ELiveParameterExposureV2::WritableExposed,
+        cfg.Temperature,
+        [controls]() { return controls->GetTemperature(); },
+        [controls](const DevFloat value) { controls->SetTemperature(value); }
+    });
+    bindings.push_back({
+        "external_field",
+        "h-field",
+        "runtime mutable",
+        BuildLiveScalarParameterTopicV2(topicPrefix, "external_field"),
+        std::nullopt,
+        std::nullopt,
+        ELiveParameterMutabilityV2::RuntimeMutable,
+        ELiveParameterExposureV2::WritableExposed,
+        cfg.ExternalField,
+        [controls]() { return controls->GetExternalField(); },
+        [controls](const DevFloat value) { controls->SetExternalField(value); }
+    });
+    bindings.push_back({
+        "L",
+        "L",
+        "runtime const",
+        BuildLiveScalarParameterTopicV2(topicPrefix, "L"),
+        std::nullopt,
+        std::nullopt,
+        ELiveParameterMutabilityV2::Const,
+        ELiveParameterExposureV2::ReadOnlyExposed,
+        static_cast<DevFloat>(cfg.L)
+    });
+    bindings.push_back({
+        "steps",
+        "Steps",
+        "runtime const",
+        BuildLiveScalarParameterTopicV2(topicPrefix, "steps"),
+        std::nullopt,
+        std::nullopt,
+        ELiveParameterMutabilityV2::Const,
+        ELiveParameterExposureV2::ReadOnlyExposed,
+        static_cast<DevFloat>(cfg.Steps)
+    });
+
+    PublishLiveScalarBindingsV2(controlHub, bindings);
+    PublishLiveScalarParameterValueV2(controlHub, BuildLiveScalarParameterTopicV2(topicPrefix, "temperature"), 0.3);
+    PublishLiveScalarParameterValueV2(controlHub, BuildLiveScalarParameterTopicV2(topicPrefix, "external_field"), -0.2);
+
+    const auto extraSubscriptions = BuildLiveScalarBindingSubscriptionsV2(controlHub, bindings, 1, "test XY live controls");
+    REQUIRE_FALSE(extraSubscriptions.empty());
+    auto wrappedRecipe = New<FAppendedSubscriptionsRecipeV2>(recipe, extraSubscriptions);
+
+    FNumericTaskV2 task(wrappedRecipe, false, batch);
+    REQUIRE(RunTaskAndWait(task) == Core::TaskSuccess);
+
+    CHECK(controls->GetTemperature() == Catch::Approx(0.3).margin(1e-12));
+    CHECK(controls->GetExternalField() == Catch::Approx(-0.2).margin(1e-12));
+
+    const auto lTopic = controlHub->FindTopic(BuildLiveScalarParameterTopicV2(topicPrefix, "L"));
+    REQUIRE(lTopic != nullptr);
+    const auto lValue = lTopic->TryGetLatestScalar();
+    REQUIRE(lValue.has_value());
+    CHECK(*lValue == Catch::Approx(static_cast<DevFloat>(cfg.L)).margin(1e-12));
+
+    const auto stepsTopic = controlHub->FindTopic(BuildLiveScalarParameterTopicV2(topicPrefix, "steps"));
+    REQUIRE(stepsTopic != nullptr);
+    const auto stepsValue = stepsTopic->TryGetLatestScalar();
+    REQUIRE(stepsValue.has_value());
+    CHECK(*stepsValue == Catch::Approx(static_cast<DevFloat>(cfg.Steps)).margin(1e-12));
+}
+
+TEST_CASE("PhaseJ V2 - Ising runtime controls bind through generic LiveControl path", "[V2][PhaseJ][Ising][LiveControl]") {
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Math::LiveControl::V2;
+    using namespace Slab::Models::Ising::V2;
+    using namespace Slab::Studios::Common::Simulations::V2;
+
+    FIsingMetropolisConfigV2 cfg;
+    cfg.L = 16;
+    cfg.Steps = 20;
+    cfg.Temperature = 2.0;
+    cfg.ExternalField = 0.0;
+    constexpr auto interval = UIntBig(5);
+    constexpr auto batch = size_t(16);
+    const Str topicPrefix = "tests/live-ising";
+    auto controlHub = New<FLiveControlHubV2>();
+
+    auto recipe = New<FIsingMetropolisRecipeV2>(cfg, interval);
+    const auto controls = recipe->GetRuntimeControls();
+    REQUIRE(controls != nullptr);
+
+    Vector<FLiveScalarParameterBindingV2> bindings;
+    bindings.push_back({
+        "temperature",
+        "Temperature",
+        "runtime mutable",
+        BuildLiveScalarParameterTopicV2(topicPrefix, "temperature"),
+        0.0,
+        std::nullopt,
+        ELiveParameterMutabilityV2::RuntimeMutable,
+        ELiveParameterExposureV2::WritableExposed,
+        cfg.Temperature,
+        [controls]() { return controls->GetTemperature(); },
+        [controls](const DevFloat value) { controls->SetTemperature(value); }
+    });
+    bindings.push_back({
+        "external_field",
+        "h-field",
+        "runtime mutable",
+        BuildLiveScalarParameterTopicV2(topicPrefix, "external_field"),
+        std::nullopt,
+        std::nullopt,
+        ELiveParameterMutabilityV2::RuntimeMutable,
+        ELiveParameterExposureV2::WritableExposed,
+        cfg.ExternalField,
+        [controls]() { return controls->GetExternalField(); },
+        [controls](const DevFloat value) { controls->SetExternalField(value); }
+    });
+    bindings.push_back({
+        "L",
+        "L",
+        "runtime const",
+        BuildLiveScalarParameterTopicV2(topicPrefix, "L"),
+        std::nullopt,
+        std::nullopt,
+        ELiveParameterMutabilityV2::Const,
+        ELiveParameterExposureV2::ReadOnlyExposed,
+        static_cast<DevFloat>(cfg.L)
+    });
+
+    PublishLiveScalarBindingsV2(controlHub, bindings);
+    PublishLiveScalarParameterValueV2(controlHub, BuildLiveScalarParameterTopicV2(topicPrefix, "temperature"), 1.7);
+    PublishLiveScalarParameterValueV2(controlHub, BuildLiveScalarParameterTopicV2(topicPrefix, "external_field"), 0.6);
+
+    const auto extraSubscriptions = BuildLiveScalarBindingSubscriptionsV2(controlHub, bindings, 1, "test Ising live controls");
+    REQUIRE_FALSE(extraSubscriptions.empty());
+    auto wrappedRecipe = New<FAppendedSubscriptionsRecipeV2>(recipe, extraSubscriptions);
+
+    FNumericTaskV2 task(wrappedRecipe, false, batch);
+    REQUIRE(RunTaskAndWait(task) == Core::TaskSuccess);
+
+    CHECK(controls->GetTemperature() == Catch::Approx(1.7).margin(1e-12));
+    CHECK(controls->GetExternalField() == Catch::Approx(0.6).margin(1e-12));
+
+    const auto lTopic = controlHub->FindTopic(BuildLiveScalarParameterTopicV2(topicPrefix, "L"));
+    REQUIRE(lTopic != nullptr);
+    const auto lValue = lTopic->TryGetLatestScalar();
+    REQUIRE(lValue.has_value());
+    CHECK(*lValue == Catch::Approx(static_cast<DevFloat>(cfg.L)).margin(1e-12));
 }

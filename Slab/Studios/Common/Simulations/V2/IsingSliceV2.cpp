@@ -4,6 +4,7 @@
 #include "../../NumericsV2TaskUtils.h"
 #include "../../V2SimulationRunners.h"
 
+#include "LiveParameterControlV2.h"
 #include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
 #include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
@@ -12,6 +13,7 @@
 #include "Models/Ising/V2/Ising-Metropolis-RecipeV2.h"
 
 #include <algorithm>
+#include <utility>
 
 namespace Slab::Studios::Common::Simulations::V2 {
 
@@ -21,6 +23,12 @@ namespace Slab::Studios::Common::Simulations::V2 {
         if (cfg.Temperature < 0.0) throw Exception("Ising V2 requires temperature >= 0.");
         if (cfg.Interval == 0) cfg.Interval = 1;
         if (cfg.MonitorInterval == 0) cfg.MonitorInterval = cfg.Interval;
+
+        if (cfg.bEnableLiveParameterBinding) {
+            if (cfg.ControlSampleInterval == 0) cfg.ControlSampleInterval = 1;
+            if (cfg.ControlTopicPrefix.empty()) throw Exception("Ising V2 live parameter binding requires a non-empty topic prefix.");
+            if (cfg.ControlHub == nullptr) cfg.ControlHub = New<Math::LiveControl::V2::FLiveControlHubV2>();
+        }
     }
 
     auto BuildIsingRecipeV2(const FIsingExecutionConfigV2 &cfg,
@@ -35,12 +43,79 @@ namespace Slab::Studios::Common::Simulations::V2 {
         modelCfg.ExternalField = cfg.ExternalField;
         modelCfg.bFerromagneticInitial = cfg.bFerromagneticInitial;
 
-        auto recipe = New<FIsingMetropolisRecipeV2>(
+        auto baseRecipe = New<FIsingMetropolisRecipeV2>(
             modelCfg,
             std::max<UIntBig>(UIntBig(1), cfg.Interval),
             liveView);
-        recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
-        return recipe;
+        baseRecipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
+
+        if (!cfg.bEnableLiveParameterBinding || cfg.ControlHub == nullptr) return baseRecipe;
+
+        const auto controls = baseRecipe->GetRuntimeControls();
+        if (controls == nullptr) return baseRecipe;
+
+        using EMutability = ELiveParameterMutabilityV2;
+        using EExposure = ELiveParameterExposureV2;
+
+        Vector<FLiveScalarParameterBindingV2> bindings;
+        bindings.push_back({
+            "temperature",
+            "Temperature",
+            "Monte Carlo temperature (runtime mutable).",
+            BuildLiveScalarParameterTopicV2(cfg.ControlTopicPrefix, "temperature"),
+            0.0,
+            std::nullopt,
+            EMutability::RuntimeMutable,
+            EExposure::WritableExposed,
+            cfg.Temperature,
+            [controls]() { return controls->GetTemperature(); },
+            [controls](const DevFloat value) { controls->SetTemperature(value); }
+        });
+        bindings.push_back({
+            "external_field",
+            "h-field",
+            "External magnetic field (runtime mutable).",
+            BuildLiveScalarParameterTopicV2(cfg.ControlTopicPrefix, "external_field"),
+            std::nullopt,
+            std::nullopt,
+            EMutability::RuntimeMutable,
+            EExposure::WritableExposed,
+            cfg.ExternalField,
+            [controls]() { return controls->GetExternalField(); },
+            [controls](const DevFloat value) { controls->SetExternalField(value); }
+        });
+        bindings.push_back({
+            "L",
+            "L",
+            "Lattice side length (read-only at runtime).",
+            BuildLiveScalarParameterTopicV2(cfg.ControlTopicPrefix, "L"),
+            std::nullopt,
+            std::nullopt,
+            EMutability::Const,
+            EExposure::ReadOnlyExposed,
+            static_cast<DevFloat>(cfg.L)
+        });
+        bindings.push_back({
+            "steps",
+            "Steps",
+            "Planned number of sweeps (read-only at runtime).",
+            BuildLiveScalarParameterTopicV2(cfg.ControlTopicPrefix, "steps"),
+            1.0,
+            std::nullopt,
+            EMutability::Const,
+            EExposure::ReadOnlyExposed,
+            static_cast<DevFloat>(cfg.Steps)
+        });
+
+        PublishLiveScalarBindingsV2(cfg.ControlHub, bindings);
+        const auto bindingSubscriptions = BuildLiveScalarBindingSubscriptionsV2(
+            cfg.ControlHub,
+            bindings,
+            cfg.ControlSampleInterval,
+            "Ising live parameter binding V2");
+        if (bindingSubscriptions.empty()) return baseRecipe;
+
+        return New<Math::Numerics::V2::FAppendedSubscriptionsRecipeV2>(baseRecipe, std::move(bindingSubscriptions));
     }
 
     auto BuildIsingPassiveMonitorWindowV2(const FIsingExecutionConfigV2 &cfg,

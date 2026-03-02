@@ -44,7 +44,6 @@ namespace {
     constexpr auto WindowTitleLiveData = "Live Data";
     constexpr auto WindowTitleLiveControl = "Live Control";
     constexpr auto WindowTitleViews = "Views";
-    constexpr auto WindowTitleKG2DControl = "KG2D Control";
     constexpr auto WindowTitleSimulationLauncher = "Simulation Launcher";
     constexpr auto WindowTitleBlueprints = "Blueprints";
     constexpr auto DockspaceHostName = "##LabV2DockspaceHost";
@@ -440,7 +439,6 @@ auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab works
         bShowWindowLiveData,
         bShowWindowLiveControl,
         bShowWindowViews,
-        bShowWindowKG2DControl,
         bShowWindowBlueprints
     };
 }
@@ -454,7 +452,6 @@ auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab works
     bShowWindowLiveData = cfg.bShowWindowLiveData;
     bShowWindowLiveControl = cfg.bShowWindowLiveControl;
     bShowWindowViews = cfg.bShowWindowViews;
-    bShowWindowKG2DControl = cfg.bShowWindowKG2DControl;
     bShowWindowBlueprints = cfg.bShowWindowBlueprints;
 }
 
@@ -660,7 +657,6 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
             drawToggle("Views", &bShowWindowViews);
             drawToggle("Live Data", &bShowWindowLiveData);
             drawToggle("Live Control", &bShowWindowLiveControl);
-            drawToggle("KG2D", &bShowWindowKG2DControl);
         } else {
             drawToggle("Blueprints", &bShowWindowBlueprints);
         }
@@ -724,7 +720,6 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
         ImGui::DockBuilderDockWindow(WindowTitleViews, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockBottom);
         ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockBottom);
-        ImGui::DockBuilderDockWindow(WindowTitleKG2DControl, dockRight);
         ImGui::DockBuilderDockWindow(WindowTitleLab, dockRight);
     } else {
         ImGui::DockBuilderDockWindow(WindowTitleBlueprints, dockMain);
@@ -856,7 +851,6 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
             ImGui::Checkbox("Live Data", &bShowWindowLiveData);
             ImGui::Checkbox("Live Control", &bShowWindowLiveControl);
             ImGui::Checkbox("Views", &bShowWindowViews);
-            ImGui::Checkbox("KG2D Control", &bShowWindowKG2DControl);
             ImGui::Checkbox("Blueprints", &bShowWindowBlueprints);
         }
     });
@@ -919,25 +913,6 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         true,
         [this]() {
             DrawViewManagerPanel();
-        }
-    });
-
-    registry.push_back(FPanelSurfaceRegistration{
-        WindowTitleKG2DControl,
-        EWorkspaceTab::Monitor,
-        &bShowWindowKG2DControl,
-        false,
-        true,
-        [this]() {
-            Slab::Studios::LabV2::Panels::ShowKG2DControlSourcePanelAndPublish(
-                LiveControlHub,
-                bPublishKG2DControlSource,
-                KG2DControlX,
-                KG2DControlY,
-                KG2DControlWidth,
-                KG2DControlAmplitude,
-                bKG2DControlEnabled,
-                KG2DControlTopicPrefix);
         }
     });
 
@@ -1033,7 +1008,6 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
         ImGui::Checkbox("Live Data", &bShowWindowLiveData);
         ImGui::Checkbox("Live Control", &bShowWindowLiveControl);
         ImGui::Checkbox("Views", &bShowWindowViews);
-        ImGui::Checkbox("KG2D Control", &bShowWindowKG2DControl);
 
         if (bShowWindowTasks) {
             Slab::Studios::LabV2::Panels::ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);
@@ -1055,18 +1029,6 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
             DrawViewManagerPanel();
         }
 
-        if (bShowWindowKG2DControl) {
-            Slab::Studios::LabV2::Panels::ShowKG2DControlSourcePanelAndPublish(
-                LiveControlHub,
-                bPublishKG2DControlSource,
-                KG2DControlX,
-                KG2DControlY,
-                KG2DControlWidth,
-                KG2DControlAmplitude,
-                bKG2DControlEnabled,
-                KG2DControlTopicPrefix);
-        }
-
         if (const auto windowWidth = static_cast<int>(ImGui::GetWindowWidth()); SidePaneWidth != windowWidth) {
             SidePaneWidth = windowWidth;
             NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
@@ -1086,6 +1048,7 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
     ImGuiContext->SetupOptionalMenuItems();
     if (SimulationManager != nullptr) {
         SimulationManager->AddMenus(platformWindow);
+        SimulationManager->TickLiveControlPublishers();
     }
     AddExitMenuEntry(platformWindow, *ImGuiContext);
 

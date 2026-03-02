@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cmath>
 #include <numbers>
+#include <utility>
 
 namespace Slab::Models::XY::V2 {
 
@@ -19,6 +20,7 @@ namespace Slab::Models::XY::V2 {
 
         class FXYMetropolisStepperV2 final : public Math::FStepper {
             FXYMetropolisConfigV2 Config;
+            TPointer<FXYRuntimeControlsV2> RuntimeControls = nullptr;
             TPointer<Math::R2toR::NumericFunction_CPU> ThetaField;
             TPointer<FXYLatticeStateV2> State;
 
@@ -42,7 +44,10 @@ namespace Slab::Models::XY::V2 {
                 }
             }
 
-            [[nodiscard]] auto DeltaEnergy(const UInt i, const UInt j, const DevFloat deltaTheta) const -> DevFloat {
+            [[nodiscard]] auto DeltaEnergy(const UInt i,
+                                           const UInt j,
+                                           const DevFloat deltaTheta,
+                                           const DevFloat externalField) const -> DevFloat {
                 const auto theta0 = ThetaField->At(i, j);
                 const auto theta1 = theta0 + deltaTheta;
 
@@ -57,19 +62,21 @@ namespace Slab::Models::XY::V2 {
                     std::cos(theta1 - north) + std::cos(theta1 - south) + std::cos(theta1 - east) + std::cos(theta1 - west);
 
                 const auto dInteraction = interaction0 - interaction1;
-                const auto dField = Config.ExternalField * (std::cos(theta0) - std::cos(theta1));
+                const auto dField = externalField * (std::cos(theta0) - std::cos(theta1));
                 return dInteraction + dField;
             }
 
-            [[nodiscard]] auto ShouldAccept(const DevFloat deltaEnergy) const -> bool {
+            [[nodiscard]] auto ShouldAccept(const DevFloat deltaEnergy, const DevFloat temperature) const -> bool {
                 if (deltaEnergy <= 0.0) return true;
-                if (Config.Temperature <= 0.0) return false;
+                if (temperature <= 0.0) return false;
 
-                const auto boltzmann = std::exp(-deltaEnergy / Config.Temperature);
+                const auto boltzmann = std::exp(-deltaEnergy / temperature);
                 return RandUtils::RandomUniformReal01() < std::min<DevFloat>(1.0, boltzmann);
             }
 
-            auto MeasureAndPublishDiagnostics(const UInt accepted, const UInt rejected) -> void {
+            auto MeasureAndPublishDiagnostics(const UInt accepted,
+                                             const UInt rejected,
+                                             const DevFloat externalField) -> void {
                 const auto latticeSize = static_cast<DevFloat>(Config.L) * static_cast<DevFloat>(Config.L);
                 if (latticeSize <= 0.0) {
                     State->SetDiagnostics(0.0, 0.0, 0.0, accepted, rejected);
@@ -87,7 +94,7 @@ namespace Slab::Models::XY::V2 {
                         const auto south = ThetaField->At(i, (j + 1) % Config.L);
 
                         energy -= std::cos(theta - east) + std::cos(theta - south);
-                        energy -= Config.ExternalField * std::cos(theta);
+                        energy -= externalField * std::cos(theta);
 
                         mx += std::cos(theta);
                         my += std::sin(theta);
@@ -103,6 +110,12 @@ namespace Slab::Models::XY::V2 {
             auto RunOneSweep() -> void {
                 UInt accepted = 0;
                 UInt rejected = 0;
+                const auto externalField = RuntimeControls != nullptr
+                    ? RuntimeControls->GetExternalField()
+                    : Config.ExternalField;
+                const auto temperature = RuntimeControls != nullptr
+                    ? RuntimeControls->GetTemperature()
+                    : Config.Temperature;
 
                 const auto attempts = Config.L * Config.L;
                 for (UInt trial = 0; trial < attempts; ++trial) {
@@ -110,8 +123,8 @@ namespace Slab::Models::XY::V2 {
                     const auto j = static_cast<UInt>(RandUtils::RandomUniformUInt() % Config.L);
                     const auto deltaTheta = Config.DeltaTheta * (RandUtils::RandomUniformReal01() - 0.5);
 
-                    const auto deltaEnergy = DeltaEnergy(i, j, deltaTheta);
-                    if (ShouldAccept(deltaEnergy)) {
+                    const auto deltaEnergy = DeltaEnergy(i, j, deltaTheta, externalField);
+                    if (ShouldAccept(deltaEnergy, temperature)) {
                         ThetaField->At(i, j) += deltaTheta;
                         ++accepted;
                     } else {
@@ -119,18 +132,23 @@ namespace Slab::Models::XY::V2 {
                     }
                 }
 
-                MeasureAndPublishDiagnostics(accepted, rejected);
+                MeasureAndPublishDiagnostics(accepted, rejected, externalField);
             }
 
         public:
-            explicit FXYMetropolisStepperV2(const FXYMetropolisConfigV2 config)
-            : Config(config) {
+            explicit FXYMetropolisStepperV2(const FXYMetropolisConfigV2 config,
+                                            TPointer<FXYRuntimeControlsV2> runtimeControls)
+            : Config(config)
+            , RuntimeControls(std::move(runtimeControls)) {
                 const auto xMin = -0.5 * static_cast<DevFloat>(Config.L);
                 const auto yMin = -0.5 * static_cast<DevFloat>(Config.L);
                 ThetaField = New<Math::R2toR::NumericFunction_CPU>(Config.L, Config.L, xMin, yMin, 1.0, 1.0);
                 State = New<FXYLatticeStateV2>(ThetaField);
                 InitializeState();
-                MeasureAndPublishDiagnostics(0, 0);
+                const auto externalField = RuntimeControls != nullptr
+                    ? RuntimeControls->GetExternalField()
+                    : Config.ExternalField;
+                MeasureAndPublishDiagnostics(0, 0, externalField);
             }
 
             auto Step(const size_t nSteps) -> void override {
@@ -316,6 +334,7 @@ namespace Slab::Models::XY::V2 {
                                                  const UIntBig consoleIntervalSteps,
                                                  const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
     : Config(std::move(config))
+    , RuntimeControls(New<FXYRuntimeControlsV2>(Config.Temperature, Config.ExternalField))
     , ConsoleIntervalSteps(std::max<UIntBig>(1, consoleIntervalSteps))
     , LiveView(liveView) {
         ValidateConfig();
@@ -330,7 +349,7 @@ namespace Slab::Models::XY::V2 {
 
     auto FXYMetropolisRecipeV2::BuildSession() -> TPointer<Math::Numerics::V2::FSimulationSessionV2> {
         ValidateConfig();
-        auto stepper = New<FXYMetropolisStepperV2>(Config);
+        auto stepper = New<FXYMetropolisStepperV2>(Config, RuntimeControls);
         return New<Math::Numerics::V2::FStepperSessionV2>(stepper);
     }
 
@@ -381,6 +400,10 @@ namespace Slab::Models::XY::V2 {
 
     auto FXYMetropolisRecipeV2::GetConfig() const -> const FXYMetropolisConfigV2 & {
         return Config;
+    }
+
+    auto FXYMetropolisRecipeV2::GetRuntimeControls() const -> TPointer<FXYRuntimeControlsV2> {
+        return RuntimeControls;
     }
 
     auto FXYMetropolisRecipeV2::GetLiveView() const -> TPointer<Math::LiveData::V2::FSessionLiveViewV2> {

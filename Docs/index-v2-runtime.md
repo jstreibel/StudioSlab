@@ -13,6 +13,7 @@
 2. `SPEC.md` (V2 architecture and constraints)
 3. One focused spec:
    - control/input: `Docs/live-control-v2-spec.md`
+   - live runtime params: `Docs/live-parameters-v2-slice-scope.md`
    - sequencing/time: `Docs/sequence-control-spec.md`
 4. One active planning doc:
    - `Docs/v2-feature-backlog.md` or `Docs/v2-model-coverage-matrix.md`

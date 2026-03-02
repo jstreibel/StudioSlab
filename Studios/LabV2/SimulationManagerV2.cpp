@@ -12,9 +12,11 @@
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 #include "Studios/Common/Simulations/V2/KGR2toRControlTopicsV2.h"
+#include "Studios/Common/Simulations/V2/LiveParameterControlV2.h"
 
 #include <algorithm>
 #include <array>
+#include <chrono>
 #include <numbers>
 #include <type_traits>
 #include <utility>
@@ -74,6 +76,14 @@ namespace {
         return pressed;
     }
 
+    auto PublishLauncherScalarControl(const Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> &hub,
+                                      const Slab::Str &topicPrefix,
+                                      const Slab::Str &key,
+                                      const Slab::DevFloat value) -> void {
+        const auto topicName = Slab::Studios::Common::Simulations::V2::BuildLiveScalarParameterTopicV2(topicPrefix, key);
+        Slab::Studios::Common::Simulations::V2::PublishLiveScalarParameterValueV2(hub, topicName, value);
+    }
+
 } // namespace
 
 FSimulationManagerV2::FSimulationManagerV2(
@@ -125,6 +135,9 @@ FSimulationManagerV2::FSimulationManagerV2(
     XYCfg.Interval = 100;
     XYCfg.MonitorInterval = 20;
     XYCfg.Batch = 1024;
+    XYCfg.bEnableLiveParameterBinding = true;
+    XYCfg.ControlSampleInterval = 1;
+    XYCfg.ControlTopicPrefix = Slab::Studios::Common::Simulations::V2::XYControlTopicPrefixDefaultV2;
 
     IsingCfg.L = 64;
     IsingCfg.Steps = 2000;
@@ -133,6 +146,9 @@ FSimulationManagerV2::FSimulationManagerV2(
     IsingCfg.Interval = 100;
     IsingCfg.MonitorInterval = 20;
     IsingCfg.Batch = 1024;
+    IsingCfg.bEnableLiveParameterBinding = true;
+    IsingCfg.ControlSampleInterval = 1;
+    IsingCfg.ControlTopicPrefix = Slab::Studios::Common::Simulations::V2::IsingControlTopicPrefixDefaultV2;
 
     MetropolisCfg.Interval = 1000;
     MetropolisCfg.MonitorInterval = 100;
@@ -281,8 +297,19 @@ auto FSimulationManagerV2::DrawLauncherContents() -> void {
     DrawMetropolisSection();
 }
 
+auto FSimulationManagerV2::TickLiveControlPublishers() -> void {
+    if (XYCfg.bEnableLiveParameterBinding && bXYPublishLiveParameters) {
+        PublishLauncherScalarControl(LiveControlHub, XYCfg.ControlTopicPrefix, "temperature", XYCfg.Temperature);
+        PublishLauncherScalarControl(LiveControlHub, XYCfg.ControlTopicPrefix, "external_field", XYCfg.ExternalField);
+    }
+    if (IsingCfg.bEnableLiveParameterBinding && bIsingPublishLiveParameters) {
+        PublishLauncherScalarControl(LiveControlHub, IsingCfg.ControlTopicPrefix, "temperature", IsingCfg.Temperature);
+        PublishLauncherScalarControl(LiveControlHub, IsingCfg.ControlTopicPrefix, "external_field", IsingCfg.ExternalField);
+    }
+}
+
 auto FSimulationManagerV2::DrawSPISection() -> void {
-    if (!ImGui::CollapsingHeader("SPI", ImGuiTreeNodeFlags_DefaultOpen)) return;
+    if (!ImGui::CollapsingHeader("SPI")) return;
 
     DragUIntLike("Steps##spi", SPICfg.Steps, 1u, 100000000u, 1.0f, "Number of stochastic-time integration steps.");
     DragDevFloat("dT##spi", SPICfg.Dt, 0.0005, 1e-6, 100.0, "%.6g", "Stochastic-time step size.");
@@ -304,7 +331,7 @@ auto FSimulationManagerV2::DrawSPISection() -> void {
 }
 
 auto FSimulationManagerV2::DrawRtoRSection() -> void {
-    if (!ImGui::CollapsingHeader("KGRtoR Plane Waves", ImGuiTreeNodeFlags_DefaultOpen)) return;
+    if (!ImGui::CollapsingHeader("KGRtoR Plane Waves")) return;
 
     DragUIntLike("Steps##rtor", RtoRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
 
@@ -341,7 +368,7 @@ auto FSimulationManagerV2::DrawRtoRSection() -> void {
 }
 
 auto FSimulationManagerV2::DrawR2toRSection() -> void {
-    if (!ImGui::CollapsingHeader("KGR2toR Baseline", ImGuiTreeNodeFlags_DefaultOpen)) return;
+    if (!ImGui::CollapsingHeader("KGR2toR Baseline")) return;
 
     DragUIntLike("Steps##kg2d", R2toRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
     DragDevFloat("L##kg2d", R2toRCfg.L, 0.01, 1e-6, 1e6, "%.6g", "Domain size.");
@@ -452,6 +479,12 @@ auto FSimulationManagerV2::DrawXYSection() -> void {
     DragUIntLike("Interval##xy", XYCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Console/log sampling interval (steps).");
     DragUIntLike("Monitor interval##xy", XYCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Snapshot publishing interval for monitor/live data.");
     DragUIntLike("Batch##xy", XYCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Max internal steps per worker loop iteration.");
+    CheckboxWithTooltip("Enable live parameter binding##xy", &XYCfg.bEnableLiveParameterBinding, "Bind selected runtime parameters to LiveControl topics.");
+    if (XYCfg.bEnableLiveParameterBinding) {
+        DragUIntLike("Control sample interval##xy", XYCfg.ControlSampleInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "How often live parameter topics are polled (steps).");
+        CheckboxWithTooltip("Publish launcher controls##xy", &bXYPublishLiveParameters, "Publish current temperature/h-field values to XY control topics every frame.");
+        ImGui::TextDisabled("Control topic prefix: %s", XYCfg.ControlTopicPrefix.c_str());
+    }
     CheckboxWithTooltip("Publish live data when headless##xy", &bXYPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
 
     ImGui::TextDisabled("Passive GL monitor shows theta field + MC diagnostics.");
@@ -463,6 +496,7 @@ auto FSimulationManagerV2::DrawXYSection() -> void {
     if (ButtonWithTooltip("Run + GL Monitor##xy", "Run and open the passive GL monitor for this simulation.")) {
         try { LaunchXY(true); } catch (const std::exception &e) { LastError = e.what(); }
     }
+
 }
 
 auto FSimulationManagerV2::DrawIsingSection() -> void {
@@ -476,6 +510,12 @@ auto FSimulationManagerV2::DrawIsingSection() -> void {
     DragUIntLike("Interval##ising", IsingCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Console/log sampling interval (steps).");
     DragUIntLike("Monitor interval##ising", IsingCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Snapshot publishing interval for monitor/live data.");
     DragUIntLike("Batch##ising", IsingCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Max internal steps per worker loop iteration.");
+    CheckboxWithTooltip("Enable live parameter binding##ising", &IsingCfg.bEnableLiveParameterBinding, "Bind selected runtime parameters to LiveControl topics.");
+    if (IsingCfg.bEnableLiveParameterBinding) {
+        DragUIntLike("Control sample interval##ising", IsingCfg.ControlSampleInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "How often live parameter topics are polled (steps).");
+        CheckboxWithTooltip("Publish launcher controls##ising", &bIsingPublishLiveParameters, "Publish current temperature/h-field values to Ising control topics every frame.");
+        ImGui::TextDisabled("Control topic prefix: %s", IsingCfg.ControlTopicPrefix.c_str());
+    }
     CheckboxWithTooltip("Publish live data when headless##ising", &bIsingPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
 
     ImGui::TextDisabled("Passive GL monitor shows spin field + MC diagnostics.");
@@ -487,6 +527,7 @@ auto FSimulationManagerV2::DrawIsingSection() -> void {
     if (ButtonWithTooltip("Run + GL Monitor##ising", "Run and open the passive GL monitor for this simulation.")) {
         try { LaunchIsing(true); } catch (const std::exception &e) { LastError = e.what(); }
     }
+
 }
 
 auto FSimulationManagerV2::LaunchSPI(const bool enableMonitor) -> void {
@@ -641,6 +682,7 @@ auto FSimulationManagerV2::LaunchXY(const bool enableMonitor) -> void {
 
     auto cfg = XYCfg;
     cfg.bEnableGLMonitor = enableMonitor;
+    cfg.ControlHub = LiveControlHub;
     FinalizeXYExecutionConfigV2(cfg);
 
     const bool bNeedLiveView = enableMonitor || bXYPublishLiveViewHeadless;
@@ -672,6 +714,7 @@ auto FSimulationManagerV2::LaunchIsing(const bool enableMonitor) -> void {
 
     auto cfg = IsingCfg;
     cfg.bEnableGLMonitor = enableMonitor;
+    cfg.ControlHub = LiveControlHub;
     FinalizeIsingExecutionConfigV2(cfg);
 
     const bool bNeedLiveView = enableMonitor || bIsingPublishLiveViewHeadless;

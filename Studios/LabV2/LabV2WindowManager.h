@@ -6,7 +6,6 @@
 
 #include "Math/Data/V2/LiveDataHubV2.h"
 #include "Math/Data/V2/LiveControlHubV2.h"
-#include "Studios/Common/Simulations/V2/KGR2toRControlTopicsV2.h"
 
 #include <functional>
 #include <array>
@@ -58,7 +57,6 @@ private:
         bool bShowWindowLiveData = true;
         bool bShowWindowLiveControl = true;
         bool bShowWindowViews = true;
-        bool bShowWindowKG2DControl = true;
         bool bShowWindowBlueprints = false;
     };
 
@@ -93,14 +91,6 @@ private:
     bool bTaskHideSuccess = false;
     bool bTaskOnlyNumeric = false;
 
-    bool bPublishKG2DControlSource = true;
-    Slab::DevFloat KG2DControlX = 0.0;
-    Slab::DevFloat KG2DControlY = 0.0;
-    Slab::DevFloat KG2DControlWidth = 0.35;
-    Slab::DevFloat KG2DControlAmplitude = 0.0;
-    bool bKG2DControlEnabled = false;
-    Slab::Str KG2DControlTopicPrefix = Slab::Studios::Common::Simulations::V2::KG2DControlTopicPrefixDefaultV2;
-
     bool bUseDockspaceLayout = true;
     bool bResetDockLayoutRequested = false;
     bool bPendingViewRetile = true;
@@ -112,9 +102,9 @@ private:
     bool bWorkspaceLayoutsBootstrapped = false;
     std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{false, true, true, false, false, false, false, false},
-        FWorkspacePanelVisibility{false, false, false, true, true, true, true, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true}
+        FWorkspacePanelVisibility{false, true, true, false, false, false, false},
+        FWorkspacePanelVisibility{false, false, false, true, true, true, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, true}
     };
     float WorkspaceTabsHeight = 0.0f;
     float WorkspaceStripHeight = 0.0f;
@@ -125,7 +115,6 @@ private:
     bool bShowWindowLiveData = true;
     bool bShowWindowLiveControl = true;
     bool bShowWindowViews = true;
-    bool bShowWindowKG2DControl = true;
     bool bShowWindowBlueprints = false;
     bool bHasLastMousePosition = false;
     int LastMouseX = 0;
