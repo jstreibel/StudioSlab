@@ -6,6 +6,7 @@
 #define STUDIOSLAB_DATA_H
 
 #include "Utils/Types.h"
+#include <atomic>
 
 namespace Slab::Math {
 
@@ -24,7 +25,7 @@ namespace Slab::Math {
     class Data {
         friend class FDataRegistry;
 
-        static CountType n;
+        static std::atomic<CountType> n;
         const UniqueID id;
         FDataName data_name;
 

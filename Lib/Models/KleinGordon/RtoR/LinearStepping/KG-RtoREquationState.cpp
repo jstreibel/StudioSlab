@@ -8,7 +8,7 @@ namespace Slab::Models::KGRtoR {
 
     auto FEquationState::Replicate(std::optional<Str> Name) const -> TPointer<Base::EquationState> {
         auto clone1 = DynamicPointerCast<RtoR::NumericFunction>(Phi->Clone());
-        auto clone2 = DynamicPointerCast<RtoR::NumericFunction>(Phi->Clone());
+        auto clone2 = DynamicPointerCast<RtoR::NumericFunction>(dPhiDt->Clone());
 
         return New<FEquationState>(clone1, clone2);
     }

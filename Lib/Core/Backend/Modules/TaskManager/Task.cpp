@@ -3,6 +3,7 @@
 //
 
 #include "Task.h"
+#include "Core/Tools/Log.h"
 
 #include <utility>
 
@@ -15,7 +16,15 @@ namespace Slab::Core {
         TaskStatus = TaskRunning;
         ThreadStatus = ThreadRunning;
 
-        TaskStatus = Run();
+        try {
+            TaskStatus = Run();
+        } catch (const std::exception &e) {
+            TaskStatus = TaskError;
+            FLog::Error() << "Task \"" << Name << "\" threw exception: " << e.what() << FLog::Flush;
+        } catch (...) {
+            TaskStatus = TaskError;
+            FLog::Error() << "Task \"" << Name << "\" threw unknown exception." << FLog::Flush;
+        }
 
         std::unique_lock lock(FinishMutex);
         ThreadStatus = ThreadWaitingRelease;

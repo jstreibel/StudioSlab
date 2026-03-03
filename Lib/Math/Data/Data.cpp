@@ -6,7 +6,7 @@
 #include "DataManager.h"
 
 namespace Slab::Math {
-    CountType Data::n = 0;
+    std::atomic<CountType> Data::n = 0;
 
     Data::Data(FDataName name) : id(name=="[invalid]" ? 0 : ++n /* zero is reserved */), data_name(name) {}
 

@@ -79,7 +79,7 @@ namespace Slab::Models::KGRtoR::PlaneWaves::V2 {
         if (Config.N < 4) throw Exception("KGRtoR PlaneWaves V2 requires N >= 4.");
         if (Config.L <= 0.0) throw Exception("KGRtoR PlaneWaves V2 requires L > 0.");
         if (Config.Dt <= 0.0) throw Exception("KGRtoR PlaneWaves V2 requires dt > 0.");
-        if (Config.Steps == 0) throw Exception("KGRtoR PlaneWaves V2 requires steps > 0.");
+        if (!bRunEndless && Config.Steps == 0) throw Exception("KGRtoR PlaneWaves V2 requires steps > 0.");
         if (Config.Harmonic == 0) throw Exception("KGRtoR PlaneWaves V2 requires harmonic >= 1.");
     }
 
