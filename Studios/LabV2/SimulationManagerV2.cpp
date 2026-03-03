@@ -164,9 +164,9 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
         const auto item = Slab::Graphics::MainMenuItem{
             itemLocation,
             {
-                {"SPI"},
-                {"KGRtoR Plane Waves"},
-                {"KGR2toR"},
+                {"Stochastic Path Integral"},
+                {"Klein-Gordon 1+1 dim"},
+                {"Klein-Gordon 2+1 dim"},
                 {Slab::Graphics::MainMenuSeparator},
                 {"Molecular Dynamics"},
                 {Slab::Graphics::MainMenuSeparator},
@@ -198,9 +198,9 @@ auto FSimulationManagerV2::HandleLaunchMenuItem(const Slab::Str &itemString) -> 
     };
 
     static constexpr std::array<FLaunchMenuEntry, 7> entries = {{
-        {"SPI", &FSimulationManagerV2::LaunchSPI},
-        {"KGRtoR Plane Waves", &FSimulationManagerV2::LaunchRtoR},
-        {"KGR2toR", &FSimulationManagerV2::LaunchR2toR},
+        {"Stochastic Path Integral", &FSimulationManagerV2::LaunchSPI},
+        {"Klein-Gordon 1+1 dim", &FSimulationManagerV2::LaunchRtoR},
+        {"Klein-Gordon 2+1 dim", &FSimulationManagerV2::LaunchR2toR},
         {"Molecular Dynamics", &FSimulationManagerV2::LaunchMolecularDynamics},
         {"XY Metropolis", &FSimulationManagerV2::LaunchXY},
         {"Ising Metropolis", &FSimulationManagerV2::LaunchIsing},
@@ -275,7 +275,7 @@ auto FSimulationManagerV2::DrawLauncherContents() -> void {
 }
 
 auto FSimulationManagerV2::DrawSPISection() -> void {
-    if (!ImGui::CollapsingHeader("SPI")) return;
+    if (!ImGui::CollapsingHeader("Stochastic Path Integral")) return;
 
     if (!bOpenEnded) {
         DragUIntLike("Steps##spi", SPICfg.Steps, 1u, 100000000u, 1.0f, "Number of stochastic-time integration steps.");
@@ -293,7 +293,7 @@ auto FSimulationManagerV2::DrawSPISection() -> void {
 }
 
 auto FSimulationManagerV2::DrawRtoRSection() -> void {
-    if (!ImGui::CollapsingHeader("KGRtoR Plane Waves")) return;
+    if (!ImGui::CollapsingHeader("Klein-Gordon 1+1 dim")) return;
 
     if (!bOpenEnded) {
         DragUIntLike("Steps##rtor", RtoRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
@@ -327,7 +327,7 @@ auto FSimulationManagerV2::DrawRtoRSection() -> void {
 }
 
 auto FSimulationManagerV2::DrawR2toRSection() -> void {
-    if (!ImGui::CollapsingHeader("KGR2toR")) return;
+    if (!ImGui::CollapsingHeader("Klein-Gordon 2+1 dim")) return;
 
     if (!bOpenEnded) {
         DragUIntLike("Steps##kg2d", R2toRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
@@ -511,7 +511,7 @@ auto FSimulationManagerV2::LaunchRtoR(const bool enableMonitor) -> void {
             "BuildRtoRPlaneWavesPassiveMonitorWindow");
     }
 
-    LaunchNumericTask(recipe, cfg.Batch, "KGRtoR Plane Waves");
+    LaunchNumericTask(recipe, cfg.Batch, "Klein-Gordon 1+1 dim");
 }
 
 auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
@@ -529,13 +529,13 @@ auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
 
     auto recipe = BuildR2toRBaselineRecipeV2(cfg, liveView);
     if (enableMonitor) {
-        if (liveView == nullptr) throw Exception("KGR2toR GL monitor requires a live view.");
+        if (liveView == nullptr) throw Exception("Klein-Gordon 2+1 dim GL monitor requires a live view.");
         AttachMonitorWindowOrThrow(
             BuildR2toRBaselinePassiveMonitorWindowV2(cfg, liveView),
             "BuildR2toRBaselinePassiveMonitorWindow");
     }
 
-    LaunchNumericTask(recipe, cfg.Batch, "KGR2toR");
+    LaunchNumericTask(recipe, cfg.Batch, "Klein-Gordon 2+1 dim");
 }
 
 auto FSimulationManagerV2::LaunchMolecularDynamics(const bool enableMonitor) -> void {

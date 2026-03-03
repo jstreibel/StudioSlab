@@ -689,8 +689,8 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
         LauncherInitialDockId = static_cast<unsigned int>(dockLeft);
         bRequestLauncherInitialDock = LauncherInitialDockId != 0;
 
-        ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleViews, dockLeft);
+        ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleLiveInteraction, dockRight);
         ImGui::DockBuilderDockWindow(WindowTitleTasks, dockBottom);
         ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockBottom);
@@ -833,6 +833,17 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleViews,
+        EWorkspaceTab::Simulations,
+        &bShowWindowViews,
+        false,
+        true,
+        [this]() {
+            DrawViewManagerPanel();
+        }
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
         WindowTitleTasks,
         EWorkspaceTab::Simulations,
         &bShowWindowTasks,
@@ -882,17 +893,6 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         }
     });
 
-    registry.push_back(FPanelSurfaceRegistration{
-        WindowTitleViews,
-        EWorkspaceTab::Simulations,
-        &bShowWindowViews,
-        false,
-        true,
-        [this]() {
-            DrawViewManagerPanel();
-        }
-    });
-
     const auto drawBlueprintsPlaceholder = []() {
         ImGui::TextDisabled("Blueprints demo placeholder");
         ImGui::Separator();
@@ -924,6 +924,7 @@ auto FLabV2WindowManager::DrawPanelSurface(const FPanelSurfaceRegistration &regi
 #ifdef IMGUI_HAS_DOCK
         if (bRequestLauncherInitialDock && LauncherInitialDockId != 0) {
             ImGui::SetNextWindowDockID(static_cast<ImGuiID>(LauncherInitialDockId), ImGuiCond_Always);
+            ImGui::SetNextWindowFocus();
         }
 #endif
     }
