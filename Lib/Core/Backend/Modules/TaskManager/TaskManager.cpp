@@ -37,7 +37,7 @@ namespace Slab::Core {
                     FLog::Fail() << "Job \"" << Task->GetName() << "\" failed (internal task error)." << FLog::Flush;
                     break;
                 case TaskAborted:
-                    FLog::Warning() << "Job \"" << Task->GetName() << "\" aborted." << FLog::Flush;
+                    FLog::Info() << "Job \"" << Task->GetName() << "\" aborted." << FLog::Flush;
                     break;
             }
         };
