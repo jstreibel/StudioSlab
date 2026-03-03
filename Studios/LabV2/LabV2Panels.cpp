@@ -127,6 +127,31 @@ namespace {
         return "-";
     }
 
+    auto BuildWallClockTimestamp() -> Slab::Math::LiveControl::V2::FControlTimestampV2 {
+        using namespace Slab::Math::LiveControl::V2;
+        const auto now = std::chrono::duration<Slab::DevFloat>(
+            std::chrono::steady_clock::now().time_since_epoch()).count();
+        FControlTimestampV2 stamp;
+        stamp.Domain = EControlTimeDomainV2::WallClockTime;
+        stamp.WallClockSeconds = now;
+        return stamp;
+    }
+
+    auto PublishControlValue(const Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> &hub,
+                             const Slab::Str &topicName,
+                             const Slab::Math::LiveControl::V2::FControlValueV2 &value,
+                             const std::optional<Slab::Math::LiveControl::V2::FControlSampleV2> &sample) -> void {
+        using namespace Slab::Math::LiveControl::V2;
+        if (hub == nullptr || topicName.empty()) return;
+
+        FControlSampleV2 nextSample;
+        nextSample.Value = value;
+        nextSample.Semantic = sample.has_value() ? sample->Semantic : EControlSemanticV2::Level;
+        nextSample.Timestamp = BuildWallClockTimestamp();
+
+        hub->GetOrCreateTopic(topicName)->Publish(nextSample);
+    }
+
     auto ResolveLiveDataType(const Slab::TPointer<Slab::Math::LiveData::V2::FSessionLiveViewV2> &view,
                              const Slab::Str &topicName,
                              std::unordered_map<Slab::Str, Slab::Str> &cachedTypes) -> Slab::Str {
@@ -646,6 +671,106 @@ namespace Slab::Studios::LabV2::Panels {
             } else {
                 ImGui::TextDisabled("No sample published yet.");
             }
+        }
+    }
+
+    auto ShowLiveInteractionPanel(const TPointer<Math::LiveControl::V2::FLiveControlHubV2> &hub,
+                                  Str &topicFilter) -> void {
+        using namespace Slab::Math::LiveControl::V2;
+
+        ImGui::SeparatorText("Live Interaction");
+
+        if (hub == nullptr) {
+            ImGui::TextColored(ImVec4(1, 0, 0, 1), "LiveControlHub unavailable.");
+            return;
+        }
+
+        DrawFilterField("##lab-live-interaction-filter", "Filter topics", topicFilter);
+
+        const auto topicNames = hub->ListTopics();
+        if (topicNames.empty()) {
+            ImGui::TextDisabled("No control streams registered.");
+            return;
+        }
+
+        Vector<Str> filteredTopics;
+        filteredTopics.reserve(topicNames.size());
+        for (const auto &topicName : topicNames) {
+            if (!MatchesTopicFilter(topicName, topicFilter)) continue;
+            filteredTopics.emplace_back(topicName);
+        }
+
+        if (filteredTopics.empty()) {
+            ImGui::TextDisabled("No control topic matched current filter.");
+            return;
+        }
+
+        constexpr auto tableFlags =
+            ImGuiTableFlags_Borders |
+            ImGuiTableFlags_RowBg |
+            ImGuiTableFlags_ScrollX |
+            ImGuiTableFlags_SizingFixedFit;
+
+        if (ImGui::BeginTable("LabLiveInteraction", 3, tableFlags)) {
+            ImGui::TableSetupColumn("Topic", ImGuiTableColumnFlags_WidthStretch, 1.0f);
+            ImGui::TableSetupColumn("Type");
+            ImGui::TableSetupColumn("Control", ImGuiTableColumnFlags_WidthStretch, 1.2f);
+            ImGui::TableHeadersRow();
+
+            for (const auto &topicName : filteredTopics) {
+                const auto topic = hub->FindTopic(topicName);
+                const auto sample = topic != nullptr ? topic->TryGetLatestSample() : std::nullopt;
+
+                ImGui::TableNextRow();
+                ImGui::TableSetColumnIndex(0);
+                ImGui::TextUnformatted(topicName.c_str());
+
+                ImGui::TableSetColumnIndex(1);
+                if (sample.has_value()) ImGui::Text("%s", ToControlValueTypeString(sample->Value).c_str());
+                else ImGui::TextDisabled("-");
+
+                ImGui::TableSetColumnIndex(2);
+                ImGui::PushID(topicName.c_str());
+                if (!sample.has_value()) {
+                    ImGui::TextDisabled("No sample");
+                } else if (std::holds_alternative<bool>(sample->Value)) {
+                    bool value = std::get<bool>(sample->Value);
+                    if (ImGui::Checkbox("##bool", &value)) {
+                        PublishControlValue(hub, topicName, value, sample);
+                    }
+                } else if (std::holds_alternative<Slab::DevFloat>(sample->Value)) {
+                    double value = static_cast<double>(std::get<Slab::DevFloat>(sample->Value));
+                    if (ImGui::DragScalar("##scalar", ImGuiDataType_Double, &value, 0.01f)) {
+                        PublishControlValue(hub, topicName, static_cast<Slab::DevFloat>(value), sample);
+                    }
+                } else if (std::holds_alternative<Slab::Math::Real2D>(sample->Value)) {
+                    const auto point = std::get<Slab::Math::Real2D>(sample->Value);
+                    double x = static_cast<double>(point.x);
+                    double y = static_cast<double>(point.y);
+                    bool changed = false;
+                    ImGui::TextUnformatted("x");
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(80.0f);
+                    changed |= ImGui::DragScalar("##x", ImGuiDataType_Double, &x, 0.01f);
+                    ImGui::SameLine();
+                    ImGui::TextUnformatted("y");
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(80.0f);
+                    changed |= ImGui::DragScalar("##y", ImGuiDataType_Double, &y, 0.01f);
+                    if (changed) {
+                        PublishControlValue(
+                            hub,
+                            topicName,
+                            Slab::Math::Real2D{static_cast<Slab::DevFloat>(x), static_cast<Slab::DevFloat>(y)},
+                            sample);
+                    }
+                } else {
+                    ImGui::TextDisabled("Unsupported");
+                }
+                ImGui::PopID();
+            }
+
+            ImGui::EndTable();
         }
     }
 

@@ -39,14 +39,14 @@ private:
     FAddWindowFn AddWindow;
     FRequestLauncherVisibilityFn RequestLauncherVisibility;
 
-    bool bSPIPublishLiveViewHeadless = true;
-    bool bRtoRPublishLiveViewHeadless = true;
-    bool bR2toRPublishLiveViewHeadless = true;
-    bool bMolecularDynamicsPublishLiveViewHeadless = true;
-    bool bXYPublishLiveViewHeadless = true;
-    bool bIsingPublishLiveViewHeadless = true;
+    bool bPublishLiveDataWhenHeadless = true;
     bool bXYPublishLiveParameters = false;
     bool bIsingPublishLiveParameters = false;
+    bool bStartWithMonitor = true;
+
+    Slab::UIntBig CommonInterval = 20;
+    Slab::UIntBig CommonMonitorInterval = 1;
+    Slab::UIntBig CommonBatch = 1;
 
     Slab::Studios::Common::Simulations::V2::FSPIExecutionConfig SPICfg;
     Slab::Studios::Common::Simulations::V2::FRtoRPlaneWavesExecutionConfig RtoRCfg;

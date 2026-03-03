@@ -20,6 +20,8 @@ namespace Slab::Studios::LabV2::Panels {
                                 Str &topicFilter,
                                 bool &bLevelsOnly,
                                 Str &selectedTopic) -> void;
+    auto ShowLiveInteractionPanel(const TPointer<Math::LiveControl::V2::FLiveControlHubV2> &hub,
+                                  Str &topicFilter) -> void;
 
 } // namespace Slab::Studios::LabV2::Panels
 

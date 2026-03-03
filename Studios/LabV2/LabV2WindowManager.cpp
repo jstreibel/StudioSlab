@@ -43,6 +43,7 @@ namespace {
     constexpr auto WindowTitleTasks = "Tasks";
     constexpr auto WindowTitleLiveData = "Live Data";
     constexpr auto WindowTitleLiveControl = "Live Control";
+    constexpr auto WindowTitleLiveInteraction = "Live Interaction";
     constexpr auto WindowTitleViews = "Views";
     constexpr auto WindowTitleSimulationLauncher = "Simulation Launcher";
     constexpr auto WindowTitleBlueprints = "Blueprints";
@@ -419,6 +420,7 @@ auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab works
         bShowWindowTasks,
         bShowWindowLiveData,
         bShowWindowLiveControl,
+        bShowWindowLiveInteraction,
         bShowWindowViews,
         bShowWindowBlueprints
     };
@@ -432,6 +434,7 @@ auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab works
     bShowWindowTasks = cfg.bShowWindowTasks;
     bShowWindowLiveData = cfg.bShowWindowLiveData;
     bShowWindowLiveControl = cfg.bShowWindowLiveControl;
+    bShowWindowLiveInteraction = cfg.bShowWindowLiveInteraction;
     bShowWindowViews = cfg.bShowWindowViews;
     bShowWindowBlueprints = cfg.bShowWindowBlueprints;
 }
@@ -635,6 +638,7 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
             drawToggle("Tasks", &bShowWindowTasks);
             drawToggle("Live Data", &bShowWindowLiveData);
             drawToggle("Live Control", &bShowWindowLiveControl);
+            drawToggle("Live Interaction", &bShowWindowLiveInteraction);
         } else {
             drawToggle("Blueprints", &bShowWindowBlueprints);
         }
@@ -679,6 +683,7 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
     ImGuiID dockMain = dockId;
     if (workspace == EWorkspaceTab::Simulations) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.24f, nullptr, &dockMain);
+        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.28f, nullptr, &dockMain);
         const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.30f, nullptr, &dockMain);
 
         LauncherInitialDockId = static_cast<unsigned int>(dockLeft);
@@ -686,6 +691,7 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
 
         ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleViews, dockLeft);
+        ImGui::DockBuilderDockWindow(WindowTitleLiveInteraction, dockRight);
         ImGui::DockBuilderDockWindow(WindowTitleTasks, dockBottom);
         ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockBottom);
         ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockBottom);
@@ -785,7 +791,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
 
 auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfaceRegistration> {
     std::vector<FPanelSurfaceRegistration> registry;
-    registry.reserve(9);
+    registry.reserve(10);
 
     registry.push_back(FPanelSurfaceRegistration{
         WindowTitleLab,
@@ -807,6 +813,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
             ImGui::Checkbox("Tasks", &bShowWindowTasks);
             ImGui::Checkbox("Live Data", &bShowWindowLiveData);
             ImGui::Checkbox("Live Control", &bShowWindowLiveControl);
+            ImGui::Checkbox("Live Interaction", &bShowWindowLiveInteraction);
             ImGui::Checkbox("Views", &bShowWindowViews);
             ImGui::Checkbox("Blueprints", &bShowWindowBlueprints);
         }
@@ -859,6 +866,19 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
                 LiveControlTopicFilter,
                 bLiveControlLevelsOnly,
                 SelectedLiveControlTopic);
+        }
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleLiveInteraction,
+        EWorkspaceTab::Simulations,
+        &bShowWindowLiveInteraction,
+        false,
+        true,
+        [this]() {
+            Slab::Studios::LabV2::Panels::ShowLiveInteractionPanel(
+                LiveControlHub,
+                LiveInteractionTopicFilter);
         }
     });
 
@@ -955,6 +975,7 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
         ImGui::Checkbox("Tasks", &bShowWindowTasks);
         ImGui::Checkbox("Live Data", &bShowWindowLiveData);
         ImGui::Checkbox("Live Control", &bShowWindowLiveControl);
+        ImGui::Checkbox("Live Interaction", &bShowWindowLiveInteraction);
         ImGui::Checkbox("Views", &bShowWindowViews);
 
         if (bShowWindowTasks) {
@@ -971,6 +992,12 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
                 LiveControlTopicFilter,
                 bLiveControlLevelsOnly,
                 SelectedLiveControlTopic);
+        }
+
+        if (bShowWindowLiveInteraction) {
+            Slab::Studios::LabV2::Panels::ShowLiveInteractionPanel(
+                LiveControlHub,
+                LiveInteractionTopicFilter);
         }
 
         if (bShowWindowViews) {

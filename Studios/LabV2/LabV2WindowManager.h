@@ -55,6 +55,7 @@ private:
         bool bShowWindowTasks = true;
         bool bShowWindowLiveData = true;
         bool bShowWindowLiveControl = true;
+        bool bShowWindowLiveInteraction = true;
         bool bShowWindowViews = true;
         bool bShowWindowBlueprints = false;
     };
@@ -82,6 +83,7 @@ private:
     Slab::Str LiveControlTopicFilter;
     bool bLiveControlLevelsOnly = false;
     Slab::Str SelectedLiveControlTopic;
+    Slab::Str LiveInteractionTopicFilter;
 
     Slab::Str SelectedViewUniqueName;
 
@@ -101,8 +103,8 @@ private:
     bool bWorkspaceLayoutsBootstrapped = false;
     std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{false, true, true, true, true, true, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, true}
+        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true}
     };
     float WorkspaceTabsHeight = 0.0f;
     float WorkspaceStripHeight = 0.0f;
@@ -112,6 +114,7 @@ private:
     bool bShowWindowTasks = true;
     bool bShowWindowLiveData = true;
     bool bShowWindowLiveControl = true;
+    bool bShowWindowLiveInteraction = true;
     bool bShowWindowViews = true;
     bool bShowWindowBlueprints = false;
     bool bHasLastMousePosition = false;

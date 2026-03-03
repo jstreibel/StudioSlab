@@ -81,6 +81,16 @@ namespace {
         Slab::Studios::Common::Simulations::V2::PublishLiveScalarParameterValueV2(hub, topicName, value);
     }
 
+    template<typename TConfig>
+    auto ApplyCommonExecutionSettings(TConfig &cfg,
+                                      const Slab::UIntBig interval,
+                                      const Slab::UIntBig monitorInterval,
+                                      const Slab::UIntBig batch) -> void {
+        cfg.Interval = interval;
+        cfg.MonitorInterval = monitorInterval;
+        cfg.Batch = batch;
+    }
+
 } // namespace
 
 FSimulationManagerV2::FSimulationManagerV2(
@@ -94,18 +104,12 @@ FSimulationManagerV2::FSimulationManagerV2(
 , LiveControlHub(std::move(liveControlHub))
 , AddWindow(std::move(addWindowFn))
 , RequestLauncherVisibility(std::move(requestLauncherVisibilityFn)) {
-    SPICfg.Interval = 10;
-    SPICfg.MonitorInterval = 2;
-    SPICfg.Batch = 512;
+    ApplyCommonExecutionSettings(SPICfg, CommonInterval, CommonMonitorInterval, CommonBatch);
 
-    RtoRCfg.Interval = 20;
-    RtoRCfg.MonitorInterval = 5;
-    RtoRCfg.Batch = 256;
+    ApplyCommonExecutionSettings(RtoRCfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     RtoRCfg.bHistorySummary = true;
 
-    R2toRCfg.Interval = 20;
-    R2toRCfg.MonitorInterval = 5;
-    R2toRCfg.Batch = 256;
+    ApplyCommonExecutionSettings(R2toRCfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     R2toRCfg.bEnableLiveControlForcing = true;
     R2toRCfg.ControlSampleInterval = 1;
     R2toRCfg.ControlTopicPrefix = Slab::Studios::Common::Simulations::V2::KG2DControlTopicPrefixDefaultV2;
@@ -120,18 +124,14 @@ FSimulationManagerV2::FSimulationManagerV2(
     MolecularDynamicsCfg.Steps = 400;
     MolecularDynamicsCfg.Temperature = 0.0;
     MolecularDynamicsCfg.Dissipation = 0.0;
-    MolecularDynamicsCfg.Interval = 20;
-    MolecularDynamicsCfg.MonitorInterval = 5;
-    MolecularDynamicsCfg.Batch = 256;
+    ApplyCommonExecutionSettings(MolecularDynamicsCfg, CommonInterval, CommonMonitorInterval, CommonBatch);
 
     XYCfg.L = 64;
     XYCfg.Steps = 2000;
     XYCfg.Temperature = 0.7;
     XYCfg.ExternalField = 0.0;
     XYCfg.DeltaTheta = 2.0 * std::numbers::pi_v<Slab::DevFloat>;
-    XYCfg.Interval = 100;
-    XYCfg.MonitorInterval = 20;
-    XYCfg.Batch = 1024;
+    ApplyCommonExecutionSettings(XYCfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     XYCfg.bEnableLiveParameterBinding = true;
     XYCfg.ControlSampleInterval = 1;
     XYCfg.ControlTopicPrefix = Slab::Studios::Common::Simulations::V2::XYControlTopicPrefixDefaultV2;
@@ -140,16 +140,12 @@ FSimulationManagerV2::FSimulationManagerV2(
     IsingCfg.Steps = 2000;
     IsingCfg.Temperature = 2.269185314;
     IsingCfg.ExternalField = 0.0;
-    IsingCfg.Interval = 100;
-    IsingCfg.MonitorInterval = 20;
-    IsingCfg.Batch = 1024;
+    ApplyCommonExecutionSettings(IsingCfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     IsingCfg.bEnableLiveParameterBinding = true;
     IsingCfg.ControlSampleInterval = 1;
     IsingCfg.ControlTopicPrefix = Slab::Studios::Common::Simulations::V2::IsingControlTopicPrefixDefaultV2;
 
-    MetropolisCfg.Interval = 1000;
-    MetropolisCfg.MonitorInterval = 100;
-    MetropolisCfg.Batch = 2048;
+    ApplyCommonExecutionSettings(MetropolisCfg, CommonInterval, CommonMonitorInterval, CommonBatch);
 }
 
 auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platformWindow) -> void {
@@ -177,24 +173,17 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
         const auto item = Slab::Graphics::MainMenuItem{
             itemLocation,
             {
-                {"SPI (Headless)"},
-                {"SPI (GL Monitor)"},
-                {"KGRtoR Plane Waves (Headless)"},
-                {"KGRtoR Plane Waves (GL Monitor)"},
-                {"KGR2toR Baseline (Headless)"},
-                {"KGR2toR Baseline (GL Monitor)"},
+                {"SPI"},
+                {"KGRtoR Plane Waves"},
+                {"KGR2toR"},
                 {Slab::Graphics::MainMenuSeparator},
-                {"Molecular Dynamics (Headless)"},
-                {"Molecular Dynamics (GL Monitor)"},
+                {"Molecular Dynamics"},
                 {Slab::Graphics::MainMenuSeparator},
-                {"XY Metropolis (Headless)"},
-                {"XY Metropolis (GL Monitor)"},
+                {"XY Metropolis"},
                 {Slab::Graphics::MainMenuSeparator},
-                {"Ising Metropolis (Headless)"},
-                {"Ising Metropolis (GL Monitor)"},
+                {"Ising Metropolis"},
                 {Slab::Graphics::MainMenuSeparator},
-                {"Metropolis RtoR (Headless)"},
-                {"Metropolis RtoR (GL Monitor)"},
+                {"Metropolis RtoR"},
                 {Slab::Graphics::MainMenuSeparator},
                 {"Open Launcher"}
             },
@@ -215,29 +204,21 @@ auto FSimulationManagerV2::HandleLaunchMenuItem(const Slab::Str &itemString) -> 
     struct FLaunchMenuEntry {
         const char *Label;
         void (FSimulationManagerV2::*LaunchFn)(bool);
-        bool bEnableMonitor;
     };
 
-    static constexpr std::array<FLaunchMenuEntry, 14> entries = {{
-        {"SPI (Headless)", &FSimulationManagerV2::LaunchSPI, false},
-        {"SPI (GL Monitor)", &FSimulationManagerV2::LaunchSPI, true},
-        {"KGRtoR Plane Waves (Headless)", &FSimulationManagerV2::LaunchRtoR, false},
-        {"KGRtoR Plane Waves (GL Monitor)", &FSimulationManagerV2::LaunchRtoR, true},
-        {"KGR2toR Baseline (Headless)", &FSimulationManagerV2::LaunchR2toR, false},
-        {"KGR2toR Baseline (GL Monitor)", &FSimulationManagerV2::LaunchR2toR, true},
-        {"Molecular Dynamics (Headless)", &FSimulationManagerV2::LaunchMolecularDynamics, false},
-        {"Molecular Dynamics (GL Monitor)", &FSimulationManagerV2::LaunchMolecularDynamics, true},
-        {"XY Metropolis (Headless)", &FSimulationManagerV2::LaunchXY, false},
-        {"XY Metropolis (GL Monitor)", &FSimulationManagerV2::LaunchXY, true},
-        {"Ising Metropolis (Headless)", &FSimulationManagerV2::LaunchIsing, false},
-        {"Ising Metropolis (GL Monitor)", &FSimulationManagerV2::LaunchIsing, true},
-        {"Metropolis RtoR (Headless)", &FSimulationManagerV2::LaunchMetropolis, false},
-        {"Metropolis RtoR (GL Monitor)", &FSimulationManagerV2::LaunchMetropolis, true}
+    static constexpr std::array<FLaunchMenuEntry, 7> entries = {{
+        {"SPI", &FSimulationManagerV2::LaunchSPI},
+        {"KGRtoR Plane Waves", &FSimulationManagerV2::LaunchRtoR},
+        {"KGR2toR", &FSimulationManagerV2::LaunchR2toR},
+        {"Molecular Dynamics", &FSimulationManagerV2::LaunchMolecularDynamics},
+        {"XY Metropolis", &FSimulationManagerV2::LaunchXY},
+        {"Ising Metropolis", &FSimulationManagerV2::LaunchIsing},
+        {"Metropolis RtoR", &FSimulationManagerV2::LaunchMetropolis}
     }};
 
     for (const auto &entry : entries) {
         if (itemString != entry.Label) continue;
-        (this->*entry.LaunchFn)(entry.bEnableMonitor);
+        (this->*entry.LaunchFn)(bStartWithMonitor);
         return true;
     }
 
@@ -285,6 +266,13 @@ auto FSimulationManagerV2::DrawLauncherContents() -> void {
         if (ButtonWithTooltip("Clear Error", "Clear the latest launch error message.")) LastError.clear();
     }
 
+    ImGui::SeparatorText("Common");
+    DragUIntLike("Interval", CommonInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Console/log sampling interval (steps).");
+    DragUIntLike("Monitor interval", CommonMonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Snapshot publishing interval for monitor/live data.");
+    DragUIntLike("Batch", CommonBatch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Max internal steps per worker loop iteration.");
+    CheckboxWithTooltip("Publish live data when headless", &bPublishLiveDataWhenHeadless, "Expose telemetry/live data even without GL monitor.");
+    CheckboxWithTooltip("Start with monitor", &bStartWithMonitor, "Launch each simulation with the GL monitor window enabled.");
+
     DrawSPISection();
     DrawRtoRSection();
     DrawR2toRSection();
@@ -313,17 +301,11 @@ auto FSimulationManagerV2::DrawSPISection() -> void {
     DragDevFloat("Time##spi", SPICfg.Time, 0.01, 1e-6, 1e6, "%.6g", "Physical time horizon.");
     DragDevFloat("L##spi", SPICfg.L, 0.01, 1e-6, 1e6, "%.6g", "Spatial domain length.");
     DragUIntLike("N##spi", SPICfg.N, 2u, 200000u, 1.0f, "Number of lattice sites.");
-    DragUIntLike("Interval##spi", SPICfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Console/log sampling interval (steps).");
-    DragUIntLike("Monitor interval##spi", SPICfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Snapshot publishing interval for monitor/live data.");
-    DragUIntLike("Batch##spi", SPICfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Max internal steps per worker loop iteration.");
-    CheckboxWithTooltip("Publish live data when headless##spi", &bSPIPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
-
-    if (ButtonWithTooltip("Run Headless##spi", "Run this simulation without opening a GL monitor window.")) {
-        try { LaunchSPI(false); } catch (const std::exception &e) { LastError = e.what(); }
-    }
-    ImGui::SameLine();
-    if (ButtonWithTooltip("Run + GL Monitor##spi", "Run and open the passive GL monitor for this simulation.")) {
-        try { LaunchSPI(true); } catch (const std::exception &e) { LastError = e.what(); }
+    const char *runTooltip = bStartWithMonitor
+        ? "Run and open the passive GL monitor for this simulation."
+        : "Run this simulation without opening a GL monitor window.";
+    if (ButtonWithTooltip("Run##spi", runTooltip)) {
+        try { LaunchSPI(bStartWithMonitor); } catch (const std::exception &e) { LastError = e.what(); }
     }
 }
 
@@ -348,24 +330,19 @@ auto FSimulationManagerV2::DrawRtoRSection() -> void {
     DragDevFloat("x-center##rtor", RtoRCfg.XCenter, 0.01, -1e6, 1e6, "%.6g", "Initial wave packet center.");
     DragDevFloat("Q##rtor", RtoRCfg.Q, 0.01, -1e6, 1e6, "%.6g", "Initial wave number / momentum.");
     DragUIntLike("Harmonic##rtor", RtoRCfg.Harmonic, 1u, 100000u, 1.0f, "Harmonic mode index.");
-    DragUIntLike("Interval##rtor", RtoRCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Console/log sampling interval (steps).");
-    DragUIntLike("Monitor interval##rtor", RtoRCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Snapshot publishing interval for monitor/live data.");
-    DragUIntLike("Batch##rtor", RtoRCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Max internal steps per worker loop iteration.");
 
-    CheckboxWithTooltip("Publish live data when headless##rtor", &bRtoRPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
     ImGui::TextDisabled("Advanced analysis listeners are currently exposed via CLI (Studios rtor).");
 
-    if (ButtonWithTooltip("Run Headless##rtor", "Run this simulation without opening a GL monitor window.")) {
-        try { LaunchRtoR(false); } catch (const std::exception &e) { LastError = e.what(); }
-    }
-    ImGui::SameLine();
-    if (ButtonWithTooltip("Run + GL Monitor##rtor", "Run and open the passive GL monitor for this simulation.")) {
-        try { LaunchRtoR(true); } catch (const std::exception &e) { LastError = e.what(); }
+    const char *runTooltip = bStartWithMonitor
+        ? "Run and open the passive GL monitor for this simulation."
+        : "Run this simulation without opening a GL monitor window.";
+    if (ButtonWithTooltip("Run##rtor", runTooltip)) {
+        try { LaunchRtoR(bStartWithMonitor); } catch (const std::exception &e) { LastError = e.what(); }
     }
 }
 
 auto FSimulationManagerV2::DrawR2toRSection() -> void {
-    if (!ImGui::CollapsingHeader("KGR2toR Baseline")) return;
+    if (!ImGui::CollapsingHeader("KGR2toR")) return;
 
     DragUIntLike("Steps##kg2d", R2toRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
     DragDevFloat("L##kg2d", R2toRCfg.L, 0.01, 1e-6, 1e6, "%.6g", "Domain size.");
@@ -378,9 +355,6 @@ auto FSimulationManagerV2::DrawR2toRSection() -> void {
     DragDevFloat("Pulse width##kg2d", R2toRCfg.PulseWidth, 0.001, 1e-8, 1e6, "%.6g", "Initial pulse width.");
     DragDevFloat("phi amplitude##kg2d", R2toRCfg.PhiAmplitude, 0.01, -1e6, 1e6, "%.6g", "Initial phi pulse amplitude.");
     DragDevFloat("dphi/dt amplitude##kg2d", R2toRCfg.DPhiDtAmplitude, 0.01, -1e6, 1e6, "%.6g", "Initial time-derivative pulse amplitude.");
-    DragUIntLike("Interval##kg2d", R2toRCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Console/log sampling interval (steps).");
-    DragUIntLike("Monitor interval##kg2d", R2toRCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Snapshot publishing interval for monitor/live data.");
-    DragUIntLike("Batch##kg2d", R2toRCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Max internal steps per worker loop iteration.");
     CheckboxWithTooltip("Enable LiveControl forcing binding##kg2d-bind", &R2toRCfg.bEnableLiveControlForcing, "Read forcing controls from LiveControl topics during run.");
     if (CheckboxWithTooltip("Enable monitor control source UI (GL)##kg2d-monitor-ctrl", &R2toRCfg.bEnableMonitorControlPublisher, "Expose forcing controls in GL monitor and publish to LiveControl topics.")) {
         if (R2toRCfg.bEnableMonitorControlPublisher) {
@@ -400,14 +374,11 @@ auto FSimulationManagerV2::DrawR2toRSection() -> void {
         ImGui::TextDisabled("GL monitor will expose a control source panel for topic-driven forcing.");
     }
 
-    CheckboxWithTooltip("Publish live data when headless##kg2d", &bR2toRPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
-
-    if (ButtonWithTooltip("Run Headless##kg2d", "Run this simulation without opening a GL monitor window.")) {
-        try { LaunchR2toR(false); } catch (const std::exception &e) { LastError = e.what(); }
-    }
-    ImGui::SameLine();
-    if (ButtonWithTooltip("Run + GL Monitor##kg2d", "Run and open the passive GL monitor for this simulation.")) {
-        try { LaunchR2toR(true); } catch (const std::exception &e) { LastError = e.what(); }
+    const char *runTooltip = bStartWithMonitor
+        ? "Run and open the passive GL monitor for this simulation."
+        : "Run this simulation without opening a GL monitor window.";
+    if (ButtonWithTooltip("Run##kg2d", runTooltip)) {
+        try { LaunchR2toR(bStartWithMonitor); } catch (const std::exception &e) { LastError = e.what(); }
     }
 }
 
@@ -420,11 +391,6 @@ auto FSimulationManagerV2::DrawMolecularDynamicsSection() -> void {
     DragUIntLike("N##md", MolecularDynamicsCfg.N, 128u, 200000u, 1.0f, "Number of particles.");
     DragDevFloat("Temperature##md", MolecularDynamicsCfg.Temperature, 0.01, 0.0, 1e6, "%.6g", "Initial/coupled temperature.");
     DragDevFloat("Dissipation##md", MolecularDynamicsCfg.Dissipation, 0.001, 0.0, 1e6, "%.6g", "Dissipation coefficient.");
-    DragUIntLike("Interval##md", MolecularDynamicsCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Console/log sampling interval (steps).");
-    DragUIntLike("Monitor interval##md", MolecularDynamicsCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Snapshot publishing interval for monitor/live data.");
-    DragUIntLike("Batch##md", MolecularDynamicsCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Max internal steps per worker loop iteration.");
-    CheckboxWithTooltip("Publish live data when headless##moldyn", &bMolecularDynamicsPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
-
     const bool bSoftDisk = MolecularDynamicsCfg.InteractionModel ==
         Slab::Studios::Common::Simulations::V2::EMDInteractionModelV2::SoftDisk;
     if (ImGui::RadioButton("SoftDisk", bSoftDisk)) {
@@ -437,12 +403,11 @@ auto FSimulationManagerV2::DrawMolecularDynamicsSection() -> void {
 
     ImGui::TextDisabled("Passive GL monitor shows particle cloud + telemetry.");
 
-    if (ButtonWithTooltip("Run Headless##md", "Run this simulation without opening a GL monitor window.")) {
-        try { LaunchMolecularDynamics(false); } catch (const std::exception &e) { LastError = e.what(); }
-    }
-    ImGui::SameLine();
-    if (ButtonWithTooltip("Run + GL Monitor##md", "Run and open the passive GL monitor for this simulation.")) {
-        try { LaunchMolecularDynamics(true); } catch (const std::exception &e) { LastError = e.what(); }
+    const char *runTooltip = bStartWithMonitor
+        ? "Run and open the passive GL monitor for this simulation."
+        : "Run this simulation without opening a GL monitor window.";
+    if (ButtonWithTooltip("Run##md", runTooltip)) {
+        try { LaunchMolecularDynamics(bStartWithMonitor); } catch (const std::exception &e) { LastError = e.what(); }
     }
 }
 
@@ -450,17 +415,13 @@ auto FSimulationManagerV2::DrawMetropolisSection() -> void {
     if (!ImGui::CollapsingHeader("Metropolis RtoR")) return;
 
     DragUIntLike("Steps##metropolis", MetropolisCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 100.0f, "Number of Metropolis updates.");
-    DragUIntLike("Interval##metropolis", MetropolisCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Console/log sampling interval (steps).");
-    DragUIntLike("Monitor interval##metropolis", MetropolisCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Snapshot publishing interval for monitor/live data.");
-    DragUIntLike("Batch##metropolis", MetropolisCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Max internal steps per worker loop iteration.");
     ImGui::TextDisabled("GL monitor shows phi(x), pi(x), and cursor telemetry.");
 
-    if (ButtonWithTooltip("Run Headless##metropolis", "Run this simulation without opening a GL monitor window.")) {
-        try { LaunchMetropolis(false); } catch (const std::exception &e) { LastError = e.what(); }
-    }
-    ImGui::SameLine();
-    if (ButtonWithTooltip("Run + GL Monitor##metropolis", "Run and open the passive GL monitor for this simulation.")) {
-        try { LaunchMetropolis(true); } catch (const std::exception &e) { LastError = e.what(); }
+    const char *runTooltip = bStartWithMonitor
+        ? "Run and open the passive GL monitor for this simulation."
+        : "Run this simulation without opening a GL monitor window.";
+    if (ButtonWithTooltip("Run##metropolis", runTooltip)) {
+        try { LaunchMetropolis(bStartWithMonitor); } catch (const std::exception &e) { LastError = e.what(); }
     }
 }
 
@@ -473,25 +434,19 @@ auto FSimulationManagerV2::DrawXYSection() -> void {
     DragDevFloat("h-field##xy", XYCfg.ExternalField, 0.005, -1e6, 1e6, "%.6g", "External field strength.");
     DragDevFloat("delta-theta##xy", XYCfg.DeltaTheta, 0.005, 1e-8, 1e6, "%.6g", "Proposal angle range.");
     CheckboxWithTooltip("Ferromagnetic initial##xy", &XYCfg.bFerromagneticInitial, "Start from aligned spins instead of random phases.");
-    DragUIntLike("Interval##xy", XYCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Console/log sampling interval (steps).");
-    DragUIntLike("Monitor interval##xy", XYCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Snapshot publishing interval for monitor/live data.");
-    DragUIntLike("Batch##xy", XYCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Max internal steps per worker loop iteration.");
     CheckboxWithTooltip("Enable live parameter binding##xy", &XYCfg.bEnableLiveParameterBinding, "Bind selected runtime parameters to LiveControl topics.");
     if (XYCfg.bEnableLiveParameterBinding) {
         DragUIntLike("Control sample interval##xy", XYCfg.ControlSampleInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "How often live parameter topics are polled (steps).");
         CheckboxWithTooltip("Publish launcher controls##xy", &bXYPublishLiveParameters, "Publish current temperature/h-field values to XY control topics every frame.");
         ImGui::TextDisabled("Control topic prefix: %s", XYCfg.ControlTopicPrefix.c_str());
     }
-    CheckboxWithTooltip("Publish live data when headless##xy", &bXYPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
-
     ImGui::TextDisabled("Passive GL monitor shows theta field + MC diagnostics.");
 
-    if (ButtonWithTooltip("Run Headless##xy", "Run this simulation without opening a GL monitor window.")) {
-        try { LaunchXY(false); } catch (const std::exception &e) { LastError = e.what(); }
-    }
-    ImGui::SameLine();
-    if (ButtonWithTooltip("Run + GL Monitor##xy", "Run and open the passive GL monitor for this simulation.")) {
-        try { LaunchXY(true); } catch (const std::exception &e) { LastError = e.what(); }
+    const char *runTooltip = bStartWithMonitor
+        ? "Run and open the passive GL monitor for this simulation."
+        : "Run this simulation without opening a GL monitor window.";
+    if (ButtonWithTooltip("Run##xy", runTooltip)) {
+        try { LaunchXY(bStartWithMonitor); } catch (const std::exception &e) { LastError = e.what(); }
     }
 
 }
@@ -504,25 +459,19 @@ auto FSimulationManagerV2::DrawIsingSection() -> void {
     DragDevFloat("Temperature##ising", IsingCfg.Temperature, 0.005, 0.0, 1e6, "%.6g", "Monte Carlo temperature.");
     DragDevFloat("h-field##ising", IsingCfg.ExternalField, 0.005, -1e6, 1e6, "%.6g", "External magnetic field.");
     CheckboxWithTooltip("Ferromagnetic initial##ising", &IsingCfg.bFerromagneticInitial, "Start from aligned spins instead of random initialization.");
-    DragUIntLike("Interval##ising", IsingCfg.Interval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Console/log sampling interval (steps).");
-    DragUIntLike("Monitor interval##ising", IsingCfg.MonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Snapshot publishing interval for monitor/live data.");
-    DragUIntLike("Batch##ising", IsingCfg.Batch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Max internal steps per worker loop iteration.");
     CheckboxWithTooltip("Enable live parameter binding##ising", &IsingCfg.bEnableLiveParameterBinding, "Bind selected runtime parameters to LiveControl topics.");
     if (IsingCfg.bEnableLiveParameterBinding) {
         DragUIntLike("Control sample interval##ising", IsingCfg.ControlSampleInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "How often live parameter topics are polled (steps).");
         CheckboxWithTooltip("Publish launcher controls##ising", &bIsingPublishLiveParameters, "Publish current temperature/h-field values to Ising control topics every frame.");
         ImGui::TextDisabled("Control topic prefix: %s", IsingCfg.ControlTopicPrefix.c_str());
     }
-    CheckboxWithTooltip("Publish live data when headless##ising", &bIsingPublishLiveViewHeadless, "Expose telemetry/live data even without GL monitor.");
-
     ImGui::TextDisabled("Passive GL monitor shows spin field + MC diagnostics.");
 
-    if (ButtonWithTooltip("Run Headless##ising", "Run this simulation without opening a GL monitor window.")) {
-        try { LaunchIsing(false); } catch (const std::exception &e) { LastError = e.what(); }
-    }
-    ImGui::SameLine();
-    if (ButtonWithTooltip("Run + GL Monitor##ising", "Run and open the passive GL monitor for this simulation.")) {
-        try { LaunchIsing(true); } catch (const std::exception &e) { LastError = e.what(); }
+    const char *runTooltip = bStartWithMonitor
+        ? "Run and open the passive GL monitor for this simulation."
+        : "Run this simulation without opening a GL monitor window.";
+    if (ButtonWithTooltip("Run##ising", runTooltip)) {
+        try { LaunchIsing(bStartWithMonitor); } catch (const std::exception &e) { LastError = e.what(); }
     }
 
 }
@@ -531,9 +480,10 @@ auto FSimulationManagerV2::LaunchSPI(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
 
     auto cfg = SPICfg;
+    ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
 
-    const bool bNeedLiveView = enableMonitor || bSPIPublishLiveViewHeadless;
+    const bool bNeedLiveView = enableMonitor || bPublishLiveDataWhenHeadless;
     auto liveView = GetOrCreateLiveViewIfNeeded(bNeedLiveView, "spi", SPIRunCounter);
 
     auto recipe = BuildSPIRecipeV2(cfg, liveView);
@@ -551,10 +501,11 @@ auto FSimulationManagerV2::LaunchRtoR(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
 
     auto cfg = RtoRCfg;
+    ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
     FinalizeRtoRPlaneWavesExecutionConfigV2(cfg);
 
-    const bool bNeedLiveView = enableMonitor || bRtoRPublishLiveViewHeadless;
+    const bool bNeedLiveView = enableMonitor || bPublishLiveDataWhenHeadless;
     auto liveView = GetOrCreateLiveViewIfNeeded(bNeedLiveView, "rtor", RtoRRunCounter);
 
     auto recipe = BuildRtoRPlaneWavesRecipeV2(cfg, liveView);
@@ -572,11 +523,12 @@ auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
 
     auto cfg = R2toRCfg;
+    ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
     cfg.ControlHub = LiveControlHub;
     FinalizeR2toRBaselineExecutionConfigV2(cfg);
 
-    const bool bNeedLiveView = enableMonitor || bR2toRPublishLiveViewHeadless;
+    const bool bNeedLiveView = enableMonitor || bPublishLiveDataWhenHeadless;
     auto liveView = GetOrCreateLiveViewIfNeeded(bNeedLiveView, "kg2d", R2toRRunCounter);
 
     auto recipe = BuildR2toRBaselineRecipeV2(cfg, liveView);
@@ -587,17 +539,18 @@ auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
             "BuildR2toRBaselinePassiveMonitorWindow");
     }
 
-    LaunchNumericTask(recipe, cfg.Batch, "KGR2toR Baseline");
+    LaunchNumericTask(recipe, cfg.Batch, "KGR2toR");
 }
 
 auto FSimulationManagerV2::LaunchMolecularDynamics(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
 
     auto cfg = MolecularDynamicsCfg;
+    ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
     FinalizeMolecularDynamicsExecutionConfigV2(cfg);
 
-    const bool bNeedLiveView = enableMonitor || bMolecularDynamicsPublishLiveViewHeadless;
+    const bool bNeedLiveView = enableMonitor || bPublishLiveDataWhenHeadless;
     auto liveView = GetOrCreateLiveViewIfNeeded(bNeedLiveView, "moldyn", MolecularDynamicsRunCounter);
 
     auto recipe = BuildMolecularDynamicsRecipeV2(cfg, liveView);
@@ -615,6 +568,7 @@ auto FSimulationManagerV2::LaunchMetropolis(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
 
     auto cfg = MetropolisCfg;
+    ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
     FinalizeMetropolisExecutionConfigV2(cfg);
 
@@ -636,11 +590,12 @@ auto FSimulationManagerV2::LaunchXY(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
 
     auto cfg = XYCfg;
+    ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
     cfg.ControlHub = LiveControlHub;
     FinalizeXYExecutionConfigV2(cfg);
 
-    const bool bNeedLiveView = enableMonitor || bXYPublishLiveViewHeadless;
+    const bool bNeedLiveView = enableMonitor || bPublishLiveDataWhenHeadless;
     auto liveView = GetOrCreateLiveViewIfNeeded(bNeedLiveView, "xy", XYRunCounter);
 
     auto recipe = BuildXYRecipeV2(cfg, liveView);
@@ -658,11 +613,12 @@ auto FSimulationManagerV2::LaunchIsing(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
 
     auto cfg = IsingCfg;
+    ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
     cfg.ControlHub = LiveControlHub;
     FinalizeIsingExecutionConfigV2(cfg);
 
-    const bool bNeedLiveView = enableMonitor || bIsingPublishLiveViewHeadless;
+    const bool bNeedLiveView = enableMonitor || bPublishLiveDataWhenHeadless;
     auto liveView = GetOrCreateLiveViewIfNeeded(bNeedLiveView, "ising", IsingRunCounter);
 
     auto recipe = BuildIsingRecipeV2(cfg, liveView);
