@@ -1,5 +1,7 @@
 # Repository Guidelines
 
+Project details under SPEC.md
+
 ## Project Structure & Module Organization
 StudioSlab is a CMake-driven C++23 workspace. Shared libraries live in `Lib/`, grouped by domain modules and exported as the `Slab` static library consumed by studio executables under `Studios/`. Assets sit under `Resources/`, notebooks in `Notebooks/`, scripts in `Scripts/`, and generated outputs land in `Build/bin` and `Build/lib`; keep throwaway `cmake-build-*` directories out of version control.
 
