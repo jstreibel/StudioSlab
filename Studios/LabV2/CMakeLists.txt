@@ -1,4 +1,4 @@
-add_executable( StudioSlabV2
+add_executable( StudioSlab
         MainStudioSlabV2.cpp
         StudioSlabV2App.cpp
         StudioSlabV2App.h
@@ -30,5 +30,5 @@ add_executable( StudioSlabV2
         ../../Slab/Studios/Common/Monitors/V2/XYMetropolisPassiveMonitorWindowV2.cpp
         ../../Slab/Studios/Common/Monitors/V2/IsingMetropolisPassiveMonitorWindowV2.cpp
 )
-target_link_libraries( StudioSlabV2 Slab )
-message(NOTICE "Added executable StudioSlabV2")
+target_link_libraries( StudioSlab Slab )
+message(NOTICE "Added executable StudioSlab")

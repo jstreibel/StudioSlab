@@ -14,6 +14,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdio>
+#include <unordered_map>
 #include <variant>
 
 namespace {
@@ -126,19 +127,46 @@ namespace {
         return "-";
     }
 
+    auto ResolveLiveDataType(const Slab::TPointer<Slab::Math::LiveData::V2::FSessionLiveViewV2> &view,
+                             const Slab::Str &topicName,
+                             std::unordered_map<Slab::Str, Slab::Str> &cachedTypes) -> Slab::Str {
+        if (view == nullptr) return "-";
+
+        const auto lease = view->TryAcquireReadLease();
+        if (!lease.has_value()) {
+            const auto it = cachedTypes.find(topicName);
+            return it != cachedTypes.end() ? it->second : "busy";
+        }
+
+        const auto state = lease->GetState();
+        if (state == nullptr) {
+            cachedTypes.erase(topicName);
+            return "-";
+        }
+
+        const auto category = state->category();
+        if (category.empty()) {
+            cachedTypes.erase(topicName);
+            return "-";
+        }
+
+        cachedTypes[topicName] = category;
+        return category;
+    }
+
     enum class ETaskKind {
         Generic,
         NumericLegacy,
-        NumericV2
+        Numeric
     };
 
     struct FTaskInspection {
         const Slab::Core::FTask *Task = nullptr;
         const Slab::Math::FNumericTask *LegacyNumeric = nullptr;
-        const Slab::Math::Numerics::V2::FNumericTaskV2 *NumericV2 = nullptr;
+        const Slab::Math::Numerics::V2::FNumericTaskV2 *Numeric = nullptr;
 
         [[nodiscard]] auto GetKind() const -> ETaskKind {
-            if (NumericV2 != nullptr) return ETaskKind::NumericV2;
+            if (Numeric != nullptr) return ETaskKind::Numeric;
             if (LegacyNumeric != nullptr) return ETaskKind::NumericLegacy;
             return ETaskKind::Generic;
         }
@@ -154,8 +182,8 @@ namespace {
         if (task == nullptr) return inspection;
 
         // Keep legacy/V2 detection in one place so the panel logic stays type-agnostic.
-        inspection.NumericV2 = dynamic_cast<const Slab::Math::Numerics::V2::FNumericTaskV2 *>(task);
-        if (inspection.NumericV2 == nullptr) {
+        inspection.Numeric = dynamic_cast<const Slab::Math::Numerics::V2::FNumericTaskV2 *>(task);
+        if (inspection.Numeric == nullptr) {
             inspection.LegacyNumeric = dynamic_cast<const Slab::Math::FNumericTask *>(task);
         }
         return inspection;
@@ -163,7 +191,7 @@ namespace {
 
     auto ToTaskKindLabel(const ETaskKind taskKind) -> const char * {
         switch (taskKind) {
-        case ETaskKind::NumericV2: return "NumericV2";
+        case ETaskKind::Numeric: return "Numeric";
         case ETaskKind::NumericLegacy: return "NumericLegacy";
         case ETaskKind::Generic: return "Task";
         }
@@ -184,7 +212,7 @@ namespace Slab::Studios::LabV2::Panels {
         const auto jobs = taskManager->GetAllJobs();
         ImGui::SeparatorText("Tasks");
 
-        DrawFilterField("##labv2-task-filter", "Filter task name", nameFilter);
+        DrawFilterField("##lab-task-filter", "Filter task name", nameFilter);
         ImGui::SameLine();
         ImGui::Checkbox("Running only", &bOnlyRunning);
         ImGui::SameLine();
@@ -242,7 +270,7 @@ namespace Slab::Studios::LabV2::Panels {
             ImGuiTableFlags_RowBg |
             ImGuiTableFlags_ScrollX |
             ImGuiTableFlags_SizingFixedFit;
-        if (!ImGui::BeginTable("LabV2TaskTable", 6, tableFlags)) return;
+        if (!ImGui::BeginTable("LabTaskTable", 6, tableFlags)) return;
 
         ImGui::TableSetupColumn("Task", ImGuiTableColumnFlags_WidthStretch, 1.0f);
         ImGui::TableSetupColumn("Kind");
@@ -297,8 +325,8 @@ namespace Slab::Studios::LabV2::Panels {
             }
 
             ImGui::TableSetColumnIndex(3);
-            if (inspection.NumericV2 != nullptr) {
-                const auto progressOpt = inspection.NumericV2->GetProgress01();
+            if (inspection.Numeric != nullptr) {
+                const auto progressOpt = inspection.Numeric->GetProgress01();
                 if (progressOpt.has_value()) {
                     ImGui::ProgressBar(*progressOpt, ImVec2(110.0f, 0.0f));
                 } else {
@@ -311,8 +339,8 @@ namespace Slab::Studios::LabV2::Panels {
             }
 
             ImGui::TableSetColumnIndex(4);
-            if (inspection.NumericV2 != nullptr) {
-                const auto cursor = inspection.NumericV2->GetCursor();
+            if (inspection.Numeric != nullptr) {
+                const auto cursor = inspection.Numeric->GetCursor();
                 if (cursor.SimulationTime.has_value()) {
                     ImGui::Text("s=%llu t=%.4g",
                         static_cast<unsigned long long>(cursor.Step),
@@ -325,12 +353,14 @@ namespace Slab::Studios::LabV2::Panels {
             }
 
             ImGui::TableSetColumnIndex(5);
-            if (task->GetStatus() != Core::TaskRunning) {
+            if (task->GetStatus() == Core::TaskRunning) {
+                if (ImGui::SmallButton("Stop")) {
+                    taskManager->Abort(job);
+                }
+            } else {
                 if (ImGui::SmallButton("Clear")) {
                     (void) taskManager->ClearJob(job);
                 }
-            } else {
-                ImGui::TextDisabled("-");
             }
 
             ImGui::PopID();
@@ -343,14 +373,15 @@ namespace Slab::Studios::LabV2::Panels {
                              Str &topicFilter,
                              bool &bOnlyBound,
                              Str &selectedTopic) -> void {
-        ImGui::SeparatorText("Live Data V2");
+        static std::unordered_map<Str, Str> sTypeCacheByTopic;
+        ImGui::SeparatorText("Live Data");
 
         if (hub == nullptr) {
-            ImGui::TextColored(ImVec4(1, 0, 0, 1), "LiveDataHubV2 unavailable.");
+            ImGui::TextColored(ImVec4(1, 0, 0, 1), "LiveDataHub unavailable.");
             return;
         }
 
-        DrawFilterField("##labv2-live-data-filter", "Filter topics", topicFilter);
+        DrawFilterField("##lab-live-data-filter", "Filter topics", topicFilter);
         ImGui::SameLine();
         ImGui::Checkbox("Only bound", &bOnlyBound);
 
@@ -382,9 +413,10 @@ namespace Slab::Studios::LabV2::Panels {
             ImGuiTableFlags_RowBg |
             ImGuiTableFlags_ScrollX |
             ImGuiTableFlags_SizingFixedFit;
-        if (ImGui::BeginTable("LabV2LiveDataTopics", 6, tableFlags)) {
+        if (ImGui::BeginTable("LabLiveDataTopics", 7, tableFlags)) {
             ImGui::TableSetupColumn("Topic", ImGuiTableColumnFlags_WidthStretch, 1.0f);
             ImGui::TableSetupColumn("Run");
+            ImGui::TableSetupColumn("Type");
             ImGui::TableSetupColumn("Step");
             ImGui::TableSetupColumn("t");
             ImGui::TableSetupColumn("Ver");
@@ -396,6 +428,7 @@ namespace Slab::Studios::LabV2::Panels {
                 const auto telemetry = view != nullptr ? view->TryGetTelemetry() : std::nullopt;
                 const auto status = view != nullptr ? view->TryGetStatus() : std::nullopt;
                 const bool bBound = view != nullptr && view->HasBoundSession();
+                const auto typeLabel = ResolveLiveDataType(view, name, sTypeCacheByTopic);
 
                 ImGui::TableNextRow();
 
@@ -424,21 +457,24 @@ namespace Slab::Studios::LabV2::Panels {
                 }
 
                 ImGui::TableSetColumnIndex(2);
+                ImGui::TextUnformatted(typeLabel.c_str());
+
+                ImGui::TableSetColumnIndex(3);
                 if (telemetry.has_value()) ImGui::Text("%llu", static_cast<unsigned long long>(telemetry->Cursor.Step));
                 else ImGui::TextDisabled("-");
 
-                ImGui::TableSetColumnIndex(3);
+                ImGui::TableSetColumnIndex(4);
                 if (telemetry.has_value() && telemetry->Cursor.SimulationTime.has_value()) {
                     ImGui::Text("%.6g", *telemetry->Cursor.SimulationTime);
                 } else {
                     ImGui::TextDisabled("-");
                 }
 
-                ImGui::TableSetColumnIndex(4);
+                ImGui::TableSetColumnIndex(5);
                 if (telemetry.has_value()) ImGui::Text("%llu", static_cast<unsigned long long>(telemetry->PublishedVersion));
                 else ImGui::TextDisabled("-");
 
-                ImGui::TableSetColumnIndex(5);
+                ImGui::TableSetColumnIndex(6);
                 ImGui::Text("%s", bBound ? "yes" : "no");
 
                 if (telemetry.has_value() && ImGui::IsItemHovered()) {
@@ -463,6 +499,7 @@ namespace Slab::Studios::LabV2::Panels {
             ImGui::SeparatorText("Selected Session Topic");
             ImGui::TextUnformatted(selectedTopic.c_str());
             ImGui::Text("Bound session: %s", selectedView->HasBoundSession() ? "yes" : "no");
+            ImGui::Text("Type: %s", ResolveLiveDataType(selectedView, selectedTopic, sTypeCacheByTopic).c_str());
 
             if (const auto status = selectedView->TryGetStatus(); status.has_value()) {
                 ImGui::Text("Run: %s", ToStatusString(status->RunState).c_str());
@@ -489,14 +526,14 @@ namespace Slab::Studios::LabV2::Panels {
                                 Str &topicFilter,
                                 bool &bLevelsOnly,
                                 Str &selectedTopic) -> void {
-        ImGui::SeparatorText("Live Control V2");
+        ImGui::SeparatorText("Live Control");
 
         if (hub == nullptr) {
-            ImGui::TextColored(ImVec4(1, 0, 0, 1), "LiveControlHubV2 unavailable.");
+            ImGui::TextColored(ImVec4(1, 0, 0, 1), "LiveControlHub unavailable.");
             return;
         }
 
-        DrawFilterField("##labv2-live-control-filter", "Filter topics", topicFilter);
+        DrawFilterField("##lab-live-control-filter", "Filter topics", topicFilter);
         ImGui::SameLine();
         ImGui::Checkbox("Levels only", &bLevelsOnly);
 
@@ -530,7 +567,7 @@ namespace Slab::Studios::LabV2::Panels {
             ImGuiTableFlags_RowBg |
             ImGuiTableFlags_ScrollX |
             ImGuiTableFlags_SizingFixedFit;
-        if (ImGui::BeginTable("LabV2LiveControlTopics", 7, tableFlags)) {
+        if (ImGui::BeginTable("LabLiveControlTopics", 7, tableFlags)) {
             ImGui::TableSetupColumn("Topic", ImGuiTableColumnFlags_WidthStretch, 1.0f);
             ImGui::TableSetupColumn("Semantic");
             ImGui::TableSetupColumn("Type");

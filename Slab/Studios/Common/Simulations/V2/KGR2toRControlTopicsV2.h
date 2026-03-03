@@ -5,7 +5,7 @@
 
 namespace Slab::Studios::Common::Simulations::V2 {
 
-    inline constexpr const char *KG2DControlTopicPrefixDefaultV2 = "labv2/control/kg2d";
+    inline constexpr const char *KG2DControlTopicPrefixDefaultV2 = "lab/control/kg2d";
 
     inline constexpr const char *KG2DForcingCenterSuffixV2 = "forcing/center";
     inline constexpr const char *KG2DForcingAmplitudeSuffixV2 = "forcing/amplitude";

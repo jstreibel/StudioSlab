@@ -10,7 +10,6 @@
 
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
-#include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
 
 namespace Slab::Studios::Common::Monitors::V2 {
 
@@ -19,7 +18,6 @@ namespace Slab::Studios::Common::Monitors::V2 {
         TPointer<Math::LiveData::V2::FSessionViewTopicV2> SessionTopic;
         TPointer<Math::LiveData::V2::FSessionTelemetryTopicV2> TelemetryTopic;
         TPointer<Math::LiveData::V2::FSessionStatusTopicV2> StatusTopic;
-        TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> SnapshotListener;
 
         TPointer<Graphics::FGUIWindow> GuiWindow;
         Graphics::FPlot2DWindow LatticeWindow;
@@ -29,7 +27,7 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
         std::optional<Math::LiveData::V2::FSessionTelemetryV2> LastTelemetry = std::nullopt;
         std::optional<Math::LiveData::V2::FSessionStatusV2> LastStatus = std::nullopt;
-        bool bLastLeaseAcquired = false;
+        bool bLastSnapshotAvailable = false;
         std::optional<UIntBig> LastSnapshotVersion = std::nullopt;
         UIntBig MaxSteps = 0;
 
@@ -45,8 +43,8 @@ namespace Slab::Studios::Common::Monitors::V2 {
     public:
         explicit FIsingMetropolisPassiveMonitorWindowV2(
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-            const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener,
             UIntBig maxSteps);
+        ~FIsingMetropolisPassiveMonitorWindowV2() override;
 
         auto ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void override;
     };

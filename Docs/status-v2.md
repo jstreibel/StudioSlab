@@ -51,11 +51,11 @@
 ## Recent Updates (`2026-03-02`)
 
 - V2 monitor data path migration:
-  - `FStateSnapshotListenerV2` now captures copied immutable snapshots behind a thread-safe envelope
-  - snapshot subscriptions for monitor runs use `EDeliveryModeV2::LatestOnly`
-  - passive monitor windows for SPI/KGRtoR/KGR2toR/MD/XY/Ising consume snapshot listeners instead of session lease polling in UI draw paths
+  - `SessionLiveViewV2` now exposes a snapshot topic (`TryGetSnapshot`) for monitor-facing render payloads
+  - snapshot publication is consumer-gated (monitor open/close controls copy pressure)
+  - passive monitor windows for SPI/KGRtoR/KGR2toR/MD/XY/Ising consume snapshots instead of session lease polling in UI draw paths
 - LabV2 launcher integration:
-  - `SimulationManagerV2` monitor launches now attach snapshot subscriptions and pass snapshot listeners to monitor builders
+  - `SimulationManagerV2` monitor launches build `SessionLiveViewV2` topics that feed passive monitor snapshots
 - Live runtime parameter controls (first slice):
   - added generic scalar binding helpers (`LiveParameterControlV2`) for topic publish + runtime binding subscriptions
   - XY/Ising recipes expose atomic runtime control handles for hot-loop-safe reads (`Temperature`, `ExternalField`)

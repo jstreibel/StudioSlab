@@ -31,10 +31,18 @@ namespace Slab::Math::LiveData::V2 {
         bool bTerminal = false;
     };
 
+    struct FSessionSnapshotV2 {
+        Base::EquationState_constptr State = nullptr;
+        Numerics::V2::FSimulationCursorV2 Cursor;
+        Numerics::V2::EEventReasonV2 LastReason = Numerics::V2::EEventReasonV2::Initial;
+        UIntBig PublishedVersion = 0;
+    };
+
     enum class ELiveTopicKindV2 {
         SessionView,
         SessionTelemetry,
-        SessionStatus
+        SessionStatus,
+        SessionSnapshot
     };
 
     class FLiveTopicV2 {
@@ -97,10 +105,28 @@ namespace Slab::Math::LiveData::V2 {
         [[nodiscard]] auto TryGetStatus() const -> std::optional<FSessionStatusV2>;
     };
 
+    class FSessionSnapshotTopicV2 final : public FLiveTopicV2 {
+        mutable std::mutex Mutex;
+        std::optional<FSessionSnapshotV2> LastSnapshot = std::nullopt;
+        UIntBig ActiveConsumerCount = 0;
+
+    public:
+        explicit FSessionSnapshotTopicV2(Str name = "")
+        : FLiveTopicV2(ELiveTopicKindV2::SessionSnapshot, std::move(name)) {
+        }
+
+        auto PublishEvent(const Numerics::V2::FSimulationEventV2 &event) -> void;
+        [[nodiscard]] auto TryGetSnapshot() const -> std::optional<FSessionSnapshotV2>;
+        auto RegisterConsumer() -> void;
+        auto UnregisterConsumer() -> void;
+        [[nodiscard]] auto HasConsumers() const -> bool;
+    };
+
     DefinePointers(FLiveTopicV2)
     DefinePointers(FSessionTelemetryTopicV2)
     DefinePointers(FSessionViewTopicV2)
     DefinePointers(FSessionStatusTopicV2)
+    DefinePointers(FSessionSnapshotTopicV2)
 
 } // namespace Slab::Math::LiveData::V2
 

@@ -16,7 +16,7 @@
 namespace Slab::Studios::Common::Simulations::V2 {
 
     auto FinalizeMetropolisExecutionConfigV2(FMetropolisExecutionConfigV2 &cfg) -> void {
-        if (cfg.Steps == 0) throw Exception("Metropolis V2 requires steps > 0.");
+        if (cfg.Steps == 0) throw Exception("Metropolis requires steps > 0.");
         if (cfg.Interval == 0) cfg.Interval = 1;
         if (cfg.MonitorInterval == 0) cfg.MonitorInterval = cfg.Interval;
     }
@@ -63,7 +63,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
         if (runCfg.bEnableGLMonitor) {
             const auto bundle = BuildMetropolisMonitorBundleV2(runCfg);
             return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
-                "Studios Metropolis V2 Monitor",
+                "Studios Metropolis Monitor",
                 bundle.Recipe,
                 bundle.MonitorWindow,
                 static_cast<size_t>(runCfg.Batch));

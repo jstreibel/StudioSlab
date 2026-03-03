@@ -7,7 +7,6 @@
 
 #include "Math/Data/V2/LiveControlHubV2.h"
 #include "Math/Numerics/V2/Listeners/ListenerV2.h"
-#include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
 #include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
@@ -120,7 +119,7 @@ namespace {
         : ControlHub(controlHub)
         , ForcingSource(forcingSource)
         , TopicPrefix(std::move(topicPrefix))
-        , Name("KGR2toR LiveControl forcing binding V2") {
+        , Name("KGR2toR LiveControl forcing binding") {
         }
 
         auto OnRunStarted(const Slab::Math::Numerics::V2::FSimulationEventV2 &initialEvent) -> void override {
@@ -248,17 +247,14 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
     auto BuildR2toRBaselinePassiveMonitorWindowV2(
             const FR2toRBaselineExecutionConfig &cfg,
-            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-            const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener) -> TPointer<Graphics::FSlabWindow> {
+            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView) -> TPointer<Graphics::FSlabWindow> {
         if (liveView == nullptr) throw Exception("KGR2toR passive monitor requires a live view.");
-        if (snapshotListener == nullptr) throw Exception("KGR2toR passive monitor requires a snapshot listener.");
         if (cfg.bEnableMonitorControlPublisher && cfg.ControlHub == nullptr) {
             throw Exception("KGR2toR monitor control publisher requires a LiveControl hub.");
         }
 
         return New<Slab::Studios::Common::Monitors::V2::FR2toRBaselinePassiveMonitorWindowV2>(
             liveView,
-            snapshotListener,
             cfg.Steps,
             cfg.ControlHub,
             cfg.ControlTopicPrefix,
@@ -278,19 +274,10 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
         if (runCfg.bEnableGLMonitor) {
             auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
-            auto baseRecipe = BuildR2toRBaselineRecipeV2(runCfg, liveView);
-            auto snapshotListener = New<FStateSnapshotListenerV2>("KGR2toR baseline monitor snapshot listener V2");
-            Vector<FSubscriptionV2> monitorSubscriptions = {{
-                New<FEveryNStepsTriggerV2>(std::max<UIntBig>(UIntBig(1), runCfg.MonitorInterval)),
-                snapshotListener,
-                EDeliveryModeV2::LatestOnly,
-                true,
-                true
-            }};
-            auto recipe = New<FAppendedSubscriptionsRecipeV2>(baseRecipe, std::move(monitorSubscriptions));
-            auto monitor = BuildR2toRBaselinePassiveMonitorWindowV2(runCfg, liveView, snapshotListener);
+            auto recipe = BuildR2toRBaselineRecipeV2(runCfg, liveView);
+            auto monitor = BuildR2toRBaselinePassiveMonitorWindowV2(runCfg, liveView);
             return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
-                "Studios KGR2toR Baseline V2 Monitor",
+                "Studios KGR2toR Baseline Monitor",
                 recipe,
                 monitor,
                 static_cast<size_t>(runCfg.Batch));

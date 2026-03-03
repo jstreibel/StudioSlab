@@ -8,7 +8,7 @@ namespace Slab::Math::Numerics::V2 {
     FNumericTaskV2::FNumericTaskV2(const TPointer<FSimulationRecipeV2> &recipe,
                                    const bool preInit,
                                    const size_t maxBatchSteps)
-    : FTask("Numeric Integration V2")
+    : FTask("Numeric Integration")
     , Recipe(recipe)
     , MaxBatchSteps(std::max<size_t>(1, maxBatchSteps)) {
         if (preInit) Init();

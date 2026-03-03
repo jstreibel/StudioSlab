@@ -105,42 +105,42 @@ Design intent:
 - keep task generic and recipe-driven
 - support finite and open-ended runs
 
-### 2. Session Synchronization Contract (Implemented baseline, monitor path evolving)
+### 2. Session Synchronization Contract (Implemented baseline)
 
 Session-owned mutable run state remains single-writer (`FNumericTaskV2`) and session-boundary synchronized.
 
 Current V2 direction for monitor-facing reads:
-- monitor/UI code should consume **copied immutable snapshots**, not direct session leases
-- snapshot materialization happens in listeners attached to trigger points
-- monitor delivery is best-effort via latest-state semantics (`LatestOnly`)
+- monitor/UI code consumes latest state through `SessionLiveViewV2` read leases
+- monitor redraw is version-gated (published version change)
+- reads are best-effort (`TryAcquireReadLease`) to avoid blocking writer progress
 
-Read leases remain valid for compatibility and analysis-oriented readers, but new monitor work should prefer listener-published snapshots.
+Copied snapshots remain valid for deterministic analytics and replay-oriented pipelines.
 
 ### 3. Live Data V2 (Implemented minimal generalized layer)
 
 Current V2 live data direction:
 - generic named live topics/hub (minimal)
 - telemetry topics (copied metadata)
-- listener-published state snapshots (copied immutable state)
-- monitor-facing delivery policy: `LatestOnly`
+- session read lease access via `SessionLiveViewV2`
+- monitor-facing consumption is latest-state pull with version gating
 
 Compatibility path:
 - `FSessionLiveViewV2` remains as a compatibility facade while broader live data V2 evolves
-- new monitor paths should consume listener-published snapshots instead of polling facade/session state
+- deterministic listener pipelines remain supported for analysis, transforms, and persisted snapshots
 
 ### 4. Graphics / Monitor Direction (Partially refactored)
 
 Monitor architecture direction:
 - monitors are **passive observers**
-- numerics publishes data/telemetry through listeners
-- state snapshots are pushed to live topics
-- monitor/UI consumes latest available snapshot (best effort, `LatestOnly`)
+- numerics publishes telemetry/session state through live view
+- monitor/UI consumes latest available read lease (best effort)
+- deterministic listeners are optional add-ons for analysis/side-effects
 
 Target monitor data flow:
-1. trigger decides **when** to emit
-2. snapshot listener decides **what** to copy/publish
-3. latest snapshot is kept by listener/topic bridge (`LatestOnly`)
-4. monitor renders from latest snapshot without direct session locking
+1. recipe binds a live view/session
+2. monitor tries to acquire read lease (`TryAcquireReadLease`)
+3. monitor redraws only when `PublishedVersion` changes
+4. optional listeners run only when deterministic output pipelines are needed
 
 Graphics host improvements already in place:
 - shared visual host loop for `Studios` and `SlabTests`
@@ -386,6 +386,7 @@ If a change requires broad coupling across numerics + data + graphics, split it 
 - `Docs/v2-feature-backlog.md` (compact planning backlog)
 - `Docs/live-control-v2-spec.md` (minimal `LiveControl V2` foundation spec)
 - `Docs/live-parameters-v2-slice-scope.md` (runtime parameter control slice)
+- `Docs/monitoring-liveview-vs-listeners.md` (monitoring data-path decision note)
 - `Docs/kg-r2tor-v2-slice-scope.md` (first KG `R^2->R` V2 migration scope)
 
 ## Maintenance Note (SPEC.md Role)

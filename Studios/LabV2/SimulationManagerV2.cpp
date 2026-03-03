@@ -7,9 +7,6 @@
 #include "Core/Tools/Log.h"
 
 #include "Math/Data/V2/SessionLiveViewV2.h"
-#include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
-#include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
-#include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 #include "Studios/Common/Simulations/V2/KGR2toRControlTopicsV2.h"
 #include "Studios/Common/Simulations/V2/LiveParameterControlV2.h"
@@ -159,11 +156,11 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
     if (ImGuiContext == nullptr) return;
 
     {
-        const auto itemLocation = Slab::Graphics::MainMenuLocation{"Lab V2"};
+        const auto itemLocation = Slab::Graphics::MainMenuLocation{"Lab"};
         const auto item = Slab::Graphics::MainMenuItem{
             itemLocation,
             {
-                {"Launcher", "Show V2 simulation launcher"}
+                {"Launcher", "Show simulation launcher"}
             },
             [this](const Slab::Str &itemString) {
                 if (itemString == "Launcher") {
@@ -176,7 +173,7 @@ auto FSimulationManagerV2::AddMenus(const Slab::Graphics::FPlatformWindow &platf
     }
 
     {
-        const auto itemLocation = Slab::Graphics::MainMenuLocation{"Simulations", "V2"};
+        const auto itemLocation = Slab::Graphics::MainMenuLocation{"Simulations"};
         const auto item = Slab::Graphics::MainMenuItem{
             itemLocation,
             {
@@ -254,7 +251,7 @@ auto FSimulationManagerV2::HandleLaunchMenuItem(const Slab::Str &itemString) -> 
 
 auto FSimulationManagerV2::CaptureLaunchError(const std::exception &e) -> void {
     LastError = e.what();
-    Slab::Core::Log::Error() << "LabV2 launch failed: " << e.what() << Slab::Core::Log::Flush;
+    Slab::Core::Log::Error() << "Lab launch failed: " << e.what() << Slab::Core::Log::Flush;
 }
 
 auto FSimulationManagerV2::RequestLauncherVisible() const -> void {
@@ -276,7 +273,7 @@ auto FSimulationManagerV2::AttachMonitorWindowOrThrow(const Slab::TPointer<Slab:
     if (window == nullptr) {
         throw Exception(Slab::Str(context) + " returned null monitor window.");
     }
-    if (!AddWindow) throw Exception("LabV2 cannot attach monitor window.");
+    if (!AddWindow) throw Exception("Lab cannot attach monitor window.");
     AddWindow(window);
 }
 
@@ -532,7 +529,6 @@ auto FSimulationManagerV2::DrawIsingSection() -> void {
 
 auto FSimulationManagerV2::LaunchSPI(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
-    using namespace Slab::Math::Numerics::V2;
 
     auto cfg = SPICfg;
     cfg.bEnableGLMonitor = enableMonitor;
@@ -543,26 +539,16 @@ auto FSimulationManagerV2::LaunchSPI(const bool enableMonitor) -> void {
     auto recipe = BuildSPIRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("SPI GL monitor requires a live view.");
-        auto snapshotListener = Slab::New<FStateSnapshotListenerV2>("LabV2 SPI monitor snapshot listener V2");
-        Slab::Vector<FSubscriptionV2> subscriptions = {{
-            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), cfg.MonitorInterval)),
-            snapshotListener,
-            EDeliveryModeV2::LatestOnly,
-            true,
-            true
-        }};
-        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(subscriptions));
         AttachMonitorWindowOrThrow(
-            BuildSPIPassiveMonitorWindowV2(cfg, liveView, snapshotListener),
-            "BuildSPIPassiveMonitorWindowV2");
+            BuildSPIPassiveMonitorWindowV2(cfg, liveView),
+            "BuildSPIPassiveMonitorWindow");
     }
 
-    LaunchNumericTask(recipe, cfg.Batch, "SPI V2");
+    LaunchNumericTask(recipe, cfg.Batch, "SPI");
 }
 
 auto FSimulationManagerV2::LaunchRtoR(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
-    using namespace Slab::Math::Numerics::V2;
 
     auto cfg = RtoRCfg;
     cfg.bEnableGLMonitor = enableMonitor;
@@ -574,26 +560,16 @@ auto FSimulationManagerV2::LaunchRtoR(const bool enableMonitor) -> void {
     auto recipe = BuildRtoRPlaneWavesRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("RtoR GL monitor requires a live view.");
-        auto snapshotListener = Slab::New<FStateSnapshotListenerV2>("LabV2 KGRtoR monitor snapshot listener V2");
-        Slab::Vector<FSubscriptionV2> subscriptions = {{
-            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), cfg.MonitorInterval)),
-            snapshotListener,
-            EDeliveryModeV2::LatestOnly,
-            true,
-            true
-        }};
-        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(subscriptions));
         AttachMonitorWindowOrThrow(
-            BuildRtoRPlaneWavesPassiveMonitorWindowV2(cfg, liveView, snapshotListener),
-            "BuildRtoRPlaneWavesPassiveMonitorWindowV2");
+            BuildRtoRPlaneWavesPassiveMonitorWindowV2(cfg, liveView),
+            "BuildRtoRPlaneWavesPassiveMonitorWindow");
     }
 
-    LaunchNumericTask(recipe, cfg.Batch, "KGRtoR Plane Waves V2");
+    LaunchNumericTask(recipe, cfg.Batch, "KGRtoR Plane Waves");
 }
 
 auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
-    using namespace Slab::Math::Numerics::V2;
 
     auto cfg = R2toRCfg;
     cfg.bEnableGLMonitor = enableMonitor;
@@ -606,26 +582,16 @@ auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
     auto recipe = BuildR2toRBaselineRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("KGR2toR GL monitor requires a live view.");
-        auto snapshotListener = Slab::New<FStateSnapshotListenerV2>("LabV2 KGR2toR monitor snapshot listener V2");
-        Slab::Vector<FSubscriptionV2> subscriptions = {{
-            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), cfg.MonitorInterval)),
-            snapshotListener,
-            EDeliveryModeV2::LatestOnly,
-            true,
-            true
-        }};
-        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(subscriptions));
         AttachMonitorWindowOrThrow(
-            BuildR2toRBaselinePassiveMonitorWindowV2(cfg, liveView, snapshotListener),
-            "BuildR2toRBaselinePassiveMonitorWindowV2");
+            BuildR2toRBaselinePassiveMonitorWindowV2(cfg, liveView),
+            "BuildR2toRBaselinePassiveMonitorWindow");
     }
 
-    LaunchNumericTask(recipe, cfg.Batch, "KGR2toR Baseline V2");
+    LaunchNumericTask(recipe, cfg.Batch, "KGR2toR Baseline");
 }
 
 auto FSimulationManagerV2::LaunchMolecularDynamics(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
-    using namespace Slab::Math::Numerics::V2;
 
     auto cfg = MolecularDynamicsCfg;
     cfg.bEnableGLMonitor = enableMonitor;
@@ -637,22 +603,12 @@ auto FSimulationManagerV2::LaunchMolecularDynamics(const bool enableMonitor) -> 
     auto recipe = BuildMolecularDynamicsRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("MolecularDynamics GL monitor requires a live view.");
-        auto snapshotListener = Slab::New<FStateSnapshotListenerV2>(
-            "LabV2 MolecularDynamics monitor snapshot listener V2");
-        Slab::Vector<FSubscriptionV2> subscriptions = {{
-            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), cfg.MonitorInterval)),
-            snapshotListener,
-            EDeliveryModeV2::LatestOnly,
-            true,
-            true
-        }};
-        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(subscriptions));
         AttachMonitorWindowOrThrow(
-            BuildMolecularDynamicsPassiveMonitorWindowV2(cfg, liveView, snapshotListener),
-            "BuildMolecularDynamicsPassiveMonitorWindowV2");
+            BuildMolecularDynamicsPassiveMonitorWindowV2(cfg, liveView),
+            "BuildMolecularDynamicsPassiveMonitorWindow");
     }
 
-    LaunchNumericTask(recipe, cfg.Batch, "Molecular Dynamics V2");
+    LaunchNumericTask(recipe, cfg.Batch, "Molecular Dynamics");
 }
 
 auto FSimulationManagerV2::LaunchMetropolis(const bool enableMonitor) -> void {
@@ -665,20 +621,19 @@ auto FSimulationManagerV2::LaunchMetropolis(const bool enableMonitor) -> void {
     if (enableMonitor) {
         const auto bundle = BuildMetropolisMonitorBundleV2(cfg);
         if (bundle.Recipe == nullptr || bundle.MonitorWindow == nullptr) {
-            throw Exception("LabV2 failed to build Metropolis monitor bundle.");
+            throw Exception("Lab failed to build Metropolis monitor bundle.");
         }
-        AttachMonitorWindowOrThrow(bundle.MonitorWindow, "BuildMetropolisMonitorBundleV2");
-        LaunchNumericTask(bundle.Recipe, cfg.Batch, "Metropolis RtoR V2");
+        AttachMonitorWindowOrThrow(bundle.MonitorWindow, "BuildMetropolisMonitorBundle");
+        LaunchNumericTask(bundle.Recipe, cfg.Batch, "Metropolis RtoR");
         return;
     }
 
     auto recipe = BuildMetropolisRecipeV2(cfg);
-    LaunchNumericTask(recipe, cfg.Batch, "Metropolis RtoR V2");
+    LaunchNumericTask(recipe, cfg.Batch, "Metropolis RtoR");
 }
 
 auto FSimulationManagerV2::LaunchXY(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
-    using namespace Slab::Math::Numerics::V2;
 
     auto cfg = XYCfg;
     cfg.bEnableGLMonitor = enableMonitor;
@@ -691,26 +646,16 @@ auto FSimulationManagerV2::LaunchXY(const bool enableMonitor) -> void {
     auto recipe = BuildXYRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("XY GL monitor requires a live view.");
-        auto snapshotListener = Slab::New<FStateSnapshotListenerV2>("LabV2 XY monitor snapshot listener V2");
-        Slab::Vector<FSubscriptionV2> subscriptions = {{
-            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), cfg.MonitorInterval)),
-            snapshotListener,
-            EDeliveryModeV2::LatestOnly,
-            true,
-            true
-        }};
-        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(subscriptions));
         AttachMonitorWindowOrThrow(
-            BuildXYPassiveMonitorWindowV2(cfg, liveView, snapshotListener),
-            "BuildXYPassiveMonitorWindowV2");
+            BuildXYPassiveMonitorWindowV2(cfg, liveView),
+            "BuildXYPassiveMonitorWindow");
     }
 
-    LaunchNumericTask(recipe, cfg.Batch, "XY Metropolis V2");
+    LaunchNumericTask(recipe, cfg.Batch, "XY Metropolis");
 }
 
 auto FSimulationManagerV2::LaunchIsing(const bool enableMonitor) -> void {
     using namespace Slab::Studios::Common::Simulations::V2;
-    using namespace Slab::Math::Numerics::V2;
 
     auto cfg = IsingCfg;
     cfg.bEnableGLMonitor = enableMonitor;
@@ -723,38 +668,29 @@ auto FSimulationManagerV2::LaunchIsing(const bool enableMonitor) -> void {
     auto recipe = BuildIsingRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("Ising GL monitor requires a live view.");
-        auto snapshotListener = Slab::New<FStateSnapshotListenerV2>("LabV2 Ising monitor snapshot listener V2");
-        Slab::Vector<FSubscriptionV2> subscriptions = {{
-            Slab::New<FEveryNStepsTriggerV2>(std::max<Slab::UIntBig>(Slab::UIntBig(1), cfg.MonitorInterval)),
-            snapshotListener,
-            EDeliveryModeV2::LatestOnly,
-            true,
-            true
-        }};
-        recipe = Slab::New<FAppendedSubscriptionsRecipeV2>(recipe, std::move(subscriptions));
         AttachMonitorWindowOrThrow(
-            BuildIsingPassiveMonitorWindowV2(cfg, liveView, snapshotListener),
-            "BuildIsingPassiveMonitorWindowV2");
+            BuildIsingPassiveMonitorWindowV2(cfg, liveView),
+            "BuildIsingPassiveMonitorWindow");
     }
 
-    LaunchNumericTask(recipe, cfg.Batch, "Ising Metropolis V2");
+    LaunchNumericTask(recipe, cfg.Batch, "Ising Metropolis");
 }
 
 auto FSimulationManagerV2::MakeTopicName(const Slab::Str &prefix, Slab::UIntBig &counter) -> Slab::Str {
     ++counter;
-    return "labv2/" + prefix + "/run-" + Slab::ToStr(counter);
+    return "lab/" + prefix + "/run-" + Slab::ToStr(counter);
 }
 
 auto FSimulationManagerV2::LaunchNumericTask(
     const Slab::TPointer<Slab::Math::Numerics::V2::FSimulationRecipeV2> &recipe,
     const Slab::UIntBig batch,
     const Slab::Str &taskNameHint) -> void {
-    if (recipe == nullptr) throw Exception("LabV2 cannot launch null V2 recipe.");
+    if (recipe == nullptr) throw Exception("Lab cannot launch null recipe.");
 
     const auto taskManager = Slab::Core::GetModule<Slab::Core::FTaskManager>("TaskManager");
     if (taskManager == nullptr) throw Exception("TaskManager module not available.");
 
     auto task = Slab::New<Slab::Math::Numerics::V2::FNumericTaskV2>(recipe, false, static_cast<size_t>(batch));
-    Slab::Core::Log::Info() << "LabV2 launching task: " << taskNameHint << Slab::Core::Log::Flush;
+    Slab::Core::Log::Info() << "Lab launching task: " << taskNameHint << Slab::Core::Log::Flush;
     taskManager->AddTask(task);
 }

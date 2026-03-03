@@ -46,7 +46,7 @@ namespace Slab::Studios::Common::Monitors::V2 {
     }
 
     auto FMetropolisFieldSnapshotListenerV2::GetName() const -> Str {
-        return "Metropolis field snapshot listener V2";
+        return "Metropolis field snapshot listener";
     }
 
     auto FMetropolisFieldSnapshotListenerV2::TryGetSnapshot() const -> std::optional<FMetropolisFieldSnapshotV2> {

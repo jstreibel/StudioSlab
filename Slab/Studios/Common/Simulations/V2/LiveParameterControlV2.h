@@ -41,7 +41,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
     };
 
     [[nodiscard]] inline auto BuildLiveScalarParameterTopicV2(const Str &topicPrefix, const Str &key) -> Str {
-        if (topicPrefix.empty()) return "labv2/control/params/" + key;
+        if (topicPrefix.empty()) return "lab/control/params/" + key;
         return topicPrefix + "/params/" + key;
     }
 

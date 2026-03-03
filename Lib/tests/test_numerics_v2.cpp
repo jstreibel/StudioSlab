@@ -1080,6 +1080,62 @@ TEST_CASE("PhaseE V2 - Live view exposes lease while active and invalidates on f
     CHECK(finalTelemetry->Cursor.Step == 5);
 }
 
+TEST_CASE("PhaseE V2 - Live view snapshot capture is consumer-gated", "[V2][PhaseE][LiveData][Snapshot]") {
+    using namespace Slab;
+    using namespace Slab::Core;
+    using namespace Slab::Math::LiveData::V2;
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::StochasticPathIntegrals;
+    using namespace Slab::Models::StochasticPathIntegrals::V2;
+
+    auto numericConfig = New<SPINumericConfig>();
+    auto iface = numericConfig->GetInterface();
+    DynamicPointerCast<RealParameter>(iface->GetParameter("length"))->SetValue(1.0);
+    DynamicPointerCast<RealParameter>(iface->GetParameter("time"))->SetValue(0.5);
+    DynamicPointerCast<IntegerParameter>(iface->GetParameter("site_count"))->SetValue(16);
+    DynamicPointerCast<RealParameter>(iface->GetParameter("dT"))->SetValue(0.125);
+    DynamicPointerCast<IntegerParameter>(iface->GetParameter("stochastic_time_steps"))->SetValue(4);
+
+    auto recipe = New<FSPIRecipeV2>(numericConfig, 1000);
+    auto session = recipe->BuildSession();
+    REQUIRE(session != nullptr);
+    session->InitializeForCurrentThread();
+    session->Step(1);
+
+    const auto lease = session->AcquireReadLease();
+    REQUIRE(lease.GetState() != nullptr);
+
+    FSimulationEventV2 event;
+    event.Cursor = lease.GetCursor();
+    event.State = lease.GetState();
+    event.Reason = EEventReasonV2::Scheduled;
+    event.PublishedVersion = lease.GetPublishedVersion();
+    event.SessionRef = TPointer<const FSimulationSessionV2>(session);
+
+    auto liveView = New<FSessionLiveViewV2>();
+    liveView->PublishEvent(event);
+    CHECK_FALSE(liveView->TryGetSnapshot().has_value());
+
+    liveView->RegisterSnapshotConsumer();
+    liveView->PublishEvent(event);
+    const auto snapshot = liveView->TryGetSnapshot();
+    REQUIRE(snapshot.has_value());
+    REQUIRE(snapshot->State != nullptr);
+    CHECK(snapshot->PublishedVersion == event.PublishedVersion);
+    CHECK(snapshot->LastReason == event.Reason);
+    CHECK(snapshot->State.get() != event.State.get());
+
+    liveView->UnregisterSnapshotConsumer();
+
+    auto terminalOnlyLiveView = New<FSessionLiveViewV2>();
+    event.Reason = EEventReasonV2::Final;
+    terminalOnlyLiveView->PublishEvent(event);
+    const auto terminalSnapshot = terminalOnlyLiveView->TryGetSnapshot();
+    REQUIRE(terminalSnapshot.has_value());
+    REQUIRE(terminalSnapshot->State != nullptr);
+    CHECK(terminalSnapshot->LastReason == EEventReasonV2::Final);
+}
+
 TEST_CASE("PhaseE V2 - SPI recipe can publish a live session view", "[V2][PhaseE][SPI][LiveData]") {
     using namespace Slab;
     using namespace Slab::Core;

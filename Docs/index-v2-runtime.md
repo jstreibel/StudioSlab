@@ -15,21 +15,24 @@
    - control/input: `Docs/live-control-v2-spec.md`
    - live runtime params: `Docs/live-parameters-v2-slice-scope.md`
    - sequencing/time: `Docs/sequence-control-spec.md`
+   - monitoring data-path tradeoffs: `Docs/monitoring-liveview-vs-listeners.md`
 4. One active planning doc:
    - `Docs/v2-feature-backlog.md` or `Docs/v2-model-coverage-matrix.md`
 
-## Monitor Data Contract (StudioSlabV2 direction)
+## Monitor Data Contract (Current)
 
-- Monitor data flow should be push-based:
-  - trigger -> snapshot listener -> passive monitor (or topic bridge when needed)
-- Delivery policy for monitor snapshots should be `LatestOnly`.
-- New monitor work should avoid direct session polling/read-lease loops in UI paths.
+- Default monitor data flow is push-to-snapshot via `SessionLiveViewV2`:
+  - task emits live-view events at monitor interval
+  - `SessionLiveViewV2` publishes telemetry/status and latest copied snapshot (consumer-gated)
+  - passive monitor reads latest snapshot + version and redraws on version change
+- Keep listener subscriptions for deterministic analytics/transforms and persisted snapshot pipelines.
+- Runtime monitor open/close should not require changing task subscription topology.
 
 Quick start for new monitored slices:
-1. define a compact copied snapshot payload for the view
-2. attach a snapshot listener at the simulation trigger point
-3. expose latest snapshot through listener handle (or stable topic when externalized)
-4. render monitor windows from the latest received snapshot only
+1. ensure the recipe is built with a `SessionLiveViewV2`
+2. monitor window registers/unregisters snapshot consumption on `SessionLiveViewV2`
+3. monitor reads via `TryGetSnapshot()` and redraws only when version changes
+4. add listener subscriptions only when deterministic side-effects/analytics are required
 
 ## Core Code Map
 

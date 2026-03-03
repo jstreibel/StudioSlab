@@ -22,10 +22,10 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
         Slab::Studios::Common::AppendSessionLiveViewStats(
             GuiWindow,
-            "Molecular Dynamics V2 passive monitor",
+            "Molecular Dynamics passive monitor",
             LastTelemetry,
             bHasBoundSession,
-            bLastLeaseAcquired,
+            bLastSnapshotAvailable,
             MaxSteps,
             extraLine);
 
@@ -75,24 +75,21 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
     FMolecularDynamicsPassiveMonitorWindowV2::FMolecularDynamicsPassiveMonitorWindowV2(
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-            const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener,
             const UIntBig maxSteps,
             const DevFloat boxLength)
-    : FWindowPanel(Graphics::FSlabWindowConfig("Molecular Dynamics V2 GL Monitor"))
+    : FWindowPanel(Graphics::FSlabWindowConfig("Molecular Dynamics GL Monitor"))
     , LiveView(liveView)
     , SessionTopic(liveView != nullptr ? liveView->GetSessionTopic() : nullptr)
     , TelemetryTopic(liveView != nullptr ? liveView->GetTelemetryTopic() : nullptr)
     , StatusTopic(liveView != nullptr ? liveView->GetStatusTopic() : nullptr)
-    , SnapshotListener(snapshotListener)
     , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("Molecular Dynamics Telemetry")))
     , ParticleWindow("Molecular Dynamics Particles")
     , ParticlePoints(New<Math::FPointSet>())
     , MaxSteps(maxSteps)
     , BoxLength(std::max<DevFloat>(boxLength, 1e-6)) {
         if (LiveView == nullptr) throw Exception("MolecularDynamics passive monitor requires a live view.");
-        if (SnapshotListener == nullptr) throw Exception("MolecularDynamics passive monitor requires a snapshot listener.");
-        if (SessionTopic == nullptr || TelemetryTopic == nullptr) {
-            throw Exception("MolecularDynamics passive monitor requires session/telemetry topics.");
+        if (SessionTopic == nullptr || TelemetryTopic == nullptr || LiveView->GetSnapshotTopic() == nullptr) {
+            throw Exception("MolecularDynamics passive monitor requires session/telemetry/snapshot topics.");
         }
 
         auto style = *Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
@@ -111,6 +108,11 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
         const auto half = 0.5 * BoxLength;
         ParticleWindow.GetRegion().setLimits(-half, half, -half, half);
+        LiveView->RegisterSnapshotConsumer();
+    }
+
+    FMolecularDynamicsPassiveMonitorWindowV2::~FMolecularDynamicsPassiveMonitorWindowV2() {
+        if (LiveView != nullptr) LiveView->UnregisterSnapshotConsumer();
     }
 
     auto FMolecularDynamicsPassiveMonitorWindowV2::ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void {
@@ -121,14 +123,13 @@ namespace Slab::Studios::Common::Monitors::V2 {
             if (status.has_value()) LastStatus = status;
         }
 
-        const auto snapshotOpt = SnapshotListener != nullptr
-            ? SnapshotListener->TryGetSnapshot()
-            : std::optional<Math::Numerics::V2::FStateSnapshotEnvelopeV2>{};
-        bLastLeaseAcquired = snapshotOpt.has_value();
-        if (snapshotOpt.has_value() &&
-            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshotOpt->PublishedVersion)) {
-            LastSnapshotVersion = snapshotOpt->PublishedVersion;
-            UpdateParticlePointsFromState(snapshotOpt->State);
+        const auto snapshot = LiveView->TryGetSnapshot();
+        bLastSnapshotAvailable = snapshot.has_value() && snapshot->State != nullptr;
+        if (snapshot.has_value() &&
+            snapshot->State != nullptr &&
+            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshot->PublishedVersion)) {
+            LastSnapshotVersion = snapshot->PublishedVersion;
+            UpdateParticlePointsFromState(snapshot->State);
         }
 
         UpdateStatsWindow();

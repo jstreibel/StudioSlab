@@ -9,7 +9,7 @@
 namespace Slab::Studios::Common::Monitors::V2 {
 
     auto FMetropolisPassiveMonitorWindowV2::UpdateStatsWindow() -> void {
-        GuiWindow->AddVolatileStat("Metropolis RtoR V2 passive monitor");
+        GuiWindow->AddVolatileStat("Metropolis RtoR passive monitor");
         GuiWindow->AddVolatileStat("");
 
         if (!LastSnapshot.has_value()) {
@@ -54,7 +54,7 @@ namespace Slab::Studios::Common::Monitors::V2 {
     FMetropolisPassiveMonitorWindowV2::FMetropolisPassiveMonitorWindowV2(
             const TPointer<FMetropolisFieldSnapshotListenerV2> &snapshotListener,
             const UIntBig maxSteps)
-    : FWindowPanel(Graphics::FSlabWindowConfig("Metropolis RtoR V2 GL Monitor"))
+    : FWindowPanel(Graphics::FSlabWindowConfig("Metropolis RtoR GL Monitor"))
     , SnapshotListener(snapshotListener)
     , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("Metropolis Telemetry")))
     , PhiWindow("Metropolis phi(x)")

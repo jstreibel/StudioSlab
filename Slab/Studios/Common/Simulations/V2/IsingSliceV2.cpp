@@ -5,9 +5,7 @@
 #include "../../V2SimulationRunners.h"
 
 #include "LiveParameterControlV2.h"
-#include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
 #include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
-#include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
 #include "Models/Ising/V2/Ising-Metropolis-RecipeV2.h"
@@ -18,15 +16,15 @@
 namespace Slab::Studios::Common::Simulations::V2 {
 
     auto FinalizeIsingExecutionConfigV2(FIsingExecutionConfigV2 &cfg) -> void {
-        if (cfg.L < 2) throw Exception("Ising V2 requires L >= 2.");
-        if (cfg.Steps == 0) throw Exception("Ising V2 requires steps > 0.");
-        if (cfg.Temperature < 0.0) throw Exception("Ising V2 requires temperature >= 0.");
+        if (cfg.L < 2) throw Exception("Ising requires L >= 2.");
+        if (cfg.Steps == 0) throw Exception("Ising requires steps > 0.");
+        if (cfg.Temperature < 0.0) throw Exception("Ising requires temperature >= 0.");
         if (cfg.Interval == 0) cfg.Interval = 1;
         if (cfg.MonitorInterval == 0) cfg.MonitorInterval = cfg.Interval;
 
         if (cfg.bEnableLiveParameterBinding) {
             if (cfg.ControlSampleInterval == 0) cfg.ControlSampleInterval = 1;
-            if (cfg.ControlTopicPrefix.empty()) throw Exception("Ising V2 live parameter binding requires a non-empty topic prefix.");
+            if (cfg.ControlTopicPrefix.empty()) throw Exception("Ising live parameter binding requires a non-empty topic prefix.");
             if (cfg.ControlHub == nullptr) cfg.ControlHub = New<Math::LiveControl::V2::FLiveControlHubV2>();
         }
     }
@@ -112,22 +110,19 @@ namespace Slab::Studios::Common::Simulations::V2 {
             cfg.ControlHub,
             bindings,
             cfg.ControlSampleInterval,
-            "Ising live parameter binding V2");
+            "Ising live parameter binding");
         if (bindingSubscriptions.empty()) return baseRecipe;
 
         return New<Math::Numerics::V2::FAppendedSubscriptionsRecipeV2>(baseRecipe, std::move(bindingSubscriptions));
     }
 
     auto BuildIsingPassiveMonitorWindowV2(const FIsingExecutionConfigV2 &cfg,
-                                          const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-                                          const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener)
+                                          const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
         -> TPointer<Graphics::FSlabWindow> {
         (void) cfg;
         if (liveView == nullptr) throw Exception("Ising passive monitor requires a live view.");
-        if (snapshotListener == nullptr) throw Exception("Ising passive monitor requires a snapshot listener.");
         return New<Slab::Studios::Common::Monitors::V2::FIsingMetropolisPassiveMonitorWindowV2>(
             liveView,
-            snapshotListener,
             cfg.Steps);
     }
 
@@ -139,21 +134,10 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
         if (runCfg.bEnableGLMonitor) {
             auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
-            auto baseRecipe = BuildIsingRecipeV2(runCfg, liveView);
-            auto snapshotListener = New<FStateSnapshotListenerV2>("Ising monitor snapshot listener V2");
-
-            Vector<FSubscriptionV2> subscriptions = {{
-                New<FEveryNStepsTriggerV2>(std::max<UIntBig>(UIntBig(1), runCfg.MonitorInterval)),
-                snapshotListener,
-                EDeliveryModeV2::LatestOnly,
-                true,
-                true
-            }};
-
-            auto recipe = New<FAppendedSubscriptionsRecipeV2>(baseRecipe, std::move(subscriptions));
-            auto monitor = BuildIsingPassiveMonitorWindowV2(runCfg, liveView, snapshotListener);
+            auto recipe = BuildIsingRecipeV2(runCfg, liveView);
+            auto monitor = BuildIsingPassiveMonitorWindowV2(runCfg, liveView);
             return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
-                "Studios Ising V2 Monitor",
+                "Studios Ising Monitor",
                 recipe,
                 monitor,
                 static_cast<size_t>(runCfg.Batch));

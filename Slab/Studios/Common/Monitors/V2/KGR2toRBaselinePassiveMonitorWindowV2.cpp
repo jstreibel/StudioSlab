@@ -26,10 +26,10 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
         Slab::Studios::Common::AppendSessionLiveViewStats(
             GuiWindow,
-            "KGR2toR Baseline V2 passive monitor",
+            "KGR2toR Baseline passive monitor",
             LastTelemetry,
             bHasBoundSession,
-            bLastLeaseAcquired,
+            bLastSnapshotAvailable,
             MaxSteps,
             extraLine);
     }
@@ -144,7 +144,6 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
     FR2toRBaselinePassiveMonitorWindowV2::FR2toRBaselinePassiveMonitorWindowV2(
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-            const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener,
             const UIntBig maxSteps,
             const TPointer<Math::LiveControl::V2::FLiveControlHubV2> &controlHub,
             const Str &controlTopicPrefix,
@@ -154,12 +153,11 @@ namespace Slab::Studios::Common::Monitors::V2 {
             const DevFloat controlWidth,
             const DevFloat controlAmplitude,
             const bool bControlEnabled)
-    : FWindowPanel(Graphics::FSlabWindowConfig("KGR2toR Baseline V2 GL Monitor"))
+    : FWindowPanel(Graphics::FSlabWindowConfig("KGR2toR Baseline GL Monitor"))
     , LiveView(liveView)
     , SessionTopic(liveView != nullptr ? liveView->GetSessionTopic() : nullptr)
     , TelemetryTopic(liveView != nullptr ? liveView->GetTelemetryTopic() : nullptr)
     , StatusTopic(liveView != nullptr ? liveView->GetStatusTopic() : nullptr)
-    , SnapshotListener(snapshotListener)
     , ControlHub(controlHub)
     , ControlTopicPrefix(controlTopicPrefix)
     , bEnableControlPublisher(bEnableControlPublisher)
@@ -173,9 +171,8 @@ namespace Slab::Studios::Common::Monitors::V2 {
     , FieldArtist(New<Graphics::R2toRFunctionArtist>())
     , MaxSteps(maxSteps) {
         if (LiveView == nullptr) throw Exception("KGR2toR passive monitor requires a live view.");
-        if (SnapshotListener == nullptr) throw Exception("KGR2toR passive monitor requires a snapshot listener.");
-        if (SessionTopic == nullptr || TelemetryTopic == nullptr) {
-            throw Exception("KGR2toR passive monitor requires session/telemetry topics.");
+        if (SessionTopic == nullptr || TelemetryTopic == nullptr || LiveView->GetSnapshotTopic() == nullptr) {
+            throw Exception("KGR2toR passive monitor requires session/telemetry/snapshot topics.");
         }
 
         FieldArtist->SetAffectGraphRanges(false);
@@ -186,6 +183,11 @@ namespace Slab::Studios::Common::Monitors::V2 {
         FieldWindow.AddArtist(FieldArtist);
         FieldWindow.SetAutoReviewGraphRanges(false);
         FieldWindow.GetRegion().setLimits(-1.0, 1.0, -1.0, 1.0);
+        LiveView->RegisterSnapshotConsumer();
+    }
+
+    FR2toRBaselinePassiveMonitorWindowV2::~FR2toRBaselinePassiveMonitorWindowV2() {
+        if (LiveView != nullptr) LiveView->UnregisterSnapshotConsumer();
     }
 
     auto FR2toRBaselinePassiveMonitorWindowV2::ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void {
@@ -196,14 +198,13 @@ namespace Slab::Studios::Common::Monitors::V2 {
             if (status.has_value()) LastStatus = status;
         }
 
-        const auto snapshotOpt = SnapshotListener != nullptr
-            ? SnapshotListener->TryGetSnapshot()
-            : std::optional<Math::Numerics::V2::FStateSnapshotEnvelopeV2>{};
-        bLastLeaseAcquired = snapshotOpt.has_value();
-        if (snapshotOpt.has_value() &&
-            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshotOpt->PublishedVersion)) {
-            LastSnapshotVersion = snapshotOpt->PublishedVersion;
-            SetPlotFromState(snapshotOpt->State);
+        const auto snapshot = LiveView->TryGetSnapshot();
+        bLastSnapshotAvailable = snapshot.has_value() && snapshot->State != nullptr;
+        if (snapshot.has_value() &&
+            snapshot->State != nullptr &&
+            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshot->PublishedVersion)) {
+            LastSnapshotVersion = snapshot->PublishedVersion;
+            SetPlotFromState(snapshot->State);
         }
 
         UpdateStatsWindow();

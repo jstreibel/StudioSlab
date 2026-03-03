@@ -1,6 +1,13 @@
 #include "LiveTopicsV2.h"
 
 namespace Slab::Math::LiveData::V2 {
+    namespace {
+        [[nodiscard]] auto IsTerminalEventReason(const Numerics::V2::EEventReasonV2 reason) -> bool {
+            return reason == Numerics::V2::EEventReasonV2::Final
+                || reason == Numerics::V2::EEventReasonV2::AbortFinal;
+        }
+    } // namespace
+
 
     auto FSessionTelemetryTopicV2::PublishEvent(const Numerics::V2::FSimulationEventV2 &event) -> void {
         std::lock_guard lock(Mutex);
@@ -113,6 +120,51 @@ namespace Slab::Math::LiveData::V2 {
     auto FSessionStatusTopicV2::TryGetStatus() const -> std::optional<FSessionStatusV2> {
         std::lock_guard lock(Mutex);
         return LastStatus;
+    }
+
+    auto FSessionSnapshotTopicV2::PublishEvent(const Numerics::V2::FSimulationEventV2 &event) -> void {
+        bool bShouldCaptureSnapshot = false;
+        {
+            std::lock_guard lock(Mutex);
+            bShouldCaptureSnapshot = ActiveConsumerCount > 0 || IsTerminalEventReason(event.Reason);
+        }
+        if (!bShouldCaptureSnapshot) return;
+
+        const auto sourceState = event.State;
+        if (sourceState == nullptr) return;
+
+        auto stateCopy = sourceState->Replicate(std::nullopt);
+        if (stateCopy == nullptr) return;
+        stateCopy->setData(*sourceState);
+
+        FSessionSnapshotV2 snapshot;
+        snapshot.State = std::move(stateCopy);
+        snapshot.Cursor = event.Cursor;
+        snapshot.LastReason = event.Reason;
+        snapshot.PublishedVersion = event.PublishedVersion;
+
+        std::lock_guard lock(Mutex);
+        LastSnapshot = std::move(snapshot);
+    }
+
+    auto FSessionSnapshotTopicV2::TryGetSnapshot() const -> std::optional<FSessionSnapshotV2> {
+        std::lock_guard lock(Mutex);
+        return LastSnapshot;
+    }
+
+    auto FSessionSnapshotTopicV2::RegisterConsumer() -> void {
+        std::lock_guard lock(Mutex);
+        ++ActiveConsumerCount;
+    }
+
+    auto FSessionSnapshotTopicV2::UnregisterConsumer() -> void {
+        std::lock_guard lock(Mutex);
+        if (ActiveConsumerCount > 0) --ActiveConsumerCount;
+    }
+
+    auto FSessionSnapshotTopicV2::HasConsumers() const -> bool {
+        std::lock_guard lock(Mutex);
+        return ActiveConsumerCount > 0;
     }
 
 } // namespace Slab::Math::LiveData::V2

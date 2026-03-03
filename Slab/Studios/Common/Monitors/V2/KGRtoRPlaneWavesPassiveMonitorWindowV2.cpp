@@ -21,10 +21,10 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
         Slab::Studios::Common::AppendSessionLiveViewStats(
             GuiWindow,
-            "KGRtoR Plane Waves V2 passive monitor",
+            "KGRtoR Plane Waves passive monitor",
             LastTelemetry,
             bHasBoundSession,
-            bLastLeaseAcquired,
+            bLastSnapshotAvailable,
             MaxSteps,
             extraLine);
     }
@@ -89,21 +89,18 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
     FRtoRPlaneWavesPassiveMonitorWindowV2::FRtoRPlaneWavesPassiveMonitorWindowV2(
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-            const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener,
             const UIntBig maxSteps)
-    : FWindowPanel(Graphics::FSlabWindowConfig("KGRtoR Plane Waves V2 GL Monitor"))
+    : FWindowPanel(Graphics::FSlabWindowConfig("KGRtoR Plane Waves GL Monitor"))
     , LiveView(liveView)
     , SessionTopic(liveView != nullptr ? liveView->GetSessionTopic() : nullptr)
     , TelemetryTopic(liveView != nullptr ? liveView->GetTelemetryTopic() : nullptr)
     , StatusTopic(liveView != nullptr ? liveView->GetStatusTopic() : nullptr)
-    , SnapshotListener(snapshotListener)
     , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("KGRtoR Telemetry")))
     , PhiWindow("KGRtoR phi(x)")
     , MaxSteps(maxSteps) {
         if (LiveView == nullptr) throw Exception("KGRtoR passive monitor requires a live view.");
-        if (SnapshotListener == nullptr) throw Exception("KGRtoR passive monitor requires a snapshot listener.");
-        if (SessionTopic == nullptr || TelemetryTopic == nullptr) {
-            throw Exception("KGRtoR passive monitor requires session/telemetry topics.");
+        if (SessionTopic == nullptr || TelemetryTopic == nullptr || LiveView->GetSnapshotTopic() == nullptr) {
+            throw Exception("KGRtoR passive monitor requires session/telemetry/snapshot topics.");
         }
 
         auto style = *Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
@@ -115,6 +112,11 @@ namespace Slab::Studios::Common::Monitors::V2 {
         PhiWindow.AddArtist(PhiArtist);
         PhiWindow.SetAutoReviewGraphRanges(false);
         PhiWindow.GetRegion().setLimits(-1.0, 1.0, -1.0, 1.0);
+        LiveView->RegisterSnapshotConsumer();
+    }
+
+    FRtoRPlaneWavesPassiveMonitorWindowV2::~FRtoRPlaneWavesPassiveMonitorWindowV2() {
+        if (LiveView != nullptr) LiveView->UnregisterSnapshotConsumer();
     }
 
     auto FRtoRPlaneWavesPassiveMonitorWindowV2::ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void {
@@ -125,14 +127,13 @@ namespace Slab::Studios::Common::Monitors::V2 {
             if (status.has_value()) LastStatus = status;
         }
 
-        const auto snapshotOpt = SnapshotListener != nullptr
-            ? SnapshotListener->TryGetSnapshot()
-            : std::optional<Math::Numerics::V2::FStateSnapshotEnvelopeV2>{};
-        bLastLeaseAcquired = snapshotOpt.has_value();
-        if (snapshotOpt.has_value() &&
-            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshotOpt->PublishedVersion)) {
-            LastSnapshotVersion = snapshotOpt->PublishedVersion;
-            SetPlotFromState(snapshotOpt->State);
+        const auto snapshot = LiveView->TryGetSnapshot();
+        bLastSnapshotAvailable = snapshot.has_value() && snapshot->State != nullptr;
+        if (snapshot.has_value() &&
+            snapshot->State != nullptr &&
+            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshot->PublishedVersion)) {
+            LastSnapshotVersion = snapshot->PublishedVersion;
+            SetPlotFromState(snapshot->State);
         }
 
         UpdateStatsWindow();

@@ -25,10 +25,10 @@ namespace Slab::Studios::Common::Monitors::V2 {
     auto FSPIPassiveMonitorWindowV2::UpdateStatsWindow() -> void {
         Slab::Studios::Common::AppendSessionLiveViewStats(
             GuiWindow,
-            "SPI V2 passive monitor",
+            "SPI passive monitor",
             LastTelemetry,
             LiveView->HasBoundSession(),
-            bLastLeaseAcquired,
+            bLastSnapshotAvailable,
             MaxSteps);
     }
 
@@ -52,36 +52,38 @@ namespace Slab::Studios::Common::Monitors::V2 {
 
     FSPIPassiveMonitorWindowV2::FSPIPassiveMonitorWindowV2(
             const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-            const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener,
             const UIntBig maxSteps)
-    : FWindowPanel(Graphics::FSlabWindowConfig("SPI V2 GL Monitor"))
+    : FWindowPanel(Graphics::FSlabWindowConfig("SPI GL Monitor"))
     , LiveView(liveView)
-    , SnapshotListener(snapshotListener)
-    , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("SPI V2 Telemetry")))
+    , GuiWindow(New<Graphics::FGUIWindow>(Graphics::FSlabWindowConfig("SPI Telemetry")))
     , SectionWindow("SPI field section")
     , MaxSteps(maxSteps) {
         if (LiveView == nullptr) throw Exception("SPI passive monitor requires a live view.");
-        if (SnapshotListener == nullptr) throw Exception("SPI passive monitor requires a snapshot listener.");
+        if (LiveView->GetSnapshotTopic() == nullptr) throw Exception("SPI passive monitor requires a snapshot topic.");
 
         SectionArtist.SetAffectGraphRanges(true);
         AddWindow(Naked(SectionWindow));
 
         SectionWindow.AddArtist(Naked(SectionArtist));
         SectionWindow.SetAutoReviewGraphRanges(true);
+        LiveView->RegisterSnapshotConsumer();
+    }
+
+    FSPIPassiveMonitorWindowV2::~FSPIPassiveMonitorWindowV2() {
+        if (LiveView != nullptr) LiveView->UnregisterSnapshotConsumer();
     }
 
     auto FSPIPassiveMonitorWindowV2::ImmediateDraw(const Graphics::FPlatformWindow &platformWindow) -> void {
         auto telemetry = LiveView->TryGetTelemetry();
         if (telemetry.has_value()) LastTelemetry = telemetry;
 
-        const auto snapshotOpt = SnapshotListener != nullptr
-            ? SnapshotListener->TryGetSnapshot()
-            : std::optional<Math::Numerics::V2::FStateSnapshotEnvelopeV2>{};
-        bLastLeaseAcquired = snapshotOpt.has_value();
-        if (snapshotOpt.has_value() &&
-            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshotOpt->PublishedVersion)) {
-            LastSnapshotVersion = snapshotOpt->PublishedVersion;
-            SetSectionFromState(snapshotOpt->State);
+        const auto snapshot = LiveView->TryGetSnapshot();
+        bLastSnapshotAvailable = snapshot.has_value() && snapshot->State != nullptr;
+        if (snapshot.has_value() &&
+            snapshot->State != nullptr &&
+            (!LastSnapshotVersion.has_value() || *LastSnapshotVersion != snapshot->PublishedVersion)) {
+            LastSnapshotVersion = snapshot->PublishedVersion;
+            SetSectionFromState(snapshot->State);
         }
 
         UpdateStatsWindow();

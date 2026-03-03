@@ -6,14 +6,13 @@
 #include "Graphics/Window/SlabWindow.h"
 #include "Math/Data/V2/LiveControlHubV2.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
-#include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
 #include "Math/Numerics/V2/Runtime/SimulationRecipeV2.h"
 
 #include <numbers>
 
 namespace Slab::Studios::Common::Simulations::V2 {
 
-    inline constexpr const char *XYControlTopicPrefixDefaultV2 = "labv2/control/xy";
+    inline constexpr const char *XYControlTopicPrefixDefaultV2 = "lab/control/xy";
 
     struct FXYExecutionConfigV2 {
         UInt L = 64;
@@ -43,8 +42,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
     auto BuildXYPassiveMonitorWindowV2(
         const FXYExecutionConfigV2 &cfg,
-        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-        const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener)
+        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
         -> TPointer<Graphics::FSlabWindow>;
 
     auto RunXYV2(const FXYExecutionConfigV2 &cfg) -> int;

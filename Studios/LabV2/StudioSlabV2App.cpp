@@ -6,7 +6,7 @@
 #include "Graphics/Plot2D/Plot2DWindow.h"
 
 FStudioSlabV2App::FStudioSlabV2App(const int argc, const char *argv[])
-: FApplication("Studio Slab V2", argc, argv) {
+: FApplication("Studio Slab", argc, argv) {
 }
 
 Slab::TPointer<Slab::Graphics::FGraphicBackend> FStudioSlabV2App::CreatePlatform() {

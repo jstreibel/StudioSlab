@@ -99,7 +99,9 @@ namespace Slab::Core {
         if (Job.Task->IsTaskRunning()) return false;
 
         Job.Task->Release();
-        Job.JobThread->join();
+        if (Job.JobThread != nullptr && Job.JobThread->joinable()) {
+            Job.JobThread->join();
+        }
 
         Jobs.remove(Job);
 

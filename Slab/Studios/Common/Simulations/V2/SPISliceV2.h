@@ -5,7 +5,6 @@
 
 #include "Graphics/Window/SlabWindow.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
-#include "Math/Numerics/V2/Listeners/StateSnapshotListenerV2.h"
 #include "Math/Numerics/V2/Runtime/SimulationRecipeV2.h"
 
 namespace Slab::Models::StochasticPathIntegrals {
@@ -34,8 +33,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
         -> TPointer<Math::Numerics::V2::FSimulationRecipeV2>;
 
     auto BuildSPIPassiveMonitorWindowV2(const FSPIExecutionConfig &cfg,
-                                        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-                                        const TPointer<Math::Numerics::V2::FStateSnapshotListenerV2> &snapshotListener)
+                                        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
         -> TPointer<Graphics::FSlabWindow>;
 
     auto RunSPIV2(const FSPIExecutionConfig &cfg) -> int;

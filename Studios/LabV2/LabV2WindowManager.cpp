@@ -46,12 +46,10 @@ namespace {
     constexpr auto WindowTitleViews = "Views";
     constexpr auto WindowTitleSimulationLauncher = "Simulation Launcher";
     constexpr auto WindowTitleBlueprints = "Blueprints";
-    constexpr auto DockspaceHostName = "##LabV2DockspaceHost";
-    constexpr auto DockspaceNameSimulations = "##LabV2Dockspace-Simulations";
-    constexpr auto DockspaceNameMonitor = "##LabV2Dockspace-Monitor";
-    constexpr auto DockspaceNameSchemes = "##LabV2Dockspace-Schemes";
+    constexpr auto DockspaceHostName = "##LabDockspaceHost";
+    constexpr auto DockspaceNameSimulations = "##LabDockspace-Simulations";
+    constexpr auto DockspaceNameSchemes = "##LabDockspace-Schemes";
     constexpr auto WorkspaceTabSimulations = "Simulations";
-    constexpr auto WorkspaceTabMonitor = "Monitor";
     constexpr auto WorkspaceTabSchemes = "Schemes";
 
 } // namespace
@@ -77,21 +75,7 @@ FLabV2WindowManager::FLabV2WindowManager()
     AddResponder(ImGuiContext);
     LoadWorkspacePanelVisibility(ActiveWorkspace);
 
-    {
-        const auto plotWindow = Slab::New<Slab::Graphics::FPlot2DWindow>("Monitor Plot");
-        plotWindow->SetAutoReviewGraphRanges(false);
-        if (const auto theme = Slab::Graphics::FPlotThemeManager::GetCurrent();
-            theme != nullptr && !theme->FuncPlotStyles.empty()) {
-            const auto sine = Slab::New<Slab::Math::RtoR::FSine>(1.0, 2.0);
-            Slab::Graphics::FPlotter::AddRtoRFunction(
-                plotWindow,
-                sine,
-                theme->FuncPlotStyles.front(),
-                "sin(2x)",
-                2048);
-        }
-        AddSlabWindow(plotWindow, false);
-    }
+    // No default monitor window; monitors are attached per simulation on demand.
 }
 
 void FLabV2WindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) {
@@ -238,14 +222,10 @@ auto FLabV2WindowManager::SyncMousePositionFromImGui() -> void {
 }
 
 auto FLabV2WindowManager::DrawViewManagerPanel() -> void {
-    ImGui::SeparatorText("Views");
+    ImGui::TextUnformatted("Views");
     if (SlabWindows.empty()) {
         ImGui::TextDisabled("No active view windows.");
         return;
-    }
-
-    if (ImGui::Button("Retile Views")) {
-        RequestViewRetile();
     }
 
     const auto selected = FindWindowByUniqueName(SelectedViewUniqueName);
@@ -260,6 +240,7 @@ auto FLabV2WindowManager::DrawViewManagerPanel() -> void {
             selected->Close();
         }
     }
+    ImGui::Separator();
 
     constexpr auto tableFlags =
         ImGuiTableFlags_Borders |
@@ -267,7 +248,7 @@ auto FLabV2WindowManager::DrawViewManagerPanel() -> void {
         ImGuiTableFlags_ScrollX |
         ImGuiTableFlags_SizingFixedFit;
 
-    if (ImGui::BeginTable("LabV2ViewTable", 5, tableFlags)) {
+    if (ImGui::BeginTable("LabViewTable", 5, tableFlags)) {
         ImGui::TableSetupColumn("Title", ImGuiTableColumnFlags_WidthStretch, 1.0f);
         ImGui::TableSetupColumn("x");
         ImGui::TableSetupColumn("y");
@@ -360,7 +341,7 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> bool {
 
     const int nWindows = static_cast<int>(SlabWindows.size());
 
-    if (bDockingMode && ActiveWorkspace == EWorkspaceTab::Monitor && nWindows == 1) {
+    if (bDockingMode && ActiveWorkspace == EWorkspaceTab::Simulations && nWindows == 1) {
         if (const auto &window = SlabWindows.front(); window != nullptr) {
             window->Set_x(xWorkspace);
             window->Set_y(yWorkspace);
@@ -416,7 +397,7 @@ auto FLabV2WindowManager::IsDockingEnabled() const -> bool {
 
 auto FLabV2WindowManager::ShouldRenderSlabWindowsInWorkspace() const -> bool {
     if (!IsDockingEnabled()) return true;
-    return ActiveWorkspace == EWorkspaceTab::Monitor;
+    return ActiveWorkspace == EWorkspaceTab::Simulations;
 }
 
 auto FLabV2WindowManager::HideSlabWindowsOffscreen() -> void {
@@ -470,11 +451,11 @@ auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> v
     const auto previousWorkspace = ActiveWorkspace;
     SaveWorkspacePanelVisibility(ActiveWorkspace);
     ActiveWorkspace = workspace;
-    if (previousWorkspace == EWorkspaceTab::Monitor && ActiveWorkspace != EWorkspaceTab::Monitor) {
+    if (previousWorkspace == EWorkspaceTab::Simulations && ActiveWorkspace != EWorkspaceTab::Simulations) {
         CapturedMouseWindow.reset();
     }
     LoadWorkspacePanelVisibility(ActiveWorkspace);
-    if (previousWorkspace == EWorkspaceTab::Monitor || ActiveWorkspace == EWorkspaceTab::Monitor) {
+    if (previousWorkspace == EWorkspaceTab::Simulations || ActiveWorkspace == EWorkspaceTab::Simulations) {
         RequestViewRetile();
     }
 }
@@ -526,11 +507,11 @@ auto FLabV2WindowManager::DrawWorkspaceLauncher() -> void {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0.0f, 0.0f));
 
     const auto previousWidth = WorkspaceLauncherWidth;
-    if (ImGui::Begin("##LabV2WorkspaceLauncher", nullptr, flags)) {
+    if (ImGui::Begin("##LabWorkspaceLauncher", nullptr, flags)) {
         const auto buttonSize = ImVec2(
             std::max(16.0f, ImGui::GetContentRegionAvail().x),
             std::max(16.0f, ImGui::GetContentRegionAvail().y));
-        (void) ImGuiContext->DrawMainMenuLauncher("LabV2MainMenuLauncher", buttonSize);
+        (void) ImGuiContext->DrawMainMenuLauncher("LabMainMenuLauncher", buttonSize);
         WorkspaceLauncherWidth = std::max(0.0f, ImGui::GetWindowWidth());
     }
     ImGui::End();
@@ -574,7 +555,7 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
 
     const auto previousHeight = WorkspaceTabsHeight;
     WorkspaceTabsHeight = estimatedHeight;
-    if (ImGui::Begin("##LabV2WorkspaceTabs", nullptr, flags)) {
+    if (ImGui::Begin("##LabWorkspaceTabs", nullptr, flags)) {
         auto selected = ActiveWorkspace;
         if (ImGui::BeginTabBar("##WorkspaceTabBar",
             ImGuiTabBarFlags_FittingPolicyResizeDown | ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
@@ -587,7 +568,6 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
             };
 
             drawTab(EWorkspaceTab::Simulations, WorkspaceTabSimulations);
-            drawTab(EWorkspaceTab::Monitor, WorkspaceTabMonitor);
             drawTab(EWorkspaceTab::Schemes, WorkspaceTabSchemes);
 
             ImGui::EndTabBar();
@@ -635,10 +615,9 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
 
     const auto previousHeight = WorkspaceStripHeight;
     WorkspaceStripHeight = estimatedHeight;
-    if (ImGui::Begin("##LabV2WorkspaceStrip", nullptr, flags)) {
+    if (ImGui::Begin("##LabWorkspaceStrip", nullptr, flags)) {
         const char *workspaceLabel = WorkspaceTabSimulations;
-        if (ActiveWorkspace == EWorkspaceTab::Monitor) workspaceLabel = WorkspaceTabMonitor;
-        else if (ActiveWorkspace == EWorkspaceTab::Schemes) workspaceLabel = WorkspaceTabSchemes;
+        if (ActiveWorkspace == EWorkspaceTab::Schemes) workspaceLabel = WorkspaceTabSchemes;
 
         ImGui::TextDisabled("%s", workspaceLabel);
         ImGui::SameLine();
@@ -652,19 +631,14 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
 
         if (ActiveWorkspace == EWorkspaceTab::Simulations) {
             drawToggle("Launcher", &bShowWindowSimulationLauncher);
-            drawToggle("Tasks", &bShowWindowTasks);
-        } else if (ActiveWorkspace == EWorkspaceTab::Monitor) {
             drawToggle("Views", &bShowWindowViews);
+            drawToggle("Tasks", &bShowWindowTasks);
             drawToggle("Live Data", &bShowWindowLiveData);
             drawToggle("Live Control", &bShowWindowLiveControl);
         } else {
             drawToggle("Blueprints", &bShowWindowBlueprints);
         }
 
-        if (ImGui::Button("Retile")) {
-            RequestViewRetile();
-        }
-        ImGui::SameLine();
         if (ImGui::Button("Reset Layout")) {
             bResetDockLayoutRequested = true;
         }
@@ -705,22 +679,16 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
     ImGuiID dockMain = dockId;
     if (workspace == EWorkspaceTab::Simulations) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.24f, nullptr, &dockMain);
-        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.28f, nullptr, &dockMain);
+        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.30f, nullptr, &dockMain);
 
         LauncherInitialDockId = static_cast<unsigned int>(dockLeft);
         bRequestLauncherInitialDock = LauncherInitialDockId != 0;
 
         ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockLeft);
-        ImGui::DockBuilderDockWindow(WindowTitleTasks, dockBottom);
-    } else if (workspace == EWorkspaceTab::Monitor) {
-        const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.22f, nullptr, &dockMain);
-        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.26f, nullptr, &dockMain);
-        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.28f, nullptr, &dockMain);
-
         ImGui::DockBuilderDockWindow(WindowTitleViews, dockLeft);
+        ImGui::DockBuilderDockWindow(WindowTitleTasks, dockBottom);
         ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockBottom);
         ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockBottom);
-        ImGui::DockBuilderDockWindow(WindowTitleLab, dockRight);
     } else {
         ImGui::DockBuilderDockWindow(WindowTitleBlueprints, dockMain);
     }
@@ -765,25 +733,20 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
     if (ImGui::Begin(DockspaceHostName, nullptr, hostFlags)) {
         const auto dockspaceIdSimulations =
             static_cast<unsigned int>(ImGui::GetID(DockspaceNameSimulations));
-        const auto dockspaceIdMonitor =
-            static_cast<unsigned int>(ImGui::GetID(DockspaceNameMonitor));
         const auto dockspaceIdSchemes =
             static_cast<unsigned int>(ImGui::GetID(DockspaceNameSchemes));
 
         if (!bWorkspaceLayoutsBootstrapped) {
             BuildDefaultDockLayout(dockspaceIdSimulations, EWorkspaceTab::Simulations);
-            BuildDefaultDockLayout(dockspaceIdMonitor, EWorkspaceTab::Monitor);
             BuildDefaultDockLayout(dockspaceIdSchemes, EWorkspaceTab::Schemes);
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Simulations)] = true;
-            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Monitor)] = true;
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Schemes)] = true;
             bWorkspaceLayoutsBootstrapped = true;
             RequestViewRetile();
         }
 
-        const auto dockspaceIdFor = [dockspaceIdSimulations, dockspaceIdMonitor, dockspaceIdSchemes]
+        const auto dockspaceIdFor = [dockspaceIdSimulations, dockspaceIdSchemes]
             (const EWorkspaceTab workspace) -> unsigned int {
-                if (workspace == EWorkspaceTab::Monitor) return dockspaceIdMonitor;
                 if (workspace == EWorkspaceTab::Schemes) return dockspaceIdSchemes;
                 return dockspaceIdSimulations;
             };
@@ -812,7 +775,6 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
         };
 
         drawWorkspaceDockspace(dockspaceIdSimulations, EWorkspaceTab::Simulations);
-        drawWorkspaceDockspace(dockspaceIdMonitor, EWorkspaceTab::Monitor);
         drawWorkspaceDockspace(dockspaceIdSchemes, EWorkspaceTab::Schemes);
 #endif
     }
@@ -827,22 +789,17 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
 
     registry.push_back(FPanelSurfaceRegistration{
         WindowTitleLab,
-        EWorkspaceTab::Monitor,
+        EWorkspaceTab::Simulations,
         &bShowWindowLab,
         false,
         true,
         [this]() {
-            ImGui::TextDisabled("V2 observability + launcher shell");
+            ImGui::TextDisabled("Observability + launcher shell");
             ImGui::SeparatorText("Workspace");
             ImGui::Checkbox("Enable dockspace layout", &bUseDockspaceLayout);
             if (ImGui::Button("Reset Dock Layout")) {
                 bResetDockLayoutRequested = true;
             }
-            ImGui::SameLine();
-            if (ImGui::Button("Retile Views")) {
-                RequestViewRetile();
-            }
-
             ImGui::SeparatorText("Panels");
             if (ActiveWorkspace == EWorkspaceTab::Simulations) {
                 ImGui::Checkbox("Simulation Launcher", &bShowWindowSimulationLauncher);
@@ -881,7 +838,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
 
     registry.push_back(FPanelSurfaceRegistration{
         WindowTitleLiveData,
-        EWorkspaceTab::Monitor,
+        EWorkspaceTab::Simulations,
         &bShowWindowLiveData,
         false,
         true,
@@ -892,7 +849,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
 
     registry.push_back(FPanelSurfaceRegistration{
         WindowTitleLiveControl,
-        EWorkspaceTab::Monitor,
+        EWorkspaceTab::Simulations,
         &bShowWindowLiveControl,
         false,
         true,
@@ -907,7 +864,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
 
     registry.push_back(FPanelSurfaceRegistration{
         WindowTitleViews,
-        EWorkspaceTab::Monitor,
+        EWorkspaceTab::Simulations,
         &bShowWindowViews,
         false,
         true,
@@ -923,15 +880,6 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
             "This workspace is reserved for node/scheme authoring. "
             "A full Blueprint renderer can be attached here incrementally.");
     };
-
-    registry.push_back(FPanelSurfaceRegistration{
-        WindowTitleBlueprints,
-        EWorkspaceTab::Monitor,
-        &bShowWindowBlueprints,
-        false,
-        true,
-        drawBlueprintsPlaceholder
-    });
 
     registry.push_back(FPanelSurfaceRegistration{
         WindowTitleBlueprints,
@@ -999,8 +947,8 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
 
     constexpr auto flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar;
     if (ImGui::Begin(FStudioConfigV2::SidePaneId, nullptr, flags)) {
-        ImGui::SeparatorText("Lab V2");
-        ImGui::TextDisabled("V2 observability + launcher shell");
+        ImGui::SeparatorText("Lab");
+        ImGui::TextDisabled("Observability + launcher shell");
 
         ImGui::SeparatorText("Panels");
         ImGui::Checkbox("Simulation Launcher", &bShowWindowSimulationLauncher);
@@ -1084,11 +1032,11 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
     }
 
     const bool bRenderSlabWindows = ShouldRenderSlabWindowsInWorkspace();
-    const bool bForceMonitorDockRetile =
+    const bool bForceSimDockRetile =
         IsDockingEnabled() &&
-        ActiveWorkspace == EWorkspaceTab::Monitor;
+        ActiveWorkspace == EWorkspaceTab::Simulations;
 
-    if (bRenderSlabWindows && (bForceMonitorDockRetile || bPendingViewRetile || RetileStabilizationFramesRemaining > 0)) {
+    if (bRenderSlabWindows && (bForceSimDockRetile || bPendingViewRetile || RetileStabilizationFramesRemaining > 0)) {
         if (ArrangeTopLevelSlabWindows()) {
             if (RetileStabilizationFramesRemaining > 0) {
                 --RetileStabilizationFramesRemaining;
