@@ -25,7 +25,9 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
         return New<FRtoRHamiltonianMetropolisHastingsRecipeV2>(
             cfg.Steps,
-            std::max<UIntBig>(UIntBig(1), cfg.Interval));
+            std::max<UIntBig>(UIntBig(1), cfg.Interval),
+            nullptr,
+            cfg.bRunEndless);
     }
 
     auto BuildMetropolisMonitorBundleV2(const FMetropolisExecutionConfigV2 &cfg) -> FMetropolisMonitorBundleV2 {
@@ -36,12 +38,15 @@ namespace Slab::Studios::Common::Simulations::V2 {
         auto baseRecipe = New<FRtoRHamiltonianMetropolisHastingsRecipeV2>(
             cfg.Steps,
             std::max<UIntBig>(UIntBig(1), cfg.Interval),
-            liveView);
+            liveView,
+            cfg.bRunEndless);
         baseRecipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
 
         FMetropolisMonitorBundleV2 bundle;
         bundle.Recipe = baseRecipe;
-        bundle.MonitorWindow = New<FMetropolisPassiveMonitorWindowV2>(liveView, cfg.Steps);
+        bundle.MonitorWindow = New<FMetropolisPassiveMonitorWindowV2>(
+            liveView,
+            cfg.bRunEndless ? UIntBig(0) : cfg.Steps);
         return bundle;
     }
 

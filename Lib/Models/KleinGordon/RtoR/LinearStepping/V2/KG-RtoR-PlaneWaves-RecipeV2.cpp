@@ -66,10 +66,12 @@ namespace Slab::Models::KGRtoR::PlaneWaves::V2 {
 
     FKGRtoRPlaneWavesRecipeV2::FKGRtoRPlaneWavesRecipeV2(FKGRtoRPlaneWavesConfigV2 config,
                                                          const UIntBig consoleIntervalSteps,
-                                                         const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
+                                                         const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+                                                         const bool bInRunEndless)
     : Config(std::move(config))
     , ConsoleIntervalSteps(std::max<UIntBig>(1, consoleIntervalSteps))
-    , LiveView(liveView) {
+    , LiveView(liveView)
+    , bRunEndless(bInRunEndless) {
         ValidateConfig();
     }
 
@@ -111,7 +113,9 @@ namespace Slab::Models::KGRtoR::PlaneWaves::V2 {
     auto FKGRtoRPlaneWavesRecipeV2::BuildDefaultSubscriptions() -> Vector<FSubscriptionV2> {
         const auto liveViewInterval = LiveViewIntervalSteps > 0 ? LiveViewIntervalSteps : ConsoleIntervalSteps;
 
-        auto console = New<FConsoleProgressListenerV2>(Config.Steps, "KGRtoR Plane Waves Console V2");
+        auto console = New<FConsoleProgressListenerV2>(
+            bRunEndless ? std::optional<UIntBig>{} : std::optional<UIntBig>{Config.Steps},
+            "KGRtoR Plane Waves Console V2");
         Vector<FSubscriptionV2> subscriptions = {{
             New<FEveryNStepsTriggerV2>(ConsoleIntervalSteps),
             console,
@@ -142,6 +146,11 @@ namespace Slab::Models::KGRtoR::PlaneWaves::V2 {
         ValidateConfig();
 
         FRunLimitsV2 limits;
+        if (bRunEndless) {
+            limits.Mode = ERunModeV2::OpenEnded;
+            limits.MaxSteps = std::nullopt;
+            return limits;
+        }
         limits.Mode = ERunModeV2::FiniteSteps;
         limits.MaxSteps = Config.Steps;
         return limits;

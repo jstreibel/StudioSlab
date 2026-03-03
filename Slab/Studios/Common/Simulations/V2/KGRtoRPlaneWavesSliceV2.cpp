@@ -238,12 +238,12 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
         const auto recipeCfg = BuildRtoRPlaneWavesRecipeConfigV2(cfg);
         if (liveView != nullptr) {
-            auto recipe = New<FKGRtoRPlaneWavesRecipeV2>(recipeCfg, cfg.Interval, liveView);
+            auto recipe = New<FKGRtoRPlaneWavesRecipeV2>(recipeCfg, cfg.Interval, liveView, cfg.bRunEndless);
             recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
             return recipe;
         }
 
-        return New<FKGRtoRPlaneWavesRecipeV2>(recipeCfg, cfg.Interval);
+        return New<FKGRtoRPlaneWavesRecipeV2>(recipeCfg, cfg.Interval, nullptr, cfg.bRunEndless);
     }
 
     auto BuildRtoRPlaneWavesPassiveMonitorWindowV2(
@@ -252,7 +252,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
         if (liveView == nullptr) throw Exception("RtoR passive monitor requires a live view.");
         return New<Slab::Studios::Common::Monitors::V2::FRtoRPlaneWavesPassiveMonitorWindowV2>(
             liveView,
-            cfg.Steps);
+            cfg.bRunEndless ? UIntBig(0) : cfg.Steps);
     }
 
     auto RunRtoRPlaneWavesV2(const FRtoRPlaneWavesExecutionConfig &cfg) -> int {

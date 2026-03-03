@@ -20,6 +20,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
     struct FR2toRBaselineExecutionConfig {
         UIntBig Steps = 200;
+        bool bRunEndless = false;
         DevFloat L = 12.0;
         UInt N = 128;
         DevFloat RDt = 0.1;

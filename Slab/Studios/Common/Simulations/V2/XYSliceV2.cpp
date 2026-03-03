@@ -46,7 +46,8 @@ namespace Slab::Studios::Common::Simulations::V2 {
         auto baseRecipe = New<FXYMetropolisRecipeV2>(
             modelCfg,
             std::max<UIntBig>(UIntBig(1), cfg.Interval),
-            liveView);
+            liveView,
+            cfg.bRunEndless);
         baseRecipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
 
         if (!cfg.bEnableLiveParameterBinding || cfg.ControlHub == nullptr) return baseRecipe;
@@ -136,7 +137,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
         if (liveView == nullptr) throw Exception("XY passive monitor requires a live view.");
         return New<Slab::Studios::Common::Monitors::V2::FXYMetropolisPassiveMonitorWindowV2>(
             liveView,
-            cfg.Steps);
+            cfg.bRunEndless ? UIntBig(0) : cfg.Steps);
     }
 
     auto RunXYV2(const FXYExecutionConfigV2 &cfg) -> int {

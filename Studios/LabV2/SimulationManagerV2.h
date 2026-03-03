@@ -29,7 +29,6 @@ public:
         FRequestLauncherVisibilityFn requestLauncherVisibilityFn);
 
     auto AddMenus(const Slab::Graphics::FPlatformWindow &platformWindow) -> void;
-    auto TickLiveControlPublishers() -> void;
     auto DrawLauncherContents() -> void;
 
 private:
@@ -40,9 +39,8 @@ private:
     FRequestLauncherVisibilityFn RequestLauncherVisibility;
 
     bool bPublishLiveDataWhenHeadless = true;
-    bool bXYPublishLiveParameters = false;
-    bool bIsingPublishLiveParameters = false;
     bool bStartWithMonitor = true;
+    bool bOpenEnded = false;
 
     Slab::UIntBig CommonInterval = 20;
     Slab::UIntBig CommonMonitorInterval = 1;

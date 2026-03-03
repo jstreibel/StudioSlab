@@ -17,6 +17,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
     struct FXYExecutionConfigV2 {
         UInt L = 64;
         UIntBig Steps = 2000;
+        bool bRunEndless = false;
         DevFloat Temperature = 0.7;
         DevFloat ExternalField = 0.0;
         DevFloat DeltaTheta = 2.0 * std::numbers::pi_v<DevFloat>;

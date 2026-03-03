@@ -332,11 +332,13 @@ namespace Slab::Models::XY::V2 {
 
     FXYMetropolisRecipeV2::FXYMetropolisRecipeV2(FXYMetropolisConfigV2 config,
                                                  const UIntBig consoleIntervalSteps,
-                                                 const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
+                                                 const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+                                                 const bool bInRunEndless)
     : Config(std::move(config))
     , RuntimeControls(New<FXYRuntimeControlsV2>(Config.Temperature, Config.ExternalField))
     , ConsoleIntervalSteps(std::max<UIntBig>(1, consoleIntervalSteps))
-    , LiveView(liveView) {
+    , LiveView(liveView)
+    , bRunEndless(bInRunEndless) {
         ValidateConfig();
     }
 
@@ -358,7 +360,9 @@ namespace Slab::Models::XY::V2 {
 
         const auto liveViewInterval = LiveViewIntervalSteps > 0 ? LiveViewIntervalSteps : ConsoleIntervalSteps;
 
-        auto console = New<FConsoleProgressListenerV2>(Config.Steps, "XY Metropolis Console V2");
+        auto console = New<FConsoleProgressListenerV2>(
+            bRunEndless ? std::optional<UIntBig>{} : std::optional<UIntBig>{Config.Steps},
+            "XY Metropolis Console V2");
         Vector<FSubscriptionV2> subscriptions = {{
             New<FEveryNStepsTriggerV2>(ConsoleIntervalSteps),
             console,
@@ -393,6 +397,11 @@ namespace Slab::Models::XY::V2 {
         ValidateConfig();
 
         Math::Numerics::V2::FRunLimitsV2 limits;
+        if (bRunEndless) {
+            limits.Mode = Math::Numerics::V2::ERunModeV2::OpenEnded;
+            limits.MaxSteps = std::nullopt;
+            return limits;
+        }
         limits.Mode = Math::Numerics::V2::ERunModeV2::FiniteSteps;
         limits.MaxSteps = Config.Steps;
         return limits;

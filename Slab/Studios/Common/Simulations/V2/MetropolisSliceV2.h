@@ -10,6 +10,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
     struct FMetropolisExecutionConfigV2 {
         UIntBig Steps = 1000;
+        bool bRunEndless = false;
         UIntBig Interval = 1000;
         UIntBig MonitorInterval = 100;
         UIntBig Batch = 2048;

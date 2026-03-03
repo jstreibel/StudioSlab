@@ -238,7 +238,8 @@ namespace Slab::Studios::Common::Simulations::V2 {
             recipeCfg,
             std::max<UIntBig>(UIntBig(1), cfg.Interval),
             liveView,
-            externalSource);
+            externalSource,
+            cfg.bRunEndless);
         recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
 
         if (controlSubscriptions.empty()) return recipe;
@@ -255,7 +256,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
         return New<Slab::Studios::Common::Monitors::V2::FR2toRBaselinePassiveMonitorWindowV2>(
             liveView,
-            cfg.Steps,
+            cfg.bRunEndless ? UIntBig(0) : cfg.Steps,
             cfg.ControlHub,
             cfg.ControlTopicPrefix,
             cfg.bEnableMonitorControlPublisher,

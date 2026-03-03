@@ -27,6 +27,7 @@ namespace Slab::Models::KGR2toR::Baseline::V2 {
         UIntBig LiveViewIntervalSteps = 0; // 0 => follow ConsoleIntervalSteps
         TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView = nullptr;
         TPointer<Math::R2toR::Function> ExternalSource = nullptr;
+        bool bRunEndless = false;
 
         auto ValidateConfig() const -> void;
         [[nodiscard]] auto ComputeCellSize() const -> DevFloat;
@@ -37,7 +38,8 @@ namespace Slab::Models::KGR2toR::Baseline::V2 {
         explicit FKGR2toRBaselineRecipeV2(FKGR2toRBaselineConfigV2 config = {},
                                           UIntBig consoleIntervalSteps = 20,
                                           const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr,
-                                          const TPointer<Math::R2toR::Function> &externalSource = nullptr);
+                                          const TPointer<Math::R2toR::Function> &externalSource = nullptr,
+                                          bool bRunEndless = false);
 
         auto BuildSession() -> TPointer<Math::Numerics::V2::FSimulationSessionV2> override;
         auto BuildDefaultSubscriptions() -> Vector<Math::Numerics::V2::FSubscriptionV2> override;

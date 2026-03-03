@@ -17,6 +17,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
     struct FRtoRPlaneWavesExecutionConfig {
         UIntBig Steps = 200;
+        bool bRunEndless = false;
         DevFloat Dt = -1.0;
         DevFloat L = 10.0;
         UInt N = 256;

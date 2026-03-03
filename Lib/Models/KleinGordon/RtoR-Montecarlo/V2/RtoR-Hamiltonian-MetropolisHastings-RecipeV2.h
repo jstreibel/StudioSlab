@@ -12,6 +12,7 @@ namespace Slab::Models::KGRtoR::Metropolis::V2 {
         UIntBig MaxSteps = 0;
         UIntBig ConsoleIntervalSteps = 1;
         UIntBig LiveViewIntervalSteps = 0; // 0 => follow ConsoleIntervalSteps
+        bool bRunEndless = false;
 
         TPointer<Math::RtoR::NumericFunction_CPU> PhiField = nullptr;
         TPointer<Math::RtoR::NumericFunction_CPU> PiField = nullptr;
@@ -22,7 +23,8 @@ namespace Slab::Models::KGRtoR::Metropolis::V2 {
     public:
         explicit FRtoRHamiltonianMetropolisHastingsRecipeV2(UIntBig maxSteps,
                                                             UIntBig consoleIntervalSteps = 1000,
-                                                            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr);
+                                                            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr,
+                                                            bool bRunEndless = false);
 
         auto BuildSession() -> TPointer<Math::Numerics::V2::FSimulationSessionV2> override;
         auto BuildDefaultSubscriptions() -> Vector<Math::Numerics::V2::FSubscriptionV2> override;

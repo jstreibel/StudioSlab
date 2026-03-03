@@ -15,6 +15,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
     struct FIsingExecutionConfigV2 {
         UInt L = 64;
         UIntBig Steps = 2000;
+        bool bRunEndless = false;
         DevFloat Temperature = 2.269185314;
         DevFloat ExternalField = 0.0;
         bool bFerromagneticInitial = false;

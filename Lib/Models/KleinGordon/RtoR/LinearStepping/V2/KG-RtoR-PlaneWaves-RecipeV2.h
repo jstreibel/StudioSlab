@@ -22,6 +22,7 @@ namespace Slab::Models::KGRtoR::PlaneWaves::V2 {
         UIntBig ConsoleIntervalSteps = 1;
         UIntBig LiveViewIntervalSteps = 0; // 0 => follow ConsoleIntervalSteps
         TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView = nullptr;
+        bool bRunEndless = false;
 
         auto ValidateConfig() const -> void;
         auto BuildStepperInstance() const -> TPointer<::Slab::Math::FStepper>;
@@ -29,7 +30,8 @@ namespace Slab::Models::KGRtoR::PlaneWaves::V2 {
     public:
         explicit FKGRtoRPlaneWavesRecipeV2(FKGRtoRPlaneWavesConfigV2 config = {},
                                            UIntBig consoleIntervalSteps = 100,
-                                           const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr);
+                                           const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr,
+                                           bool bRunEndless = false);
 
         auto BuildSession() -> TPointer<Math::Numerics::V2::FSimulationSessionV2> override;
         auto BuildDefaultSubscriptions() -> Vector<Math::Numerics::V2::FSubscriptionV2> override;

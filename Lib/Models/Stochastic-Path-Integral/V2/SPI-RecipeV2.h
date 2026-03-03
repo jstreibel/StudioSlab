@@ -14,13 +14,15 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
         UIntBig ConsoleIntervalSteps = 1;
         UIntBig LiveViewIntervalSteps = 0; // 0 => follow ConsoleIntervalSteps
         TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView = nullptr;
+        bool bRunEndless = false;
 
         auto BuildStepper() const -> TPointer<Math::FStepper>;
 
     public:
         explicit FSPIRecipeV2(const TPointer<SPINumericConfig> &numericConfig = New<SPINumericConfig>(),
                               UIntBig consoleIntervalSteps = 100,
-                              const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr);
+                              const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr,
+                              bool bRunEndless = false);
 
         auto BuildSession() -> TPointer<Math::Numerics::V2::FSimulationSessionV2> override;
         auto BuildDefaultSubscriptions() -> Vector<Math::Numerics::V2::FSubscriptionV2> override;

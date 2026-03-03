@@ -23,6 +23,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
         DevFloat L = 50.0;
         DevFloat TotalTime = 50.0;
         UIntBig Steps = 1000;
+        bool bRunEndless = false;
         DevFloat Temperature = 0.0;
         DevFloat Dissipation = 0.0;
         EMDInteractionModelV2 InteractionModel = EMDInteractionModelV2::SoftDisk;

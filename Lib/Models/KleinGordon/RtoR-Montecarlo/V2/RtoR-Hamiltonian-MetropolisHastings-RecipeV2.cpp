@@ -31,10 +31,12 @@ namespace Slab::Models::KGRtoR::Metropolis::V2 {
     FRtoRHamiltonianMetropolisHastingsRecipeV2::FRtoRHamiltonianMetropolisHastingsRecipeV2(
             const UIntBig maxSteps,
             const UIntBig consoleIntervalSteps,
-            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
+            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+            const bool bInRunEndless)
     : MaxSteps(maxSteps)
     , ConsoleIntervalSteps(std::max<UIntBig>(1, consoleIntervalSteps))
-    , LiveView(liveView) {
+    , LiveView(liveView)
+    , bRunEndless(bInRunEndless) {
     }
 
     auto FRtoRHamiltonianMetropolisHastingsRecipeV2::BuildStepper() -> TPointer<FStepper> {
@@ -150,7 +152,9 @@ namespace Slab::Models::KGRtoR::Metropolis::V2 {
 
     auto FRtoRHamiltonianMetropolisHastingsRecipeV2::BuildDefaultSubscriptions() -> Vector<FSubscriptionV2> {
         const auto liveViewInterval = LiveViewIntervalSteps > 0 ? LiveViewIntervalSteps : ConsoleIntervalSteps;
-        auto console = New<FConsoleProgressListenerV2>(MaxSteps, "Metropolis RtoR Console V2");
+        auto console = New<FConsoleProgressListenerV2>(
+            bRunEndless ? std::optional<UIntBig>{} : std::optional<UIntBig>{MaxSteps},
+            "Metropolis RtoR Console V2");
 
         Vector<FSubscriptionV2> subscriptions = {{
             New<FEveryNStepsTriggerV2>(ConsoleIntervalSteps),
@@ -182,6 +186,11 @@ namespace Slab::Models::KGRtoR::Metropolis::V2 {
 
     auto FRtoRHamiltonianMetropolisHastingsRecipeV2::GetRunLimits() const -> FRunLimitsV2 {
         FRunLimitsV2 limits;
+        if (bRunEndless) {
+            limits.Mode = ERunModeV2::OpenEnded;
+            limits.MaxSteps = std::nullopt;
+            return limits;
+        }
         limits.Mode = ERunModeV2::FiniteSteps;
         limits.MaxSteps = MaxSteps;
         return limits;

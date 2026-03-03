@@ -52,7 +52,8 @@ namespace Slab::Studios::Common::Simulations::V2 {
         auto recipe = New<FMolecularDynamicsBaselineRecipeV2>(
             modelCfg,
             std::max<UIntBig>(UIntBig(1), cfg.Interval),
-            liveView);
+            liveView,
+            cfg.bRunEndless);
         recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
         return recipe;
     }
@@ -88,7 +89,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
         if (liveView == nullptr) throw Exception("MolecularDynamics passive monitor requires a live view.");
         return New<Slab::Studios::Common::Monitors::V2::FMolecularDynamicsPassiveMonitorWindowV2>(
             liveView,
-            cfg.Steps,
+            cfg.bRunEndless ? UIntBig(0) : cfg.Steps,
             cfg.L);
     }
 

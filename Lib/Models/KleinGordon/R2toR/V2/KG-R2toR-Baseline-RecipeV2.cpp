@@ -77,11 +77,13 @@ namespace Slab::Models::KGR2toR::Baseline::V2 {
     FKGR2toRBaselineRecipeV2::FKGR2toRBaselineRecipeV2(FKGR2toRBaselineConfigV2 config,
                                                        const UIntBig consoleIntervalSteps,
                                                        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
-                                                       const TPointer<Math::R2toR::Function> &externalSource)
+                                                       const TPointer<Math::R2toR::Function> &externalSource,
+                                                       const bool bInRunEndless)
     : Config(std::move(config))
     , ConsoleIntervalSteps(std::max<UIntBig>(1, consoleIntervalSteps))
     , LiveView(liveView)
-    , ExternalSource(externalSource) {
+    , ExternalSource(externalSource)
+    , bRunEndless(bInRunEndless) {
         ValidateConfig();
     }
 
@@ -129,7 +131,9 @@ namespace Slab::Models::KGR2toR::Baseline::V2 {
     auto FKGR2toRBaselineRecipeV2::BuildDefaultSubscriptions() -> Vector<FSubscriptionV2> {
         const auto liveViewInterval = LiveViewIntervalSteps > 0 ? LiveViewIntervalSteps : ConsoleIntervalSteps;
 
-        auto console = New<FConsoleProgressListenerV2>(Config.Steps, "KGR2toR Baseline Console V2");
+        auto console = New<FConsoleProgressListenerV2>(
+            bRunEndless ? std::optional<UIntBig>{} : std::optional<UIntBig>{Config.Steps},
+            "KGR2toR Baseline Console V2");
         Vector<FSubscriptionV2> subscriptions = {{
             New<FEveryNStepsTriggerV2>(ConsoleIntervalSteps),
             console,
@@ -159,6 +163,11 @@ namespace Slab::Models::KGR2toR::Baseline::V2 {
     auto FKGR2toRBaselineRecipeV2::GetRunLimits() const -> FRunLimitsV2 {
         ValidateConfig();
         FRunLimitsV2 limits;
+        if (bRunEndless) {
+            limits.Mode = ERunModeV2::OpenEnded;
+            limits.MaxSteps = std::nullopt;
+            return limits;
+        }
         limits.Mode = ERunModeV2::FiniteSteps;
         limits.MaxSteps = Config.Steps;
         return limits;

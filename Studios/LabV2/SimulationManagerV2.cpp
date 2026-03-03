@@ -9,7 +9,6 @@
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 #include "Studios/Common/Simulations/V2/KGR2toRControlTopicsV2.h"
-#include "Studios/Common/Simulations/V2/LiveParameterControlV2.h"
 
 #include <algorithm>
 #include <array>
@@ -71,14 +70,6 @@ namespace {
         const bool pressed = ImGui::Button(label);
         AddTooltipForLastItem(tooltip);
         return pressed;
-    }
-
-    auto PublishLauncherScalarControl(const Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> &hub,
-                                      const Slab::Str &topicPrefix,
-                                      const Slab::Str &key,
-                                      const Slab::DevFloat value) -> void {
-        const auto topicName = Slab::Studios::Common::Simulations::V2::BuildLiveScalarParameterTopicV2(topicPrefix, key);
-        Slab::Studios::Common::Simulations::V2::PublishLiveScalarParameterValueV2(hub, topicName, value);
     }
 
     template<typename TConfig>
@@ -270,6 +261,7 @@ auto FSimulationManagerV2::DrawLauncherContents() -> void {
     DragUIntLike("Interval", CommonInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Console/log sampling interval (steps).");
     DragUIntLike("Monitor interval", CommonMonitorInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Snapshot publishing interval for monitor/live data.");
     DragUIntLike("Batch", CommonBatch, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Max internal steps per worker loop iteration.");
+    CheckboxWithTooltip("Open-ended", &bOpenEnded, "Run simulations without a finite step limit until aborted.");
     CheckboxWithTooltip("Publish live data when headless", &bPublishLiveDataWhenHeadless, "Expose telemetry/live data even without GL monitor.");
     CheckboxWithTooltip("Start with monitor", &bStartWithMonitor, "Launch each simulation with the GL monitor window enabled.");
 
@@ -282,21 +274,12 @@ auto FSimulationManagerV2::DrawLauncherContents() -> void {
     DrawMetropolisSection();
 }
 
-auto FSimulationManagerV2::TickLiveControlPublishers() -> void {
-    if (XYCfg.bEnableLiveParameterBinding && bXYPublishLiveParameters) {
-        PublishLauncherScalarControl(LiveControlHub, XYCfg.ControlTopicPrefix, "temperature", XYCfg.Temperature);
-        PublishLauncherScalarControl(LiveControlHub, XYCfg.ControlTopicPrefix, "external_field", XYCfg.ExternalField);
-    }
-    if (IsingCfg.bEnableLiveParameterBinding && bIsingPublishLiveParameters) {
-        PublishLauncherScalarControl(LiveControlHub, IsingCfg.ControlTopicPrefix, "temperature", IsingCfg.Temperature);
-        PublishLauncherScalarControl(LiveControlHub, IsingCfg.ControlTopicPrefix, "external_field", IsingCfg.ExternalField);
-    }
-}
-
 auto FSimulationManagerV2::DrawSPISection() -> void {
     if (!ImGui::CollapsingHeader("SPI")) return;
 
-    DragUIntLike("Steps##spi", SPICfg.Steps, 1u, 100000000u, 1.0f, "Number of stochastic-time integration steps.");
+    if (!bOpenEnded) {
+        DragUIntLike("Steps##spi", SPICfg.Steps, 1u, 100000000u, 1.0f, "Number of stochastic-time integration steps.");
+    }
     DragDevFloat("dT##spi", SPICfg.Dt, 0.0005, 1e-6, 100.0, "%.6g", "Stochastic-time step size.");
     DragDevFloat("Time##spi", SPICfg.Time, 0.01, 1e-6, 1e6, "%.6g", "Physical time horizon.");
     DragDevFloat("L##spi", SPICfg.L, 0.01, 1e-6, 1e6, "%.6g", "Spatial domain length.");
@@ -312,7 +295,9 @@ auto FSimulationManagerV2::DrawSPISection() -> void {
 auto FSimulationManagerV2::DrawRtoRSection() -> void {
     if (!ImGui::CollapsingHeader("KGRtoR Plane Waves")) return;
 
-    DragUIntLike("Steps##rtor", RtoRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
+    if (!bOpenEnded) {
+        DragUIntLike("Steps##rtor", RtoRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
+    }
 
     bool bUseDtOverride = RtoRCfg.Dt > 0.0;
     if (CheckboxWithTooltip("Override dT (otherwise legacy dt/h=0.1)##rtor", &bUseDtOverride, "Use explicit dt instead of legacy dt/h rule.")) {
@@ -344,7 +329,9 @@ auto FSimulationManagerV2::DrawRtoRSection() -> void {
 auto FSimulationManagerV2::DrawR2toRSection() -> void {
     if (!ImGui::CollapsingHeader("KGR2toR")) return;
 
-    DragUIntLike("Steps##kg2d", R2toRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
+    if (!bOpenEnded) {
+        DragUIntLike("Steps##kg2d", R2toRCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
+    }
     DragDevFloat("L##kg2d", R2toRCfg.L, 0.01, 1e-6, 1e6, "%.6g", "Domain size.");
     DragUIntLike("N##kg2d", R2toRCfg.N, 8u, 200000u, 1.0f, "Grid resolution along each axis.");
     DragDevFloat("r_dt##kg2d", R2toRCfg.RDt, 0.001, 1e-8, 10.0, "%.6g", "CFL-like ratio used to compute dt.");
@@ -385,7 +372,9 @@ auto FSimulationManagerV2::DrawR2toRSection() -> void {
 auto FSimulationManagerV2::DrawMolecularDynamicsSection() -> void {
     if (!ImGui::CollapsingHeader("Molecular Dynamics")) return;
 
-    DragUIntLike("Steps##md", MolecularDynamicsCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
+    if (!bOpenEnded) {
+        DragUIntLike("Steps##md", MolecularDynamicsCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "Total integration steps.");
+    }
     DragDevFloat("Total time##md", MolecularDynamicsCfg.TotalTime, 0.01, 1e-6, 1e8, "%.6g", "Physical time horizon.");
     DragDevFloat("L##md", MolecularDynamicsCfg.L, 0.01, 1e-6, 1e8, "%.6g", "Box side length.");
     DragUIntLike("N##md", MolecularDynamicsCfg.N, 128u, 200000u, 1.0f, "Number of particles.");
@@ -414,7 +403,9 @@ auto FSimulationManagerV2::DrawMolecularDynamicsSection() -> void {
 auto FSimulationManagerV2::DrawMetropolisSection() -> void {
     if (!ImGui::CollapsingHeader("Metropolis RtoR")) return;
 
-    DragUIntLike("Steps##metropolis", MetropolisCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 100.0f, "Number of Metropolis updates.");
+    if (!bOpenEnded) {
+        DragUIntLike("Steps##metropolis", MetropolisCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 100.0f, "Number of Metropolis updates.");
+    }
     ImGui::TextDisabled("GL monitor shows phi(x), pi(x), and cursor telemetry.");
 
     const char *runTooltip = bStartWithMonitor
@@ -428,7 +419,9 @@ auto FSimulationManagerV2::DrawMetropolisSection() -> void {
 auto FSimulationManagerV2::DrawXYSection() -> void {
     if (!ImGui::CollapsingHeader("XY Metropolis")) return;
 
-    DragUIntLike("Steps##xy", XYCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Number of Monte Carlo sweeps.");
+    if (!bOpenEnded) {
+        DragUIntLike("Steps##xy", XYCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Number of Monte Carlo sweeps.");
+    }
     DragUIntLike("L##xy", XYCfg.L, 2u, 8192u, 1.0f, "Lattice size (LxL).");
     DragDevFloat("Temperature##xy", XYCfg.Temperature, 0.005, 0.0, 1e6, "%.6g", "Monte Carlo temperature.");
     DragDevFloat("h-field##xy", XYCfg.ExternalField, 0.005, -1e6, 1e6, "%.6g", "External field strength.");
@@ -437,7 +430,6 @@ auto FSimulationManagerV2::DrawXYSection() -> void {
     CheckboxWithTooltip("Enable live parameter binding##xy", &XYCfg.bEnableLiveParameterBinding, "Bind selected runtime parameters to LiveControl topics.");
     if (XYCfg.bEnableLiveParameterBinding) {
         DragUIntLike("Control sample interval##xy", XYCfg.ControlSampleInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "How often live parameter topics are polled (steps).");
-        CheckboxWithTooltip("Publish launcher controls##xy", &bXYPublishLiveParameters, "Publish current temperature/h-field values to XY control topics every frame.");
         ImGui::TextDisabled("Control topic prefix: %s", XYCfg.ControlTopicPrefix.c_str());
     }
     ImGui::TextDisabled("Passive GL monitor shows theta field + MC diagnostics.");
@@ -454,7 +446,9 @@ auto FSimulationManagerV2::DrawXYSection() -> void {
 auto FSimulationManagerV2::DrawIsingSection() -> void {
     if (!ImGui::CollapsingHeader("Ising Metropolis")) return;
 
-    DragUIntLike("Steps##ising", IsingCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Number of Monte Carlo sweeps.");
+    if (!bOpenEnded) {
+        DragUIntLike("Steps##ising", IsingCfg.Steps, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 10.0f, "Number of Monte Carlo sweeps.");
+    }
     DragUIntLike("L##ising", IsingCfg.L, 2u, 8192u, 1.0f, "Lattice size (LxL).");
     DragDevFloat("Temperature##ising", IsingCfg.Temperature, 0.005, 0.0, 1e6, "%.6g", "Monte Carlo temperature.");
     DragDevFloat("h-field##ising", IsingCfg.ExternalField, 0.005, -1e6, 1e6, "%.6g", "External magnetic field.");
@@ -462,7 +456,6 @@ auto FSimulationManagerV2::DrawIsingSection() -> void {
     CheckboxWithTooltip("Enable live parameter binding##ising", &IsingCfg.bEnableLiveParameterBinding, "Bind selected runtime parameters to LiveControl topics.");
     if (IsingCfg.bEnableLiveParameterBinding) {
         DragUIntLike("Control sample interval##ising", IsingCfg.ControlSampleInterval, Slab::UIntBig(1), Slab::UIntBig(1ull << 40), 1.0f, "How often live parameter topics are polled (steps).");
-        CheckboxWithTooltip("Publish launcher controls##ising", &bIsingPublishLiveParameters, "Publish current temperature/h-field values to Ising control topics every frame.");
         ImGui::TextDisabled("Control topic prefix: %s", IsingCfg.ControlTopicPrefix.c_str());
     }
     ImGui::TextDisabled("Passive GL monitor shows spin field + MC diagnostics.");
@@ -482,6 +475,7 @@ auto FSimulationManagerV2::LaunchSPI(const bool enableMonitor) -> void {
     auto cfg = SPICfg;
     ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
+    cfg.bRunEndless = bOpenEnded;
 
     const bool bNeedLiveView = enableMonitor || bPublishLiveDataWhenHeadless;
     auto liveView = GetOrCreateLiveViewIfNeeded(bNeedLiveView, "spi", SPIRunCounter);
@@ -503,6 +497,7 @@ auto FSimulationManagerV2::LaunchRtoR(const bool enableMonitor) -> void {
     auto cfg = RtoRCfg;
     ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
+    cfg.bRunEndless = bOpenEnded;
     FinalizeRtoRPlaneWavesExecutionConfigV2(cfg);
 
     const bool bNeedLiveView = enableMonitor || bPublishLiveDataWhenHeadless;
@@ -525,6 +520,7 @@ auto FSimulationManagerV2::LaunchR2toR(const bool enableMonitor) -> void {
     auto cfg = R2toRCfg;
     ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
+    cfg.bRunEndless = bOpenEnded;
     cfg.ControlHub = LiveControlHub;
     FinalizeR2toRBaselineExecutionConfigV2(cfg);
 
@@ -548,6 +544,7 @@ auto FSimulationManagerV2::LaunchMolecularDynamics(const bool enableMonitor) -> 
     auto cfg = MolecularDynamicsCfg;
     ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
+    cfg.bRunEndless = bOpenEnded;
     FinalizeMolecularDynamicsExecutionConfigV2(cfg);
 
     const bool bNeedLiveView = enableMonitor || bPublishLiveDataWhenHeadless;
@@ -570,6 +567,7 @@ auto FSimulationManagerV2::LaunchMetropolis(const bool enableMonitor) -> void {
     auto cfg = MetropolisCfg;
     ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
+    cfg.bRunEndless = bOpenEnded;
     FinalizeMetropolisExecutionConfigV2(cfg);
 
     if (enableMonitor) {
@@ -592,6 +590,7 @@ auto FSimulationManagerV2::LaunchXY(const bool enableMonitor) -> void {
     auto cfg = XYCfg;
     ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
+    cfg.bRunEndless = bOpenEnded;
     cfg.ControlHub = LiveControlHub;
     FinalizeXYExecutionConfigV2(cfg);
 
@@ -615,6 +614,7 @@ auto FSimulationManagerV2::LaunchIsing(const bool enableMonitor) -> void {
     auto cfg = IsingCfg;
     ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
+    cfg.bRunEndless = bOpenEnded;
     cfg.ControlHub = LiveControlHub;
     FinalizeIsingExecutionConfigV2(cfg);
 

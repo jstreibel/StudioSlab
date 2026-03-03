@@ -94,6 +94,7 @@ namespace Slab::Models::Ising::V2 {
         UIntBig ConsoleIntervalSteps = 1;
         UIntBig LiveViewIntervalSteps = 0; // 0 => follow ConsoleIntervalSteps
         TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView = nullptr;
+        bool bRunEndless = false;
 
         auto ValidateConfig() const -> void;
 
@@ -101,7 +102,8 @@ namespace Slab::Models::Ising::V2 {
         explicit FIsingMetropolisRecipeV2(
             FIsingMetropolisConfigV2 config = {},
             UIntBig consoleIntervalSteps = 100,
-            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr);
+            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr,
+            bool bRunEndless = false);
 
         auto BuildSession() -> TPointer<Math::Numerics::V2::FSimulationSessionV2> override;
         auto BuildDefaultSubscriptions() -> Vector<Math::Numerics::V2::FSubscriptionV2> override;

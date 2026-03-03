@@ -29,6 +29,7 @@ namespace Slab::Models::MolecularDynamics::V2 {
         UIntBig ConsoleIntervalSteps = 1;
         UIntBig LiveViewIntervalSteps = 0; // 0 => follow ConsoleIntervalSteps
         TPointer<Math::LiveData::V2::FSessionLiveViewV2> LiveView = nullptr;
+        bool bRunEndless = false;
 
         auto ValidateConfig() const -> void;
         auto BuildNumericConfig() const -> TPointer<MolDynNumericConfig>;
@@ -38,7 +39,8 @@ namespace Slab::Models::MolecularDynamics::V2 {
         explicit FMolecularDynamicsBaselineRecipeV2(
             FMolecularDynamicsBaselineConfigV2 config = {},
             UIntBig consoleIntervalSteps = 100,
-            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr);
+            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr,
+            bool bRunEndless = false);
 
         auto BuildSession() -> TPointer<Math::Numerics::V2::FSimulationSessionV2> override;
         auto BuildDefaultSubscriptions() -> Vector<Math::Numerics::V2::FSubscriptionV2> override;

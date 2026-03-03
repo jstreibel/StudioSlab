@@ -15,6 +15,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
     struct FSPIExecutionConfig {
         UInt Steps = 20;
+        bool bRunEndless = false;
         DevFloat Dt = 0.05;
         DevFloat Time = 1.0;
         DevFloat L = 1.0;

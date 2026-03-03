@@ -59,12 +59,12 @@ namespace Slab::Studios::Common::Simulations::V2 {
         auto numericConfig = BuildSPINumericConfigV2(cfg);
 
         if (liveView != nullptr) {
-            auto recipe = New<FSPIRecipeV2>(numericConfig, cfg.Interval, liveView);
+            auto recipe = New<FSPIRecipeV2>(numericConfig, cfg.Interval, liveView, cfg.bRunEndless);
             recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
             return recipe;
         }
 
-        return New<FSPIRecipeV2>(numericConfig, cfg.Interval);
+        return New<FSPIRecipeV2>(numericConfig, cfg.Interval, nullptr, cfg.bRunEndless);
     }
 
     auto BuildSPIPassiveMonitorWindowV2(const FSPIExecutionConfig &cfg,
@@ -73,7 +73,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
         if (liveView == nullptr) throw Exception("SPI passive monitor requires a live view.");
         return New<Slab::Studios::Common::Monitors::V2::FSPIPassiveMonitorWindowV2>(
             liveView,
-            static_cast<UIntBig>(cfg.Steps));
+            cfg.bRunEndless ? UIntBig(0) : static_cast<UIntBig>(cfg.Steps));
     }
 
     auto RunSPIV2(const FSPIExecutionConfig &cfg) -> int {

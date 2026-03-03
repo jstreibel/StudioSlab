@@ -23,10 +23,12 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
 
     FSPIRecipeV2::FSPIRecipeV2(const TPointer<SPINumericConfig> &numericConfig,
                                const UIntBig consoleIntervalSteps,
-                               const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
+                               const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView,
+                               const bool bInRunEndless)
     : NumericConfig(numericConfig != nullptr ? numericConfig : New<SPINumericConfig>())
     , ConsoleIntervalSteps(std::max<UIntBig>(1, consoleIntervalSteps))
     , LiveView(liveView) {
+        bRunEndless = bInRunEndless;
     }
 
     auto FSPIRecipeV2::BuildStepper() const -> TPointer<FStepper> {
@@ -63,7 +65,9 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
     auto FSPIRecipeV2::BuildDefaultSubscriptions() -> Vector<FSubscriptionV2> {
         const auto totalSteps = NumericConfig != nullptr ? NumericConfig->Get_n() : UIntBig(0);
         const auto liveViewInterval = LiveViewIntervalSteps > 0 ? LiveViewIntervalSteps : ConsoleIntervalSteps;
-        auto console = New<FConsoleProgressListenerV2>(totalSteps, "SPI Console V2");
+        auto console = New<FConsoleProgressListenerV2>(
+            bRunEndless ? std::optional<UIntBig>{} : std::optional<UIntBig>{totalSteps},
+            "SPI Console V2");
         Vector<FSubscriptionV2> subscriptions = {{
             New<FEveryNStepsTriggerV2>(ConsoleIntervalSteps),
             console,
@@ -94,6 +98,11 @@ namespace Slab::Models::StochasticPathIntegrals::V2 {
         if (NumericConfig == nullptr) throw Exception("FSPIRecipeV2 requires a numeric config.");
 
         FRunLimitsV2 limits;
+        if (bRunEndless) {
+            limits.Mode = ERunModeV2::OpenEnded;
+            limits.MaxSteps = std::nullopt;
+            return limits;
+        }
         limits.Mode = ERunModeV2::FiniteSteps;
         limits.MaxSteps = NumericConfig->Get_n();
         return limits;
