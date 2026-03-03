@@ -8,6 +8,7 @@
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Numerics/NumericTask.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
+#include "Studios/Common/Simulations/V2/LiveParameterControlV2.h"
 
 #include <algorithm>
 #include <cctype>
@@ -720,10 +721,22 @@ namespace Slab::Studios::LabV2::Panels {
             for (const auto &topicName : filteredTopics) {
                 const auto topic = hub->FindTopic(topicName);
                 const auto sample = topic != nullptr ? topic->TryGetLatestSample() : std::nullopt;
+                const auto bindingInfo =
+                    Slab::Studios::Common::Simulations::V2::TryGetLiveControlBindingInfoV2(topicName);
+                const bool bWritable = !bindingInfo.has_value() ||
+                    (bindingInfo->Mutability == Slab::Studios::Common::Simulations::V2::ELiveParameterMutabilityV2::RuntimeMutable &&
+                     bindingInfo->Exposure == Slab::Studios::Common::Simulations::V2::ELiveParameterExposureV2::WritableExposed);
 
                 ImGui::TableNextRow();
                 ImGui::TableSetColumnIndex(0);
                 ImGui::TextUnformatted(topicName.c_str());
+                if (bindingInfo.has_value() && !bindingInfo->Description.empty() &&
+                    ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort)) {
+                    if (ImGui::BeginTooltip()) {
+                        ImGui::TextUnformatted(bindingInfo->Description.c_str());
+                        ImGui::EndTooltip();
+                    }
+                }
 
                 ImGui::TableSetColumnIndex(1);
                 if (sample.has_value()) ImGui::Text("%s", ToControlValueTypeString(sample->Value).c_str());
@@ -731,6 +744,7 @@ namespace Slab::Studios::LabV2::Panels {
 
                 ImGui::TableSetColumnIndex(2);
                 ImGui::PushID(topicName.c_str());
+                ImGui::BeginDisabled(!bWritable);
                 if (!sample.has_value()) {
                     ImGui::TextDisabled("No sample");
                 } else if (std::holds_alternative<bool>(sample->Value)) {
@@ -740,7 +754,15 @@ namespace Slab::Studios::LabV2::Panels {
                     }
                 } else if (std::holds_alternative<Slab::DevFloat>(sample->Value)) {
                     double value = static_cast<double>(std::get<Slab::DevFloat>(sample->Value));
-                    if (ImGui::DragScalar("##scalar", ImGuiDataType_Double, &value, 0.01f)) {
+                    const double minVal = bindingInfo && bindingInfo->MinValue.has_value()
+                        ? static_cast<double>(*bindingInfo->MinValue)
+                        : 0.0;
+                    const double maxVal = bindingInfo && bindingInfo->MaxValue.has_value()
+                        ? static_cast<double>(*bindingInfo->MaxValue)
+                        : 0.0;
+                    const void *pMin = bindingInfo && bindingInfo->MinValue.has_value() ? &minVal : nullptr;
+                    const void *pMax = bindingInfo && bindingInfo->MaxValue.has_value() ? &maxVal : nullptr;
+                    if (ImGui::DragScalar("##scalar", ImGuiDataType_Double, &value, 0.01f, pMin, pMax)) {
                         PublishControlValue(hub, topicName, static_cast<Slab::DevFloat>(value), sample);
                     }
                 } else if (std::holds_alternative<Slab::Math::Real2D>(sample->Value)) {
@@ -767,6 +789,7 @@ namespace Slab::Studios::LabV2::Panels {
                 } else {
                     ImGui::TextDisabled("Unsupported");
                 }
+                ImGui::EndDisabled();
                 ImGui::PopID();
             }
 

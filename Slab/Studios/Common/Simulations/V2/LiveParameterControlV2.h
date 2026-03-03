@@ -11,6 +11,7 @@
 #include <functional>
 #include <limits>
 #include <optional>
+#include <unordered_map>
 #include <utility>
 
 namespace Slab::Studios::Common::Simulations::V2 {
@@ -39,6 +40,48 @@ namespace Slab::Studios::Common::Simulations::V2 {
         std::function<DevFloat()> ReadValue = nullptr;
         std::function<void(DevFloat)> WriteValue = nullptr;
     };
+
+    struct FLiveControlBindingInfoV2 {
+        Str Label;
+        Str Description;
+        std::optional<DevFloat> MinValue = std::nullopt;
+        std::optional<DevFloat> MaxValue = std::nullopt;
+        ELiveParameterMutabilityV2 Mutability = ELiveParameterMutabilityV2::Const;
+        ELiveParameterExposureV2 Exposure = ELiveParameterExposureV2::ReadOnlyExposed;
+    };
+
+    inline auto LiveControlBindingRegistryMutex() -> std::mutex & {
+        static std::mutex registryMutex;
+        return registryMutex;
+    }
+
+    inline auto LiveControlBindingRegistry() -> std::unordered_map<Str, FLiveControlBindingInfoV2> & {
+        static std::unordered_map<Str, FLiveControlBindingInfoV2> registry;
+        return registry;
+    }
+
+    inline auto RegisterLiveScalarBindingV2(const FLiveScalarParameterBindingV2 &binding) -> void {
+        if (binding.TopicName.empty()) return;
+        std::lock_guard lock(LiveControlBindingRegistryMutex());
+        LiveControlBindingRegistry()[binding.TopicName] = FLiveControlBindingInfoV2{
+            binding.Label,
+            binding.Description,
+            binding.MinValue,
+            binding.MaxValue,
+            binding.Mutability,
+            binding.Exposure
+        };
+    }
+
+    [[nodiscard]] inline auto TryGetLiveControlBindingInfoV2(const Str &topicName)
+        -> std::optional<FLiveControlBindingInfoV2> {
+        if (topicName.empty()) return std::nullopt;
+        std::lock_guard lock(LiveControlBindingRegistryMutex());
+        const auto &registry = LiveControlBindingRegistry();
+        const auto it = registry.find(topicName);
+        if (it == registry.end()) return std::nullopt;
+        return it->second;
+    }
 
     [[nodiscard]] inline auto BuildLiveScalarParameterTopicV2(const Str &topicPrefix, const Str &key) -> Str {
         if (topicPrefix.empty()) return "lab/control/params/" + key;
@@ -90,6 +133,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
             if (!includeHidden && binding.Exposure == ELiveParameterExposureV2::Hidden) continue;
             if (binding.TopicName.empty()) continue;
 
+            RegisterLiveScalarBindingV2(binding);
             PublishLiveScalarParameterValueV2(
                 hub,
                 binding.TopicName,
