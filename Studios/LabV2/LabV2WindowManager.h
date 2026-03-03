@@ -103,7 +103,7 @@ private:
     bool bWorkspaceLayoutsBootstrapped = false;
     std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false},
+        FWorkspacePanelVisibility{false, true, true, true, true, true, false, false},
         FWorkspacePanelVisibility{false, false, false, false, false, false, false, true}
     };
     float WorkspaceTabsHeight = 0.0f;
