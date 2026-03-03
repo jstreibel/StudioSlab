@@ -1023,7 +1023,6 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
     ImGuiContext->SetupOptionalMenuItems();
     if (SimulationManager != nullptr) {
         SimulationManager->AddMenus(platformWindow);
-        SimulationManager->TickLiveControlPublishers();
     }
     AddExitMenuEntry(platformWindow, *ImGuiContext);
 
