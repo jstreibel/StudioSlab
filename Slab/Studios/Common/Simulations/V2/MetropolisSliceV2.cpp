@@ -1,12 +1,10 @@
 #include "MetropolisSliceV2.h"
 
-#include "../../Monitors/V2/MetropolisFieldSnapshotListenerV2.h"
 #include "../../Monitors/V2/MetropolisPassiveMonitorWindowV2.h"
 #include "../../NumericsV2TaskUtils.h"
 #include "../../V2SimulationRunners.h"
 
-#include "Math/Numerics/V2/Runtime/AppendedSubscriptionsRecipeV2.h"
-#include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
+#include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
 #include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
@@ -31,26 +29,19 @@ namespace Slab::Studios::Common::Simulations::V2 {
     }
 
     auto BuildMetropolisMonitorBundleV2(const FMetropolisExecutionConfigV2 &cfg) -> FMetropolisMonitorBundleV2 {
-        using namespace Slab::Math::Numerics::V2;
         using namespace Slab::Models::KGRtoR::Metropolis::V2;
         using namespace Slab::Studios::Common::Monitors::V2;
 
+        auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
         auto baseRecipe = New<FRtoRHamiltonianMetropolisHastingsRecipeV2>(
             cfg.Steps,
-            std::max<UIntBig>(UIntBig(1), cfg.Interval));
-        auto snapshotListener = New<FMetropolisFieldSnapshotListenerV2>(baseRecipe);
-
-        Vector<FSubscriptionV2> subscriptions = {{
-            New<FEveryNStepsTriggerV2>(std::max<UIntBig>(UIntBig(1), cfg.MonitorInterval)),
-            snapshotListener,
-            EDeliveryModeV2::Synchronous,
-            true,
-            true
-        }};
+            std::max<UIntBig>(UIntBig(1), cfg.Interval),
+            liveView);
+        baseRecipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
 
         FMetropolisMonitorBundleV2 bundle;
-        bundle.Recipe = New<FAppendedSubscriptionsRecipeV2>(baseRecipe, std::move(subscriptions));
-        bundle.MonitorWindow = New<FMetropolisPassiveMonitorWindowV2>(snapshotListener, cfg.Steps);
+        bundle.Recipe = baseRecipe;
+        bundle.MonitorWindow = New<FMetropolisPassiveMonitorWindowV2>(liveView, cfg.Steps);
         return bundle;
     }
 

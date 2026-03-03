@@ -7,8 +7,11 @@
 #include "Math/Numerics/Metropolis/MetropolisAlgorithm.h"
 #include "Math/Numerics/Metropolis/MontecarloStepper.h"
 #include "Math/Numerics/V2/Listeners/ConsoleProgressListenerV2.h"
+#include "Math/Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.h"
 #include "Math/Numerics/V2/Runtime/StepperSessionV2.h"
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
+
+#include "Metropolis-FieldStateV2.h"
 
 #include <algorithm>
 #include <cmath>
@@ -27,12 +30,37 @@ namespace Slab::Models::KGRtoR::Metropolis::V2 {
 
     FRtoRHamiltonianMetropolisHastingsRecipeV2::FRtoRHamiltonianMetropolisHastingsRecipeV2(
             const UIntBig maxSteps,
-            const UIntBig consoleIntervalSteps)
+            const UIntBig consoleIntervalSteps,
+            const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
     : MaxSteps(maxSteps)
-    , ConsoleIntervalSteps(std::max<UIntBig>(1, consoleIntervalSteps)) {
+    , ConsoleIntervalSteps(std::max<UIntBig>(1, consoleIntervalSteps))
+    , LiveView(liveView) {
     }
 
     auto FRtoRHamiltonianMetropolisHastingsRecipeV2::BuildStepper() -> TPointer<FStepper> {
+        class FMetropolisStepperV2 final : public Math::FStepper {
+            TPointer<FMetropolisAlgo> Algorithm;
+            TPointer<FMetropolisFieldStateV2> State;
+
+        public:
+            FMetropolisStepperV2(TPointer<FMetropolisAlgo> algorithm,
+                                 TPointer<FMetropolisFieldStateV2> state)
+            : Algorithm(std::move(algorithm))
+            , State(std::move(state)) {
+            }
+
+            auto Step(const size_t nSteps) -> void override {
+                if (Algorithm == nullptr) return;
+                for (size_t step = 0; step < nSteps; ++step) {
+                    Algorithm->step();
+                }
+            }
+
+            [[nodiscard]] auto GetCurrentState() const -> Math::Base::EquationState_constptr override {
+                return State;
+            }
+        };
+
         constexpr DevFloat xMin = -0.5;
         constexpr DevFloat xMax = 0.5;
         constexpr UInt N = 10000;
@@ -112,7 +140,8 @@ namespace Slab::Models::KGRtoR::Metropolis::V2 {
         };
 
         const auto metropolis = New<FMetropolisAlgo>(setup);
-        return New<FMontecarloStepper<FRandomSite, FNewValue>>(metropolis);
+        auto state = New<FMetropolisFieldStateV2>(phiField, piField);
+        return New<FMetropolisStepperV2>(metropolis, state);
     }
 
     auto FRtoRHamiltonianMetropolisHastingsRecipeV2::BuildSession() -> TPointer<FSimulationSessionV2> {
@@ -120,15 +149,35 @@ namespace Slab::Models::KGRtoR::Metropolis::V2 {
     }
 
     auto FRtoRHamiltonianMetropolisHastingsRecipeV2::BuildDefaultSubscriptions() -> Vector<FSubscriptionV2> {
+        const auto liveViewInterval = LiveViewIntervalSteps > 0 ? LiveViewIntervalSteps : ConsoleIntervalSteps;
         auto console = New<FConsoleProgressListenerV2>(MaxSteps, "Metropolis RtoR Console V2");
 
-        return {{
+        Vector<FSubscriptionV2> subscriptions = {{
             New<FEveryNStepsTriggerV2>(ConsoleIntervalSteps),
             console,
             EDeliveryModeV2::Synchronous,
             true,
             true
         }};
+
+        if (LiveView != nullptr) {
+            auto publisher = New<FSessionLiveViewPublisherListenerV2>(LiveView, "Metropolis Live View Publisher V2");
+            subscriptions.push_back({
+                New<FEveryNStepsTriggerV2>(liveViewInterval),
+                publisher,
+                EDeliveryModeV2::Synchronous,
+                true,
+                true
+            });
+        }
+
+        return subscriptions;
+    }
+
+    auto FRtoRHamiltonianMetropolisHastingsRecipeV2::SetLiveViewIntervalSteps(const UIntBig liveViewIntervalSteps) -> void {
+        LiveViewIntervalSteps = liveViewIntervalSteps == 0
+            ? UIntBig(0)
+            : std::max<UIntBig>(1, liveViewIntervalSteps);
     }
 
     auto FRtoRHamiltonianMetropolisHastingsRecipeV2::GetRunLimits() const -> FRunLimitsV2 {
@@ -144,6 +193,10 @@ namespace Slab::Models::KGRtoR::Metropolis::V2 {
 
     auto FRtoRHamiltonianMetropolisHastingsRecipeV2::GetPiField() const -> TPointer<RtoR::NumericFunction_CPU> {
         return PiField;
+    }
+
+    auto FRtoRHamiltonianMetropolisHastingsRecipeV2::GetLiveView() const -> TPointer<Math::LiveData::V2::FSessionLiveViewV2> {
+        return LiveView;
     }
 
 } // namespace Slab::Models::KGRtoR::Metropolis::V2

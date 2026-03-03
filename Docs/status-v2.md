@@ -53,7 +53,7 @@
 - V2 monitor data path migration:
   - `SessionLiveViewV2` now exposes a snapshot topic (`TryGetSnapshot`) for monitor-facing render payloads
   - snapshot publication is consumer-gated (monitor open/close controls copy pressure)
-  - passive monitor windows for SPI/KGRtoR/KGR2toR/MD/XY/Ising consume snapshots instead of session lease polling in UI draw paths
+  - passive monitor windows for SPI/KGRtoR/KGR2toR/MD/XY/Ising/Metropolis consume snapshots instead of session lease polling in UI draw paths
 - LabV2 launcher integration:
   - `SimulationManagerV2` monitor launches build `SessionLiveViewV2` topics that feed passive monitor snapshots
 - Live runtime parameter controls (first slice):

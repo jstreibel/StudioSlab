@@ -9,7 +9,7 @@ Capture the current architectural tradeoff for starting/stopping monitoring at r
 - `FNumericTaskV2` builds its subscription list once during initialization.
 - There is no runtime API to inject/remove subscriptions on a running task.
 - Passive monitor windows for `spi`, `rtor`, `r2tor`, `moldyn`, `xy`, and `ising` consume copied latest snapshots from `SessionLiveViewV2`.
-- Metropolis `r2tor` monitor path still uses a model-specific snapshot listener.
+- Metropolis `r2tor` monitor path now consumes copied latest snapshots from `SessionLiveViewV2`.
 - `SessionLiveViewV2` also exposes compatibility read leases, but monitor redraw paths should use snapshots.
 
 ## Why Runtime Subscription Injection Is Risky
