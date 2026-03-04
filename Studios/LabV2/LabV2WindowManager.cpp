@@ -869,10 +869,13 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
 
     ImGui::Separator();
 
-    constexpr float GraphTraceHeight = 140.0f;
+    constexpr float SplitterHeight = 6.0f;
+    constexpr float GraphTraceMinHeight = 80.0f;
+    constexpr float GraphTraceMaxHeight = 340.0f;
     // Keep a small epsilon to avoid 1-2px overflow/scrollbar jitter from fractional layout math.
     constexpr float CanvasLayoutEpsilon = 6.0f;
-    const float canvasBottomReserve = GraphTraceHeight + 44.0f + CanvasLayoutEpsilon;
+    BlueprintGraphTraceHeight = std::clamp(BlueprintGraphTraceHeight, GraphTraceMinHeight, GraphTraceMaxHeight);
+    const float canvasBottomReserve = BlueprintGraphTraceHeight + 44.0f + SplitterHeight + CanvasLayoutEpsilon;
 
     const auto canvasPos = ImGui::GetCursorScreenPos();
     auto canvasSize = ImGui::GetContentRegionAvail();
@@ -1536,6 +1539,20 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     // Node interaction widgets move the ImGui cursor; explicitly restore flow below the canvas.
     ImGui::SetCursorScreenPos(ImVec2(canvasPos.x, canvasEnd.y));
 
+    ImGui::InvisibleButton("SchemesBlueprintTraceSplitter", ImVec2(canvasSize.x, SplitterHeight), ImGuiButtonFlags_MouseButtonLeft);
+    const bool bSplitterHovered = ImGui::IsItemHovered();
+    const bool bSplitterActive = ImGui::IsItemActive();
+    if (bSplitterHovered || bSplitterActive) {
+        ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
+    }
+    if (bSplitterActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 0.0f)) {
+        const auto &dragIo = ImGui::GetIO();
+        BlueprintGraphTraceHeight = std::clamp(
+            BlueprintGraphTraceHeight - dragIo.MouseDelta.y,
+            GraphTraceMinHeight,
+            GraphTraceMaxHeight);
+    }
+
     if (!hoveredBadgeLabel.empty()) {
         ImGui::SetNextWindowSizeConstraints(ImVec2(280.0f, 0.0f), ImVec2(420.0f, FLT_MAX));
         ImGui::BeginTooltip();
@@ -1550,7 +1567,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     }
 
     ImGui::SeparatorText("Graph Trace");
-    if (ImGui::BeginChild("SchemesBlueprintTrace", ImVec2(0.0f, GraphTraceHeight), true)) {
+    if (ImGui::BeginChild("SchemesBlueprintTrace", ImVec2(0.0f, BlueprintGraphTraceHeight), true)) {
         if (SchemesOperationTrace.empty()) {
             ImGui::TextDisabled("No operation invocations yet.");
         } else {

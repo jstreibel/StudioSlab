@@ -127,6 +127,7 @@ private:
     bool bBlueprintGraphShowQueries = true;
     bool bBlueprintGraphShowCommands = true;
     int BlueprintGraphMutabilityFilter = 0;
+    float BlueprintGraphTraceHeight = 140.0f;
 
     bool bUseDockspaceLayout = true;
     bool bResetDockLayoutRequested = false;
