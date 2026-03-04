@@ -6,6 +6,7 @@
 - Changing recipe/session/task behavior
 - Wiring live data or live control topics/bindings
 - Adding monitored execution paths shared by CLI and LabV2
+- Designing or integrating reflection-driven interface/parameter/operation surfaces
 
 ## Read Order (Smallest Useful Set)
 
@@ -16,6 +17,7 @@
    - live runtime params: `Docs/live-parameters-v2-slice-scope.md`
    - sequencing/time: `Docs/sequence-control-spec.md`
    - monitoring data-path tradeoffs: `Docs/monitoring-liveview-vs-listeners.md`
+   - reflection contract/migration: `Docs/reflection-v2-contract.md`, `Docs/reflection-v2-migration-plan.md`, `Docs/reflection-v2-implementation.md`
 4. One active planning doc:
    - `Docs/v2-feature-backlog.md` or `Docs/v2-model-coverage-matrix.md`
 
@@ -44,6 +46,13 @@ Quick start for new monitored slices:
   - `Slab/Math/Data/V2/LiveDataHubV2.h`
   - `Slab/Math/Data/V2/LiveControlHubV2.h`
   - `Slab/Math/Data/V2/SessionLiveViewV2.h`
+- Legacy interface seed (adapter source for reflection migration):
+  - `Lib/Core/Controller/Interface.h`
+  - `Lib/Core/Controller/Parameter/Parameter.h`
+- Reflection V2 adapter/invoke path:
+  - `Slab/Core/Reflection/V2/ReflectionTypesV2.h`
+  - `Slab/Core/Reflection/V2/ReflectionInvokeV2.h`
+  - `Slab/Core/Reflection/V2/LegacyInterfaceAdapterV2.h`
 - Shared simulation slices:
   - `Slab/Studios/Common/Simulations/V2/*.h`
   - `Slab/Studios/Common/Simulations/V2/*.cpp`
@@ -61,6 +70,9 @@ Quick start for new monitored slices:
 - LabV2 dispatch:
   - `Studios/LabV2/SimulationManagerV2.h`
   - `Studios/LabV2/SimulationManagerV2.cpp`
+- LabV2 schemes/panel host (reflection surface insertion point):
+  - `Studios/LabV2/LabV2WindowManager.h`
+  - `Studios/LabV2/LabV2WindowManager.cpp`
 
 ## Validation Minimum
 
@@ -69,6 +81,6 @@ Quick start for new monitored slices:
 - Tests:
   - `ctest --test-dir cmake-build-debug --output-on-failure`
 - Graphics/runtime smoke when relevant:
-  - `cmake --build cmake-build-debug --target SlabTests StudioSlabV2 -j8`
+  - `cmake --build cmake-build-debug --target SlabTests StudioSlab -j8`
   - `./Build/bin/SlabTests list`
-  - `./Build/bin/StudioSlabV2`
+  - `./Build/bin/StudioSlab`

@@ -1,6 +1,7 @@
 #include "CrashPad.h"
 
 #include "Core/Controller/CommandLine/CommandLineParserDefs.h"
+#include "Core/Reflection/V2/LegacyInterfaceAdapterV2.h"
 #include "Core/SlabCore.h"
 
 #include "StudioSlab.h"
@@ -36,6 +37,8 @@ namespace {
                 << "  Studios <subprogram> [options]\n"
                 << "  Studios run <subprogram> [options]\n\n"
                 << "Subprograms:\n"
+                << "  reflect      Reflection V2 catalog and invocation utilities\n"
+                << "               (list/get/set/apply/invoke)\n\n"
                 << "  metropolis   Run V2 Hamiltonian RtoR Metropolis slice\n"
                 << "  spi          Run V2 SPI ODE/time-aware slice\n"
                 << "  rtor         Run V2 KGRtoR plane-waves slice\n\n"
@@ -51,7 +54,11 @@ namespace {
                 << "  md-v2, molecular-dynamics, v2-moldyn\n\n"
                 << "  xy-v2, v2-xy\n\n"
                 << "  ising-v2, v2-ising\n\n"
+                << "  reflection, reflect-v2\n\n"
                 << "Examples:\n"
+                << "  Studios reflect --action list\n"
+                << "  Studios reflect --action get --interface v2.function-sandbox --parameter initial-condition\n"
+                << "  Studios reflect --action set --interface v2.function-sandbox --parameter initial-condition --value \"family=analytic;expr=sin(x);domain_min=-3.14;domain_max=3.14\"\n"
                 << "  Studios metropolis --steps 5000 --interval 500\n"
                 << "  Studios metropolis --gl --steps 5000 --interval 500 --monitor-interval 100\n"
                 << "  Studios spi --steps 8 --dt 0.125 --time 0.5 --N 16 --interval 2\n"
@@ -72,7 +79,7 @@ namespace {
     }
 
     auto PrintList() -> void {
-        std::cout << "metropolis\nspi\nrtor\nkg2d\nmoldyn\nxy\nising\n";
+        std::cout << "reflect\nmetropolis\nspi\nrtor\nkg2d\nmoldyn\nxy\nising\n";
     }
 
     auto NormalizeShortLongSingleLetterOption(const Str &arg) -> Str {
@@ -108,6 +115,186 @@ namespace {
         auto normalizedArgv = BuildArgvPointers(normalizedArgvStorage);
 
         return options.parse(static_cast<int>(normalizedArgv.size()), normalizedArgv.data());
+    }
+
+    auto ParseThreadAffinity(const Str &raw) -> Slab::Core::Reflection::V2::EThreadAffinity {
+        using namespace Slab::Core::Reflection::V2;
+
+        Str lowered = raw;
+        std::transform(lowered.begin(), lowered.end(), lowered.begin(), [](const unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+        });
+
+        if (lowered == "any") return EThreadAffinity::Any;
+        if (lowered == "ui") return EThreadAffinity::UI;
+        if (lowered == "simulation") return EThreadAffinity::Simulation;
+        if (lowered == "worker") return EThreadAffinity::Worker;
+
+        throw Exception(
+            "Unknown thread affinity '" + raw + "'. Expected one of: any, ui, simulation, worker.");
+    }
+
+    auto PrintOperationResult(const Slab::Core::Reflection::V2::FOperationResultV2 &result) -> int {
+        using namespace Slab::Core::Reflection::V2;
+
+        std::cout << "status: " << ToString(result.Status) << '\n';
+        if (!result.ErrorCode.empty()) std::cout << "error_code: " << result.ErrorCode << '\n';
+        if (!result.ErrorMessage.empty()) std::cout << "error_message: " << result.ErrorMessage << '\n';
+        if (result.LatencyMs.has_value()) std::cout << "latency_ms: " << result.LatencyMs.value() << '\n';
+        if (!result.ExecutedThread.empty()) std::cout << "executed_thread: " << result.ExecutedThread << '\n';
+        for (const auto &warning : result.Warnings) std::cout << "warning: " << warning << '\n';
+
+        if (!result.OutputMap.empty()) {
+            std::cout << "outputs:\n";
+            for (const auto &[key, value] : result.OutputMap) {
+                std::cout << "  " << key << " [" << value.TypeId << "] = " << value.Encoded << '\n';
+            }
+        }
+
+        return result.IsOk() ? 0 : 1;
+    }
+
+    auto RunReflectCommand(const int argc, const char **argv) -> int {
+        using namespace Slab::Core::Reflection::V2;
+
+        CLOptionsDescription options(
+            "Studios reflect",
+            "Reflection V2 helper: catalog listing and invoke path over legacy adapter.");
+        options.add_options()
+            ("h,help", "Show this help")
+            ("action",
+             "Action: list | get | set | apply | invoke",
+             cxxopts::value<Str>()->default_value("list"))
+            ("interface", "Target interface id", cxxopts::value<Str>())
+            ("parameter", "Target parameter id", cxxopts::value<Str>())
+            ("operation", "Target operation id (for --action invoke)", cxxopts::value<Str>())
+            ("value", "Encoded parameter value (for --action set)", cxxopts::value<Str>())
+            ("arg",
+             "Invoke argument key=value. Repeat for multiple args.",
+             cxxopts::value<Vector<Str>>())
+            ("thread",
+             "Invocation thread context: any|ui|simulation|worker",
+             cxxopts::value<Str>()->default_value("worker"))
+            ("running", "Set invocation context runtime as running");
+
+        const auto result = ParseSubcommandOptions(argc, argv, options);
+        if (result.count("help") > 0) {
+            std::cout << options.help() << '\n';
+            return 0;
+        }
+
+        Slab::Startup();
+
+        FLegacyReflectionCatalogAdapterV2 adapter;
+        adapter.RefreshFromLegacyInterfaces();
+        const auto &catalog = adapter.GetCatalog();
+
+        FInvocationContextV2 context;
+        context.CurrentThread = ParseThreadAffinity(result["thread"].as<Str>());
+        context.bRuntimeRunning = result.count("running") > 0;
+
+        Str action = result["action"].as<Str>();
+        std::transform(action.begin(), action.end(), action.begin(), [](const unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+        });
+
+        if (action == "list") {
+            std::cout << "catalog_version: " << catalog.CatalogVersion << '\n';
+            std::cout << "interface_count: " << catalog.Interfaces.size() << '\n';
+            for (const auto &interfaceSchema : catalog.Interfaces) {
+                std::cout << "\n[" << interfaceSchema.InterfaceId << "] " << interfaceSchema.DisplayName << '\n';
+                if (!interfaceSchema.Description.empty()) {
+                    std::cout << "  description: " << interfaceSchema.Description << '\n';
+                }
+                std::cout << "  parameters: " << interfaceSchema.Parameters.size() << '\n';
+                for (const auto &parameter : interfaceSchema.Parameters) {
+                    std::cout << "    - " << parameter.ParameterId
+                        << " (" << parameter.TypeId << ", " << ToString(parameter.Mutability) << ")\n";
+                }
+                std::cout << "  operations: " << interfaceSchema.Operations.size() << '\n';
+                for (const auto &operation : interfaceSchema.Operations) {
+                    std::cout << "    - " << operation.OperationId
+                        << " [" << ToString(operation.Kind) << "] "
+                        << " run=" << ToString(operation.RunStatePolicy)
+                        << " thread=" << ToString(operation.ThreadAffinity) << '\n';
+                }
+            }
+            return 0;
+        }
+
+        if (result.count("interface") == 0) {
+            throw Exception("--interface is required for action '" + action + "'.");
+        }
+
+        const auto interfaceId = result["interface"].as<Str>();
+
+        if (action == "get") {
+            if (result.count("parameter") == 0) {
+                throw Exception("--parameter is required for --action get.");
+            }
+
+            FValueMapV2 inputs;
+            inputs["parameter_id"] = MakeStringValue(result["parameter"].as<Str>());
+            const auto invokeResult = adapter.Invoke(interfaceId, COperationIdQueryGetParameter, inputs, context);
+            return PrintOperationResult(invokeResult);
+        }
+
+        if (action == "set") {
+            if (result.count("parameter") == 0) {
+                throw Exception("--parameter is required for --action set.");
+            }
+            if (result.count("value") == 0) {
+                throw Exception("--value is required for --action set.");
+            }
+
+            const auto parameterId = result["parameter"].as<Str>();
+            const auto *parameterSchema = adapter.GetParameter(interfaceId, parameterId);
+            if (parameterSchema == nullptr) {
+                throw Exception(
+                    "Parameter '" + parameterId + "' not found in interface '" + interfaceId + "'.");
+            }
+
+            FValueMapV2 inputs;
+            inputs["parameter_id"] = MakeStringValue(parameterId);
+            inputs["value"] = FReflectionValueV2(parameterSchema->TypeId, result["value"].as<Str>());
+            const auto invokeResult = adapter.Invoke(interfaceId, COperationIdCommandSetParameter, inputs, context);
+            return PrintOperationResult(invokeResult);
+        }
+
+        if (action == "apply") {
+            const auto invokeResult = adapter.Invoke(interfaceId, COperationIdCommandApplyPending, {}, context);
+            return PrintOperationResult(invokeResult);
+        }
+
+        if (action == "invoke") {
+            if (result.count("operation") == 0) {
+                throw Exception("--operation is required for --action invoke.");
+            }
+
+            FValueMapV2 inputs;
+            if (result.count("arg") > 0) {
+                for (const auto &rawArg : result["arg"].as<Vector<Str>>()) {
+                    const auto splitPos = rawArg.find('=');
+                    if (splitPos == Str::npos) {
+                        throw Exception(
+                            "Invalid --arg '" + rawArg + "'. Expected key=value.");
+                    }
+
+                    const auto key = rawArg.substr(0, splitPos);
+                    const auto value = rawArg.substr(splitPos + 1);
+                    inputs[key] = MakeStringValue(value);
+                }
+            }
+
+            const auto invokeResult = adapter.Invoke(
+                interfaceId,
+                result["operation"].as<Str>(),
+                inputs,
+                context);
+            return PrintOperationResult(invokeResult);
+        }
+
+        throw Exception("Unknown --action '" + action + "'.");
     }
 
     auto RunMetropolisCommand(const int argc, const char **argv) -> int {
@@ -467,6 +654,10 @@ namespace {
         return name == "metropolis" || name == "metropolis-v2" || name == "v2-metropolis";
     }
 
+    auto IsReflectCommand(const Str &name) -> bool {
+        return name == "reflect" || name == "reflection" || name == "reflect-v2";
+    }
+
     auto IsSPICommand(const Str &name) -> bool {
         return name == "spi" || name == "spi-v2" || name == "v2-spi";
     }
@@ -514,6 +705,7 @@ namespace {
             if (argc <= 2) throw Exception("Missing subprogram after 'run'.");
 
             const Str sub = argv[2];
+            if (IsReflectCommand(sub)) return RunReflectCommand(argc - 2, argv + 2);
             if (IsMetropolisCommand(sub)) return RunMetropolisCommand(argc - 2, argv + 2);
             if (IsSPICommand(sub)) return RunSPICommand(argc - 2, argv + 2);
             if (IsRtoRCommand(sub)) return RunRtoRCommand(argc - 2, argv + 2);
@@ -525,6 +717,7 @@ namespace {
             throw Exception("Unknown subprogram '" + sub + "'. Use 'Studios list'.");
         }
 
+        if (IsReflectCommand(first)) return RunReflectCommand(argc - 1, argv + 1);
         if (IsMetropolisCommand(first)) return RunMetropolisCommand(argc - 1, argv + 1);
         if (IsSPICommand(first)) return RunSPICommand(argc - 1, argv + 1);
         if (IsRtoRCommand(first)) return RunRtoRCommand(argc - 1, argv + 1);

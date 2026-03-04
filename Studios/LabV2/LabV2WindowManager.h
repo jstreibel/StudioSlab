@@ -6,9 +6,12 @@
 
 #include "Math/Data/V2/LiveDataHubV2.h"
 #include "Math/Data/V2/LiveControlHubV2.h"
+#include "Core/Reflection/V2/LegacyInterfaceAdapterV2.h"
+#include "imgui.h"
 
 #include <functional>
 #include <array>
+#include <map>
 #include <vector>
 
 class FLabV2WindowManager final : public Slab::Graphics::FWindowManager {
@@ -57,7 +60,8 @@ private:
         bool bShowWindowLiveControl = true;
         bool bShowWindowLiveInteraction = true;
         bool bShowWindowViews = true;
-        bool bShowWindowBlueprints = false;
+        bool bShowWindowSchemeInspector = false;
+        bool bShowWindowBlueprintGraph = false;
     };
 
     static constexpr std::size_t WorkspaceCount = 2;
@@ -75,6 +79,7 @@ private:
     Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> LiveDataHub;
     Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> LiveControlHub;
     Slab::TPointer<class FSimulationManagerV2> SimulationManager;
+    Slab::Core::Reflection::V2::FLegacyReflectionCatalogAdapterV2 ReflectionAdapter;
 
     Slab::Str LiveDataTopicFilter;
     bool bLiveDataOnlyBound = false;
@@ -91,6 +96,14 @@ private:
     bool bTaskOnlyRunning = false;
     bool bTaskHideSuccess = false;
     bool bTaskOnlyNumeric = false;
+    Slab::Str SelectedSchemeInterfaceId;
+    Slab::Str SelectedSchemeParameterId;
+    std::map<Slab::Str, Slab::Str> SchemeParameterDraftByKey;
+    Slab::Str SchemesLastOperationSummary;
+    Slab::Core::Reflection::V2::FValueMapV2 SchemesLastOperationOutput;
+    std::map<Slab::Str, ImVec2> BlueprintNodePositionById;
+    ImVec2 BlueprintGraphPan = ImVec2(80.0f, 80.0f);
+    bool bShowBlueprintGrid = true;
 
     bool bUseDockspaceLayout = true;
     bool bResetDockLayoutRequested = false;
@@ -103,8 +116,8 @@ private:
     bool bWorkspaceLayoutsBootstrapped = false;
     std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true}
+        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true}
     };
     float WorkspaceTabsHeight = 0.0f;
     float WorkspaceStripHeight = 0.0f;
@@ -116,7 +129,8 @@ private:
     bool bShowWindowLiveControl = true;
     bool bShowWindowLiveInteraction = true;
     bool bShowWindowViews = true;
-    bool bShowWindowBlueprints = false;
+    bool bShowWindowSchemeInspector = true;
+    bool bShowWindowBlueprintGraph = true;
     bool bHasLastMousePosition = false;
     int LastMouseX = 0;
     int LastMouseY = 0;
@@ -133,8 +147,13 @@ private:
     auto DrawDockedToolWindows() -> void;
     auto BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfaceRegistration>;
     auto DrawPanelSurface(const FPanelSurfaceRegistration &registration) -> void;
+    auto DrawSchemesInspectorPanel() -> void;
+    auto DrawSchemesBlueprintGraphPanel() -> void;
     auto DrawLegacySidePane() -> void;
     auto BuildDefaultDockLayout(unsigned int dockspaceId, EWorkspaceTab workspace) -> void;
+    [[nodiscard]] auto BuildReflectionInvocationContext() const -> Slab::Core::Reflection::V2::FInvocationContextV2;
+    [[nodiscard]] auto BuildSchemeParameterDraftKey(const Slab::Str &interfaceId, const Slab::Str &parameterId) const -> Slab::Str;
+    auto EnsureSchemeSelectionIsValid() -> void;
     [[nodiscard]] auto GetTopMenuInset() const -> float;
     auto RequestSimulationLauncherVisible() -> void;
     auto SaveWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;

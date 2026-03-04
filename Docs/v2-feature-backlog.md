@@ -59,6 +59,43 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - mouse events captured by ImGui overlays now stop propagation to underlying plot canvases
   - removed dedicated KG2D control-source panel and its default monitor-side pre-publish behavior from LabV2 shell
 
+## Progress Notes (2026-03-04)
+
+- `RV2-00` done (design/doc phase): Reflection V2 baseline contract locked.
+  - indexed route added: `Docs/index-reflection-v2.md`
+  - contract added: `Docs/reflection-v2-contract.md`
+  - migration plan added: `Docs/reflection-v2-migration-plan.md`
+  - decision locked: unified operation model (`Command|Query` kind), one invocation path, no heavy CQRS split
+  - decision locked: `RestartRequired` parameter mutability for staged apply-on-restart semantics
+- `RV2-01` done: adapter-first discovery path implemented in LabV2 Schemes over shared reflection catalog.
+- `RV2-02` done: operation invoke dispatcher + command/query wiring + invocation policy checks.
+- `RV2-03` done: first complex type slice (`slab.math.function.r_to_r`) with editor/codec/apply path.
+- `RV2-04` done: CLI convergence first vertical slice via `Studios reflect` over same adapter/codecs/invoke path.
+- `LAB-09` done: Schemes workspace now splits reflection metadata and blueprint graph concerns:
+  - renamed old overloaded `Blueprints` metadata surface to `Interface Inspector`
+  - added `Blueprint Graph` node-canvas panel with draggable nodes and interface-parameter-operation links
+
+### `P0` `RV2-00` — Reflection V2 contract freeze — done
+- Define `Interface`/`Parameter`/`Operation` schema contracts.
+- Define operation invocation result shape and policy enums.
+- Define type id baseline and adapter boundary from legacy interface seed.
+
+### `P0` `RV2-01` — Reflection adapter read-only path — done
+- Build adapter projection from legacy `FInterface`/`FParameter`.
+- Expose discovery metadata in LabV2 Schemes (read-only first).
+- Do not change legacy runtime semantics in this phase.
+
+### `P1` `RV2-02` — Reflection operation invocation — done
+- Add unified operation invoke path with policy enforcement (`ThreadAffinity`, `RunStatePolicy`, `SideEffectClass`).
+- Wire first host/runtime command and query operations.
+
+### `P1` `RV2-03` — Complex parameter type slice — done
+- Add first complex function descriptor type adapter (`r_to_r` or `r2_to_r`).
+- Provide minimal editor surface and validation path.
+
+### `P1` `RV2-04` — CLI convergence over reflection codecs — done
+- Route one vertical CLI slice through reflection codecs while preserving legacy compatibility.
+
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
 

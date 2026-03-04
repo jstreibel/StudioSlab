@@ -2,11 +2,11 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-03-02`
-- Last implementation update: `2026-03-02` (listener-driven monitor snapshots + first XY/Ising live runtime parameter binding slice)
-- Last architecture-doc update: `2026-03-02` (monitor data-path contract update: listener-pushed snapshots, `LatestOnly`)
-- Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-01`
-- Build-target sanity check date: `2026-03-01` (`StudioSlabV2`, `SlabTests`, `testsuite` present in `cmake-build-debug`)
+- Snapshot date: `2026-03-04`
+- Last implementation update: `2026-03-04` (Reflection V2 adapter/invoke vertical slice in LabV2 Schemes + CLI)
+- Last architecture-doc update: `2026-03-04` (Reflection V2 implementation/migration docs synced to code)
+- Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-04`
+- Build-target sanity check date: `2026-03-04` (`StudioSlab`, `Studios`, `SlabTests`, `testsuite` present in `cmake-build-debug`)
 
 ## Implemented Baseline
 
@@ -65,6 +65,33 @@
   - removed KG2D control-source panel surface and default monitor-side pre-publish path from LabV2 shell
   - mouse routing now honors ImGui capture for plot overlays (`Plot Detail` no longer propagates wheel/drag to the plot canvas behind it)
 
+## Recent Updates (`2026-03-04`, design lock)
+
+- Reflection V2 design baseline locked (docs/contracts):
+  - added indexed route for reflection workstream (`Docs/index-reflection-v2.md`)
+  - added contract baseline (`Docs/reflection-v2-contract.md`)
+  - added adapter-first migration plan (`Docs/reflection-v2-migration-plan.md`)
+- Operation semantics decision:
+  - unified operation model (`Kind = Command | Query`) with one invocation path
+  - no heavy CQRS split introduced
+- Parameter policy baseline extended:
+  - `RestartRequired` mutability class formalized for staged apply-on-restart flows
+
+## Recent Updates (`2026-03-04`, implementation)
+
+- Reflection V2 phases `RV2-01`..`RV2-04` vertical slice implemented:
+  - shared reflection runtime/adapter/invoke path under `Slab/Core/Reflection/V2/`
+  - LabV2 Schemes now exposes two surfaces in `Studios/LabV2/LabV2WindowManager.cpp`:
+    - `Interface Inspector` (reflection catalog + invocation/editor panel)
+    - `Blueprint Graph` (node-canvas graph for selected interface)
+  - new CLI reflection command path in `Studios/CLI/main.cpp` (`Studios reflect ...`)
+- Operation/runtime contract path now exercised in both consumers:
+  - command/query operations: parameter list/get/set/apply
+  - invoke-time checks: `ThreadAffinity`, `RunStatePolicy`, query side-effect invariant
+- First complex parameter slice implemented:
+  - `slab.math.function.r_to_r` descriptor codec + editor/apply flow via sandbox interface
+  - `RestartRequired` staged apply behavior wired through shared adapter operations
+
 ## Model Coverage Status (Current)
 
 - `KG R^2->R`: `V2-H`, `V2-M`, first `V2-I` prototype path
@@ -78,6 +105,12 @@
 ## Active Workstream
 
 - `CVG-04`: functional minimization V2 first slice (`Docs/functional-minimization-v2-slice-scope.md`)
+- Reflection V2 migration workstream status:
+  - `RV2-00`: done
+  - `RV2-01`: done
+  - `RV2-02`: done
+  - `RV2-03`: done
+  - `RV2-04`: done
 
 ## Known Missing Pieces
 
