@@ -162,6 +162,10 @@ namespace {
         return "Unknown";
     }
 
+    auto WithPolicyPrefix(const char prefix, const Slab::Str &value) -> Slab::Str {
+        return Slab::Str(1, prefix) + ":" + value;
+    }
+
 } // namespace
 
 FLabV2WindowManager::FLabV2WindowManager()
@@ -986,7 +990,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     interfaceNode.Kind = FGraphNode::EKind::Interface;
     interfaceNode.RefId = interfaceSchema->InterfaceId;
     interfaceNode.bSelected = true;
-    interfaceNode.Badges.push_back({"Interface", IM_COL32(118, 98, 166, 240)});
+    interfaceNode.Badges.push_back({WithPolicyPrefix('N', "Interface"), IM_COL32(118, 98, 166, 240)});
     interfaceNode.Size = computeNodeSize(interfaceNode, 300.0f, 520.0f);
     interfaceNode.Position = findOrCreatePosition(interfaceNode.Key, ImVec2(560.0f, 200.0f));
     nodes.push_back(interfaceNode);
@@ -1034,9 +1038,9 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         node.Kind = FGraphNode::EKind::Parameter;
         node.RefId = parameter.ParameterId;
         node.bSelected = SelectedSchemeParameterId == parameter.ParameterId;
-        node.Badges.push_back({ToCompactMutabilityLabel(parameter.Mutability), IM_COL32(88, 132, 192, 220)});
-        node.Badges.push_back({ToCompactExposureLabel(parameter.Exposure), IM_COL32(96, 120, 150, 220)});
-        node.Badges.push_back({stateLabel, stateColor});
+        node.Badges.push_back({WithPolicyPrefix('M', ToCompactMutabilityLabel(parameter.Mutability)), IM_COL32(88, 132, 192, 220)});
+        node.Badges.push_back({WithPolicyPrefix('E', ToCompactExposureLabel(parameter.Exposure)), IM_COL32(96, 120, 150, 220)});
+        node.Badges.push_back({WithPolicyPrefix('S', stateLabel), stateColor});
         node.Size = computeNodeSize(node, 340.0f, 620.0f);
         node.Position = findOrCreatePosition(node.Key, ImVec2(70.0f, parameterLaneY));
         nodes.push_back(node);
@@ -1075,9 +1079,9 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
             commandLaneY += node.Size.y + 20.0f;
         }
         node.RefId = operation.OperationId;
-        node.Badges.push_back({ToCompactRunStateLabel(operation.RunStatePolicy), IM_COL32(78, 122, 112, 220)});
-        node.Badges.push_back({ToCompactThreadLabel(operation.ThreadAffinity), IM_COL32(86, 112, 142, 220)});
-        node.Badges.push_back({ToCompactSideEffectLabel(operation.SideEffectClass), IM_COL32(122, 104, 88, 220)});
+        node.Badges.push_back({WithPolicyPrefix('R', ToCompactRunStateLabel(operation.RunStatePolicy)), IM_COL32(78, 122, 112, 220)});
+        node.Badges.push_back({WithPolicyPrefix('T', ToCompactThreadLabel(operation.ThreadAffinity)), IM_COL32(86, 112, 142, 220)});
+        node.Badges.push_back({WithPolicyPrefix('X', ToCompactSideEffectLabel(operation.SideEffectClass)), IM_COL32(122, 104, 88, 220)});
         nodes.push_back(node);
     }
 
@@ -1424,29 +1428,43 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         float badgeX = nodePos.x + 9.0f;
         float badgeRowY = badgeStartY;
         const auto setHoveredBadgeTooltip = [&](const Slab::Str &badgeLabel, const FGraphNode &currentNode) {
-            hoveredBadgeLabel = badgeLabel;
-            if (badgeLabel == "Restart") hoveredBadgeDetail = "RestartRequired: changes are staged and need Apply/Restart.";
-            else if (badgeLabel == "Writable") hoveredBadgeDetail = "WritableExposed: parameter can be edited via reflection.";
-            else if (badgeLabel == "ReadOnly") hoveredBadgeDetail = "ReadOnlyExposed: visible but cannot be changed.";
-            else if (badgeLabel == "Hidden") hoveredBadgeDetail = "Hidden: not intended for routine user editing.";
-            else if (badgeLabel == "Live") hoveredBadgeDetail = "Draft matches current runtime value.";
-            else if (badgeLabel == "Draft") hoveredBadgeDetail = "Draft differs from runtime value.";
-            else if (badgeLabel == "Pending") hoveredBadgeDetail = "Staged value pending Apply/Restart.";
-            else if (badgeLabel == "Unavailable") hoveredBadgeDetail = "Current value provider unavailable.";
-            else if (badgeLabel == "Stopped") hoveredBadgeDetail = "Operation allowed only while runtime is stopped.";
-            else if (badgeLabel == "Running") hoveredBadgeDetail = "Operation allowed only while runtime is running.";
-            else if (badgeLabel == "Any") hoveredBadgeDetail = "No restriction for this policy dimension.";
-            else if (badgeLabel == "UI") hoveredBadgeDetail = "Invocation must run on UI thread.";
-            else if (badgeLabel == "Sim") hoveredBadgeDetail = "Invocation must run on simulation thread.";
-            else if (badgeLabel == "Worker") hoveredBadgeDetail = "Invocation must run on worker thread.";
-            else if (badgeLabel == "Local") hoveredBadgeDetail = "Side effects are local state changes.";
-            else if (badgeLabel == "Task") hoveredBadgeDetail = "Side effects include task lifecycle changes.";
-            else if (badgeLabel == "IO") hoveredBadgeDetail = "Side effects include IO.";
-            else if (badgeLabel == "External") hoveredBadgeDetail = "Side effects include external integrations.";
-            else if (badgeLabel == "Const") hoveredBadgeDetail = "Const mutability: runtime read-only.";
-            else if (badgeLabel == "Runtime") hoveredBadgeDetail = "RuntimeMutable: can be applied while runtime is active.";
-            else if (badgeLabel == "None") hoveredBadgeDetail = "No side effects declared.";
-            else if (badgeLabel == "Interface") hoveredBadgeDetail = "Interface root node.";
+            const auto separator = badgeLabel.find(':');
+            const bool bHasPrefix = separator != Slab::Str::npos && separator > 0;
+            const char prefix = bHasPrefix ? badgeLabel[0] : '\0';
+            const Slab::Str value = bHasPrefix ? badgeLabel.substr(separator + 1) : badgeLabel;
+
+            if (prefix == 'M') hoveredBadgeLabel = "Mutability = " + value;
+            else if (prefix == 'E') hoveredBadgeLabel = "Exposure = " + value;
+            else if (prefix == 'S') hoveredBadgeLabel = "State = " + value;
+            else if (prefix == 'R') hoveredBadgeLabel = "Run State Policy = " + value;
+            else if (prefix == 'T') hoveredBadgeLabel = "Thread Affinity = " + value;
+            else if (prefix == 'X') hoveredBadgeLabel = "Side Effect Class = " + value;
+            else if (prefix == 'N') hoveredBadgeLabel = "Node Kind = " + value;
+            else hoveredBadgeLabel = value;
+
+            if (prefix == 'M' && value == "Restart") hoveredBadgeDetail = "RestartRequired: changes are staged and need Apply/Restart.";
+            else if (prefix == 'M' && value == "Runtime") hoveredBadgeDetail = "RuntimeMutable: can be applied while runtime is active.";
+            else if (prefix == 'M' && value == "Const") hoveredBadgeDetail = "Const mutability: runtime read-only.";
+            else if (prefix == 'E' && value == "Writable") hoveredBadgeDetail = "WritableExposed: parameter can be edited via reflection.";
+            else if (prefix == 'E' && value == "ReadOnly") hoveredBadgeDetail = "ReadOnlyExposed: visible but cannot be changed.";
+            else if (prefix == 'E' && value == "Hidden") hoveredBadgeDetail = "Hidden: not intended for routine user editing.";
+            else if (prefix == 'S' && value == "Live") hoveredBadgeDetail = "Draft matches current runtime value.";
+            else if (prefix == 'S' && value == "Draft") hoveredBadgeDetail = "Draft differs from runtime value.";
+            else if (prefix == 'S' && value == "Pending") hoveredBadgeDetail = "Staged value pending Apply/Restart.";
+            else if (prefix == 'S' && value == "Unavailable") hoveredBadgeDetail = "Current value provider unavailable.";
+            else if (prefix == 'R' && value == "Stopped") hoveredBadgeDetail = "Operation allowed only while runtime is stopped.";
+            else if (prefix == 'R' && value == "Running") hoveredBadgeDetail = "Operation allowed only while runtime is running.";
+            else if (prefix == 'R' && value == "Any") hoveredBadgeDetail = "No run-state restriction.";
+            else if (prefix == 'T' && value == "UI") hoveredBadgeDetail = "Invocation must run on UI thread.";
+            else if (prefix == 'T' && value == "Sim") hoveredBadgeDetail = "Invocation must run on simulation thread.";
+            else if (prefix == 'T' && value == "Worker") hoveredBadgeDetail = "Invocation must run on worker thread.";
+            else if (prefix == 'T' && value == "Any") hoveredBadgeDetail = "No thread-affinity restriction.";
+            else if (prefix == 'X' && value == "Local") hoveredBadgeDetail = "Side effects are local state changes.";
+            else if (prefix == 'X' && value == "Task") hoveredBadgeDetail = "Side effects include task lifecycle changes.";
+            else if (prefix == 'X' && value == "IO") hoveredBadgeDetail = "Side effects include IO.";
+            else if (prefix == 'X' && value == "External") hoveredBadgeDetail = "Side effects include external integrations.";
+            else if (prefix == 'X' && value == "None") hoveredBadgeDetail = "No side effects declared.";
+            else if (prefix == 'N' && value == "Interface") hoveredBadgeDetail = "Interface root node.";
             else hoveredBadgeDetail = "Policy badge for " + currentNode.Title + ".";
         };
         for (const auto &badge : node.Badges) {
