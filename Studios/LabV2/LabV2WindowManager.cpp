@@ -22,6 +22,7 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
 #include <algorithm>
+#include <cctype>
 #include <cfloat>
 #include <cstring>
 #include <sstream>
@@ -73,6 +74,92 @@ namespace {
     auto TruncateLabel(const Slab::Str &label, std::size_t maxChars = 56) -> Slab::Str {
         if (label.size() <= maxChars) return label;
         return label.substr(0, maxChars - 3) + "...";
+    }
+
+    auto ContainsCaseInsensitive(const Slab::Str &value, const Slab::Str &needle) -> bool {
+        if (needle.empty()) return true;
+        if (needle.size() > value.size()) return false;
+
+        auto loweredValue = value;
+        auto loweredNeedle = needle;
+        std::transform(loweredValue.begin(), loweredValue.end(), loweredValue.begin(), [](const unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+        });
+        std::transform(loweredNeedle.begin(), loweredNeedle.end(), loweredNeedle.begin(), [](const unsigned char c) {
+            return static_cast<char>(std::tolower(c));
+        });
+        return loweredValue.find(loweredNeedle) != Slab::Str::npos;
+    }
+
+    auto DrawNodeBadge(ImDrawList *drawList, const ImVec2 position, const Slab::Str &text, const ImU32 color) -> float {
+        if (drawList == nullptr || text.empty()) return 0.0f;
+
+        const auto compactText = TruncateLabel(text, 14);
+        const auto textSize = ImGui::CalcTextSize(compactText.c_str());
+        const auto size = ImVec2(textSize.x + 12.0f, textSize.y + 4.0f);
+        drawList->AddRectFilled(position, ImVec2(position.x + size.x, position.y + size.y), color, 5.0f);
+        drawList->AddText(ImVec2(position.x + 6.0f, position.y + 2.0f), IM_COL32(246, 248, 252, 255), compactText.c_str());
+        return size.x + 6.0f;
+    }
+
+    auto MeasureBadgeWidth(const Slab::Str &text) -> float {
+        if (text.empty()) return 0.0f;
+        const auto compactText = TruncateLabel(text, 14);
+        const auto textSize = ImGui::CalcTextSize(compactText.c_str());
+        return textSize.x + 12.0f + 6.0f;
+    }
+
+    auto ToCompactMutabilityLabel(const Slab::Core::Reflection::V2::EParameterMutability value) -> Slab::Str {
+        using namespace Slab::Core::Reflection::V2;
+        switch (value) {
+            case EParameterMutability::Const: return "Const";
+            case EParameterMutability::RuntimeMutable: return "Runtime";
+            case EParameterMutability::RestartRequired: return "Restart";
+        }
+        return "Unknown";
+    }
+
+    auto ToCompactExposureLabel(const Slab::Core::Reflection::V2::EParameterExposure value) -> Slab::Str {
+        using namespace Slab::Core::Reflection::V2;
+        switch (value) {
+            case EParameterExposure::Hidden: return "Hidden";
+            case EParameterExposure::ReadOnlyExposed: return "ReadOnly";
+            case EParameterExposure::WritableExposed: return "Writable";
+        }
+        return "Unknown";
+    }
+
+    auto ToCompactRunStateLabel(const Slab::Core::Reflection::V2::ERunStatePolicy value) -> Slab::Str {
+        using namespace Slab::Core::Reflection::V2;
+        switch (value) {
+            case ERunStatePolicy::Any: return "Any";
+            case ERunStatePolicy::StoppedOnly: return "Stopped";
+            case ERunStatePolicy::RunningOnly: return "Running";
+        }
+        return "Unknown";
+    }
+
+    auto ToCompactThreadLabel(const Slab::Core::Reflection::V2::EThreadAffinity value) -> Slab::Str {
+        using namespace Slab::Core::Reflection::V2;
+        switch (value) {
+            case EThreadAffinity::Any: return "Any";
+            case EThreadAffinity::UI: return "UI";
+            case EThreadAffinity::Simulation: return "Sim";
+            case EThreadAffinity::Worker: return "Worker";
+        }
+        return "Unknown";
+    }
+
+    auto ToCompactSideEffectLabel(const Slab::Core::Reflection::V2::ESideEffectClass value) -> Slab::Str {
+        using namespace Slab::Core::Reflection::V2;
+        switch (value) {
+            case ESideEffectClass::None: return "None";
+            case ESideEffectClass::LocalState: return "Local";
+            case ESideEffectClass::TaskLifecycle: return "Task";
+            case ESideEffectClass::IO: return "IO";
+            case ESideEffectClass::External: return "External";
+        }
+        return "Unknown";
     }
 
 } // namespace
@@ -359,10 +446,12 @@ auto FLabV2WindowManager::EnsureSchemeSelectionIsValid() -> void {
         SelectedSchemeInterfaceId = catalog.Interfaces.front().InterfaceId;
         interfaceSchema = &catalog.Interfaces.front();
         SelectedSchemeParameterId.clear();
+        SelectedSchemeOperationId.clear();
     }
 
     if (interfaceSchema->Parameters.empty()) {
         SelectedSchemeParameterId.clear();
+        SelectedSchemeOperationId.clear();
         return;
     }
 
@@ -381,6 +470,84 @@ auto FLabV2WindowManager::EnsureSchemeSelectionIsValid() -> void {
         } else {
             SchemeParameterDraftByKey[draftKey] = "";
         }
+    }
+}
+
+auto FLabV2WindowManager::ApplySchemeOperationResult(const Slab::Str &interfaceId,
+                                                     const Slab::Str &operationId,
+                                                     const Slab::Core::Reflection::V2::FOperationResultV2 &result) -> void {
+    SchemesLastOperationSummary = BuildOperationSummary(result);
+    SchemesLastOperationOutput = result.OutputMap;
+
+    FSchemeOperationTraceEntry trace;
+    trace.SequenceId = ++SchemesOperationTraceSequence;
+    trace.InterfaceId = interfaceId;
+    trace.OperationId = operationId;
+    trace.Summary = SchemesLastOperationSummary;
+    trace.bOk = result.IsOk();
+    if (result.LatencyMs.has_value()) {
+        std::ostringstream os;
+        os.setf(std::ios::fixed, std::ios::floatfield);
+        os.precision(2);
+        os << result.LatencyMs.value() << " ms";
+        trace.LatencyLabel = os.str();
+    }
+
+    SchemesOperationTrace.push_front(std::move(trace));
+    constexpr std::size_t MaxTraceEntries = 24;
+    while (SchemesOperationTrace.size() > MaxTraceEntries) {
+        SchemesOperationTrace.pop_back();
+    }
+}
+
+auto FLabV2WindowManager::InvokeSelectedSchemeOperation(
+    const Slab::Core::Reflection::V2::FInterfaceSchemaV2 &interfaceSchema,
+    const Slab::Str &operationId,
+    const Slab::Core::Reflection::V2::FInvocationContextV2 &context) -> void {
+    using namespace Slab::Core::Reflection::V2;
+
+    FValueMapV2 inputs;
+    const bool bNeedsParameterSelection =
+        operationId == COperationIdQueryGetParameter ||
+        operationId == COperationIdCommandSetParameter;
+
+    if (bNeedsParameterSelection) {
+        if (SelectedSchemeParameterId.empty()) {
+            const auto missingParameterResult = FOperationResultV2::Error(
+                "reflection.parameter.required",
+                "Select a parameter before invoking this operation.");
+            ApplySchemeOperationResult(interfaceSchema.InterfaceId, operationId, missingParameterResult);
+            return;
+        }
+
+        inputs["parameter_id"] = MakeStringValue(SelectedSchemeParameterId);
+    }
+
+    if (operationId == COperationIdCommandSetParameter) {
+        const auto *parameterSchema = FindParameterById(interfaceSchema, SelectedSchemeParameterId);
+        if (parameterSchema == nullptr) {
+            const auto missingParameterResult = FOperationResultV2::Error(
+                "reflection.parameter.not_found",
+                "Selected parameter is no longer available.");
+            ApplySchemeOperationResult(interfaceSchema.InterfaceId, operationId, missingParameterResult);
+            return;
+        }
+
+        const auto draftKey = BuildSchemeParameterDraftKey(interfaceSchema.InterfaceId, parameterSchema->ParameterId);
+        const auto draftIt = SchemeParameterDraftByKey.find(draftKey);
+        const auto draft = draftIt != SchemeParameterDraftByKey.end() ? draftIt->second : Slab::Str{};
+        inputs["value"] = FReflectionValueV2(parameterSchema->TypeId, draft);
+    }
+
+    const auto result = ReflectionAdapter.Invoke(interfaceSchema.InterfaceId, operationId, inputs, context);
+    ApplySchemeOperationResult(interfaceSchema.InterfaceId, operationId, result);
+
+    if (!result.IsOk()) return;
+
+    if (const auto it = result.OutputMap.find("value"); it != result.OutputMap.end() &&
+        !SelectedSchemeParameterId.empty()) {
+        const auto draftKey = BuildSchemeParameterDraftKey(interfaceSchema.InterfaceId, SelectedSchemeParameterId);
+        SchemeParameterDraftByKey[draftKey] = it->second.Encoded;
     }
 }
 
@@ -472,43 +639,7 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
                     ImGui::PushID(operation.OperationId.c_str());
                     ImGui::BeginDisabled(!bCanInvoke);
                     if (ImGui::Button(operation.DisplayName.c_str())) {
-                        FValueMapV2 inputs;
-                        if (operation.OperationId == COperationIdQueryGetParameter ||
-                            operation.OperationId == COperationIdCommandSetParameter) {
-                            inputs["parameter_id"] = MakeStringValue(SelectedSchemeParameterId);
-                        }
-
-                        if (operation.OperationId == COperationIdCommandSetParameter) {
-                            const auto *parameterSchema = FindParameterById(*interfaceSchema, SelectedSchemeParameterId);
-                            if (parameterSchema == nullptr) {
-                                SchemesLastOperationSummary = "[Error] reflection.parameter.not_found";
-                            } else {
-                                const auto draftKey = BuildSchemeParameterDraftKey(
-                                    interfaceSchema->InterfaceId,
-                                    parameterSchema->ParameterId);
-                                const auto draftIt = SchemeParameterDraftByKey.find(draftKey);
-                                const auto draft = draftIt != SchemeParameterDraftByKey.end() ? draftIt->second : Slab::Str{};
-                                inputs["value"] = FReflectionValueV2(parameterSchema->TypeId, draft);
-                            }
-                        }
-
-                        const auto result = ReflectionAdapter.Invoke(
-                            interfaceSchema->InterfaceId,
-                            operation.OperationId,
-                            inputs,
-                            context);
-                        SchemesLastOperationSummary = BuildOperationSummary(result);
-                        SchemesLastOperationOutput = result.OutputMap;
-
-                        if (result.IsOk()) {
-                            if (const auto it = result.OutputMap.find("value"); it != result.OutputMap.end() &&
-                                !SelectedSchemeParameterId.empty()) {
-                                const auto draftKey = BuildSchemeParameterDraftKey(
-                                    interfaceSchema->InterfaceId,
-                                    SelectedSchemeParameterId);
-                                SchemeParameterDraftByKey[draftKey] = it->second.Encoded;
-                            }
-                        }
+                        InvokeSelectedSchemeOperation(*interfaceSchema, operation.OperationId, context);
                     }
                     ImGui::EndDisabled();
                     ImGui::SameLine();
@@ -637,29 +768,14 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
                         }
                         ImGui::SameLine();
                         if (ImGui::Button("Set Parameter")) {
-                            FValueMapV2 inputs;
-                            inputs["parameter_id"] = MakeStringValue(selectedParameterSchema->ParameterId);
-                            inputs["value"] = FReflectionValueV2(selectedParameterSchema->TypeId, draft);
-
-                            const auto result = ReflectionAdapter.Invoke(
-                                interfaceSchema->InterfaceId,
-                                COperationIdCommandSetParameter,
-                                inputs,
-                                context);
-                            SchemesLastOperationSummary = BuildOperationSummary(result);
-                            SchemesLastOperationOutput = result.OutputMap;
+                            SelectedSchemeParameterId = selectedParameterSchema->ParameterId;
+                            InvokeSelectedSchemeOperation(*interfaceSchema, COperationIdCommandSetParameter, context);
                         }
 
                         if (selectedParameterSchema->Mutability == EParameterMutability::RestartRequired) {
                             ImGui::SameLine();
                             if (ImGui::Button("Apply Pending")) {
-                                const auto result = ReflectionAdapter.Invoke(
-                                    interfaceSchema->InterfaceId,
-                                    COperationIdCommandApplyPending,
-                                    {},
-                                    context);
-                                SchemesLastOperationSummary = BuildOperationSummary(result);
-                                SchemesLastOperationOutput = result.OutputMap;
+                                InvokeSelectedSchemeOperation(*interfaceSchema, COperationIdCommandApplyPending, context);
                             }
                         }
                     }
@@ -688,6 +804,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     EnsureSchemeSelectionIsValid();
 
     const auto &catalog = ReflectionAdapter.GetCatalog();
+    const auto context = BuildReflectionInvocationContext();
     if (catalog.Interfaces.empty()) {
         ImGui::TextDisabled("No interfaces available in reflection catalog.");
         return;
@@ -705,6 +822,36 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     ImGui::SameLine();
     ImGui::Checkbox("Grid", &bShowBlueprintGrid);
     ImGui::SameLine();
+    {
+        auto filterBuffer = std::vector<char>(256, '\0');
+        if (!BlueprintGraphFilterText.empty()) {
+            std::strncpy(filterBuffer.data(), BlueprintGraphFilterText.c_str(), filterBuffer.size() - 1);
+            filterBuffer[filterBuffer.size() - 1] = '\0';
+        }
+        ImGui::SetNextItemWidth(260.0f);
+        if (ImGui::InputTextWithHint("##BlueprintGraphFilter", "Search id/type/mutability...", filterBuffer.data(), filterBuffer.size())) {
+            BlueprintGraphFilterText = filterBuffer.data();
+        }
+    }
+    ImGui::SameLine();
+    ImGui::Checkbox("Parameters", &bBlueprintGraphShowParameters);
+    ImGui::SameLine();
+    ImGui::Checkbox("Queries", &bBlueprintGraphShowQueries);
+    ImGui::SameLine();
+    ImGui::Checkbox("Commands", &bBlueprintGraphShowCommands);
+    ImGui::SameLine();
+    const char *mutabilityFilterLabel = "Mutability: Any";
+    if (BlueprintGraphMutabilityFilter == 1) mutabilityFilterLabel = "Mutability: Const";
+    if (BlueprintGraphMutabilityFilter == 2) mutabilityFilterLabel = "Mutability: Runtime";
+    if (BlueprintGraphMutabilityFilter == 3) mutabilityFilterLabel = "Mutability: Restart";
+    if (ImGui::BeginCombo("##BlueprintMutabilityFilter", mutabilityFilterLabel)) {
+        if (ImGui::Selectable("Any", BlueprintGraphMutabilityFilter == 0)) BlueprintGraphMutabilityFilter = 0;
+        if (ImGui::Selectable("Const", BlueprintGraphMutabilityFilter == 1)) BlueprintGraphMutabilityFilter = 1;
+        if (ImGui::Selectable("RuntimeMutable", BlueprintGraphMutabilityFilter == 2)) BlueprintGraphMutabilityFilter = 2;
+        if (ImGui::Selectable("RestartRequired", BlueprintGraphMutabilityFilter == 3)) BlueprintGraphMutabilityFilter = 3;
+        ImGui::EndCombo();
+    }
+    ImGui::SameLine();
     if (ImGui::Button("Auto Layout")) {
         const auto keyPrefix = interfaceSchema->InterfaceId + "::";
         for (auto it = BlueprintNodePositionById.begin(); it != BlueprintNodePositionById.end(); ) {
@@ -718,16 +865,22 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
 
     ImGui::Separator();
 
+    constexpr float GraphTraceHeight = 140.0f;
+    // Keep a small epsilon to avoid 1-2px overflow/scrollbar jitter from fractional layout math.
+    constexpr float CanvasLayoutEpsilon = 6.0f;
+    const float canvasBottomReserve = GraphTraceHeight + 44.0f + CanvasLayoutEpsilon;
+
     const auto canvasPos = ImGui::GetCursorScreenPos();
     auto canvasSize = ImGui::GetContentRegionAvail();
     if (canvasSize.x < 64.0f) canvasSize.x = 64.0f;
-    if (canvasSize.y < 180.0f) canvasSize.y = 180.0f;
+    canvasSize.y = std::max(180.0f, canvasSize.y - canvasBottomReserve);
     const auto canvasEnd = ImVec2(canvasPos.x + canvasSize.x, canvasPos.y + canvasSize.y);
 
     ImGui::InvisibleButton(
         "SchemesBlueprintCanvas",
         canvasSize,
-        ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+        ImGuiButtonFlags_MouseButtonRight);
+    ImGui::SetItemAllowOverlap();
 
     const bool bCanvasHovered = ImGui::IsItemHovered();
     if (bCanvasHovered && ImGui::IsMouseDragging(ImGuiMouseButton_Right, 0.0f)) {
@@ -759,14 +912,17 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         enum class EKind : unsigned char {
             Interface,
             Parameter,
-            Operation
+            Query,
+            Command
         };
 
         Slab::Str Key;
         Slab::Str Title;
-        Slab::Str Subtitle;
+        Slab::Str SubtitlePrimary;
+        Slab::Str SubtitleSecondary;
+        Slab::Vector<std::pair<Slab::Str, ImU32>> Badges;
         ImVec2 *Position = nullptr;
-        ImVec2 Size = ImVec2(240.0f, 96.0f);
+        ImVec2 Size = ImVec2(360.0f, 132.0f);
         EKind Kind = EKind::Parameter;
         Slab::Str RefId;
         bool bSelected = false;
@@ -781,44 +937,147 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     Slab::Vector<FGraphNode> nodes;
     nodes.reserve(1 + interfaceSchema->Parameters.size() + interfaceSchema->Operations.size());
 
+    const auto computeNodeSize = [](const FGraphNode &node, const float minWidth, const float maxWidth) -> ImVec2 {
+        const float lineHeight = ImGui::GetTextLineHeight();
+        const float headerHeight = std::max(36.0f, std::round(lineHeight * 1.55f));
+        constexpr float BodyPaddingX = 9.0f;
+        constexpr float BodyTopPadding = 8.0f;
+        constexpr float BodyBottomPadding = 10.0f;
+        constexpr float BadgeRowGap = 4.0f;
+        const float titleWidth = ImGui::CalcTextSize(node.Title.c_str()).x;
+        const float subtitleWidth = ImGui::CalcTextSize(node.SubtitlePrimary.c_str()).x;
+
+        float badgesWidth = 0.0f;
+        for (const auto &badge : node.Badges) badgesWidth += MeasureBadgeWidth(badge.first);
+
+        float width = std::max(titleWidth, subtitleWidth) + 2.0f * BodyPaddingX + 4.0f;
+        width = std::max(width, badgesWidth + 2.0f * BodyPaddingX + 4.0f);
+        width = std::clamp(width, minWidth, maxWidth);
+
+        const float contentWidth = std::max(120.0f, width - 2.0f * BodyPaddingX);
+        int badgeRows = 0;
+        float rowWidth = 0.0f;
+        for (const auto &badge : node.Badges) {
+            const float badgeWidth = MeasureBadgeWidth(badge.first);
+            if (rowWidth > 0.0f && rowWidth + badgeWidth > contentWidth) {
+                ++badgeRows;
+                rowWidth = 0.0f;
+            }
+            if (rowWidth <= 0.0f) ++badgeRows;
+            rowWidth += badgeWidth;
+        }
+
+        const float textBlockHeight = lineHeight + 4.0f + lineHeight;
+        const float badgeHeight = badgeRows > 0
+            ? static_cast<float>(badgeRows) * (lineHeight + 4.0f) + static_cast<float>(badgeRows - 1) * BadgeRowGap
+            : 0.0f;
+        const float actionReserveHeight = node.Kind == FGraphNode::EKind::Interface ? 0.0f : (lineHeight + 14.0f);
+        const float height = headerHeight + BodyTopPadding + textBlockHeight + 10.0f + badgeHeight + actionReserveHeight + BodyBottomPadding;
+        return ImVec2(width, std::max(116.0f, height));
+    };
+
     const auto keyPrefix = interfaceSchema->InterfaceId + "::";
     FGraphNode interfaceNode;
     interfaceNode.Key = keyPrefix + "interface";
     interfaceNode.Title = interfaceSchema->DisplayName;
-    interfaceNode.Subtitle = interfaceSchema->InterfaceId;
-    interfaceNode.Position = findOrCreatePosition(interfaceNode.Key, ImVec2(460.0f, 180.0f));
-    interfaceNode.Size = ImVec2(280.0f, 110.0f);
+    interfaceNode.SubtitlePrimary = interfaceSchema->InterfaceId;
+    interfaceNode.SubtitleSecondary = Slab::Str("parameters=") + std::to_string(interfaceSchema->Parameters.size()) +
+        " | operations=" + std::to_string(interfaceSchema->Operations.size());
     interfaceNode.Kind = FGraphNode::EKind::Interface;
     interfaceNode.RefId = interfaceSchema->InterfaceId;
     interfaceNode.bSelected = true;
+    interfaceNode.Badges.push_back({"Interface", IM_COL32(118, 98, 166, 240)});
+    interfaceNode.Size = computeNodeSize(interfaceNode, 300.0f, 520.0f);
+    interfaceNode.Position = findOrCreatePosition(interfaceNode.Key, ImVec2(560.0f, 200.0f));
     nodes.push_back(interfaceNode);
 
-    for (std::size_t i = 0; i < interfaceSchema->Parameters.size(); ++i) {
-        const auto &parameter = interfaceSchema->Parameters[i];
+    float parameterLaneY = 56.0f;
+    for (const auto &parameter : interfaceSchema->Parameters) {
+        if (!bBlueprintGraphShowParameters) continue;
+        if (BlueprintGraphMutabilityFilter == 1 && parameter.Mutability != EParameterMutability::Const) continue;
+        if (BlueprintGraphMutabilityFilter == 2 && parameter.Mutability != EParameterMutability::RuntimeMutable) continue;
+        if (BlueprintGraphMutabilityFilter == 3 && parameter.Mutability != EParameterMutability::RestartRequired) continue;
+
+        const bool bMatchesText =
+            ContainsCaseInsensitive(parameter.DisplayName, BlueprintGraphFilterText) ||
+            ContainsCaseInsensitive(parameter.ParameterId, BlueprintGraphFilterText) ||
+            ContainsCaseInsensitive(parameter.TypeId, BlueprintGraphFilterText) ||
+            ContainsCaseInsensitive(ToString(parameter.Mutability), BlueprintGraphFilterText) ||
+            ContainsCaseInsensitive(ToString(parameter.Exposure), BlueprintGraphFilterText);
+        if (!bMatchesText) continue;
+
+        const auto draftKey = BuildSchemeParameterDraftKey(interfaceSchema->InterfaceId, parameter.ParameterId);
+        const auto draftIt = SchemeParameterDraftByKey.find(draftKey);
+        const auto draftValue = draftIt != SchemeParameterDraftByKey.end() ? draftIt->second : Slab::Str{};
+        const auto liveValue = ReflectionAdapter.EncodeCurrentParameterValue(interfaceSchema->InterfaceId, parameter.ParameterId);
+
+        Slab::Str stateLabel = "Unavailable";
+        ImU32 stateColor = IM_COL32(120, 124, 136, 220);
+        if (liveValue.has_value()) {
+            if (draftValue == liveValue->Encoded) {
+                stateLabel = "Live";
+                stateColor = IM_COL32(94, 180, 130, 220);
+            } else if (parameter.Mutability == EParameterMutability::RestartRequired) {
+                stateLabel = "Pending";
+                stateColor = IM_COL32(222, 176, 102, 220);
+            } else {
+                stateLabel = "Draft";
+                stateColor = IM_COL32(122, 168, 224, 220);
+            }
+        }
 
         FGraphNode node;
         node.Key = keyPrefix + "param:" + parameter.ParameterId;
         node.Title = parameter.DisplayName;
-        node.Subtitle = Slab::Str(parameter.TypeId) + " | " + ToString(parameter.Mutability);
-        node.Position = findOrCreatePosition(node.Key, ImVec2(80.0f, 60.0f + static_cast<float>(i) * 130.0f));
-        node.Size = ImVec2(290.0f, 104.0f);
+        node.SubtitlePrimary = Slab::Str(parameter.ParameterId) + " | " + TruncateLabel(parameter.TypeId, 18);
+        node.SubtitleSecondary = Slab::Str("State: ") + stateLabel + " | type: " + parameter.TypeId;
         node.Kind = FGraphNode::EKind::Parameter;
         node.RefId = parameter.ParameterId;
         node.bSelected = SelectedSchemeParameterId == parameter.ParameterId;
+        node.Badges.push_back({ToCompactMutabilityLabel(parameter.Mutability), IM_COL32(88, 132, 192, 220)});
+        node.Badges.push_back({ToCompactExposureLabel(parameter.Exposure), IM_COL32(96, 120, 150, 220)});
+        node.Badges.push_back({stateLabel, stateColor});
+        node.Size = computeNodeSize(node, 340.0f, 620.0f);
+        node.Position = findOrCreatePosition(node.Key, ImVec2(70.0f, parameterLaneY));
         nodes.push_back(node);
+        parameterLaneY += node.Size.y + 20.0f;
     }
 
-    for (std::size_t i = 0; i < interfaceSchema->Operations.size(); ++i) {
-        const auto &operation = interfaceSchema->Operations[i];
+    float queryLaneY = 56.0f;
+    float commandLaneY = 56.0f;
+    for (const auto &operation : interfaceSchema->Operations) {
+        if (operation.Kind == EOperationKind::Query && !bBlueprintGraphShowQueries) continue;
+        if (operation.Kind == EOperationKind::Command && !bBlueprintGraphShowCommands) continue;
+
+        const bool bMatchesText =
+            ContainsCaseInsensitive(operation.DisplayName, BlueprintGraphFilterText) ||
+            ContainsCaseInsensitive(operation.OperationId, BlueprintGraphFilterText) ||
+            ContainsCaseInsensitive(ToString(operation.Kind), BlueprintGraphFilterText) ||
+            ContainsCaseInsensitive(ToString(operation.RunStatePolicy), BlueprintGraphFilterText) ||
+            ContainsCaseInsensitive(ToString(operation.ThreadAffinity), BlueprintGraphFilterText);
+        if (!bMatchesText) continue;
 
         FGraphNode node;
         node.Key = keyPrefix + "operation:" + operation.OperationId;
         node.Title = operation.DisplayName;
-        node.Subtitle = Slab::Str(ToString(operation.Kind)) + " | " + ToString(operation.RunStatePolicy);
-        node.Position = findOrCreatePosition(node.Key, ImVec2(860.0f, 60.0f + static_cast<float>(i) * 130.0f));
-        node.Size = ImVec2(300.0f, 104.0f);
-        node.Kind = FGraphNode::EKind::Operation;
+        node.SubtitlePrimary = Slab::Str(operation.OperationId);
+        node.SubtitleSecondary = Slab::Str(ToString(operation.Kind)) + " | run=" + ToCompactRunStateLabel(operation.RunStatePolicy) +
+            " | thread=" + ToCompactThreadLabel(operation.ThreadAffinity) +
+            " | side=" + ToCompactSideEffectLabel(operation.SideEffectClass);
+        node.Size = computeNodeSize(node, 340.0f, 620.0f);
+        if (operation.Kind == EOperationKind::Query) {
+            node.Position = findOrCreatePosition(node.Key, ImVec2(980.0f, queryLaneY));
+            node.Kind = FGraphNode::EKind::Query;
+            queryLaneY += node.Size.y + 20.0f;
+        } else {
+            node.Position = findOrCreatePosition(node.Key, ImVec2(1470.0f, commandLaneY));
+            node.Kind = FGraphNode::EKind::Command;
+            commandLaneY += node.Size.y + 20.0f;
+        }
         node.RefId = operation.OperationId;
+        node.Badges.push_back({ToCompactRunStateLabel(operation.RunStatePolicy), IM_COL32(78, 122, 112, 220)});
+        node.Badges.push_back({ToCompactThreadLabel(operation.ThreadAffinity), IM_COL32(86, 112, 142, 220)});
+        node.Badges.push_back({ToCompactSideEffectLabel(operation.SideEffectClass), IM_COL32(122, 104, 88, 220)});
         nodes.push_back(node);
     }
 
@@ -832,84 +1091,417 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         const auto nodePos = screenPositionFor(node);
         const float slots = static_cast<float>(std::max(1, totalSlots));
         const float slotRatio = static_cast<float>(slot + 1) / (slots + 1.0f);
-        const float y = nodePos.y + 30.0f + slotRatio * (node.Size.y - 40.0f);
+        const float y = nodePos.y + 52.0f + slotRatio * (node.Size.y - 64.0f);
         const float x = bOutput ? nodePos.x + node.Size.x : nodePos.x;
         return ImVec2(x, y);
     };
 
     auto &root = nodes.front();
-    const int parameterCount = static_cast<int>(interfaceSchema->Parameters.size());
-    const int operationCount = static_cast<int>(interfaceSchema->Operations.size());
-    for (int i = 0; i < parameterCount; ++i) {
-        const auto &paramNode = nodes[1 + i];
-        const auto source = pinPositionFor(paramNode, true, 0, 1);
-        const auto target = pinPositionFor(root, false, i, parameterCount);
-        const auto cp1 = ImVec2(source.x + 70.0f, source.y);
-        const auto cp2 = ImVec2(target.x - 70.0f, target.y);
-        drawList->AddBezierCubic(source, cp1, cp2, target, IM_COL32(104, 168, 224, 190), 2.0f);
-    }
-    for (int i = 0; i < operationCount; ++i) {
-        const auto &operationNode = nodes[1 + parameterCount + i];
-        const auto source = pinPositionFor(root, true, i, operationCount);
-        const auto target = pinPositionFor(operationNode, false, 0, 1);
-        const auto cp1 = ImVec2(source.x + 90.0f, source.y);
-        const auto cp2 = ImVec2(target.x - 90.0f, target.y);
-        drawList->AddBezierCubic(source, cp1, cp2, target, IM_COL32(120, 214, 146, 200), 2.0f);
+    Slab::Vector<const FGraphNode *> parameterNodes;
+    Slab::Vector<const FGraphNode *> queryNodes;
+    Slab::Vector<const FGraphNode *> commandNodes;
+    for (const auto &node : nodes) {
+        if (node.Kind == FGraphNode::EKind::Parameter) parameterNodes.push_back(&node);
+        else if (node.Kind == FGraphNode::EKind::Query) queryNodes.push_back(&node);
+        else if (node.Kind == FGraphNode::EKind::Command) commandNodes.push_back(&node);
     }
 
+    const int parameterCount = static_cast<int>(parameterNodes.size());
+    const int operationCount = static_cast<int>(queryNodes.size() + commandNodes.size());
+    for (int i = 0; i < parameterCount; ++i) {
+        const auto &paramNode = *parameterNodes[i];
+        const auto source = pinPositionFor(paramNode, true, 0, 1);
+        const auto target = pinPositionFor(root, false, i, parameterCount);
+        const auto cp1 = ImVec2(source.x + 84.0f, source.y);
+        const auto cp2 = ImVec2(target.x - 84.0f, target.y);
+        drawList->AddBezierCubic(source, cp1, cp2, target, IM_COL32(104, 168, 224, 128), 1.6f);
+    }
+
+    Slab::Vector<const FGraphNode *> operationNodes;
+    operationNodes.reserve(queryNodes.size() + commandNodes.size());
+    operationNodes.insert(operationNodes.end(), queryNodes.begin(), queryNodes.end());
+    operationNodes.insert(operationNodes.end(), commandNodes.begin(), commandNodes.end());
+    for (int i = 0; i < operationCount; ++i) {
+        const auto &operationNode = *operationNodes[i];
+        const auto source = pinPositionFor(root, true, i, operationCount);
+        const auto target = pinPositionFor(operationNode, false, 0, 1);
+        const auto cp1 = ImVec2(source.x + 108.0f, source.y);
+        const auto cp2 = ImVec2(target.x - 108.0f, target.y);
+        const auto edgeColor = operationNode.Kind == FGraphNode::EKind::Query
+            ? IM_COL32(116, 214, 174, 128)
+            : IM_COL32(214, 184, 116, 128);
+        drawList->AddBezierCubic(source, cp1, cp2, target, edgeColor, 1.6f);
+    }
+
+    struct FNodeAction {
+        enum class EKind : unsigned char {
+            Invoke,
+            CopyId
+        };
+        Slab::Str Label;
+        EKind Kind = EKind::Invoke;
+        Slab::Str OperationId;
+    };
+
+    struct FActionRect {
+        ImVec2 Min;
+        ImVec2 Max;
+    };
+
+    const auto isPointInside = [](const ImVec2 point, const ImVec2 min, const ImVec2 max) -> bool {
+        return point.x >= min.x && point.y >= min.y && point.x <= max.x && point.y <= max.y;
+    };
+
+    const auto isNodeSelected = [this](const FGraphNode &node) {
+        if (node.Kind == FGraphNode::EKind::Interface) return false;
+        if (node.Kind == FGraphNode::EKind::Parameter) return node.RefId == SelectedSchemeParameterId;
+        return node.RefId == SelectedSchemeOperationId;
+    };
+
+    const auto buildNodeActions = [interfaceSchema](const FGraphNode &node) -> Slab::Vector<FNodeAction> {
+        using namespace Slab::Core::Reflection::V2;
+
+        Slab::Vector<FNodeAction> actions;
+        if (node.Kind == FGraphNode::EKind::Parameter) {
+            actions.push_back(FNodeAction{"Get", FNodeAction::EKind::Invoke, COperationIdQueryGetParameter});
+            actions.push_back(FNodeAction{"Set", FNodeAction::EKind::Invoke, COperationIdCommandSetParameter});
+            const auto *parameterSchema = FindParameterById(*interfaceSchema, node.RefId);
+            if (parameterSchema != nullptr && parameterSchema->Mutability == EParameterMutability::RestartRequired) {
+                actions.push_back(FNodeAction{"Apply", FNodeAction::EKind::Invoke, COperationIdCommandApplyPending});
+            }
+            actions.push_back(FNodeAction{"Copy Id", FNodeAction::EKind::CopyId, {}});
+        } else if (node.Kind == FGraphNode::EKind::Query || node.Kind == FGraphNode::EKind::Command) {
+            actions.push_back(FNodeAction{"Invoke", FNodeAction::EKind::Invoke, node.RefId});
+            actions.push_back(FNodeAction{"Copy Id", FNodeAction::EKind::CopyId, {}});
+        }
+        return actions;
+    };
+
+    const auto buildActionRects = [&](const FGraphNode &node, const Slab::Vector<FNodeAction> &actions) {
+        Slab::Vector<FActionRect> rects;
+        if (actions.empty()) return rects;
+
+        const auto nodePos = screenPositionFor(node);
+        const auto nodeEnd = ImVec2(nodePos.x + node.Size.x, nodePos.y + node.Size.y);
+        const float actionHeight = ImGui::GetTextLineHeight() + 6.0f;
+        const float startX = nodePos.x + 8.0f;
+        float x = startX;
+        float y = nodeEnd.y - actionHeight - 6.0f;
+
+        for (const auto &action : actions) {
+            const float width = ImGui::CalcTextSize(action.Label.c_str()).x + 12.0f;
+            if (x > startX && x + width > nodeEnd.x - 8.0f) {
+                x = startX;
+                y -= actionHeight + 4.0f;
+            }
+            if (y < nodePos.y + 58.0f) break;
+            rects.push_back(FActionRect{ImVec2(x, y), ImVec2(x + width, y + actionHeight)});
+            x += width + 6.0f;
+        }
+        return rects;
+    };
+
+    const auto executeNodeAction = [&](const FGraphNode &node, const FNodeAction &action) {
+        if (action.Kind == FNodeAction::EKind::CopyId) {
+            ImGui::SetClipboardText(node.RefId.c_str());
+            return;
+        }
+
+        if (node.Kind == FGraphNode::EKind::Parameter) {
+            SelectedSchemeParameterId = node.RefId;
+            SelectedSchemeOperationId.clear();
+        } else if (node.Kind == FGraphNode::EKind::Query || node.Kind == FGraphNode::EKind::Command) {
+            SelectedSchemeOperationId = node.RefId;
+        }
+        InvokeSelectedSchemeOperation(*interfaceSchema, action.OperationId, context);
+    };
+
+    std::map<Slab::Str, FGraphNode *> nodesByKey;
+    std::map<Slab::Str, Slab::Vector<FNodeAction>> nodeActionsByKey;
+    std::map<Slab::Str, Slab::Vector<FActionRect>> nodeActionRectsByKey;
+    Slab::Str hoveredBadgeLabel;
+    Slab::Str hoveredBadgeDetail;
+
+    const auto rebuildSelectedActionLayout = [&]() {
+        nodeActionsByKey.clear();
+        nodeActionRectsByKey.clear();
+        for (auto &node : nodes) {
+            if (!isNodeSelected(node)) continue;
+            const auto actions = buildNodeActions(node);
+            nodeActionsByKey[node.Key] = actions;
+            nodeActionRectsByKey[node.Key] = buildActionRects(node, actions);
+        }
+    };
+
     for (auto &node : nodes) {
+        nodesByKey[node.Key] = &node;
+    }
+    rebuildSelectedActionLayout();
+
+    const auto &io = ImGui::GetIO();
+    const auto mousePos = io.MousePos;
+    const bool bLeftClicked = ImGui::IsMouseClicked(ImGuiMouseButton_Left);
+    const bool bLeftDown = ImGui::IsMouseDown(ImGuiMouseButton_Left);
+    const bool bLeftReleased = ImGui::IsMouseReleased(ImGuiMouseButton_Left);
+
+    int hoveredNodeIndex = -1;
+    for (int i = static_cast<int>(nodes.size()) - 1; i >= 0; --i) {
+        const auto nodePos = screenPositionFor(nodes[static_cast<std::size_t>(i)]);
+        const auto nodeEnd = ImVec2(nodePos.x + nodes[static_cast<std::size_t>(i)].Size.x, nodePos.y + nodes[static_cast<std::size_t>(i)].Size.y);
+        if (isPointInside(mousePos, nodePos, nodeEnd)) {
+            hoveredNodeIndex = i;
+            break;
+        }
+    }
+
+    Slab::Str hoveredActionNodeKey;
+    int hoveredActionIndex = -1;
+    if (hoveredNodeIndex >= 0) {
+        const auto &hoveredNode = nodes[static_cast<std::size_t>(hoveredNodeIndex)];
+        if (const auto rectsIt = nodeActionRectsByKey.find(hoveredNode.Key); rectsIt != nodeActionRectsByKey.end()) {
+            const auto &rects = rectsIt->second;
+            for (std::size_t idx = 0; idx < rects.size(); ++idx) {
+                if (isPointInside(mousePos, rects[idx].Min, rects[idx].Max)) {
+                    hoveredActionNodeKey = hoveredNode.Key;
+                    hoveredActionIndex = static_cast<int>(idx);
+                    break;
+                }
+            }
+        }
+    }
+
+    if (bLeftClicked) {
+        if (hoveredActionIndex >= 0) {
+            BlueprintPressedActionNodeKey = hoveredActionNodeKey;
+            BlueprintPressedActionIndex = hoveredActionIndex;
+            BlueprintPressedNodeKey.clear();
+            bBlueprintNodeDragging = false;
+        } else if (hoveredNodeIndex >= 0) {
+            auto &pressedNode = nodes[static_cast<std::size_t>(hoveredNodeIndex)];
+            BlueprintPressedNodeKey = pressedNode.Key;
+            BlueprintPressMousePos = mousePos;
+            BlueprintPressNodePos = *(pressedNode.Position);
+            bBlueprintNodeDragging = false;
+            BlueprintPressedActionNodeKey.clear();
+            BlueprintPressedActionIndex = -1;
+        } else {
+            BlueprintPressedNodeKey.clear();
+            BlueprintPressedActionNodeKey.clear();
+            BlueprintPressedActionIndex = -1;
+            bBlueprintNodeDragging = false;
+        }
+    }
+
+    if (bLeftDown && !BlueprintPressedNodeKey.empty() && BlueprintPressedActionNodeKey.empty()) {
+        if (const auto nodeIt = nodesByKey.find(BlueprintPressedNodeKey); nodeIt != nodesByKey.end()) {
+            const auto delta = ImVec2(mousePos.x - BlueprintPressMousePos.x, mousePos.y - BlueprintPressMousePos.y);
+            const float distance2 = delta.x * delta.x + delta.y * delta.y;
+            if (!bBlueprintNodeDragging && distance2 > 9.0f) bBlueprintNodeDragging = true;
+            if (bBlueprintNodeDragging) {
+                nodeIt->second->Position->x = BlueprintPressNodePos.x + delta.x;
+                nodeIt->second->Position->y = BlueprintPressNodePos.y + delta.y;
+            }
+        }
+    }
+
+    if (bLeftReleased) {
+        if (!BlueprintPressedActionNodeKey.empty()) {
+            if (BlueprintPressedActionNodeKey == hoveredActionNodeKey && BlueprintPressedActionIndex == hoveredActionIndex) {
+                if (const auto nodeIt = nodesByKey.find(BlueprintPressedActionNodeKey); nodeIt != nodesByKey.end()) {
+                    if (const auto actionsIt = nodeActionsByKey.find(BlueprintPressedActionNodeKey); actionsIt != nodeActionsByKey.end()) {
+                        const auto &actions = actionsIt->second;
+                        if (BlueprintPressedActionIndex >= 0 &&
+                            static_cast<std::size_t>(BlueprintPressedActionIndex) < actions.size()) {
+                            executeNodeAction(*nodeIt->second, actions[static_cast<std::size_t>(BlueprintPressedActionIndex)]);
+                        }
+                    }
+                }
+            }
+            BlueprintPressedActionNodeKey.clear();
+            BlueprintPressedActionIndex = -1;
+        } else if (!BlueprintPressedNodeKey.empty()) {
+            if (!bBlueprintNodeDragging) {
+                if (const auto nodeIt = nodesByKey.find(BlueprintPressedNodeKey); nodeIt != nodesByKey.end()) {
+                    const auto &node = *(nodeIt->second);
+                    if (node.Kind == FGraphNode::EKind::Interface) {
+                        SelectedSchemeInterfaceId = node.RefId;
+                        SelectedSchemeOperationId.clear();
+                    } else if (node.Kind == FGraphNode::EKind::Parameter) {
+                        SelectedSchemeParameterId = node.RefId;
+                        SelectedSchemeOperationId.clear();
+                    } else if (node.Kind == FGraphNode::EKind::Query || node.Kind == FGraphNode::EKind::Command) {
+                        SelectedSchemeOperationId = node.RefId;
+                    }
+                }
+            }
+            BlueprintPressedNodeKey.clear();
+            bBlueprintNodeDragging = false;
+        }
+    }
+
+    // Keep action-bar geometry in sync with post-drag/post-selection node positions this frame.
+    rebuildSelectedActionLayout();
+
+    for (const auto &node : nodes) {
         const auto nodePos = screenPositionFor(node);
         const auto nodeEnd = ImVec2(nodePos.x + node.Size.x, nodePos.y + node.Size.y);
         if (nodeEnd.x < canvasPos.x || nodePos.x > canvasEnd.x || nodeEnd.y < canvasPos.y || nodePos.y > canvasEnd.y) {
             continue;
         }
 
-        const auto interactionId = "##bpnode_" + node.Key;
-        ImGui::SetCursorScreenPos(nodePos);
-        ImGui::InvisibleButton(interactionId.c_str(), node.Size, ImGuiButtonFlags_MouseButtonLeft);
-        const bool bHovered = ImGui::IsItemHovered();
-        const bool bActive = ImGui::IsItemActive();
-
-        if (bActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 0.0f)) {
-            const auto &io = ImGui::GetIO();
-            node.Position->x += io.MouseDelta.x;
-            node.Position->y += io.MouseDelta.y;
-        }
-
-        if (bHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-            if (node.Kind == FGraphNode::EKind::Interface) {
-                SelectedSchemeInterfaceId = node.RefId;
-            } else if (node.Kind == FGraphNode::EKind::Parameter) {
-                SelectedSchemeParameterId = node.RefId;
-            }
-        }
-
         ImU32 bodyColor = IM_COL32(38, 44, 55, 238);
         ImU32 headerColor = IM_COL32(92, 106, 132, 255);
-        if (node.Kind == FGraphNode::EKind::Operation) {
+        if (node.Kind == FGraphNode::EKind::Query) {
             bodyColor = IM_COL32(34, 48, 46, 238);
             headerColor = IM_COL32(78, 132, 120, 255);
+        }
+        if (node.Kind == FGraphNode::EKind::Command) {
+            bodyColor = IM_COL32(52, 48, 36, 238);
+            headerColor = IM_COL32(146, 124, 72, 255);
         }
         if (node.Kind == FGraphNode::EKind::Interface) {
             bodyColor = IM_COL32(44, 40, 58, 238);
             headerColor = IM_COL32(112, 94, 154, 255);
         }
 
+        const float lineHeight = ImGui::GetTextLineHeight();
+        const float headerHeight = std::max(36.0f, std::round(lineHeight * 1.55f));
         drawList->AddRectFilled(nodePos, nodeEnd, bodyColor, 8.0f);
-        drawList->AddRectFilled(nodePos, ImVec2(nodeEnd.x, nodePos.y + 26.0f), headerColor, 8.0f, ImDrawFlags_RoundCornersTop);
-        drawList->AddRect(nodePos, nodeEnd, node.bSelected ? IM_COL32(245, 195, 110, 255) : IM_COL32(96, 106, 122, 255), 8.0f, 0, node.bSelected ? 2.0f : 1.0f);
-        drawList->AddText(ImVec2(nodePos.x + 9.0f, nodePos.y + 6.0f), IM_COL32(240, 244, 252, 255), node.Title.c_str());
+        drawList->AddRectFilled(nodePos, ImVec2(nodeEnd.x, nodePos.y + headerHeight), headerColor, 8.0f, ImDrawFlags_RoundCornersTop);
+        drawList->AddLine(
+            ImVec2(nodePos.x + 1.0f, nodePos.y + headerHeight),
+            ImVec2(nodeEnd.x - 1.0f, nodePos.y + headerHeight),
+            IM_COL32(168, 178, 196, 72),
+            1.0f);
+
+        const bool bNodeSelected =
+            (node.Kind == FGraphNode::EKind::Parameter && node.RefId == SelectedSchemeParameterId) ||
+            ((node.Kind == FGraphNode::EKind::Query || node.Kind == FGraphNode::EKind::Command) &&
+                node.RefId == SelectedSchemeOperationId);
+        drawList->AddRect(nodePos, nodeEnd, bNodeSelected ? IM_COL32(245, 195, 110, 255) : IM_COL32(96, 106, 122, 255), 8.0f, 0, bNodeSelected ? 2.0f : 1.0f);
+        const float contentWidth = std::max(120.0f, node.Size.x - 18.0f);
+        const std::size_t titleChars = static_cast<std::size_t>(std::max(12.0f, std::floor(contentWidth / 8.3f)));
+        const std::size_t subtitleChars = static_cast<std::size_t>(std::max(14.0f, std::floor(contentWidth / 8.0f)));
         drawList->AddText(
-            ImVec2(nodePos.x + 9.0f, nodePos.y + 36.0f),
+            ImVec2(nodePos.x + 9.0f, nodePos.y + 6.0f),
+            IM_COL32(240, 244, 252, 255),
+            TruncateLabel(node.Title, titleChars).c_str());
+        drawList->AddText(
+            ImVec2(nodePos.x + 9.0f, nodePos.y + headerHeight + 6.0f),
             IM_COL32(182, 192, 208, 255),
-            TruncateLabel(node.Subtitle, 64).c_str());
+            TruncateLabel(node.SubtitlePrimary, subtitleChars).c_str());
+
+        const float badgeRowHeight = ImGui::GetTextLineHeight() + 4.0f;
+        const float badgeRowGap = 4.0f;
+        const float badgeRowStep = badgeRowHeight + badgeRowGap;
+        int badgeRowCount = 0;
+        float measureRowWidth = 0.0f;
+        for (const auto &badge : node.Badges) {
+            const float badgeWidth = MeasureBadgeWidth(badge.first);
+            if (measureRowWidth > 0.0f && measureRowWidth + badgeWidth > node.Size.x - 18.0f) {
+                ++badgeRowCount;
+                measureRowWidth = 0.0f;
+            }
+            if (measureRowWidth <= 0.0f) ++badgeRowCount;
+            measureRowWidth += badgeWidth;
+        }
+
+        const float badgeBlockHeight =
+            static_cast<float>(badgeRowCount) * badgeRowHeight +
+            static_cast<float>(std::max(0, badgeRowCount - 1)) * badgeRowGap;
+        float badgeBottomY = nodeEnd.y - 10.0f;
+        if (bNodeSelected) {
+            if (const auto rectsIt = nodeActionRectsByKey.find(node.Key); rectsIt != nodeActionRectsByKey.end()) {
+                if (!rectsIt->second.empty()) {
+                    float actionTopY = rectsIt->second.front().Min.y;
+                    for (const auto &rect : rectsIt->second) actionTopY = std::min(actionTopY, rect.Min.y);
+                    badgeBottomY = std::min(badgeBottomY, actionTopY - 10.0f);
+                }
+            }
+        }
+        const float badgeStartY = std::max(nodePos.y + headerHeight + 42.0f, badgeBottomY - badgeBlockHeight);
+
+        float badgeX = nodePos.x + 9.0f;
+        float badgeRowY = badgeStartY;
+        const auto setHoveredBadgeTooltip = [&](const Slab::Str &badgeLabel, const FGraphNode &currentNode) {
+            hoveredBadgeLabel = badgeLabel;
+            if (badgeLabel == "Restart") hoveredBadgeDetail = "RestartRequired: changes are staged and need Apply/Restart.";
+            else if (badgeLabel == "Writable") hoveredBadgeDetail = "WritableExposed: parameter can be edited via reflection.";
+            else if (badgeLabel == "ReadOnly") hoveredBadgeDetail = "ReadOnlyExposed: visible but cannot be changed.";
+            else if (badgeLabel == "Hidden") hoveredBadgeDetail = "Hidden: not intended for routine user editing.";
+            else if (badgeLabel == "Live") hoveredBadgeDetail = "Draft matches current runtime value.";
+            else if (badgeLabel == "Draft") hoveredBadgeDetail = "Draft differs from runtime value.";
+            else if (badgeLabel == "Pending") hoveredBadgeDetail = "Staged value pending Apply/Restart.";
+            else if (badgeLabel == "Unavailable") hoveredBadgeDetail = "Current value provider unavailable.";
+            else if (badgeLabel == "Stopped") hoveredBadgeDetail = "Operation allowed only while runtime is stopped.";
+            else if (badgeLabel == "Running") hoveredBadgeDetail = "Operation allowed only while runtime is running.";
+            else if (badgeLabel == "Any") hoveredBadgeDetail = "No restriction for this policy dimension.";
+            else if (badgeLabel == "UI") hoveredBadgeDetail = "Invocation must run on UI thread.";
+            else if (badgeLabel == "Sim") hoveredBadgeDetail = "Invocation must run on simulation thread.";
+            else if (badgeLabel == "Worker") hoveredBadgeDetail = "Invocation must run on worker thread.";
+            else if (badgeLabel == "Local") hoveredBadgeDetail = "Side effects are local state changes.";
+            else if (badgeLabel == "Task") hoveredBadgeDetail = "Side effects include task lifecycle changes.";
+            else if (badgeLabel == "IO") hoveredBadgeDetail = "Side effects include IO.";
+            else if (badgeLabel == "External") hoveredBadgeDetail = "Side effects include external integrations.";
+            else if (badgeLabel == "Const") hoveredBadgeDetail = "Const mutability: runtime read-only.";
+            else if (badgeLabel == "Runtime") hoveredBadgeDetail = "RuntimeMutable: can be applied while runtime is active.";
+            else if (badgeLabel == "None") hoveredBadgeDetail = "No side effects declared.";
+            else if (badgeLabel == "Interface") hoveredBadgeDetail = "Interface root node.";
+            else hoveredBadgeDetail = "Policy badge for " + currentNode.Title + ".";
+        };
+        for (const auto &badge : node.Badges) {
+            const float badgeWidth = MeasureBadgeWidth(badge.first);
+            if (badgeX > nodePos.x + 9.0f && badgeX + badgeWidth > nodeEnd.x - 9.0f) {
+                badgeX = nodePos.x + 9.0f;
+                badgeRowY += badgeRowStep;
+            }
+            if (badgeRowY + badgeRowHeight > badgeBottomY) break;
+            const auto compactText = TruncateLabel(badge.first, 14);
+            const auto compactWidth = ImGui::CalcTextSize(compactText.c_str()).x + 12.0f;
+            const auto badgeMin = ImVec2(badgeX, badgeRowY);
+            const auto badgeMax = ImVec2(badgeX + compactWidth, badgeRowY + badgeRowHeight);
+            if (isPointInside(mousePos, badgeMin, badgeMax)) {
+                setHoveredBadgeTooltip(badge.first, node);
+            }
+            badgeX += DrawNodeBadge(drawList, ImVec2(badgeX, badgeRowY), badge.first, badge.second);
+        }
+
+        if (bNodeSelected && node.Kind != FGraphNode::EKind::Interface) {
+            if (const auto rectsIt = nodeActionRectsByKey.find(node.Key); rectsIt != nodeActionRectsByKey.end()) {
+                if (const auto actionsIt = nodeActionsByKey.find(node.Key); actionsIt != nodeActionsByKey.end()) {
+                    const auto &rects = rectsIt->second;
+                    const auto &actions = actionsIt->second;
+                    const std::size_t count = std::min(rects.size(), actions.size());
+                    for (std::size_t idx = 0; idx < count; ++idx) {
+                        const bool bHoveredAction =
+                            hoveredActionIndex >= 0 &&
+                            static_cast<std::size_t>(hoveredActionIndex) == idx &&
+                            hoveredActionNodeKey == node.Key;
+                        const bool bPressedAction =
+                            bLeftDown &&
+                            BlueprintPressedActionNodeKey == node.Key &&
+                            BlueprintPressedActionIndex >= 0 &&
+                            static_cast<std::size_t>(BlueprintPressedActionIndex) == idx;
+                        const ImU32 fill = bPressedAction
+                            ? IM_COL32(142, 152, 166, 230)
+                            : (bHoveredAction ? IM_COL32(112, 122, 138, 220) : IM_COL32(92, 102, 118, 210));
+                        drawList->AddRectFilled(rects[idx].Min, rects[idx].Max, fill, 4.0f);
+                        drawList->AddRect(rects[idx].Min, rects[idx].Max, IM_COL32(180, 186, 198, 170), 4.0f, 0, 1.0f);
+                        drawList->AddText(ImVec2(rects[idx].Min.x + 6.0f, rects[idx].Min.y + 2.0f), IM_COL32(236, 240, 248, 255), actions[idx].Label.c_str());
+                    }
+                }
+            }
+        }
 
         if (node.Kind == FGraphNode::EKind::Parameter) {
             const auto pin = pinPositionFor(node, true, 0, 1);
             drawList->AddCircleFilled(pin, 5.0f, IM_COL32(138, 196, 246, 255));
-        } else if (node.Kind == FGraphNode::EKind::Operation) {
+        } else if (node.Kind == FGraphNode::EKind::Query) {
             const auto pin = pinPositionFor(node, false, 0, 1);
             drawList->AddCircleFilled(pin, 5.0f, IM_COL32(132, 220, 162, 255));
+        } else if (node.Kind == FGraphNode::EKind::Command) {
+            const auto pin = pinPositionFor(node, false, 0, 1);
+            drawList->AddCircleFilled(pin, 5.0f, IM_COL32(226, 198, 132, 255));
         } else {
             const auto leftPins = std::max(1, parameterCount);
             const auto rightPins = std::max(1, operationCount);
@@ -923,6 +1515,48 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     }
 
     drawList->PopClipRect();
+    // Node interaction widgets move the ImGui cursor; explicitly restore flow below the canvas.
+    ImGui::SetCursorScreenPos(ImVec2(canvasPos.x, canvasEnd.y));
+
+    if (!hoveredBadgeLabel.empty()) {
+        ImGui::SetNextWindowSizeConstraints(ImVec2(280.0f, 0.0f), ImVec2(420.0f, FLT_MAX));
+        ImGui::BeginTooltip();
+        ImGui::TextUnformatted(hoveredBadgeLabel.c_str());
+        if (!hoveredBadgeDetail.empty()) {
+            ImGui::Separator();
+            ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + 320.0f);
+            ImGui::TextWrapped("%s", hoveredBadgeDetail.c_str());
+            ImGui::PopTextWrapPos();
+        }
+        ImGui::EndTooltip();
+    }
+
+    ImGui::SeparatorText("Graph Trace");
+    if (ImGui::BeginChild("SchemesBlueprintTrace", ImVec2(0.0f, GraphTraceHeight), true)) {
+        if (SchemesOperationTrace.empty()) {
+            ImGui::TextDisabled("No operation invocations yet.");
+        } else {
+            if (ImGui::Button("Clear")) {
+                SchemesOperationTrace.clear();
+            }
+            for (const auto &entry : SchemesOperationTrace) {
+                ImGui::PushID(static_cast<int>(entry.SequenceId));
+                ImGui::TextColored(
+                    entry.bOk ? ImVec4(0.45f, 0.86f, 0.56f, 1.0f) : ImVec4(0.93f, 0.40f, 0.40f, 1.0f),
+                    "#%zu",
+                    entry.SequenceId);
+                ImGui::SameLine();
+                ImGui::Text("%s :: %s", entry.InterfaceId.c_str(), entry.OperationId.c_str());
+                if (!entry.LatencyLabel.empty()) {
+                    ImGui::SameLine();
+                    ImGui::TextDisabled("(%s)", entry.LatencyLabel.c_str());
+                }
+                ImGui::TextDisabled("%s", TruncateLabel(entry.Summary, 120).c_str());
+                ImGui::PopID();
+            }
+        }
+    }
+    ImGui::EndChild();
 }
 
 auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> bool {

@@ -11,6 +11,7 @@
 
 #include <functional>
 #include <array>
+#include <deque>
 #include <map>
 #include <vector>
 
@@ -98,12 +99,34 @@ private:
     bool bTaskOnlyNumeric = false;
     Slab::Str SelectedSchemeInterfaceId;
     Slab::Str SelectedSchemeParameterId;
+    Slab::Str SelectedSchemeOperationId;
     std::map<Slab::Str, Slab::Str> SchemeParameterDraftByKey;
     Slab::Str SchemesLastOperationSummary;
     Slab::Core::Reflection::V2::FValueMapV2 SchemesLastOperationOutput;
+    struct FSchemeOperationTraceEntry {
+        std::size_t SequenceId = 0;
+        Slab::Str InterfaceId;
+        Slab::Str OperationId;
+        Slab::Str Summary;
+        bool bOk = false;
+        Slab::Str LatencyLabel;
+    };
+    std::deque<FSchemeOperationTraceEntry> SchemesOperationTrace;
+    std::size_t SchemesOperationTraceSequence = 0;
     std::map<Slab::Str, ImVec2> BlueprintNodePositionById;
     ImVec2 BlueprintGraphPan = ImVec2(80.0f, 80.0f);
     bool bShowBlueprintGrid = true;
+    Slab::Str BlueprintPressedNodeKey;
+    ImVec2 BlueprintPressMousePos = ImVec2(0.0f, 0.0f);
+    ImVec2 BlueprintPressNodePos = ImVec2(0.0f, 0.0f);
+    bool bBlueprintNodeDragging = false;
+    Slab::Str BlueprintPressedActionNodeKey;
+    int BlueprintPressedActionIndex = -1;
+    Slab::Str BlueprintGraphFilterText;
+    bool bBlueprintGraphShowParameters = true;
+    bool bBlueprintGraphShowQueries = true;
+    bool bBlueprintGraphShowCommands = true;
+    int BlueprintGraphMutabilityFilter = 0;
 
     bool bUseDockspaceLayout = true;
     bool bResetDockLayoutRequested = false;
@@ -154,6 +177,12 @@ private:
     [[nodiscard]] auto BuildReflectionInvocationContext() const -> Slab::Core::Reflection::V2::FInvocationContextV2;
     [[nodiscard]] auto BuildSchemeParameterDraftKey(const Slab::Str &interfaceId, const Slab::Str &parameterId) const -> Slab::Str;
     auto EnsureSchemeSelectionIsValid() -> void;
+    auto ApplySchemeOperationResult(const Slab::Str &interfaceId,
+                                    const Slab::Str &operationId,
+                                    const Slab::Core::Reflection::V2::FOperationResultV2 &result) -> void;
+    auto InvokeSelectedSchemeOperation(const Slab::Core::Reflection::V2::FInterfaceSchemaV2 &interfaceSchema,
+                                       const Slab::Str &operationId,
+                                       const Slab::Core::Reflection::V2::FInvocationContextV2 &context) -> void;
     [[nodiscard]] auto GetTopMenuInset() const -> float;
     auto RequestSimulationLauncherVisible() -> void;
     auto SaveWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;

@@ -91,6 +91,12 @@
 - First complex parameter slice implemented:
   - `slab.math.function.r_to_r` descriptor codec + editor/apply flow via sandbox interface
   - `RestartRequired` staged apply behavior wired through shared adapter operations
+- Schemes Blueprint Graph UX iteration:
+  - graph now splits operation lanes into `Queries` and `Commands` (with interface-centered flow)
+  - in-graph policy/state badges added (parameter mutability/exposure/live-draft-pending and operation runtime/thread/side-effect hints)
+  - node-level quick actions added (`Get`/`Set`/`Apply`/`Invoke` + copy id) through shared reflection invoke path
+  - graph-side operation trace rail added for recent invoke outcomes and latency visibility
+  - graph controls added for search and visibility filters (`Parameters`/`Queries`/`Commands`, mutability filter)
 
 ## Reflection Working-Memory Caveats (Current)
 

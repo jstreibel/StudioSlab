@@ -74,6 +74,11 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `LAB-09` done: Schemes workspace now splits reflection metadata and blueprint graph concerns:
   - renamed old overloaded `Blueprints` metadata surface to `Interface Inspector`
   - added `Blueprint Graph` node-canvas panel with draggable nodes and interface-parameter-operation links
+- `LAB-10` active (first interaction slice): Schemes blueprint graph now supports node-level reflection actions and richer reflection-state visibility:
+  - operation lanes split into `Queries` and `Commands`
+  - node badges expose mutability/exposure/live-vs-draft-vs-pending and operation policy metadata
+  - hover quick actions invoke reflection operations from graph nodes (`Get`/`Set`/`Apply`/`Invoke`)
+  - graph trace rail logs recent invoke outcomes and latency
 
 ### `P0` `RV2-00` — Reflection V2 contract freeze — done
 - Define `Interface`/`Parameter`/`Operation` schema contracts.
@@ -147,6 +152,7 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `P1` `LAB-10` — Schemes blueprint graph execution interactions
   - support operation invoke from graph nodes/pins (not only inspector panel buttons)
   - add clear command/query affordances in-graph
+  - status: active (`node-level invoke` and command/query lane clarity done; deeper pin wiring remains)
 - `P1` `LAB-11` — Schemes graph persistence
   - persist per-interface node positions/pan/viewport preferences
   - restore layout state on workspace startup
