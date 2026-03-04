@@ -96,6 +96,10 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 ### `P1` `RV2-04` — CLI convergence over reflection codecs — done
 - Route one vertical CLI slice through reflection codecs while preserving legacy compatibility.
 
+### `P1` `RV2-05` — Reflection id normalization + alias policy
+- Formalize agent/user-facing id policy for legacy snake_case vs V2 kebab-case.
+- Decide and implement alias/compat behavior for mixed-id inputs across UI/CLI/API.
+
 ### `P0` `LC-00` — `LiveControl V2` spec
 - Define control topics/streams, source kinds, timing domains, and binding semantics.
 
@@ -140,6 +144,12 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `P1` `LAB-03` — Centralized panel/window orchestration contract — done
 - `P1` `LAB-04` — Sub-window event routing contract and wrapper hardening — done
 - `P1` `LAB-05` — Plot window control surface UX hardening — done
+- `P1` `LAB-10` — Schemes blueprint graph execution interactions
+  - support operation invoke from graph nodes/pins (not only inspector panel buttons)
+  - add clear command/query affordances in-graph
+- `P1` `LAB-11` — Schemes graph persistence
+  - persist per-interface node positions/pan/viewport preferences
+  - restore layout state on workspace startup
 
 ### Coverage Portfolio
 - `P1` `CVG-01` — MD V2 scoping — done

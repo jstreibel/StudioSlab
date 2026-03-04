@@ -28,7 +28,7 @@
 
 ## Active Architecture Transition (Upcoming Work)
 
-- StudioSlabV2 monitor/live-data path is moving to push-based snapshot delivery:
+- StudioSlab/LabV2 monitor/live-data path is moving to push-based snapshot delivery:
   - trigger -> listener copies snapshot -> monitor consumes latest (topic bridge optional)
 - Monitor snapshot delivery target is `LatestOnly` (best-effort rendering; dropped intermediate frames are acceptable).
 - New monitor-facing work should avoid direct session polling/read-lease loops in UI code.
@@ -91,6 +91,13 @@
 - First complex parameter slice implemented:
   - `slab.math.function.r_to_r` descriptor codec + editor/apply flow via sandbox interface
   - `RestartRequired` staged apply behavior wired through shared adapter operations
+
+## Reflection Working-Memory Caveats (Current)
+
+- Schemes `Blueprint Graph` is a visualization/navigation surface, not yet a full graph-execution editor.
+- Graph node layout state is not persisted across restarts.
+- Reflection ids intentionally mix legacy snake_case compatibility and V2 kebab-case style.
+- Reflection catalog availability depends on in-process legacy interface registration timing.
 
 ## Model Coverage Status (Current)
 

@@ -11,10 +11,11 @@
 
 1. `Docs/status-v2.md`
 2. `SPEC.md` (V2 boundaries, migration policy)
-3. `Docs/reflection-v2-contract.md`
-4. `Docs/reflection-v2-migration-plan.md`
-5. `Docs/reflection-v2-implementation.md`
-6. One planning context:
+3. `Docs/reflection-v2-decision-log.md`
+4. `Docs/reflection-v2-contract.md`
+5. `Docs/reflection-v2-migration-plan.md`
+6. `Docs/reflection-v2-implementation.md`
+7. One planning context:
    - `Docs/v2-feature-backlog.md`
    - `Docs/v2-model-coverage-matrix.md`
 
@@ -47,6 +48,17 @@
 - Parameter policy includes `RestartRequired`
 - Adapter-first migration: legacy remains source, V2 reflection is projected view
 - First vertical slice is live in LabV2 Schemes + `Studios reflect` CLI
+
+## Known Gaps / Agent Warnings
+
+- `Blueprint Graph` is currently a visualization surface, not a full graph-execution editor.
+- Graph node edits/layout are in-memory only; positions are not persisted across process restarts.
+- Identifier styles are intentionally mixed:
+  - legacy adapter ids keep snake_case compatibility
+  - V2-first ids use kebab-case (for example `v2.function-sandbox`, `initial-condition`)
+- Adapter output depends on legacy interfaces being registered in-process before catalog refresh.
+  - Empty/partial catalog can be expected in startup phases where registration has not happened yet.
+- Runtime operation path currently ships one complex type vertical slice (`slab.math.function.r_to_r`) via sandbox.
 
 ## Validation Minimum
 

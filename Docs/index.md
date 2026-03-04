@@ -12,7 +12,8 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 4. Read at most:
    - one contract/spec document
    - one roadmap/slice document
-5. If docs conflict:
+5. In the selected sub-index, always check `Known Gaps`/`Warnings` sections before coding.
+6. If docs conflict:
    - trust `Docs/status-v2.md` first
    - then trust code in `Slab/` and `Studios/LabV2/`
    - treat older draft docs as potentially stale and update them after code changes
@@ -34,7 +35,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 
 - Product/domain: `Docs/product-direction.md`, `Docs/product-vocabulary.md`, `Docs/domain-model-ux-surfaces-spec.md`, `Docs/study-model-spec.md`, `Docs/sequence-control-spec.md`
 - V2 planning/slices: `Docs/v2-feature-backlog.md`, `Docs/v2-model-coverage-matrix.md`, `Docs/live-control-v2-spec.md`, `Docs/live-parameters-v2-slice-scope.md`, `Docs/kg-r2tor-v2-slice-scope.md`, `Docs/md-v2-slice-scope.md`, `Docs/functional-minimization-v2-slice-scope.md`
-- Reflection: `Docs/index-reflection-v2.md`, `Docs/reflection-v2-contract.md`, `Docs/reflection-v2-migration-plan.md`, `Docs/reflection-v2-implementation.md`
+- Reflection: `Docs/index-reflection-v2.md`, `Docs/reflection-v2-decision-log.md`, `Docs/reflection-v2-contract.md`, `Docs/reflection-v2-migration-plan.md`, `Docs/reflection-v2-implementation.md`
 - Platform feasibility: `Docs/platform-wasm-feasibility.md`
 - Runtime/UI contracts: `Docs/graphics-composition-contract.md`, `Docs/plot-window-ux-contract.md`, `Docs/slab-root-migration-policy.md`
 - Monitoring architecture (LiveView vs listeners): `Docs/monitoring-liveview-vs-listeners.md`

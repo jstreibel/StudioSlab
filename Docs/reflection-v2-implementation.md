@@ -69,6 +69,7 @@ Under `Schemes` workspace:
 - node-canvas view for selected interface
 - parameter and operation nodes linked through interface node
 - node drag + canvas pan + grid + auto-layout reset controls
+- graph interactions currently drive selection/navigation, not operation execution wiring
 
 ## CLI Behavior
 
@@ -100,3 +101,7 @@ CLI smoke:
 - Adapter refresh is in-memory; staged values are not persisted across process restarts.
 - Complex parameter is currently sandbox-scoped (first typed round-trip baseline).
 - Legacy CLI command definitions for simulation slices are still direct/manual (full convergence remains incremental).
+- `Blueprint Graph` is not yet a full blueprint authoring/runtime surface (no pin-to-pin invoke wiring yet).
+- Graph node layout is currently process-local and non-persistent.
+- Identifier style is mixed by design (`legacy.*` snake_case compatibility vs V2 kebab-case ids).
+- Catalog completeness depends on legacy interface registration timing within the running process.
