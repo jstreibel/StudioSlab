@@ -17,6 +17,7 @@
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Graphics/Plot2D/Plotter.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
+#include "Graphics/Plot2D/V2/PlotReflectionSchemaV2.h"
 #include "Graphics/Window/WindowStyles.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
@@ -54,11 +55,14 @@ namespace {
     constexpr auto WindowTitleSimulationLauncher = "Simulation Launcher";
     constexpr auto WindowTitleSchemesInspector = "Interface Inspector";
     constexpr auto WindowTitleBlueprintGraph = "Blueprint Graph";
+    constexpr auto WindowTitlePlotInspector = "Plot Inspector";
     constexpr auto DockspaceHostName = "##LabDockspaceHost";
     constexpr auto DockspaceNameSimulations = "##LabDockspace-Simulations";
     constexpr auto DockspaceNameSchemes = "##LabDockspace-Schemes";
+    constexpr auto DockspaceNamePlots = "##LabDockspace-Plots";
     constexpr auto WorkspaceTabSimulations = "Simulations";
     constexpr auto WorkspaceTabSchemes = "Schemes";
+    constexpr auto WorkspaceTabPlots = "Plots";
 
     auto BuildOperationSummary(const Slab::Core::Reflection::V2::FOperationResultV2 &result) -> Slab::Str {
         using namespace Slab::Core::Reflection::V2;
@@ -437,6 +441,11 @@ auto FLabV2WindowManager::BuildSchemeParameterDraftKey(const Slab::Str &interfac
     return interfaceId + "::" + parameterId;
 }
 
+auto FLabV2WindowManager::BuildPlotParameterDraftKey(const Slab::Str &interfaceId, const Slab::Str &parameterId) const
+    -> Slab::Str {
+    return interfaceId + "::" + parameterId;
+}
+
 auto FLabV2WindowManager::EnsureSchemeSelectionIsValid() -> void {
     using namespace Slab::Core::Reflection::V2;
 
@@ -479,6 +488,46 @@ auto FLabV2WindowManager::EnsureSchemeSelectionIsValid() -> void {
     }
 }
 
+auto FLabV2WindowManager::EnsurePlotSelectionIsValid() -> void {
+    using namespace Slab::Core::Reflection::V2;
+
+    const auto &catalog = PlotReflectionAdapter.GetCatalog();
+    if (catalog.Interfaces.empty()) {
+        SelectedPlotInterfaceId.clear();
+        SelectedPlotParameterId.clear();
+        return;
+    }
+
+    const auto *interfaceSchema = FindInterfaceById(catalog, SelectedPlotInterfaceId);
+    if (interfaceSchema == nullptr) {
+        SelectedPlotInterfaceId = catalog.Interfaces.front().InterfaceId;
+        interfaceSchema = &catalog.Interfaces.front();
+        SelectedPlotParameterId.clear();
+    }
+
+    if (interfaceSchema->Parameters.empty()) {
+        SelectedPlotParameterId.clear();
+        return;
+    }
+
+    const auto *parameterSchema = FindParameterById(*interfaceSchema, SelectedPlotParameterId);
+    if (parameterSchema == nullptr) {
+        SelectedPlotParameterId = interfaceSchema->Parameters.front().ParameterId;
+        parameterSchema = &interfaceSchema->Parameters.front();
+    }
+
+    const auto draftKey = BuildPlotParameterDraftKey(interfaceSchema->InterfaceId, parameterSchema->ParameterId);
+    if (!PlotParameterDraftByKey.contains(draftKey)) {
+        if (const auto current = PlotReflectionAdapter.EncodeCurrentParameterValue(
+                interfaceSchema->InterfaceId,
+                parameterSchema->ParameterId); current.has_value()) {
+            PlotParameterDraftByKey[draftKey] = current->Encoded;
+        } else {
+            PlotParameterDraftByKey[draftKey] = "";
+        }
+    }
+}
+
 auto FLabV2WindowManager::ApplySchemeOperationResult(const Slab::Str &interfaceId,
                                                      const Slab::Str &operationId,
                                                      const Slab::Core::Reflection::V2::FOperationResultV2 &result) -> void {
@@ -504,6 +553,15 @@ auto FLabV2WindowManager::ApplySchemeOperationResult(const Slab::Str &interfaceI
     while (SchemesOperationTrace.size() > MaxTraceEntries) {
         SchemesOperationTrace.pop_back();
     }
+}
+
+auto FLabV2WindowManager::ApplyPlotOperationResult(const Slab::Str &interfaceId,
+                                                   const Slab::Str &operationId,
+                                                   const Slab::Core::Reflection::V2::FOperationResultV2 &result) -> void {
+    (void) interfaceId;
+    (void) operationId;
+    PlotsLastOperationSummary = BuildOperationSummary(result);
+    PlotsLastOperationOutput = result.OutputMap;
 }
 
 auto FLabV2WindowManager::InvokeSelectedSchemeOperation(
@@ -554,6 +612,58 @@ auto FLabV2WindowManager::InvokeSelectedSchemeOperation(
         !SelectedSchemeParameterId.empty()) {
         const auto draftKey = BuildSchemeParameterDraftKey(interfaceSchema.InterfaceId, SelectedSchemeParameterId);
         SchemeParameterDraftByKey[draftKey] = it->second.Encoded;
+    }
+}
+
+auto FLabV2WindowManager::InvokeSelectedPlotOperation(
+    const Slab::Core::Reflection::V2::FInterfaceSchemaV2 &interfaceSchema,
+    const Slab::Str &operationId,
+    const Slab::Core::Reflection::V2::FInvocationContextV2 &context) -> void {
+    using namespace Slab::Core::Reflection::V2;
+    using namespace Slab::Graphics::Plot2D::V2;
+
+    FValueMapV2 inputs;
+    const bool bNeedsParameterSelection =
+        operationId == CPlotOperationIdQueryGetParameterV2 ||
+        operationId == CPlotOperationIdCommandSetParameterV2;
+
+    if (bNeedsParameterSelection) {
+        if (SelectedPlotParameterId.empty()) {
+            const auto missingParameterResult = FOperationResultV2::Error(
+                "reflection.parameter.required",
+                "Select a parameter before invoking this operation.");
+            ApplyPlotOperationResult(interfaceSchema.InterfaceId, operationId, missingParameterResult);
+            return;
+        }
+
+        inputs["parameter_id"] = MakeStringValue(SelectedPlotParameterId);
+    }
+
+    if (operationId == CPlotOperationIdCommandSetParameterV2) {
+        const auto *parameterSchema = FindParameterById(interfaceSchema, SelectedPlotParameterId);
+        if (parameterSchema == nullptr) {
+            const auto missingParameterResult = FOperationResultV2::Error(
+                "reflection.parameter.not_found",
+                "Selected parameter is no longer available.");
+            ApplyPlotOperationResult(interfaceSchema.InterfaceId, operationId, missingParameterResult);
+            return;
+        }
+
+        const auto draftKey = BuildPlotParameterDraftKey(interfaceSchema.InterfaceId, parameterSchema->ParameterId);
+        const auto draftIt = PlotParameterDraftByKey.find(draftKey);
+        const auto draft = draftIt != PlotParameterDraftByKey.end() ? draftIt->second : Slab::Str{};
+        inputs["value"] = FReflectionValueV2(parameterSchema->TypeId, draft);
+    }
+
+    const auto result = PlotReflectionAdapter.Invoke(interfaceSchema.InterfaceId, operationId, inputs, context);
+    ApplyPlotOperationResult(interfaceSchema.InterfaceId, operationId, result);
+
+    if (!result.IsOk()) return;
+
+    if (const auto it = result.OutputMap.find("value"); it != result.OutputMap.end() &&
+        !SelectedPlotParameterId.empty()) {
+        const auto draftKey = BuildPlotParameterDraftKey(interfaceSchema.InterfaceId, SelectedPlotParameterId);
+        PlotParameterDraftByKey[draftKey] = it->second.Encoded;
     }
 }
 
@@ -792,6 +902,220 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
                     ImGui::TextDisabled("No operation output yet.");
                 } else {
                     for (const auto &[key, value] : SchemesLastOperationOutput) {
+                        ImGui::BulletText("%s (%s): %s", key.c_str(), value.TypeId.c_str(), value.Encoded.c_str());
+                    }
+                }
+            }
+        }
+        ImGui::EndChild();
+
+        ImGui::EndTable();
+    }
+}
+
+auto FLabV2WindowManager::DrawPlotsInspectorPanel() -> void {
+    using namespace Slab::Core::Reflection::V2;
+    using namespace Slab::Graphics::Plot2D::V2;
+
+    PlotReflectionAdapter.RefreshFromLiveWindows();
+    EnsurePlotSelectionIsValid();
+
+    const auto &catalog = PlotReflectionAdapter.GetCatalog();
+    const auto context = BuildReflectionInvocationContext();
+
+    ImGui::Text("Catalog version: %s", catalog.CatalogVersion.c_str());
+    ImGui::SameLine();
+    ImGui::TextDisabled("| interfaces: %zu", catalog.Interfaces.size());
+    ImGui::SameLine();
+    ImGui::TextDisabled("| runtime: %s", context.bRuntimeRunning ? "running" : "stopped");
+
+    if (!PlotsLastOperationSummary.empty()) {
+        if (!PlotsLastOperationSummary.starts_with("[Ok]")) {
+            ImGui::TextColored(ImVec4(0.9f, 0.3f, 0.3f, 1.0f), "%s", PlotsLastOperationSummary.c_str());
+        } else {
+            ImGui::TextColored(ImVec4(0.3f, 0.8f, 0.4f, 1.0f), "%s", PlotsLastOperationSummary.c_str());
+        }
+    }
+
+    if (catalog.Interfaces.empty()) {
+        ImGui::Separator();
+        ImGui::TextDisabled("No Plot2D V2 windows/artists are currently registered.");
+        ImGui::TextDisabled("Create Plot2D V2 windows to populate this catalog.");
+        return;
+    }
+
+    const auto drawStringEditor = [](const char *label, Slab::Str &value, const std::size_t capacity) {
+        auto buffer = std::vector<char>(capacity, '\0');
+        if (!value.empty()) {
+            std::strncpy(buffer.data(), value.c_str(), capacity - 1);
+            buffer[capacity - 1] = '\0';
+        }
+        if (ImGui::InputText(label, buffer.data(), capacity)) {
+            value = buffer.data();
+        }
+    };
+
+    if (ImGui::BeginTable("PlotsCatalogLayout", 2, ImGuiTableFlags_Resizable | ImGuiTableFlags_BordersInnerV)) {
+        ImGui::TableSetupColumn("Interfaces", ImGuiTableColumnFlags_WidthFixed, 300.0f);
+        ImGui::TableSetupColumn("Inspector", ImGuiTableColumnFlags_WidthStretch, 1.0f);
+        ImGui::TableNextRow();
+
+        ImGui::TableSetColumnIndex(0);
+        if (ImGui::BeginChild("PlotsInterfaceList", ImVec2(0.0f, 0.0f), true)) {
+            for (const auto &interfaceSchema : catalog.Interfaces) {
+                const bool bSelected = interfaceSchema.InterfaceId == SelectedPlotInterfaceId;
+                ImGui::PushID(interfaceSchema.InterfaceId.c_str());
+                if (ImGui::Selectable(interfaceSchema.DisplayName.c_str(), bSelected)) {
+                    SelectedPlotInterfaceId = interfaceSchema.InterfaceId;
+                    SelectedPlotParameterId.clear();
+                    EnsurePlotSelectionIsValid();
+                }
+
+                ImGui::SameLine();
+                ImGui::TextDisabled("%s", interfaceSchema.InterfaceId.c_str());
+                if (!interfaceSchema.Description.empty()) {
+                    ImGui::TextDisabled("%s", TruncateLabel(interfaceSchema.Description).c_str());
+                }
+                ImGui::PopID();
+            }
+        }
+        ImGui::EndChild();
+
+        ImGui::TableSetColumnIndex(1);
+        if (ImGui::BeginChild("PlotsInterfaceInspector", ImVec2(0.0f, 0.0f), false)) {
+            const auto *interfaceSchema = FindInterfaceById(catalog, SelectedPlotInterfaceId);
+            if (interfaceSchema == nullptr) {
+                ImGui::TextDisabled("Select a plot interface.");
+            } else {
+                ImGui::TextUnformatted(interfaceSchema->DisplayName.c_str());
+                ImGui::TextDisabled("%s", interfaceSchema->InterfaceId.c_str());
+                if (!interfaceSchema->Description.empty()) {
+                    ImGui::TextWrapped("%s", interfaceSchema->Description.c_str());
+                }
+
+                ImGui::SeparatorText("Operations");
+                for (const auto &operation : interfaceSchema->Operations) {
+                    const bool bNeedsParameterSelection =
+                        operation.OperationId == CPlotOperationIdQueryGetParameterV2 ||
+                        operation.OperationId == CPlotOperationIdCommandSetParameterV2;
+                    const bool bCanInvoke = !bNeedsParameterSelection || !SelectedPlotParameterId.empty();
+
+                    ImGui::PushID(operation.OperationId.c_str());
+                    ImGui::BeginDisabled(!bCanInvoke);
+                    if (ImGui::Button(operation.DisplayName.c_str())) {
+                        InvokeSelectedPlotOperation(*interfaceSchema, operation.OperationId, context);
+                    }
+                    ImGui::EndDisabled();
+                    ImGui::SameLine();
+                    ImGui::TextDisabled(
+                        "%s | %s | %s",
+                        ToString(operation.Kind),
+                        ToString(operation.RunStatePolicy),
+                        ToString(operation.ThreadAffinity));
+                    ImGui::PopID();
+                }
+
+                ImGui::SeparatorText("Parameters");
+                if (interfaceSchema->Parameters.empty()) {
+                    ImGui::TextDisabled("No parameters in this interface.");
+                } else {
+                    constexpr auto tableFlags =
+                        ImGuiTableFlags_Borders |
+                        ImGuiTableFlags_RowBg |
+                        ImGuiTableFlags_SizingFixedFit |
+                        ImGuiTableFlags_ScrollY;
+
+                    if (ImGui::BeginTable("PlotsParameterTable", 4, tableFlags, ImVec2(0.0f, 220.0f))) {
+                        ImGui::TableSetupColumn("Parameter", ImGuiTableColumnFlags_WidthStretch, 1.2f);
+                        ImGui::TableSetupColumn("Type");
+                        ImGui::TableSetupColumn("Mutability");
+                        ImGui::TableSetupColumn("Live Value", ImGuiTableColumnFlags_WidthStretch, 1.6f);
+                        ImGui::TableHeadersRow();
+
+                        for (const auto &parameterSchema : interfaceSchema->Parameters) {
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            const bool bSelected = parameterSchema.ParameterId == SelectedPlotParameterId;
+                            ImGui::PushID(parameterSchema.ParameterId.c_str());
+                            if (ImGui::Selectable(parameterSchema.DisplayName.c_str(), bSelected)) {
+                                SelectedPlotParameterId = parameterSchema.ParameterId;
+                                const auto draftKey = BuildPlotParameterDraftKey(
+                                    interfaceSchema->InterfaceId,
+                                    SelectedPlotParameterId);
+                                if (!PlotParameterDraftByKey.contains(draftKey)) {
+                                    if (const auto liveValue = PlotReflectionAdapter.EncodeCurrentParameterValue(
+                                            interfaceSchema->InterfaceId,
+                                            SelectedPlotParameterId); liveValue.has_value()) {
+                                        PlotParameterDraftByKey[draftKey] = liveValue->Encoded;
+                                    } else {
+                                        PlotParameterDraftByKey[draftKey] = "";
+                                    }
+                                }
+                            }
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::TextUnformatted(parameterSchema.TypeId.c_str());
+                            ImGui::TableSetColumnIndex(2);
+                            ImGui::TextUnformatted(ToString(parameterSchema.Mutability));
+                            ImGui::TableSetColumnIndex(3);
+                            if (const auto liveValue = PlotReflectionAdapter.EncodeCurrentParameterValue(
+                                    interfaceSchema->InterfaceId,
+                                    parameterSchema.ParameterId); liveValue.has_value()) {
+                                ImGui::TextWrapped("%s", liveValue->Encoded.c_str());
+                            } else {
+                                ImGui::TextDisabled("<unavailable>");
+                            }
+                            ImGui::PopID();
+                        }
+
+                        ImGui::EndTable();
+                    }
+
+                    const auto *selectedParameterSchema = FindParameterById(*interfaceSchema, SelectedPlotParameterId);
+                    if (selectedParameterSchema != nullptr) {
+                        ImGui::SeparatorText("Parameter Editor");
+                        ImGui::TextUnformatted(selectedParameterSchema->DisplayName.c_str());
+                        ImGui::TextDisabled(
+                            "id=%s | type=%s | mutability=%s",
+                            selectedParameterSchema->ParameterId.c_str(),
+                            selectedParameterSchema->TypeId.c_str(),
+                            ToString(selectedParameterSchema->Mutability));
+                        if (!selectedParameterSchema->Description.empty()) {
+                            ImGui::TextWrapped("%s", selectedParameterSchema->Description.c_str());
+                        }
+
+                        const auto draftKey = BuildPlotParameterDraftKey(
+                            interfaceSchema->InterfaceId,
+                            selectedParameterSchema->ParameterId);
+                        auto &draft = PlotParameterDraftByKey[draftKey];
+                        drawStringEditor("Encoded Value", draft, 512);
+
+                        if (ImGui::Button("Load Live Value")) {
+                            if (const auto liveValue = PlotReflectionAdapter.EncodeCurrentParameterValue(
+                                    interfaceSchema->InterfaceId,
+                                    selectedParameterSchema->ParameterId); liveValue.has_value()) {
+                                draft = liveValue->Encoded;
+                            }
+                        }
+                        ImGui::SameLine();
+                        if (ImGui::Button("Set Parameter")) {
+                            SelectedPlotParameterId = selectedParameterSchema->ParameterId;
+                            InvokeSelectedPlotOperation(*interfaceSchema, CPlotOperationIdCommandSetParameterV2, context);
+                        }
+
+                        if (selectedParameterSchema->Mutability == EParameterMutability::RestartRequired) {
+                            ImGui::SameLine();
+                            if (ImGui::Button("Apply Pending")) {
+                                InvokeSelectedPlotOperation(*interfaceSchema, CPlotOperationIdCommandApplyPendingV2, context);
+                            }
+                        }
+                    }
+                }
+
+                ImGui::SeparatorText("Last Outputs");
+                if (PlotsLastOperationOutput.empty()) {
+                    ImGui::TextDisabled("No operation output yet.");
+                } else {
+                    for (const auto &[key, value] : PlotsLastOperationOutput) {
                         ImGui::BulletText("%s (%s): %s", key.c_str(), value.TypeId.c_str(), value.Encoded.c_str());
                     }
                 }
@@ -1876,7 +2200,8 @@ auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab works
         bShowWindowLiveInteraction,
         bShowWindowViews,
         bShowWindowSchemeInspector,
-        bShowWindowBlueprintGraph
+        bShowWindowBlueprintGraph,
+        bShowWindowPlotInspector
     };
 }
 
@@ -1892,6 +2217,7 @@ auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab works
     bShowWindowViews = cfg.bShowWindowViews;
     bShowWindowSchemeInspector = cfg.bShowWindowSchemeInspector;
     bShowWindowBlueprintGraph = cfg.bShowWindowBlueprintGraph;
+    bShowWindowPlotInspector = cfg.bShowWindowPlotInspector;
 }
 
 auto FLabV2WindowManager::RequestSimulationLauncherVisible() -> void {
@@ -2027,6 +2353,7 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
 
             drawTab(EWorkspaceTab::Simulations, WorkspaceTabSimulations);
             drawTab(EWorkspaceTab::Schemes, WorkspaceTabSchemes);
+            drawTab(EWorkspaceTab::Plots, WorkspaceTabPlots);
 
             ImGui::EndTabBar();
         }
@@ -2076,6 +2403,7 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
     if (ImGui::Begin("##LabWorkspaceStrip", nullptr, flags)) {
         const char *workspaceLabel = WorkspaceTabSimulations;
         if (ActiveWorkspace == EWorkspaceTab::Schemes) workspaceLabel = WorkspaceTabSchemes;
+        if (ActiveWorkspace == EWorkspaceTab::Plots) workspaceLabel = WorkspaceTabPlots;
 
         ImGui::TextDisabled("%s", workspaceLabel);
         ImGui::SameLine();
@@ -2094,9 +2422,11 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
             drawToggle("Live Data", &bShowWindowLiveData);
             drawToggle("Live Control", &bShowWindowLiveControl);
             drawToggle("Live Interaction", &bShowWindowLiveInteraction);
-        } else {
+        } else if (ActiveWorkspace == EWorkspaceTab::Schemes) {
             drawToggle("Inspector", &bShowWindowSchemeInspector);
             drawToggle("Blueprint Graph", &bShowWindowBlueprintGraph);
+        } else {
+            drawToggle("Plot Inspector", &bShowWindowPlotInspector);
         }
 
         if (ImGui::Button("Reset Layout")) {
@@ -2151,10 +2481,12 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
         ImGui::DockBuilderDockWindow(WindowTitleTasks, dockBottom);
         ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockBottom);
         ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockBottom);
-    } else {
+    } else if (workspace == EWorkspaceTab::Schemes) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.35f, nullptr, &dockMain);
         ImGui::DockBuilderDockWindow(WindowTitleSchemesInspector, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleBlueprintGraph, dockMain);
+    } else {
+        ImGui::DockBuilderDockWindow(WindowTitlePlotInspector, dockMain);
     }
 
     ImGui::DockBuilderFinish(dockId);
@@ -2199,19 +2531,24 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
             static_cast<unsigned int>(ImGui::GetID(DockspaceNameSimulations));
         const auto dockspaceIdSchemes =
             static_cast<unsigned int>(ImGui::GetID(DockspaceNameSchemes));
+        const auto dockspaceIdPlots =
+            static_cast<unsigned int>(ImGui::GetID(DockspaceNamePlots));
 
         if (!bWorkspaceLayoutsBootstrapped) {
             BuildDefaultDockLayout(dockspaceIdSimulations, EWorkspaceTab::Simulations);
             BuildDefaultDockLayout(dockspaceIdSchemes, EWorkspaceTab::Schemes);
+            BuildDefaultDockLayout(dockspaceIdPlots, EWorkspaceTab::Plots);
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Simulations)] = true;
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Schemes)] = true;
+            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Plots)] = true;
             bWorkspaceLayoutsBootstrapped = true;
             RequestViewRetile();
         }
 
-        const auto dockspaceIdFor = [dockspaceIdSimulations, dockspaceIdSchemes]
+        const auto dockspaceIdFor = [dockspaceIdSimulations, dockspaceIdSchemes, dockspaceIdPlots]
             (const EWorkspaceTab workspace) -> unsigned int {
                 if (workspace == EWorkspaceTab::Schemes) return dockspaceIdSchemes;
+                if (workspace == EWorkspaceTab::Plots) return dockspaceIdPlots;
                 return dockspaceIdSimulations;
             };
 
@@ -2240,6 +2577,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
 
         drawWorkspaceDockspace(dockspaceIdSimulations, EWorkspaceTab::Simulations);
         drawWorkspaceDockspace(dockspaceIdSchemes, EWorkspaceTab::Schemes);
+        drawWorkspaceDockspace(dockspaceIdPlots, EWorkspaceTab::Plots);
 #endif
     }
     ImGui::End();
@@ -2249,7 +2587,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
 
 auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfaceRegistration> {
     std::vector<FPanelSurfaceRegistration> registry;
-    registry.reserve(11);
+    registry.reserve(12);
 
     registry.push_back(FPanelSurfaceRegistration{
         WindowTitleLab,
@@ -2276,6 +2614,8 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
             if (ActiveWorkspace == EWorkspaceTab::Schemes) {
                 ImGui::Checkbox("Interface Inspector", &bShowWindowSchemeInspector);
                 ImGui::Checkbox("Blueprint Graph", &bShowWindowBlueprintGraph);
+            } else if (ActiveWorkspace == EWorkspaceTab::Plots) {
+                ImGui::Checkbox("Plot Inspector", &bShowWindowPlotInspector);
             }
         }
     });
@@ -2373,6 +2713,17 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         false,
         [this]() {
             DrawSchemesBlueprintGraphPanel();
+        }
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitlePlotInspector,
+        EWorkspaceTab::Plots,
+        &bShowWindowPlotInspector,
+        false,
+        false,
+        [this]() {
+            DrawPlotsInspectorPanel();
         }
     });
 

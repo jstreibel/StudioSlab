@@ -7,6 +7,7 @@
 #include "Math/Data/V2/LiveDataHubV2.h"
 #include "Math/Data/V2/LiveControlHubV2.h"
 #include "Core/Reflection/V2/LegacyInterfaceAdapterV2.h"
+#include "Graphics/Plot2D/V2/PlotReflectionCatalogV2.h"
 #include "imgui.h"
 
 #include <functional>
@@ -41,7 +42,8 @@ public:
 private:
     enum class EWorkspaceTab : unsigned char {
         Simulations = 0,
-        Schemes
+        Schemes,
+        Plots
     };
 
     struct FPanelSurfaceRegistration {
@@ -63,9 +65,10 @@ private:
         bool bShowWindowViews = true;
         bool bShowWindowSchemeInspector = false;
         bool bShowWindowBlueprintGraph = false;
+        bool bShowWindowPlotInspector = false;
     };
 
-    static constexpr std::size_t WorkspaceCount = 2;
+    static constexpr std::size_t WorkspaceCount = 3;
     using FSlabWindowPtr = Slab::TPointer<Slab::Graphics::FSlabWindow>;
     using FSlabWindowVec = Slab::Vector<FSlabWindowPtr>;
 
@@ -81,6 +84,7 @@ private:
     Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> LiveControlHub;
     Slab::TPointer<class FSimulationManagerV2> SimulationManager;
     Slab::Core::Reflection::V2::FLegacyReflectionCatalogAdapterV2 ReflectionAdapter;
+    Slab::Graphics::Plot2D::V2::FPlotReflectionCatalogV2 PlotReflectionAdapter;
 
     Slab::Str LiveDataTopicFilter;
     bool bLiveDataOnlyBound = false;
@@ -103,6 +107,11 @@ private:
     std::map<Slab::Str, Slab::Str> SchemeParameterDraftByKey;
     Slab::Str SchemesLastOperationSummary;
     Slab::Core::Reflection::V2::FValueMapV2 SchemesLastOperationOutput;
+    Slab::Str SelectedPlotInterfaceId;
+    Slab::Str SelectedPlotParameterId;
+    std::map<Slab::Str, Slab::Str> PlotParameterDraftByKey;
+    Slab::Str PlotsLastOperationSummary;
+    Slab::Core::Reflection::V2::FValueMapV2 PlotsLastOperationOutput;
     struct FSchemeOperationTraceEntry {
         std::size_t SequenceId = 0;
         Slab::Str InterfaceId;
@@ -155,8 +164,9 @@ private:
     bool bWorkspaceLayoutsBootstrapped = false;
     std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true}
+        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, true}
     };
     float WorkspaceTabsHeight = 0.0f;
     float WorkspaceStripHeight = 0.0f;
@@ -170,6 +180,7 @@ private:
     bool bShowWindowViews = true;
     bool bShowWindowSchemeInspector = true;
     bool bShowWindowBlueprintGraph = true;
+    bool bShowWindowPlotInspector = true;
     bool bHasLastMousePosition = false;
     int LastMouseX = 0;
     int LastMouseY = 0;
@@ -188,17 +199,26 @@ private:
     auto DrawPanelSurface(const FPanelSurfaceRegistration &registration) -> void;
     auto DrawSchemesInspectorPanel() -> void;
     auto DrawSchemesBlueprintGraphPanel() -> void;
+    auto DrawPlotsInspectorPanel() -> void;
     auto DrawLegacySidePane() -> void;
     auto BuildDefaultDockLayout(unsigned int dockspaceId, EWorkspaceTab workspace) -> void;
     [[nodiscard]] auto BuildReflectionInvocationContext() const -> Slab::Core::Reflection::V2::FInvocationContextV2;
     [[nodiscard]] auto BuildSchemeParameterDraftKey(const Slab::Str &interfaceId, const Slab::Str &parameterId) const -> Slab::Str;
+    [[nodiscard]] auto BuildPlotParameterDraftKey(const Slab::Str &interfaceId, const Slab::Str &parameterId) const -> Slab::Str;
     auto EnsureSchemeSelectionIsValid() -> void;
+    auto EnsurePlotSelectionIsValid() -> void;
     auto ApplySchemeOperationResult(const Slab::Str &interfaceId,
                                     const Slab::Str &operationId,
                                     const Slab::Core::Reflection::V2::FOperationResultV2 &result) -> void;
+    auto ApplyPlotOperationResult(const Slab::Str &interfaceId,
+                                  const Slab::Str &operationId,
+                                  const Slab::Core::Reflection::V2::FOperationResultV2 &result) -> void;
     auto InvokeSelectedSchemeOperation(const Slab::Core::Reflection::V2::FInterfaceSchemaV2 &interfaceSchema,
                                        const Slab::Str &operationId,
                                        const Slab::Core::Reflection::V2::FInvocationContextV2 &context) -> void;
+    auto InvokeSelectedPlotOperation(const Slab::Core::Reflection::V2::FInterfaceSchemaV2 &interfaceSchema,
+                                     const Slab::Str &operationId,
+                                     const Slab::Core::Reflection::V2::FInvocationContextV2 &context) -> void;
     [[nodiscard]] auto GetTopMenuInset() const -> float;
     auto RequestSimulationLauncherVisible() -> void;
     auto SaveWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
