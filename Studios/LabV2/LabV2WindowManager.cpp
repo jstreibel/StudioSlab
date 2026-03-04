@@ -30,6 +30,8 @@
 
 namespace {
 
+    constexpr bool CEnableBlueprintGraphTuningUi = false;
+
     auto AddExitMenuEntry(const Slab::Graphics::FPlatformWindow &platformWindow,
                           Slab::Graphics::FImGuiContext &imguiContext) -> void {
         const auto itemLocation = Slab::Graphics::MainMenuLocation{"System"};
@@ -804,6 +806,23 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
 auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     using namespace Slab::Core::Reflection::V2;
 
+    if (!CEnableBlueprintGraphTuningUi) {
+        bShowBlueprintTuningWindow = false;
+        BlueprintNodeHeaderScale = 1.55f;
+        BlueprintNodeHeaderMinHeight = 36.0f;
+        BlueprintNodeBodyTopPadding = 8.0f;
+        BlueprintNodeBodyBottomPadding = 10.0f;
+        BlueprintNodeBadgeRowGap = 4.0f;
+        BlueprintNodeActionReserve = 14.0f;
+        BlueprintNodeBadgeTopOffset = 42.0f;
+        BlueprintNodeActionGap = 10.0f;
+        BlueprintLegendPadding = 14.0f;
+        BlueprintLegendRowGap = 6.0f;
+        BlueprintLegendItemGap = 8.0f;
+        BlueprintLegendChipExtraHeight = 12.0f;
+        BlueprintLegendMarkerInset = 4.0f;
+    }
+
     ReflectionAdapter.RefreshFromLegacyInterfaces();
     EnsureSchemeSelectionIsValid();
 
@@ -825,6 +844,12 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     ImGui::TextDisabled("(%s)", interfaceSchema->InterfaceId.c_str());
     ImGui::SameLine();
     ImGui::Checkbox("Grid", &bShowBlueprintGrid);
+    ImGui::SameLine();
+    ImGui::Checkbox("Legend", &bShowBlueprintLegend);
+    if constexpr (CEnableBlueprintGraphTuningUi) {
+        ImGui::SameLine();
+        ImGui::Checkbox("Tune", &bShowBlueprintTuningWindow);
+    }
     ImGui::SameLine();
     {
         auto filterBuffer = std::vector<char>(256, '\0');
@@ -865,6 +890,14 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
                 ++it;
             }
         }
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Reset View")) {
+        BlueprintGraphPan = ImVec2(80.0f, 80.0f);
+        bBlueprintGraphShowParameters = true;
+        bBlueprintGraphShowQueries = true;
+        bBlueprintGraphShowCommands = true;
+        BlueprintGraphMutabilityFilter = 0;
     }
 
     ImGui::Separator();
@@ -915,6 +948,87 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         }
     }
 
+    Slab::Str hoveredLegendLabel;
+    Slab::Str hoveredLegendDetail;
+    if (bShowBlueprintLegend) {
+        struct FLegendEntry {
+            const char *Id;
+            ImVec4 Color;
+            const char *Label;
+            const char *Tooltip;
+        };
+
+        const std::array<FLegendEntry, 7> entries = {{
+            {"legend-interface", ImVec4(112.0f / 255.0f, 94.0f / 255.0f, 154.0f / 255.0f, 1.0f), "Interface", "Root interface descriptor node."},
+            {"legend-parameter", ImVec4(92.0f / 255.0f, 106.0f / 255.0f, 132.0f / 255.0f, 1.0f), "Parameter", "Reflected parameter schema + live/draft policy badges."},
+            {"legend-query", ImVec4(78.0f / 255.0f, 132.0f / 255.0f, 120.0f / 255.0f, 1.0f), "Query", "Read/query operation endpoint."},
+            {"legend-command", ImVec4(146.0f / 255.0f, 124.0f / 255.0f, 72.0f / 255.0f, 1.0f), "Command", "Mutating command operation endpoint."},
+            {"legend-edge-param", ImVec4(104.0f / 255.0f, 168.0f / 255.0f, 224.0f / 255.0f, 1.0f), "Param Link", "Parameter-to-interface relation."},
+            {"legend-edge-op", ImVec4(116.0f / 255.0f, 214.0f / 255.0f, 174.0f / 255.0f, 1.0f), "Op Link", "Interface-to-operation relation."},
+            {"legend-prefix", ImVec4(168.0f / 255.0f, 174.0f / 255.0f, 188.0f / 255.0f, 1.0f), "Prefixes", "M=Mutability, E=Exposure, S=State, R=Run State, T=Thread, X=Side Effect, N=Node Kind."}
+        }};
+
+        const float legendPadding = BlueprintLegendPadding;
+        const float legendTextHeight = ImGui::GetTextLineHeight();
+        const float legendChipHeight = legendTextHeight + BlueprintLegendChipExtraHeight;
+        const float legendMarkerSize = legendChipHeight - BlueprintLegendMarkerInset;
+        const float legendRowGap = BlueprintLegendRowGap;
+        const float legendItemGap = BlueprintLegendItemGap;
+        const float legendContentWidth = (canvasEnd.x - 6.0f) - (canvasPos.x + 6.0f) - 2.0f * legendPadding;
+
+        int legendRowCount = 1;
+        float currentRowWidth = 0.0f;
+        for (const auto &entry : entries) {
+            const float labelW = ImGui::CalcTextSize(entry.Label).x;
+            const float itemW = legendMarkerSize + 6.0f + labelW + 14.0f;
+            if (currentRowWidth > 0.0f && currentRowWidth + itemW > legendContentWidth) {
+                ++legendRowCount;
+                currentRowWidth = 0.0f;
+            }
+            currentRowWidth += itemW + legendItemGap;
+        }
+
+        const float legendHeight = legendPadding * 2.0f +
+            static_cast<float>(legendRowCount) * legendChipHeight +
+            static_cast<float>(std::max(0, legendRowCount - 1)) * legendRowGap;
+        const ImVec2 legendMin = ImVec2(canvasPos.x + 6.0f, canvasEnd.y - legendHeight - 6.0f);
+        const ImVec2 legendMax = ImVec2(canvasEnd.x - 6.0f, canvasEnd.y - 6.0f);
+        drawList->AddRectFilled(legendMin, legendMax, IM_COL32(12, 16, 22, 228), 4.0f);
+        drawList->AddRect(legendMin, legendMax, IM_COL32(108, 120, 138, 195), 4.0f, 0, 1.0f);
+
+        const auto legendMousePos = ImGui::GetIO().MousePos;
+        drawList->PushClipRect(legendMin, legendMax, true);
+        float legendX = legendMin.x + legendPadding;
+        float legendY = legendMin.y + legendPadding;
+        for (const auto &entry : entries) {
+            const float labelW = ImGui::CalcTextSize(entry.Label).x;
+            const float itemW = legendMarkerSize + 6.0f + labelW + 14.0f;
+            if (legendX > legendMin.x + legendPadding && legendX + itemW > legendMax.x - legendPadding) {
+                legendX = legendMin.x + legendPadding;
+                legendY += legendChipHeight + legendRowGap;
+            }
+
+            const ImVec2 chipMin = ImVec2(legendX, legendY);
+            const ImVec2 chipMax = ImVec2(legendX + itemW, legendY + legendChipHeight);
+            drawList->AddRectFilled(chipMin, chipMax, IM_COL32(22, 28, 40, 168), 4.0f);
+
+            const ImVec2 markerMin = ImVec2(legendX + 4.0f, legendY + 2.0f);
+            const ImVec2 markerMax = ImVec2(markerMin.x + legendMarkerSize, markerMin.y + legendMarkerSize);
+            drawList->AddRectFilled(markerMin, markerMax, ImGui::GetColorU32(entry.Color), 2.0f);
+            drawList->AddRect(markerMin, markerMax, IM_COL32(205, 212, 225, 200), 2.0f, 0, 1.0f);
+            drawList->AddText(ImVec2(markerMax.x + 6.0f, legendY + 3.0f), IM_COL32(226, 234, 244, 255), entry.Label);
+
+            if (legendMousePos.x >= chipMin.x && legendMousePos.y >= chipMin.y &&
+                legendMousePos.x <= chipMax.x && legendMousePos.y <= chipMax.y) {
+                hoveredLegendLabel = entry.Label;
+                hoveredLegendDetail = entry.Tooltip;
+            }
+
+            legendX += itemW + legendItemGap;
+        }
+        drawList->PopClipRect();
+    }
+
     struct FGraphNode {
         enum class EKind : unsigned char {
             Interface,
@@ -944,13 +1058,13 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     Slab::Vector<FGraphNode> nodes;
     nodes.reserve(1 + interfaceSchema->Parameters.size() + interfaceSchema->Operations.size());
 
-    const auto computeNodeSize = [](const FGraphNode &node, const float minWidth, const float maxWidth) -> ImVec2 {
+    const auto computeNodeSize = [this](const FGraphNode &node, const float minWidth, const float maxWidth) -> ImVec2 {
         const float lineHeight = ImGui::GetTextLineHeight();
-        const float headerHeight = std::max(36.0f, std::round(lineHeight * 1.55f));
+        const float headerHeight = std::max(BlueprintNodeHeaderMinHeight, std::round(lineHeight * BlueprintNodeHeaderScale));
         constexpr float BodyPaddingX = 9.0f;
-        constexpr float BodyTopPadding = 8.0f;
-        constexpr float BodyBottomPadding = 10.0f;
-        constexpr float BadgeRowGap = 4.0f;
+        const float bodyTopPadding = BlueprintNodeBodyTopPadding;
+        const float bodyBottomPadding = BlueprintNodeBodyBottomPadding;
+        const float badgeRowGap = BlueprintNodeBadgeRowGap;
         const float titleWidth = ImGui::CalcTextSize(node.Title.c_str()).x;
         const float subtitleWidth = ImGui::CalcTextSize(node.SubtitlePrimary.c_str()).x;
 
@@ -976,10 +1090,10 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
 
         const float textBlockHeight = lineHeight + 4.0f + lineHeight;
         const float badgeHeight = badgeRows > 0
-            ? static_cast<float>(badgeRows) * (lineHeight + 4.0f) + static_cast<float>(badgeRows - 1) * BadgeRowGap
+            ? static_cast<float>(badgeRows) * (lineHeight + 4.0f) + static_cast<float>(badgeRows - 1) * badgeRowGap
             : 0.0f;
-        const float actionReserveHeight = node.Kind == FGraphNode::EKind::Interface ? 0.0f : (lineHeight + 14.0f);
-        const float height = headerHeight + BodyTopPadding + textBlockHeight + 10.0f + badgeHeight + actionReserveHeight + BodyBottomPadding;
+        const float actionReserveHeight = node.Kind == FGraphNode::EKind::Interface ? 0.0f : (lineHeight + BlueprintNodeActionReserve);
+        const float height = headerHeight + bodyTopPadding + textBlockHeight + 10.0f + badgeHeight + actionReserveHeight + bodyBottomPadding;
         return ImVec2(width, std::max(116.0f, height));
     };
 
@@ -1372,7 +1486,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         }
 
         const float lineHeight = ImGui::GetTextLineHeight();
-        const float headerHeight = std::max(36.0f, std::round(lineHeight * 1.55f));
+        const float headerHeight = std::max(BlueprintNodeHeaderMinHeight, std::round(lineHeight * BlueprintNodeHeaderScale));
         drawList->AddRectFilled(nodePos, nodeEnd, bodyColor, 8.0f);
         drawList->AddRectFilled(nodePos, ImVec2(nodeEnd.x, nodePos.y + headerHeight), headerColor, 8.0f, ImDrawFlags_RoundCornersTop);
         drawList->AddLine(
@@ -1399,7 +1513,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
             TruncateLabel(node.SubtitlePrimary, subtitleChars).c_str());
 
         const float badgeRowHeight = ImGui::GetTextLineHeight() + 4.0f;
-        const float badgeRowGap = 4.0f;
+        const float badgeRowGap = BlueprintNodeBadgeRowGap;
         const float badgeRowStep = badgeRowHeight + badgeRowGap;
         int badgeRowCount = 0;
         float measureRowWidth = 0.0f;
@@ -1422,11 +1536,11 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
                 if (!rectsIt->second.empty()) {
                     float actionTopY = rectsIt->second.front().Min.y;
                     for (const auto &rect : rectsIt->second) actionTopY = std::min(actionTopY, rect.Min.y);
-                    badgeBottomY = std::min(badgeBottomY, actionTopY - 10.0f);
+                    badgeBottomY = std::min(badgeBottomY, actionTopY - BlueprintNodeActionGap);
                 }
             }
         }
-        const float badgeStartY = std::max(nodePos.y + headerHeight + 42.0f, badgeBottomY - badgeBlockHeight);
+        const float badgeStartY = std::max(nodePos.y + headerHeight + BlueprintNodeBadgeTopOffset, badgeBottomY - badgeBlockHeight);
 
         float badgeX = nodePos.x + 9.0f;
         float badgeRowY = badgeStartY;
@@ -1553,42 +1667,87 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
             GraphTraceMaxHeight);
     }
 
-    if (!hoveredBadgeLabel.empty()) {
+    const Slab::Str &tooltipLabel = !hoveredBadgeLabel.empty() ? hoveredBadgeLabel : hoveredLegendLabel;
+    const Slab::Str &tooltipDetail = !hoveredBadgeLabel.empty() ? hoveredBadgeDetail : hoveredLegendDetail;
+    if (!tooltipLabel.empty()) {
         ImGui::SetNextWindowSizeConstraints(ImVec2(280.0f, 0.0f), ImVec2(420.0f, FLT_MAX));
         ImGui::BeginTooltip();
-        ImGui::TextUnformatted(hoveredBadgeLabel.c_str());
-        if (!hoveredBadgeDetail.empty()) {
+        ImGui::TextUnformatted(tooltipLabel.c_str());
+        if (!tooltipDetail.empty()) {
             ImGui::Separator();
-            ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + 320.0f);
-            ImGui::TextWrapped("%s", hoveredBadgeDetail.c_str());
+            ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + 360.0f);
+            ImGui::TextWrapped("%s", tooltipDetail.c_str());
             ImGui::PopTextWrapPos();
         }
         ImGui::EndTooltip();
     }
 
-    ImGui::SeparatorText("Graph Trace");
-    if (ImGui::BeginChild("SchemesBlueprintTrace", ImVec2(0.0f, BlueprintGraphTraceHeight), true)) {
-        if (SchemesOperationTrace.empty()) {
-            ImGui::TextDisabled("No operation invocations yet.");
-        } else {
-            if (ImGui::Button("Clear")) {
-                SchemesOperationTrace.clear();
-            }
-            for (const auto &entry : SchemesOperationTrace) {
-                ImGui::PushID(static_cast<int>(entry.SequenceId));
-                ImGui::TextColored(
-                    entry.bOk ? ImVec4(0.45f, 0.86f, 0.56f, 1.0f) : ImVec4(0.93f, 0.40f, 0.40f, 1.0f),
-                    "#%zu",
-                    entry.SequenceId);
+    if constexpr (CEnableBlueprintGraphTuningUi) {
+    if (bShowBlueprintTuningWindow) {
+        ImGui::SetNextWindowBgAlpha(0.94f);
+        ImGui::SetNextWindowSize(ImVec2(380.0f, 0.0f), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowPos(ImVec2(canvasPos.x + 20.0f, canvasPos.y + 20.0f), ImGuiCond_FirstUseEver);
+        constexpr auto tuningFlags =
+            ImGuiWindowFlags_NoDocking |
+            ImGuiWindowFlags_AlwaysAutoResize;
+        if (ImGui::Begin("Graph Tuning (Temporary)", &bShowBlueprintTuningWindow, tuningFlags)) {
+            const auto sliderWithReset = [](const char *id,
+                                            const char *label,
+                                            float *value,
+                                            const float minValue,
+                                            const float maxValue,
+                                            const float defaultValue) {
+                ImGui::PushID(id);
+                ImGui::SetNextItemWidth(220.0f);
+                ImGui::SliderFloat(label, value, minValue, maxValue, "%.2f");
                 ImGui::SameLine();
-                ImGui::Text("%s :: %s", entry.InterfaceId.c_str(), entry.OperationId.c_str());
-                if (!entry.LatencyLabel.empty()) {
-                    ImGui::SameLine();
-                    ImGui::TextDisabled("(%s)", entry.LatencyLabel.c_str());
-                }
-                ImGui::TextDisabled("%s", TruncateLabel(entry.Summary, 120).c_str());
+                if (ImGui::SmallButton("Reset")) *value = defaultValue;
                 ImGui::PopID();
+            };
+
+            ImGui::SeparatorText("Node");
+            sliderWithReset("node_header_scale", "Header Scale", &BlueprintNodeHeaderScale, 1.2f, 2.2f, 1.55f);
+            sliderWithReset("node_header_min_h", "Header Min Height", &BlueprintNodeHeaderMinHeight, 28.0f, 72.0f, 36.0f);
+            sliderWithReset("node_body_top", "Body Top Padding", &BlueprintNodeBodyTopPadding, 2.0f, 20.0f, 8.0f);
+            sliderWithReset("node_body_bottom", "Body Bottom Padding", &BlueprintNodeBodyBottomPadding, 2.0f, 24.0f, 10.0f);
+            sliderWithReset("node_badge_gap", "Badge Row Gap", &BlueprintNodeBadgeRowGap, 0.0f, 12.0f, 4.0f);
+            sliderWithReset("node_action_reserve", "Action Reserve", &BlueprintNodeActionReserve, 6.0f, 36.0f, 14.0f);
+            sliderWithReset("node_badge_top", "Badge Top Offset", &BlueprintNodeBadgeTopOffset, 22.0f, 90.0f, 42.0f);
+            sliderWithReset("node_action_gap", "Action Gap", &BlueprintNodeActionGap, 2.0f, 24.0f, 10.0f);
+
+            ImGui::SeparatorText("Legend");
+            sliderWithReset("legend_padding", "Legend Padding", &BlueprintLegendPadding, 4.0f, 18.0f, 14.0f);
+            sliderWithReset("legend_row_gap", "Legend Row Gap", &BlueprintLegendRowGap, 0.0f, 16.0f, 6.0f);
+            sliderWithReset("legend_item_gap", "Legend Item Gap", &BlueprintLegendItemGap, 2.0f, 20.0f, 8.0f);
+            sliderWithReset("legend_chip_extra", "Legend Chip Extra H", &BlueprintLegendChipExtraHeight, 6.0f, 24.0f, 12.0f);
+            sliderWithReset("legend_marker_inset", "Legend Marker Inset", &BlueprintLegendMarkerInset, 1.0f, 12.0f, 4.0f);
+        }
+        ImGui::End();
+    }
+    }
+
+    ImGui::SeparatorText("Graph Trace");
+    ImGui::BeginChild("SchemesBlueprintTrace", ImVec2(0.0f, BlueprintGraphTraceHeight), true);
+    if (SchemesOperationTrace.empty()) {
+        ImGui::TextDisabled("No operation invocations yet.");
+    } else {
+        if (ImGui::Button("Clear")) {
+            SchemesOperationTrace.clear();
+        }
+        for (const auto &entry : SchemesOperationTrace) {
+            ImGui::PushID(static_cast<int>(entry.SequenceId));
+            ImGui::TextColored(
+                entry.bOk ? ImVec4(0.45f, 0.86f, 0.56f, 1.0f) : ImVec4(0.93f, 0.40f, 0.40f, 1.0f),
+                "#%zu",
+                entry.SequenceId);
+            ImGui::SameLine();
+            ImGui::Text("%s :: %s", entry.InterfaceId.c_str(), entry.OperationId.c_str());
+            if (!entry.LatencyLabel.empty()) {
+                ImGui::SameLine();
+                ImGui::TextDisabled("(%s)", entry.LatencyLabel.c_str());
             }
+            ImGui::TextDisabled("%s", TruncateLabel(entry.Summary, 120).c_str());
+            ImGui::PopID();
         }
     }
     ImGui::EndChild();
