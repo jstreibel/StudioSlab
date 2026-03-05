@@ -3,6 +3,7 @@
 
 #include "Plot2DWindowV2.h"
 #include "PlotReflectionCatalogV2.h"
+#include "LegacyPlotReflectionAdapterV2.h"
 
 #include "Artists/AxisArtistV2.h"
 #include "Artists/PointSetArtistV2.h"

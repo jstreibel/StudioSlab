@@ -9,6 +9,7 @@
 #include "Plot2DWindow.h"
 
 #include <algorithm>
+#include <cctype>
 #include <functional>
 #include <ranges>
 
@@ -36,6 +37,55 @@ namespace Slab::Graphics {
     using Core::FLog;
 
     namespace {
+
+        auto NormalizeToken(Str raw) -> Str
+        {
+            for (char &ch : raw) {
+                if (std::isalnum(static_cast<unsigned char>(ch))) {
+                    ch = static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
+                } else {
+                    ch = '_';
+                }
+            }
+
+            Str out;
+            out.reserve(raw.size());
+
+            bool lastUnderscore = false;
+            for (const char ch : raw) {
+                const bool isUnderscore = ch == '_';
+                if (isUnderscore && lastUnderscore) continue;
+                out.push_back(ch);
+                lastUnderscore = isUnderscore;
+            }
+
+            while (!out.empty() && out.front() == '_') out.erase(out.begin());
+            while (!out.empty() && out.back() == '_') out.pop_back();
+
+            return out;
+        }
+
+        auto BuildDefaultArtistId(const FPlot2DWindow::ContentMap &content, const FArtist_ptr &pArtist) -> Str
+        {
+            auto base = NormalizeToken(pArtist->GetLabel());
+            if (base.empty()) base = "artist";
+
+            const auto exists = [&content](const Str &candidate) {
+                return std::any_of(content.begin(), content.end(), [&](const auto &slot) {
+                    const auto &existing = slot.second;
+                    return existing != nullptr && existing->GetArtistId() == candidate;
+                });
+            };
+
+            if (!exists(base)) return base;
+
+            int suffix = 2;
+            while (true) {
+                const auto candidate = base + "_" + ToStr(suffix);
+                if (!exists(candidate)) return candidate;
+                ++suffix;
+            }
+        }
 
         struct FOverlayIconButton {
             Str Id;
@@ -354,12 +404,42 @@ namespace Slab::Graphics {
     FPlot2DWindow::FPlot2DWindow(Str Title)
     : FPlot2DWindow(-1, 1, -1, 1, std::move(Title)) {    }
 
+    FPlot2DWindow::~FPlot2DWindow() {
+        const auto it = GraphMap.find(Title);
+        if (it != GraphMap.end() && it->second == this) {
+            GraphMap.erase(it);
+        }
+    }
+
+    auto FPlot2DWindow::GetLiveWindows() -> Vector<FPlot2DWindow *> {
+        Vector<FPlot2DWindow *> windows;
+        windows.reserve(GraphMap.size());
+
+        for (const auto &[windowTitle, window] : GraphMap) {
+            (void) windowTitle;
+            if (window == nullptr) continue;
+            windows.push_back(window);
+        }
+
+        return windows;
+    }
+
+    auto FPlot2DWindow::FindLiveWindowByTitle(const Str &title) -> FPlot2DWindow * {
+        const auto it = GraphMap.find(title);
+        if (it == GraphMap.end()) return nullptr;
+        return it->second;
+    }
+
     void FPlot2DWindow::AddArtist(const FArtist_ptr &pArtist, zOrder_t zOrder) {
         if (pArtist == nullptr) {
             FLog::Error() << __PRETTY_FUNCTION__ << " trying to add "
                          << FLog::FGBlue << "nullptr" << FLog::ResetFormatting << " artist.";
 
             return;
+        }
+
+        if (pArtist->GetArtistId().empty()) {
+            pArtist->SetArtistId(BuildDefaultArtistId(Content, pArtist));
         }
 
         Content.emplace(zOrder, pArtist);
@@ -782,8 +862,49 @@ namespace Slab::Graphics {
     FAxisArtist &
     FPlot2DWindow::GetAxisArtist() { return AxisArtist; }
 
+    auto FPlot2DWindow::GetWindowNumericId() const -> CountType { return Id; }
+
+    auto FPlot2DWindow::GetStableWindowIdV2() const -> Str {
+        return "legacy_plot_window_" + ToStr(Id);
+    }
+
+    auto FPlot2DWindow::GetWindowTitle() const -> const Str & { return Title; }
+
+    auto FPlot2DWindow::GetArtists() const -> const ContentMap & { return Content; }
+
+    auto FPlot2DWindow::GetArtists() -> ContentMap & { return Content; }
+
+    auto FPlot2DWindow::TryGetArtistZOrder(const FArtist_ptr &pArtist, zOrder_t &zOrderOut) const -> bool {
+        if (pArtist == nullptr) return false;
+
+        const auto it = std::find_if(Content.begin(), Content.end(), [&](const auto &slot) {
+            return slot.second == pArtist;
+        });
+
+        if (it == Content.end()) return false;
+        zOrderOut = it->first;
+        return true;
+    }
+
+    auto FPlot2DWindow::SetArtistZOrder(const FArtist_ptr &pArtist, const zOrder_t zOrder) -> bool {
+        if (pArtist == nullptr) return false;
+
+        const auto it = std::find_if(Content.begin(), Content.end(), [&](const auto &slot) {
+            return slot.second == pArtist;
+        });
+        if (it == Content.end()) return false;
+
+        const auto artist = it->second;
+        Content.erase(it);
+        Content.emplace(zOrder, artist);
+
+        return true;
+    }
+
     void
     FPlot2DWindow::SetAutoReviewGraphRanges(bool autoReview) { AutoReviewGraphRanges = autoReview; }
+
+    auto FPlot2DWindow::GetAutoReviewGraphRanges() const -> bool { return AutoReviewGraphRanges; }
 
     void
     FPlot2DWindow::toggleShowInterface() { ShowInterface = !ShowInterface; }

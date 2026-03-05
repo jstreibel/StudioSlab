@@ -943,8 +943,8 @@ auto FLabV2WindowManager::DrawPlotsInspectorPanel() -> void {
 
     if (catalog.Interfaces.empty()) {
         ImGui::Separator();
-        ImGui::TextDisabled("No Plot2D V2 windows/artists are currently registered.");
-        ImGui::TextDisabled("Create Plot2D V2 windows to populate this catalog.");
+        ImGui::TextDisabled("No Plot2D windows/artists are currently registered.");
+        ImGui::TextDisabled("Create Plot2D V2 windows or legacy Plot2D windows to populate this catalog.");
         return;
     }
 

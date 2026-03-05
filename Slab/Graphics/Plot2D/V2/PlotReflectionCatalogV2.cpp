@@ -1,4 +1,5 @@
 #include "PlotReflectionCatalogV2.h"
+#include "LegacyPlotReflectionAdapterV2.h"
 
 #include <algorithm>
 
@@ -82,12 +83,16 @@ namespace Slab::Graphics::Plot2D::V2 {
         Vector<FOperationSchemaV2> operations;
         operations.reserve(4);
 
+        const auto defaultThreadAffinity = interfaceId.starts_with("legacy.plot.")
+            ? ReflectionV2::EThreadAffinity::UI
+            : ReflectionV2::EThreadAffinity::Any;
+
         FOperationSchemaV2 listParameters;
         listParameters.OperationId = CPlotOperationIdQueryListParametersV2;
         listParameters.DisplayName = "List Parameters";
         listParameters.Description = "Query current parameter values for this interface.";
         listParameters.Kind = ReflectionV2::EOperationKind::Query;
-        listParameters.ThreadAffinity = ReflectionV2::EThreadAffinity::Any;
+        listParameters.ThreadAffinity = defaultThreadAffinity;
         listParameters.RunStatePolicy = ReflectionV2::ERunStatePolicy::Any;
         listParameters.SideEffectClass = ReflectionV2::ESideEffectClass::None;
         listParameters.InvokeHandler = [this, interfaceId](const FValueMapV2 &inputs, const FInvocationContextV2 &) {
@@ -100,7 +105,7 @@ namespace Slab::Graphics::Plot2D::V2 {
         getParameter.DisplayName = "Get Parameter";
         getParameter.Description = "Query one parameter by parameter_id.";
         getParameter.Kind = ReflectionV2::EOperationKind::Query;
-        getParameter.ThreadAffinity = ReflectionV2::EThreadAffinity::Any;
+        getParameter.ThreadAffinity = defaultThreadAffinity;
         getParameter.RunStatePolicy = ReflectionV2::ERunStatePolicy::Any;
         getParameter.SideEffectClass = ReflectionV2::ESideEffectClass::None;
         getParameter.Inputs = {
@@ -122,7 +127,7 @@ namespace Slab::Graphics::Plot2D::V2 {
         setParameter.DisplayName = "Set Parameter";
         setParameter.Description = "Set one parameter by parameter_id.";
         setParameter.Kind = ReflectionV2::EOperationKind::Command;
-        setParameter.ThreadAffinity = ReflectionV2::EThreadAffinity::Any;
+        setParameter.ThreadAffinity = defaultThreadAffinity;
         setParameter.RunStatePolicy = ReflectionV2::ERunStatePolicy::Any;
         setParameter.SideEffectClass = ReflectionV2::ESideEffectClass::LocalState;
         setParameter.Inputs = {
@@ -151,7 +156,7 @@ namespace Slab::Graphics::Plot2D::V2 {
         applyPending.DisplayName = "Apply Pending";
         applyPending.Description = "Apply RestartRequired staged parameter values.";
         applyPending.Kind = ReflectionV2::EOperationKind::Command;
-        applyPending.ThreadAffinity = ReflectionV2::EThreadAffinity::Any;
+        applyPending.ThreadAffinity = defaultThreadAffinity;
         applyPending.RunStatePolicy = ReflectionV2::ERunStatePolicy::Any;
         applyPending.SideEffectClass = ReflectionV2::ESideEffectClass::LocalState;
         applyPending.InvokeHandler = [this, interfaceId](const FValueMapV2 &inputs, const FInvocationContextV2 &) {
@@ -390,6 +395,24 @@ namespace Slab::Graphics::Plot2D::V2 {
             for (const auto &slot : window->GetArtists()) {
                 if (slot.Artist == nullptr) continue;
                 AddEntityDescriptor(slot.Artist->DescribeReflection(), previousPending);
+            }
+        }
+
+        auto legacyWindows = Slab::Graphics::FPlot2DWindow::GetLiveWindows();
+        std::sort(legacyWindows.begin(), legacyWindows.end(), [](const auto *lhs, const auto *rhs) {
+            if (lhs == nullptr || rhs == nullptr) return lhs != nullptr;
+            return lhs->GetWindowNumericId() < rhs->GetWindowNumericId();
+        });
+
+        for (auto *window : legacyWindows) {
+            if (window == nullptr) continue;
+
+            AddEntityDescriptor(FLegacyPlotReflectionAdapterV2::DescribeWindow(*window), previousPending);
+            for (const auto &[zOrder, artist] : window->GetArtists()) {
+                if (artist == nullptr) continue;
+                AddEntityDescriptor(
+                    FLegacyPlotReflectionAdapterV2::DescribeArtist(*window, zOrder, artist),
+                    previousPending);
             }
         }
 

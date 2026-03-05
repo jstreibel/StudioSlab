@@ -290,6 +290,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotReflectionSchemaV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/LegacyPlotReflectionAdapterV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/LegacyPlotReflectionAdapterV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/AxisArtistV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/AxisArtistV2.h
