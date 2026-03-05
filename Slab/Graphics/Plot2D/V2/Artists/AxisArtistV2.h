@@ -10,6 +10,8 @@ namespace Slab::Graphics::Plot2D::V2 {
         PlotStyle GridStyle;
         bool bShowGrid = true;
         bool bShowAxes = true;
+        bool bShowTickMarks = true;
+        bool bShowTickLabels = true;
         int MajorTickCount = 8;
 
     protected:
@@ -28,10 +30,14 @@ namespace Slab::Graphics::Plot2D::V2 {
 
         auto SetShowGrid(bool showGrid) -> void;
         auto SetShowAxes(bool showAxes) -> void;
+        auto SetShowTickMarks(bool showTickMarks) -> void;
+        auto SetShowTickLabels(bool showTickLabels) -> void;
         auto SetMajorTickCount(int tickCount) -> void;
 
         [[nodiscard]] auto GetShowGrid() const -> bool;
         [[nodiscard]] auto GetShowAxes() const -> bool;
+        [[nodiscard]] auto GetShowTickMarks() const -> bool;
+        [[nodiscard]] auto GetShowTickLabels() const -> bool;
         [[nodiscard]] auto GetMajorTickCount() const -> int;
     };
 

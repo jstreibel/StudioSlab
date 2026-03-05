@@ -295,12 +295,16 @@ add_library(${LIB_GRAPHICS} STATIC
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/AxisArtistV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/AxisArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/BackgroundArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/BackgroundArtistV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/PointSetArtistV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/PointSetArtistV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/RtoRFunctionArtistV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/RtoRFunctionArtistV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Backends/RecordingRenderBackendV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Backends/RecordingRenderBackendV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Backends/OpenGLRenderBackendV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Backends/OpenGLRenderBackendV2.h
 		DataViewers/Viewers/HistoryViewer.cpp
 		DataViewers/Viewers/HistoryViewer.h
 		DataViewers/Viewers/ModesHistoryViewer.cpp

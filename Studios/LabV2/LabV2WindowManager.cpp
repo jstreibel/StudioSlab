@@ -17,8 +17,11 @@
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Graphics/Plot2D/Plotter.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
+#include "Graphics/Plot2D/V2/Artists/AxisArtistV2.h"
 #include "Graphics/Plot2D/V2/Artists/PointSetArtistV2.h"
 #include "Graphics/Plot2D/V2/Artists/RtoRFunctionArtistV2.h"
+#include "Graphics/Plot2D/V2/Artists/BackgroundArtistV2.h"
+#include "Graphics/Plot2D/V2/Backends/OpenGLRenderBackendV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionSchemaV2.h"
 #include "Graphics/Window/WindowStyles.h"
@@ -67,6 +70,49 @@ namespace {
     constexpr auto WorkspaceTabSimulations = "Simulations";
     constexpr auto WorkspaceTabSchemes = "Schemes";
     constexpr auto WorkspaceTabPlots = "Plots";
+    constexpr auto PlotWindowInterfaceIdPrefix = "v2.plot.window.";
+
+    class FPlot2DWindowHostV2 final : public Slab::Graphics::FSlabWindow {
+        Slab::Str PlotWindowId;
+        Slab::Graphics::Plot2D::V2::FOpenGLRenderBackendV2 RenderBackend;
+
+    public:
+        FPlot2DWindowHostV2(Slab::Str plotWindowId, Slab::Str title)
+        : FSlabWindow(Slab::Graphics::FSlabWindowConfig(std::move(title)))
+        , PlotWindowId(std::move(plotWindowId)) {
+        }
+
+        auto ImmediateDraw(const Slab::Graphics::FPlatformWindow &platformWindow) -> void override {
+            using Slab::Graphics::Plot2D::V2::FPlot2DWindowV2;
+
+            FSlabWindow::ImmediateDraw(platformWindow);
+
+            const auto windows = FPlot2DWindowV2::GetLiveWindows();
+            const auto it = std::find_if(windows.begin(), windows.end(), [&](const auto *window) {
+                return window != nullptr && window->GetWindowId() == PlotWindowId;
+            });
+
+            if (it == windows.end() || *it == nullptr) {
+                Close();
+                return;
+            }
+
+            auto *window = *it;
+            const auto width = std::max(1, GetWidth());
+            const auto height = std::max(1, GetHeight());
+            window->SetViewport({0, width, 0, height});
+
+            if (!window->GetTitle().empty()) {
+                GetConfig().Title = window->GetTitle();
+            }
+
+            (void) window->Render(RenderBackend);
+        }
+
+        [[nodiscard]] auto GetPlotWindowId() const -> const Slab::Str & {
+            return PlotWindowId;
+        }
+    };
 
     auto BuildOperationSummary(const Slab::Core::Reflection::V2::FOperationResultV2 &result) -> Slab::Str {
         using namespace Slab::Core::Reflection::V2;
@@ -203,14 +249,22 @@ FLabV2WindowManager::FLabV2WindowManager()
 }
 
 void FLabV2WindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) {
-    AddSlabWindow(window, false);
+    AddSlabWindowInWorkspace(window, EWorkspaceTab::Simulations, false);
 }
 
 void FLabV2WindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window, bool hidden) {
+    AddSlabWindowInWorkspace(window, EWorkspaceTab::Simulations, hidden);
+}
+
+auto FLabV2WindowManager::AddSlabWindowInWorkspace(
+    const Slab::TPointer<Slab::Graphics::FSlabWindow> &window,
+    const EWorkspaceTab workspace,
+    const bool hidden) -> void {
     (void) hidden;
     if (window == nullptr) return;
     AddResponder(window);
     SlabWindows.emplace_back(window);
+    SlabWindowWorkspaceByUniqueName[window->GetUniqueName()] = workspace;
     if (SelectedViewUniqueName.empty()) {
         SelectedViewUniqueName = window->GetUniqueName();
     }
@@ -219,8 +273,14 @@ void FLabV2WindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSl
 }
 
 auto FLabV2WindowManager::QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void {
+    QueueSlabWindowInWorkspace(window, EWorkspaceTab::Simulations);
+}
+
+auto FLabV2WindowManager::QueueSlabWindowInWorkspace(
+    const Slab::TPointer<Slab::Graphics::FSlabWindow> &window,
+    const EWorkspaceTab workspace) -> void {
     if (window == nullptr) return;
-    PendingSlabWindows.emplace_back(window);
+    PendingSlabWindows.push_back(FPendingSlabWindow{window, workspace});
 }
 
 auto FLabV2WindowManager::FlushPendingSlabWindows() -> void {
@@ -228,7 +288,7 @@ auto FLabV2WindowManager::FlushPendingSlabWindows() -> void {
 
     auto pending = std::move(PendingSlabWindows);
     PendingSlabWindows.clear();
-    for (const auto &window : pending) AddSlabWindow(window, false);
+    for (const auto &entry : pending) AddSlabWindowInWorkspace(entry.Window, entry.Workspace, false);
 }
 
 auto FLabV2WindowManager::PruneClosedSlabWindows() -> bool {
@@ -245,6 +305,14 @@ auto FLabV2WindowManager::PruneClosedSlabWindows() -> bool {
 
         if (window != nullptr) {
             RemoveResponder(window);
+            SlabWindowWorkspaceByUniqueName.erase(window->GetUniqueName());
+            for (auto hostIt = PlotWindowHostsByWindowId.begin(); hostIt != PlotWindowHostsByWindowId.end();) {
+                if (hostIt->second == window) {
+                    hostIt = PlotWindowHostsByWindowId.erase(hostIt);
+                } else {
+                    ++hostIt;
+                }
+            }
         }
         it = SlabWindows.erase(it);
         bRemovedAny = true;
@@ -269,6 +337,27 @@ auto FLabV2WindowManager::FindWindowByUniqueName(const Slab::Str &uniqueName) co
 
     if (it == SlabWindows.end()) return nullptr;
     return *it;
+}
+
+auto FLabV2WindowManager::GetWorkspaceForWindow(const FSlabWindowPtr &window) const -> EWorkspaceTab {
+    if (window == nullptr) return EWorkspaceTab::Simulations;
+
+    const auto it = SlabWindowWorkspaceByUniqueName.find(window->GetUniqueName());
+    if (it == SlabWindowWorkspaceByUniqueName.end()) return EWorkspaceTab::Simulations;
+    return it->second;
+}
+
+auto FLabV2WindowManager::GetWorkspaceWindows(const EWorkspaceTab workspace) const -> FSlabWindowVec {
+    FSlabWindowVec windows;
+    windows.reserve(SlabWindows.size());
+
+    for (const auto &window : SlabWindows) {
+        if (window == nullptr) continue;
+        if (GetWorkspaceForWindow(window) != workspace) continue;
+        windows.push_back(window);
+    }
+
+    return windows;
 }
 
 auto FLabV2WindowManager::FocusWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void {
@@ -311,6 +400,7 @@ auto FLabV2WindowManager::FindTopWindowAtPoint(const int x, const int y) const
     for (auto it = SlabWindows.rbegin(); it != SlabWindows.rend(); ++it) {
         const auto &window = *it;
         if (window == nullptr) continue;
+        if (GetWorkspaceForWindow(window) != ActiveWorkspace) continue;
         if (window->WantsClose()) continue;
         if (window->GetWidth() <= 0 || window->GetHeight() <= 0) continue;
         if (window->IsPointWithin(point)) return window;
@@ -323,11 +413,15 @@ auto FLabV2WindowManager::FindKeyboardTargetWindow() const -> Slab::TPointer<Sla
     if (!ShouldRenderSlabWindowsInWorkspace()) return nullptr;
 
     if (const auto selected = FindWindowByUniqueName(SelectedViewUniqueName); selected != nullptr) {
-        return selected;
+        if (GetWorkspaceForWindow(selected) == ActiveWorkspace) {
+            return selected;
+        }
     }
 
     for (auto it = SlabWindows.rbegin(); it != SlabWindows.rend(); ++it) {
-        if (*it != nullptr && !(*it)->WantsClose()) return *it;
+        if (*it == nullptr) continue;
+        if (GetWorkspaceForWindow(*it) != ActiveWorkspace) continue;
+        if (!(*it)->WantsClose()) return *it;
     }
 
     return nullptr;
@@ -346,13 +440,23 @@ auto FLabV2WindowManager::SyncMousePositionFromImGui() -> void {
 }
 
 auto FLabV2WindowManager::DrawViewManagerPanel() -> void {
+    const auto simulationWindows = GetWorkspaceWindows(EWorkspaceTab::Simulations);
+
     ImGui::TextUnformatted("Views");
-    if (SlabWindows.empty()) {
+    if (simulationWindows.empty()) {
         ImGui::TextDisabled("No active view windows.");
         return;
     }
 
-    const auto selected = FindWindowByUniqueName(SelectedViewUniqueName);
+    auto selected = FindWindowByUniqueName(SelectedViewUniqueName);
+    if (selected != nullptr && GetWorkspaceForWindow(selected) != EWorkspaceTab::Simulations) {
+        selected = nullptr;
+    }
+    if (selected == nullptr) {
+        selected = simulationWindows.front();
+        SelectedViewUniqueName = selected->GetUniqueName();
+    }
+
     if (selected != nullptr) {
         ImGui::SameLine();
         if (ImGui::Button("Focus Selected")) {
@@ -380,7 +484,7 @@ auto FLabV2WindowManager::DrawViewManagerPanel() -> void {
         ImGui::TableSetupColumn("h");
         ImGui::TableHeadersRow();
 
-        for (const auto &window : SlabWindows) {
+        for (const auto &window : simulationWindows) {
             if (window == nullptr) continue;
 
             const auto uniqueName = window->GetUniqueName();
@@ -448,6 +552,48 @@ auto FLabV2WindowManager::BuildSchemeParameterDraftKey(const Slab::Str &interfac
 auto FLabV2WindowManager::BuildPlotParameterDraftKey(const Slab::Str &interfaceId, const Slab::Str &parameterId) const
     -> Slab::Str {
     return interfaceId + "::" + parameterId;
+}
+
+auto FLabV2WindowManager::SyncPlotWorkspaceWindows() -> void {
+    using namespace Slab::Core::Reflection::V2;
+
+    PlotReflectionAdapter.RefreshFromLiveWindows();
+    const auto &catalog = PlotReflectionAdapter.GetCatalog();
+
+    std::map<Slab::Str, Slab::Str> discoveredV2Windows;
+    for (const auto &interfaceSchema : catalog.Interfaces) {
+        if (!interfaceSchema.InterfaceId.starts_with(PlotWindowInterfaceIdPrefix)) continue;
+
+        const auto windowId = interfaceSchema.InterfaceId.substr(std::char_traits<char>::length(PlotWindowInterfaceIdPrefix));
+        if (windowId.empty()) continue;
+
+        discoveredV2Windows[windowId] =
+            interfaceSchema.DisplayName.empty() ? windowId : interfaceSchema.DisplayName;
+    }
+
+    for (auto it = PlotWindowHostsByWindowId.begin(); it != PlotWindowHostsByWindowId.end();) {
+        const auto &windowId = it->first;
+        const auto &host = it->second;
+        const bool bMissing = !discoveredV2Windows.contains(windowId);
+        const bool bHostClosed = host == nullptr || host->WantsClose();
+        if (!bMissing && !bHostClosed) {
+            ++it;
+            continue;
+        }
+
+        if (host != nullptr) {
+            host->Close();
+        }
+        it = PlotWindowHostsByWindowId.erase(it);
+    }
+
+    for (const auto &[windowId, displayName] : discoveredV2Windows) {
+        if (PlotWindowHostsByWindowId.contains(windowId)) continue;
+
+        auto host = Slab::New<FPlot2DWindowHostV2>(windowId, displayName);
+        PlotWindowHostsByWindowId[windowId] = host;
+        QueueSlabWindowInWorkspace(host, EWorkspaceTab::Plots);
+    }
 }
 
 auto FLabV2WindowManager::EnsureSchemeSelectionIsValid() -> void {
@@ -1741,6 +1887,12 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
             Slab::Graphics::RectR{-1.0, 1.0, -1.0, 1.0},
             Slab::Graphics::RectI{0, 1024, 0, 768});
         window->SetAutoFitRanges(true);
+
+        auto background = Slab::New<FBackgroundArtistV2>();
+        auto axis = Slab::New<FAxisArtistV2>();
+        window->AddArtist(background, -100);
+        window->AddArtist(axis, -10);
+
         PlotWindowsV2.push_back(window);
 
         SelectedPlotInterfaceId = "v2.plot.window." + window->GetWindowId();
@@ -2242,10 +2394,23 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> bool {
 
     if (wWorkspace <= 0 || hWorkspace <= 0) return false;
 
-    const int nWindows = static_cast<int>(SlabWindows.size());
+    auto activeWorkspaceWindows = GetWorkspaceWindows(ActiveWorkspace);
+    for (const auto &window : SlabWindows) {
+        if (window == nullptr) continue;
+        if (GetWorkspaceForWindow(window) == ActiveWorkspace) continue;
+        window->Set_x(-10000);
+        window->Set_y(-10000);
+        window->NotifyReshape(64, 64);
+    }
 
-    if (bDockingMode && ActiveWorkspace == EWorkspaceTab::Simulations && nWindows == 1) {
-        if (const auto &window = SlabWindows.front(); window != nullptr) {
+    const int nWindows = static_cast<int>(activeWorkspaceWindows.size());
+    if (nWindows <= 0) {
+        CapturedMouseWindow.reset();
+        return true;
+    }
+
+    if (bDockingMode && nWindows == 1) {
+        if (const auto &window = activeWorkspaceWindows.front(); window != nullptr) {
             window->Set_x(xWorkspace);
             window->Set_y(yWorkspace);
             window->NotifyReshape(wWorkspace, hWorkspace);
@@ -2269,7 +2434,7 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> bool {
     const int tileH = std::max(1, hTiles / nRows);
 
     int iWindow = 0;
-    for (const auto &window : SlabWindows) {
+    for (const auto &window : activeWorkspaceWindows) {
         if (window == nullptr) continue;
 
         const int iCol = iWindow % nCols;
@@ -2300,7 +2465,7 @@ auto FLabV2WindowManager::IsDockingEnabled() const -> bool {
 
 auto FLabV2WindowManager::ShouldRenderSlabWindowsInWorkspace() const -> bool {
     if (!IsDockingEnabled()) return true;
-    return ActiveWorkspace == EWorkspaceTab::Simulations;
+    return ActiveWorkspace == EWorkspaceTab::Simulations || ActiveWorkspace == EWorkspaceTab::Plots;
 }
 
 auto FLabV2WindowManager::HideSlabWindowsOffscreen() -> void {
@@ -2360,11 +2525,15 @@ auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> v
     const auto previousWorkspace = ActiveWorkspace;
     SaveWorkspacePanelVisibility(ActiveWorkspace);
     ActiveWorkspace = workspace;
-    if (previousWorkspace == EWorkspaceTab::Simulations && ActiveWorkspace != EWorkspaceTab::Simulations) {
+    const bool bPreviousHasSlabWindows =
+        previousWorkspace == EWorkspaceTab::Simulations || previousWorkspace == EWorkspaceTab::Plots;
+    const bool bCurrentHasSlabWindows =
+        ActiveWorkspace == EWorkspaceTab::Simulations || ActiveWorkspace == EWorkspaceTab::Plots;
+    if (!bCurrentHasSlabWindows || previousWorkspace != ActiveWorkspace) {
         CapturedMouseWindow.reset();
     }
     LoadWorkspacePanelVisibility(ActiveWorkspace);
-    if (previousWorkspace == EWorkspaceTab::Simulations || ActiveWorkspace == EWorkspaceTab::Simulations) {
+    if (bPreviousHasSlabWindows || bCurrentHasSlabWindows) {
         RequestViewRetile();
     }
 }
@@ -2996,16 +3165,19 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
         }
     }
 
+    SyncPlotWorkspaceWindows();
+    FlushPendingSlabWindows();
+
     if (PruneClosedSlabWindows()) {
         RequestViewRetile();
     }
 
     const bool bRenderSlabWindows = ShouldRenderSlabWindowsInWorkspace();
-    const bool bForceSimDockRetile =
+    const bool bForceWorkspaceDockRetile =
         IsDockingEnabled() &&
-        ActiveWorkspace == EWorkspaceTab::Simulations;
+        (ActiveWorkspace == EWorkspaceTab::Simulations || ActiveWorkspace == EWorkspaceTab::Plots);
 
-    if (bRenderSlabWindows && (bForceSimDockRetile || bPendingViewRetile || RetileStabilizationFramesRemaining > 0)) {
+    if (bRenderSlabWindows && (bForceWorkspaceDockRetile || bPendingViewRetile || RetileStabilizationFramesRemaining > 0)) {
         if (ArrangeTopLevelSlabWindows()) {
             if (RetileStabilizationFramesRemaining > 0) {
                 --RetileStabilizationFramesRemaining;

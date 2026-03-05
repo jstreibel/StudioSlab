@@ -72,9 +72,14 @@ private:
     static constexpr std::size_t WorkspaceCount = 3;
     using FSlabWindowPtr = Slab::TPointer<Slab::Graphics::FSlabWindow>;
     using FSlabWindowVec = Slab::Vector<FSlabWindowPtr>;
+    struct FPendingSlabWindow {
+        FSlabWindowPtr Window = nullptr;
+        EWorkspaceTab Workspace = EWorkspaceTab::Simulations;
+    };
 
     FSlabWindowVec SlabWindows;
-    FSlabWindowVec PendingSlabWindows;
+    Slab::Vector<FPendingSlabWindow> PendingSlabWindows;
+    std::map<Slab::Str, EWorkspaceTab> SlabWindowWorkspaceByUniqueName;
 
     int WidthSysWin = 200;
     int HeightSysWin = 200;
@@ -87,6 +92,7 @@ private:
     Slab::Core::Reflection::V2::FLegacyReflectionCatalogAdapterV2 ReflectionAdapter;
     Slab::Graphics::Plot2D::V2::FPlotReflectionCatalogV2 PlotReflectionAdapter;
     Slab::Vector<Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr> PlotWindowsV2;
+    std::map<Slab::Str, FSlabWindowPtr> PlotWindowHostsByWindowId;
     std::size_t BlueprintPlotWindowCreateCount = 0;
     std::size_t BlueprintPlotArtistCreateCount = 0;
 
@@ -192,7 +198,15 @@ private:
 
     auto FlushPendingSlabWindows() -> void;
     auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
+    auto QueueSlabWindowInWorkspace(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window,
+                                    EWorkspaceTab workspace) -> void;
+    auto AddSlabWindowInWorkspace(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window,
+                                  EWorkspaceTab workspace,
+                                  bool hidden = false) -> void;
+    auto SyncPlotWorkspaceWindows() -> void;
     auto PruneClosedSlabWindows() -> bool;
+    [[nodiscard]] auto GetWorkspaceForWindow(const FSlabWindowPtr &window) const -> EWorkspaceTab;
+    [[nodiscard]] auto GetWorkspaceWindows(EWorkspaceTab workspace) const -> FSlabWindowVec;
     auto ArrangeTopLevelSlabWindows() -> bool;
     auto DrawWorkspaceLauncher() -> void;
     auto DrawWorkspaceTabs() -> void;

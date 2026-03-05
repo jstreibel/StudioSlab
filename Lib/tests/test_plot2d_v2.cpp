@@ -36,6 +36,28 @@ namespace {
         return count;
     }
 
+    auto CountRectangleCommands(const FPlotDrawListV2 &drawList) -> int {
+        int count = 0;
+        for (const auto &command : drawList.GetCommands()) {
+            if (std::holds_alternative<FRectangleCommandV2>(command)) {
+                ++count;
+            }
+        }
+
+        return count;
+    }
+
+    auto CountTextCommands(const FPlotDrawListV2 &drawList) -> int {
+        int count = 0;
+        for (const auto &command : drawList.GetCommands()) {
+            if (std::holds_alternative<FTextCommandV2>(command)) {
+                ++count;
+            }
+        }
+
+        return count;
+    }
+
 } // namespace
 
 TEST_CASE("Plot2D V2 emits draw commands through backend abstraction", "[Plot2DV2]") {
@@ -156,4 +178,37 @@ TEST_CASE("Plot2D V2 reflection catalog supports query and set", "[Plot2DV2][Ref
 
     REQUIRE(fitResult.IsOk());
     REQUIRE(fitResult.OutputMap.at("fitted").Encoded == "true");
+}
+
+TEST_CASE("Plot2D V2 background and axis artists emit baseline visual commands", "[Plot2DV2]") {
+    FPlot2DWindowV2 window("Visual Baseline", {-2.0, 2.0, -3.0, 3.0}, {0, 640, 0, 480});
+
+    auto background = New<FBackgroundArtistV2>(Slab::Graphics::FColor(0.1f, 0.2f, 0.3f, 1.0f));
+    background->SetUseThemeColor(false);
+    auto axis = New<FAxisArtistV2>();
+    axis->SetMajorTickCount(4);
+
+    window.AddArtist(background, -100);
+    window.AddArtist(axis, -10);
+
+    FRecordingRenderBackendV2 backend;
+    REQUIRE(window.Render(backend));
+
+    const auto &drawList = backend.GetLastDrawList();
+    REQUIRE(CountRectangleCommands(drawList) >= 1);
+    REQUIRE(CountPolylineCommands(drawList) >= 4);
+    REQUIRE(CountTextCommands(drawList) >= 2);
+
+    bool foundRegionBackground = false;
+    for (const auto &command : drawList.GetCommands()) {
+        if (!std::holds_alternative<FRectangleCommandV2>(command)) continue;
+        const auto &rectangle = std::get<FRectangleCommandV2>(command);
+        if (!rectangle.bFilled) continue;
+        if (rectangle.Rectangle == window.GetRegion()) {
+            foundRegionBackground = true;
+            break;
+        }
+    }
+
+    REQUIRE(foundRegionBackground);
 }
