@@ -12,6 +12,7 @@
 
 #include "Core/SlabCore.h"
 #include "Core/Reflection/V2/ReflectionCodecsV2.h"
+#include "Graphics/Modules/Animator/Animator.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "Graphics/SlabGraphics.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
@@ -31,6 +32,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cfloat>
+#include <cmath>
 #include <cstring>
 #include <sstream>
 #include <utility>
@@ -73,31 +75,207 @@ namespace {
     constexpr auto PlotWindowInterfaceIdPrefix = "v2.plot.window.";
 
     class FPlot2DWindowHostV2 final : public Slab::Graphics::FSlabWindow {
+        using FPlot2DWindowV2 = Slab::Graphics::Plot2D::V2::FPlot2DWindowV2;
+
         Slab::Str PlotWindowId;
         Slab::Graphics::Plot2D::V2::FOpenGLRenderBackendV2 RenderBackend;
+        double AnimatedXMin = -1.0;
+        double AnimatedXMax = 1.0;
+        double AnimatedYMin = -1.0;
+        double AnimatedYMax = 1.0;
+        Slab::Graphics::RectR TargetRegion = {-1.0, 1.0, -1.0, 1.0};
+        bool bAnimationStateInitialized = false;
+        bool bLockUnitAspectRatio = false;
+        double AnimationTimeSeconds = 0.28;
+
+        [[nodiscard]] auto FindWindow() const -> FPlot2DWindowV2 * {
+            const auto windows = FPlot2DWindowV2::GetLiveWindows();
+            const auto it = std::find_if(windows.begin(), windows.end(), [&](const auto *window) {
+                return window != nullptr && window->GetWindowId() == PlotWindowId;
+            });
+            if (it == windows.end()) return nullptr;
+            return *it;
+        }
+
+        [[nodiscard]] auto IsRegionAnimating() const -> bool {
+            return Slab::Graphics::FAnimator::Contains(AnimatedXMin) ||
+                   Slab::Graphics::FAnimator::Contains(AnimatedXMax) ||
+                   Slab::Graphics::FAnimator::Contains(AnimatedYMin) ||
+                   Slab::Graphics::FAnimator::Contains(AnimatedYMax);
+        }
+
+        auto SyncAnimationStateFromWindow(const FPlot2DWindowV2 &window) -> void {
+            const auto region = window.GetRegion();
+            if (!bAnimationStateInitialized || !IsRegionAnimating()) {
+                AnimatedXMin = region.xMin;
+                AnimatedXMax = region.xMax;
+                AnimatedYMin = region.yMin;
+                AnimatedYMax = region.yMax;
+                TargetRegion = region;
+                bAnimationStateInitialized = true;
+            }
+        }
+
+        auto BuildAnimatedRegion() const -> Slab::Graphics::RectR {
+            return {
+                static_cast<Slab::DevFloat>(AnimatedXMin),
+                static_cast<Slab::DevFloat>(AnimatedXMax),
+                static_cast<Slab::DevFloat>(AnimatedYMin),
+                static_cast<Slab::DevFloat>(AnimatedYMax)
+            };
+        }
+
+        auto SetRegionImmediate(FPlot2DWindowV2 &window, const Slab::Graphics::RectR &region) -> void {
+            AnimatedXMin = region.xMin;
+            AnimatedXMax = region.xMax;
+            AnimatedYMin = region.yMin;
+            AnimatedYMax = region.yMax;
+            TargetRegion = region;
+            bAnimationStateInitialized = true;
+            window.SetRegion(region);
+        }
+
+        auto AnimateRegionTo(const Slab::Graphics::RectR &region) -> void {
+            TargetRegion = region;
+            Slab::Graphics::FAnimator::Set(AnimatedXMin, region.xMin, AnimationTimeSeconds);
+            Slab::Graphics::FAnimator::Set(AnimatedXMax, region.xMax, AnimationTimeSeconds);
+            Slab::Graphics::FAnimator::Set(AnimatedYMin, region.yMin, AnimationTimeSeconds);
+            Slab::Graphics::FAnimator::Set(AnimatedYMax, region.yMax, AnimationTimeSeconds);
+            bAnimationStateInitialized = true;
+        }
 
     public:
         FPlot2DWindowHostV2(Slab::Str plotWindowId, Slab::Str title)
         : FSlabWindow(Slab::Graphics::FSlabWindowConfig(std::move(title)))
         , PlotWindowId(std::move(plotWindowId)) {
+            Slab::Core::LoadModule("RealTimeAnimation");
+        }
+
+        auto NotifyMouseButton(const Slab::Graphics::EMouseButton button,
+                               const Slab::Graphics::EKeyState state,
+                               const Slab::Graphics::EModKeys keys) -> bool override {
+            return FSlabWindow::NotifyMouseButton(button, state, keys);
+        }
+
+        auto NotifyMouseMotion(const int x, const int y, const int dx, const int dy) -> bool override {
+            if (FSlabWindow::NotifyMouseMotion(x, y, dx, dy)) return true;
+
+            auto *window = FindWindow();
+            if (window == nullptr) return false;
+
+            SyncAnimationStateFromWindow(*window);
+
+            const auto mouseState = GetMouseState();
+            if (mouseState == nullptr) return false;
+
+            auto region = BuildAnimatedRegion();
+            bool bHandled = false;
+
+            if (mouseState->IsLeftPressed()) {
+                const auto viewportWidth = static_cast<Slab::DevFloat>(std::max(1, GetWidth()));
+                const auto viewportHeight = static_cast<Slab::DevFloat>(std::max(1, GetHeight()));
+
+                const auto dxClamped = -static_cast<Slab::DevFloat>(mouseState->dx) / viewportWidth;
+                const auto dyClamped = static_cast<Slab::DevFloat>(mouseState->dy) / viewportHeight;
+
+                const auto dxGraph = region.GetWidth() * dxClamped;
+                const auto dyGraph = region.GetHeight() * dyClamped;
+
+                region = {
+                    region.xMin + dxGraph,
+                    region.xMax + dxGraph,
+                    region.yMin + dyGraph,
+                    region.yMax + dyGraph
+                };
+
+                window->SetAutoFitRanges(false);
+                SetRegionImmediate(*window, region);
+                bHandled = true;
+            }
+
+            if (mouseState->IsRightPressed()) {
+                if (bLockUnitAspectRatio) {
+                    constexpr Slab::DevFloat factor = 0.01;
+                    const auto d = static_cast<Slab::DevFloat>(1.0 - factor * static_cast<Slab::DevFloat>(dx - dy));
+                    const auto x0 = region.xCenter();
+                    const auto hw = static_cast<Slab::DevFloat>(0.5 * region.GetWidth() * d);
+                    region = {x0 - hw, x0 + hw, region.yMin, region.yMax};
+                } else {
+                    constexpr Slab::DevFloat factor = 0.01;
+                    const auto dw = static_cast<Slab::DevFloat>(1.0 - factor * static_cast<Slab::DevFloat>(dx));
+                    const auto dh = static_cast<Slab::DevFloat>(1.0 + factor * static_cast<Slab::DevFloat>(dy));
+
+                    const auto x0 = region.xCenter();
+                    const auto y0 = region.yCenter();
+                    const auto hw = static_cast<Slab::DevFloat>(0.5 * region.GetWidth() * dw);
+                    const auto hh = static_cast<Slab::DevFloat>(0.5 * region.GetHeight() * dh);
+                    region = {x0 - hw, x0 + hw, y0 - hh, y0 + hh};
+                }
+
+                window->SetAutoFitRanges(false);
+                SetRegionImmediate(*window, region);
+                bHandled = true;
+            }
+
+            return bHandled;
+        }
+
+        auto NotifyMouseWheel(const double dx, const double dy) -> bool override {
+            if (FSlabWindow::NotifyMouseWheel(dx, dy)) return true;
+            if (std::abs(dy) < 1.0e-12) return false;
+
+            auto *window = FindWindow();
+            if (window == nullptr) return false;
+
+            SyncAnimationStateFromWindow(*window);
+
+            constexpr Slab::DevFloat factor = 1.2;
+            const auto d = std::pow(factor, -dy);
+
+            auto targetRegion = TargetRegion;
+            if (!IsRegionAnimating()) {
+                targetRegion = BuildAnimatedRegion();
+            }
+
+            const auto x0 = targetRegion.xCenter();
+            const auto hw = static_cast<Slab::DevFloat>(0.5 * targetRegion.GetWidth() * d);
+            targetRegion.xMin = x0 - hw;
+            targetRegion.xMax = x0 + hw;
+
+            const auto y0 = targetRegion.yCenter();
+            const auto hh = static_cast<Slab::DevFloat>(0.5 * targetRegion.GetHeight() * d);
+            targetRegion.yMin = y0 - hh;
+            targetRegion.yMax = y0 + hh;
+
+            if (bLockUnitAspectRatio) {
+                const auto viewport = GetViewport();
+                const auto viewportWidth = static_cast<Slab::DevFloat>(std::max(1, viewport.GetWidth()));
+                const auto viewportHeight = static_cast<Slab::DevFloat>(std::max(1, viewport.GetHeight()));
+                const auto viewportAspect = viewportWidth / viewportHeight;
+                if (viewportAspect > 0.0) {
+                    const auto halfWidth = static_cast<Slab::DevFloat>(0.5 * targetRegion.GetWidth());
+                    const auto halfHeight =
+                        static_cast<Slab::DevFloat>(std::max(halfWidth / viewportAspect, static_cast<Slab::DevFloat>(1e-8)));
+                    targetRegion.yMin = y0 - halfHeight;
+                    targetRegion.yMax = y0 + halfHeight;
+                }
+            }
+
+            window->SetAutoFitRanges(false);
+            AnimateRegionTo(targetRegion);
+
+            return true;
         }
 
         auto ImmediateDraw(const Slab::Graphics::FPlatformWindow &platformWindow) -> void override {
-            using Slab::Graphics::Plot2D::V2::FPlot2DWindowV2;
-
             FSlabWindow::ImmediateDraw(platformWindow);
 
-            const auto windows = FPlot2DWindowV2::GetLiveWindows();
-            const auto it = std::find_if(windows.begin(), windows.end(), [&](const auto *window) {
-                return window != nullptr && window->GetWindowId() == PlotWindowId;
-            });
-
-            if (it == windows.end() || *it == nullptr) {
+            auto *window = FindWindow();
+            if (window == nullptr) {
                 Close();
                 return;
             }
 
-            auto *window = *it;
             const auto width = std::max(1, GetWidth());
             const auto height = std::max(1, GetHeight());
             window->SetViewport({0, width, 0, height});
@@ -105,6 +283,9 @@ namespace {
             if (!window->GetTitle().empty()) {
                 GetConfig().Title = window->GetTitle();
             }
+
+            SyncAnimationStateFromWindow(*window);
+            window->SetRegion(BuildAnimatedRegion());
 
             (void) window->Render(RenderBackend);
         }

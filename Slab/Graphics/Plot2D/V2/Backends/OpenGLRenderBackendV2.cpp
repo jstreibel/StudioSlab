@@ -13,6 +13,7 @@
 #include "Math/VectorSpace/Impl/PointSet.h"
 
 #include <algorithm>
+#include <cmath>
 #include <type_traits>
 #include <variant>
 
@@ -59,6 +60,70 @@ namespace Slab::Graphics::Plot2D::V2 {
             OpenGL::Legacy::RenderPointSet(pointSet, style);
         }
 
+        auto Luminance(const FColor &color) -> DevFloat {
+            return (0.2126 * color.r) + (0.7152 * color.g) + (0.0722 * color.b);
+        }
+
+        auto ContrastRatio(const FColor &lhs, const FColor &rhs) -> DevFloat {
+            const auto l1 = Luminance(lhs);
+            const auto l2 = Luminance(rhs);
+            const auto bright = std::max(l1, l2);
+            const auto dark = std::min(l1, l2);
+            return (bright + 0.05) / (dark + 0.05);
+        }
+
+        auto MixColor(const FColor &lhs, const FColor &rhs, const DevFloat t) -> FColor {
+            const auto a = std::clamp(t, static_cast<DevFloat>(0.0), static_cast<DevFloat>(1.0));
+            return {
+                static_cast<float>((1.0 - a) * lhs.r + a * rhs.r),
+                static_cast<float>((1.0 - a) * lhs.g + a * rhs.g),
+                static_cast<float>((1.0 - a) * lhs.b + a * rhs.b),
+                lhs.a
+            };
+        }
+
+        auto EnsureContrastColor(const FColor &color, const FColor &background) -> FColor {
+            constexpr DevFloat MinContrast = 2.8;
+            if (ContrastRatio(color, background) >= MinContrast) return color;
+
+            const auto contrastToBlack = ContrastRatio(Black, background);
+            const auto contrastToWhite = ContrastRatio(White, background);
+            const auto target = contrastToWhite >= contrastToBlack ? White : Black;
+
+            FColor candidate = color;
+            for (int i = 1; i <= 10; ++i) {
+                candidate = MixColor(color, target, static_cast<DevFloat>(i) / 10.0);
+                if (ContrastRatio(candidate, background) >= MinContrast) {
+                    return candidate;
+                }
+            }
+
+            return MixColor(color, target, 0.85);
+        }
+
+        auto EnsureContrastStyle(PlotStyle style, const FColor &background) -> PlotStyle {
+            style.lineColor = EnsureContrastColor(style.lineColor, background);
+            return style;
+        }
+
+        auto ResolveBackgroundColor(const FPlotFrameContextV2 &frame,
+                                    const FPlotDrawListV2 &drawList,
+                                    const GraphTheme_ptr &theme) -> FColor {
+            auto color = theme != nullptr ? theme->graphBackground : Black;
+
+            for (const auto &command : drawList.GetCommands()) {
+                const auto *rectangle = std::get_if<FRectangleCommandV2>(&command);
+                if (rectangle == nullptr) continue;
+                if (!rectangle->bFilled || rectangle->CoordinateSpace != EPlotCoordinateSpaceV2::Plot) continue;
+                if (rectangle->Rectangle == frame.PlotRegion) {
+                    color = rectangle->Color;
+                    break;
+                }
+            }
+
+            return color;
+        }
+
         auto DrawRectangle(const FRectangleCommandV2 &command) -> void {
             const auto &rect = command.Rectangle;
 
@@ -100,7 +165,8 @@ namespace Slab::Graphics::Plot2D::V2 {
 
         auto DrawLegendEntries(const Vector<FLegendEntryV2> &entries,
                                const RectI &screenViewport,
-                               const TPointer<FWriter> &writer) -> void {
+                               const TPointer<FWriter> &writer,
+                               const FColor &plotBackgroundColor) -> void {
             if (entries.empty() || writer == nullptr) return;
 
             const auto fontHeight = std::max<DevFloat>(10.0, writer->GetFontHeightInPixels());
@@ -128,7 +194,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                 const auto &entry = entries[i];
                 const auto y = y0 + boxHeight - padding - (rowHeight * (static_cast<DevFloat>(i) + 0.5));
 
-                auto sampleStyle = entry.Style;
+                auto sampleStyle = EnsureContrastStyle(entry.Style, plotBackgroundColor);
                 if (sampleStyle.getPrimitive() == LinePrimitive::Points) {
                     sampleStyle.setPrimitive(LinePrimitive::LineStrip);
                 }
@@ -143,7 +209,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                 writer->Write(
                     entry.Label,
                     {x0 + padding + sampleWidth + sampleGap, y + 0.28 * fontHeight},
-                    entry.Style.lineColor);
+                    sampleStyle.lineColor);
             }
 
             OpenGL::FTexture::Deactivate();
@@ -161,6 +227,7 @@ namespace Slab::Graphics::Plot2D::V2 {
         const auto screenViewport = ResolveScreenViewport(frame);
         auto theme = FPlotThemeManager::GetCurrent();
         auto writer = theme != nullptr ? theme->LabelsWriter : nullptr;
+        const auto plotBackgroundColor = ResolveBackgroundColor(frame, drawList, theme);
 
         OpenGL::Legacy::FShaderGuard guard{};
         OpenGL::Legacy::PushScene();
@@ -171,7 +238,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                 SetupProjection(command.CoordinateSpace, frame, screenViewport);
 
                 if constexpr (std::is_same_v<TCommand, FPolylineCommandV2>) {
-                    auto style = command.Style;
+                    auto style = EnsureContrastStyle(command.Style, plotBackgroundColor);
                     if (command.bClosed && style.getPrimitive() == LinePrimitive::LineStrip) {
                         style.setPrimitive(LinePrimitive::LineLoop);
                     }
@@ -180,7 +247,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                     }
                     EmitPointSet(command.Points, style);
                 } else if constexpr (std::is_same_v<TCommand, FPointSetCommandV2>) {
-                    EmitPointSet(command.Points, command.Style);
+                    EmitPointSet(command.Points, EnsureContrastStyle(command.Style, plotBackgroundColor));
                 } else if constexpr (std::is_same_v<TCommand, FRectangleCommandV2>) {
                     DrawRectangle(command);
                 } else if constexpr (std::is_same_v<TCommand, FTextCommandV2>) {
@@ -195,7 +262,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                 writer->Reshape(screenViewport.GetWidth(), screenViewport.GetHeight());
                 writer->ResetTransforms();
             }
-            DrawLegendEntries(drawList.GetLegendEntries(), screenViewport, writer);
+            DrawLegendEntries(drawList.GetLegendEntries(), screenViewport, writer, plotBackgroundColor);
         }
 
         OpenGL::Legacy::PopScene();
