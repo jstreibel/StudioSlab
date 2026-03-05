@@ -1,13 +1,88 @@
 #include "RtoRFunctionArtistV2.h"
 
 #include "Core/Reflection/V2/ReflectionCodecsV2.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/NativeFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
 #include <algorithm>
+#include <cctype>
 #include <limits>
 
 namespace Slab::Graphics::Plot2D::V2 {
 
     namespace ReflectionV2 = Slab::Core::Reflection::V2;
+
+    namespace {
+
+        auto ToLowerAscii(Slab::Str value) -> Slab::Str {
+            for (auto &ch : value) ch = static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
+            return value;
+        }
+
+        auto RemoveAsciiSpaces(Slab::Str value) -> Slab::Str {
+            value.erase(std::remove_if(value.begin(), value.end(), [](const char ch) {
+                return std::isspace(static_cast<unsigned char>(ch)) != 0;
+            }), value.end());
+            return value;
+        }
+
+        auto TryParseDomainInput(const Slab::Str &encoded,
+                                 Slab::DevFloat &outXMin,
+                                 Slab::DevFloat &outXMax,
+                                 Slab::Str &outError) -> bool {
+            const auto commaPos = encoded.find(',');
+            if (commaPos != Slab::Str::npos) {
+                try {
+                    const auto left = encoded.substr(0, commaPos);
+                    const auto right = encoded.substr(commaPos + 1);
+                    outXMin = std::stod(left);
+                    outXMax = std::stod(right);
+                    return true;
+                } catch (const std::exception &e) {
+                    outError = Slab::Str("Failed to parse domain as 'x_min,x_max': ") + e.what();
+                    return false;
+                }
+            }
+
+            ReflectionV2::FFunctionDescriptorV2 descriptor;
+            if (!ReflectionV2::DecodeFunctionDescriptorCLI(encoded, descriptor, &outError)) return false;
+            outXMin = descriptor.DomainMin;
+            outXMax = descriptor.DomainMax;
+            return true;
+        }
+
+        auto BuildFunctionFromDescriptor(const ReflectionV2::FFunctionDescriptorV2 &descriptor,
+                                         Slab::Str &outError) -> Slab::Math::RtoR::Function_ptr {
+            const auto family = ToLowerAscii(descriptor.Family);
+            const auto expr = RemoveAsciiSpaces(ToLowerAscii(descriptor.Expression));
+
+            if (expr == "sin(x)" || expr == "sin" || family == "sine") {
+                return Slab::New<Slab::Math::RtoR::FSine>(1.0, 1.0);
+            }
+            if (expr == "cos(x)" || expr == "cos" || family == "cosine") {
+                return Slab::New<Slab::Math::RtoR::FCosine>(1.0, 1.0);
+            }
+            if (expr == "x" || family == "identity") {
+                return Slab::New<Slab::Math::RtoR::NativeFunction>([](const Slab::DevFloat x) -> Slab::DevFloat {
+                    return x;
+                });
+            }
+            if (expr == "x^2" || expr == "x*x") {
+                return Slab::New<Slab::Math::RtoR::NativeFunction>([](const Slab::DevFloat x) -> Slab::DevFloat {
+                    return x * x;
+                });
+            }
+            if (expr == "0" || expr == "zero" || expr == "null" || family == "null") {
+                return Slab::New<Slab::Math::RtoR::NullFunction>();
+            }
+
+            outError =
+                "Unsupported function descriptor. Supported expressions: sin(x), cos(x), x, x^2, 0.";
+            return nullptr;
+        }
+
+    } // namespace
 
     FRtoRFunctionArtistV2::FRtoRFunctionArtistV2(Math::RtoR::Function_ptr function,
                                                  PlotStyle style,
@@ -118,6 +193,119 @@ namespace Slab::Graphics::Plot2D::V2 {
             return ReflectionV2::FOperationResultV2::Ok(std::move(output));
         };
         operations.push_back(std::move(doubleSampleCount));
+
+        FOperationSchemaV2 setDomain;
+        setDomain.OperationId = CPlotOperationIdCommandArtistSetDomainV2;
+        setDomain.DisplayName = "Set Domain";
+        setDomain.Description =
+            "Set x-domain bounds. Input 'value' accepts 'x_min,x_max' or descriptor fields "
+            "'domain_min=...;domain_max=...'.";
+        setDomain.Kind = ReflectionV2::EOperationKind::Command;
+        setDomain.ThreadAffinity = ReflectionV2::EThreadAffinity::Any;
+        setDomain.RunStatePolicy = ReflectionV2::ERunStatePolicy::Any;
+        setDomain.SideEffectClass = ReflectionV2::ESideEffectClass::LocalState;
+        setDomain.Inputs = {
+            ReflectionV2::FOperationFieldSchemaV2{
+                "value",
+                "Domain Value",
+                "Domain payload encoded as 'x_min,x_max' or descriptor fields with domain_min/domain_max.",
+                ReflectionV2::CTypeIdScalarString,
+                true
+            }
+        };
+        setDomain.InvokeHandler = [this](const ReflectionV2::FValueMapV2 &inputs,
+                                         const ReflectionV2::FInvocationContextV2 &) {
+            const auto valueIt = inputs.find("value");
+            if (valueIt == inputs.end()) {
+                return ReflectionV2::FOperationResultV2::Error(
+                    "reflection.operation.missing_input",
+                    "Missing required input 'value'.");
+            }
+
+            DevFloat xMin = 0.0;
+            DevFloat xMax = 0.0;
+            Str parseError;
+            if (!TryParseDomainInput(valueIt->second.Encoded, xMin, xMax, parseError)) {
+                return ReflectionV2::FOperationResultV2::Error(
+                    "plot2d_v2.operation.parse_domain",
+                    "Could not parse domain payload: " + parseError);
+            }
+
+            SetDomain(xMin, xMax);
+
+            ReflectionV2::FValueMapV2 output;
+            output["artist_id"] = ReflectionV2::MakeStringValue(GetArtistId());
+            output["domain_x_min"] = ReflectionV2::MakeFloatValue(GetDomainXMin());
+            output["domain_x_max"] = ReflectionV2::MakeFloatValue(GetDomainXMax());
+            return ReflectionV2::FOperationResultV2::Ok(std::move(output));
+        };
+        operations.push_back(std::move(setDomain));
+
+        FOperationSchemaV2 setFunction;
+        setFunction.OperationId = CPlotOperationIdCommandArtistSetFunctionV2;
+        setFunction.DisplayName = "Set Function";
+        setFunction.Description =
+            "Set function from descriptor in input 'value' (family/expr/domain). "
+            "Also applies descriptor domain bounds.";
+        setFunction.Kind = ReflectionV2::EOperationKind::Command;
+        setFunction.ThreadAffinity = ReflectionV2::EThreadAffinity::Any;
+        setFunction.RunStatePolicy = ReflectionV2::ERunStatePolicy::Any;
+        setFunction.SideEffectClass = ReflectionV2::ESideEffectClass::LocalState;
+        setFunction.Inputs = {
+            ReflectionV2::FOperationFieldSchemaV2{
+                "value",
+                "Function Descriptor",
+                "Encoded function descriptor. Example: family=analytic;expr=sin(x);domain_min=-3.14;domain_max=3.14",
+                ReflectionV2::CTypeIdFunctionRtoR,
+                true
+            }
+        };
+        setFunction.InvokeHandler = [this](const ReflectionV2::FValueMapV2 &inputs,
+                                           const ReflectionV2::FInvocationContextV2 &) {
+            const auto valueIt = inputs.find("value");
+            if (valueIt == inputs.end()) {
+                return ReflectionV2::FOperationResultV2::Error(
+                    "reflection.operation.missing_input",
+                    "Missing required input 'value'.");
+            }
+
+            const auto &value = valueIt->second;
+            if (!value.TypeId.empty() &&
+                value.TypeId != ReflectionV2::CTypeIdFunctionRtoR &&
+                value.TypeId != ReflectionV2::CTypeIdScalarString) {
+                return ReflectionV2::FOperationResultV2::Error(
+                    "plot2d_v2.operation.type_mismatch",
+                    "Set Function expects type '" + Str(ReflectionV2::CTypeIdFunctionRtoR) + "' or scalar string.");
+            }
+
+            ReflectionV2::FFunctionDescriptorV2 descriptor;
+            Str decodeError;
+            if (!ReflectionV2::DecodeFunctionDescriptorCLI(value.Encoded, descriptor, &decodeError)) {
+                return ReflectionV2::FOperationResultV2::Error(
+                    "plot2d_v2.operation.decode_function_descriptor",
+                    "Could not decode function descriptor: " + decodeError);
+            }
+
+            Str functionError;
+            auto function = BuildFunctionFromDescriptor(descriptor, functionError);
+            if (function == nullptr) {
+                return ReflectionV2::FOperationResultV2::Error(
+                    "plot2d_v2.operation.unsupported_function",
+                    functionError);
+            }
+
+            SetFunction(std::move(function));
+            SetDomain(descriptor.DomainMin, descriptor.DomainMax);
+
+            ReflectionV2::FValueMapV2 output;
+            output["artist_id"] = ReflectionV2::MakeStringValue(GetArtistId());
+            output["function_family"] = ReflectionV2::MakeStringValue(descriptor.Family);
+            output["function_expr"] = ReflectionV2::MakeStringValue(descriptor.Expression);
+            output["domain_x_min"] = ReflectionV2::MakeFloatValue(GetDomainXMin());
+            output["domain_x_max"] = ReflectionV2::MakeFloatValue(GetDomainXMax());
+            return ReflectionV2::FOperationResultV2::Ok(std::move(output));
+        };
+        operations.push_back(std::move(setFunction));
 
         return operations;
     }

@@ -19,6 +19,8 @@ namespace Slab::Graphics::Plot2D::V2 {
     inline constexpr auto CPlotOperationIdCommandSetParameterV2 = "command.parameter.set";
     inline constexpr auto CPlotOperationIdCommandApplyPendingV2 = "command.parameter.apply_pending";
     inline constexpr auto CPlotOperationIdCommandArtistDoubleSampleCountV2 = "command.artist.double_sample_count";
+    inline constexpr auto CPlotOperationIdCommandArtistSetDomainV2 = "command.artist.set_domain";
+    inline constexpr auto CPlotOperationIdCommandArtistSetFunctionV2 = "command.artist.set_function";
 
     struct FPlotReflectionParameterBindingV2 {
         FParameterSchemaV2 Schema;

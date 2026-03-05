@@ -199,6 +199,40 @@ TEST_CASE("Plot2D V2 reflection catalog supports query and set", "[Plot2DV2][Ref
     REQUIRE(doubleSamplesResult.IsOk());
     REQUIRE(doubleSamplesResult.OutputMap.at("sample_count").Encoded == "32");
     REQUIRE(function->GetSampleCount() == 32);
+
+    ReflectionV2::FFunctionDescriptorV2 setFunctionDescriptor;
+    setFunctionDescriptor.Family = "analytic";
+    setFunctionDescriptor.Expression = "cos(x)";
+    setFunctionDescriptor.DomainMin = -2.25;
+    setFunctionDescriptor.DomainMax = 2.75;
+
+    ReflectionV2::FValueMapV2 setFunctionInputs;
+    setFunctionInputs["value"] = ReflectionV2::MakeEncodedValue(
+        ReflectionV2::CTypeIdFunctionRtoR,
+        ReflectionV2::EncodeFunctionDescriptorCLI(setFunctionDescriptor));
+
+    const auto setFunctionResult = catalog.Invoke(
+        functionArtistInterfaceId,
+        CPlotOperationIdCommandArtistSetFunctionV2,
+        setFunctionInputs,
+        context);
+    REQUIRE(setFunctionResult.IsOk());
+    REQUIRE(function->GetFunction() != nullptr);
+    REQUIRE((*function->GetFunction())(0.0) == Catch::Approx(1.0));
+    REQUIRE(function->GetDomainXMin() == Catch::Approx(-2.25));
+    REQUIRE(function->GetDomainXMax() == Catch::Approx(2.75));
+
+    ReflectionV2::FValueMapV2 setDomainInputs;
+    setDomainInputs["value"] = ReflectionV2::MakeStringValue("-4.5,4.25");
+
+    const auto setDomainResult = catalog.Invoke(
+        functionArtistInterfaceId,
+        CPlotOperationIdCommandArtistSetDomainV2,
+        setDomainInputs,
+        context);
+    REQUIRE(setDomainResult.IsOk());
+    REQUIRE(function->GetDomainXMin() == Catch::Approx(-4.5));
+    REQUIRE(function->GetDomainXMax() == Catch::Approx(4.25));
 }
 
 TEST_CASE("Plot2D V2 background and axis artists emit baseline visual commands", "[Plot2DV2]") {
