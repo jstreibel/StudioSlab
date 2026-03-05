@@ -423,10 +423,56 @@ FLabV2WindowManager::FLabV2WindowManager()
         [this](const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) { QueueSlabWindow(window); },
         [this]() { RequestSimulationLauncherVisible(); });
 
+    LegacyCatalogSourceId = "labv2.catalog.legacy";
+    PlotCatalogSourceId = "labv2.catalog.plots";
+    auto &catalogRegistry = Slab::Core::Reflection::V2::FReflectionCatalogRegistryV2::Get();
+    catalogRegistry.RegisterSource(Slab::Core::Reflection::V2::FReflectionCatalogSourceBindingV2{
+        .SourceId = LegacyCatalogSourceId,
+        .DisplayName = "Legacy Interfaces",
+        .Description = "Legacy CLI/interface reflection adapter.",
+        .Refresh = [this] { ReflectionAdapter.RefreshFromLegacyInterfaces(); },
+        .GetCatalog = [this]() -> const Slab::Core::Reflection::V2::FReflectionCatalogV2 & {
+            return ReflectionAdapter.GetCatalog();
+        },
+        .Invoke = [this](const Slab::Str &interfaceId,
+                         const Slab::Str &operationId,
+                         const Slab::Core::Reflection::V2::FValueMapV2 &inputs,
+                         const Slab::Core::Reflection::V2::FInvocationContextV2 &context) {
+            return ReflectionAdapter.Invoke(interfaceId, operationId, inputs, context);
+        },
+        .EncodeCurrentParameterValue = [this](const Slab::Str &interfaceId, const Slab::Str &parameterId) {
+            return ReflectionAdapter.EncodeCurrentParameterValue(interfaceId, parameterId);
+        }
+    });
+    catalogRegistry.RegisterSource(Slab::Core::Reflection::V2::FReflectionCatalogSourceBindingV2{
+        .SourceId = PlotCatalogSourceId,
+        .DisplayName = "Plot Reflection",
+        .Description = "Plot2D V2 and legacy plot reflection catalog.",
+        .Refresh = [this] { PlotReflectionAdapter.RefreshFromLiveWindows(); },
+        .GetCatalog = [this]() -> const Slab::Core::Reflection::V2::FReflectionCatalogV2 & {
+            return PlotReflectionAdapter.GetCatalog();
+        },
+        .Invoke = [this](const Slab::Str &interfaceId,
+                         const Slab::Str &operationId,
+                         const Slab::Core::Reflection::V2::FValueMapV2 &inputs,
+                         const Slab::Core::Reflection::V2::FInvocationContextV2 &context) {
+            return PlotReflectionAdapter.Invoke(interfaceId, operationId, inputs, context);
+        },
+        .EncodeCurrentParameterValue = [this](const Slab::Str &interfaceId, const Slab::Str &parameterId) {
+            return PlotReflectionAdapter.EncodeCurrentParameterValue(interfaceId, parameterId);
+        }
+    });
+
     AddResponder(ImGuiContext);
     LoadWorkspacePanelVisibility(ActiveWorkspace);
 
     // No default monitor window; monitors are attached per simulation on demand.
+}
+
+FLabV2WindowManager::~FLabV2WindowManager() {
+    auto &catalogRegistry = Slab::Core::Reflection::V2::FReflectionCatalogRegistryV2::Get();
+    if (!LegacyCatalogSourceId.empty()) catalogRegistry.UnregisterSource(LegacyCatalogSourceId);
+    if (!PlotCatalogSourceId.empty()) catalogRegistry.UnregisterSource(PlotCatalogSourceId);
 }
 
 void FLabV2WindowManager::AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) {
@@ -738,8 +784,11 @@ auto FLabV2WindowManager::BuildPlotParameterDraftKey(const Slab::Str &interfaceI
 auto FLabV2WindowManager::SyncPlotWorkspaceWindows() -> void {
     using namespace Slab::Core::Reflection::V2;
 
-    PlotReflectionAdapter.RefreshFromLiveWindows();
-    const auto &catalog = PlotReflectionAdapter.GetCatalog();
+    auto &catalogRegistry = Slab::Core::Reflection::V2::FReflectionCatalogRegistryV2::Get();
+    (void) catalogRegistry.RefreshSource(PlotCatalogSourceId);
+    const auto *catalogPtr = catalogRegistry.GetCatalog(PlotCatalogSourceId);
+    if (catalogPtr == nullptr) return;
+    const auto &catalog = *catalogPtr;
 
     std::map<Slab::Str, Slab::Str> discoveredV2Windows;
     for (const auto &interfaceSchema : catalog.Interfaces) {
@@ -777,10 +826,9 @@ auto FLabV2WindowManager::SyncPlotWorkspaceWindows() -> void {
     }
 }
 
-auto FLabV2WindowManager::EnsureSchemeSelectionIsValid() -> void {
+auto FLabV2WindowManager::EnsureSchemeSelectionIsValid(const Slab::Core::Reflection::V2::FReflectionCatalogV2 &catalog) -> void {
     using namespace Slab::Core::Reflection::V2;
 
-    const auto &catalog = ReflectionAdapter.GetCatalog();
     if (catalog.Interfaces.empty()) {
         SelectedSchemeInterfaceId.clear();
         SelectedSchemeParameterId.clear();
@@ -809,7 +857,7 @@ auto FLabV2WindowManager::EnsureSchemeSelectionIsValid() -> void {
 
     const auto draftKey = BuildSchemeParameterDraftKey(interfaceSchema->InterfaceId, parameterSchema->ParameterId);
     if (!SchemeParameterDraftByKey.contains(draftKey)) {
-        if (const auto current = ReflectionAdapter.EncodeCurrentParameterValue(
+        if (const auto current = Slab::Core::Reflection::V2::FReflectionCatalogRegistryV2::Get().EncodeCurrentParameterValue(
                 interfaceSchema->InterfaceId,
                 parameterSchema->ParameterId); current.has_value()) {
             SchemeParameterDraftByKey[draftKey] = current->Encoded;
@@ -902,9 +950,16 @@ auto FLabV2WindowManager::InvokeSelectedSchemeOperation(
     using namespace Slab::Core::Reflection::V2;
 
     FValueMapV2 inputs;
-    const bool bNeedsParameterSelection =
-        operationId == COperationIdQueryGetParameter ||
-        operationId == COperationIdCommandSetParameter;
+    const auto *operationSchema = FindOperationById(interfaceSchema, operationId);
+    const auto hasRequiredInput = [operationSchema](const Slab::Str &fieldId) -> bool {
+        if (operationSchema == nullptr) return false;
+        return std::any_of(operationSchema->Inputs.begin(), operationSchema->Inputs.end(), [&](const auto &field) {
+            return field.bRequired && field.FieldId == fieldId;
+        });
+    };
+
+    const bool bNeedsParameterSelection = hasRequiredInput("parameter_id");
+    const bool bNeedsValueInput = hasRequiredInput("value");
 
     if (bNeedsParameterSelection) {
         if (SelectedSchemeParameterId.empty()) {
@@ -918,7 +973,15 @@ auto FLabV2WindowManager::InvokeSelectedSchemeOperation(
         inputs["parameter_id"] = MakeStringValue(SelectedSchemeParameterId);
     }
 
-    if (operationId == COperationIdCommandSetParameter) {
+    if (bNeedsValueInput) {
+        if (SelectedSchemeParameterId.empty()) {
+            const auto missingParameterResult = FOperationResultV2::Error(
+                "reflection.parameter.required",
+                "Select a parameter before setting an encoded value.");
+            ApplySchemeOperationResult(interfaceSchema.InterfaceId, operationId, missingParameterResult);
+            return;
+        }
+
         const auto *parameterSchema = FindParameterById(interfaceSchema, SelectedSchemeParameterId);
         if (parameterSchema == nullptr) {
             const auto missingParameterResult = FOperationResultV2::Error(
@@ -934,7 +997,11 @@ auto FLabV2WindowManager::InvokeSelectedSchemeOperation(
         inputs["value"] = FReflectionValueV2(parameterSchema->TypeId, draft);
     }
 
-    const auto result = ReflectionAdapter.Invoke(interfaceSchema.InterfaceId, operationId, inputs, context);
+    const auto result = Slab::Core::Reflection::V2::FReflectionCatalogRegistryV2::Get().Invoke(
+        interfaceSchema.InterfaceId,
+        operationId,
+        inputs,
+        context);
     ApplySchemeOperationResult(interfaceSchema.InterfaceId, operationId, result);
 
     if (!result.IsOk()) return;
@@ -1001,17 +1068,34 @@ auto FLabV2WindowManager::InvokeSelectedPlotOperation(
 auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
     using namespace Slab::Core::Reflection::V2;
 
-    ReflectionAdapter.RefreshFromLegacyInterfaces();
-    EnsureSchemeSelectionIsValid();
-
-    const auto &catalog = ReflectionAdapter.GetCatalog();
+    auto &catalogRegistry = Slab::Core::Reflection::V2::FReflectionCatalogRegistryV2::Get();
+    catalogRegistry.RefreshAll();
+    const auto catalog = catalogRegistry.BuildMergedCatalog();
+    EnsureSchemeSelectionIsValid(catalog);
     const auto context = BuildReflectionInvocationContext();
+    const auto catalogSources = catalogRegistry.ListSources();
 
     ImGui::Text("Catalog version: %s", catalog.CatalogVersion.c_str());
     ImGui::SameLine();
     ImGui::TextDisabled("| interfaces: %zu", catalog.Interfaces.size());
     ImGui::SameLine();
+    ImGui::TextDisabled("| catalogs: %zu", catalogSources.size());
+    ImGui::SameLine();
     ImGui::TextDisabled("| runtime: %s", context.bRuntimeRunning ? "running" : "stopped");
+
+    if (!catalogSources.empty() && ImGui::TreeNodeEx("Catalog Sources", ImGuiTreeNodeFlags_DefaultOpen)) {
+        for (const auto &source : catalogSources) {
+            ImGui::BulletText(
+                "%s (%s) - %zu interfaces",
+                source.DisplayName.c_str(),
+                source.SourceId.c_str(),
+                source.InterfaceCount);
+            if (!source.Description.empty()) {
+                ImGui::TextDisabled("%s", source.Description.c_str());
+            }
+        }
+        ImGui::TreePop();
+    }
 
     if (!SchemesLastOperationSummary.empty()) {
         if (!SchemesLastOperationSummary.starts_with("[Ok]")) {
@@ -1051,13 +1135,17 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
                 if (ImGui::Selectable(interfaceSchema.DisplayName.c_str(), bSelected)) {
                     SelectedSchemeInterfaceId = interfaceSchema.InterfaceId;
                     SelectedSchemeParameterId.clear();
-                    EnsureSchemeSelectionIsValid();
+                    EnsureSchemeSelectionIsValid(catalog);
                 }
 
                 ImGui::SameLine();
                 ImGui::TextDisabled("%s", interfaceSchema.InterfaceId.c_str());
                 if (!interfaceSchema.Description.empty()) {
                     ImGui::TextDisabled("%s", TruncateLabel(interfaceSchema.Description).c_str());
+                }
+                if (const auto source = catalogRegistry.FindSourceForInterface(interfaceSchema.InterfaceId);
+                    source.has_value()) {
+                    ImGui::TextDisabled("catalog: %s", source->DisplayName.c_str());
                 }
                 ImGui::PopID();
             }
@@ -1072,15 +1160,22 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
             } else {
                 ImGui::TextUnformatted(interfaceSchema->DisplayName.c_str());
                 ImGui::TextDisabled("%s", interfaceSchema->InterfaceId.c_str());
+                if (const auto source = catalogRegistry.FindSourceForInterface(interfaceSchema->InterfaceId);
+                    source.has_value()) {
+                    ImGui::TextDisabled("Catalog: %s (%s)", source->DisplayName.c_str(), source->SourceId.c_str());
+                }
                 if (!interfaceSchema->Description.empty()) {
                     ImGui::TextWrapped("%s", interfaceSchema->Description.c_str());
                 }
 
                 ImGui::SeparatorText("Operations");
                 for (const auto &operation : interfaceSchema->Operations) {
-                    const bool bNeedsParameterSelection =
-                        operation.OperationId == COperationIdQueryGetParameter ||
-                        operation.OperationId == COperationIdCommandSetParameter;
+                    const bool bNeedsParameterSelection = std::any_of(
+                        operation.Inputs.begin(),
+                        operation.Inputs.end(),
+                        [](const auto &input) {
+                            return input.bRequired && input.FieldId == "parameter_id";
+                        });
                     const bool bCanInvoke = !bNeedsParameterSelection || !SelectedSchemeParameterId.empty();
 
                     ImGui::PushID(operation.OperationId.c_str());
@@ -1126,7 +1221,7 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
                                     interfaceSchema->InterfaceId,
                                     SelectedSchemeParameterId);
                                 if (!SchemeParameterDraftByKey.contains(draftKey)) {
-                                    if (const auto liveValue = ReflectionAdapter.EncodeCurrentParameterValue(
+                                    if (const auto liveValue = catalogRegistry.EncodeCurrentParameterValue(
                                             interfaceSchema->InterfaceId,
                                             SelectedSchemeParameterId); liveValue.has_value()) {
                                         SchemeParameterDraftByKey[draftKey] = liveValue->Encoded;
@@ -1140,7 +1235,7 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
                             ImGui::TableSetColumnIndex(2);
                             ImGui::TextUnformatted(ToString(parameterSchema.Mutability));
                             ImGui::TableSetColumnIndex(3);
-                            if (const auto liveValue = ReflectionAdapter.EncodeCurrentParameterValue(
+                            if (const auto liveValue = catalogRegistry.EncodeCurrentParameterValue(
                                     interfaceSchema->InterfaceId,
                                     parameterSchema.ParameterId); liveValue.has_value()) {
                                 ImGui::TextWrapped("%s", liveValue->Encoded.c_str());
@@ -1170,6 +1265,18 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
                             interfaceSchema->InterfaceId,
                             selectedParameterSchema->ParameterId);
                         auto &draft = SchemeParameterDraftByKey[draftKey];
+                        const auto resolveOperationId = [interfaceSchema](const Slab::Str &primary,
+                                                                          const Slab::Str &alternate) -> Slab::Str {
+                            if (FindOperationById(*interfaceSchema, primary) != nullptr) return primary;
+                            if (FindOperationById(*interfaceSchema, alternate) != nullptr) return alternate;
+                            return {};
+                        };
+                        const auto setOperationId = resolveOperationId(
+                            COperationIdCommandSetParameter,
+                            Slab::Graphics::Plot2D::V2::CPlotOperationIdCommandSetParameterV2);
+                        const auto applyOperationId = resolveOperationId(
+                            COperationIdCommandApplyPending,
+                            Slab::Graphics::Plot2D::V2::CPlotOperationIdCommandApplyPendingV2);
 
                         if (selectedParameterSchema->TypeId == CTypeIdFunctionRtoR) {
                             FFunctionDescriptorV2 descriptor;
@@ -1207,22 +1314,25 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
                         }
 
                         if (ImGui::Button("Load Live Value")) {
-                            if (const auto liveValue = ReflectionAdapter.EncodeCurrentParameterValue(
+                            if (const auto liveValue = catalogRegistry.EncodeCurrentParameterValue(
                                     interfaceSchema->InterfaceId,
                                     selectedParameterSchema->ParameterId); liveValue.has_value()) {
                                 draft = liveValue->Encoded;
                             }
                         }
                         ImGui::SameLine();
+                        ImGui::BeginDisabled(setOperationId.empty());
                         if (ImGui::Button("Set Parameter")) {
                             SelectedSchemeParameterId = selectedParameterSchema->ParameterId;
-                            InvokeSelectedSchemeOperation(*interfaceSchema, COperationIdCommandSetParameter, context);
+                            InvokeSelectedSchemeOperation(*interfaceSchema, setOperationId, context);
                         }
+                        ImGui::EndDisabled();
 
-                        if (selectedParameterSchema->Mutability == EParameterMutability::RestartRequired) {
+                        if (selectedParameterSchema->Mutability == EParameterMutability::RestartRequired &&
+                            !applyOperationId.empty()) {
                             ImGui::SameLine();
                             if (ImGui::Button("Apply Pending")) {
-                                InvokeSelectedSchemeOperation(*interfaceSchema, COperationIdCommandApplyPending, context);
+                                InvokeSelectedSchemeOperation(*interfaceSchema, applyOperationId, context);
                             }
                         }
                     }
@@ -1479,10 +1589,11 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         BlueprintLegendMarkerInset = 4.0f;
     }
 
-    ReflectionAdapter.RefreshFromLegacyInterfaces();
-    EnsureSchemeSelectionIsValid();
+    auto &catalogRegistry = Slab::Core::Reflection::V2::FReflectionCatalogRegistryV2::Get();
+    catalogRegistry.RefreshAll();
+    const auto catalog = catalogRegistry.BuildMergedCatalog();
+    EnsureSchemeSelectionIsValid(catalog);
 
-    const auto &catalog = ReflectionAdapter.GetCatalog();
     const auto context = BuildReflectionInvocationContext();
     if (catalog.Interfaces.empty()) {
         ImGui::TextDisabled("No interfaces available in reflection catalog.");
@@ -1786,7 +1897,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         const auto draftKey = BuildSchemeParameterDraftKey(interfaceSchema->InterfaceId, parameter.ParameterId);
         const auto draftIt = SchemeParameterDraftByKey.find(draftKey);
         const auto draftValue = draftIt != SchemeParameterDraftByKey.end() ? draftIt->second : Slab::Str{};
-        const auto liveValue = ReflectionAdapter.EncodeCurrentParameterValue(interfaceSchema->InterfaceId, parameter.ParameterId);
+        const auto liveValue = catalogRegistry.EncodeCurrentParameterValue(interfaceSchema->InterfaceId, parameter.ParameterId);
 
         Slab::Str stateLabel = "Unavailable";
         ImU32 stateColor = IM_COL32(120, 124, 136, 220);
@@ -1937,14 +2048,36 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
 
     const auto buildNodeActions = [interfaceSchema](const FGraphNode &node) -> Slab::Vector<FNodeAction> {
         using namespace Slab::Core::Reflection::V2;
+        using namespace Slab::Graphics::Plot2D::V2;
 
         Slab::Vector<FNodeAction> actions;
+        const auto hasOperation = [interfaceSchema](const Slab::Str &candidate) -> bool {
+            if (candidate.empty()) return false;
+            return FindOperationById(*interfaceSchema, candidate) != nullptr;
+        };
+        const auto selectOperationId = [&hasOperation](const Slab::Str &primary,
+                                                       const Slab::Str &alternate) -> Slab::Str {
+            if (hasOperation(primary)) return primary;
+            if (hasOperation(alternate)) return alternate;
+            return {};
+        };
+
         if (node.Kind == FGraphNode::EKind::Parameter) {
-            actions.push_back(FNodeAction{"Get", FNodeAction::EKind::Invoke, COperationIdQueryGetParameter});
-            actions.push_back(FNodeAction{"Set", FNodeAction::EKind::Invoke, COperationIdCommandSetParameter});
+            const auto getOperationId = selectOperationId(COperationIdQueryGetParameter, CPlotOperationIdQueryGetParameterV2);
+            const auto setOperationId = selectOperationId(COperationIdCommandSetParameter, CPlotOperationIdCommandSetParameterV2);
+            const auto applyOperationId = selectOperationId(COperationIdCommandApplyPending, CPlotOperationIdCommandApplyPendingV2);
+
+            if (!getOperationId.empty()) {
+                actions.push_back(FNodeAction{"Get", FNodeAction::EKind::Invoke, getOperationId});
+            }
+            if (!setOperationId.empty()) {
+                actions.push_back(FNodeAction{"Set", FNodeAction::EKind::Invoke, setOperationId});
+            }
             const auto *parameterSchema = FindParameterById(*interfaceSchema, node.RefId);
-            if (parameterSchema != nullptr && parameterSchema->Mutability == EParameterMutability::RestartRequired) {
-                actions.push_back(FNodeAction{"Apply", FNodeAction::EKind::Invoke, COperationIdCommandApplyPending});
+            if (parameterSchema != nullptr &&
+                parameterSchema->Mutability == EParameterMutability::RestartRequired &&
+                !applyOperationId.empty()) {
+                actions.push_back(FNodeAction{"Apply", FNodeAction::EKind::Invoke, applyOperationId});
             }
             actions.push_back(FNodeAction{"Copy Id", FNodeAction::EKind::CopyId, {}});
         } else if (node.Kind == FGraphNode::EKind::Query || node.Kind == FGraphNode::EKind::Command) {

@@ -7,6 +7,7 @@
 #include "Math/Data/V2/LiveDataHubV2.h"
 #include "Math/Data/V2/LiveControlHubV2.h"
 #include "Core/Reflection/V2/LegacyInterfaceAdapterV2.h"
+#include "Core/Reflection/V2/ReflectionCatalogRegistryV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionCatalogV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
 #include "imgui.h"
@@ -20,6 +21,7 @@
 class FLabV2WindowManager final : public Slab::Graphics::FWindowManager {
 public:
     explicit FLabV2WindowManager();
+    ~FLabV2WindowManager() override;
 
     void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &) override;
     void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &, bool hidden) override;
@@ -91,6 +93,8 @@ private:
     Slab::TPointer<class FSimulationManagerV2> SimulationManager;
     Slab::Core::Reflection::V2::FLegacyReflectionCatalogAdapterV2 ReflectionAdapter;
     Slab::Graphics::Plot2D::V2::FPlotReflectionCatalogV2 PlotReflectionAdapter;
+    Slab::Str LegacyCatalogSourceId;
+    Slab::Str PlotCatalogSourceId;
     Slab::Vector<Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr> PlotWindowsV2;
     std::map<Slab::Str, FSlabWindowPtr> PlotWindowHostsByWindowId;
     std::size_t BlueprintPlotWindowCreateCount = 0;
@@ -223,7 +227,7 @@ private:
     [[nodiscard]] auto BuildReflectionInvocationContext() const -> Slab::Core::Reflection::V2::FInvocationContextV2;
     [[nodiscard]] auto BuildSchemeParameterDraftKey(const Slab::Str &interfaceId, const Slab::Str &parameterId) const -> Slab::Str;
     [[nodiscard]] auto BuildPlotParameterDraftKey(const Slab::Str &interfaceId, const Slab::Str &parameterId) const -> Slab::Str;
-    auto EnsureSchemeSelectionIsValid() -> void;
+    auto EnsureSchemeSelectionIsValid(const Slab::Core::Reflection::V2::FReflectionCatalogV2 &catalog) -> void;
     auto EnsurePlotSelectionIsValid() -> void;
     auto ApplySchemeOperationResult(const Slab::Str &interfaceId,
                                     const Slab::Str &operationId,
