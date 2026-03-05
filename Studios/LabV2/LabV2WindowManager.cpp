@@ -1018,12 +1018,18 @@ auto FLabV2WindowManager::InvokeSelectedPlotOperation(
     const Slab::Str &operationId,
     const Slab::Core::Reflection::V2::FInvocationContextV2 &context) -> void {
     using namespace Slab::Core::Reflection::V2;
-    using namespace Slab::Graphics::Plot2D::V2;
 
     FValueMapV2 inputs;
-    const bool bNeedsParameterSelection =
-        operationId == CPlotOperationIdQueryGetParameterV2 ||
-        operationId == CPlotOperationIdCommandSetParameterV2;
+    const auto *operationSchema = FindOperationById(interfaceSchema, operationId);
+    const auto hasRequiredInput = [operationSchema](const Slab::Str &fieldId) -> bool {
+        if (operationSchema == nullptr) return false;
+        return std::any_of(operationSchema->Inputs.begin(), operationSchema->Inputs.end(), [&](const auto &field) {
+            return field.bRequired && field.FieldId == fieldId;
+        });
+    };
+
+    const bool bNeedsParameterSelection = hasRequiredInput("parameter_id");
+    const bool bNeedsValueInput = hasRequiredInput("value");
 
     if (bNeedsParameterSelection) {
         if (SelectedPlotParameterId.empty()) {
@@ -1037,7 +1043,15 @@ auto FLabV2WindowManager::InvokeSelectedPlotOperation(
         inputs["parameter_id"] = MakeStringValue(SelectedPlotParameterId);
     }
 
-    if (operationId == CPlotOperationIdCommandSetParameterV2) {
+    if (bNeedsValueInput) {
+        if (SelectedPlotParameterId.empty()) {
+            const auto missingParameterResult = FOperationResultV2::Error(
+                "reflection.parameter.required",
+                "Select a parameter before setting an encoded value.");
+            ApplyPlotOperationResult(interfaceSchema.InterfaceId, operationId, missingParameterResult);
+            return;
+        }
+
         const auto *parameterSchema = FindParameterById(interfaceSchema, SelectedPlotParameterId);
         if (parameterSchema == nullptr) {
             const auto missingParameterResult = FOperationResultV2::Error(
@@ -1217,13 +1231,50 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
 
                 ImGui::SeparatorText("Operations");
                 for (const auto &operation : interfaceSchema->Operations) {
+                    const auto isBuiltinRequiredInput = [](const Slab::Str &fieldId) -> bool {
+                        return fieldId == "parameter_id" || fieldId == "value";
+                    };
                     const bool bNeedsParameterSelection = std::any_of(
                         operation.Inputs.begin(),
                         operation.Inputs.end(),
                         [](const auto &input) {
                             return input.bRequired && input.FieldId == "parameter_id";
                         });
-                    const bool bCanInvoke = !bNeedsParameterSelection || !SelectedSchemeParameterId.empty();
+                    const bool bNeedsValueInput = std::any_of(
+                        operation.Inputs.begin(),
+                        operation.Inputs.end(),
+                        [](const auto &input) {
+                            return input.bRequired && input.FieldId == "value";
+                        });
+                    const bool bHasNonBuiltinRequiredInput = std::any_of(
+                        operation.Inputs.begin(),
+                        operation.Inputs.end(),
+                        [&](const auto &input) {
+                            return input.bRequired && !isBuiltinRequiredInput(input.FieldId);
+                        });
+
+                    bool bCanInvoke = !bHasNonBuiltinRequiredInput;
+                    if (bNeedsParameterSelection || bNeedsValueInput) {
+                        bCanInvoke = bCanInvoke && !SelectedSchemeParameterId.empty();
+                    }
+
+                    const bool bShowsBuiltinInputFields = !bHasNonBuiltinRequiredInput &&
+                        std::any_of(operation.Inputs.begin(), operation.Inputs.end(), [&](const auto &input) {
+                            return input.bRequired && isBuiltinRequiredInput(input.FieldId);
+                        });
+
+                    if (bShowsBuiltinInputFields && !SelectedSchemeParameterId.empty()) {
+                        const auto draftKey = BuildSchemeParameterDraftKey(interfaceSchema->InterfaceId, SelectedSchemeParameterId);
+                        if (!SchemeParameterDraftByKey.contains(draftKey)) {
+                            if (const auto liveValue = catalogRegistry.EncodeCurrentParameterValue(
+                                    interfaceSchema->InterfaceId,
+                                    SelectedSchemeParameterId); liveValue.has_value()) {
+                                SchemeParameterDraftByKey[draftKey] = liveValue->Encoded;
+                            } else {
+                                SchemeParameterDraftByKey[draftKey] = "";
+                            }
+                        }
+                    }
 
                     ImGui::PushID(operation.OperationId.c_str());
                     ImGui::BeginDisabled(!bCanInvoke);
@@ -1245,6 +1296,72 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
                         ImGui::TextUnformatted(operation.Description.c_str());
                         ImGui::PopTextWrapPos();
                         ImGui::EndTooltip();
+                    }
+
+                    if (bHasNonBuiltinRequiredInput) {
+                        ImGui::SameLine();
+                        ImGui::TextDisabled("requires non-builtin input");
+                    }
+
+                    if (bShowsBuiltinInputFields) {
+                        ImGui::Indent();
+                        if (bNeedsParameterSelection) {
+                            const char *preview = SelectedSchemeParameterId.empty()
+                                ? "<select parameter_id>"
+                                : SelectedSchemeParameterId.c_str();
+                            ImGui::SetNextItemWidth(260.0f);
+                            if (ImGui::BeginCombo("parameter_id", preview)) {
+                                for (const auto &parameter : interfaceSchema->Parameters) {
+                                    const bool bSelectedParameter = parameter.ParameterId == SelectedSchemeParameterId;
+                                    if (ImGui::Selectable(parameter.ParameterId.c_str(), bSelectedParameter)) {
+                                        SelectedSchemeParameterId = parameter.ParameterId;
+                                        const auto draftKey = BuildSchemeParameterDraftKey(
+                                            interfaceSchema->InterfaceId,
+                                            SelectedSchemeParameterId);
+                                        if (!SchemeParameterDraftByKey.contains(draftKey)) {
+                                            if (const auto liveValue = catalogRegistry.EncodeCurrentParameterValue(
+                                                    interfaceSchema->InterfaceId,
+                                                    SelectedSchemeParameterId); liveValue.has_value()) {
+                                                SchemeParameterDraftByKey[draftKey] = liveValue->Encoded;
+                                            } else {
+                                                SchemeParameterDraftByKey[draftKey] = "";
+                                            }
+                                        }
+                                    }
+                                    if (bSelectedParameter) ImGui::SetItemDefaultFocus();
+                                }
+                                ImGui::EndCombo();
+                            }
+                        }
+
+                        if (bNeedsValueInput) {
+                            if (SelectedSchemeParameterId.empty()) {
+                                ImGui::TextDisabled("value: select parameter_id first");
+                            } else {
+                                const auto draftKey = BuildSchemeParameterDraftKey(
+                                    interfaceSchema->InterfaceId,
+                                    SelectedSchemeParameterId);
+                                auto &draft = SchemeParameterDraftByKey[draftKey];
+                                auto valueBuffer = std::vector<char>(512, '\0');
+                                if (!draft.empty()) {
+                                    std::strncpy(valueBuffer.data(), draft.c_str(), valueBuffer.size() - 1);
+                                    valueBuffer[valueBuffer.size() - 1] = '\0';
+                                }
+                                ImGui::SetNextItemWidth(320.0f);
+                                if (ImGui::InputText("value", valueBuffer.data(), valueBuffer.size())) {
+                                    draft = valueBuffer.data();
+                                }
+                                ImGui::SameLine();
+                                if (ImGui::SmallButton("Load Live")) {
+                                    if (const auto liveValue = catalogRegistry.EncodeCurrentParameterValue(
+                                            interfaceSchema->InterfaceId,
+                                            SelectedSchemeParameterId); liveValue.has_value()) {
+                                        draft = liveValue->Encoded;
+                                    }
+                                }
+                            }
+                        }
+                        ImGui::Unindent();
                     }
                     ImGui::PopID();
                 }
@@ -1492,10 +1609,50 @@ auto FLabV2WindowManager::DrawPlotsInspectorPanel() -> void {
 
                 ImGui::SeparatorText("Operations");
                 for (const auto &operation : interfaceSchema->Operations) {
-                    const bool bNeedsParameterSelection =
-                        operation.OperationId == CPlotOperationIdQueryGetParameterV2 ||
-                        operation.OperationId == CPlotOperationIdCommandSetParameterV2;
-                    const bool bCanInvoke = !bNeedsParameterSelection || !SelectedPlotParameterId.empty();
+                    const auto isBuiltinRequiredInput = [](const Slab::Str &fieldId) -> bool {
+                        return fieldId == "parameter_id" || fieldId == "value";
+                    };
+                    const bool bNeedsParameterSelection = std::any_of(
+                        operation.Inputs.begin(),
+                        operation.Inputs.end(),
+                        [](const auto &input) {
+                            return input.bRequired && input.FieldId == "parameter_id";
+                        });
+                    const bool bNeedsValueInput = std::any_of(
+                        operation.Inputs.begin(),
+                        operation.Inputs.end(),
+                        [](const auto &input) {
+                            return input.bRequired && input.FieldId == "value";
+                        });
+                    const bool bHasNonBuiltinRequiredInput = std::any_of(
+                        operation.Inputs.begin(),
+                        operation.Inputs.end(),
+                        [&](const auto &input) {
+                            return input.bRequired && !isBuiltinRequiredInput(input.FieldId);
+                        });
+
+                    bool bCanInvoke = !bHasNonBuiltinRequiredInput;
+                    if (bNeedsParameterSelection || bNeedsValueInput) {
+                        bCanInvoke = bCanInvoke && !SelectedPlotParameterId.empty();
+                    }
+
+                    const bool bShowsBuiltinInputFields = !bHasNonBuiltinRequiredInput &&
+                        std::any_of(operation.Inputs.begin(), operation.Inputs.end(), [&](const auto &input) {
+                            return input.bRequired && isBuiltinRequiredInput(input.FieldId);
+                        });
+
+                    if (bShowsBuiltinInputFields && !SelectedPlotParameterId.empty()) {
+                        const auto draftKey = BuildPlotParameterDraftKey(interfaceSchema->InterfaceId, SelectedPlotParameterId);
+                        if (!PlotParameterDraftByKey.contains(draftKey)) {
+                            if (const auto liveValue = PlotReflectionAdapter.EncodeCurrentParameterValue(
+                                    interfaceSchema->InterfaceId,
+                                    SelectedPlotParameterId); liveValue.has_value()) {
+                                PlotParameterDraftByKey[draftKey] = liveValue->Encoded;
+                            } else {
+                                PlotParameterDraftByKey[draftKey] = "";
+                            }
+                        }
+                    }
 
                     ImGui::PushID(operation.OperationId.c_str());
                     ImGui::BeginDisabled(!bCanInvoke);
@@ -1517,6 +1674,72 @@ auto FLabV2WindowManager::DrawPlotsInspectorPanel() -> void {
                         ImGui::TextUnformatted(operation.Description.c_str());
                         ImGui::PopTextWrapPos();
                         ImGui::EndTooltip();
+                    }
+
+                    if (bHasNonBuiltinRequiredInput) {
+                        ImGui::SameLine();
+                        ImGui::TextDisabled("requires non-builtin input");
+                    }
+
+                    if (bShowsBuiltinInputFields) {
+                        ImGui::Indent();
+                        if (bNeedsParameterSelection) {
+                            const char *preview = SelectedPlotParameterId.empty()
+                                ? "<select parameter_id>"
+                                : SelectedPlotParameterId.c_str();
+                            ImGui::SetNextItemWidth(260.0f);
+                            if (ImGui::BeginCombo("parameter_id", preview)) {
+                                for (const auto &parameter : interfaceSchema->Parameters) {
+                                    const bool bSelectedParameter = parameter.ParameterId == SelectedPlotParameterId;
+                                    if (ImGui::Selectable(parameter.ParameterId.c_str(), bSelectedParameter)) {
+                                        SelectedPlotParameterId = parameter.ParameterId;
+                                        const auto draftKey = BuildPlotParameterDraftKey(
+                                            interfaceSchema->InterfaceId,
+                                            SelectedPlotParameterId);
+                                        if (!PlotParameterDraftByKey.contains(draftKey)) {
+                                            if (const auto liveValue = PlotReflectionAdapter.EncodeCurrentParameterValue(
+                                                    interfaceSchema->InterfaceId,
+                                                    SelectedPlotParameterId); liveValue.has_value()) {
+                                                PlotParameterDraftByKey[draftKey] = liveValue->Encoded;
+                                            } else {
+                                                PlotParameterDraftByKey[draftKey] = "";
+                                            }
+                                        }
+                                    }
+                                    if (bSelectedParameter) ImGui::SetItemDefaultFocus();
+                                }
+                                ImGui::EndCombo();
+                            }
+                        }
+
+                        if (bNeedsValueInput) {
+                            if (SelectedPlotParameterId.empty()) {
+                                ImGui::TextDisabled("value: select parameter_id first");
+                            } else {
+                                const auto draftKey = BuildPlotParameterDraftKey(
+                                    interfaceSchema->InterfaceId,
+                                    SelectedPlotParameterId);
+                                auto &draft = PlotParameterDraftByKey[draftKey];
+                                auto valueBuffer = std::vector<char>(512, '\0');
+                                if (!draft.empty()) {
+                                    std::strncpy(valueBuffer.data(), draft.c_str(), valueBuffer.size() - 1);
+                                    valueBuffer[valueBuffer.size() - 1] = '\0';
+                                }
+                                ImGui::SetNextItemWidth(320.0f);
+                                if (ImGui::InputText("value", valueBuffer.data(), valueBuffer.size())) {
+                                    draft = valueBuffer.data();
+                                }
+                                ImGui::SameLine();
+                                if (ImGui::SmallButton("Load Live")) {
+                                    if (const auto liveValue = PlotReflectionAdapter.EncodeCurrentParameterValue(
+                                            interfaceSchema->InterfaceId,
+                                            SelectedPlotParameterId); liveValue.has_value()) {
+                                        draft = liveValue->Encoded;
+                                    }
+                                }
+                            }
+                        }
+                        ImGui::Unindent();
                     }
                     ImGui::PopID();
                 }
@@ -1797,7 +2020,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
             {"legend-command", ImVec4(146.0f / 255.0f, 124.0f / 255.0f, 72.0f / 255.0f, 1.0f), "Command", "Mutating command operation endpoint."},
             {"legend-edge-param", ImVec4(104.0f / 255.0f, 168.0f / 255.0f, 224.0f / 255.0f, 1.0f), "Param Link", "Parameter-to-interface relation."},
             {"legend-edge-op", ImVec4(116.0f / 255.0f, 214.0f / 255.0f, 174.0f / 255.0f, 1.0f), "Op Link", "Interface-to-operation relation."},
-            {"legend-prefix", ImVec4(168.0f / 255.0f, 174.0f / 255.0f, 188.0f / 255.0f, 1.0f), "Prefixes", "M=Mutability, E=Exposure, S=State, R=Run State, T=Thread, X=Side Effect, N=Node Kind."}
+            {"legend-prefix", ImVec4(168.0f / 255.0f, 174.0f / 255.0f, 188.0f / 255.0f, 1.0f), "Prefixes", "M=Mutability, E=Exposure, S=State, R=Run State, T=Thread, X=Side Effect, I=Required Inputs, N=Node Kind."}
         }};
 
         const float legendPadding = BlueprintLegendPadding;
@@ -1878,6 +2101,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         ImVec2 Size = ImVec2(360.0f, 132.0f);
         EKind Kind = EKind::Parameter;
         Slab::Str RefId;
+        int InputSocketCount = 1;
         bool bSelected = false;
     };
 
@@ -2017,6 +2241,11 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         node.SubtitleSecondary = Slab::Str(ToString(operation.Kind)) + " | run=" + ToCompactRunStateLabel(operation.RunStatePolicy) +
             " | thread=" + ToCompactThreadLabel(operation.ThreadAffinity) +
             " | side=" + ToCompactSideEffectLabel(operation.SideEffectClass);
+        const auto requiredInputCount = static_cast<int>(std::count_if(
+            operation.Inputs.begin(),
+            operation.Inputs.end(),
+            [](const auto &input) { return input.bRequired; }));
+        node.InputSocketCount = std::max(1, requiredInputCount);
         node.Size = computeNodeSize(node, 340.0f, 620.0f);
         if (operation.Kind == EOperationKind::Query) {
             node.Position = findOrCreatePosition(node.Key, ImVec2(980.0f, queryLaneY));
@@ -2031,6 +2260,9 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         node.Badges.push_back({WithPolicyPrefix('R', ToCompactRunStateLabel(operation.RunStatePolicy)), IM_COL32(78, 122, 112, 220)});
         node.Badges.push_back({WithPolicyPrefix('T', ToCompactThreadLabel(operation.ThreadAffinity)), IM_COL32(86, 112, 142, 220)});
         node.Badges.push_back({WithPolicyPrefix('X', ToCompactSideEffectLabel(operation.SideEffectClass)), IM_COL32(122, 104, 88, 220)});
+        if (requiredInputCount > 0) {
+            node.Badges.push_back({WithPolicyPrefix('I', Slab::ToStr(requiredInputCount)), IM_COL32(96, 128, 186, 220)});
+        }
         nodes.push_back(node);
     }
 
@@ -2077,13 +2309,16 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     for (int i = 0; i < operationCount; ++i) {
         const auto &operationNode = *operationNodes[i];
         const auto source = pinPositionFor(root, true, i, operationCount);
-        const auto target = pinPositionFor(operationNode, false, 0, 1);
-        const auto cp1 = ImVec2(source.x + 108.0f, source.y);
-        const auto cp2 = ImVec2(target.x - 108.0f, target.y);
-        const auto edgeColor = operationNode.Kind == FGraphNode::EKind::Query
-            ? IM_COL32(116, 214, 174, 128)
-            : IM_COL32(214, 184, 116, 128);
-        drawList->AddBezierCubic(source, cp1, cp2, target, edgeColor, 1.6f);
+        const auto inputSocketCount = std::max(1, operationNode.InputSocketCount);
+        for (int socket = 0; socket < inputSocketCount; ++socket) {
+            const auto target = pinPositionFor(operationNode, false, socket, inputSocketCount);
+            const auto cp1 = ImVec2(source.x + 108.0f, source.y);
+            const auto cp2 = ImVec2(target.x - 108.0f, target.y);
+            const auto edgeColor = operationNode.Kind == FGraphNode::EKind::Query
+                ? IM_COL32(116, 214, 174, 128)
+                : IM_COL32(214, 184, 116, 128);
+            drawList->AddBezierCubic(source, cp1, cp2, target, edgeColor, 1.6f);
+        }
     }
 
     struct FNodeAction {
@@ -2536,6 +2771,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
             else if (prefix == 'R') hoveredBadgeLabel = "Run State Policy = " + value;
             else if (prefix == 'T') hoveredBadgeLabel = "Thread Affinity = " + value;
             else if (prefix == 'X') hoveredBadgeLabel = "Side Effect Class = " + value;
+            else if (prefix == 'I') hoveredBadgeLabel = "Required Inputs = " + value;
             else if (prefix == 'N') hoveredBadgeLabel = "Node Kind = " + value;
             else hoveredBadgeLabel = value;
 
@@ -2561,6 +2797,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
             else if (prefix == 'X' && value == "IO") hoveredBadgeDetail = "Side effects include IO.";
             else if (prefix == 'X' && value == "External") hoveredBadgeDetail = "Side effects include external integrations.";
             else if (prefix == 'X' && value == "None") hoveredBadgeDetail = "No side effects declared.";
+            else if (prefix == 'I') hoveredBadgeDetail = "Number of required operation inputs.";
             else if (prefix == 'N' && value == "Interface") hoveredBadgeDetail = "Interface root node.";
             else hoveredBadgeDetail = "Policy badge for " + currentNode.Title + ".";
         };
@@ -2612,11 +2849,17 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
             const auto pin = pinPositionFor(node, true, 0, 1);
             drawList->AddCircleFilled(pin, 5.0f, IM_COL32(138, 196, 246, 255));
         } else if (node.Kind == FGraphNode::EKind::Query) {
-            const auto pin = pinPositionFor(node, false, 0, 1);
-            drawList->AddCircleFilled(pin, 5.0f, IM_COL32(132, 220, 162, 255));
+            const auto socketCount = std::max(1, node.InputSocketCount);
+            for (int socket = 0; socket < socketCount; ++socket) {
+                const auto pin = pinPositionFor(node, false, socket, socketCount);
+                drawList->AddCircleFilled(pin, 5.0f, IM_COL32(132, 220, 162, 255));
+            }
         } else if (node.Kind == FGraphNode::EKind::Command) {
-            const auto pin = pinPositionFor(node, false, 0, 1);
-            drawList->AddCircleFilled(pin, 5.0f, IM_COL32(226, 198, 132, 255));
+            const auto socketCount = std::max(1, node.InputSocketCount);
+            for (int socket = 0; socket < socketCount; ++socket) {
+                const auto pin = pinPositionFor(node, false, socket, socketCount);
+                drawList->AddCircleFilled(pin, 5.0f, IM_COL32(226, 198, 132, 255));
+            }
         } else {
             const auto leftPins = std::max(1, parameterCount);
             const auto rightPins = std::max(1, operationCount);
