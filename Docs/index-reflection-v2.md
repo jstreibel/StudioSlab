@@ -17,7 +17,13 @@
 6. `Docs/reflection-v2-implementation.md`
 7. Focused quick path for Plot2D reflection:
    - `Docs/plot2d-reflection-v2-quick.md`
-8. One planning context:
+8. Registry-focused discovery/routing details:
+   - `Docs/index-reflection-catalog-registry-v2.md`
+   - `Docs/reflection-catalog-registry-v2-overview.md`
+   - `Docs/reflection-catalog-registry-v2-routing.md`
+9. Technical debt follow-up queue:
+   - `Docs/technical-debt.md`
+10. One planning context:
    - `Docs/v2-feature-backlog.md`
    - `Docs/v2-model-coverage-matrix.md`
 
@@ -27,6 +33,7 @@
   - `Slab/Core/Reflection/V2/ReflectionTypesV2.h`
   - `Slab/Core/Reflection/V2/ReflectionCodecsV2.h`
   - `Slab/Core/Reflection/V2/ReflectionInvokeV2.h`
+  - `Slab/Core/Reflection/V2/ReflectionCatalogRegistryV2.h`
   - `Slab/Core/Reflection/V2/LegacyInterfaceAdapterV2.h`
 - Legacy reflection seed (current):
   - `Lib/Core/Controller/Interface.h`
@@ -64,6 +71,7 @@
 - Adapter output depends on legacy interfaces being registered in-process before catalog refresh.
   - Empty/partial catalog can be expected in startup phases where registration has not happened yet.
 - Runtime operation path currently ships one complex type vertical slice (`slab.math.function.r_to_r`) via sandbox.
+- Registry follow-ups and caveat TODOs are tracked in `Docs/technical-debt.md`.
 
 ## Validation Minimum
 

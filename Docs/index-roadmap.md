@@ -23,6 +23,7 @@ Use this order when docs disagree:
 - Coverage breadth: `Docs/v2-model-coverage-matrix.md`
 - Platform feasibility notes: `Docs/platform-wasm-feasibility.md`
 - Active slice (current): `Docs/functional-minimization-v2-slice-scope.md`
+- Technical debt follow-ups: `Docs/technical-debt.md`
 - Product context:
   - `Docs/product-direction.md`
   - `Docs/domain-model-ux-surfaces-spec.md`

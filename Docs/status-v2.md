@@ -4,7 +4,7 @@
 
 - Snapshot date: `2026-03-05`
 - Last implementation update: `2026-03-05` (Plot2D legacy-to-V2 reflection bridge + legacy discovery/id hooks)
-- Last architecture-doc update: `2026-03-05` (Plot2D reflection quick guide + V2 scheme path sync)
+- Last architecture-doc update: `2026-03-05` (catalog registry docs + indexed technical debt follow-ups)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-04`
 - Build-target sanity check date: `2026-03-04` (`StudioSlab`, `Studios`, `SlabTests`, `testsuite` present in `cmake-build-debug`)
 
@@ -103,6 +103,10 @@
 - Plot2D reflection catalog now composes both sources:
   - V2-native windows/artists (`v2.plot.*`)
   - legacy Plot2D windows/artists via adapter bridge (`legacy.plot.*`)
+- Reflection catalog registry baseline implemented:
+  - central source registry in `Slab/Core/Reflection/V2/ReflectionCatalogRegistryV2.h`
+  - LabV2 Schemes now consumes merged catalogs across all registered sources (not legacy-only)
+  - Schemes invoke/live-value reads are routed by interface source through registry
 - Legacy Plot2D hooks added for safe adapter projection:
   - window discovery (`GetLiveWindows`)
   - stable ids (`GetStableWindowIdV2`, artist ids)
