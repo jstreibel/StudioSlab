@@ -280,25 +280,25 @@ add_library(${LIB_GRAPHICS} STATIC
         Plot2D/Artists/Painters/RealValued2DPainter.h
         Plot2D/Artists/Painters/HeightmapShadingPainter.cpp
         Plot2D/Artists/Painters/HeightmapShadingPainter.h
-		Plot2D/V2/Plot2DDrawListV2.cpp
-		Plot2D/V2/Plot2DDrawListV2.h
-		Plot2D/V2/Plot2DRenderBackendV2.h
-		Plot2D/V2/PlotArtistV2.cpp
-		Plot2D/V2/PlotArtistV2.h
-		Plot2D/V2/Plot2DWindowV2.cpp
-		Plot2D/V2/Plot2DWindowV2.h
-		Plot2D/V2/PlotReflectionSchemaV2.h
-		Plot2D/V2/PlotReflectionCatalogV2.cpp
-		Plot2D/V2/PlotReflectionCatalogV2.h
-		Plot2D/V2/Plot2DV2.h
-		Plot2D/V2/Artists/AxisArtistV2.cpp
-		Plot2D/V2/Artists/AxisArtistV2.h
-		Plot2D/V2/Artists/PointSetArtistV2.cpp
-		Plot2D/V2/Artists/PointSetArtistV2.h
-		Plot2D/V2/Artists/RtoRFunctionArtistV2.cpp
-		Plot2D/V2/Artists/RtoRFunctionArtistV2.h
-		Plot2D/V2/Backends/RecordingRenderBackendV2.cpp
-		Plot2D/V2/Backends/RecordingRenderBackendV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DDrawListV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DDrawListV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DRenderBackendV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DWindowV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DWindowV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotReflectionSchemaV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/AxisArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/AxisArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/PointSetArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/PointSetArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/RtoRFunctionArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/RtoRFunctionArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Backends/RecordingRenderBackendV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Backends/RecordingRenderBackendV2.h
 		DataViewers/Viewers/HistoryViewer.cpp
 		DataViewers/Viewers/HistoryViewer.h
 		DataViewers/Viewers/ModesHistoryViewer.cpp
