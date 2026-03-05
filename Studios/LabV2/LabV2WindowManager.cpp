@@ -17,6 +17,9 @@
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Graphics/Plot2D/Plotter.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
+#include "Graphics/Plot2D/V2/Artists/PointSetArtistV2.h"
+#include "Graphics/Plot2D/V2/Artists/RtoRFunctionArtistV2.h"
+#include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionSchemaV2.h"
 #include "Graphics/Window/WindowStyles.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
@@ -56,6 +59,7 @@ namespace {
     constexpr auto WindowTitleSchemesInspector = "Interface Inspector";
     constexpr auto WindowTitleBlueprintGraph = "Blueprint Graph";
     constexpr auto WindowTitlePlotInspector = "Plot Inspector";
+    constexpr auto PopupBlueprintGraphContext = "SchemesBlueprintGraphContext";
     constexpr auto DockspaceHostName = "##LabDockspaceHost";
     constexpr auto DockspaceNameSimulations = "##LabDockspace-Simulations";
     constexpr auto DockspaceNameSchemes = "##LabDockspace-Schemes";
@@ -1129,6 +1133,7 @@ auto FLabV2WindowManager::DrawPlotsInspectorPanel() -> void {
 
 auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     using namespace Slab::Core::Reflection::V2;
+    using namespace Slab::Graphics::Plot2D::V2;
 
     if (!CEnableBlueprintGraphTuningUi) {
         bShowBlueprintTuningWindow = false;
@@ -1713,6 +1718,126 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
                 }
             }
         }
+    }
+
+    if (bCanvasHovered && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+        const auto clickPos = io.MouseClickedPos[ImGuiMouseButton_Right];
+        const auto drag = ImVec2(mousePos.x - clickPos.x, mousePos.y - clickPos.y);
+        const float dragDistance2 = drag.x * drag.x + drag.y * drag.y;
+        if (dragDistance2 <= 36.0f) {
+            ImGui::OpenPopup(PopupBlueprintGraphContext);
+        }
+    }
+
+    const auto createBlueprintPlotWindow = [&]() -> FPlot2DWindowV2 * {
+        ++BlueprintPlotWindowCreateCount;
+        const auto baseTitle = interfaceSchema->DisplayName.empty()
+            ? Slab::Str("Blueprint Plot")
+            : interfaceSchema->DisplayName + " Plot";
+        const auto windowTitle = baseTitle + " " + Slab::ToStr(BlueprintPlotWindowCreateCount);
+
+        auto window = Slab::New<FPlot2DWindowV2>(
+            windowTitle,
+            Slab::Graphics::RectR{-1.0, 1.0, -1.0, 1.0},
+            Slab::Graphics::RectI{0, 1024, 0, 768});
+        window->SetAutoFitRanges(true);
+        PlotWindowsV2.push_back(window);
+
+        SelectedPlotInterfaceId = "v2.plot.window." + window->GetWindowId();
+        SelectedPlotParameterId.clear();
+        PlotsLastOperationSummary = "[Ok] Created Plot2D window '" + window->GetTitle() + "'.";
+        PlotsLastOperationOutput.clear();
+
+        return window.get();
+    };
+
+    const auto createPointArtist = [&](FPlot2DWindowV2 *window) {
+        if (window == nullptr) return;
+
+        ++BlueprintPlotArtistCreateCount;
+        auto artist = Slab::New<FPointSetArtistV2>(
+            Slab::Vector<Slab::Graphics::FPoint2D>{
+                {-1.0, -0.4},
+                {-0.2, 0.9},
+                {0.6, -0.1},
+                {1.2, 0.55}
+            });
+        artist->SetLabel("Blueprint Points " + Slab::ToStr(BlueprintPlotArtistCreateCount));
+
+        window->AddArtist(artist, static_cast<int>(window->GetArtists().size()));
+        window->FitRegionToArtists();
+
+        SelectedPlotInterfaceId = "v2.plot.artist." + window->GetWindowId() + "." + artist->GetArtistId();
+        SelectedPlotParameterId.clear();
+        PlotsLastOperationSummary =
+            "[Ok] Added point-set artist '" + artist->GetArtistId() + "' to '" + window->GetTitle() + "'.";
+        PlotsLastOperationOutput.clear();
+    };
+
+    const auto createFunctionArtist = [&](FPlot2DWindowV2 *window) {
+        if (window == nullptr) return;
+
+        ++BlueprintPlotArtistCreateCount;
+        auto artist = Slab::New<FRtoRFunctionArtistV2>(Slab::New<Slab::Math::RtoR::FSine>(1.0, 1.0));
+        artist->SetSampleCount(512);
+        artist->SetDomain(-6.28318530718, 6.28318530718);
+        artist->SetLabel("Blueprint f(x) " + Slab::ToStr(BlueprintPlotArtistCreateCount));
+
+        window->AddArtist(artist, static_cast<int>(window->GetArtists().size()));
+        window->FitRegionToArtists();
+
+        SelectedPlotInterfaceId = "v2.plot.artist." + window->GetWindowId() + "." + artist->GetArtistId();
+        SelectedPlotParameterId.clear();
+        PlotsLastOperationSummary =
+            "[Ok] Added R->R function artist '" + artist->GetArtistId() + "' to '" + window->GetTitle() + "'.";
+        PlotsLastOperationOutput.clear();
+    };
+
+    const auto drawWindowTargetMenu = [&](const char *menuLabel, const auto &createArtistAction) {
+        if (!ImGui::BeginMenu(menuLabel)) return;
+
+        auto windows = FPlot2DWindowV2::GetLiveWindows();
+        if (windows.empty()) {
+            if (ImGui::MenuItem("Create in New Plot Window")) {
+                createArtistAction(createBlueprintPlotWindow());
+            }
+            ImGui::EndMenu();
+            return;
+        }
+
+        for (auto *window : windows) {
+            if (window == nullptr) continue;
+            const auto itemLabel = window->GetTitle().empty()
+                ? window->GetWindowId()
+                : window->GetTitle() + " (" + window->GetWindowId() + ")";
+            if (ImGui::MenuItem(itemLabel.c_str())) {
+                createArtistAction(window);
+            }
+        }
+
+        ImGui::Separator();
+        if (ImGui::MenuItem("Create in New Plot Window")) {
+            createArtistAction(createBlueprintPlotWindow());
+        }
+
+        ImGui::EndMenu();
+    };
+
+    if (ImGui::BeginPopup(PopupBlueprintGraphContext)) {
+        if (hoveredNodeIndex >= 0) {
+            const auto &hoveredNode = nodes[static_cast<std::size_t>(hoveredNodeIndex)];
+            ImGui::TextDisabled("Blueprint Node: %s", hoveredNode.Title.c_str());
+            ImGui::Separator();
+        }
+
+        if (ImGui::MenuItem("Create Plot Window")) {
+            createBlueprintPlotWindow();
+        }
+
+        drawWindowTargetMenu("Create Point-Set Artist", createPointArtist);
+        drawWindowTargetMenu("Create R->R Function Artist", createFunctionArtist);
+
+        ImGui::EndPopup();
     }
 
     if (bLeftClicked) {

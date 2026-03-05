@@ -8,6 +8,7 @@
 #include "Math/Data/V2/LiveControlHubV2.h"
 #include "Core/Reflection/V2/LegacyInterfaceAdapterV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionCatalogV2.h"
+#include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
 #include "imgui.h"
 
 #include <functional>
@@ -85,6 +86,9 @@ private:
     Slab::TPointer<class FSimulationManagerV2> SimulationManager;
     Slab::Core::Reflection::V2::FLegacyReflectionCatalogAdapterV2 ReflectionAdapter;
     Slab::Graphics::Plot2D::V2::FPlotReflectionCatalogV2 PlotReflectionAdapter;
+    Slab::Vector<Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr> PlotWindowsV2;
+    std::size_t BlueprintPlotWindowCreateCount = 0;
+    std::size_t BlueprintPlotArtistCreateCount = 0;
 
     Slab::Str LiveDataTopicFilter;
     bool bLiveDataOnlyBound = false;
