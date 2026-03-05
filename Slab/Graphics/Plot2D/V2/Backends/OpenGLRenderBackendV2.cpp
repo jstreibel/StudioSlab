@@ -186,15 +186,31 @@ namespace Slab::Graphics::Plot2D::V2 {
             const DevFloat x0 = static_cast<DevFloat>(screenViewport.GetWidth()) - padding - boxWidth;
             const DevFloat y0 = static_cast<DevFloat>(screenViewport.GetHeight()) - padding - boxHeight;
 
+            const auto legendBackgroundColor =
+                Luminance(plotBackgroundColor) < 0.42
+                    ? FColor(0.94f, 0.95f, 0.97f, 0.78f)
+                    : FColor(0.04f, 0.05f, 0.07f, 0.70f);
+            const auto legendBorderColor = EnsureContrastColor(
+                legendBackgroundColor.inverse(false).WithAlpha(0.82f),
+                legendBackgroundColor);
+
             // Background.
-            OpenGL::Legacy::SetColor(FColor(0.04f, 0.05f, 0.07f, 0.70f));
+            OpenGL::Legacy::SetColor(legendBackgroundColor);
             OpenGL::Legacy::DrawRectangle(FRectangleShape({x0, y0 + boxHeight}, {x0 + boxWidth, y0}));
+            OpenGL::Legacy::SetColor(legendBorderColor);
+            glLineWidth(1.0f);
+            glBegin(GL_LINE_LOOP);
+            glVertex2d(x0, y0);
+            glVertex2d(x0, y0 + boxHeight);
+            glVertex2d(x0 + boxWidth, y0 + boxHeight);
+            glVertex2d(x0 + boxWidth, y0);
+            glEnd();
 
             for (std::size_t i = 0; i < entries.size(); ++i) {
                 const auto &entry = entries[i];
                 const auto y = y0 + boxHeight - padding - (rowHeight * (static_cast<DevFloat>(i) + 0.5));
 
-                auto sampleStyle = EnsureContrastStyle(entry.Style, plotBackgroundColor);
+                auto sampleStyle = EnsureContrastStyle(entry.Style, legendBackgroundColor);
                 if (sampleStyle.getPrimitive() == LinePrimitive::Points) {
                     sampleStyle.setPrimitive(LinePrimitive::LineStrip);
                 }
