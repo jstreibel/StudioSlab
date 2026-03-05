@@ -16,8 +16,9 @@
    - control/input: `Docs/live-control-v2-spec.md`
    - live runtime params: `Docs/live-parameters-v2-slice-scope.md`
    - sequencing/time: `Docs/sequence-control-spec.md`
-   - monitoring data-path tradeoffs: `Docs/monitoring-liveview-vs-listeners.md`
-   - reflection contract/migration: `Docs/reflection-v2-contract.md`, `Docs/reflection-v2-migration-plan.md`, `Docs/reflection-v2-implementation.md`
+  - monitoring data-path tradeoffs: `Docs/monitoring-liveview-vs-listeners.md`
+  - reflection contract/migration: `Docs/reflection-v2-contract.md`, `Docs/reflection-v2-migration-plan.md`, `Docs/reflection-v2-implementation.md`
+  - plot reflection bridge quick path: `Docs/plot2d-reflection-v2-quick.md`
 4. One active planning doc:
    - `Docs/v2-feature-backlog.md` or `Docs/v2-model-coverage-matrix.md`
 

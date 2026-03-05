@@ -2,9 +2,9 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-03-04`
-- Last implementation update: `2026-03-04` (Reflection V2 adapter/invoke vertical slice in LabV2 Schemes + CLI)
-- Last architecture-doc update: `2026-03-04` (Reflection V2 implementation/migration docs synced to code)
+- Snapshot date: `2026-03-05`
+- Last implementation update: `2026-03-05` (Plot2D legacy-to-V2 reflection bridge + legacy discovery/id hooks)
+- Last architecture-doc update: `2026-03-05` (Plot2D reflection quick guide + V2 scheme path sync)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-04`
 - Build-target sanity check date: `2026-03-04` (`StudioSlab`, `Studios`, `SlabTests`, `testsuite` present in `cmake-build-debug`)
 
@@ -97,6 +97,18 @@
   - node-level quick actions added (`Get`/`Set`/`Apply`/`Invoke` + copy id) through shared reflection invoke path
   - graph-side operation trace rail added for recent invoke outcomes and latency visibility
   - graph controls added for search and visibility filters (`Parameters`/`Queries`/`Commands`, mutability filter)
+
+## Recent Updates (`2026-03-05`, implementation)
+
+- Plot2D reflection catalog now composes both sources:
+  - V2-native windows/artists (`v2.plot.*`)
+  - legacy Plot2D windows/artists via adapter bridge (`legacy.plot.*`)
+- Legacy Plot2D hooks added for safe adapter projection:
+  - window discovery (`GetLiveWindows`)
+  - stable ids (`GetStableWindowIdV2`, artist ids)
+  - artist slot/z-order metadata access
+  - artist parameter get/set extension points for bridge-driven reflection
+- Plot inspector empty-state message now reflects mixed-source discovery (V2 + legacy).
 
 ## Reflection Working-Memory Caveats (Current)
 

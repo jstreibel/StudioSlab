@@ -92,13 +92,14 @@
 ## Migration Strategy
 
 ### Phase 1 (implemented)
-- Introduce V2 side-by-side under `Lib/Graphics/Plot2D/V2`.
+- Introduce V2 side-by-side under `Slab/Graphics/Plot2D/V2`.
 - Keep legacy classes unchanged.
 - Use test backend to validate behavior and reflection semantics.
 
 ### Phase 2
 - Add runtime backends (legacy GL adapter first for immediate visual parity).
 - Port additional artists (`R2toR`, sections, history, overlays).
+- Add legacy-to-V2 reflection bridge so legacy windows/artists are discoverable in one catalog.
 
 ### Phase 3
 - Integrate V2 reflection catalog composition in Lab/CLI surfaces.
@@ -109,15 +110,16 @@
 - Keep backends swappable per window/context.
 
 ## File Map (this iteration)
-- `Lib/Graphics/Plot2D/V2/Plot2DWindowV2.*`
-- `Lib/Graphics/Plot2D/V2/PlotArtistV2.*`
-- `Lib/Graphics/Plot2D/V2/Plot2DDrawListV2.*`
-- `Lib/Graphics/Plot2D/V2/Plot2DRenderBackendV2.h`
-- `Lib/Graphics/Plot2D/V2/PlotReflectionSchemaV2.h`
-- `Lib/Graphics/Plot2D/V2/PlotReflectionCatalogV2.*`
-- `Lib/Graphics/Plot2D/V2/Artists/*ArtistV2.*`
-- `Lib/Graphics/Plot2D/V2/Backends/RecordingRenderBackendV2.*`
-- `Lib/Graphics/Plot2D/V2/Plot2DV2.h`
+- `Slab/Graphics/Plot2D/V2/Plot2DWindowV2.*`
+- `Slab/Graphics/Plot2D/V2/PlotArtistV2.*`
+- `Slab/Graphics/Plot2D/V2/Plot2DDrawListV2.*`
+- `Slab/Graphics/Plot2D/V2/Plot2DRenderBackendV2.h`
+- `Slab/Graphics/Plot2D/V2/PlotReflectionSchemaV2.h`
+- `Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.*`
+- `Slab/Graphics/Plot2D/V2/LegacyPlotReflectionAdapterV2.*`
+- `Slab/Graphics/Plot2D/V2/Artists/*ArtistV2.*`
+- `Slab/Graphics/Plot2D/V2/Backends/RecordingRenderBackendV2.*`
+- `Slab/Graphics/Plot2D/V2/Plot2DV2.h`
 
 ## Validation
 - Added Catch2 coverage in `Lib/tests/test_plot2d_v2.cpp`:

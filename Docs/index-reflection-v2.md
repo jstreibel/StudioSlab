@@ -15,7 +15,9 @@
 4. `Docs/reflection-v2-contract.md`
 5. `Docs/reflection-v2-migration-plan.md`
 6. `Docs/reflection-v2-implementation.md`
-7. One planning context:
+7. Focused quick path for Plot2D reflection:
+   - `Docs/plot2d-reflection-v2-quick.md`
+8. One planning context:
    - `Docs/v2-feature-backlog.md`
    - `Docs/v2-model-coverage-matrix.md`
 
@@ -38,6 +40,9 @@
   - `Studios/Lab/Blueprints/BlueprintRenderer.cpp`
 - LabV2 Schemes insertion point:
   - `Studios/LabV2/LabV2WindowManager.cpp`
+- Plot2D reflection catalog + legacy bridge:
+  - `Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.cpp`
+  - `Slab/Graphics/Plot2D/V2/LegacyPlotReflectionAdapterV2.cpp`
 - CLI reflection consumer:
   - `Studios/CLI/main.cpp`
 

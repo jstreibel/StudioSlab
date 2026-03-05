@@ -28,6 +28,9 @@
 - Top-level shell/window orchestration:
   - `Studios/LabV2/LabV2WindowManager.h`
   - `Studios/LabV2/LabV2WindowManager.cpp`
+- Plot reflection catalog bridge surfaces:
+  - `Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.h`
+  - `Slab/Graphics/Plot2D/V2/LegacyPlotReflectionAdapterV2.h`
 - Shared LabV2 panel draw surfaces:
   - `Studios/LabV2/LabV2Panels.h`
   - `Studios/LabV2/LabV2Panels.cpp`
