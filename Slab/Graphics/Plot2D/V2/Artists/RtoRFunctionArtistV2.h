@@ -16,6 +16,7 @@ namespace Slab::Graphics::Plot2D::V2 {
 
     protected:
         [[nodiscard]] auto BuildReflectionParameterBindings() -> Vector<FPlotReflectionParameterBindingV2> override;
+        [[nodiscard]] auto BuildReflectionOperations() -> Vector<FOperationSchemaV2> override;
 
     public:
         explicit FRtoRFunctionArtistV2(Math::RtoR::Function_ptr function = nullptr,

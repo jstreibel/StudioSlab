@@ -1129,7 +1129,7 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
 
         ImGui::TableSetColumnIndex(0);
         if (ImGui::BeginChild("SchemesInterfaceList", ImVec2(0.0f, 0.0f), true)) {
-            for (const auto &interfaceSchema : catalog.Interfaces) {
+            const auto drawInterfaceRow = [&](const FInterfaceSchemaV2 &interfaceSchema) {
                 const bool bSelected = interfaceSchema.InterfaceId == SelectedSchemeInterfaceId;
                 ImGui::PushID(interfaceSchema.InterfaceId.c_str());
                 if (ImGui::Selectable(interfaceSchema.DisplayName.c_str(), bSelected)) {
@@ -1143,11 +1143,58 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
                 if (!interfaceSchema.Description.empty()) {
                     ImGui::TextDisabled("%s", TruncateLabel(interfaceSchema.Description).c_str());
                 }
-                if (const auto source = catalogRegistry.FindSourceForInterface(interfaceSchema.InterfaceId);
-                    source.has_value()) {
-                    ImGui::TextDisabled("catalog: %s", source->DisplayName.c_str());
-                }
                 ImGui::PopID();
+            };
+
+            std::map<Slab::Str, Slab::Vector<const FInterfaceSchemaV2 *>> interfacesBySourceId;
+            std::map<Slab::Str, Slab::Str> sourceDisplayNameById;
+            Slab::Vector<Slab::Str> sourceOrder;
+            sourceOrder.reserve(catalogSources.size());
+            for (const auto &source : catalogSources) {
+                sourceOrder.push_back(source.SourceId);
+                sourceDisplayNameById[source.SourceId] = source.DisplayName;
+            }
+
+            for (const auto &interfaceSchema : catalog.Interfaces) {
+                Slab::Str sourceId = "catalog.unknown";
+                Slab::Str sourceDisplayName = "Unknown Catalog";
+                if (const auto source = catalogRegistry.FindSourceForInterface(interfaceSchema.InterfaceId); source.has_value()) {
+                    sourceId = source->SourceId;
+                    sourceDisplayName = source->DisplayName;
+                }
+
+                if (!sourceDisplayNameById.contains(sourceId)) {
+                    sourceDisplayNameById[sourceId] = sourceDisplayName;
+                }
+                interfacesBySourceId[sourceId].push_back(&interfaceSchema);
+            }
+
+            const auto drawCatalogGroup = [&](const Slab::Str &sourceId, const Slab::Str &sourceDisplayName) {
+                const auto sourceIt = interfacesBySourceId.find(sourceId);
+                if (sourceIt == interfacesBySourceId.end()) return;
+                if (sourceIt->second.empty()) return;
+
+                const auto headerLabel = sourceDisplayName + " (" + Slab::ToStr(sourceIt->second.size()) + ")###" + sourceId;
+                if (!ImGui::CollapsingHeader(headerLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) return;
+
+                for (const auto *interfaceSchema : sourceIt->second) {
+                    if (interfaceSchema == nullptr) continue;
+                    drawInterfaceRow(*interfaceSchema);
+                }
+            };
+
+            for (const auto &sourceId : sourceOrder) {
+                const auto displayIt = sourceDisplayNameById.find(sourceId);
+                const auto displayName = displayIt != sourceDisplayNameById.end() ? displayIt->second : sourceId;
+                drawCatalogGroup(sourceId, displayName);
+            }
+
+            for (const auto &[sourceId, interfaces] : interfacesBySourceId) {
+                (void) interfaces;
+                if (std::find(sourceOrder.begin(), sourceOrder.end(), sourceId) != sourceOrder.end()) continue;
+                const auto displayIt = sourceDisplayNameById.find(sourceId);
+                const auto displayName = displayIt != sourceDisplayNameById.end() ? displayIt->second : sourceId;
+                drawCatalogGroup(sourceId, displayName);
             }
         }
         ImGui::EndChild();
@@ -1183,6 +1230,7 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
                     if (ImGui::Button(operation.DisplayName.c_str())) {
                         InvokeSelectedSchemeOperation(*interfaceSchema, operation.OperationId, context);
                     }
+                    const bool bOperationButtonHovered = ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort);
                     ImGui::EndDisabled();
                     ImGui::SameLine();
                     ImGui::TextDisabled(
@@ -1190,6 +1238,14 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
                         ToString(operation.Kind),
                         ToString(operation.RunStatePolicy),
                         ToString(operation.ThreadAffinity));
+                    const bool bOperationMetaHovered = ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort);
+                    if (!operation.Description.empty() && (bOperationButtonHovered || bOperationMetaHovered)) {
+                        ImGui::BeginTooltip();
+                        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 42.0f);
+                        ImGui::TextUnformatted(operation.Description.c_str());
+                        ImGui::PopTextWrapPos();
+                        ImGui::EndTooltip();
+                    }
                     ImGui::PopID();
                 }
 
@@ -1446,6 +1502,7 @@ auto FLabV2WindowManager::DrawPlotsInspectorPanel() -> void {
                     if (ImGui::Button(operation.DisplayName.c_str())) {
                         InvokeSelectedPlotOperation(*interfaceSchema, operation.OperationId, context);
                     }
+                    const bool bOperationButtonHovered = ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort);
                     ImGui::EndDisabled();
                     ImGui::SameLine();
                     ImGui::TextDisabled(
@@ -1453,6 +1510,14 @@ auto FLabV2WindowManager::DrawPlotsInspectorPanel() -> void {
                         ToString(operation.Kind),
                         ToString(operation.RunStatePolicy),
                         ToString(operation.ThreadAffinity));
+                    const bool bOperationMetaHovered = ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort);
+                    if (!operation.Description.empty() && (bOperationButtonHovered || bOperationMetaHovered)) {
+                        ImGui::BeginTooltip();
+                        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 42.0f);
+                        ImGui::TextUnformatted(operation.Description.c_str());
+                        ImGui::PopTextWrapPos();
+                        ImGui::EndTooltip();
+                    }
                     ImGui::PopID();
                 }
 

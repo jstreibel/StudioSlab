@@ -3,6 +3,7 @@
 #include "Core/Reflection/V2/ReflectionCodecsV2.h"
 
 #include <algorithm>
+#include <limits>
 
 namespace Slab::Graphics::Plot2D::V2 {
 
@@ -89,6 +90,36 @@ namespace Slab::Graphics::Plot2D::V2 {
         bindings.push_back(std::move(hasFunctionBinding));
 
         return bindings;
+    }
+
+    auto FRtoRFunctionArtistV2::BuildReflectionOperations() -> Vector<FOperationSchemaV2> {
+        auto operations = FPlotArtistV2::BuildReflectionOperations();
+
+        FOperationSchemaV2 doubleSampleCount;
+        doubleSampleCount.OperationId = CPlotOperationIdCommandArtistDoubleSampleCountV2;
+        doubleSampleCount.DisplayName = "Double Sample Count";
+        doubleSampleCount.Description = "Double function sample_count while preserving minimum bounds.";
+        doubleSampleCount.Kind = ReflectionV2::EOperationKind::Command;
+        doubleSampleCount.ThreadAffinity = ReflectionV2::EThreadAffinity::Any;
+        doubleSampleCount.RunStatePolicy = ReflectionV2::ERunStatePolicy::Any;
+        doubleSampleCount.SideEffectClass = ReflectionV2::ESideEffectClass::LocalState;
+        doubleSampleCount.InvokeHandler = [this](const ReflectionV2::FValueMapV2 &inputs,
+                                                 const ReflectionV2::FInvocationContextV2 &) {
+            (void) inputs;
+
+            const auto maxCount = std::numeric_limits<CountType>::max();
+            const auto current = GetSampleCount();
+            const auto next = current > (maxCount / 2) ? maxCount : (current * 2);
+            SetSampleCount(next);
+
+            ReflectionV2::FValueMapV2 output;
+            output["artist_id"] = ReflectionV2::MakeStringValue(GetArtistId());
+            output["sample_count"] = ReflectionV2::MakeStringValue(ToStr(GetSampleCount()));
+            return ReflectionV2::FOperationResultV2::Ok(std::move(output));
+        };
+        operations.push_back(std::move(doubleSampleCount));
+
+        return operations;
     }
 
     auto FRtoRFunctionArtistV2::EmitDrawCommands(const FPlotFrameContextV2 &frame,

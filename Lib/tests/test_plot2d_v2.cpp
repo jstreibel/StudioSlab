@@ -118,14 +118,25 @@ TEST_CASE("Plot2D V2 reflection catalog supports query and set", "[Plot2DV2][Ref
     points->SetLabel("reflect-points");
     window.AddArtist(points);
 
+    auto function = New<FRtoRFunctionArtistV2>(
+        New<FSin2XFunction>(),
+        PlotStyle(Slab::Graphics::FlatBlue, Slab::Graphics::LineStrip, false, Slab::Graphics::Nil, 1.3f),
+        16,
+        -2.0,
+        2.0);
+    function->SetLabel("reflect-function");
+    window.AddArtist(function);
+
     FPlotReflectionCatalogV2 catalog;
     catalog.RefreshFromLiveWindows();
 
     const auto windowInterfaceId = Str("v2.plot.window.") + window.GetWindowId();
     const auto artistInterfaceId = Str("v2.plot.artist.") + window.GetWindowId() + "." + points->GetArtistId();
+    const auto functionArtistInterfaceId = Str("v2.plot.artist.") + window.GetWindowId() + "." + function->GetArtistId();
 
     REQUIRE(catalog.GetInterface(windowInterfaceId) != nullptr);
     REQUIRE(catalog.GetInterface(artistInterfaceId) != nullptr);
+    REQUIRE(catalog.GetInterface(functionArtistInterfaceId) != nullptr);
 
     const ReflectionV2::FInvocationContextV2 context{
         .CurrentThread = ReflectionV2::EThreadAffinity::Any,
@@ -178,6 +189,16 @@ TEST_CASE("Plot2D V2 reflection catalog supports query and set", "[Plot2DV2][Ref
 
     REQUIRE(fitResult.IsOk());
     REQUIRE(fitResult.OutputMap.at("fitted").Encoded == "true");
+
+    REQUIRE(function->GetSampleCount() == 16);
+    const auto doubleSamplesResult = catalog.Invoke(
+        functionArtistInterfaceId,
+        CPlotOperationIdCommandArtistDoubleSampleCountV2,
+        {},
+        context);
+    REQUIRE(doubleSamplesResult.IsOk());
+    REQUIRE(doubleSamplesResult.OutputMap.at("sample_count").Encoded == "32");
+    REQUIRE(function->GetSampleCount() == 32);
 }
 
 TEST_CASE("Plot2D V2 background and axis artists emit baseline visual commands", "[Plot2DV2]") {
