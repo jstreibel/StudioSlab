@@ -47,6 +47,7 @@ private:
     enum class EWorkspaceTab : unsigned char {
         Simulations = 0,
         Schemes,
+        GraphPlayground,
         Plots
     };
 
@@ -73,7 +74,7 @@ private:
         bool bShowWindowPlotInspector = false;
     };
 
-    static constexpr std::size_t WorkspaceCount = 3;
+    static constexpr std::size_t WorkspaceCount = 4;
     using FSlabWindowPtr = Slab::TPointer<Slab::Graphics::FSlabWindow>;
     using FSlabWindowVec = Slab::Vector<FSlabWindowPtr>;
     struct FPendingSlabWindow {
@@ -242,10 +243,11 @@ private:
     unsigned int DockspaceId = 0;
     EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Simulations;
     bool bWorkspaceLayoutsBootstrapped = false;
-    std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false};
+    std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
         FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true, true, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, true, false},
         FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, true}
     };
     float WorkspaceTabsHeight = 0.0f;

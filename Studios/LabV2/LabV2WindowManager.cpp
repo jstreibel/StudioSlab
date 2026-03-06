@@ -70,9 +70,11 @@ namespace {
     constexpr auto DockspaceHostName = "##LabDockspaceHost";
     constexpr auto DockspaceNameSimulations = "##LabDockspace-Simulations";
     constexpr auto DockspaceNameSchemes = "##LabDockspace-Schemes";
+    constexpr auto DockspaceNameGraphPlayground = "##LabDockspace-GraphPlayground";
     constexpr auto DockspaceNamePlots = "##LabDockspace-Plots";
     constexpr auto WorkspaceTabSimulations = "Simulations";
     constexpr auto WorkspaceTabSchemes = "Schemes";
+    constexpr auto WorkspaceTabGraphPlayground = "Graph Playground";
     constexpr auto WorkspaceTabPlots = "Plots";
     constexpr auto PlotWindowInterfaceIdPrefix = "v2.plot.window.";
 
@@ -4092,6 +4094,7 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
 
             drawTab(EWorkspaceTab::Simulations, WorkspaceTabSimulations);
             drawTab(EWorkspaceTab::Schemes, WorkspaceTabSchemes);
+            drawTab(EWorkspaceTab::GraphPlayground, WorkspaceTabGraphPlayground);
             drawTab(EWorkspaceTab::Plots, WorkspaceTabPlots);
 
             ImGui::EndTabBar();
@@ -4142,6 +4145,7 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
     if (ImGui::Begin("##LabWorkspaceStrip", nullptr, flags)) {
         const char *workspaceLabel = WorkspaceTabSimulations;
         if (ActiveWorkspace == EWorkspaceTab::Schemes) workspaceLabel = WorkspaceTabSchemes;
+        if (ActiveWorkspace == EWorkspaceTab::GraphPlayground) workspaceLabel = WorkspaceTabGraphPlayground;
         if (ActiveWorkspace == EWorkspaceTab::Plots) workspaceLabel = WorkspaceTabPlots;
 
         ImGui::TextDisabled("%s", workspaceLabel);
@@ -4164,6 +4168,7 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
         } else if (ActiveWorkspace == EWorkspaceTab::Schemes) {
             drawToggle("Inspector", &bShowWindowSchemeInspector);
             drawToggle("Blueprint Graph", &bShowWindowBlueprintGraph);
+        } else if (ActiveWorkspace == EWorkspaceTab::GraphPlayground) {
             drawToggle("Graph Playground", &bShowWindowGraphPlayground);
         } else {
             drawToggle("Plot Inspector", &bShowWindowPlotInspector);
@@ -4223,10 +4228,10 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
         ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockBottom);
     } else if (workspace == EWorkspaceTab::Schemes) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.35f, nullptr, &dockMain);
-        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.38f, nullptr, &dockMain);
         ImGui::DockBuilderDockWindow(WindowTitleSchemesInspector, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleBlueprintGraph, dockMain);
-        ImGui::DockBuilderDockWindow(WindowTitleGraphPlayground, dockBottom);
+    } else if (workspace == EWorkspaceTab::GraphPlayground) {
+        ImGui::DockBuilderDockWindow(WindowTitleGraphPlayground, dockMain);
     } else {
         ImGui::DockBuilderDockWindow(WindowTitlePlotInspector, dockMain);
     }
@@ -4273,23 +4278,28 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
             static_cast<unsigned int>(ImGui::GetID(DockspaceNameSimulations));
         const auto dockspaceIdSchemes =
             static_cast<unsigned int>(ImGui::GetID(DockspaceNameSchemes));
+        const auto dockspaceIdGraphPlayground =
+            static_cast<unsigned int>(ImGui::GetID(DockspaceNameGraphPlayground));
         const auto dockspaceIdPlots =
             static_cast<unsigned int>(ImGui::GetID(DockspaceNamePlots));
 
         if (!bWorkspaceLayoutsBootstrapped) {
             BuildDefaultDockLayout(dockspaceIdSimulations, EWorkspaceTab::Simulations);
             BuildDefaultDockLayout(dockspaceIdSchemes, EWorkspaceTab::Schemes);
+            BuildDefaultDockLayout(dockspaceIdGraphPlayground, EWorkspaceTab::GraphPlayground);
             BuildDefaultDockLayout(dockspaceIdPlots, EWorkspaceTab::Plots);
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Simulations)] = true;
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Schemes)] = true;
+            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::GraphPlayground)] = true;
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Plots)] = true;
             bWorkspaceLayoutsBootstrapped = true;
             RequestViewRetile();
         }
 
-        const auto dockspaceIdFor = [dockspaceIdSimulations, dockspaceIdSchemes, dockspaceIdPlots]
+        const auto dockspaceIdFor = [dockspaceIdSimulations, dockspaceIdSchemes, dockspaceIdGraphPlayground, dockspaceIdPlots]
             (const EWorkspaceTab workspace) -> unsigned int {
                 if (workspace == EWorkspaceTab::Schemes) return dockspaceIdSchemes;
+                if (workspace == EWorkspaceTab::GraphPlayground) return dockspaceIdGraphPlayground;
                 if (workspace == EWorkspaceTab::Plots) return dockspaceIdPlots;
                 return dockspaceIdSimulations;
             };
@@ -4319,6 +4329,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
 
         drawWorkspaceDockspace(dockspaceIdSimulations, EWorkspaceTab::Simulations);
         drawWorkspaceDockspace(dockspaceIdSchemes, EWorkspaceTab::Schemes);
+        drawWorkspaceDockspace(dockspaceIdGraphPlayground, EWorkspaceTab::GraphPlayground);
         drawWorkspaceDockspace(dockspaceIdPlots, EWorkspaceTab::Plots);
 #endif
     }
@@ -4356,6 +4367,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
             if (ActiveWorkspace == EWorkspaceTab::Schemes) {
                 ImGui::Checkbox("Interface Inspector", &bShowWindowSchemeInspector);
                 ImGui::Checkbox("Blueprint Graph", &bShowWindowBlueprintGraph);
+            } else if (ActiveWorkspace == EWorkspaceTab::GraphPlayground) {
                 ImGui::Checkbox("Graph Playground", &bShowWindowGraphPlayground);
             } else if (ActiveWorkspace == EWorkspaceTab::Plots) {
                 ImGui::Checkbox("Plot Inspector", &bShowWindowPlotInspector);
@@ -4461,7 +4473,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
 
     registry.push_back(FPanelSurfaceRegistration{
         WindowTitleGraphPlayground,
-        EWorkspaceTab::Schemes,
+        EWorkspaceTab::GraphPlayground,
         &bShowWindowGraphPlayground,
         false,
         false,
