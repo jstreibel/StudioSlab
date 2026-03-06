@@ -8,6 +8,7 @@
 #include "Math/Data/V2/LiveControlHubV2.h"
 #include "Core/Reflection/V2/LegacyInterfaceAdapterV2.h"
 #include "Core/Reflection/V2/ReflectionCatalogRegistryV2.h"
+#include "Core/Reflection/V2/GraphSubstrateV2.h"
 #include "Core/Reflection/V2/SemanticTypesV1.h"
 #include "Graphics/Plot2D/V2/PlotReflectionCatalogV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
@@ -139,9 +140,8 @@ private:
     };
     std::deque<FSchemeOperationTraceEntry> SchemesOperationTrace;
     std::size_t SchemesOperationTraceSequence = 0;
+    Slab::Core::Reflection::V2::FGraphDocumentV2 SchemesBlueprintDocument;
     std::map<Slab::Str, ImVec2> BlueprintNodePositionById;
-    ImVec2 BlueprintGraphPan = ImVec2(80.0f, 80.0f);
-    bool bShowBlueprintGrid = true;
     bool bShowBlueprintLegend = true;
     bool bShowBlueprintTuningWindow = false;
     float BlueprintNodeHeaderScale = 1.55f;
@@ -170,23 +170,6 @@ private:
     int BlueprintGraphMutabilityFilter = 0;
     float BlueprintGraphTraceHeight = 140.0f;
 
-    struct FTemplateGraphPlaygroundNode {
-        Slab::Str NodeId;
-        Slab::Str SemanticOperatorId;
-        ImVec2 Position = ImVec2(120.0f, 120.0f);
-    };
-
-    struct FTemplateGraphPlaygroundEdge {
-        Slab::Str EdgeId;
-        Slab::Str FromNodeId;
-        Slab::Str FromPortId;
-        Slab::Str ToNodeId;
-        Slab::Str ToPortId;
-        Slab::Str MatchReason;
-        Slab::StrVector Diagnostics;
-        Slab::Vector<Slab::Str> SuggestedCoercionOperatorIds;
-    };
-
     struct FTemplateGraphPendingCoercionSuggestion {
         bool bActive = false;
         Slab::Str FromNodeId;
@@ -197,22 +180,7 @@ private:
         Slab::Str Summary;
     };
 
-    enum class ERoutingGraphEdgeKind : unsigned char {
-        ValueFlow = 0,
-        HandleBinding = 1,
-        StreamSubscription = 2,
-        ControlDependency = 3
-    };
-
-    struct FRoutingGraphPlaygroundEdge {
-        Slab::Str EdgeId;
-        Slab::Str SourceEndpoint;
-        Slab::Str TargetEndpoint;
-        ERoutingGraphEdgeKind Kind = ERoutingGraphEdgeKind::ValueFlow;
-    };
-
-    Slab::Vector<FTemplateGraphPlaygroundNode> PlaygroundTemplateNodes;
-    Slab::Vector<FTemplateGraphPlaygroundEdge> PlaygroundTemplateEdges;
+    Slab::Core::Reflection::V2::FGraphDocumentV2 PlaygroundTemplateDocument;
     Slab::Vector<Slab::Str> PlaygroundTemplateSelectedNodeIds;
     std::size_t PlaygroundTemplateNodeCounter = 0;
     std::size_t PlaygroundTemplateEdgeCounter = 0;
@@ -225,18 +193,16 @@ private:
     bool bPlaygroundTemplateConnectingFromOutput = false;
     Slab::Str PlaygroundTemplateStatus;
     FTemplateGraphPendingCoercionSuggestion PlaygroundTemplatePendingCoercion;
-    ImVec2 PlaygroundTemplatePan = ImVec2(90.0f, 70.0f);
-    bool bPlaygroundTemplateShowGrid = true;
-    bool bPlaygroundTemplateShowMinimap = true;
     bool bPlaygroundTemplateMarqueeSelecting = false;
     ImVec2 PlaygroundTemplateMarqueeStart = ImVec2(0.0f, 0.0f);
     ImVec2 PlaygroundTemplateMarqueeEnd = ImVec2(0.0f, 0.0f);
 
-    Slab::Vector<FRoutingGraphPlaygroundEdge> PlaygroundRoutingEdges;
+    Slab::Core::Reflection::V2::FGraphDocumentV2 PlaygroundRoutingDocument;
     std::size_t PlaygroundRoutingEdgeCounter = 0;
     Slab::Str PlaygroundRoutingSourceEndpoint;
     Slab::Str PlaygroundRoutingTargetEndpoint;
-    ERoutingGraphEdgeKind PlaygroundRoutingEdgeKind = ERoutingGraphEdgeKind::ValueFlow;
+    Slab::Core::Reflection::V2::EGraphEdgeKindV2 PlaygroundRoutingEdgeKind =
+        Slab::Core::Reflection::V2::EGraphEdgeKindV2::ValueFlow;
     Slab::Str PlaygroundRoutingStatus;
     Slab::Str PlaygroundRuntimeFilter;
     Slab::Str PlaygroundPersistenceFilePath = "Build/bin/labv2_graph_playground.json";

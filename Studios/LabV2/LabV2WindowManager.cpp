@@ -13,6 +13,7 @@
 
 #include "Core/SlabCore.h"
 #include "Core/Reflection/V2/ReflectionCodecsV2.h"
+#include "Core/Reflection/V2/GraphSubstrateV2.h"
 #include "Core/Reflection/V2/ReflectionSemanticsOverlayV1.h"
 #include "Graphics/Modules/Animator/Animator.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
@@ -523,6 +524,18 @@ namespace {
 
 FLabV2WindowManager::FLabV2WindowManager()
 : SidePaneWidth(FStudioConfigV2::SidePaneWidth) {
+    SchemesBlueprintDocument.Mode = Slab::Core::Reflection::V2::EGraphModeV2::SchemesBlueprint;
+    SchemesBlueprintDocument.Canvas.PanX = 80.0f;
+    SchemesBlueprintDocument.Canvas.PanY = 80.0f;
+    SchemesBlueprintDocument.Canvas.bShowGrid = true;
+    SchemesBlueprintDocument.Canvas.bShowMinimap = false;
+    PlaygroundTemplateDocument.Mode = Slab::Core::Reflection::V2::EGraphModeV2::Template;
+    PlaygroundTemplateDocument.Canvas.PanX = 90.0f;
+    PlaygroundTemplateDocument.Canvas.PanY = 70.0f;
+    PlaygroundTemplateDocument.Canvas.bShowGrid = true;
+    PlaygroundTemplateDocument.Canvas.bShowMinimap = true;
+    PlaygroundRoutingDocument.Mode = Slab::Core::Reflection::V2::EGraphModeV2::Routing;
+
     const auto imGuiModule = Slab::Core::GetModule<Slab::Graphics::FImGuiModule>("ImGui");
     const auto platformWindow = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
 
@@ -2014,11 +2027,25 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         return;
     }
 
+    FReflectionCatalogV2 selectedInterfaceCatalog;
+    selectedInterfaceCatalog.Interfaces.push_back(*interfaceSchema);
+    const auto previousBlueprintCanvas = SchemesBlueprintDocument.Canvas;
+    SchemesBlueprintDocument = MakeGraphDocumentFromReflectionCatalog(
+        selectedInterfaceCatalog,
+        EGraphModeV2::SchemesBlueprint);
+    SchemesBlueprintDocument.Canvas = previousBlueprintCanvas;
+
     ImGui::Text("Graph interface: %s", interfaceSchema->DisplayName.c_str());
     ImGui::SameLine();
     ImGui::TextDisabled("(%s)", interfaceSchema->InterfaceId.c_str());
     ImGui::SameLine();
-    ImGui::Checkbox("Grid", &bShowBlueprintGrid);
+    ImGui::TextDisabled(
+        "| substrate nodes=%zu edges=%zu members=%zu",
+        SchemesBlueprintDocument.Nodes.size(),
+        SchemesBlueprintDocument.Edges.size(),
+        CountGraphMembers(SchemesBlueprintDocument));
+    ImGui::SameLine();
+    ImGui::Checkbox("Grid", &SchemesBlueprintDocument.Canvas.bShowGrid);
     ImGui::SameLine();
     ImGui::Checkbox("Legend", &bShowBlueprintLegend);
     if constexpr (CEnableBlueprintGraphTuningUi) {
@@ -2059,7 +2086,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     if (ImGui::Button("Auto Layout")) {
         const auto keyPrefix = interfaceSchema->InterfaceId + "::";
         for (auto it = BlueprintNodePositionById.begin(); it != BlueprintNodePositionById.end(); ) {
-            if (it->first.rfind(keyPrefix, 0) == 0) {
+            if (it->first == interfaceSchema->InterfaceId || it->first.rfind(keyPrefix, 0) == 0) {
                 it = BlueprintNodePositionById.erase(it);
             } else {
                 ++it;
@@ -2068,7 +2095,8 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     }
     ImGui::SameLine();
     if (ImGui::Button("Reset View")) {
-        BlueprintGraphPan = ImVec2(80.0f, 80.0f);
+        SchemesBlueprintDocument.Canvas.PanX = 80.0f;
+        SchemesBlueprintDocument.Canvas.PanY = 80.0f;
         bBlueprintGraphShowParameters = true;
         bBlueprintGraphShowQueries = true;
         bBlueprintGraphShowCommands = true;
@@ -2100,8 +2128,8 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     const bool bCanvasHovered = ImGui::IsItemHovered();
     if (bCanvasHovered && ImGui::IsMouseDragging(ImGuiMouseButton_Right, 0.0f)) {
         const auto &io = ImGui::GetIO();
-        BlueprintGraphPan.x += io.MouseDelta.x;
-        BlueprintGraphPan.y += io.MouseDelta.y;
+        SchemesBlueprintDocument.Canvas.PanX += io.MouseDelta.x;
+        SchemesBlueprintDocument.Canvas.PanY += io.MouseDelta.y;
     }
 
     auto *drawList = ImGui::GetWindowDrawList();
@@ -2110,10 +2138,10 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
 
     drawList->PushClipRect(canvasPos, canvasEnd, true);
 
-    if (bShowBlueprintGrid) {
+    if (SchemesBlueprintDocument.Canvas.bShowGrid) {
         constexpr float GridStep = 64.0f;
-        const float xOffset = std::fmod(BlueprintGraphPan.x, GridStep);
-        const float yOffset = std::fmod(BlueprintGraphPan.y, GridStep);
+        const float xOffset = std::fmod(SchemesBlueprintDocument.Canvas.PanX, GridStep);
+        const float yOffset = std::fmod(SchemesBlueprintDocument.Canvas.PanY, GridStep);
 
         for (float x = canvasPos.x + xOffset; x < canvasEnd.x; x += GridStep) {
             drawList->AddLine(ImVec2(x, canvasPos.y), ImVec2(x, canvasEnd.y), IM_COL32(36, 42, 52, 255), 1.0f);
@@ -2217,7 +2245,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         Slab::Str SubtitlePrimary;
         Slab::Str SubtitleSecondary;
         Slab::Vector<std::pair<Slab::Str, ImU32>> Badges;
-        ImVec2 *Position = nullptr;
+        FGraphNodeV2 *GraphNode = nullptr;
         ImVec2 Size = ImVec2(360.0f, 132.0f);
         EKind Kind = EKind::Parameter;
         Slab::Str RefId;
@@ -2225,14 +2253,34 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         bool bSelected = false;
     };
 
-    const auto findOrCreatePosition = [this](const Slab::Str &nodeKey, const ImVec2 defaultPosition) -> ImVec2 * {
-        const auto [it, inserted] = BlueprintNodePositionById.emplace(nodeKey, defaultPosition);
-        (void) inserted;
-        return &it->second;
+    const auto findOrCreatePosition = [this](FGraphNodeV2 &graphNode, const ImVec2 defaultPosition, Slab::Str legacyKey = {}) -> void {
+        if (const auto positionIt = BlueprintNodePositionById.find(graphNode.NodeId); positionIt != BlueprintNodePositionById.end()) {
+            graphNode.Position.x = positionIt->second.x;
+            graphNode.Position.y = positionIt->second.y;
+            return;
+        }
+
+        if (!legacyKey.empty()) {
+            if (const auto legacyIt = BlueprintNodePositionById.find(legacyKey); legacyIt != BlueprintNodePositionById.end()) {
+                graphNode.Position.x = legacyIt->second.x;
+                graphNode.Position.y = legacyIt->second.y;
+                BlueprintNodePositionById.emplace(graphNode.NodeId, legacyIt->second);
+                return;
+            }
+        }
+
+        graphNode.Position.x = defaultPosition.x;
+        graphNode.Position.y = defaultPosition.y;
+        BlueprintNodePositionById[graphNode.NodeId] = defaultPosition;
+    };
+
+    const auto persistNodePosition = [this](const FGraphNode &node) -> void {
+        if (node.GraphNode == nullptr) return;
+        BlueprintNodePositionById[node.Key] = ImVec2(node.GraphNode->Position.x, node.GraphNode->Position.y);
     };
 
     Slab::Vector<FGraphNode> nodes;
-    nodes.reserve(1 + interfaceSchema->Parameters.size() + interfaceSchema->Operations.size());
+    nodes.reserve(SchemesBlueprintDocument.Nodes.size());
 
     const auto computeNodeSize = [this](const FGraphNode &node, const float minWidth, const float maxWidth) -> ImVec2 {
         const float lineHeight = ImGui::GetTextLineHeight();
@@ -2273,123 +2321,145 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         return ImVec2(width, std::max(116.0f, height));
     };
 
-    const auto keyPrefix = interfaceSchema->InterfaceId + "::";
-    FGraphNode interfaceNode;
-    interfaceNode.Key = keyPrefix + "interface";
-    interfaceNode.Title = interfaceSchema->DisplayName;
-    interfaceNode.SubtitlePrimary = interfaceSchema->InterfaceId;
-    interfaceNode.SubtitleSecondary = Slab::Str("parameters=") + std::to_string(interfaceSchema->Parameters.size()) +
-        " | operations=" + std::to_string(interfaceSchema->Operations.size());
-    interfaceNode.Kind = FGraphNode::EKind::Interface;
-    interfaceNode.RefId = interfaceSchema->InterfaceId;
-    interfaceNode.bSelected = true;
-    interfaceNode.Badges.push_back({WithPolicyPrefix('N', "Interface"), IM_COL32(118, 98, 166, 240)});
-    interfaceNode.Size = computeNodeSize(interfaceNode, 300.0f, 520.0f);
-    interfaceNode.Position = findOrCreatePosition(interfaceNode.Key, ImVec2(560.0f, 200.0f));
-    nodes.push_back(interfaceNode);
-
     float parameterLaneY = 56.0f;
-    for (const auto &parameter : interfaceSchema->Parameters) {
-        if (!bBlueprintGraphShowParameters) continue;
-        if (BlueprintGraphMutabilityFilter == 1 && parameter.Mutability != EParameterMutability::Const) continue;
-        if (BlueprintGraphMutabilityFilter == 2 && parameter.Mutability != EParameterMutability::RuntimeMutable) continue;
-        if (BlueprintGraphMutabilityFilter == 3 && parameter.Mutability != EParameterMutability::RestartRequired) continue;
-
-        const bool bMatchesText =
-            ContainsCaseInsensitive(parameter.DisplayName, BlueprintGraphFilterText) ||
-            ContainsCaseInsensitive(parameter.ParameterId, BlueprintGraphFilterText) ||
-            ContainsCaseInsensitive(parameter.TypeId, BlueprintGraphFilterText) ||
-            ContainsCaseInsensitive(ToString(parameter.Mutability), BlueprintGraphFilterText) ||
-            ContainsCaseInsensitive(ToString(parameter.Exposure), BlueprintGraphFilterText);
-        if (!bMatchesText) continue;
-
-        const auto draftKey = BuildSchemeParameterDraftKey(interfaceSchema->InterfaceId, parameter.ParameterId);
-        const auto draftIt = SchemeParameterDraftByKey.find(draftKey);
-        const auto draftValue = draftIt != SchemeParameterDraftByKey.end() ? draftIt->second : Slab::Str{};
-        const auto liveValue = catalogRegistry.EncodeCurrentParameterValue(interfaceSchema->InterfaceId, parameter.ParameterId);
-
-        Slab::Str stateLabel = "Unavailable";
-        ImU32 stateColor = IM_COL32(120, 124, 136, 220);
-        if (liveValue.has_value()) {
-            if (draftValue == liveValue->Encoded) {
-                stateLabel = "Live";
-                stateColor = IM_COL32(94, 180, 130, 220);
-            } else if (parameter.Mutability == EParameterMutability::RestartRequired) {
-                stateLabel = "Pending";
-                stateColor = IM_COL32(222, 176, 102, 220);
-            } else {
-                stateLabel = "Draft";
-                stateColor = IM_COL32(122, 168, 224, 220);
-            }
-        }
-
-        FGraphNode node;
-        node.Key = keyPrefix + "param:" + parameter.ParameterId;
-        node.Title = parameter.DisplayName;
-        node.SubtitlePrimary = Slab::Str(parameter.ParameterId) + " | " + TruncateLabel(parameter.TypeId, 18);
-        node.SubtitleSecondary = Slab::Str("State: ") + stateLabel + " | type: " + parameter.TypeId;
-        node.Kind = FGraphNode::EKind::Parameter;
-        node.RefId = parameter.ParameterId;
-        node.bSelected = SelectedSchemeParameterId == parameter.ParameterId;
-        node.Badges.push_back({WithPolicyPrefix('M', ToCompactMutabilityLabel(parameter.Mutability)), IM_COL32(88, 132, 192, 220)});
-        node.Badges.push_back({WithPolicyPrefix('E', ToCompactExposureLabel(parameter.Exposure)), IM_COL32(96, 120, 150, 220)});
-        node.Badges.push_back({WithPolicyPrefix('S', stateLabel), stateColor});
-        node.Size = computeNodeSize(node, 340.0f, 620.0f);
-        node.Position = findOrCreatePosition(node.Key, ImVec2(70.0f, parameterLaneY));
-        nodes.push_back(node);
-        parameterLaneY += node.Size.y + 20.0f;
-    }
-
     float queryLaneY = 56.0f;
     float commandLaneY = 56.0f;
-    for (const auto &operation : interfaceSchema->Operations) {
-        if (operation.Kind == EOperationKind::Query && !bBlueprintGraphShowQueries) continue;
-        if (operation.Kind == EOperationKind::Command && !bBlueprintGraphShowCommands) continue;
+    for (auto &graphNode : SchemesBlueprintDocument.Nodes) {
+        if (graphNode.Kind == EGraphNodeKindV2::Interface) {
+            FGraphNode interfaceNode;
+            interfaceNode.Key = graphNode.NodeId;
+            interfaceNode.Title = graphNode.DisplayName;
+            interfaceNode.SubtitlePrimary = graphNode.SourceInterfaceId.empty() ? graphNode.NodeId : graphNode.SourceInterfaceId;
+            interfaceNode.SubtitleSecondary = Slab::Str("parameters=") + std::to_string(interfaceSchema->Parameters.size()) +
+                " | operations=" + std::to_string(interfaceSchema->Operations.size());
+            interfaceNode.GraphNode = &graphNode;
+            interfaceNode.Kind = FGraphNode::EKind::Interface;
+            interfaceNode.RefId = graphNode.SourceInterfaceId.empty() ? graphNode.NodeId : graphNode.SourceInterfaceId;
+            interfaceNode.bSelected = true;
+            interfaceNode.Badges.push_back({WithPolicyPrefix('N', "Interface"), IM_COL32(118, 98, 166, 240)});
+            interfaceNode.Size = computeNodeSize(interfaceNode, 300.0f, 520.0f);
+            const auto legacyInterfaceKey = interfaceSchema->InterfaceId + "::interface";
+            findOrCreatePosition(graphNode, ImVec2(560.0f, 200.0f), legacyInterfaceKey);
+            persistNodePosition(interfaceNode);
+            nodes.push_back(std::move(interfaceNode));
+            continue;
+        }
+
+        if (graphNode.Kind == EGraphNodeKindV2::Parameter) {
+            const auto *parameterSchema = FindParameterById(*interfaceSchema, graphNode.SourceParameterId);
+            if (parameterSchema == nullptr) continue;
+            if (!bBlueprintGraphShowParameters) continue;
+
+            const auto mutability = graphNode.Policies.ParameterMutability.value_or(parameterSchema->Mutability);
+            const auto exposure = graphNode.Policies.ParameterExposure.value_or(parameterSchema->Exposure);
+
+            if (BlueprintGraphMutabilityFilter == 1 && mutability != EParameterMutability::Const) continue;
+            if (BlueprintGraphMutabilityFilter == 2 && mutability != EParameterMutability::RuntimeMutable) continue;
+            if (BlueprintGraphMutabilityFilter == 3 && mutability != EParameterMutability::RestartRequired) continue;
+
+            const bool bMatchesText =
+                ContainsCaseInsensitive(graphNode.DisplayName, BlueprintGraphFilterText) ||
+                ContainsCaseInsensitive(graphNode.SourceParameterId, BlueprintGraphFilterText) ||
+                ContainsCaseInsensitive(parameterSchema->TypeId, BlueprintGraphFilterText) ||
+                ContainsCaseInsensitive(ToString(mutability), BlueprintGraphFilterText) ||
+                ContainsCaseInsensitive(ToString(exposure), BlueprintGraphFilterText);
+            if (!bMatchesText) continue;
+
+            const auto draftKey = BuildSchemeParameterDraftKey(interfaceSchema->InterfaceId, parameterSchema->ParameterId);
+            const auto draftIt = SchemeParameterDraftByKey.find(draftKey);
+            const auto draftValue = draftIt != SchemeParameterDraftByKey.end() ? draftIt->second : Slab::Str{};
+            const auto liveValue = catalogRegistry.EncodeCurrentParameterValue(interfaceSchema->InterfaceId, parameterSchema->ParameterId);
+
+            Slab::Str stateLabel = "Unavailable";
+            ImU32 stateColor = IM_COL32(120, 124, 136, 220);
+            if (liveValue.has_value()) {
+                if (draftValue == liveValue->Encoded) {
+                    stateLabel = "Live";
+                    stateColor = IM_COL32(94, 180, 130, 220);
+                } else if (mutability == EParameterMutability::RestartRequired) {
+                    stateLabel = "Pending";
+                    stateColor = IM_COL32(222, 176, 102, 220);
+                } else {
+                    stateLabel = "Draft";
+                    stateColor = IM_COL32(122, 168, 224, 220);
+                }
+            }
+
+            FGraphNode node;
+            node.Key = graphNode.NodeId;
+            node.Title = graphNode.DisplayName;
+            node.SubtitlePrimary = Slab::Str(graphNode.SourceParameterId) + " | " + TruncateLabel(parameterSchema->TypeId, 18);
+            node.SubtitleSecondary = Slab::Str("State: ") + stateLabel + " | type: " + parameterSchema->TypeId;
+            node.GraphNode = &graphNode;
+            node.Kind = FGraphNode::EKind::Parameter;
+            node.RefId = graphNode.SourceParameterId;
+            node.bSelected = SelectedSchemeParameterId == graphNode.SourceParameterId;
+            node.Badges.push_back({WithPolicyPrefix('M', ToCompactMutabilityLabel(mutability)), IM_COL32(88, 132, 192, 220)});
+            node.Badges.push_back({WithPolicyPrefix('E', ToCompactExposureLabel(exposure)), IM_COL32(96, 120, 150, 220)});
+            node.Badges.push_back({WithPolicyPrefix('S', stateLabel), stateColor});
+            node.Size = computeNodeSize(node, 340.0f, 620.0f);
+            const auto nodeHeight = node.Size.y;
+            findOrCreatePosition(graphNode, ImVec2(70.0f, parameterLaneY));
+            persistNodePosition(node);
+            nodes.push_back(std::move(node));
+            parameterLaneY += nodeHeight + 20.0f;
+            continue;
+        }
+
+        if (graphNode.Kind != EGraphNodeKindV2::Operation) continue;
+        const auto *operationSchema = FindOperationById(*interfaceSchema, graphNode.SourceOperationId);
+        if (operationSchema == nullptr) continue;
+        if (operationSchema->Kind == EOperationKind::Query && !bBlueprintGraphShowQueries) continue;
+        if (operationSchema->Kind == EOperationKind::Command && !bBlueprintGraphShowCommands) continue;
 
         const bool bMatchesText =
-            ContainsCaseInsensitive(operation.DisplayName, BlueprintGraphFilterText) ||
-            ContainsCaseInsensitive(operation.OperationId, BlueprintGraphFilterText) ||
-            ContainsCaseInsensitive(ToString(operation.Kind), BlueprintGraphFilterText) ||
-            ContainsCaseInsensitive(ToString(operation.RunStatePolicy), BlueprintGraphFilterText) ||
-            ContainsCaseInsensitive(ToString(operation.ThreadAffinity), BlueprintGraphFilterText);
+            ContainsCaseInsensitive(graphNode.DisplayName, BlueprintGraphFilterText) ||
+            ContainsCaseInsensitive(graphNode.SourceOperationId, BlueprintGraphFilterText) ||
+            ContainsCaseInsensitive(ToString(operationSchema->Kind), BlueprintGraphFilterText) ||
+            ContainsCaseInsensitive(ToString(operationSchema->RunStatePolicy), BlueprintGraphFilterText) ||
+            ContainsCaseInsensitive(ToString(operationSchema->ThreadAffinity), BlueprintGraphFilterText);
         if (!bMatchesText) continue;
 
         FGraphNode node;
-        node.Key = keyPrefix + "operation:" + operation.OperationId;
-        node.Title = operation.DisplayName;
-        node.SubtitlePrimary = Slab::Str(operation.OperationId);
-        node.SubtitleSecondary = Slab::Str(ToString(operation.Kind)) + " | run=" + ToCompactRunStateLabel(operation.RunStatePolicy) +
-            " | thread=" + ToCompactThreadLabel(operation.ThreadAffinity) +
-            " | side=" + ToCompactSideEffectLabel(operation.SideEffectClass);
+        node.Key = graphNode.NodeId;
+        node.Title = graphNode.DisplayName;
+        node.SubtitlePrimary = Slab::Str(graphNode.SourceOperationId);
+        node.SubtitleSecondary = Slab::Str(ToString(operationSchema->Kind)) + " | run=" + ToCompactRunStateLabel(operationSchema->RunStatePolicy) +
+            " | thread=" + ToCompactThreadLabel(operationSchema->ThreadAffinity) +
+            " | side=" + ToCompactSideEffectLabel(operationSchema->SideEffectClass);
+        node.GraphNode = &graphNode;
         const auto requiredInputCount = static_cast<int>(std::count_if(
-            operation.Inputs.begin(),
-            operation.Inputs.end(),
-            [](const auto &input) { return input.bRequired; }));
+            graphNode.Ports.begin(),
+            graphNode.Ports.end(),
+            [](const auto &port) {
+                return port.Direction == EGraphPortDirectionV2::Input && port.bRequired;
+            }));
         node.InputSocketCount = std::max(1, requiredInputCount);
         node.Size = computeNodeSize(node, 340.0f, 620.0f);
-        if (operation.Kind == EOperationKind::Query) {
-            node.Position = findOrCreatePosition(node.Key, ImVec2(980.0f, queryLaneY));
+        if (operationSchema->Kind == EOperationKind::Query) {
             node.Kind = FGraphNode::EKind::Query;
+            findOrCreatePosition(graphNode, ImVec2(980.0f, queryLaneY), interfaceSchema->InterfaceId + "::operation:" + operationSchema->OperationId);
             queryLaneY += node.Size.y + 20.0f;
         } else {
-            node.Position = findOrCreatePosition(node.Key, ImVec2(1470.0f, commandLaneY));
             node.Kind = FGraphNode::EKind::Command;
+            findOrCreatePosition(graphNode, ImVec2(1470.0f, commandLaneY), interfaceSchema->InterfaceId + "::operation:" + operationSchema->OperationId);
             commandLaneY += node.Size.y + 20.0f;
         }
-        node.RefId = operation.OperationId;
-        node.Badges.push_back({WithPolicyPrefix('R', ToCompactRunStateLabel(operation.RunStatePolicy)), IM_COL32(78, 122, 112, 220)});
-        node.Badges.push_back({WithPolicyPrefix('T', ToCompactThreadLabel(operation.ThreadAffinity)), IM_COL32(86, 112, 142, 220)});
-        node.Badges.push_back({WithPolicyPrefix('X', ToCompactSideEffectLabel(operation.SideEffectClass)), IM_COL32(122, 104, 88, 220)});
+        node.RefId = graphNode.SourceOperationId;
+        node.Badges.push_back({WithPolicyPrefix('R', ToCompactRunStateLabel(operationSchema->RunStatePolicy)), IM_COL32(78, 122, 112, 220)});
+        node.Badges.push_back({WithPolicyPrefix('T', ToCompactThreadLabel(operationSchema->ThreadAffinity)), IM_COL32(86, 112, 142, 220)});
+        node.Badges.push_back({WithPolicyPrefix('X', ToCompactSideEffectLabel(operationSchema->SideEffectClass)), IM_COL32(122, 104, 88, 220)});
         if (requiredInputCount > 0) {
             node.Badges.push_back({WithPolicyPrefix('I', Slab::ToStr(requiredInputCount)), IM_COL32(96, 128, 186, 220)});
         }
-        nodes.push_back(node);
+        persistNodePosition(node);
+        nodes.push_back(std::move(node));
     }
 
     const auto screenPositionFor = [&](const FGraphNode &node) {
         return ImVec2(
-            canvasPos.x + BlueprintGraphPan.x + node.Position->x,
-            canvasPos.y + BlueprintGraphPan.y + node.Position->y);
+            canvasPos.x + SchemesBlueprintDocument.Canvas.PanX + node.GraphNode->Position.x,
+            canvasPos.y + SchemesBlueprintDocument.Canvas.PanY + node.GraphNode->Position.y);
     };
 
     const auto pinPositionFor = [&](const FGraphNode &node, const bool bOutput, int slot, int totalSlots) {
@@ -2401,7 +2471,27 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
         return ImVec2(x, y);
     };
 
-    auto &root = nodes.front();
+    const auto findVisibleNodeByKind = [&](const FGraphNode::EKind kind) -> const FGraphNode * {
+        const auto it = std::find_if(nodes.begin(), nodes.end(), [&](const auto &node) {
+            return node.Kind == kind;
+        });
+        if (it == nodes.end()) return nullptr;
+        return &(*it);
+    };
+
+    const auto *root = findVisibleNodeByKind(FGraphNode::EKind::Interface);
+    if (root == nullptr) {
+        drawList->PopClipRect();
+        ImGui::SetCursorScreenPos(ImVec2(canvasPos.x, canvasEnd.y));
+        ImGui::TextDisabled("Blueprint graph root node unavailable.");
+        return;
+    }
+
+    std::map<Slab::Str, const FGraphNode *> visibleNodesById;
+    for (const auto &node : nodes) {
+        visibleNodesById[node.Key] = &node;
+    }
+
     Slab::Vector<const FGraphNode *> parameterNodes;
     Slab::Vector<const FGraphNode *> queryNodes;
     Slab::Vector<const FGraphNode *> commandNodes;
@@ -2413,28 +2503,64 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
 
     const int parameterCount = static_cast<int>(parameterNodes.size());
     const int operationCount = static_cast<int>(queryNodes.size() + commandNodes.size());
-    for (int i = 0; i < parameterCount; ++i) {
-        const auto &paramNode = *parameterNodes[i];
-        const auto source = pinPositionFor(paramNode, true, 0, 1);
-        const auto target = pinPositionFor(root, false, i, parameterCount);
-        const auto cp1 = ImVec2(source.x + 84.0f, source.y);
-        const auto cp2 = ImVec2(target.x - 84.0f, target.y);
-        drawList->AddBezierCubic(source, cp1, cp2, target, IM_COL32(104, 168, 224, 128), 1.6f);
-    }
-
     Slab::Vector<const FGraphNode *> operationNodes;
     operationNodes.reserve(queryNodes.size() + commandNodes.size());
     operationNodes.insert(operationNodes.end(), queryNodes.begin(), queryNodes.end());
     operationNodes.insert(operationNodes.end(), commandNodes.begin(), commandNodes.end());
+    std::map<Slab::Str, int> parameterSlotByNodeId;
+    std::map<Slab::Str, int> operationSlotByNodeId;
+    for (int i = 0; i < parameterCount; ++i) {
+        parameterSlotByNodeId[parameterNodes[static_cast<std::size_t>(i)]->Key] = i;
+    }
     for (int i = 0; i < operationCount; ++i) {
-        const auto &operationNode = *operationNodes[i];
-        const auto source = pinPositionFor(root, true, i, operationCount);
-        const auto inputSocketCount = std::max(1, operationNode.InputSocketCount);
+        operationSlotByNodeId[operationNodes[static_cast<std::size_t>(i)]->Key] = i;
+    }
+
+    for (const auto &edge : SchemesBlueprintDocument.Edges) {
+        const auto fromIt = visibleNodesById.find(edge.FromNodeId);
+        const auto toIt = visibleNodesById.find(edge.ToNodeId);
+        if (fromIt == visibleNodesById.end() || toIt == visibleNodesById.end()) continue;
+
+        const auto *fromNode = fromIt->second;
+        const auto *toNode = toIt->second;
+
+        const bool bParameterEdge =
+            (fromNode->Kind == FGraphNode::EKind::Interface && toNode->Kind == FGraphNode::EKind::Parameter) ||
+            (toNode->Kind == FGraphNode::EKind::Interface && fromNode->Kind == FGraphNode::EKind::Parameter);
+        if (bParameterEdge) {
+            const auto *parameterNode = fromNode->Kind == FGraphNode::EKind::Parameter ? fromNode : toNode;
+            const auto slotIt = parameterSlotByNodeId.find(parameterNode->Key);
+            if (slotIt == parameterSlotByNodeId.end()) continue;
+
+            const auto source = pinPositionFor(*parameterNode, true, 0, 1);
+            const auto target = pinPositionFor(*root, false, slotIt->second, parameterCount);
+            const auto cp1 = ImVec2(source.x + 84.0f, source.y);
+            const auto cp2 = ImVec2(target.x - 84.0f, target.y);
+            drawList->AddBezierCubic(source, cp1, cp2, target, IM_COL32(104, 168, 224, 128), 1.6f);
+            continue;
+        }
+
+        const bool bOperationEdge =
+            (fromNode->Kind == FGraphNode::EKind::Interface &&
+                (toNode->Kind == FGraphNode::EKind::Query || toNode->Kind == FGraphNode::EKind::Command)) ||
+            (toNode->Kind == FGraphNode::EKind::Interface &&
+                (fromNode->Kind == FGraphNode::EKind::Query || fromNode->Kind == FGraphNode::EKind::Command));
+        if (!bOperationEdge) continue;
+
+        const auto *operationNode =
+            (fromNode->Kind == FGraphNode::EKind::Query || fromNode->Kind == FGraphNode::EKind::Command)
+                ? fromNode
+                : toNode;
+        const auto slotIt = operationSlotByNodeId.find(operationNode->Key);
+        if (slotIt == operationSlotByNodeId.end()) continue;
+
+        const auto source = pinPositionFor(*root, true, slotIt->second, operationCount);
+        const auto inputSocketCount = std::max(1, operationNode->InputSocketCount);
         for (int socket = 0; socket < inputSocketCount; ++socket) {
-            const auto target = pinPositionFor(operationNode, false, socket, inputSocketCount);
+            const auto target = pinPositionFor(*operationNode, false, socket, inputSocketCount);
             const auto cp1 = ImVec2(source.x + 108.0f, source.y);
             const auto cp2 = ImVec2(target.x - 108.0f, target.y);
-            const auto edgeColor = operationNode.Kind == FGraphNode::EKind::Query
+            const auto edgeColor = operationNode->Kind == FGraphNode::EKind::Query
                 ? IM_COL32(116, 214, 174, 128)
                 : IM_COL32(214, 184, 116, 128);
             drawList->AddBezierCubic(source, cp1, cp2, target, edgeColor, 1.6f);
@@ -2736,7 +2862,11 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
             auto &pressedNode = nodes[static_cast<std::size_t>(hoveredNodeIndex)];
             BlueprintPressedNodeKey = pressedNode.Key;
             BlueprintPressMousePos = mousePos;
-            BlueprintPressNodePos = *(pressedNode.Position);
+            if (pressedNode.GraphNode != nullptr) {
+                BlueprintPressNodePos = ImVec2(pressedNode.GraphNode->Position.x, pressedNode.GraphNode->Position.y);
+            } else {
+                BlueprintPressNodePos = ImVec2(0.0f, 0.0f);
+            }
             bBlueprintNodeDragging = false;
             BlueprintPressedActionNodeKey.clear();
             BlueprintPressedActionIndex = -1;
@@ -2753,9 +2883,10 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
             const auto delta = ImVec2(mousePos.x - BlueprintPressMousePos.x, mousePos.y - BlueprintPressMousePos.y);
             const float distance2 = delta.x * delta.x + delta.y * delta.y;
             if (!bBlueprintNodeDragging && distance2 > 9.0f) bBlueprintNodeDragging = true;
-            if (bBlueprintNodeDragging) {
-                nodeIt->second->Position->x = BlueprintPressNodePos.x + delta.x;
-                nodeIt->second->Position->y = BlueprintPressNodePos.y + delta.y;
+            if (bBlueprintNodeDragging && nodeIt->second->GraphNode != nullptr) {
+                nodeIt->second->GraphNode->Position.x = BlueprintPressNodePos.x + delta.x;
+                nodeIt->second->GraphNode->Position.y = BlueprintPressNodePos.y + delta.y;
+                persistNodePosition(*nodeIt->second);
             }
         }
     }
@@ -3113,27 +3244,29 @@ auto FLabV2WindowManager::SaveGraphPlaygroundStateToFile() -> bool {
 
     json::value templateState(json::object{});
     templateState["selected_operator"] = PlaygroundTemplateSelectedOperatorId;
-    templateState["show_grid"] = bPlaygroundTemplateShowGrid;
-    templateState["show_minimap"] = bPlaygroundTemplateShowMinimap;
-    templateState["pan"] = JsonWriteVec2(PlaygroundTemplatePan);
+    templateState["show_grid"] = PlaygroundTemplateDocument.Canvas.bShowGrid;
+    templateState["show_minimap"] = PlaygroundTemplateDocument.Canvas.bShowMinimap;
+    templateState["pan"] = JsonWriteVec2(ImVec2(
+        PlaygroundTemplateDocument.Canvas.PanX,
+        PlaygroundTemplateDocument.Canvas.PanY));
     templateState["node_counter"] = static_cast<double>(PlaygroundTemplateNodeCounter);
     templateState["edge_counter"] = static_cast<double>(PlaygroundTemplateEdgeCounter);
     templateState["coercion_counter"] = static_cast<double>(PlaygroundTemplateCoercionCounter);
 
     json::array templateNodes;
-    templateNodes.reserve(PlaygroundTemplateNodes.size());
-    for (const auto &node : PlaygroundTemplateNodes) {
+    templateNodes.reserve(PlaygroundTemplateDocument.Nodes.size());
+    for (const auto &node : PlaygroundTemplateDocument.Nodes) {
         json::value nodeValue(json::object{});
         nodeValue["id"] = node.NodeId;
         nodeValue["operator_id"] = node.SemanticOperatorId;
-        nodeValue["position"] = JsonWriteVec2(node.Position);
+        nodeValue["position"] = JsonWriteVec2(ImVec2(node.Position.x, node.Position.y));
         templateNodes.push_back(std::move(nodeValue));
     }
     templateState["nodes"] = json::value(std::move(templateNodes));
 
     json::array templateEdges;
-    templateEdges.reserve(PlaygroundTemplateEdges.size());
-    for (const auto &edge : PlaygroundTemplateEdges) {
+    templateEdges.reserve(PlaygroundTemplateDocument.Edges.size());
+    for (const auto &edge : PlaygroundTemplateDocument.Edges) {
         json::value edgeValue(json::object{});
         edgeValue["id"] = edge.EdgeId;
         edgeValue["from_node_id"] = edge.FromNodeId;
@@ -3177,12 +3310,12 @@ auto FLabV2WindowManager::SaveGraphPlaygroundStateToFile() -> bool {
     routingState["edge_kind"] = static_cast<double>(static_cast<int>(PlaygroundRoutingEdgeKind));
 
     json::array routingEdges;
-    routingEdges.reserve(PlaygroundRoutingEdges.size());
-    for (const auto &edge : PlaygroundRoutingEdges) {
+    routingEdges.reserve(PlaygroundRoutingDocument.Edges.size());
+    for (const auto &edge : PlaygroundRoutingDocument.Edges) {
         json::value edgeValue(json::object{});
         edgeValue["id"] = edge.EdgeId;
-        edgeValue["source"] = edge.SourceEndpoint;
-        edgeValue["target"] = edge.TargetEndpoint;
+        edgeValue["source"] = edge.FromNodeId;
+        edgeValue["target"] = edge.ToNodeId;
         edgeValue["kind"] = static_cast<double>(static_cast<int>(edge.Kind));
         routingEdges.push_back(std::move(edgeValue));
     }
@@ -3229,8 +3362,8 @@ auto FLabV2WindowManager::LoadGraphPlaygroundStateFromFile() -> bool {
         return false;
     }
 
-    PlaygroundTemplateNodes.clear();
-    PlaygroundTemplateEdges.clear();
+    PlaygroundTemplateDocument.Nodes.clear();
+    PlaygroundTemplateDocument.Edges.clear();
     PlaygroundTemplateSelectedNodeIds.clear();
     PlaygroundTemplateSelectedNodeId.clear();
     PlaygroundTemplateSelectedEdgeId.clear();
@@ -3242,25 +3375,37 @@ auto FLabV2WindowManager::LoadGraphPlaygroundStateFromFile() -> bool {
     PlaygroundTemplateMarqueeStart = ImVec2(0.0f, 0.0f);
     PlaygroundTemplateMarqueeEnd = ImVec2(0.0f, 0.0f);
 
-    PlaygroundRoutingEdges.clear();
+    PlaygroundRoutingDocument.Edges.clear();
 
     if (const auto *templateState = JsonTryGetValue(loadedRoot, "template"); templateState != nullptr) {
         PlaygroundTemplateSelectedOperatorId = JsonReadString(*templateState, "selected_operator", PlaygroundTemplateSelectedOperatorId);
-        bPlaygroundTemplateShowGrid = JsonReadBool(*templateState, "show_grid", bPlaygroundTemplateShowGrid);
-        bPlaygroundTemplateShowMinimap = JsonReadBool(*templateState, "show_minimap", bPlaygroundTemplateShowMinimap);
-        PlaygroundTemplatePan = JsonReadVec2(*templateState, "pan", PlaygroundTemplatePan);
+        PlaygroundTemplateDocument.Canvas.bShowGrid = JsonReadBool(*templateState, "show_grid", PlaygroundTemplateDocument.Canvas.bShowGrid);
+        PlaygroundTemplateDocument.Canvas.bShowMinimap = JsonReadBool(*templateState, "show_minimap", PlaygroundTemplateDocument.Canvas.bShowMinimap);
+        const auto pan = JsonReadVec2(
+            *templateState,
+            "pan",
+            ImVec2(
+                PlaygroundTemplateDocument.Canvas.PanX,
+                PlaygroundTemplateDocument.Canvas.PanY));
+        PlaygroundTemplateDocument.Canvas.PanX = pan.x;
+        PlaygroundTemplateDocument.Canvas.PanY = pan.y;
 
         if (const auto *nodesValue = JsonTryGetValue(*templateState, "nodes");
             nodesValue != nullptr && nodesValue->is_array()) {
             for (const auto &nodeValue : nodesValue->get<json::array>()) {
                 if (!nodeValue.is_object()) continue;
 
-                FTemplateGraphPlaygroundNode node;
+                Slab::Core::Reflection::V2::FGraphNodeV2 node;
                 node.NodeId = JsonReadString(nodeValue, "id");
                 node.SemanticOperatorId = JsonReadString(nodeValue, "operator_id");
-                node.Position = JsonReadVec2(nodeValue, "position", node.Position);
+                const auto position = JsonReadVec2(
+                    nodeValue,
+                    "position",
+                    ImVec2(node.Position.x, node.Position.y));
+                node.Position.x = position.x;
+                node.Position.y = position.y;
                 if (node.NodeId.empty() || node.SemanticOperatorId.empty()) continue;
-                PlaygroundTemplateNodes.push_back(std::move(node));
+                PlaygroundTemplateDocument.Nodes.push_back(std::move(node));
             }
         }
 
@@ -3269,14 +3414,14 @@ auto FLabV2WindowManager::LoadGraphPlaygroundStateFromFile() -> bool {
             for (const auto &edgeValue : edgesValue->get<json::array>()) {
                 if (!edgeValue.is_object()) continue;
 
-                FTemplateGraphPlaygroundEdge edge;
+                Slab::Core::Reflection::V2::FGraphEdgeV2 edge;
                 edge.EdgeId = JsonReadString(edgeValue, "id");
                 edge.FromNodeId = JsonReadString(edgeValue, "from_node_id");
                 edge.FromPortId = JsonReadString(edgeValue, "from_port_id");
                 edge.ToNodeId = JsonReadString(edgeValue, "to_node_id");
                 edge.ToPortId = JsonReadString(edgeValue, "to_port_id");
                 edge.MatchReason = JsonReadString(edgeValue, "match_reason", "ExactMatch");
-                if (edge.EdgeId.empty()) edge.EdgeId = "tmpl.edge." + Slab::ToStr(PlaygroundTemplateEdges.size() + 1);
+                if (edge.EdgeId.empty()) edge.EdgeId = "tmpl.edge." + Slab::ToStr(PlaygroundTemplateDocument.Edges.size() + 1);
                 if (edge.FromNodeId.empty() || edge.ToNodeId.empty() || edge.FromPortId.empty() || edge.ToPortId.empty()) continue;
 
                 if (const auto *diagnosticsValue = JsonTryGetValue(edgeValue, "diagnostics");
@@ -3297,7 +3442,7 @@ auto FLabV2WindowManager::LoadGraphPlaygroundStateFromFile() -> bool {
                     }
                 }
 
-                PlaygroundTemplateEdges.push_back(std::move(edge));
+                PlaygroundTemplateDocument.Edges.push_back(std::move(edge));
             }
         }
 
@@ -3313,18 +3458,18 @@ auto FLabV2WindowManager::LoadGraphPlaygroundStateFromFile() -> bool {
         PlaygroundTemplateSelectedEdgeId = JsonReadString(*templateState, "selected_edge");
 
         PlaygroundTemplateNodeCounter = std::max(
-            PlaygroundTemplateNodes.size(),
-            JsonReadUSize(*templateState, "node_counter", PlaygroundTemplateNodes.size()));
+            PlaygroundTemplateDocument.Nodes.size(),
+            JsonReadUSize(*templateState, "node_counter", PlaygroundTemplateDocument.Nodes.size()));
         PlaygroundTemplateEdgeCounter = std::max(
-            PlaygroundTemplateEdges.size(),
-            JsonReadUSize(*templateState, "edge_counter", PlaygroundTemplateEdges.size()));
+            PlaygroundTemplateDocument.Edges.size(),
+            JsonReadUSize(*templateState, "edge_counter", PlaygroundTemplateDocument.Edges.size()));
         PlaygroundTemplateCoercionCounter = JsonReadUSize(
             *templateState,
             "coercion_counter",
             PlaygroundTemplateCoercionCounter);
     } else {
-        PlaygroundTemplateNodeCounter = PlaygroundTemplateNodes.size();
-        PlaygroundTemplateEdgeCounter = PlaygroundTemplateEdges.size();
+        PlaygroundTemplateNodeCounter = PlaygroundTemplateDocument.Nodes.size();
+        PlaygroundTemplateEdgeCounter = PlaygroundTemplateDocument.Edges.size();
     }
 
     if (const auto *routingState = JsonTryGetValue(loadedRoot, "routing"); routingState != nullptr) {
@@ -3334,39 +3479,39 @@ auto FLabV2WindowManager::LoadGraphPlaygroundStateFromFile() -> bool {
             *routingState,
             "edge_kind",
             static_cast<double>(static_cast<int>(PlaygroundRoutingEdgeKind))));
-        PlaygroundRoutingEdgeKind = static_cast<ERoutingGraphEdgeKind>(std::clamp(edgeKind, 0, 3));
+        PlaygroundRoutingEdgeKind = static_cast<Slab::Core::Reflection::V2::EGraphEdgeKindV2>(std::clamp(edgeKind, 0, 3));
 
         if (const auto *edgesValue = JsonTryGetValue(*routingState, "edges");
             edgesValue != nullptr && edgesValue->is_array()) {
             for (const auto &edgeValue : edgesValue->get<json::array>()) {
                 if (!edgeValue.is_object()) continue;
 
-                FRoutingGraphPlaygroundEdge edge;
+                Slab::Core::Reflection::V2::FGraphEdgeV2 edge;
                 edge.EdgeId = JsonReadString(edgeValue, "id");
-                edge.SourceEndpoint = JsonReadString(edgeValue, "source");
-                edge.TargetEndpoint = JsonReadString(edgeValue, "target");
+                edge.FromNodeId = JsonReadString(edgeValue, "source");
+                edge.ToNodeId = JsonReadString(edgeValue, "target");
                 const auto kind = static_cast<int>(JsonReadDouble(edgeValue, "kind", 0.0));
-                edge.Kind = static_cast<ERoutingGraphEdgeKind>(std::clamp(kind, 0, 3));
-                if (edge.EdgeId.empty()) edge.EdgeId = "route.edge." + Slab::ToStr(PlaygroundRoutingEdges.size() + 1);
-                if (edge.SourceEndpoint.empty() || edge.TargetEndpoint.empty()) continue;
-                PlaygroundRoutingEdges.push_back(std::move(edge));
+                edge.Kind = static_cast<Slab::Core::Reflection::V2::EGraphEdgeKindV2>(std::clamp(kind, 0, 3));
+                if (edge.EdgeId.empty()) edge.EdgeId = "route.edge." + Slab::ToStr(PlaygroundRoutingDocument.Edges.size() + 1);
+                if (edge.FromNodeId.empty() || edge.ToNodeId.empty()) continue;
+                PlaygroundRoutingDocument.Edges.push_back(std::move(edge));
             }
         }
 
         PlaygroundRoutingEdgeCounter = std::max(
-            PlaygroundRoutingEdges.size(),
-            JsonReadUSize(*routingState, "edge_counter", PlaygroundRoutingEdges.size()));
+            PlaygroundRoutingDocument.Edges.size(),
+            JsonReadUSize(*routingState, "edge_counter", PlaygroundRoutingDocument.Edges.size()));
     } else {
-        PlaygroundRoutingEdgeCounter = PlaygroundRoutingEdges.size();
+        PlaygroundRoutingEdgeCounter = PlaygroundRoutingDocument.Edges.size();
     }
 
     bPlaygroundDirty = false;
     PlaygroundLastAutosaveTimestampSeconds = ImGui::GetTime();
     PlaygroundPersistenceStatus =
         "[Ok] Loaded graph state: " +
-        Slab::ToStr(PlaygroundTemplateNodes.size()) + " template nodes, " +
-        Slab::ToStr(PlaygroundTemplateEdges.size()) + " template edges, " +
-        Slab::ToStr(PlaygroundRoutingEdges.size()) + " routing edges.";
+        Slab::ToStr(PlaygroundTemplateDocument.Nodes.size()) + " template nodes, " +
+        Slab::ToStr(PlaygroundTemplateDocument.Edges.size()) + " template edges, " +
+        Slab::ToStr(PlaygroundRoutingDocument.Edges.size()) + " routing edges.";
     return true;
 }
 
@@ -3484,27 +3629,27 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
         std::size_t IncompatibleEdges = 0;
     };
 
-    const auto findTemplateNode = [this](const Slab::Str &nodeId) -> FTemplateGraphPlaygroundNode * {
-        const auto it = std::find_if(PlaygroundTemplateNodes.begin(), PlaygroundTemplateNodes.end(), [&](const auto &node) {
+    const auto findTemplateNode = [this](const Slab::Str &nodeId) -> FGraphNodeV2 * {
+        const auto it = std::find_if(PlaygroundTemplateDocument.Nodes.begin(), PlaygroundTemplateDocument.Nodes.end(), [&](const auto &node) {
             return node.NodeId == nodeId;
         });
-        if (it == PlaygroundTemplateNodes.end()) return nullptr;
+        if (it == PlaygroundTemplateDocument.Nodes.end()) return nullptr;
         return &(*it);
     };
 
-    const auto findTemplateNodeConst = [this](const Slab::Str &nodeId) -> const FTemplateGraphPlaygroundNode * {
-        const auto it = std::find_if(PlaygroundTemplateNodes.begin(), PlaygroundTemplateNodes.end(), [&](const auto &node) {
+    const auto findTemplateNodeConst = [this](const Slab::Str &nodeId) -> const FGraphNodeV2 * {
+        const auto it = std::find_if(PlaygroundTemplateDocument.Nodes.begin(), PlaygroundTemplateDocument.Nodes.end(), [&](const auto &node) {
             return node.NodeId == nodeId;
         });
-        if (it == PlaygroundTemplateNodes.end()) return nullptr;
+        if (it == PlaygroundTemplateDocument.Nodes.end()) return nullptr;
         return &(*it);
     };
 
-    const auto findTemplateEdgeConst = [this](const Slab::Str &edgeId) -> const FTemplateGraphPlaygroundEdge * {
-        const auto it = std::find_if(PlaygroundTemplateEdges.begin(), PlaygroundTemplateEdges.end(), [&](const auto &edge) {
+    const auto findTemplateEdgeConst = [this](const Slab::Str &edgeId) -> const FGraphEdgeV2 * {
+        const auto it = std::find_if(PlaygroundTemplateDocument.Edges.begin(), PlaygroundTemplateDocument.Edges.end(), [&](const auto &edge) {
             return edge.EdgeId == edgeId;
         });
-        if (it == PlaygroundTemplateEdges.end()) return nullptr;
+        if (it == PlaygroundTemplateDocument.Edges.end()) return nullptr;
         return &(*it);
     };
 
@@ -3564,28 +3709,28 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
             return std::find(nodeIds.begin(), nodeIds.end(), nodeId) != nodeIds.end();
         };
 
-        const auto previousNodeCount = PlaygroundTemplateNodes.size();
-        const auto previousEdgeCount = PlaygroundTemplateEdges.size();
+        const auto previousNodeCount = PlaygroundTemplateDocument.Nodes.size();
+        const auto previousEdgeCount = PlaygroundTemplateDocument.Edges.size();
 
-        PlaygroundTemplateNodes.erase(
+        PlaygroundTemplateDocument.Nodes.erase(
             std::remove_if(
-                PlaygroundTemplateNodes.begin(),
-                PlaygroundTemplateNodes.end(),
+                PlaygroundTemplateDocument.Nodes.begin(),
+                PlaygroundTemplateDocument.Nodes.end(),
                 [&](const auto &node) { return containsNodeId(node.NodeId); }),
-            PlaygroundTemplateNodes.end());
+            PlaygroundTemplateDocument.Nodes.end());
 
-        PlaygroundTemplateEdges.erase(
+        PlaygroundTemplateDocument.Edges.erase(
             std::remove_if(
-                PlaygroundTemplateEdges.begin(),
-                PlaygroundTemplateEdges.end(),
+                PlaygroundTemplateDocument.Edges.begin(),
+                PlaygroundTemplateDocument.Edges.end(),
                 [&](const auto &edge) {
                     return containsNodeId(edge.FromNodeId) || containsNodeId(edge.ToNodeId);
                 }),
-            PlaygroundTemplateEdges.end());
+            PlaygroundTemplateDocument.Edges.end());
 
         const bool bChanged =
-            previousNodeCount != PlaygroundTemplateNodes.size() ||
-            previousEdgeCount != PlaygroundTemplateEdges.size();
+            previousNodeCount != PlaygroundTemplateDocument.Nodes.size() ||
+            previousEdgeCount != PlaygroundTemplateDocument.Edges.size();
 
         if (!bChanged) return false;
 
@@ -3656,18 +3801,18 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                                               Slab::StrVector diagnostics = {},
                                               Slab::Vector<Slab::Str> suggestions = {}) -> bool {
         const auto duplicateIt = std::find_if(
-            PlaygroundTemplateEdges.begin(),
-            PlaygroundTemplateEdges.end(),
+            PlaygroundTemplateDocument.Edges.begin(),
+            PlaygroundTemplateDocument.Edges.end(),
             [&](const auto &edge) {
                 return edge.FromNodeId == fromNodeId &&
                        edge.FromPortId == fromPortId &&
                        edge.ToNodeId == toNodeId &&
                        edge.ToPortId == toPortId;
             });
-        if (duplicateIt != PlaygroundTemplateEdges.end()) return false;
+        if (duplicateIt != PlaygroundTemplateDocument.Edges.end()) return false;
 
         ++PlaygroundTemplateEdgeCounter;
-        FTemplateGraphPlaygroundEdge edge;
+        FGraphEdgeV2 edge;
         edge.EdgeId = "tmpl.edge." + Slab::ToStr(PlaygroundTemplateEdgeCounter);
         edge.FromNodeId = fromNodeId;
         edge.FromPortId = fromPortId;
@@ -3676,7 +3821,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
         edge.MatchReason = reason;
         edge.Diagnostics = std::move(diagnostics);
         edge.SuggestedCoercionOperatorIds = std::move(suggestions);
-        PlaygroundTemplateEdges.push_back(std::move(edge));
+        PlaygroundTemplateDocument.Edges.push_back(std::move(edge));
         markDirty();
         return true;
     };
@@ -3708,29 +3853,28 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
         }
 
         if (!edgeIdToReplace.empty()) {
-            const auto previousCount = PlaygroundTemplateEdges.size();
-            PlaygroundTemplateEdges.erase(
+            const auto previousCount = PlaygroundTemplateDocument.Edges.size();
+            PlaygroundTemplateDocument.Edges.erase(
                 std::remove_if(
-                    PlaygroundTemplateEdges.begin(),
-                    PlaygroundTemplateEdges.end(),
+                    PlaygroundTemplateDocument.Edges.begin(),
+                    PlaygroundTemplateDocument.Edges.end(),
                     [&](const auto &edge) { return edge.EdgeId == edgeIdToReplace; }),
-                PlaygroundTemplateEdges.end());
-            if (previousCount != PlaygroundTemplateEdges.size()) {
+                PlaygroundTemplateDocument.Edges.end());
+            if (previousCount != PlaygroundTemplateDocument.Edges.size()) {
                 markDirty();
             }
         }
 
         ++PlaygroundTemplateCoercionCounter;
-        FTemplateGraphPlaygroundNode coercionNode;
+        FGraphNodeV2 coercionNode;
         coercionNode.NodeId = "tmpl.coercion." + Slab::ToStr(PlaygroundTemplateCoercionCounter);
         coercionNode.SemanticOperatorId = coercionOperator->OperatorId;
-        coercionNode.Position = ImVec2(
-            0.5f * (fromNode->Position.x + toNode->Position.x) + 10.0f,
-            0.5f * (fromNode->Position.y + toNode->Position.y) + 30.0f);
-        PlaygroundTemplateNodes.push_back(std::move(coercionNode));
+        coercionNode.Position.x = 0.5f * (fromNode->Position.x + toNode->Position.x) + 10.0f;
+        coercionNode.Position.y = 0.5f * (fromNode->Position.y + toNode->Position.y) + 30.0f;
+        PlaygroundTemplateDocument.Nodes.push_back(std::move(coercionNode));
         markDirty();
 
-        const auto coercionNodeId = PlaygroundTemplateNodes.back().NodeId;
+        const auto coercionNodeId = PlaygroundTemplateDocument.Nodes.back().NodeId;
         (void) addTemplateEdge(
             fromNodeId,
             fromPortId,
@@ -3826,7 +3970,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
     const auto buildCompilePreview = [&]() -> FTemplateCompilePreview {
         FTemplateCompilePreview preview;
 
-        for (const auto &node : PlaygroundTemplateNodes) {
+        for (const auto &node : PlaygroundTemplateDocument.Nodes) {
             FTemplateCompilePreviewNode nodePreview;
             nodePreview.NodeId = node.NodeId;
             nodePreview.OperatorId = node.SemanticOperatorId;
@@ -3856,7 +4000,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
             preview.Nodes.push_back(std::move(nodePreview));
         }
 
-        for (const auto &edge : PlaygroundTemplateEdges) {
+        for (const auto &edge : PlaygroundTemplateDocument.Edges) {
             FTemplateCompilePreviewEdge edgePreview;
             edgePreview.EdgeId = edge.EdgeId;
             edgePreview.MatchReason = edge.MatchReason;
@@ -4017,15 +4161,14 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
             if (ImGui::Button("Add Node")) {
                 if (selectedOperator != nullptr) {
                     ++PlaygroundTemplateNodeCounter;
-                    FTemplateGraphPlaygroundNode node;
+                    FGraphNodeV2 node;
                     node.NodeId = "tmpl.node." + Slab::ToStr(PlaygroundTemplateNodeCounter);
                     node.SemanticOperatorId = selectedOperator->OperatorId;
-                    node.Position = ImVec2(
-                        80.0f + static_cast<float>((PlaygroundTemplateNodeCounter % 4) * 280),
-                        70.0f + static_cast<float>((PlaygroundTemplateNodeCounter / 4) * 140));
-                    PlaygroundTemplateNodes.push_back(std::move(node));
-                    PlaygroundTemplateSelectedNodeId = PlaygroundTemplateNodes.back().NodeId;
-                    PlaygroundTemplateSelectedNodeIds = {PlaygroundTemplateNodes.back().NodeId};
+                    node.Position.x = 80.0f + static_cast<float>((PlaygroundTemplateNodeCounter % 4) * 280);
+                    node.Position.y = 70.0f + static_cast<float>((PlaygroundTemplateNodeCounter / 4) * 140);
+                    PlaygroundTemplateDocument.Nodes.push_back(std::move(node));
+                    PlaygroundTemplateSelectedNodeId = PlaygroundTemplateDocument.Nodes.back().NodeId;
+                    PlaygroundTemplateSelectedNodeIds = {PlaygroundTemplateDocument.Nodes.back().NodeId};
                     PlaygroundTemplateSelectedEdgeId.clear();
                     PlaygroundTemplateStatus = "[Ok] Added semantic node '" + selectedOperator->DisplayName + "'.";
                     markDirty();
@@ -4048,12 +4191,12 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                         const auto *source = findTemplateNodeConst(sourceNodeId);
                         if (source == nullptr) continue;
                         ++PlaygroundTemplateNodeCounter;
-                        FTemplateGraphPlaygroundNode duplicated = *source;
+                        FGraphNodeV2 duplicated = *source;
                         duplicated.NodeId = "tmpl.node." + Slab::ToStr(PlaygroundTemplateNodeCounter);
                         duplicated.Position.x += 36.0f;
                         duplicated.Position.y += 24.0f;
                         duplicatedNodeIds.push_back(duplicated.NodeId);
-                        PlaygroundTemplateNodes.push_back(std::move(duplicated));
+                        PlaygroundTemplateDocument.Nodes.push_back(std::move(duplicated));
                     }
 
                     if (duplicatedNodeIds.empty()) {
@@ -4072,13 +4215,12 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
             ImGui::SameLine();
             if (ImGui::Button("Auto Layout")) {
                 std::size_t idx = 0;
-                for (auto &node : PlaygroundTemplateNodes) {
-                    node.Position = ImVec2(
-                        90.0f + static_cast<float>((idx % 4) * 300),
-                        80.0f + static_cast<float>((idx / 4) * 170));
+                for (auto &node : PlaygroundTemplateDocument.Nodes) {
+                    node.Position.x = 90.0f + static_cast<float>((idx % 4) * 300);
+                    node.Position.y = 80.0f + static_cast<float>((idx / 4) * 170);
                     ++idx;
                 }
-                if (!PlaygroundTemplateNodes.empty()) {
+                if (!PlaygroundTemplateDocument.Nodes.empty()) {
                     PlaygroundTemplateStatus = "[Ok] Applied auto layout.";
                     markDirty();
                 }
@@ -4092,8 +4234,8 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
 
             ImGui::SameLine();
             if (ImGui::Button("Clear")) {
-                PlaygroundTemplateNodes.clear();
-                PlaygroundTemplateEdges.clear();
+                PlaygroundTemplateDocument.Nodes.clear();
+                PlaygroundTemplateDocument.Edges.clear();
                 PlaygroundTemplateSelectedNodeIds.clear();
                 PlaygroundTemplateSelectedNodeId.clear();
                 PlaygroundTemplateSelectedEdgeId.clear();
@@ -4120,14 +4262,14 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                 if (PlaygroundTemplateSelectedEdgeId.empty()) {
                     PlaygroundTemplateStatus = "[Warn] No selected edge to delete.";
                 } else {
-                    const auto previousCount = PlaygroundTemplateEdges.size();
-                    PlaygroundTemplateEdges.erase(
+                    const auto previousCount = PlaygroundTemplateDocument.Edges.size();
+                    PlaygroundTemplateDocument.Edges.erase(
                         std::remove_if(
-                            PlaygroundTemplateEdges.begin(),
-                            PlaygroundTemplateEdges.end(),
+                            PlaygroundTemplateDocument.Edges.begin(),
+                            PlaygroundTemplateDocument.Edges.end(),
                             [&](const auto &edge) { return edge.EdgeId == PlaygroundTemplateSelectedEdgeId; }),
-                        PlaygroundTemplateEdges.end());
-                    if (previousCount != PlaygroundTemplateEdges.size()) {
+                        PlaygroundTemplateDocument.Edges.end());
+                    if (previousCount != PlaygroundTemplateDocument.Edges.size()) {
                         PlaygroundTemplateStatus = "[Ok] Deleted selected edge.";
                         PlaygroundTemplateSelectedEdgeId.clear();
                         markDirty();
@@ -4138,11 +4280,11 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
             }
 
             ImGui::SameLine();
-            if (ImGui::Checkbox("Grid", &bPlaygroundTemplateShowGrid)) {
+            if (ImGui::Checkbox("Grid", &PlaygroundTemplateDocument.Canvas.bShowGrid)) {
                 markDirty();
             }
             ImGui::SameLine();
-            if (ImGui::Checkbox("Minimap", &bPlaygroundTemplateShowMinimap)) {
+            if (ImGui::Checkbox("Minimap", &PlaygroundTemplateDocument.Canvas.bShowMinimap)) {
                 markDirty();
             }
 
@@ -4152,15 +4294,14 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
             if (bTemplateHotkeysEnabled && ImGui::IsKeyPressed(ImGuiKey_A, false)) {
                 if (selectedOperator != nullptr) {
                     ++PlaygroundTemplateNodeCounter;
-                    FTemplateGraphPlaygroundNode node;
+                    FGraphNodeV2 node;
                     node.NodeId = "tmpl.node." + Slab::ToStr(PlaygroundTemplateNodeCounter);
                     node.SemanticOperatorId = selectedOperator->OperatorId;
-                    node.Position = ImVec2(
-                        100.0f + static_cast<float>((PlaygroundTemplateNodeCounter % 3) * 120),
-                        110.0f + static_cast<float>((PlaygroundTemplateNodeCounter / 3) * 80));
-                    PlaygroundTemplateNodes.push_back(std::move(node));
-                    PlaygroundTemplateSelectedNodeId = PlaygroundTemplateNodes.back().NodeId;
-                    PlaygroundTemplateSelectedNodeIds = {PlaygroundTemplateNodes.back().NodeId};
+                    node.Position.x = 100.0f + static_cast<float>((PlaygroundTemplateNodeCounter % 3) * 120);
+                    node.Position.y = 110.0f + static_cast<float>((PlaygroundTemplateNodeCounter / 3) * 80);
+                    PlaygroundTemplateDocument.Nodes.push_back(std::move(node));
+                    PlaygroundTemplateSelectedNodeId = PlaygroundTemplateDocument.Nodes.back().NodeId;
+                    PlaygroundTemplateSelectedNodeIds = {PlaygroundTemplateDocument.Nodes.back().NodeId};
                     PlaygroundTemplateSelectedEdgeId.clear();
                     PlaygroundTemplateStatus = "[Ok] Added node (shortcut A).";
                     markDirty();
@@ -4171,14 +4312,14 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
             }
             if (bTemplateHotkeysEnabled && ImGui::IsKeyPressed(ImGuiKey_Delete, false)) {
                 if (!PlaygroundTemplateSelectedEdgeId.empty()) {
-                    const auto previousCount = PlaygroundTemplateEdges.size();
-                    PlaygroundTemplateEdges.erase(
+                    const auto previousCount = PlaygroundTemplateDocument.Edges.size();
+                    PlaygroundTemplateDocument.Edges.erase(
                         std::remove_if(
-                            PlaygroundTemplateEdges.begin(),
-                            PlaygroundTemplateEdges.end(),
+                            PlaygroundTemplateDocument.Edges.begin(),
+                            PlaygroundTemplateDocument.Edges.end(),
                             [&](const auto &edge) { return edge.EdgeId == PlaygroundTemplateSelectedEdgeId; }),
-                        PlaygroundTemplateEdges.end());
-                    if (previousCount != PlaygroundTemplateEdges.size()) {
+                        PlaygroundTemplateDocument.Edges.end());
+                    if (previousCount != PlaygroundTemplateDocument.Edges.size()) {
                         PlaygroundTemplateSelectedEdgeId.clear();
                         PlaygroundTemplateStatus = "[Ok] Deleted selected edge (Del).";
                         markDirty();
@@ -4255,8 +4396,8 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                 bool bCanvasPanning = false;
                 if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Right, 0.0f)) {
                     const auto &io = ImGui::GetIO();
-                    PlaygroundTemplatePan.x += io.MouseDelta.x;
-                    PlaygroundTemplatePan.y += io.MouseDelta.y;
+                    PlaygroundTemplateDocument.Canvas.PanX += io.MouseDelta.x;
+                    PlaygroundTemplateDocument.Canvas.PanY += io.MouseDelta.y;
                     bCanvasPanning = true;
                     markDirty();
                 }
@@ -4266,10 +4407,10 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                 drawList->AddRect(canvasPos, canvasEnd, IM_COL32(74, 82, 96, 255), 6.0f, 0, 1.0f);
                 drawList->PushClipRect(canvasPos, canvasEnd, true);
 
-                if (bPlaygroundTemplateShowGrid) {
+                if (PlaygroundTemplateDocument.Canvas.bShowGrid) {
                     constexpr float GridStep = 52.0f;
-                    const float xOffset = std::fmod(PlaygroundTemplatePan.x, GridStep);
-                    const float yOffset = std::fmod(PlaygroundTemplatePan.y, GridStep);
+                    const float xOffset = std::fmod(PlaygroundTemplateDocument.Canvas.PanX, GridStep);
+                    const float yOffset = std::fmod(PlaygroundTemplateDocument.Canvas.PanY, GridStep);
                     for (float x = canvasPos.x + xOffset; x < canvasEnd.x; x += GridStep) {
                         drawList->AddLine(ImVec2(x, canvasPos.y), ImVec2(x, canvasEnd.y), IM_COL32(34, 40, 52, 255), 1.0f);
                     }
@@ -4278,10 +4419,10 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                     }
                 }
 
-                const auto nodeScreenPos = [&](const FTemplateGraphPlaygroundNode &node) -> ImVec2 {
+                const auto nodeScreenPos = [&](const FGraphNodeV2 &node) -> ImVec2 {
                     return ImVec2(
-                        canvasPos.x + PlaygroundTemplatePan.x + node.Position.x,
-                        canvasPos.y + PlaygroundTemplatePan.y + node.Position.y);
+                        canvasPos.x + PlaygroundTemplateDocument.Canvas.PanX + node.Position.x,
+                        canvasPos.y + PlaygroundTemplateDocument.Canvas.PanY + node.Position.y);
                 };
 
                 const auto nodeScreenSize = [&](const FSemanticOperatorSchemaV1 &semanticOperator) -> ImVec2 {
@@ -4294,7 +4435,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                     return ImVec2(width, height);
                 };
 
-                const auto portPinPosition = [&](const FTemplateGraphPlaygroundNode &node,
+                const auto portPinPosition = [&](const FGraphNodeV2 &node,
                                                  const FSemanticOperatorSchemaV1 &semanticOperator,
                                                  const bool bOutput,
                                                  const int index) -> ImVec2 {
@@ -4313,14 +4454,14 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                 };
 
                 if (bRequestFitToContent) {
-                    if (PlaygroundTemplateNodes.empty()) {
+                    if (PlaygroundTemplateDocument.Nodes.empty()) {
                         PlaygroundTemplateStatus = "[Warn] Nothing to fit.";
                     } else {
                         float minX = std::numeric_limits<float>::max();
                         float minY = std::numeric_limits<float>::max();
                         float maxX = std::numeric_limits<float>::lowest();
                         float maxY = std::numeric_limits<float>::lowest();
-                        for (const auto &node : PlaygroundTemplateNodes) {
+                        for (const auto &node : PlaygroundTemplateDocument.Nodes) {
                             const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
                             if (semanticOperator == nullptr) continue;
                             const auto nodeSize = nodeScreenSize(*semanticOperator);
@@ -4332,8 +4473,8 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                         if (minX <= maxX && minY <= maxY) {
                             const auto contentWidth = std::max(1.0f, maxX - minX);
                             const auto contentHeight = std::max(1.0f, maxY - minY);
-                            PlaygroundTemplatePan.x = 0.5f * (canvasSize.x - contentWidth) - minX;
-                            PlaygroundTemplatePan.y = 0.5f * (canvasSize.y - contentHeight) - minY;
+                            PlaygroundTemplateDocument.Canvas.PanX = 0.5f * (canvasSize.x - contentWidth) - minX;
+                            PlaygroundTemplateDocument.Canvas.PanY = 0.5f * (canvasSize.y - contentHeight) - minY;
                             PlaygroundTemplateStatus = "[Ok] View fitted to graph bounds.";
                             markDirty();
                         }
@@ -4341,7 +4482,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                 }
 
                 struct FRenderedTemplateEdge {
-                    const FTemplateGraphPlaygroundEdge *Edge = nullptr;
+                    const FGraphEdgeV2 *Edge = nullptr;
                     ImVec2 P0 = ImVec2(0.0f, 0.0f);
                     ImVec2 P1 = ImVec2(0.0f, 0.0f);
                     ImVec2 P2 = ImVec2(0.0f, 0.0f);
@@ -4349,9 +4490,9 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                     ImU32 Color = IM_COL32(110, 198, 255, 255);
                 };
                 Slab::Vector<FRenderedTemplateEdge> renderedEdges;
-                renderedEdges.reserve(PlaygroundTemplateEdges.size());
+                renderedEdges.reserve(PlaygroundTemplateDocument.Edges.size());
 
-                for (const auto &edge : PlaygroundTemplateEdges) {
+                for (const auto &edge : PlaygroundTemplateDocument.Edges) {
                     const auto *fromNode = findTemplateNodeConst(edge.FromNodeId);
                     const auto *toNode = findTemplateNodeConst(edge.ToNodeId);
                     if (fromNode == nullptr || toNode == nullptr) continue;
@@ -4401,7 +4542,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                 bool bAnyPortClicked = false;
                 bool bAnyNodeDragging = false;
 
-                for (auto &node : PlaygroundTemplateNodes) {
+                for (auto &node : PlaygroundTemplateDocument.Nodes) {
                     const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
                     if (semanticOperator == nullptr) continue;
 
@@ -4603,7 +4744,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                                 std::max(PlaygroundTemplateMarqueeStart.y, PlaygroundTemplateMarqueeEnd.y));
 
                             PlaygroundTemplateSelectedNodeIds.clear();
-                            for (const auto &node : PlaygroundTemplateNodes) {
+                            for (const auto &node : PlaygroundTemplateDocument.Nodes) {
                                 const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
                                 if (semanticOperator == nullptr) continue;
                                 const auto nodePos = nodeScreenPos(node);
@@ -4673,7 +4814,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                     }
                 }
 
-                if (bPlaygroundTemplateShowMinimap && !PlaygroundTemplateNodes.empty()) {
+                if (PlaygroundTemplateDocument.Canvas.bShowMinimap && !PlaygroundTemplateDocument.Nodes.empty()) {
                     const auto minimapSize = ImVec2(
                         std::clamp(canvasSize.x * 0.20f, 140.0f, 220.0f),
                         std::clamp(canvasSize.y * 0.25f, 90.0f, 140.0f));
@@ -4688,7 +4829,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                     float minY = std::numeric_limits<float>::max();
                     float maxX = std::numeric_limits<float>::lowest();
                     float maxY = std::numeric_limits<float>::lowest();
-                    for (const auto &node : PlaygroundTemplateNodes) {
+                    for (const auto &node : PlaygroundTemplateDocument.Nodes) {
                         const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
                         if (semanticOperator == nullptr) continue;
                         const auto nodeSize = nodeScreenSize(*semanticOperator);
@@ -4699,16 +4840,23 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                     }
 
                     if (minX <= maxX && minY <= maxY) {
-                        const auto graphWidth = std::max(1.0f, maxX - minX);
-                        const auto graphHeight = std::max(1.0f, maxY - minY);
-                        const auto mapX = [minX, graphWidth, minimapPos, minimapSize](const float x) {
-                            return minimapPos.x + (x - minX) * (minimapSize.x / graphWidth);
+                        const auto viewMin = ImVec2(-PlaygroundTemplateDocument.Canvas.PanX, -PlaygroundTemplateDocument.Canvas.PanY);
+                        const auto viewMax = ImVec2(viewMin.x + canvasSize.x, viewMin.y + canvasSize.y);
+                        const float worldMinX = std::min(minX, viewMin.x);
+                        const float worldMinY = std::min(minY, viewMin.y);
+                        const float worldMaxX = std::max(maxX, viewMax.x);
+                        const float worldMaxY = std::max(maxY, viewMax.y);
+                        const auto graphWidth = std::max(1.0f, worldMaxX - worldMinX);
+                        const auto graphHeight = std::max(1.0f, worldMaxY - worldMinY);
+                        const auto mapX = [worldMinX, graphWidth, minimapPos, minimapSize](const float x) {
+                            return minimapPos.x + (x - worldMinX) * (minimapSize.x / graphWidth);
                         };
-                        const auto mapY = [minY, graphHeight, minimapPos, minimapSize](const float y) {
-                            return minimapPos.y + (y - minY) * (minimapSize.y / graphHeight);
+                        const auto mapY = [worldMinY, graphHeight, minimapPos, minimapSize](const float y) {
+                            return minimapPos.y + (y - worldMinY) * (minimapSize.y / graphHeight);
                         };
 
-                        for (const auto &node : PlaygroundTemplateNodes) {
+                        drawList->PushClipRect(minimapPos, minimapEnd, true);
+                        for (const auto &node : PlaygroundTemplateDocument.Nodes) {
                             const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
                             if (semanticOperator == nullptr) continue;
                             const auto nodeSize = nodeScreenSize(*semanticOperator);
@@ -4719,11 +4867,14 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                             drawList->AddRectFilled(p0, p1, IM_COL32(98, 136, 194, 180), 2.0f);
                         }
 
-                        const auto viewMin = ImVec2(-PlaygroundTemplatePan.x, -PlaygroundTemplatePan.y);
-                        const auto viewMax = ImVec2(viewMin.x + canvasSize.x, viewMin.y + canvasSize.y);
-                        const auto vp0 = ImVec2(mapX(viewMin.x), mapY(viewMin.y));
-                        const auto vp1 = ImVec2(mapX(viewMax.x), mapY(viewMax.y));
+                        auto vp0 = ImVec2(mapX(viewMin.x), mapY(viewMin.y));
+                        auto vp1 = ImVec2(mapX(viewMax.x), mapY(viewMax.y));
+                        vp0.x = std::clamp(vp0.x, minimapPos.x, minimapEnd.x);
+                        vp0.y = std::clamp(vp0.y, minimapPos.y, minimapEnd.y);
+                        vp1.x = std::clamp(vp1.x, minimapPos.x, minimapEnd.x);
+                        vp1.y = std::clamp(vp1.y, minimapPos.y, minimapEnd.y);
                         drawList->AddRect(vp0, vp1, IM_COL32(246, 202, 116, 240), 2.0f, 0, 1.3f);
+                        drawList->PopClipRect();
                     }
                 }
 
@@ -4731,8 +4882,8 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                 ImGui::SetCursorScreenPos(ImVec2(canvasPos.x, canvasEnd.y));
                 ImGui::TextDisabled(
                     "Template graph: %zu nodes, %zu edges | Shortcuts: A add, Del delete, F fit | Right-drag pans.",
-                    PlaygroundTemplateNodes.size(),
-                    PlaygroundTemplateEdges.size());
+                    PlaygroundTemplateDocument.Nodes.size(),
+                    PlaygroundTemplateDocument.Edges.size());
 
                 ImGui::TableSetColumnIndex(1);
                 if (ImGui::BeginChild("TemplateInspectorChild", ImVec2(0.0f, 0.0f), false)) {
@@ -4800,14 +4951,14 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                         }
 
                         if (ImGui::Button("Delete This Edge")) {
-                            const auto previousCount = PlaygroundTemplateEdges.size();
-                            PlaygroundTemplateEdges.erase(
+                            const auto previousCount = PlaygroundTemplateDocument.Edges.size();
+                            PlaygroundTemplateDocument.Edges.erase(
                                 std::remove_if(
-                                    PlaygroundTemplateEdges.begin(),
-                                    PlaygroundTemplateEdges.end(),
+                                    PlaygroundTemplateDocument.Edges.begin(),
+                                    PlaygroundTemplateDocument.Edges.end(),
                                     [&](const auto &edge) { return edge.EdgeId == selectedEdge->EdgeId; }),
-                                PlaygroundTemplateEdges.end());
-                            if (previousCount != PlaygroundTemplateEdges.size()) {
+                                PlaygroundTemplateDocument.Edges.end());
+                            if (previousCount != PlaygroundTemplateDocument.Edges.size()) {
                                 PlaygroundTemplateStatus = "[Ok] Deleted selected edge.";
                                 PlaygroundTemplateSelectedEdgeId.clear();
                                 markDirty();
@@ -4909,9 +5060,14 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
             auto &catalogRegistry = FReflectionCatalogRegistryV2::Get();
             catalogRegistry.RefreshAll();
             const auto mergedCatalog = catalogRegistry.BuildMergedCatalog();
+            const auto runtimeGraphDocument = MakeGraphDocumentFromReflectionCatalog(mergedCatalog, EGraphModeV2::Runtime);
             SyncReflectionSemanticsOverlayV1(mergedCatalog);
 
-            ImGui::Text("Runtime reflection snapshot: %zu interfaces", mergedCatalog.Interfaces.size());
+            ImGui::Text(
+                "Runtime reflection snapshot: %zu interfaces | %zu graph nodes | %zu graph members",
+                mergedCatalog.Interfaces.size(),
+                runtimeGraphDocument.Nodes.size(),
+                CountGraphMembers(runtimeGraphDocument));
             {
                 auto buffer = std::vector<char>(256, '\0');
                 if (!PlaygroundRuntimeFilter.empty()) {
@@ -4967,15 +5123,15 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
         }
 
         if (ImGui::BeginTabItem("Routing")) {
-            const auto routeKindLabel = [](const ERoutingGraphEdgeKind kind) -> const char * {
+            const auto routeKindLabel = [](const EGraphEdgeKindV2 kind) -> const char * {
                 switch (kind) {
-                    case ERoutingGraphEdgeKind::ValueFlow:
+                    case EGraphEdgeKindV2::ValueFlow:
                         return "ValueFlow";
-                    case ERoutingGraphEdgeKind::HandleBinding:
+                    case EGraphEdgeKindV2::HandleBinding:
                         return "HandleBinding";
-                    case ERoutingGraphEdgeKind::StreamSubscription:
+                    case EGraphEdgeKindV2::StreamSubscription:
                         return "StreamSubscription";
-                    case ERoutingGraphEdgeKind::ControlDependency:
+                    case EGraphEdgeKindV2::ControlDependency:
                         return "ControlDependency";
                 }
                 return "Unknown";
@@ -5018,7 +5174,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                 routeKindLabels,
                 static_cast<int>(std::size(routeKindLabels)));
             routeKindIndex = std::clamp(routeKindIndex, 0, 3);
-            PlaygroundRoutingEdgeKind = static_cast<ERoutingGraphEdgeKind>(routeKindIndex);
+            PlaygroundRoutingEdgeKind = static_cast<EGraphEdgeKindV2>(routeKindIndex);
             if (PlaygroundRoutingEdgeKind != previousRouteKind) markDirty();
 
             if (ImGui::Button("Add Route")) {
@@ -5026,19 +5182,19 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                     PlaygroundRoutingStatus = "[Error] Source and target endpoint are required.";
                 } else {
                     ++PlaygroundRoutingEdgeCounter;
-                    FRoutingGraphPlaygroundEdge edge;
+                    FGraphEdgeV2 edge;
                     edge.EdgeId = "route.edge." + Slab::ToStr(PlaygroundRoutingEdgeCounter);
-                    edge.SourceEndpoint = PlaygroundRoutingSourceEndpoint;
-                    edge.TargetEndpoint = PlaygroundRoutingTargetEndpoint;
+                    edge.FromNodeId = PlaygroundRoutingSourceEndpoint;
+                    edge.ToNodeId = PlaygroundRoutingTargetEndpoint;
                     edge.Kind = PlaygroundRoutingEdgeKind;
-                    PlaygroundRoutingEdges.push_back(std::move(edge));
+                    PlaygroundRoutingDocument.Edges.push_back(std::move(edge));
                     PlaygroundRoutingStatus = "[Ok] Added routing edge (" + Slab::Str(routeKindLabel(PlaygroundRoutingEdgeKind)) + ").";
                     markDirty();
                 }
             }
             ImGui::SameLine();
             if (ImGui::Button("Clear Routes")) {
-                PlaygroundRoutingEdges.clear();
+                PlaygroundRoutingDocument.Edges.clear();
                 PlaygroundRoutingStatus = "[Ok] Cleared routing playground edges.";
                 markDirty();
             }
@@ -5058,16 +5214,16 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                 ImGui::TableSetupColumn("Target");
                 ImGui::TableHeadersRow();
 
-                for (const auto &edge : PlaygroundRoutingEdges) {
+                for (const auto &edge : PlaygroundRoutingDocument.Edges) {
                     ImGui::TableNextRow();
                     ImGui::TableSetColumnIndex(0);
                     ImGui::TextUnformatted(edge.EdgeId.c_str());
                     ImGui::TableSetColumnIndex(1);
                     ImGui::TextUnformatted(routeKindLabel(edge.Kind));
                     ImGui::TableSetColumnIndex(2);
-                    ImGui::TextUnformatted(edge.SourceEndpoint.c_str());
+                    ImGui::TextUnformatted(edge.FromNodeId.c_str());
                     ImGui::TableSetColumnIndex(3);
-                    ImGui::TextUnformatted(edge.TargetEndpoint.c_str());
+                    ImGui::TextUnformatted(edge.ToNodeId.c_str());
                 }
 
                 ImGui::EndTable();
