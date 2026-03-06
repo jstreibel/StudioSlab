@@ -12,6 +12,7 @@
 
 #include "Core/SlabCore.h"
 #include "Core/Reflection/V2/ReflectionCodecsV2.h"
+#include "Core/Reflection/V2/ReflectionSemanticsOverlayV1.h"
 #include "Graphics/Modules/Animator/Animator.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "Graphics/SlabGraphics.h"
@@ -425,6 +426,7 @@ FLabV2WindowManager::FLabV2WindowManager()
 
     LegacyCatalogSourceId = "labv2.catalog.legacy";
     PlotCatalogSourceId = "labv2.catalog.plots";
+    Slab::Core::Reflection::V2::InitSemanticLayerV1();
     auto &catalogRegistry = Slab::Core::Reflection::V2::FReflectionCatalogRegistryV2::Get();
     catalogRegistry.RegisterSource(Slab::Core::Reflection::V2::FReflectionCatalogSourceBindingV2{
         .SourceId = LegacyCatalogSourceId,
@@ -789,6 +791,7 @@ auto FLabV2WindowManager::SyncPlotWorkspaceWindows() -> void {
     const auto *catalogPtr = catalogRegistry.GetCatalog(PlotCatalogSourceId);
     if (catalogPtr == nullptr) return;
     const auto &catalog = *catalogPtr;
+    Slab::Core::Reflection::V2::SyncReflectionSemanticsOverlayV1(catalog);
 
     std::map<Slab::Str, Slab::Str> discoveredV2Windows;
     for (const auto &interfaceSchema : catalog.Interfaces) {
@@ -1085,6 +1088,7 @@ auto FLabV2WindowManager::DrawSchemesInspectorPanel() -> void {
     auto &catalogRegistry = Slab::Core::Reflection::V2::FReflectionCatalogRegistryV2::Get();
     catalogRegistry.RefreshAll();
     const auto catalog = catalogRegistry.BuildMergedCatalog();
+    Slab::Core::Reflection::V2::SyncReflectionSemanticsOverlayV1(catalog);
     EnsureSchemeSelectionIsValid(catalog);
     const auto context = BuildReflectionInvocationContext();
     const auto catalogSources = catalogRegistry.ListSources();
@@ -1880,6 +1884,7 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     auto &catalogRegistry = Slab::Core::Reflection::V2::FReflectionCatalogRegistryV2::Get();
     catalogRegistry.RefreshAll();
     const auto catalog = catalogRegistry.BuildMergedCatalog();
+    Slab::Core::Reflection::V2::SyncReflectionSemanticsOverlayV1(catalog);
     EnsureSchemeSelectionIsValid(catalog);
 
     const auto context = BuildReflectionInvocationContext();

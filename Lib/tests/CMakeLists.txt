@@ -8,6 +8,7 @@ add_executable(testsuite
         test_numerics_v2.cpp
         test_plot2d_v2.cpp
         test_plot2d_legacy_reflection_bridge.cpp
+        test_reflection_semantics_v1.cpp
         ../Utils/StringFormatting.cpp
 )
 target_link_libraries(testsuite PRIVATE
