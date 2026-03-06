@@ -8,6 +8,7 @@
 #include "Math/Data/V2/LiveControlHubV2.h"
 #include "Core/Reflection/V2/LegacyInterfaceAdapterV2.h"
 #include "Core/Reflection/V2/ReflectionCatalogRegistryV2.h"
+#include "Core/Reflection/V2/SemanticTypesV1.h"
 #include "Graphics/Plot2D/V2/PlotReflectionCatalogV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
 #include "imgui.h"
@@ -68,6 +69,7 @@ private:
         bool bShowWindowViews = true;
         bool bShowWindowSchemeInspector = false;
         bool bShowWindowBlueprintGraph = false;
+        bool bShowWindowGraphPlayground = false;
         bool bShowWindowPlotInspector = false;
     };
 
@@ -167,6 +169,70 @@ private:
     int BlueprintGraphMutabilityFilter = 0;
     float BlueprintGraphTraceHeight = 140.0f;
 
+    struct FTemplateGraphPlaygroundNode {
+        Slab::Str NodeId;
+        Slab::Str SemanticOperatorId;
+        ImVec2 Position = ImVec2(120.0f, 120.0f);
+    };
+
+    struct FTemplateGraphPlaygroundEdge {
+        Slab::Str EdgeId;
+        Slab::Str FromNodeId;
+        Slab::Str FromPortId;
+        Slab::Str ToNodeId;
+        Slab::Str ToPortId;
+        Slab::Str MatchReason;
+        Slab::StrVector Diagnostics;
+        Slab::Vector<Slab::Str> SuggestedCoercionOperatorIds;
+    };
+
+    struct FTemplateGraphPendingCoercionSuggestion {
+        bool bActive = false;
+        Slab::Str FromNodeId;
+        Slab::Str FromPortId;
+        Slab::Str ToNodeId;
+        Slab::Str ToPortId;
+        Slab::StrVector SuggestedCoercionOperatorIds;
+        Slab::Str Summary;
+    };
+
+    enum class ERoutingGraphEdgeKind : unsigned char {
+        ValueFlow = 0,
+        HandleBinding = 1,
+        StreamSubscription = 2,
+        ControlDependency = 3
+    };
+
+    struct FRoutingGraphPlaygroundEdge {
+        Slab::Str EdgeId;
+        Slab::Str SourceEndpoint;
+        Slab::Str TargetEndpoint;
+        ERoutingGraphEdgeKind Kind = ERoutingGraphEdgeKind::ValueFlow;
+    };
+
+    Slab::Vector<FTemplateGraphPlaygroundNode> PlaygroundTemplateNodes;
+    Slab::Vector<FTemplateGraphPlaygroundEdge> PlaygroundTemplateEdges;
+    std::size_t PlaygroundTemplateNodeCounter = 0;
+    std::size_t PlaygroundTemplateEdgeCounter = 0;
+    std::size_t PlaygroundTemplateCoercionCounter = 0;
+    Slab::Str PlaygroundTemplateSelectedOperatorId;
+    Slab::Str PlaygroundTemplateSelectedNodeId;
+    Slab::Str PlaygroundTemplateConnectingNodeId;
+    Slab::Str PlaygroundTemplateConnectingPortId;
+    bool bPlaygroundTemplateConnectingFromOutput = false;
+    Slab::Str PlaygroundTemplateStatus;
+    FTemplateGraphPendingCoercionSuggestion PlaygroundTemplatePendingCoercion;
+    ImVec2 PlaygroundTemplatePan = ImVec2(90.0f, 70.0f);
+    bool bPlaygroundTemplateShowGrid = true;
+
+    Slab::Vector<FRoutingGraphPlaygroundEdge> PlaygroundRoutingEdges;
+    std::size_t PlaygroundRoutingEdgeCounter = 0;
+    Slab::Str PlaygroundRoutingSourceEndpoint;
+    Slab::Str PlaygroundRoutingTargetEndpoint;
+    ERoutingGraphEdgeKind PlaygroundRoutingEdgeKind = ERoutingGraphEdgeKind::ValueFlow;
+    Slab::Str PlaygroundRoutingStatus;
+    Slab::Str PlaygroundRuntimeFilter;
+
     bool bUseDockspaceLayout = true;
     bool bResetDockLayoutRequested = false;
     bool bPendingViewRetile = true;
@@ -178,9 +244,9 @@ private:
     bool bWorkspaceLayoutsBootstrapped = false;
     std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, true}
+        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true, true, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, true}
     };
     float WorkspaceTabsHeight = 0.0f;
     float WorkspaceStripHeight = 0.0f;
@@ -194,6 +260,7 @@ private:
     bool bShowWindowViews = true;
     bool bShowWindowSchemeInspector = true;
     bool bShowWindowBlueprintGraph = true;
+    bool bShowWindowGraphPlayground = true;
     bool bShowWindowPlotInspector = true;
     bool bHasLastMousePosition = false;
     int LastMouseX = 0;
@@ -221,6 +288,7 @@ private:
     auto DrawPanelSurface(const FPanelSurfaceRegistration &registration) -> void;
     auto DrawSchemesInspectorPanel() -> void;
     auto DrawSchemesBlueprintGraphPanel() -> void;
+    auto DrawGraphPlaygroundPanel() -> void;
     auto DrawPlotsInspectorPanel() -> void;
     auto DrawLegacySidePane() -> void;
     auto BuildDefaultDockLayout(unsigned int dockspaceId, EWorkspaceTab workspace) -> void;

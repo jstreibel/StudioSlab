@@ -64,6 +64,7 @@ namespace {
     constexpr auto WindowTitleSimulationLauncher = "Simulation Launcher";
     constexpr auto WindowTitleSchemesInspector = "Interface Inspector";
     constexpr auto WindowTitleBlueprintGraph = "Blueprint Graph";
+    constexpr auto WindowTitleGraphPlayground = "Graph Playground";
     constexpr auto WindowTitlePlotInspector = "Plot Inspector";
     constexpr auto PopupBlueprintGraphContext = "SchemesBlueprintGraphContext";
     constexpr auto DockspaceHostName = "##LabDockspaceHost";
@@ -2981,6 +2982,821 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     ImGui::EndChild();
 }
 
+auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
+    using namespace Slab::Core::Reflection::V2;
+
+    InitSemanticLayerV1();
+    auto &semanticCatalog = GetSemanticCatalogV1();
+    const auto semanticSpaces = semanticCatalog.ListSpaces();
+    const auto semanticOperators = semanticCatalog.ListOperators();
+
+    if (PlaygroundTemplateSelectedOperatorId.empty()) {
+        PlaygroundTemplateSelectedOperatorId = COperatorIdIdentityV1;
+    }
+    if (semanticCatalog.FindOperatorById(PlaygroundTemplateSelectedOperatorId) == nullptr && !semanticOperators.empty()) {
+        PlaygroundTemplateSelectedOperatorId = semanticOperators.front()->OperatorId;
+    }
+
+    const auto findTemplateNode = [this](const Slab::Str &nodeId) -> FTemplateGraphPlaygroundNode * {
+        const auto it = std::find_if(PlaygroundTemplateNodes.begin(), PlaygroundTemplateNodes.end(), [&](const auto &node) {
+            return node.NodeId == nodeId;
+        });
+        if (it == PlaygroundTemplateNodes.end()) return nullptr;
+        return &(*it);
+    };
+
+    const auto findTemplateNodeConst = [this](const Slab::Str &nodeId) -> const FTemplateGraphPlaygroundNode * {
+        const auto it = std::find_if(PlaygroundTemplateNodes.begin(), PlaygroundTemplateNodes.end(), [&](const auto &node) {
+            return node.NodeId == nodeId;
+        });
+        if (it == PlaygroundTemplateNodes.end()) return nullptr;
+        return &(*it);
+    };
+
+    const auto findInputPort = [](const FSemanticOperatorSchemaV1 &semanticOperator, const Slab::Str &portId)
+        -> const FSemanticPortSchemaV1 * {
+        const auto it = std::find_if(semanticOperator.DomainPorts.begin(), semanticOperator.DomainPorts.end(), [&](const auto &port) {
+            return port.PortId == portId;
+        });
+        if (it == semanticOperator.DomainPorts.end()) return nullptr;
+        return &(*it);
+    };
+
+    const auto findOutputPort = [](const FSemanticOperatorSchemaV1 &semanticOperator, const Slab::Str &portId)
+        -> const FSemanticPortSchemaV1 * {
+        const auto it = std::find_if(semanticOperator.CodomainPorts.begin(), semanticOperator.CodomainPorts.end(), [&](const auto &port) {
+            return port.PortId == portId;
+        });
+        if (it == semanticOperator.CodomainPorts.end()) return nullptr;
+        return &(*it);
+    };
+
+    const auto appendUniqueString = [](Slab::Vector<Slab::Str> &target, const Slab::Str &item) {
+        if (item.empty()) return;
+        if (std::find(target.begin(), target.end(), item) != target.end()) return;
+        target.push_back(item);
+    };
+
+    const auto addTemplateEdge = [this](const Slab::Str &fromNodeId,
+                                        const Slab::Str &fromPortId,
+                                        const Slab::Str &toNodeId,
+                                        const Slab::Str &toPortId,
+                                        const Slab::Str &reason,
+                                        Slab::StrVector diagnostics = {},
+                                        Slab::Vector<Slab::Str> suggestions = {}) -> bool {
+        const auto duplicateIt = std::find_if(
+            PlaygroundTemplateEdges.begin(),
+            PlaygroundTemplateEdges.end(),
+            [&](const auto &edge) {
+                return edge.FromNodeId == fromNodeId &&
+                       edge.FromPortId == fromPortId &&
+                       edge.ToNodeId == toNodeId &&
+                       edge.ToPortId == toPortId;
+            });
+        if (duplicateIt != PlaygroundTemplateEdges.end()) return false;
+
+        ++PlaygroundTemplateEdgeCounter;
+        FTemplateGraphPlaygroundEdge edge;
+        edge.EdgeId = "tmpl.edge." + Slab::ToStr(PlaygroundTemplateEdgeCounter);
+        edge.FromNodeId = fromNodeId;
+        edge.FromPortId = fromPortId;
+        edge.ToNodeId = toNodeId;
+        edge.ToPortId = toPortId;
+        edge.MatchReason = reason;
+        edge.Diagnostics = std::move(diagnostics);
+        edge.SuggestedCoercionOperatorIds = std::move(suggestions);
+        PlaygroundTemplateEdges.push_back(std::move(edge));
+        return true;
+    };
+
+    const auto clearTemplateConnectionState = [this]() {
+        PlaygroundTemplateConnectingNodeId.clear();
+        PlaygroundTemplateConnectingPortId.clear();
+        bPlaygroundTemplateConnectingFromOutput = false;
+    };
+
+    const auto attemptTemplateConnection = [&](const Slab::Str &outputNodeId,
+                                               const Slab::Str &outputPortId,
+                                               const Slab::Str &inputNodeId,
+                                               const Slab::Str &inputPortId) {
+        auto *fromNode = findTemplateNode(outputNodeId);
+        auto *toNode = findTemplateNode(inputNodeId);
+        if (fromNode == nullptr || toNode == nullptr) {
+            PlaygroundTemplateStatus = "[Error] Could not resolve source/target nodes.";
+            PlaygroundTemplatePendingCoercion = {};
+            clearTemplateConnectionState();
+            return;
+        }
+
+        const auto *fromOperator = semanticCatalog.FindOperatorById(fromNode->SemanticOperatorId);
+        const auto *toOperator = semanticCatalog.FindOperatorById(toNode->SemanticOperatorId);
+        if (fromOperator == nullptr || toOperator == nullptr) {
+            PlaygroundTemplateStatus = "[Error] Could not resolve semantic operator schema for one endpoint.";
+            PlaygroundTemplatePendingCoercion = {};
+            clearTemplateConnectionState();
+            return;
+        }
+
+        const auto *fromPort = findOutputPort(*fromOperator, outputPortId);
+        const auto *toPort = findInputPort(*toOperator, inputPortId);
+        if (fromPort == nullptr || toPort == nullptr) {
+            PlaygroundTemplateStatus = "[Error] Could not resolve source/target ports.";
+            PlaygroundTemplatePendingCoercion = {};
+            clearTemplateConnectionState();
+            return;
+        }
+
+        const auto &fromSpaceId = fromPort->SpaceId;
+        const auto &toSpaceId = toPort->SpaceId;
+
+        PlaygroundTemplatePendingCoercion = {};
+        if (fromSpaceId == toSpaceId) {
+            if (addTemplateEdge(outputNodeId, outputPortId, inputNodeId, inputPortId, "ExactMatch")) {
+                PlaygroundTemplateStatus =
+                    "[Ok] Connected " + fromPort->DisplayName + " -> " + toPort->DisplayName + " (exact semantic space match).";
+            } else {
+                PlaygroundTemplateStatus = "[Warn] Edge already exists.";
+            }
+            clearTemplateConnectionState();
+            return;
+        }
+
+        Slab::Vector<Slab::Str> coercionOperatorIds;
+        Slab::StrVector diagnostics;
+        const auto matchResults = semanticCatalog.QueryOperatorMatchesForSignature({fromSpaceId}, {toSpaceId});
+        for (const auto &result : matchResults) {
+            if (result.Reason == ESignatureMatchReasonV1::ExactMatch) {
+                const auto *operatorSchema = semanticCatalog.FindOperatorById(result.OperatorId);
+                if (operatorSchema == nullptr) continue;
+                if (operatorSchema->Kind == ESemanticOperatorKindV1::Coercion ||
+                    operatorSchema->Kind == ESemanticOperatorKindV1::Projection) {
+                    appendUniqueString(coercionOperatorIds, operatorSchema->OperatorId);
+                }
+            } else if (result.Reason == ESignatureMatchReasonV1::CompatibleButNeedsCoercion) {
+                for (const auto &suggestion : result.SuggestedCoercionOperatorIds) {
+                    appendUniqueString(coercionOperatorIds, suggestion);
+                }
+                for (const auto &diagnostic : result.Diagnostics) {
+                    appendUniqueString(diagnostics, diagnostic);
+                }
+            }
+        }
+
+        if (!coercionOperatorIds.empty()) {
+            PlaygroundTemplatePendingCoercion.bActive = true;
+            PlaygroundTemplatePendingCoercion.FromNodeId = outputNodeId;
+            PlaygroundTemplatePendingCoercion.FromPortId = outputPortId;
+            PlaygroundTemplatePendingCoercion.ToNodeId = inputNodeId;
+            PlaygroundTemplatePendingCoercion.ToPortId = inputPortId;
+            PlaygroundTemplatePendingCoercion.SuggestedCoercionOperatorIds = coercionOperatorIds;
+            PlaygroundTemplatePendingCoercion.Summary =
+                "Direct edge requires explicit coercion node: '" + fromSpaceId + "' -> '" + toSpaceId + "'.";
+            PlaygroundTemplateStatus =
+                "[Warn] Compatible with coercion. Insert one of the suggested coercion operators.";
+            clearTemplateConnectionState();
+            return;
+        }
+
+        if (diagnostics.empty() && !matchResults.empty()) {
+            for (const auto &diagnostic : matchResults.front().Diagnostics) diagnostics.push_back(diagnostic);
+        }
+
+        PlaygroundTemplateStatus =
+            "[Error] Incompatible spaces: '" + fromSpaceId + "' -> '" + toSpaceId + "'.";
+        if (!diagnostics.empty()) {
+            PlaygroundTemplateStatus += " " + diagnostics.front();
+        }
+        clearTemplateConnectionState();
+    };
+
+    if (ImGui::BeginTabBar("GraphPlaygroundModes")) {
+        if (ImGui::BeginTabItem("Semantic")) {
+            ImGui::Text("Semantic catalog: %zu spaces | %zu operators", semanticSpaces.size(), semanticOperators.size());
+            if (ImGui::BeginTable("SemanticCatalogTable", 2, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_Resizable)) {
+                ImGui::TableSetupColumn("Spaces", ImGuiTableColumnFlags_WidthStretch, 0.48f);
+                ImGui::TableSetupColumn("Operators", ImGuiTableColumnFlags_WidthStretch, 0.52f);
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                if (ImGui::BeginChild("SemanticSpacesChild", ImVec2(0.0f, 0.0f), false)) {
+                    for (const auto *space : semanticSpaces) {
+                        if (space == nullptr) continue;
+                        ImGui::PushID(space->SpaceId.c_str());
+                        ImGui::Text("%s", space->DisplayName.c_str());
+                        ImGui::TextDisabled("%s", space->SpaceId.c_str());
+                        ImGui::TextDisabled("Carrier: %s", space->CarrierTypeId.c_str());
+                        if (!space->Latex.empty()) ImGui::TextDisabled("LaTeX: %s", space->Latex.c_str());
+                        if (!space->Tags.empty()) {
+                            Slab::Str tagsLine = "Tags: ";
+                            for (std::size_t i = 0; i < space->Tags.size(); ++i) {
+                                tagsLine += space->Tags[i];
+                                if (i + 1 < space->Tags.size()) tagsLine += ", ";
+                            }
+                            ImGui::TextDisabled("%s", TruncateLabel(tagsLine, 90).c_str());
+                        }
+                        ImGui::Separator();
+                        ImGui::PopID();
+                    }
+                }
+                ImGui::EndChild();
+
+                ImGui::TableSetColumnIndex(1);
+                if (ImGui::BeginChild("SemanticOperatorsChild", ImVec2(0.0f, 0.0f), false)) {
+                    for (const auto *semanticOperator : semanticOperators) {
+                        if (semanticOperator == nullptr) continue;
+                        ImGui::PushID(semanticOperator->OperatorId.c_str());
+
+                        const bool bPickOperator = ImGui::Selectable(
+                            semanticOperator->DisplayName.c_str(),
+                            PlaygroundTemplateSelectedOperatorId == semanticOperator->OperatorId);
+                        if (bPickOperator) PlaygroundTemplateSelectedOperatorId = semanticOperator->OperatorId;
+
+                        ImGui::TextDisabled("%s", semanticOperator->OperatorId.c_str());
+                        if (!semanticOperator->LatexSymbol.empty()) {
+                            ImGui::TextDisabled("LaTeX: %s", semanticOperator->LatexSymbol.c_str());
+                        }
+                        if (!semanticOperator->DomainPorts.empty() || !semanticOperator->CodomainPorts.empty()) {
+                            Slab::Str signature = "Signature: ";
+                            for (std::size_t i = 0; i < semanticOperator->DomainPorts.size(); ++i) {
+                                signature += semanticOperator->DomainPorts[i].SpaceId;
+                                if (i + 1 < semanticOperator->DomainPorts.size()) signature += " x ";
+                            }
+                            signature += " -> ";
+                            for (std::size_t i = 0; i < semanticOperator->CodomainPorts.size(); ++i) {
+                                signature += semanticOperator->CodomainPorts[i].SpaceId;
+                                if (i + 1 < semanticOperator->CodomainPorts.size()) signature += " x ";
+                            }
+                            ImGui::TextDisabled("%s", TruncateLabel(signature, 108).c_str());
+                        }
+                        const auto bindings = semanticCatalog.QueryBindingsForOperator(semanticOperator->OperatorId);
+                        if (!bindings.empty()) {
+                            ImGui::TextDisabled("Bindings: %zu", bindings.size());
+                        }
+                        ImGui::Separator();
+                        ImGui::PopID();
+                    }
+                }
+                ImGui::EndChild();
+
+                ImGui::EndTable();
+            }
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Template")) {
+            auto *selectedOperator = semanticCatalog.FindOperatorById(PlaygroundTemplateSelectedOperatorId);
+            const auto selectedOperatorLabel = selectedOperator == nullptr
+                ? "<no operator>"
+                : selectedOperator->DisplayName + "###" + selectedOperator->OperatorId;
+            if (ImGui::BeginCombo("Operator Seed", selectedOperatorLabel.c_str())) {
+                for (const auto *semanticOperator : semanticOperators) {
+                    if (semanticOperator == nullptr) continue;
+                    const bool bSelected = PlaygroundTemplateSelectedOperatorId == semanticOperator->OperatorId;
+                    if (ImGui::Selectable(semanticOperator->DisplayName.c_str(), bSelected)) {
+                        PlaygroundTemplateSelectedOperatorId = semanticOperator->OperatorId;
+                    }
+                    if (bSelected) ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Add Node")) {
+                if (selectedOperator != nullptr) {
+                    ++PlaygroundTemplateNodeCounter;
+                    FTemplateGraphPlaygroundNode node;
+                    node.NodeId = "tmpl.node." + Slab::ToStr(PlaygroundTemplateNodeCounter);
+                    node.SemanticOperatorId = selectedOperator->OperatorId;
+                    node.Position = ImVec2(
+                        80.0f + static_cast<float>((PlaygroundTemplateNodeCounter % 4) * 280),
+                        70.0f + static_cast<float>((PlaygroundTemplateNodeCounter / 4) * 140));
+                    PlaygroundTemplateNodes.push_back(std::move(node));
+                    PlaygroundTemplateStatus = "[Ok] Added semantic node '" + selectedOperator->DisplayName + "'.";
+                } else {
+                    PlaygroundTemplateStatus = "[Error] Select a semantic operator first.";
+                }
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Auto Layout")) {
+                std::size_t idx = 0;
+                for (auto &node : PlaygroundTemplateNodes) {
+                    node.Position = ImVec2(
+                        90.0f + static_cast<float>((idx % 4) * 300),
+                        80.0f + static_cast<float>((idx / 4) * 170));
+                    ++idx;
+                }
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Clear")) {
+                PlaygroundTemplateNodes.clear();
+                PlaygroundTemplateEdges.clear();
+                PlaygroundTemplateSelectedNodeId.clear();
+                PlaygroundTemplatePendingCoercion = {};
+                clearTemplateConnectionState();
+                PlaygroundTemplateStatus = "[Ok] Template playground graph cleared.";
+            }
+            ImGui::SameLine();
+            ImGui::Checkbox("Grid", &bPlaygroundTemplateShowGrid);
+            if (!PlaygroundTemplateSelectedNodeId.empty()) {
+                ImGui::SameLine();
+                if (ImGui::Button("Delete Selected")) {
+                    PlaygroundTemplateNodes.erase(
+                        std::remove_if(
+                            PlaygroundTemplateNodes.begin(),
+                            PlaygroundTemplateNodes.end(),
+                            [&](const auto &node) { return node.NodeId == PlaygroundTemplateSelectedNodeId; }),
+                        PlaygroundTemplateNodes.end());
+                    PlaygroundTemplateEdges.erase(
+                        std::remove_if(
+                            PlaygroundTemplateEdges.begin(),
+                            PlaygroundTemplateEdges.end(),
+                            [&](const auto &edge) {
+                                return edge.FromNodeId == PlaygroundTemplateSelectedNodeId ||
+                                       edge.ToNodeId == PlaygroundTemplateSelectedNodeId;
+                            }),
+                        PlaygroundTemplateEdges.end());
+                    PlaygroundTemplateStatus = "[Ok] Deleted selected node and attached edges.";
+                    PlaygroundTemplateSelectedNodeId.clear();
+                    PlaygroundTemplatePendingCoercion = {};
+                    clearTemplateConnectionState();
+                }
+            }
+
+            if (!PlaygroundTemplateStatus.empty()) {
+                const bool bError = PlaygroundTemplateStatus.starts_with("[Error]");
+                const bool bWarn = PlaygroundTemplateStatus.starts_with("[Warn]");
+                const auto color = bError
+                    ? ImVec4(0.92f, 0.35f, 0.35f, 1.0f)
+                    : (bWarn ? ImVec4(0.93f, 0.73f, 0.30f, 1.0f) : ImVec4(0.42f, 0.83f, 0.52f, 1.0f));
+                ImGui::TextColored(color, "%s", PlaygroundTemplateStatus.c_str());
+            }
+
+            if (PlaygroundTemplatePendingCoercion.bActive) {
+                ImGui::SeparatorText("Pending Coercion");
+                ImGui::TextWrapped("%s", PlaygroundTemplatePendingCoercion.Summary.c_str());
+                if (!PlaygroundTemplatePendingCoercion.SuggestedCoercionOperatorIds.empty()) {
+                    ImGui::TextDisabled("Suggestions: %s",
+                        TruncateLabel(
+                            Slab::ToStr(PlaygroundTemplatePendingCoercion.SuggestedCoercionOperatorIds),
+                            120).c_str());
+                }
+
+                if (ImGui::Button("Insert Suggested Coercion")) {
+                    const auto suggestedIds = PlaygroundTemplatePendingCoercion.SuggestedCoercionOperatorIds;
+                    const auto *fromNode = findTemplateNodeConst(PlaygroundTemplatePendingCoercion.FromNodeId);
+                    const auto *toNode = findTemplateNodeConst(PlaygroundTemplatePendingCoercion.ToNodeId);
+                    if (suggestedIds.empty() || fromNode == nullptr || toNode == nullptr) {
+                        PlaygroundTemplateStatus = "[Error] Could not resolve coercion insertion request.";
+                    } else {
+                        const auto *coercionOperator = semanticCatalog.FindOperatorById(suggestedIds.front());
+                        if (coercionOperator == nullptr ||
+                            coercionOperator->DomainPorts.empty() ||
+                            coercionOperator->CodomainPorts.empty()) {
+                            PlaygroundTemplateStatus = "[Error] Suggested coercion operator is not well-formed.";
+                        } else {
+                            ++PlaygroundTemplateCoercionCounter;
+                            FTemplateGraphPlaygroundNode coercionNode;
+                            coercionNode.NodeId = "tmpl.coercion." + Slab::ToStr(PlaygroundTemplateCoercionCounter);
+                            coercionNode.SemanticOperatorId = coercionOperator->OperatorId;
+                            coercionNode.Position = ImVec2(
+                                0.5f * (fromNode->Position.x + toNode->Position.x) + 10.0f,
+                                0.5f * (fromNode->Position.y + toNode->Position.y) + 30.0f);
+                            PlaygroundTemplateNodes.push_back(std::move(coercionNode));
+
+                            (void) addTemplateEdge(
+                                PlaygroundTemplatePendingCoercion.FromNodeId,
+                                PlaygroundTemplatePendingCoercion.FromPortId,
+                                PlaygroundTemplateNodes.back().NodeId,
+                                coercionOperator->DomainPorts.front().PortId,
+                                "ExactMatch");
+                            (void) addTemplateEdge(
+                                PlaygroundTemplateNodes.back().NodeId,
+                                coercionOperator->CodomainPorts.front().PortId,
+                                PlaygroundTemplatePendingCoercion.ToNodeId,
+                                PlaygroundTemplatePendingCoercion.ToPortId,
+                                "ExactMatch");
+
+                            PlaygroundTemplateStatus =
+                                "[Ok] Inserted coercion node '" + coercionOperator->DisplayName + "'.";
+                            PlaygroundTemplatePendingCoercion = {};
+                        }
+                    }
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Dismiss Coercion")) {
+                    PlaygroundTemplatePendingCoercion = {};
+                    PlaygroundTemplateStatus = "[Info] Coercion suggestion dismissed.";
+                }
+            }
+
+            ImGui::Separator();
+            const auto canvasPos = ImGui::GetCursorScreenPos();
+            auto canvasSize = ImGui::GetContentRegionAvail();
+            if (canvasSize.x < 340.0f) canvasSize.x = 340.0f;
+            if (canvasSize.y < 220.0f) canvasSize.y = 220.0f;
+            const auto canvasEnd = ImVec2(canvasPos.x + canvasSize.x, canvasPos.y + canvasSize.y);
+
+            ImGui::InvisibleButton(
+                "GraphPlaygroundTemplateCanvas",
+                canvasSize,
+                ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
+            ImGui::SetItemAllowOverlap();
+            if (ImGui::IsItemHovered() && ImGui::IsMouseDragging(ImGuiMouseButton_Right, 0.0f)) {
+                const auto &io = ImGui::GetIO();
+                PlaygroundTemplatePan.x += io.MouseDelta.x;
+                PlaygroundTemplatePan.y += io.MouseDelta.y;
+            }
+
+            auto *drawList = ImGui::GetWindowDrawList();
+            drawList->AddRectFilled(canvasPos, canvasEnd, IM_COL32(18, 21, 28, 255), 6.0f);
+            drawList->AddRect(canvasPos, canvasEnd, IM_COL32(74, 82, 96, 255), 6.0f, 0, 1.0f);
+            drawList->PushClipRect(canvasPos, canvasEnd, true);
+
+            if (bPlaygroundTemplateShowGrid) {
+                constexpr float GridStep = 52.0f;
+                const float xOffset = std::fmod(PlaygroundTemplatePan.x, GridStep);
+                const float yOffset = std::fmod(PlaygroundTemplatePan.y, GridStep);
+                for (float x = canvasPos.x + xOffset; x < canvasEnd.x; x += GridStep) {
+                    drawList->AddLine(ImVec2(x, canvasPos.y), ImVec2(x, canvasEnd.y), IM_COL32(34, 40, 52, 255), 1.0f);
+                }
+                for (float y = canvasPos.y + yOffset; y < canvasEnd.y; y += GridStep) {
+                    drawList->AddLine(ImVec2(canvasPos.x, y), ImVec2(canvasEnd.x, y), IM_COL32(34, 40, 52, 255), 1.0f);
+                }
+            }
+
+            const auto nodeScreenPos = [&](const FTemplateGraphPlaygroundNode &node) -> ImVec2 {
+                return ImVec2(
+                    canvasPos.x + PlaygroundTemplatePan.x + node.Position.x,
+                    canvasPos.y + PlaygroundTemplatePan.y + node.Position.y);
+            };
+
+            const auto nodeScreenSize = [&](const FSemanticOperatorSchemaV1 &semanticOperator) -> ImVec2 {
+                const int rows = std::max(
+                    static_cast<int>(semanticOperator.DomainPorts.size()),
+                    static_cast<int>(semanticOperator.CodomainPorts.size()));
+                const float height = 56.0f + static_cast<float>(std::max(1, rows)) * 20.0f;
+                const float titleWidth = ImGui::CalcTextSize(semanticOperator.DisplayName.c_str()).x + 80.0f;
+                const float width = std::max(260.0f, std::min(420.0f, titleWidth));
+                return ImVec2(width, height);
+            };
+
+            const auto portPinPosition = [&](const FTemplateGraphPlaygroundNode &node,
+                                             const FSemanticOperatorSchemaV1 &semanticOperator,
+                                             const bool bOutput,
+                                             const int index) -> ImVec2 {
+                const auto nodePos = nodeScreenPos(node);
+                const auto size = nodeScreenSize(semanticOperator);
+                const int total = std::max(
+                    1,
+                    bOutput
+                        ? static_cast<int>(semanticOperator.CodomainPorts.size())
+                        : static_cast<int>(semanticOperator.DomainPorts.size()));
+                const float y = nodePos.y + 42.0f + (static_cast<float>(index) + 0.5f) * ((size.y - 48.0f) / static_cast<float>(total));
+                const float x = bOutput ? (nodePos.x + size.x - 8.0f) : (nodePos.x + 8.0f);
+                return ImVec2(x, y);
+            };
+
+            for (const auto &edge : PlaygroundTemplateEdges) {
+                const auto *fromNode = findTemplateNodeConst(edge.FromNodeId);
+                const auto *toNode = findTemplateNodeConst(edge.ToNodeId);
+                if (fromNode == nullptr || toNode == nullptr) continue;
+
+                const auto *fromOperator = semanticCatalog.FindOperatorById(fromNode->SemanticOperatorId);
+                const auto *toOperator = semanticCatalog.FindOperatorById(toNode->SemanticOperatorId);
+                if (fromOperator == nullptr || toOperator == nullptr) continue;
+
+                const auto fromPortIt = std::find_if(
+                    fromOperator->CodomainPorts.begin(),
+                    fromOperator->CodomainPorts.end(),
+                    [&](const auto &port) { return port.PortId == edge.FromPortId; });
+                const auto toPortIt = std::find_if(
+                    toOperator->DomainPorts.begin(),
+                    toOperator->DomainPorts.end(),
+                    [&](const auto &port) { return port.PortId == edge.ToPortId; });
+                if (fromPortIt == fromOperator->CodomainPorts.end() || toPortIt == toOperator->DomainPorts.end()) continue;
+
+                const int fromIndex = static_cast<int>(std::distance(fromOperator->CodomainPorts.begin(), fromPortIt));
+                const int toIndex = static_cast<int>(std::distance(toOperator->DomainPorts.begin(), toPortIt));
+
+                const auto p0 = portPinPosition(*fromNode, *fromOperator, true, fromIndex);
+                const auto p3 = portPinPosition(*toNode, *toOperator, false, toIndex);
+                const auto p1 = ImVec2(p0.x + 54.0f, p0.y);
+                const auto p2 = ImVec2(p3.x - 54.0f, p3.y);
+
+                ImU32 color = IM_COL32(110, 198, 255, 255);
+                if (edge.MatchReason == "CompatibleButNeedsCoercion") color = IM_COL32(236, 194, 92, 255);
+                if (edge.MatchReason == "Incompatible") color = IM_COL32(226, 98, 98, 255);
+                drawList->AddBezierCubic(p0, p1, p2, p3, color, 2.0f);
+            }
+
+            for (auto &node : PlaygroundTemplateNodes) {
+                const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
+                if (semanticOperator == nullptr) continue;
+
+                const auto nodePos = nodeScreenPos(node);
+                const auto nodeSize = nodeScreenSize(*semanticOperator);
+                const auto nodeEnd = ImVec2(nodePos.x + nodeSize.x, nodePos.y + nodeSize.y);
+                if (nodeEnd.x < canvasPos.x || nodePos.x > canvasEnd.x || nodeEnd.y < canvasPos.y || nodePos.y > canvasEnd.y) {
+                    continue;
+                }
+
+                ImGui::SetCursorScreenPos(nodePos);
+                ImGui::InvisibleButton(("##TemplateNode" + node.NodeId).c_str(), nodeSize, ImGuiButtonFlags_MouseButtonLeft);
+                ImGui::SetItemAllowOverlap();
+                const bool bNodeHovered = ImGui::IsItemHovered();
+                if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+                    PlaygroundTemplateSelectedNodeId = node.NodeId;
+                }
+                if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 0.0f)) {
+                    const auto &io = ImGui::GetIO();
+                    node.Position.x += io.MouseDelta.x;
+                    node.Position.y += io.MouseDelta.y;
+                }
+
+                const bool bSelected = PlaygroundTemplateSelectedNodeId == node.NodeId;
+                drawList->AddRectFilled(nodePos, nodeEnd, IM_COL32(36, 43, 56, 246), 7.0f);
+                drawList->AddRectFilled(nodePos, ImVec2(nodeEnd.x, nodePos.y + 28.0f), IM_COL32(84, 104, 148, 255), 7.0f, ImDrawFlags_RoundCornersTop);
+                drawList->AddRect(nodePos, nodeEnd, bSelected ? IM_COL32(246, 202, 116, 255) : IM_COL32(116, 126, 146, 255), 7.0f, 0, bSelected ? 2.0f : 1.0f);
+                drawList->AddText(ImVec2(nodePos.x + 10.0f, nodePos.y + 6.0f), IM_COL32(240, 246, 252, 255), TruncateLabel(semanticOperator->DisplayName, 34).c_str());
+                drawList->AddText(ImVec2(nodePos.x + 10.0f, nodePos.y + 32.0f), IM_COL32(174, 186, 204, 255), TruncateLabel(node.NodeId, 34).c_str());
+
+                for (std::size_t i = 0; i < semanticOperator->DomainPorts.size(); ++i) {
+                    const auto &port = semanticOperator->DomainPorts[i];
+                    const auto pin = portPinPosition(node, *semanticOperator, false, static_cast<int>(i));
+                    drawList->AddCircleFilled(pin, 5.0f, IM_COL32(116, 212, 176, 255));
+                    drawList->AddText(
+                        ImVec2(pin.x + 8.0f, pin.y - 7.0f),
+                        IM_COL32(212, 220, 232, 255),
+                        TruncateLabel(port.DisplayName.empty() ? port.PortId : port.DisplayName, 22).c_str());
+
+                    ImGui::SetCursorScreenPos(ImVec2(pin.x - 7.0f, pin.y - 7.0f));
+                    ImGui::InvisibleButton(("##TemplateInPort" + node.NodeId + ":" + port.PortId).c_str(), ImVec2(14.0f, 14.0f));
+                    ImGui::SetItemAllowOverlap();
+                    if (ImGui::IsItemHovered()) {
+                        ImGui::SetTooltip("Input %s\nSpace: %s", port.PortId.c_str(), port.SpaceId.c_str());
+                    }
+                    if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+                        if (!PlaygroundTemplateConnectingNodeId.empty() && bPlaygroundTemplateConnectingFromOutput) {
+                            attemptTemplateConnection(
+                                PlaygroundTemplateConnectingNodeId,
+                                PlaygroundTemplateConnectingPortId,
+                                node.NodeId,
+                                port.PortId);
+                        } else {
+                            PlaygroundTemplateConnectingNodeId = node.NodeId;
+                            PlaygroundTemplateConnectingPortId = port.PortId;
+                            bPlaygroundTemplateConnectingFromOutput = false;
+                            PlaygroundTemplateStatus = "[Info] Selected input port. Click an output port to connect.";
+                        }
+                    }
+                }
+
+                for (std::size_t i = 0; i < semanticOperator->CodomainPorts.size(); ++i) {
+                    const auto &port = semanticOperator->CodomainPorts[i];
+                    const auto pin = portPinPosition(node, *semanticOperator, true, static_cast<int>(i));
+                    drawList->AddCircleFilled(pin, 5.0f, IM_COL32(122, 198, 255, 255));
+                    const auto label = TruncateLabel(port.DisplayName.empty() ? port.PortId : port.DisplayName, 22);
+                    const auto labelWidth = ImGui::CalcTextSize(label.c_str()).x;
+                    drawList->AddText(
+                        ImVec2(pin.x - 10.0f - labelWidth, pin.y - 7.0f),
+                        IM_COL32(212, 220, 232, 255),
+                        label.c_str());
+
+                    ImGui::SetCursorScreenPos(ImVec2(pin.x - 7.0f, pin.y - 7.0f));
+                    ImGui::InvisibleButton(("##TemplateOutPort" + node.NodeId + ":" + port.PortId).c_str(), ImVec2(14.0f, 14.0f));
+                    ImGui::SetItemAllowOverlap();
+                    if (ImGui::IsItemHovered()) {
+                        ImGui::SetTooltip("Output %s\nSpace: %s", port.PortId.c_str(), port.SpaceId.c_str());
+                    }
+                    if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+                        if (!PlaygroundTemplateConnectingNodeId.empty() && !bPlaygroundTemplateConnectingFromOutput) {
+                            attemptTemplateConnection(
+                                node.NodeId,
+                                port.PortId,
+                                PlaygroundTemplateConnectingNodeId,
+                                PlaygroundTemplateConnectingPortId);
+                        } else {
+                            PlaygroundTemplateConnectingNodeId = node.NodeId;
+                            PlaygroundTemplateConnectingPortId = port.PortId;
+                            bPlaygroundTemplateConnectingFromOutput = true;
+                            PlaygroundTemplateStatus = "[Info] Selected output port. Click an input port to connect.";
+                        }
+                    }
+                }
+
+                if (bNodeHovered && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
+                    PlaygroundTemplateSelectedNodeId = node.NodeId;
+                }
+            }
+
+            if (!PlaygroundTemplateConnectingNodeId.empty()) {
+                const auto *sourceNode = findTemplateNodeConst(PlaygroundTemplateConnectingNodeId);
+                if (sourceNode != nullptr) {
+                    const auto *sourceOperator = semanticCatalog.FindOperatorById(sourceNode->SemanticOperatorId);
+                    if (sourceOperator != nullptr) {
+                        const auto portVec = bPlaygroundTemplateConnectingFromOutput
+                            ? sourceOperator->CodomainPorts
+                            : sourceOperator->DomainPorts;
+                        const auto portIt = std::find_if(portVec.begin(), portVec.end(), [&](const auto &port) {
+                            return port.PortId == PlaygroundTemplateConnectingPortId;
+                        });
+                        if (portIt != portVec.end()) {
+                            const int index = static_cast<int>(std::distance(portVec.begin(), portIt));
+                            const auto sourcePin = portPinPosition(
+                                *sourceNode,
+                                *sourceOperator,
+                                bPlaygroundTemplateConnectingFromOutput,
+                                index);
+                            const auto mousePos = ImGui::GetIO().MousePos;
+                            drawList->AddBezierCubic(
+                                sourcePin,
+                                ImVec2(sourcePin.x + (bPlaygroundTemplateConnectingFromOutput ? 48.0f : -48.0f), sourcePin.y),
+                                ImVec2(mousePos.x + (bPlaygroundTemplateConnectingFromOutput ? -24.0f : 24.0f), mousePos.y),
+                                mousePos,
+                                IM_COL32(232, 206, 118, 220),
+                                2.0f);
+                        }
+                    }
+                }
+
+                if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered()) {
+                    clearTemplateConnectionState();
+                    PlaygroundTemplateStatus = "[Info] Connection cancelled.";
+                }
+            }
+
+            drawList->PopClipRect();
+            ImGui::SetCursorScreenPos(ImVec2(canvasPos.x, canvasEnd.y));
+            ImGui::TextDisabled(
+                "Template graph: %zu nodes, %zu edges. Right-drag canvas to pan.",
+                PlaygroundTemplateNodes.size(),
+                PlaygroundTemplateEdges.size());
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Runtime")) {
+            auto &catalogRegistry = FReflectionCatalogRegistryV2::Get();
+            catalogRegistry.RefreshAll();
+            const auto mergedCatalog = catalogRegistry.BuildMergedCatalog();
+            SyncReflectionSemanticsOverlayV1(mergedCatalog);
+
+            ImGui::Text("Runtime reflection snapshot: %zu interfaces", mergedCatalog.Interfaces.size());
+            {
+                auto buffer = std::vector<char>(256, '\0');
+                if (!PlaygroundRuntimeFilter.empty()) {
+                    std::strncpy(buffer.data(), PlaygroundRuntimeFilter.c_str(), buffer.size() - 1);
+                    buffer.back() = '\0';
+                }
+                if (ImGui::InputTextWithHint("##RuntimeFilter", "Filter interfaces...", buffer.data(), buffer.size())) {
+                    PlaygroundRuntimeFilter = buffer.data();
+                }
+            }
+
+            if (ImGui::BeginTable(
+                    "RuntimeGraphInterfaces",
+                    4,
+                    ImGuiTableFlags_RowBg |
+                    ImGuiTableFlags_BordersInnerV |
+                    ImGuiTableFlags_ScrollY)) {
+                ImGui::TableSetupColumn("Interface");
+                ImGui::TableSetupColumn("Source", ImGuiTableColumnFlags_WidthFixed, 180.0f);
+                ImGui::TableSetupColumn("Properties", ImGuiTableColumnFlags_WidthFixed, 80.0f);
+                ImGui::TableSetupColumn("Operations", ImGuiTableColumnFlags_WidthFixed, 80.0f);
+                ImGui::TableHeadersRow();
+
+                for (const auto &interfaceSchema : mergedCatalog.Interfaces) {
+                    const bool bMatches =
+                        ContainsCaseInsensitive(interfaceSchema.DisplayName, PlaygroundRuntimeFilter) ||
+                        ContainsCaseInsensitive(interfaceSchema.InterfaceId, PlaygroundRuntimeFilter);
+                    if (!bMatches) continue;
+
+                    auto sourceLabel = Slab::Str("unknown");
+                    if (const auto source = catalogRegistry.FindSourceForInterface(interfaceSchema.InterfaceId); source.has_value()) {
+                        sourceLabel = source->DisplayName;
+                    }
+
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::Text("%s", interfaceSchema.DisplayName.c_str());
+                    ImGui::TextDisabled("%s", TruncateLabel(interfaceSchema.InterfaceId, 68).c_str());
+
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::TextUnformatted(sourceLabel.c_str());
+
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::Text("%zu", interfaceSchema.Parameters.size());
+
+                    ImGui::TableSetColumnIndex(3);
+                    ImGui::Text("%zu", interfaceSchema.Operations.size());
+                }
+
+                ImGui::EndTable();
+            }
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Routing")) {
+            const auto routeKindLabel = [](const ERoutingGraphEdgeKind kind) -> const char * {
+                switch (kind) {
+                    case ERoutingGraphEdgeKind::ValueFlow:
+                        return "ValueFlow";
+                    case ERoutingGraphEdgeKind::HandleBinding:
+                        return "HandleBinding";
+                    case ERoutingGraphEdgeKind::StreamSubscription:
+                        return "StreamSubscription";
+                    case ERoutingGraphEdgeKind::ControlDependency:
+                        return "ControlDependency";
+                }
+                return "Unknown";
+            };
+
+            ImGui::TextDisabled("Patchbay playground (in-memory only).");
+            {
+                auto sourceBuffer = std::vector<char>(256, '\0');
+                auto targetBuffer = std::vector<char>(256, '\0');
+                if (!PlaygroundRoutingSourceEndpoint.empty()) {
+                    std::strncpy(sourceBuffer.data(), PlaygroundRoutingSourceEndpoint.c_str(), sourceBuffer.size() - 1);
+                }
+                if (!PlaygroundRoutingTargetEndpoint.empty()) {
+                    std::strncpy(targetBuffer.data(), PlaygroundRoutingTargetEndpoint.c_str(), targetBuffer.size() - 1);
+                }
+
+                ImGui::InputText("Source Endpoint", sourceBuffer.data(), sourceBuffer.size());
+                ImGui::InputText("Target Endpoint", targetBuffer.data(), targetBuffer.size());
+                PlaygroundRoutingSourceEndpoint = sourceBuffer.data();
+                PlaygroundRoutingTargetEndpoint = targetBuffer.data();
+            }
+
+            int routeKindIndex = static_cast<int>(PlaygroundRoutingEdgeKind);
+            const char *routeKindLabels[] = {
+                "ValueFlow",
+                "HandleBinding",
+                "StreamSubscription",
+                "ControlDependency"
+            };
+            ImGui::Combo(
+                "Edge Kind",
+                &routeKindIndex,
+                routeKindLabels,
+                static_cast<int>(std::size(routeKindLabels)));
+            routeKindIndex = std::clamp(routeKindIndex, 0, 3);
+            PlaygroundRoutingEdgeKind = static_cast<ERoutingGraphEdgeKind>(routeKindIndex);
+
+            if (ImGui::Button("Add Route")) {
+                if (PlaygroundRoutingSourceEndpoint.empty() || PlaygroundRoutingTargetEndpoint.empty()) {
+                    PlaygroundRoutingStatus = "[Error] Source and target endpoint are required.";
+                } else {
+                    ++PlaygroundRoutingEdgeCounter;
+                    FRoutingGraphPlaygroundEdge edge;
+                    edge.EdgeId = "route.edge." + Slab::ToStr(PlaygroundRoutingEdgeCounter);
+                    edge.SourceEndpoint = PlaygroundRoutingSourceEndpoint;
+                    edge.TargetEndpoint = PlaygroundRoutingTargetEndpoint;
+                    edge.Kind = PlaygroundRoutingEdgeKind;
+                    PlaygroundRoutingEdges.push_back(std::move(edge));
+                    PlaygroundRoutingStatus = "[Ok] Added routing edge (" + Slab::Str(routeKindLabel(PlaygroundRoutingEdgeKind)) + ").";
+                }
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Clear Routes")) {
+                PlaygroundRoutingEdges.clear();
+                PlaygroundRoutingStatus = "[Ok] Cleared routing playground edges.";
+            }
+
+            if (!PlaygroundRoutingStatus.empty()) {
+                const bool bError = PlaygroundRoutingStatus.starts_with("[Error]");
+                ImGui::TextColored(
+                    bError ? ImVec4(0.92f, 0.36f, 0.36f, 1.0f) : ImVec4(0.42f, 0.83f, 0.52f, 1.0f),
+                    "%s",
+                    PlaygroundRoutingStatus.c_str());
+            }
+
+            if (ImGui::BeginTable("RoutingGraphTable", 4, ImGuiTableFlags_BordersInnerV | ImGuiTableFlags_RowBg)) {
+                ImGui::TableSetupColumn("Id", ImGuiTableColumnFlags_WidthFixed, 130.0f);
+                ImGui::TableSetupColumn("Kind", ImGuiTableColumnFlags_WidthFixed, 160.0f);
+                ImGui::TableSetupColumn("Source");
+                ImGui::TableSetupColumn("Target");
+                ImGui::TableHeadersRow();
+
+                for (const auto &edge : PlaygroundRoutingEdges) {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+                    ImGui::TextUnformatted(edge.EdgeId.c_str());
+                    ImGui::TableSetColumnIndex(1);
+                    ImGui::TextUnformatted(routeKindLabel(edge.Kind));
+                    ImGui::TableSetColumnIndex(2);
+                    ImGui::TextUnformatted(edge.SourceEndpoint.c_str());
+                    ImGui::TableSetColumnIndex(3);
+                    ImGui::TextUnformatted(edge.TargetEndpoint.c_str());
+                }
+
+                ImGui::EndTable();
+            }
+            ImGui::EndTabItem();
+        }
+
+        ImGui::EndTabBar();
+    }
+}
+
 auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> bool {
     if (SlabWindows.empty()) return true;
 
@@ -3118,6 +3934,7 @@ auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab works
         bShowWindowViews,
         bShowWindowSchemeInspector,
         bShowWindowBlueprintGraph,
+        bShowWindowGraphPlayground,
         bShowWindowPlotInspector
     };
 }
@@ -3134,6 +3951,7 @@ auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab works
     bShowWindowViews = cfg.bShowWindowViews;
     bShowWindowSchemeInspector = cfg.bShowWindowSchemeInspector;
     bShowWindowBlueprintGraph = cfg.bShowWindowBlueprintGraph;
+    bShowWindowGraphPlayground = cfg.bShowWindowGraphPlayground;
     bShowWindowPlotInspector = cfg.bShowWindowPlotInspector;
 }
 
@@ -3346,6 +4164,7 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
         } else if (ActiveWorkspace == EWorkspaceTab::Schemes) {
             drawToggle("Inspector", &bShowWindowSchemeInspector);
             drawToggle("Blueprint Graph", &bShowWindowBlueprintGraph);
+            drawToggle("Graph Playground", &bShowWindowGraphPlayground);
         } else {
             drawToggle("Plot Inspector", &bShowWindowPlotInspector);
         }
@@ -3404,8 +4223,10 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
         ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockBottom);
     } else if (workspace == EWorkspaceTab::Schemes) {
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.35f, nullptr, &dockMain);
+        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.38f, nullptr, &dockMain);
         ImGui::DockBuilderDockWindow(WindowTitleSchemesInspector, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleBlueprintGraph, dockMain);
+        ImGui::DockBuilderDockWindow(WindowTitleGraphPlayground, dockBottom);
     } else {
         ImGui::DockBuilderDockWindow(WindowTitlePlotInspector, dockMain);
     }
@@ -3535,6 +4356,7 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
             if (ActiveWorkspace == EWorkspaceTab::Schemes) {
                 ImGui::Checkbox("Interface Inspector", &bShowWindowSchemeInspector);
                 ImGui::Checkbox("Blueprint Graph", &bShowWindowBlueprintGraph);
+                ImGui::Checkbox("Graph Playground", &bShowWindowGraphPlayground);
             } else if (ActiveWorkspace == EWorkspaceTab::Plots) {
                 ImGui::Checkbox("Plot Inspector", &bShowWindowPlotInspector);
             }
@@ -3634,6 +4456,17 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
         false,
         [this]() {
             DrawSchemesBlueprintGraphPanel();
+        }
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleGraphPlayground,
+        EWorkspaceTab::Schemes,
+        &bShowWindowGraphPlayground,
+        false,
+        false,
+        [this]() {
+            DrawGraphPlaygroundPanel();
         }
     });
 

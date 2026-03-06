@@ -419,6 +419,40 @@ namespace Slab::Core::Reflection::V2 {
             return &it->second;
         }
 
+        [[nodiscard]] auto ListSpaces() const -> Vector<const FSpaceSchemaV1 *> {
+            Vector<const FSpaceSchemaV1 *> spaces;
+            spaces.reserve(SpacesById.size());
+            for (const auto &[spaceId, space] : SpacesById) {
+                (void) spaceId;
+                spaces.push_back(&space);
+            }
+
+            std::sort(spaces.begin(), spaces.end(), [](const auto *lhs, const auto *rhs) {
+                if (lhs == nullptr || rhs == nullptr) return lhs < rhs;
+                if (lhs->DisplayName == rhs->DisplayName) return lhs->SpaceId < rhs->SpaceId;
+                return lhs->DisplayName < rhs->DisplayName;
+            });
+
+            return spaces;
+        }
+
+        [[nodiscard]] auto ListOperators() const -> Vector<const FSemanticOperatorSchemaV1 *> {
+            Vector<const FSemanticOperatorSchemaV1 *> operators;
+            operators.reserve(OperatorsById.size());
+            for (const auto &[operatorId, semanticOperator] : OperatorsById) {
+                (void) operatorId;
+                operators.push_back(&semanticOperator);
+            }
+
+            std::sort(operators.begin(), operators.end(), [](const auto *lhs, const auto *rhs) {
+                if (lhs == nullptr || rhs == nullptr) return lhs < rhs;
+                if (lhs->DisplayName == rhs->DisplayName) return lhs->OperatorId < rhs->OperatorId;
+                return lhs->DisplayName < rhs->DisplayName;
+            });
+
+            return operators;
+        }
+
         [[nodiscard]] auto QueryOperatorsForSignature(const Vector<FSpaceId> &domainSpaces,
                                                       const Vector<FSpaceId> &codomainSpaces) const
             -> Vector<const FSemanticOperatorSchemaV1 *> {
