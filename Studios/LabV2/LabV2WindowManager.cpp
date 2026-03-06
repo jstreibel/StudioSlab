@@ -4425,11 +4425,16 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                         canvasPos.y + PlaygroundTemplateDocument.Canvas.PanY + node.Position.y);
                 };
 
+                const float templateLineHeight = ImGui::GetTextLineHeight();
+                const float templateHeaderHeight = std::max(
+                    BlueprintNodeHeaderMinHeight,
+                    std::round(templateLineHeight * BlueprintNodeHeaderScale));
+
                 const auto nodeScreenSize = [&](const FSemanticOperatorSchemaV1 &semanticOperator) -> ImVec2 {
                     const int rows = std::max(
                         static_cast<int>(semanticOperator.DomainPorts.size()),
                         static_cast<int>(semanticOperator.CodomainPorts.size()));
-                    const float height = 56.0f + static_cast<float>(std::max(1, rows)) * 20.0f;
+                    const float height = templateHeaderHeight + 28.0f + static_cast<float>(std::max(1, rows)) * 20.0f;
                     const float titleWidth = ImGui::CalcTextSize(semanticOperator.DisplayName.c_str()).x + 80.0f;
                     const float width = std::max(260.0f, std::min(420.0f, titleWidth));
                     return ImVec2(width, height);
@@ -4447,8 +4452,8 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                             ? static_cast<int>(semanticOperator.CodomainPorts.size())
                             : static_cast<int>(semanticOperator.DomainPorts.size()));
                     const float y =
-                        nodePos.y + 42.0f +
-                        (static_cast<float>(index) + 0.5f) * ((size.y - 48.0f) / static_cast<float>(total));
+                        nodePos.y + (templateHeaderHeight + 14.0f) +
+                        (static_cast<float>(index) + 0.5f) * ((size.y - (templateHeaderHeight + 20.0f)) / static_cast<float>(total));
                     const float x = bOutput ? (nodePos.x + size.x - 8.0f) : (nodePos.x + 8.0f);
                     return ImVec2(x, y);
                 };
@@ -4581,7 +4586,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                     drawList->AddRectFilled(nodePos, nodeEnd, IM_COL32(36, 43, 56, 246), 7.0f);
                     drawList->AddRectFilled(
                         nodePos,
-                        ImVec2(nodeEnd.x, nodePos.y + 28.0f),
+                        ImVec2(nodeEnd.x, nodePos.y + templateHeaderHeight),
                         IM_COL32(84, 104, 148, 255),
                         7.0f,
                         ImDrawFlags_RoundCornersTop);
@@ -4597,7 +4602,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                         IM_COL32(240, 246, 252, 255),
                         TruncateLabel(semanticOperator->DisplayName, 34).c_str());
                     drawList->AddText(
-                        ImVec2(nodePos.x + 10.0f, nodePos.y + 32.0f),
+                        ImVec2(nodePos.x + 10.0f, nodePos.y + templateHeaderHeight + 4.0f),
                         IM_COL32(174, 186, 204, 255),
                         TruncateLabel(node.NodeId, 34).c_str());
 
