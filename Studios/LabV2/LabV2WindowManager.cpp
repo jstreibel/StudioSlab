@@ -5,6 +5,7 @@
 #include "StudioConfigV2.h"
 
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
+#include "3rdParty/imgui-node-editor/crude_json.h"
 #include "imgui.h"
 #ifdef IMGUI_HAS_DOCK
 #include "imgui_internal.h"
@@ -35,6 +36,8 @@
 #include <cfloat>
 #include <cmath>
 #include <cstring>
+#include <filesystem>
+#include <limits>
 #include <sstream>
 #include <utility>
 
@@ -405,6 +408,115 @@ namespace {
 
     auto WithPolicyPrefix(const char prefix, const Slab::Str &value) -> Slab::Str {
         return Slab::Str(1, prefix) + ":" + value;
+    }
+
+    namespace json = crude_json;
+
+    [[nodiscard]] auto JsonTryGetValue(const json::value &value, const char *key) -> const json::value * {
+        const auto *object = value.get_ptr<json::object>();
+        if (object == nullptr || key == nullptr) return nullptr;
+        const auto it = object->find(key);
+        if (it == object->end()) return nullptr;
+        return &it->second;
+    }
+
+    [[nodiscard]] auto JsonReadString(const json::value &value, const char *key, const Slab::Str &fallback = {}) -> Slab::Str {
+        const auto *entry = JsonTryGetValue(value, key);
+        if (entry == nullptr) return fallback;
+        const auto *str = entry->get_ptr<json::string>();
+        if (str == nullptr) return fallback;
+        return *str;
+    }
+
+    [[nodiscard]] auto JsonReadBool(const json::value &value, const char *key, const bool fallback = false) -> bool {
+        const auto *entry = JsonTryGetValue(value, key);
+        if (entry == nullptr) return fallback;
+        const auto *boolean = entry->get_ptr<json::boolean>();
+        if (boolean == nullptr) return fallback;
+        return *boolean;
+    }
+
+    [[nodiscard]] auto JsonReadDouble(const json::value &value, const char *key, const double fallback = 0.0) -> double {
+        const auto *entry = JsonTryGetValue(value, key);
+        if (entry == nullptr) return fallback;
+        const auto *number = entry->get_ptr<json::number>();
+        if (number == nullptr) return fallback;
+        return *number;
+    }
+
+    [[nodiscard]] auto JsonReadUSize(const json::value &value, const char *key, const std::size_t fallback = 0) -> std::size_t {
+        const auto numeric = JsonReadDouble(value, key, static_cast<double>(fallback));
+        if (numeric < 0.0) return fallback;
+        return static_cast<std::size_t>(numeric);
+    }
+
+    [[nodiscard]] auto JsonReadVec2(const json::value &value, const char *key, const ImVec2 fallback = ImVec2(0.0f, 0.0f)) -> ImVec2 {
+        const auto *entry = JsonTryGetValue(value, key);
+        if (entry == nullptr) return fallback;
+
+        const auto *arr = entry->get_ptr<json::array>();
+        if (arr == nullptr || arr->size() < 2) return fallback;
+        const auto *x = (*arr)[0].get_ptr<json::number>();
+        const auto *y = (*arr)[1].get_ptr<json::number>();
+        if (x == nullptr || y == nullptr) return fallback;
+        return ImVec2(static_cast<float>(*x), static_cast<float>(*y));
+    }
+
+    auto JsonWriteVec2(const ImVec2 value) -> json::value {
+        json::array arr;
+        arr.emplace_back(static_cast<double>(value.x));
+        arr.emplace_back(static_cast<double>(value.y));
+        return json::value(std::move(arr));
+    }
+
+    [[nodiscard]] auto DistanceSquared(const ImVec2 a, const ImVec2 b) -> float {
+        const auto dx = a.x - b.x;
+        const auto dy = a.y - b.y;
+        return dx * dx + dy * dy;
+    }
+
+    [[nodiscard]] auto CubicBezierPoint(const ImVec2 p0, const ImVec2 p1, const ImVec2 p2, const ImVec2 p3, const float t) -> ImVec2 {
+        const auto u = 1.0f - t;
+        const auto tt = t * t;
+        const auto uu = u * u;
+        const auto uuu = uu * u;
+        const auto ttt = tt * t;
+        return ImVec2(
+            uuu * p0.x + 3.0f * uu * t * p1.x + 3.0f * u * tt * p2.x + ttt * p3.x,
+            uuu * p0.y + 3.0f * uu * t * p1.y + 3.0f * u * tt * p2.y + ttt * p3.y);
+    }
+
+    [[nodiscard]] auto DistanceSquaredToBezier(const ImVec2 p0,
+                                               const ImVec2 p1,
+                                               const ImVec2 p2,
+                                               const ImVec2 p3,
+                                               const ImVec2 point) -> float {
+        constexpr int Samples = 24;
+        float minDistance = std::numeric_limits<float>::max();
+        auto previous = p0;
+        for (int i = 1; i <= Samples; ++i) {
+            const auto t = static_cast<float>(i) / static_cast<float>(Samples);
+            const auto current = CubicBezierPoint(p0, p1, p2, p3, t);
+
+            const auto segment = ImVec2(current.x - previous.x, current.y - previous.y);
+            const auto fromPrevious = ImVec2(point.x - previous.x, point.y - previous.y);
+            const auto segmentLengthSq = segment.x * segment.x + segment.y * segment.y;
+            float projectedT = 0.0f;
+            if (segmentLengthSq > 1.0e-6f) {
+                projectedT = std::clamp(
+                    (fromPrevious.x * segment.x + fromPrevious.y * segment.y) / segmentLengthSq,
+                    0.0f,
+                    1.0f);
+            }
+
+            const auto closestPoint = ImVec2(
+                previous.x + segment.x * projectedT,
+                previous.y + segment.y * projectedT);
+            minDistance = std::min(minDistance, DistanceSquared(point, closestPoint));
+            previous = current;
+        }
+
+        return minDistance;
     }
 
 } // namespace
@@ -2984,6 +3096,280 @@ auto FLabV2WindowManager::DrawSchemesBlueprintGraphPanel() -> void {
     ImGui::EndChild();
 }
 
+auto FLabV2WindowManager::MarkGraphPlaygroundDirty() -> void {
+    bPlaygroundDirty = true;
+}
+
+auto FLabV2WindowManager::SaveGraphPlaygroundStateToFile() -> bool {
+    if (PlaygroundPersistenceFilePath.empty()) {
+        PlaygroundPersistenceStatus = "[Error] Graph state path is empty.";
+        return false;
+    }
+
+    namespace json = crude_json;
+    json::value root(json::object{});
+    root["schema_version"] = 1.0;
+    root["workspace"] = "GraphPlayground";
+
+    json::value templateState(json::object{});
+    templateState["selected_operator"] = PlaygroundTemplateSelectedOperatorId;
+    templateState["show_grid"] = bPlaygroundTemplateShowGrid;
+    templateState["show_minimap"] = bPlaygroundTemplateShowMinimap;
+    templateState["pan"] = JsonWriteVec2(PlaygroundTemplatePan);
+    templateState["node_counter"] = static_cast<double>(PlaygroundTemplateNodeCounter);
+    templateState["edge_counter"] = static_cast<double>(PlaygroundTemplateEdgeCounter);
+    templateState["coercion_counter"] = static_cast<double>(PlaygroundTemplateCoercionCounter);
+
+    json::array templateNodes;
+    templateNodes.reserve(PlaygroundTemplateNodes.size());
+    for (const auto &node : PlaygroundTemplateNodes) {
+        json::value nodeValue(json::object{});
+        nodeValue["id"] = node.NodeId;
+        nodeValue["operator_id"] = node.SemanticOperatorId;
+        nodeValue["position"] = JsonWriteVec2(node.Position);
+        templateNodes.push_back(std::move(nodeValue));
+    }
+    templateState["nodes"] = json::value(std::move(templateNodes));
+
+    json::array templateEdges;
+    templateEdges.reserve(PlaygroundTemplateEdges.size());
+    for (const auto &edge : PlaygroundTemplateEdges) {
+        json::value edgeValue(json::object{});
+        edgeValue["id"] = edge.EdgeId;
+        edgeValue["from_node_id"] = edge.FromNodeId;
+        edgeValue["from_port_id"] = edge.FromPortId;
+        edgeValue["to_node_id"] = edge.ToNodeId;
+        edgeValue["to_port_id"] = edge.ToPortId;
+        edgeValue["match_reason"] = edge.MatchReason;
+
+        json::array diagnostics;
+        diagnostics.reserve(edge.Diagnostics.size());
+        for (const auto &diagnostic : edge.Diagnostics) {
+            diagnostics.emplace_back(diagnostic);
+        }
+        edgeValue["diagnostics"] = json::value(std::move(diagnostics));
+
+        json::array suggestions;
+        suggestions.reserve(edge.SuggestedCoercionOperatorIds.size());
+        for (const auto &suggestion : edge.SuggestedCoercionOperatorIds) {
+            suggestions.emplace_back(suggestion);
+        }
+        edgeValue["suggested_coercions"] = json::value(std::move(suggestions));
+        templateEdges.push_back(std::move(edgeValue));
+    }
+    templateState["edges"] = json::value(std::move(templateEdges));
+
+    json::array selectedNodes;
+    selectedNodes.reserve(PlaygroundTemplateSelectedNodeIds.size());
+    for (const auto &selectedNodeId : PlaygroundTemplateSelectedNodeIds) {
+        selectedNodes.emplace_back(selectedNodeId);
+    }
+    templateState["selected_nodes"] = json::value(std::move(selectedNodes));
+    templateState["selected_node"] = PlaygroundTemplateSelectedNodeId;
+    templateState["selected_edge"] = PlaygroundTemplateSelectedEdgeId;
+
+    root["template"] = std::move(templateState);
+
+    json::value routingState(json::object{});
+    routingState["edge_counter"] = static_cast<double>(PlaygroundRoutingEdgeCounter);
+    routingState["source_endpoint"] = PlaygroundRoutingSourceEndpoint;
+    routingState["target_endpoint"] = PlaygroundRoutingTargetEndpoint;
+    routingState["edge_kind"] = static_cast<double>(static_cast<int>(PlaygroundRoutingEdgeKind));
+
+    json::array routingEdges;
+    routingEdges.reserve(PlaygroundRoutingEdges.size());
+    for (const auto &edge : PlaygroundRoutingEdges) {
+        json::value edgeValue(json::object{});
+        edgeValue["id"] = edge.EdgeId;
+        edgeValue["source"] = edge.SourceEndpoint;
+        edgeValue["target"] = edge.TargetEndpoint;
+        edgeValue["kind"] = static_cast<double>(static_cast<int>(edge.Kind));
+        routingEdges.push_back(std::move(edgeValue));
+    }
+    routingState["edges"] = json::value(std::move(routingEdges));
+    root["routing"] = std::move(routingState);
+
+    try {
+        const std::filesystem::path path(PlaygroundPersistenceFilePath);
+        if (path.has_parent_path()) {
+            std::filesystem::create_directories(path.parent_path());
+        }
+    } catch (const std::exception &exception) {
+        PlaygroundPersistenceStatus = "[Error] Could not create folder for graph state: " + Slab::Str(exception.what());
+        return false;
+    }
+
+    if (!root.save(PlaygroundPersistenceFilePath, 2, ' ')) {
+        PlaygroundPersistenceStatus = "[Error] Failed to save graph state at '" + PlaygroundPersistenceFilePath + "'.";
+        return false;
+    }
+
+    bPlaygroundDirty = false;
+    PlaygroundLastAutosaveTimestampSeconds = ImGui::GetTime();
+    PlaygroundPersistenceStatus = "[Ok] Saved graph state to '" + PlaygroundPersistenceFilePath + "'.";
+    return true;
+}
+
+auto FLabV2WindowManager::LoadGraphPlaygroundStateFromFile() -> bool {
+    if (PlaygroundPersistenceFilePath.empty()) {
+        PlaygroundPersistenceStatus = "[Error] Graph state path is empty.";
+        return false;
+    }
+
+    namespace json = crude_json;
+    const std::filesystem::path path(PlaygroundPersistenceFilePath);
+    if (!std::filesystem::exists(path)) {
+        PlaygroundPersistenceStatus = "[Info] Graph state file not found; starting with empty graphs.";
+        return false;
+    }
+
+    const auto [loadedRoot, ok] = json::value::load(PlaygroundPersistenceFilePath);
+    if (!ok || !loadedRoot.is_object()) {
+        PlaygroundPersistenceStatus = "[Error] Failed to parse graph state file '" + PlaygroundPersistenceFilePath + "'.";
+        return false;
+    }
+
+    PlaygroundTemplateNodes.clear();
+    PlaygroundTemplateEdges.clear();
+    PlaygroundTemplateSelectedNodeIds.clear();
+    PlaygroundTemplateSelectedNodeId.clear();
+    PlaygroundTemplateSelectedEdgeId.clear();
+    PlaygroundTemplatePendingCoercion = {};
+    PlaygroundTemplateConnectingNodeId.clear();
+    PlaygroundTemplateConnectingPortId.clear();
+    bPlaygroundTemplateConnectingFromOutput = false;
+    bPlaygroundTemplateMarqueeSelecting = false;
+    PlaygroundTemplateMarqueeStart = ImVec2(0.0f, 0.0f);
+    PlaygroundTemplateMarqueeEnd = ImVec2(0.0f, 0.0f);
+
+    PlaygroundRoutingEdges.clear();
+
+    if (const auto *templateState = JsonTryGetValue(loadedRoot, "template"); templateState != nullptr) {
+        PlaygroundTemplateSelectedOperatorId = JsonReadString(*templateState, "selected_operator", PlaygroundTemplateSelectedOperatorId);
+        bPlaygroundTemplateShowGrid = JsonReadBool(*templateState, "show_grid", bPlaygroundTemplateShowGrid);
+        bPlaygroundTemplateShowMinimap = JsonReadBool(*templateState, "show_minimap", bPlaygroundTemplateShowMinimap);
+        PlaygroundTemplatePan = JsonReadVec2(*templateState, "pan", PlaygroundTemplatePan);
+
+        if (const auto *nodesValue = JsonTryGetValue(*templateState, "nodes");
+            nodesValue != nullptr && nodesValue->is_array()) {
+            for (const auto &nodeValue : nodesValue->get<json::array>()) {
+                if (!nodeValue.is_object()) continue;
+
+                FTemplateGraphPlaygroundNode node;
+                node.NodeId = JsonReadString(nodeValue, "id");
+                node.SemanticOperatorId = JsonReadString(nodeValue, "operator_id");
+                node.Position = JsonReadVec2(nodeValue, "position", node.Position);
+                if (node.NodeId.empty() || node.SemanticOperatorId.empty()) continue;
+                PlaygroundTemplateNodes.push_back(std::move(node));
+            }
+        }
+
+        if (const auto *edgesValue = JsonTryGetValue(*templateState, "edges");
+            edgesValue != nullptr && edgesValue->is_array()) {
+            for (const auto &edgeValue : edgesValue->get<json::array>()) {
+                if (!edgeValue.is_object()) continue;
+
+                FTemplateGraphPlaygroundEdge edge;
+                edge.EdgeId = JsonReadString(edgeValue, "id");
+                edge.FromNodeId = JsonReadString(edgeValue, "from_node_id");
+                edge.FromPortId = JsonReadString(edgeValue, "from_port_id");
+                edge.ToNodeId = JsonReadString(edgeValue, "to_node_id");
+                edge.ToPortId = JsonReadString(edgeValue, "to_port_id");
+                edge.MatchReason = JsonReadString(edgeValue, "match_reason", "ExactMatch");
+                if (edge.EdgeId.empty()) edge.EdgeId = "tmpl.edge." + Slab::ToStr(PlaygroundTemplateEdges.size() + 1);
+                if (edge.FromNodeId.empty() || edge.ToNodeId.empty() || edge.FromPortId.empty() || edge.ToPortId.empty()) continue;
+
+                if (const auto *diagnosticsValue = JsonTryGetValue(edgeValue, "diagnostics");
+                    diagnosticsValue != nullptr && diagnosticsValue->is_array()) {
+                    for (const auto &diagnosticValue : diagnosticsValue->get<json::array>()) {
+                        const auto *diagnostic = diagnosticValue.get_ptr<json::string>();
+                        if (diagnostic == nullptr || diagnostic->empty()) continue;
+                        edge.Diagnostics.push_back(*diagnostic);
+                    }
+                }
+
+                if (const auto *suggestionsValue = JsonTryGetValue(edgeValue, "suggested_coercions");
+                    suggestionsValue != nullptr && suggestionsValue->is_array()) {
+                    for (const auto &suggestionValue : suggestionsValue->get<json::array>()) {
+                        const auto *suggestion = suggestionValue.get_ptr<json::string>();
+                        if (suggestion == nullptr || suggestion->empty()) continue;
+                        edge.SuggestedCoercionOperatorIds.push_back(*suggestion);
+                    }
+                }
+
+                PlaygroundTemplateEdges.push_back(std::move(edge));
+            }
+        }
+
+        if (const auto *selectedNodesValue = JsonTryGetValue(*templateState, "selected_nodes");
+            selectedNodesValue != nullptr && selectedNodesValue->is_array()) {
+            for (const auto &selectedNodeValue : selectedNodesValue->get<json::array>()) {
+                const auto *selectedNodeId = selectedNodeValue.get_ptr<json::string>();
+                if (selectedNodeId == nullptr || selectedNodeId->empty()) continue;
+                PlaygroundTemplateSelectedNodeIds.push_back(*selectedNodeId);
+            }
+        }
+        PlaygroundTemplateSelectedNodeId = JsonReadString(*templateState, "selected_node");
+        PlaygroundTemplateSelectedEdgeId = JsonReadString(*templateState, "selected_edge");
+
+        PlaygroundTemplateNodeCounter = std::max(
+            PlaygroundTemplateNodes.size(),
+            JsonReadUSize(*templateState, "node_counter", PlaygroundTemplateNodes.size()));
+        PlaygroundTemplateEdgeCounter = std::max(
+            PlaygroundTemplateEdges.size(),
+            JsonReadUSize(*templateState, "edge_counter", PlaygroundTemplateEdges.size()));
+        PlaygroundTemplateCoercionCounter = JsonReadUSize(
+            *templateState,
+            "coercion_counter",
+            PlaygroundTemplateCoercionCounter);
+    } else {
+        PlaygroundTemplateNodeCounter = PlaygroundTemplateNodes.size();
+        PlaygroundTemplateEdgeCounter = PlaygroundTemplateEdges.size();
+    }
+
+    if (const auto *routingState = JsonTryGetValue(loadedRoot, "routing"); routingState != nullptr) {
+        PlaygroundRoutingSourceEndpoint = JsonReadString(*routingState, "source_endpoint");
+        PlaygroundRoutingTargetEndpoint = JsonReadString(*routingState, "target_endpoint");
+        const auto edgeKind = static_cast<int>(JsonReadDouble(
+            *routingState,
+            "edge_kind",
+            static_cast<double>(static_cast<int>(PlaygroundRoutingEdgeKind))));
+        PlaygroundRoutingEdgeKind = static_cast<ERoutingGraphEdgeKind>(std::clamp(edgeKind, 0, 3));
+
+        if (const auto *edgesValue = JsonTryGetValue(*routingState, "edges");
+            edgesValue != nullptr && edgesValue->is_array()) {
+            for (const auto &edgeValue : edgesValue->get<json::array>()) {
+                if (!edgeValue.is_object()) continue;
+
+                FRoutingGraphPlaygroundEdge edge;
+                edge.EdgeId = JsonReadString(edgeValue, "id");
+                edge.SourceEndpoint = JsonReadString(edgeValue, "source");
+                edge.TargetEndpoint = JsonReadString(edgeValue, "target");
+                const auto kind = static_cast<int>(JsonReadDouble(edgeValue, "kind", 0.0));
+                edge.Kind = static_cast<ERoutingGraphEdgeKind>(std::clamp(kind, 0, 3));
+                if (edge.EdgeId.empty()) edge.EdgeId = "route.edge." + Slab::ToStr(PlaygroundRoutingEdges.size() + 1);
+                if (edge.SourceEndpoint.empty() || edge.TargetEndpoint.empty()) continue;
+                PlaygroundRoutingEdges.push_back(std::move(edge));
+            }
+        }
+
+        PlaygroundRoutingEdgeCounter = std::max(
+            PlaygroundRoutingEdges.size(),
+            JsonReadUSize(*routingState, "edge_counter", PlaygroundRoutingEdges.size()));
+    } else {
+        PlaygroundRoutingEdgeCounter = PlaygroundRoutingEdges.size();
+    }
+
+    bPlaygroundDirty = false;
+    PlaygroundLastAutosaveTimestampSeconds = ImGui::GetTime();
+    PlaygroundPersistenceStatus =
+        "[Ok] Loaded graph state: " +
+        Slab::ToStr(PlaygroundTemplateNodes.size()) + " template nodes, " +
+        Slab::ToStr(PlaygroundTemplateEdges.size()) + " template edges, " +
+        Slab::ToStr(PlaygroundRoutingEdges.size()) + " routing edges.";
+    return true;
+}
+
 auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
     using namespace Slab::Core::Reflection::V2;
 
@@ -2992,12 +3378,111 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
     const auto semanticSpaces = semanticCatalog.ListSpaces();
     const auto semanticOperators = semanticCatalog.ListOperators();
 
+    if (!bPlaygroundStateLoaded) {
+        bPlaygroundStateLoaded = true;
+        (void) LoadGraphPlaygroundStateFromFile();
+    }
+
+    if (bPlaygroundAutosave && bPlaygroundDirty) {
+        const auto now = ImGui::GetTime();
+        if (now - PlaygroundLastAutosaveTimestampSeconds >= PlaygroundAutosaveIntervalSeconds) {
+            if (SaveGraphPlaygroundStateToFile()) {
+                PlaygroundPersistenceStatus = "[Ok] Autosaved graph state.";
+            }
+        }
+    }
+
+    {
+        auto pathBuffer = std::vector<char>(512, '\0');
+        if (!PlaygroundPersistenceFilePath.empty()) {
+            std::strncpy(pathBuffer.data(), PlaygroundPersistenceFilePath.c_str(), pathBuffer.size() - 1);
+            pathBuffer.back() = '\0';
+        }
+
+        ImGui::TextDisabled("State");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(360.0f);
+        if (ImGui::InputTextWithHint(
+                "##GraphPlaygroundStatePath",
+                "Graph state path...",
+                pathBuffer.data(),
+                pathBuffer.size())) {
+            PlaygroundPersistenceFilePath = pathBuffer.data();
+        }
+        ImGui::PopItemWidth();
+        ImGui::SameLine();
+        if (ImGui::Button("Load")) {
+            (void) LoadGraphPlaygroundStateFromFile();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Save")) {
+            (void) SaveGraphPlaygroundStateToFile();
+        }
+        ImGui::SameLine();
+        ImGui::Checkbox("Autosave", &bPlaygroundAutosave);
+        if (bPlaygroundAutosave) {
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(120.0f);
+            auto autosaveSeconds = static_cast<float>(PlaygroundAutosaveIntervalSeconds);
+            ImGui::SliderFloat(
+                "Interval (s)",
+                &autosaveSeconds,
+                0.35f,
+                5.0f,
+                "%.2f");
+            PlaygroundAutosaveIntervalSeconds = std::max(0.25, static_cast<double>(autosaveSeconds));
+        }
+
+        if (!PlaygroundPersistenceStatus.empty()) {
+            const bool bError = PlaygroundPersistenceStatus.starts_with("[Error]");
+            const auto color = bError
+                ? ImVec4(0.92f, 0.35f, 0.35f, 1.0f)
+                : ImVec4(0.56f, 0.76f, 0.92f, 1.0f);
+            ImGui::TextColored(color, "%s", PlaygroundPersistenceStatus.c_str());
+        }
+    }
+
+    ImGui::Separator();
+
     if (PlaygroundTemplateSelectedOperatorId.empty()) {
         PlaygroundTemplateSelectedOperatorId = COperatorIdIdentityV1;
     }
     if (semanticCatalog.FindOperatorById(PlaygroundTemplateSelectedOperatorId) == nullptr && !semanticOperators.empty()) {
         PlaygroundTemplateSelectedOperatorId = semanticOperators.front()->OperatorId;
     }
+
+    struct FSpaceMatchResult {
+        Slab::Str Reason = "Incompatible";
+        Slab::StrVector Diagnostics;
+        Slab::Vector<Slab::Str> SuggestedCoercionOperatorIds;
+    };
+
+    struct FTemplateCompilePreviewNode {
+        Slab::Str NodeId;
+        Slab::Str OperatorId;
+        Slab::Str DisplayName;
+        bool bBound = false;
+        Slab::Str BindingLabel;
+        Slab::StrVector Diagnostics;
+    };
+
+    struct FTemplateCompilePreviewEdge {
+        Slab::Str EdgeId;
+        Slab::Str MatchReason;
+        Slab::Str Summary;
+        Slab::StrVector Diagnostics;
+        Slab::Vector<Slab::Str> SuggestedCoercionOperatorIds;
+    };
+
+    struct FTemplateCompilePreview {
+        Slab::Vector<FTemplateCompilePreviewNode> Nodes;
+        Slab::Vector<FTemplateCompilePreviewEdge> Edges;
+        std::size_t BoundNodes = 0;
+        std::size_t UnboundNodes = 0;
+        std::size_t ExactEdges = 0;
+        std::size_t CoercionEdges = 0;
+        std::size_t IncompatibleEdges = 0;
+    };
 
     const auto findTemplateNode = [this](const Slab::Str &nodeId) -> FTemplateGraphPlaygroundNode * {
         const auto it = std::find_if(PlaygroundTemplateNodes.begin(), PlaygroundTemplateNodes.end(), [&](const auto &node) {
@@ -3012,6 +3497,14 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
             return node.NodeId == nodeId;
         });
         if (it == PlaygroundTemplateNodes.end()) return nullptr;
+        return &(*it);
+    };
+
+    const auto findTemplateEdgeConst = [this](const Slab::Str &edgeId) -> const FTemplateGraphPlaygroundEdge * {
+        const auto it = std::find_if(PlaygroundTemplateEdges.begin(), PlaygroundTemplateEdges.end(), [&](const auto &edge) {
+            return edge.EdgeId == edgeId;
+        });
+        if (it == PlaygroundTemplateEdges.end()) return nullptr;
         return &(*it);
     };
 
@@ -3039,13 +3532,129 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
         target.push_back(item);
     };
 
-    const auto addTemplateEdge = [this](const Slab::Str &fromNodeId,
-                                        const Slab::Str &fromPortId,
-                                        const Slab::Str &toNodeId,
-                                        const Slab::Str &toPortId,
-                                        const Slab::Str &reason,
-                                        Slab::StrVector diagnostics = {},
-                                        Slab::Vector<Slab::Str> suggestions = {}) -> bool {
+    const auto appendUniqueNodeSelection = [this](const Slab::Str &nodeId) {
+        if (nodeId.empty()) return;
+        if (std::find(PlaygroundTemplateSelectedNodeIds.begin(), PlaygroundTemplateSelectedNodeIds.end(), nodeId)
+            != PlaygroundTemplateSelectedNodeIds.end()) {
+            return;
+        }
+        PlaygroundTemplateSelectedNodeIds.push_back(nodeId);
+    };
+
+    const auto markDirty = [this]() {
+        MarkGraphPlaygroundDirty();
+    };
+
+    const auto clearTemplateSelection = [this]() {
+        PlaygroundTemplateSelectedNodeId.clear();
+        PlaygroundTemplateSelectedNodeIds.clear();
+        PlaygroundTemplateSelectedEdgeId.clear();
+    };
+
+    const auto clearTemplateConnectionState = [this]() {
+        PlaygroundTemplateConnectingNodeId.clear();
+        PlaygroundTemplateConnectingPortId.clear();
+        bPlaygroundTemplateConnectingFromOutput = false;
+    };
+
+    const auto deleteTemplateNodes = [this, &markDirty, &clearTemplateSelection, &clearTemplateConnectionState](const Slab::Vector<Slab::Str> &nodeIds) -> bool {
+        if (nodeIds.empty()) return false;
+
+        const auto containsNodeId = [&nodeIds](const Slab::Str &nodeId) {
+            return std::find(nodeIds.begin(), nodeIds.end(), nodeId) != nodeIds.end();
+        };
+
+        const auto previousNodeCount = PlaygroundTemplateNodes.size();
+        const auto previousEdgeCount = PlaygroundTemplateEdges.size();
+
+        PlaygroundTemplateNodes.erase(
+            std::remove_if(
+                PlaygroundTemplateNodes.begin(),
+                PlaygroundTemplateNodes.end(),
+                [&](const auto &node) { return containsNodeId(node.NodeId); }),
+            PlaygroundTemplateNodes.end());
+
+        PlaygroundTemplateEdges.erase(
+            std::remove_if(
+                PlaygroundTemplateEdges.begin(),
+                PlaygroundTemplateEdges.end(),
+                [&](const auto &edge) {
+                    return containsNodeId(edge.FromNodeId) || containsNodeId(edge.ToNodeId);
+                }),
+            PlaygroundTemplateEdges.end());
+
+        const bool bChanged =
+            previousNodeCount != PlaygroundTemplateNodes.size() ||
+            previousEdgeCount != PlaygroundTemplateEdges.size();
+
+        if (!bChanged) return false;
+
+        PlaygroundTemplatePendingCoercion = {};
+        clearTemplateSelection();
+        clearTemplateConnectionState();
+        markDirty();
+        return true;
+    };
+
+    const auto evaluateSpaceMatch = [&](const Slab::Str &fromSpaceId, const Slab::Str &toSpaceId) -> FSpaceMatchResult {
+        FSpaceMatchResult result;
+        if (fromSpaceId.empty() || toSpaceId.empty()) {
+            result.Reason = "Incompatible";
+            result.Diagnostics = {"space id is empty"};
+            return result;
+        }
+        if (fromSpaceId == toSpaceId) {
+            result.Reason = "ExactMatch";
+            return result;
+        }
+
+        bool bCompatibleWithCoercion = false;
+        const auto matchResults = semanticCatalog.QueryOperatorMatchesForSignature({fromSpaceId}, {toSpaceId});
+        for (const auto &match : matchResults) {
+            if (match.Reason == ESignatureMatchReasonV1::ExactMatch) {
+                const auto *operatorSchema = semanticCatalog.FindOperatorById(match.OperatorId);
+                if (operatorSchema == nullptr) continue;
+                if (operatorSchema->Kind == ESemanticOperatorKindV1::Coercion ||
+                    operatorSchema->Kind == ESemanticOperatorKindV1::Projection) {
+                    appendUniqueString(result.SuggestedCoercionOperatorIds, operatorSchema->OperatorId);
+                    bCompatibleWithCoercion = true;
+                }
+                continue;
+            }
+
+            if (match.Reason != ESignatureMatchReasonV1::CompatibleButNeedsCoercion) continue;
+            bCompatibleWithCoercion = true;
+            for (const auto &diagnostic : match.Diagnostics) {
+                appendUniqueString(result.Diagnostics, diagnostic);
+            }
+            for (const auto &suggestion : match.SuggestedCoercionOperatorIds) {
+                appendUniqueString(result.SuggestedCoercionOperatorIds, suggestion);
+            }
+        }
+
+        if (bCompatibleWithCoercion) {
+            result.Reason = "CompatibleButNeedsCoercion";
+            if (result.Diagnostics.empty()) {
+                result.Diagnostics.push_back("coercion required: '" + fromSpaceId + "' -> '" + toSpaceId + "'");
+            }
+            return result;
+        }
+
+        result.Reason = "Incompatible";
+        if (result.Diagnostics.empty()) {
+            result.Diagnostics.push_back("incompatible spaces: '" + fromSpaceId + "' -> '" + toSpaceId + "'");
+        }
+        return result;
+    };
+
+    const auto addTemplateEdge = [this,
+                                  &markDirty](const Slab::Str &fromNodeId,
+                                              const Slab::Str &fromPortId,
+                                              const Slab::Str &toNodeId,
+                                              const Slab::Str &toPortId,
+                                              const Slab::Str &reason,
+                                              Slab::StrVector diagnostics = {},
+                                              Slab::Vector<Slab::Str> suggestions = {}) -> bool {
         const auto duplicateIt = std::find_if(
             PlaygroundTemplateEdges.begin(),
             PlaygroundTemplateEdges.end(),
@@ -3068,13 +3677,80 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
         edge.Diagnostics = std::move(diagnostics);
         edge.SuggestedCoercionOperatorIds = std::move(suggestions);
         PlaygroundTemplateEdges.push_back(std::move(edge));
+        markDirty();
         return true;
     };
 
-    const auto clearTemplateConnectionState = [this]() {
-        PlaygroundTemplateConnectingNodeId.clear();
-        PlaygroundTemplateConnectingPortId.clear();
-        bPlaygroundTemplateConnectingFromOutput = false;
+    const auto insertCoercionNode = [&](const Slab::Str &fromNodeId,
+                                        const Slab::Str &fromPortId,
+                                        const Slab::Str &toNodeId,
+                                        const Slab::Str &toPortId,
+                                        const Slab::Vector<Slab::Str> &coercionOperatorIds,
+                                        const Slab::Str &edgeIdToReplace = Slab::Str{}) -> bool {
+        if (coercionOperatorIds.empty()) {
+            PlaygroundTemplateStatus = "[Error] No coercion operator was suggested.";
+            return false;
+        }
+
+        const auto *fromNode = findTemplateNodeConst(fromNodeId);
+        const auto *toNode = findTemplateNodeConst(toNodeId);
+        if (fromNode == nullptr || toNode == nullptr) {
+            PlaygroundTemplateStatus = "[Error] Could not resolve coercion endpoints.";
+            return false;
+        }
+
+        const auto *coercionOperator = semanticCatalog.FindOperatorById(coercionOperatorIds.front());
+        if (coercionOperator == nullptr ||
+            coercionOperator->DomainPorts.empty() ||
+            coercionOperator->CodomainPorts.empty()) {
+            PlaygroundTemplateStatus = "[Error] Suggested coercion operator is invalid.";
+            return false;
+        }
+
+        if (!edgeIdToReplace.empty()) {
+            const auto previousCount = PlaygroundTemplateEdges.size();
+            PlaygroundTemplateEdges.erase(
+                std::remove_if(
+                    PlaygroundTemplateEdges.begin(),
+                    PlaygroundTemplateEdges.end(),
+                    [&](const auto &edge) { return edge.EdgeId == edgeIdToReplace; }),
+                PlaygroundTemplateEdges.end());
+            if (previousCount != PlaygroundTemplateEdges.size()) {
+                markDirty();
+            }
+        }
+
+        ++PlaygroundTemplateCoercionCounter;
+        FTemplateGraphPlaygroundNode coercionNode;
+        coercionNode.NodeId = "tmpl.coercion." + Slab::ToStr(PlaygroundTemplateCoercionCounter);
+        coercionNode.SemanticOperatorId = coercionOperator->OperatorId;
+        coercionNode.Position = ImVec2(
+            0.5f * (fromNode->Position.x + toNode->Position.x) + 10.0f,
+            0.5f * (fromNode->Position.y + toNode->Position.y) + 30.0f);
+        PlaygroundTemplateNodes.push_back(std::move(coercionNode));
+        markDirty();
+
+        const auto coercionNodeId = PlaygroundTemplateNodes.back().NodeId;
+        (void) addTemplateEdge(
+            fromNodeId,
+            fromPortId,
+            coercionNodeId,
+            coercionOperator->DomainPorts.front().PortId,
+            "ExactMatch");
+        (void) addTemplateEdge(
+            coercionNodeId,
+            coercionOperator->CodomainPorts.front().PortId,
+            toNodeId,
+            toPortId,
+            "ExactMatch");
+
+        PlaygroundTemplatePendingCoercion = {};
+        PlaygroundTemplateSelectedNodeId = coercionNodeId;
+        PlaygroundTemplateSelectedNodeIds = {coercionNodeId};
+        PlaygroundTemplateSelectedEdgeId.clear();
+        PlaygroundTemplateStatus =
+            "[Ok] Inserted coercion node '" + coercionOperator->DisplayName + "'.";
+        return true;
     };
 
     const auto attemptTemplateConnection = [&](const Slab::Str &outputNodeId,
@@ -3112,7 +3788,8 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
         const auto &toSpaceId = toPort->SpaceId;
 
         PlaygroundTemplatePendingCoercion = {};
-        if (fromSpaceId == toSpaceId) {
+        const auto match = evaluateSpaceMatch(fromSpaceId, toSpaceId);
+        if (match.Reason == "ExactMatch") {
             if (addTemplateEdge(outputNodeId, outputPortId, inputNodeId, inputPortId, "ExactMatch")) {
                 PlaygroundTemplateStatus =
                     "[Ok] Connected " + fromPort->DisplayName + " -> " + toPort->DisplayName + " (exact semantic space match).";
@@ -3123,34 +3800,13 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
             return;
         }
 
-        Slab::Vector<Slab::Str> coercionOperatorIds;
-        Slab::StrVector diagnostics;
-        const auto matchResults = semanticCatalog.QueryOperatorMatchesForSignature({fromSpaceId}, {toSpaceId});
-        for (const auto &result : matchResults) {
-            if (result.Reason == ESignatureMatchReasonV1::ExactMatch) {
-                const auto *operatorSchema = semanticCatalog.FindOperatorById(result.OperatorId);
-                if (operatorSchema == nullptr) continue;
-                if (operatorSchema->Kind == ESemanticOperatorKindV1::Coercion ||
-                    operatorSchema->Kind == ESemanticOperatorKindV1::Projection) {
-                    appendUniqueString(coercionOperatorIds, operatorSchema->OperatorId);
-                }
-            } else if (result.Reason == ESignatureMatchReasonV1::CompatibleButNeedsCoercion) {
-                for (const auto &suggestion : result.SuggestedCoercionOperatorIds) {
-                    appendUniqueString(coercionOperatorIds, suggestion);
-                }
-                for (const auto &diagnostic : result.Diagnostics) {
-                    appendUniqueString(diagnostics, diagnostic);
-                }
-            }
-        }
-
-        if (!coercionOperatorIds.empty()) {
+        if (match.Reason == "CompatibleButNeedsCoercion") {
             PlaygroundTemplatePendingCoercion.bActive = true;
             PlaygroundTemplatePendingCoercion.FromNodeId = outputNodeId;
             PlaygroundTemplatePendingCoercion.FromPortId = outputPortId;
             PlaygroundTemplatePendingCoercion.ToNodeId = inputNodeId;
             PlaygroundTemplatePendingCoercion.ToPortId = inputPortId;
-            PlaygroundTemplatePendingCoercion.SuggestedCoercionOperatorIds = coercionOperatorIds;
+            PlaygroundTemplatePendingCoercion.SuggestedCoercionOperatorIds = match.SuggestedCoercionOperatorIds;
             PlaygroundTemplatePendingCoercion.Summary =
                 "Direct edge requires explicit coercion node: '" + fromSpaceId + "' -> '" + toSpaceId + "'.";
             PlaygroundTemplateStatus =
@@ -3159,16 +3815,111 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
             return;
         }
 
-        if (diagnostics.empty() && !matchResults.empty()) {
-            for (const auto &diagnostic : matchResults.front().Diagnostics) diagnostics.push_back(diagnostic);
-        }
-
         PlaygroundTemplateStatus =
             "[Error] Incompatible spaces: '" + fromSpaceId + "' -> '" + toSpaceId + "'.";
-        if (!diagnostics.empty()) {
-            PlaygroundTemplateStatus += " " + diagnostics.front();
+        if (!match.Diagnostics.empty()) {
+            PlaygroundTemplateStatus += " " + match.Diagnostics.front();
         }
         clearTemplateConnectionState();
+    };
+
+    const auto buildCompilePreview = [&]() -> FTemplateCompilePreview {
+        FTemplateCompilePreview preview;
+
+        for (const auto &node : PlaygroundTemplateNodes) {
+            FTemplateCompilePreviewNode nodePreview;
+            nodePreview.NodeId = node.NodeId;
+            nodePreview.OperatorId = node.SemanticOperatorId;
+
+            const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
+            if (semanticOperator == nullptr) {
+                nodePreview.DisplayName = "<missing operator>";
+                nodePreview.Diagnostics.push_back("operator schema not found");
+                ++preview.UnboundNodes;
+                preview.Nodes.push_back(std::move(nodePreview));
+                continue;
+            }
+
+            nodePreview.DisplayName = semanticOperator->DisplayName;
+            const auto bindings = semanticCatalog.QueryBindingsForOperator(semanticOperator->OperatorId);
+            if (bindings.empty()) {
+                nodePreview.bBound = false;
+                nodePreview.Diagnostics.push_back("no implementation bindings");
+                ++preview.UnboundNodes;
+            } else {
+                nodePreview.bBound = true;
+                ++preview.BoundNodes;
+                const auto &binding = bindings.front();
+                nodePreview.BindingLabel = binding.TargetInterfaceId + "::" + binding.TargetOperationId;
+            }
+
+            preview.Nodes.push_back(std::move(nodePreview));
+        }
+
+        for (const auto &edge : PlaygroundTemplateEdges) {
+            FTemplateCompilePreviewEdge edgePreview;
+            edgePreview.EdgeId = edge.EdgeId;
+            edgePreview.MatchReason = edge.MatchReason;
+            edgePreview.Summary =
+                edge.FromNodeId + ":" + edge.FromPortId +
+                " -> " +
+                edge.ToNodeId + ":" + edge.ToPortId;
+            edgePreview.Diagnostics = edge.Diagnostics;
+            edgePreview.SuggestedCoercionOperatorIds = edge.SuggestedCoercionOperatorIds;
+
+            const auto *fromNode = findTemplateNodeConst(edge.FromNodeId);
+            const auto *toNode = findTemplateNodeConst(edge.ToNodeId);
+            if (fromNode == nullptr || toNode == nullptr) {
+                edgePreview.MatchReason = "Incompatible";
+                edgePreview.Diagnostics.push_back("edge endpoint node missing");
+                ++preview.IncompatibleEdges;
+                preview.Edges.push_back(std::move(edgePreview));
+                continue;
+            }
+
+            const auto *fromOperator = semanticCatalog.FindOperatorById(fromNode->SemanticOperatorId);
+            const auto *toOperator = semanticCatalog.FindOperatorById(toNode->SemanticOperatorId);
+            if (fromOperator == nullptr || toOperator == nullptr) {
+                edgePreview.MatchReason = "Incompatible";
+                edgePreview.Diagnostics.push_back("edge endpoint operator schema missing");
+                ++preview.IncompatibleEdges;
+                preview.Edges.push_back(std::move(edgePreview));
+                continue;
+            }
+
+            const auto *fromPort = findOutputPort(*fromOperator, edge.FromPortId);
+            const auto *toPort = findInputPort(*toOperator, edge.ToPortId);
+            if (fromPort == nullptr || toPort == nullptr) {
+                edgePreview.MatchReason = "Incompatible";
+                edgePreview.Diagnostics.push_back("edge endpoint port missing");
+                ++preview.IncompatibleEdges;
+                preview.Edges.push_back(std::move(edgePreview));
+                continue;
+            }
+
+            const auto match = evaluateSpaceMatch(fromPort->SpaceId, toPort->SpaceId);
+            edgePreview.MatchReason = match.Reason;
+            if (edgePreview.Diagnostics.empty()) {
+                edgePreview.Diagnostics = match.Diagnostics;
+            } else {
+                for (const auto &diagnostic : match.Diagnostics) {
+                    appendUniqueString(edgePreview.Diagnostics, diagnostic);
+                }
+            }
+            for (const auto &suggestion : match.SuggestedCoercionOperatorIds) {
+                appendUniqueString(edgePreview.SuggestedCoercionOperatorIds, suggestion);
+            }
+
+            if (match.Reason == "ExactMatch") ++preview.ExactEdges;
+            if (match.Reason == "CompatibleButNeedsCoercion") ++preview.CoercionEdges;
+            if (match.Reason == "Incompatible") ++preview.IncompatibleEdges;
+
+            if (match.Reason != "ExactMatch") {
+                preview.Edges.push_back(std::move(edgePreview));
+            }
+        }
+
+        return preview;
     };
 
     if (ImGui::BeginTabBar("GraphPlaygroundModes")) {
@@ -3261,6 +4012,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                 }
                 ImGui::EndCombo();
             }
+
             ImGui::SameLine();
             if (ImGui::Button("Add Node")) {
                 if (selectedOperator != nullptr) {
@@ -3272,11 +4024,51 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                         80.0f + static_cast<float>((PlaygroundTemplateNodeCounter % 4) * 280),
                         70.0f + static_cast<float>((PlaygroundTemplateNodeCounter / 4) * 140));
                     PlaygroundTemplateNodes.push_back(std::move(node));
+                    PlaygroundTemplateSelectedNodeId = PlaygroundTemplateNodes.back().NodeId;
+                    PlaygroundTemplateSelectedNodeIds = {PlaygroundTemplateNodes.back().NodeId};
+                    PlaygroundTemplateSelectedEdgeId.clear();
                     PlaygroundTemplateStatus = "[Ok] Added semantic node '" + selectedOperator->DisplayName + "'.";
+                    markDirty();
                 } else {
                     PlaygroundTemplateStatus = "[Error] Select a semantic operator first.";
                 }
             }
+
+            ImGui::SameLine();
+            if (ImGui::Button("Duplicate Selected")) {
+                if (PlaygroundTemplateSelectedNodeIds.empty() && PlaygroundTemplateSelectedNodeId.empty()) {
+                    PlaygroundTemplateStatus = "[Error] Select a node to duplicate.";
+                } else {
+                    Slab::Vector<Slab::Str> sourceNodeIds = PlaygroundTemplateSelectedNodeIds;
+                    if (sourceNodeIds.empty()) sourceNodeIds.push_back(PlaygroundTemplateSelectedNodeId);
+
+                    Slab::Vector<Slab::Str> duplicatedNodeIds;
+                    duplicatedNodeIds.reserve(sourceNodeIds.size());
+                    for (const auto &sourceNodeId : sourceNodeIds) {
+                        const auto *source = findTemplateNodeConst(sourceNodeId);
+                        if (source == nullptr) continue;
+                        ++PlaygroundTemplateNodeCounter;
+                        FTemplateGraphPlaygroundNode duplicated = *source;
+                        duplicated.NodeId = "tmpl.node." + Slab::ToStr(PlaygroundTemplateNodeCounter);
+                        duplicated.Position.x += 36.0f;
+                        duplicated.Position.y += 24.0f;
+                        duplicatedNodeIds.push_back(duplicated.NodeId);
+                        PlaygroundTemplateNodes.push_back(std::move(duplicated));
+                    }
+
+                    if (duplicatedNodeIds.empty()) {
+                        PlaygroundTemplateStatus = "[Error] Could not duplicate selected node(s).";
+                    } else {
+                        PlaygroundTemplateSelectedNodeIds = duplicatedNodeIds;
+                        PlaygroundTemplateSelectedNodeId = duplicatedNodeIds.front();
+                        PlaygroundTemplateSelectedEdgeId.clear();
+                        PlaygroundTemplateStatus =
+                            "[Ok] Duplicated " + Slab::ToStr(duplicatedNodeIds.size()) + " node(s).";
+                        markDirty();
+                    }
+                }
+            }
+
             ImGui::SameLine();
             if (ImGui::Button("Auto Layout")) {
                 std::size_t idx = 0;
@@ -3286,40 +4078,119 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                         80.0f + static_cast<float>((idx / 4) * 170));
                     ++idx;
                 }
+                if (!PlaygroundTemplateNodes.empty()) {
+                    PlaygroundTemplateStatus = "[Ok] Applied auto layout.";
+                    markDirty();
+                }
             }
+
+            bool bRequestFitToContent = false;
+            ImGui::SameLine();
+            if (ImGui::Button("Fit")) {
+                bRequestFitToContent = true;
+            }
+
             ImGui::SameLine();
             if (ImGui::Button("Clear")) {
                 PlaygroundTemplateNodes.clear();
                 PlaygroundTemplateEdges.clear();
+                PlaygroundTemplateSelectedNodeIds.clear();
                 PlaygroundTemplateSelectedNodeId.clear();
+                PlaygroundTemplateSelectedEdgeId.clear();
                 PlaygroundTemplatePendingCoercion = {};
                 clearTemplateConnectionState();
                 PlaygroundTemplateStatus = "[Ok] Template playground graph cleared.";
+                markDirty();
             }
             ImGui::SameLine();
-            ImGui::Checkbox("Grid", &bPlaygroundTemplateShowGrid);
-            if (!PlaygroundTemplateSelectedNodeId.empty()) {
-                ImGui::SameLine();
-                if (ImGui::Button("Delete Selected")) {
-                    PlaygroundTemplateNodes.erase(
-                        std::remove_if(
-                            PlaygroundTemplateNodes.begin(),
-                            PlaygroundTemplateNodes.end(),
-                            [&](const auto &node) { return node.NodeId == PlaygroundTemplateSelectedNodeId; }),
-                        PlaygroundTemplateNodes.end());
+            if (ImGui::Button("Delete Selected")) {
+                Slab::Vector<Slab::Str> selectedNodes = PlaygroundTemplateSelectedNodeIds;
+                if (selectedNodes.empty() && !PlaygroundTemplateSelectedNodeId.empty()) {
+                    selectedNodes.push_back(PlaygroundTemplateSelectedNodeId);
+                }
+                if (deleteTemplateNodes(selectedNodes)) {
+                    PlaygroundTemplateStatus = "[Ok] Deleted selected node(s) and connected edges.";
+                } else {
+                    PlaygroundTemplateStatus = "[Warn] No selected node to delete.";
+                }
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Button("Delete Edge")) {
+                if (PlaygroundTemplateSelectedEdgeId.empty()) {
+                    PlaygroundTemplateStatus = "[Warn] No selected edge to delete.";
+                } else {
+                    const auto previousCount = PlaygroundTemplateEdges.size();
                     PlaygroundTemplateEdges.erase(
                         std::remove_if(
                             PlaygroundTemplateEdges.begin(),
                             PlaygroundTemplateEdges.end(),
-                            [&](const auto &edge) {
-                                return edge.FromNodeId == PlaygroundTemplateSelectedNodeId ||
-                                       edge.ToNodeId == PlaygroundTemplateSelectedNodeId;
-                            }),
+                            [&](const auto &edge) { return edge.EdgeId == PlaygroundTemplateSelectedEdgeId; }),
                         PlaygroundTemplateEdges.end());
-                    PlaygroundTemplateStatus = "[Ok] Deleted selected node and attached edges.";
-                    PlaygroundTemplateSelectedNodeId.clear();
-                    PlaygroundTemplatePendingCoercion = {};
-                    clearTemplateConnectionState();
+                    if (previousCount != PlaygroundTemplateEdges.size()) {
+                        PlaygroundTemplateStatus = "[Ok] Deleted selected edge.";
+                        PlaygroundTemplateSelectedEdgeId.clear();
+                        markDirty();
+                    } else {
+                        PlaygroundTemplateStatus = "[Warn] Selected edge was not found.";
+                    }
+                }
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Checkbox("Grid", &bPlaygroundTemplateShowGrid)) {
+                markDirty();
+            }
+            ImGui::SameLine();
+            if (ImGui::Checkbox("Minimap", &bPlaygroundTemplateShowMinimap)) {
+                markDirty();
+            }
+
+            const bool bTemplateHotkeysEnabled =
+                ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) &&
+                !ImGui::GetIO().WantTextInput;
+            if (bTemplateHotkeysEnabled && ImGui::IsKeyPressed(ImGuiKey_A, false)) {
+                if (selectedOperator != nullptr) {
+                    ++PlaygroundTemplateNodeCounter;
+                    FTemplateGraphPlaygroundNode node;
+                    node.NodeId = "tmpl.node." + Slab::ToStr(PlaygroundTemplateNodeCounter);
+                    node.SemanticOperatorId = selectedOperator->OperatorId;
+                    node.Position = ImVec2(
+                        100.0f + static_cast<float>((PlaygroundTemplateNodeCounter % 3) * 120),
+                        110.0f + static_cast<float>((PlaygroundTemplateNodeCounter / 3) * 80));
+                    PlaygroundTemplateNodes.push_back(std::move(node));
+                    PlaygroundTemplateSelectedNodeId = PlaygroundTemplateNodes.back().NodeId;
+                    PlaygroundTemplateSelectedNodeIds = {PlaygroundTemplateNodes.back().NodeId};
+                    PlaygroundTemplateSelectedEdgeId.clear();
+                    PlaygroundTemplateStatus = "[Ok] Added node (shortcut A).";
+                    markDirty();
+                }
+            }
+            if (bTemplateHotkeysEnabled && ImGui::IsKeyPressed(ImGuiKey_F, false)) {
+                bRequestFitToContent = true;
+            }
+            if (bTemplateHotkeysEnabled && ImGui::IsKeyPressed(ImGuiKey_Delete, false)) {
+                if (!PlaygroundTemplateSelectedEdgeId.empty()) {
+                    const auto previousCount = PlaygroundTemplateEdges.size();
+                    PlaygroundTemplateEdges.erase(
+                        std::remove_if(
+                            PlaygroundTemplateEdges.begin(),
+                            PlaygroundTemplateEdges.end(),
+                            [&](const auto &edge) { return edge.EdgeId == PlaygroundTemplateSelectedEdgeId; }),
+                        PlaygroundTemplateEdges.end());
+                    if (previousCount != PlaygroundTemplateEdges.size()) {
+                        PlaygroundTemplateSelectedEdgeId.clear();
+                        PlaygroundTemplateStatus = "[Ok] Deleted selected edge (Del).";
+                        markDirty();
+                    }
+                } else {
+                    Slab::Vector<Slab::Str> selectedNodes = PlaygroundTemplateSelectedNodeIds;
+                    if (selectedNodes.empty() && !PlaygroundTemplateSelectedNodeId.empty()) {
+                        selectedNodes.push_back(PlaygroundTemplateSelectedNodeId);
+                    }
+                    if (deleteTemplateNodes(selectedNodes)) {
+                        PlaygroundTemplateStatus = "[Ok] Deleted selected node(s) (Del).";
+                    }
                 }
             }
 
@@ -3343,45 +4214,12 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                 }
 
                 if (ImGui::Button("Insert Suggested Coercion")) {
-                    const auto suggestedIds = PlaygroundTemplatePendingCoercion.SuggestedCoercionOperatorIds;
-                    const auto *fromNode = findTemplateNodeConst(PlaygroundTemplatePendingCoercion.FromNodeId);
-                    const auto *toNode = findTemplateNodeConst(PlaygroundTemplatePendingCoercion.ToNodeId);
-                    if (suggestedIds.empty() || fromNode == nullptr || toNode == nullptr) {
-                        PlaygroundTemplateStatus = "[Error] Could not resolve coercion insertion request.";
-                    } else {
-                        const auto *coercionOperator = semanticCatalog.FindOperatorById(suggestedIds.front());
-                        if (coercionOperator == nullptr ||
-                            coercionOperator->DomainPorts.empty() ||
-                            coercionOperator->CodomainPorts.empty()) {
-                            PlaygroundTemplateStatus = "[Error] Suggested coercion operator is not well-formed.";
-                        } else {
-                            ++PlaygroundTemplateCoercionCounter;
-                            FTemplateGraphPlaygroundNode coercionNode;
-                            coercionNode.NodeId = "tmpl.coercion." + Slab::ToStr(PlaygroundTemplateCoercionCounter);
-                            coercionNode.SemanticOperatorId = coercionOperator->OperatorId;
-                            coercionNode.Position = ImVec2(
-                                0.5f * (fromNode->Position.x + toNode->Position.x) + 10.0f,
-                                0.5f * (fromNode->Position.y + toNode->Position.y) + 30.0f);
-                            PlaygroundTemplateNodes.push_back(std::move(coercionNode));
-
-                            (void) addTemplateEdge(
-                                PlaygroundTemplatePendingCoercion.FromNodeId,
-                                PlaygroundTemplatePendingCoercion.FromPortId,
-                                PlaygroundTemplateNodes.back().NodeId,
-                                coercionOperator->DomainPorts.front().PortId,
-                                "ExactMatch");
-                            (void) addTemplateEdge(
-                                PlaygroundTemplateNodes.back().NodeId,
-                                coercionOperator->CodomainPorts.front().PortId,
-                                PlaygroundTemplatePendingCoercion.ToNodeId,
-                                PlaygroundTemplatePendingCoercion.ToPortId,
-                                "ExactMatch");
-
-                            PlaygroundTemplateStatus =
-                                "[Ok] Inserted coercion node '" + coercionOperator->DisplayName + "'.";
-                            PlaygroundTemplatePendingCoercion = {};
-                        }
-                    }
+                    (void) insertCoercionNode(
+                        PlaygroundTemplatePendingCoercion.FromNodeId,
+                        PlaygroundTemplatePendingCoercion.FromPortId,
+                        PlaygroundTemplatePendingCoercion.ToNodeId,
+                        PlaygroundTemplatePendingCoercion.ToPortId,
+                        PlaygroundTemplatePendingCoercion.SuggestedCoercionOperatorIds);
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Dismiss Coercion")) {
@@ -3391,247 +4229,679 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
             }
 
             ImGui::Separator();
-            const auto canvasPos = ImGui::GetCursorScreenPos();
-            auto canvasSize = ImGui::GetContentRegionAvail();
-            if (canvasSize.x < 340.0f) canvasSize.x = 340.0f;
-            if (canvasSize.y < 220.0f) canvasSize.y = 220.0f;
-            const auto canvasEnd = ImVec2(canvasPos.x + canvasSize.x, canvasPos.y + canvasSize.y);
+            if (ImGui::BeginTable(
+                    "TemplateGraphLayout",
+                    2,
+                    ImGuiTableFlags_Resizable |
+                    ImGuiTableFlags_SizingStretchSame |
+                    ImGuiTableFlags_BordersInnerV)) {
+                ImGui::TableSetupColumn("Canvas", ImGuiTableColumnFlags_WidthStretch, 0.70f);
+                ImGui::TableSetupColumn("Inspector", ImGuiTableColumnFlags_WidthStretch, 0.30f);
+                ImGui::TableNextRow();
 
-            ImGui::InvisibleButton(
-                "GraphPlaygroundTemplateCanvas",
-                canvasSize,
-                ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight);
-            ImGui::SetItemAllowOverlap();
-            if (ImGui::IsItemHovered() && ImGui::IsMouseDragging(ImGuiMouseButton_Right, 0.0f)) {
-                const auto &io = ImGui::GetIO();
-                PlaygroundTemplatePan.x += io.MouseDelta.x;
-                PlaygroundTemplatePan.y += io.MouseDelta.y;
-            }
+                ImGui::TableSetColumnIndex(0);
+                const auto canvasPos = ImGui::GetCursorScreenPos();
+                auto canvasSize = ImGui::GetContentRegionAvail();
+                if (canvasSize.x < 320.0f) canvasSize.x = 320.0f;
+                if (canvasSize.y < 240.0f) canvasSize.y = 240.0f;
+                const auto canvasEnd = ImVec2(canvasPos.x + canvasSize.x, canvasPos.y + canvasSize.y);
 
-            auto *drawList = ImGui::GetWindowDrawList();
-            drawList->AddRectFilled(canvasPos, canvasEnd, IM_COL32(18, 21, 28, 255), 6.0f);
-            drawList->AddRect(canvasPos, canvasEnd, IM_COL32(74, 82, 96, 255), 6.0f, 0, 1.0f);
-            drawList->PushClipRect(canvasPos, canvasEnd, true);
-
-            if (bPlaygroundTemplateShowGrid) {
-                constexpr float GridStep = 52.0f;
-                const float xOffset = std::fmod(PlaygroundTemplatePan.x, GridStep);
-                const float yOffset = std::fmod(PlaygroundTemplatePan.y, GridStep);
-                for (float x = canvasPos.x + xOffset; x < canvasEnd.x; x += GridStep) {
-                    drawList->AddLine(ImVec2(x, canvasPos.y), ImVec2(x, canvasEnd.y), IM_COL32(34, 40, 52, 255), 1.0f);
-                }
-                for (float y = canvasPos.y + yOffset; y < canvasEnd.y; y += GridStep) {
-                    drawList->AddLine(ImVec2(canvasPos.x, y), ImVec2(canvasEnd.x, y), IM_COL32(34, 40, 52, 255), 1.0f);
-                }
-            }
-
-            const auto nodeScreenPos = [&](const FTemplateGraphPlaygroundNode &node) -> ImVec2 {
-                return ImVec2(
-                    canvasPos.x + PlaygroundTemplatePan.x + node.Position.x,
-                    canvasPos.y + PlaygroundTemplatePan.y + node.Position.y);
-            };
-
-            const auto nodeScreenSize = [&](const FSemanticOperatorSchemaV1 &semanticOperator) -> ImVec2 {
-                const int rows = std::max(
-                    static_cast<int>(semanticOperator.DomainPorts.size()),
-                    static_cast<int>(semanticOperator.CodomainPorts.size()));
-                const float height = 56.0f + static_cast<float>(std::max(1, rows)) * 20.0f;
-                const float titleWidth = ImGui::CalcTextSize(semanticOperator.DisplayName.c_str()).x + 80.0f;
-                const float width = std::max(260.0f, std::min(420.0f, titleWidth));
-                return ImVec2(width, height);
-            };
-
-            const auto portPinPosition = [&](const FTemplateGraphPlaygroundNode &node,
-                                             const FSemanticOperatorSchemaV1 &semanticOperator,
-                                             const bool bOutput,
-                                             const int index) -> ImVec2 {
-                const auto nodePos = nodeScreenPos(node);
-                const auto size = nodeScreenSize(semanticOperator);
-                const int total = std::max(
-                    1,
-                    bOutput
-                        ? static_cast<int>(semanticOperator.CodomainPorts.size())
-                        : static_cast<int>(semanticOperator.DomainPorts.size()));
-                const float y = nodePos.y + 42.0f + (static_cast<float>(index) + 0.5f) * ((size.y - 48.0f) / static_cast<float>(total));
-                const float x = bOutput ? (nodePos.x + size.x - 8.0f) : (nodePos.x + 8.0f);
-                return ImVec2(x, y);
-            };
-
-            for (const auto &edge : PlaygroundTemplateEdges) {
-                const auto *fromNode = findTemplateNodeConst(edge.FromNodeId);
-                const auto *toNode = findTemplateNodeConst(edge.ToNodeId);
-                if (fromNode == nullptr || toNode == nullptr) continue;
-
-                const auto *fromOperator = semanticCatalog.FindOperatorById(fromNode->SemanticOperatorId);
-                const auto *toOperator = semanticCatalog.FindOperatorById(toNode->SemanticOperatorId);
-                if (fromOperator == nullptr || toOperator == nullptr) continue;
-
-                const auto fromPortIt = std::find_if(
-                    fromOperator->CodomainPorts.begin(),
-                    fromOperator->CodomainPorts.end(),
-                    [&](const auto &port) { return port.PortId == edge.FromPortId; });
-                const auto toPortIt = std::find_if(
-                    toOperator->DomainPorts.begin(),
-                    toOperator->DomainPorts.end(),
-                    [&](const auto &port) { return port.PortId == edge.ToPortId; });
-                if (fromPortIt == fromOperator->CodomainPorts.end() || toPortIt == toOperator->DomainPorts.end()) continue;
-
-                const int fromIndex = static_cast<int>(std::distance(fromOperator->CodomainPorts.begin(), fromPortIt));
-                const int toIndex = static_cast<int>(std::distance(toOperator->DomainPorts.begin(), toPortIt));
-
-                const auto p0 = portPinPosition(*fromNode, *fromOperator, true, fromIndex);
-                const auto p3 = portPinPosition(*toNode, *toOperator, false, toIndex);
-                const auto p1 = ImVec2(p0.x + 54.0f, p0.y);
-                const auto p2 = ImVec2(p3.x - 54.0f, p3.y);
-
-                ImU32 color = IM_COL32(110, 198, 255, 255);
-                if (edge.MatchReason == "CompatibleButNeedsCoercion") color = IM_COL32(236, 194, 92, 255);
-                if (edge.MatchReason == "Incompatible") color = IM_COL32(226, 98, 98, 255);
-                drawList->AddBezierCubic(p0, p1, p2, p3, color, 2.0f);
-            }
-
-            for (auto &node : PlaygroundTemplateNodes) {
-                const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
-                if (semanticOperator == nullptr) continue;
-
-                const auto nodePos = nodeScreenPos(node);
-                const auto nodeSize = nodeScreenSize(*semanticOperator);
-                const auto nodeEnd = ImVec2(nodePos.x + nodeSize.x, nodePos.y + nodeSize.y);
-                if (nodeEnd.x < canvasPos.x || nodePos.x > canvasEnd.x || nodeEnd.y < canvasPos.y || nodePos.y > canvasEnd.y) {
-                    continue;
-                }
-
-                ImGui::SetCursorScreenPos(nodePos);
-                ImGui::InvisibleButton(("##TemplateNode" + node.NodeId).c_str(), nodeSize, ImGuiButtonFlags_MouseButtonLeft);
+                ImGui::InvisibleButton(
+                    "GraphPlaygroundTemplateCanvas",
+                    canvasSize,
+                    ImGuiButtonFlags_MouseButtonRight);
                 ImGui::SetItemAllowOverlap();
-                const bool bNodeHovered = ImGui::IsItemHovered();
-                if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-                    PlaygroundTemplateSelectedNodeId = node.NodeId;
-                }
-                if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 0.0f)) {
+                const bool bCanvasHovered = ImGui::IsItemHovered();
+                bool bCanvasPanning = false;
+                if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Right, 0.0f)) {
                     const auto &io = ImGui::GetIO();
-                    node.Position.x += io.MouseDelta.x;
-                    node.Position.y += io.MouseDelta.y;
+                    PlaygroundTemplatePan.x += io.MouseDelta.x;
+                    PlaygroundTemplatePan.y += io.MouseDelta.y;
+                    bCanvasPanning = true;
+                    markDirty();
                 }
 
-                const bool bSelected = PlaygroundTemplateSelectedNodeId == node.NodeId;
-                drawList->AddRectFilled(nodePos, nodeEnd, IM_COL32(36, 43, 56, 246), 7.0f);
-                drawList->AddRectFilled(nodePos, ImVec2(nodeEnd.x, nodePos.y + 28.0f), IM_COL32(84, 104, 148, 255), 7.0f, ImDrawFlags_RoundCornersTop);
-                drawList->AddRect(nodePos, nodeEnd, bSelected ? IM_COL32(246, 202, 116, 255) : IM_COL32(116, 126, 146, 255), 7.0f, 0, bSelected ? 2.0f : 1.0f);
-                drawList->AddText(ImVec2(nodePos.x + 10.0f, nodePos.y + 6.0f), IM_COL32(240, 246, 252, 255), TruncateLabel(semanticOperator->DisplayName, 34).c_str());
-                drawList->AddText(ImVec2(nodePos.x + 10.0f, nodePos.y + 32.0f), IM_COL32(174, 186, 204, 255), TruncateLabel(node.NodeId, 34).c_str());
+                auto *drawList = ImGui::GetWindowDrawList();
+                drawList->AddRectFilled(canvasPos, canvasEnd, IM_COL32(18, 21, 28, 255), 6.0f);
+                drawList->AddRect(canvasPos, canvasEnd, IM_COL32(74, 82, 96, 255), 6.0f, 0, 1.0f);
+                drawList->PushClipRect(canvasPos, canvasEnd, true);
 
-                for (std::size_t i = 0; i < semanticOperator->DomainPorts.size(); ++i) {
-                    const auto &port = semanticOperator->DomainPorts[i];
-                    const auto pin = portPinPosition(node, *semanticOperator, false, static_cast<int>(i));
-                    drawList->AddCircleFilled(pin, 5.0f, IM_COL32(116, 212, 176, 255));
-                    drawList->AddText(
-                        ImVec2(pin.x + 8.0f, pin.y - 7.0f),
-                        IM_COL32(212, 220, 232, 255),
-                        TruncateLabel(port.DisplayName.empty() ? port.PortId : port.DisplayName, 22).c_str());
-
-                    ImGui::SetCursorScreenPos(ImVec2(pin.x - 7.0f, pin.y - 7.0f));
-                    ImGui::InvisibleButton(("##TemplateInPort" + node.NodeId + ":" + port.PortId).c_str(), ImVec2(14.0f, 14.0f));
-                    ImGui::SetItemAllowOverlap();
-                    if (ImGui::IsItemHovered()) {
-                        ImGui::SetTooltip("Input %s\nSpace: %s", port.PortId.c_str(), port.SpaceId.c_str());
+                if (bPlaygroundTemplateShowGrid) {
+                    constexpr float GridStep = 52.0f;
+                    const float xOffset = std::fmod(PlaygroundTemplatePan.x, GridStep);
+                    const float yOffset = std::fmod(PlaygroundTemplatePan.y, GridStep);
+                    for (float x = canvasPos.x + xOffset; x < canvasEnd.x; x += GridStep) {
+                        drawList->AddLine(ImVec2(x, canvasPos.y), ImVec2(x, canvasEnd.y), IM_COL32(34, 40, 52, 255), 1.0f);
                     }
-                    if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-                        if (!PlaygroundTemplateConnectingNodeId.empty() && bPlaygroundTemplateConnectingFromOutput) {
-                            attemptTemplateConnection(
-                                PlaygroundTemplateConnectingNodeId,
-                                PlaygroundTemplateConnectingPortId,
-                                node.NodeId,
-                                port.PortId);
-                        } else {
-                            PlaygroundTemplateConnectingNodeId = node.NodeId;
-                            PlaygroundTemplateConnectingPortId = port.PortId;
-                            bPlaygroundTemplateConnectingFromOutput = false;
-                            PlaygroundTemplateStatus = "[Info] Selected input port. Click an output port to connect.";
+                    for (float y = canvasPos.y + yOffset; y < canvasEnd.y; y += GridStep) {
+                        drawList->AddLine(ImVec2(canvasPos.x, y), ImVec2(canvasEnd.x, y), IM_COL32(34, 40, 52, 255), 1.0f);
+                    }
+                }
+
+                const auto nodeScreenPos = [&](const FTemplateGraphPlaygroundNode &node) -> ImVec2 {
+                    return ImVec2(
+                        canvasPos.x + PlaygroundTemplatePan.x + node.Position.x,
+                        canvasPos.y + PlaygroundTemplatePan.y + node.Position.y);
+                };
+
+                const auto nodeScreenSize = [&](const FSemanticOperatorSchemaV1 &semanticOperator) -> ImVec2 {
+                    const int rows = std::max(
+                        static_cast<int>(semanticOperator.DomainPorts.size()),
+                        static_cast<int>(semanticOperator.CodomainPorts.size()));
+                    const float height = 56.0f + static_cast<float>(std::max(1, rows)) * 20.0f;
+                    const float titleWidth = ImGui::CalcTextSize(semanticOperator.DisplayName.c_str()).x + 80.0f;
+                    const float width = std::max(260.0f, std::min(420.0f, titleWidth));
+                    return ImVec2(width, height);
+                };
+
+                const auto portPinPosition = [&](const FTemplateGraphPlaygroundNode &node,
+                                                 const FSemanticOperatorSchemaV1 &semanticOperator,
+                                                 const bool bOutput,
+                                                 const int index) -> ImVec2 {
+                    const auto nodePos = nodeScreenPos(node);
+                    const auto size = nodeScreenSize(semanticOperator);
+                    const int total = std::max(
+                        1,
+                        bOutput
+                            ? static_cast<int>(semanticOperator.CodomainPorts.size())
+                            : static_cast<int>(semanticOperator.DomainPorts.size()));
+                    const float y =
+                        nodePos.y + 42.0f +
+                        (static_cast<float>(index) + 0.5f) * ((size.y - 48.0f) / static_cast<float>(total));
+                    const float x = bOutput ? (nodePos.x + size.x - 8.0f) : (nodePos.x + 8.0f);
+                    return ImVec2(x, y);
+                };
+
+                if (bRequestFitToContent) {
+                    if (PlaygroundTemplateNodes.empty()) {
+                        PlaygroundTemplateStatus = "[Warn] Nothing to fit.";
+                    } else {
+                        float minX = std::numeric_limits<float>::max();
+                        float minY = std::numeric_limits<float>::max();
+                        float maxX = std::numeric_limits<float>::lowest();
+                        float maxY = std::numeric_limits<float>::lowest();
+                        for (const auto &node : PlaygroundTemplateNodes) {
+                            const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
+                            if (semanticOperator == nullptr) continue;
+                            const auto nodeSize = nodeScreenSize(*semanticOperator);
+                            minX = std::min(minX, node.Position.x);
+                            minY = std::min(minY, node.Position.y);
+                            maxX = std::max(maxX, node.Position.x + nodeSize.x);
+                            maxY = std::max(maxY, node.Position.y + nodeSize.y);
+                        }
+                        if (minX <= maxX && minY <= maxY) {
+                            const auto contentWidth = std::max(1.0f, maxX - minX);
+                            const auto contentHeight = std::max(1.0f, maxY - minY);
+                            PlaygroundTemplatePan.x = 0.5f * (canvasSize.x - contentWidth) - minX;
+                            PlaygroundTemplatePan.y = 0.5f * (canvasSize.y - contentHeight) - minY;
+                            PlaygroundTemplateStatus = "[Ok] View fitted to graph bounds.";
+                            markDirty();
                         }
                     }
                 }
 
-                for (std::size_t i = 0; i < semanticOperator->CodomainPorts.size(); ++i) {
-                    const auto &port = semanticOperator->CodomainPorts[i];
-                    const auto pin = portPinPosition(node, *semanticOperator, true, static_cast<int>(i));
-                    drawList->AddCircleFilled(pin, 5.0f, IM_COL32(122, 198, 255, 255));
-                    const auto label = TruncateLabel(port.DisplayName.empty() ? port.PortId : port.DisplayName, 22);
-                    const auto labelWidth = ImGui::CalcTextSize(label.c_str()).x;
-                    drawList->AddText(
-                        ImVec2(pin.x - 10.0f - labelWidth, pin.y - 7.0f),
-                        IM_COL32(212, 220, 232, 255),
-                        label.c_str());
+                struct FRenderedTemplateEdge {
+                    const FTemplateGraphPlaygroundEdge *Edge = nullptr;
+                    ImVec2 P0 = ImVec2(0.0f, 0.0f);
+                    ImVec2 P1 = ImVec2(0.0f, 0.0f);
+                    ImVec2 P2 = ImVec2(0.0f, 0.0f);
+                    ImVec2 P3 = ImVec2(0.0f, 0.0f);
+                    ImU32 Color = IM_COL32(110, 198, 255, 255);
+                };
+                Slab::Vector<FRenderedTemplateEdge> renderedEdges;
+                renderedEdges.reserve(PlaygroundTemplateEdges.size());
 
-                    ImGui::SetCursorScreenPos(ImVec2(pin.x - 7.0f, pin.y - 7.0f));
-                    ImGui::InvisibleButton(("##TemplateOutPort" + node.NodeId + ":" + port.PortId).c_str(), ImVec2(14.0f, 14.0f));
-                    ImGui::SetItemAllowOverlap();
-                    if (ImGui::IsItemHovered()) {
-                        ImGui::SetTooltip("Output %s\nSpace: %s", port.PortId.c_str(), port.SpaceId.c_str());
+                for (const auto &edge : PlaygroundTemplateEdges) {
+                    const auto *fromNode = findTemplateNodeConst(edge.FromNodeId);
+                    const auto *toNode = findTemplateNodeConst(edge.ToNodeId);
+                    if (fromNode == nullptr || toNode == nullptr) continue;
+
+                    const auto *fromOperator = semanticCatalog.FindOperatorById(fromNode->SemanticOperatorId);
+                    const auto *toOperator = semanticCatalog.FindOperatorById(toNode->SemanticOperatorId);
+                    if (fromOperator == nullptr || toOperator == nullptr) continue;
+
+                    const auto fromPortIt = std::find_if(
+                        fromOperator->CodomainPorts.begin(),
+                        fromOperator->CodomainPorts.end(),
+                        [&](const auto &port) { return port.PortId == edge.FromPortId; });
+                    const auto toPortIt = std::find_if(
+                        toOperator->DomainPorts.begin(),
+                        toOperator->DomainPorts.end(),
+                        [&](const auto &port) { return port.PortId == edge.ToPortId; });
+                    if (fromPortIt == fromOperator->CodomainPorts.end() || toPortIt == toOperator->DomainPorts.end()) continue;
+
+                    const int fromIndex = static_cast<int>(std::distance(fromOperator->CodomainPorts.begin(), fromPortIt));
+                    const int toIndex = static_cast<int>(std::distance(toOperator->DomainPorts.begin(), toPortIt));
+                    const auto p0 = portPinPosition(*fromNode, *fromOperator, true, fromIndex);
+                    const auto p3 = portPinPosition(*toNode, *toOperator, false, toIndex);
+                    const auto p1 = ImVec2(p0.x + 54.0f, p0.y);
+                    const auto p2 = ImVec2(p3.x - 54.0f, p3.y);
+
+                    ImU32 color = IM_COL32(110, 198, 255, 255);
+                    if (edge.MatchReason == "CompatibleButNeedsCoercion") color = IM_COL32(236, 194, 92, 255);
+                    if (edge.MatchReason == "Incompatible") color = IM_COL32(226, 98, 98, 255);
+                    const bool bSelected = (PlaygroundTemplateSelectedEdgeId == edge.EdgeId);
+                    const float thickness = bSelected ? 3.2f : 2.0f;
+                    if (bSelected) color = IM_COL32(246, 202, 116, 255);
+                    drawList->AddBezierCubic(p0, p1, p2, p3, color, thickness);
+
+                    renderedEdges.push_back(FRenderedTemplateEdge{
+                        .Edge = &edge,
+                        .P0 = p0,
+                        .P1 = p1,
+                        .P2 = p2,
+                        .P3 = p3,
+                        .Color = color
+                    });
+                }
+
+                bool bAnyNodeHovered = false;
+                bool bAnyPortHovered = false;
+                bool bAnyNodeClicked = false;
+                bool bAnyPortClicked = false;
+                bool bAnyNodeDragging = false;
+
+                for (auto &node : PlaygroundTemplateNodes) {
+                    const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
+                    if (semanticOperator == nullptr) continue;
+
+                    const auto nodePos = nodeScreenPos(node);
+                    const auto nodeSize = nodeScreenSize(*semanticOperator);
+                    const auto nodeEnd = ImVec2(nodePos.x + nodeSize.x, nodePos.y + nodeSize.y);
+                    if (nodeEnd.x < canvasPos.x || nodePos.x > canvasEnd.x || nodeEnd.y < canvasPos.y || nodePos.y > canvasEnd.y) {
+                        continue;
                     }
+
+                    ImGui::SetCursorScreenPos(nodePos);
+                    ImGui::InvisibleButton(("##TemplateNode" + node.NodeId).c_str(), nodeSize, ImGuiButtonFlags_MouseButtonLeft);
+                    ImGui::SetItemAllowOverlap();
+                    const bool bNodeHovered = ImGui::IsItemHovered();
+                    bAnyNodeHovered = bAnyNodeHovered || bNodeHovered;
                     if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
-                        if (!PlaygroundTemplateConnectingNodeId.empty() && !bPlaygroundTemplateConnectingFromOutput) {
-                            attemptTemplateConnection(
-                                node.NodeId,
-                                port.PortId,
-                                PlaygroundTemplateConnectingNodeId,
-                                PlaygroundTemplateConnectingPortId);
-                        } else {
-                            PlaygroundTemplateConnectingNodeId = node.NodeId;
-                            PlaygroundTemplateConnectingPortId = port.PortId;
-                            bPlaygroundTemplateConnectingFromOutput = true;
-                            PlaygroundTemplateStatus = "[Info] Selected output port. Click an input port to connect.";
+                        bAnyNodeClicked = true;
+                        PlaygroundTemplateSelectedNodeId = node.NodeId;
+                        PlaygroundTemplateSelectedNodeIds = {node.NodeId};
+                        PlaygroundTemplateSelectedEdgeId.clear();
+                    }
+                    if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 0.0f)) {
+                        const auto &io = ImGui::GetIO();
+                        node.Position.x += io.MouseDelta.x;
+                        node.Position.y += io.MouseDelta.y;
+                        bAnyNodeDragging = true;
+                        markDirty();
+                    }
+
+                    bool bSelected = PlaygroundTemplateSelectedNodeId == node.NodeId;
+                    bSelected = bSelected ||
+                        std::find(
+                            PlaygroundTemplateSelectedNodeIds.begin(),
+                            PlaygroundTemplateSelectedNodeIds.end(),
+                            node.NodeId) != PlaygroundTemplateSelectedNodeIds.end();
+                    drawList->AddRectFilled(nodePos, nodeEnd, IM_COL32(36, 43, 56, 246), 7.0f);
+                    drawList->AddRectFilled(
+                        nodePos,
+                        ImVec2(nodeEnd.x, nodePos.y + 28.0f),
+                        IM_COL32(84, 104, 148, 255),
+                        7.0f,
+                        ImDrawFlags_RoundCornersTop);
+                    drawList->AddRect(
+                        nodePos,
+                        nodeEnd,
+                        bSelected ? IM_COL32(246, 202, 116, 255) : IM_COL32(116, 126, 146, 255),
+                        7.0f,
+                        0,
+                        bSelected ? 2.0f : 1.0f);
+                    drawList->AddText(
+                        ImVec2(nodePos.x + 10.0f, nodePos.y + 6.0f),
+                        IM_COL32(240, 246, 252, 255),
+                        TruncateLabel(semanticOperator->DisplayName, 34).c_str());
+                    drawList->AddText(
+                        ImVec2(nodePos.x + 10.0f, nodePos.y + 32.0f),
+                        IM_COL32(174, 186, 204, 255),
+                        TruncateLabel(node.NodeId, 34).c_str());
+
+                    for (std::size_t i = 0; i < semanticOperator->DomainPorts.size(); ++i) {
+                        const auto &port = semanticOperator->DomainPorts[i];
+                        const auto pin = portPinPosition(node, *semanticOperator, false, static_cast<int>(i));
+                        drawList->AddCircleFilled(pin, 5.0f, IM_COL32(116, 212, 176, 255));
+                        drawList->AddText(
+                            ImVec2(pin.x + 8.0f, pin.y - 7.0f),
+                            IM_COL32(212, 220, 232, 255),
+                            TruncateLabel(port.DisplayName.empty() ? port.PortId : port.DisplayName, 22).c_str());
+
+                        ImGui::SetCursorScreenPos(ImVec2(pin.x - 7.0f, pin.y - 7.0f));
+                        ImGui::InvisibleButton(
+                            ("##TemplateInPort" + node.NodeId + ":" + port.PortId).c_str(),
+                            ImVec2(14.0f, 14.0f));
+                        ImGui::SetItemAllowOverlap();
+                        bAnyPortHovered = bAnyPortHovered || ImGui::IsItemHovered();
+                        if (ImGui::IsItemHovered()) {
+                            ImGui::SetTooltip("Input %s\nSpace: %s", port.PortId.c_str(), port.SpaceId.c_str());
+                        }
+                        if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+                            bAnyPortClicked = true;
+                            if (!PlaygroundTemplateConnectingNodeId.empty() && bPlaygroundTemplateConnectingFromOutput) {
+                                attemptTemplateConnection(
+                                    PlaygroundTemplateConnectingNodeId,
+                                    PlaygroundTemplateConnectingPortId,
+                                    node.NodeId,
+                                    port.PortId);
+                            } else {
+                                PlaygroundTemplateConnectingNodeId = node.NodeId;
+                                PlaygroundTemplateConnectingPortId = port.PortId;
+                                bPlaygroundTemplateConnectingFromOutput = false;
+                                PlaygroundTemplateStatus = "[Info] Selected input port. Click an output port to connect.";
+                            }
+                        }
+                    }
+
+                    for (std::size_t i = 0; i < semanticOperator->CodomainPorts.size(); ++i) {
+                        const auto &port = semanticOperator->CodomainPorts[i];
+                        const auto pin = portPinPosition(node, *semanticOperator, true, static_cast<int>(i));
+                        drawList->AddCircleFilled(pin, 5.0f, IM_COL32(122, 198, 255, 255));
+                        const auto label = TruncateLabel(port.DisplayName.empty() ? port.PortId : port.DisplayName, 22);
+                        const auto labelWidth = ImGui::CalcTextSize(label.c_str()).x;
+                        drawList->AddText(
+                            ImVec2(pin.x - 10.0f - labelWidth, pin.y - 7.0f),
+                            IM_COL32(212, 220, 232, 255),
+                            label.c_str());
+
+                        ImGui::SetCursorScreenPos(ImVec2(pin.x - 7.0f, pin.y - 7.0f));
+                        ImGui::InvisibleButton(
+                            ("##TemplateOutPort" + node.NodeId + ":" + port.PortId).c_str(),
+                            ImVec2(14.0f, 14.0f));
+                        ImGui::SetItemAllowOverlap();
+                        bAnyPortHovered = bAnyPortHovered || ImGui::IsItemHovered();
+                        if (ImGui::IsItemHovered()) {
+                            ImGui::SetTooltip("Output %s\nSpace: %s", port.PortId.c_str(), port.SpaceId.c_str());
+                        }
+                        if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
+                            bAnyPortClicked = true;
+                            if (!PlaygroundTemplateConnectingNodeId.empty() && !bPlaygroundTemplateConnectingFromOutput) {
+                                attemptTemplateConnection(
+                                    node.NodeId,
+                                    port.PortId,
+                                    PlaygroundTemplateConnectingNodeId,
+                                    PlaygroundTemplateConnectingPortId);
+                            } else {
+                                PlaygroundTemplateConnectingNodeId = node.NodeId;
+                                PlaygroundTemplateConnectingPortId = port.PortId;
+                                bPlaygroundTemplateConnectingFromOutput = true;
+                                PlaygroundTemplateStatus = "[Info] Selected output port. Click an input port to connect.";
+                            }
                         }
                     }
                 }
 
-                if (bNodeHovered && ImGui::IsMouseReleased(ImGuiMouseButton_Right)) {
-                    PlaygroundTemplateSelectedNodeId = node.NodeId;
+                const auto mousePos = ImGui::GetIO().MousePos;
+                const bool bMouseInCanvas =
+                    mousePos.x >= canvasPos.x && mousePos.x <= canvasEnd.x &&
+                    mousePos.y >= canvasPos.y && mousePos.y <= canvasEnd.y;
+
+                if (bCanvasPanning || bAnyNodeDragging || bAnyNodeClicked || bAnyPortClicked) {
+                    bPlaygroundTemplateMarqueeSelecting = false;
                 }
+
+                if (bCanvasHovered &&
+                    bMouseInCanvas &&
+                    ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
+                    !bAnyNodeHovered &&
+                    !bAnyPortHovered &&
+                    !bAnyNodeClicked &&
+                    !bAnyPortClicked) {
+                    constexpr float EdgePickDistanceSq = 11.0f * 11.0f;
+                    const FRenderedTemplateEdge *pickedEdge = nullptr;
+                    float minDistanceSq = EdgePickDistanceSq;
+                    for (const auto &renderedEdge : renderedEdges) {
+                        const auto distanceSq = DistanceSquaredToBezier(
+                            renderedEdge.P0,
+                            renderedEdge.P1,
+                            renderedEdge.P2,
+                            renderedEdge.P3,
+                            mousePos);
+                        if (distanceSq < minDistanceSq) {
+                            minDistanceSq = distanceSq;
+                            pickedEdge = &renderedEdge;
+                        }
+                    }
+
+                    if (pickedEdge != nullptr && pickedEdge->Edge != nullptr) {
+                        PlaygroundTemplateSelectedEdgeId = pickedEdge->Edge->EdgeId;
+                        PlaygroundTemplateSelectedNodeId.clear();
+                        PlaygroundTemplateSelectedNodeIds.clear();
+                        bPlaygroundTemplateMarqueeSelecting = false;
+                    } else {
+                        PlaygroundTemplateSelectedEdgeId.clear();
+                        PlaygroundTemplateSelectedNodeId.clear();
+                        PlaygroundTemplateSelectedNodeIds.clear();
+                        bPlaygroundTemplateMarqueeSelecting = true;
+                        PlaygroundTemplateMarqueeStart = mousePos;
+                        PlaygroundTemplateMarqueeEnd = mousePos;
+                    }
+                }
+
+                if (bPlaygroundTemplateMarqueeSelecting) {
+                    if (ImGui::IsMouseDown(ImGuiMouseButton_Right)) {
+                        bPlaygroundTemplateMarqueeSelecting = false;
+                    } else if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+                        PlaygroundTemplateMarqueeEnd = mousePos;
+                    } else {
+                        constexpr float MarqueeMinDistanceSq = 8.0f * 8.0f;
+                        const bool bTinyMarquee =
+                            DistanceSquared(PlaygroundTemplateMarqueeStart, PlaygroundTemplateMarqueeEnd) < MarqueeMinDistanceSq;
+
+                        if (bTinyMarquee) {
+                            PlaygroundTemplateSelectedNodeId.clear();
+                            PlaygroundTemplateSelectedNodeIds.clear();
+                            PlaygroundTemplateSelectedEdgeId.clear();
+                        } else {
+                            const auto rectMin = ImVec2(
+                                std::min(PlaygroundTemplateMarqueeStart.x, PlaygroundTemplateMarqueeEnd.x),
+                                std::min(PlaygroundTemplateMarqueeStart.y, PlaygroundTemplateMarqueeEnd.y));
+                            const auto rectMax = ImVec2(
+                                std::max(PlaygroundTemplateMarqueeStart.x, PlaygroundTemplateMarqueeEnd.x),
+                                std::max(PlaygroundTemplateMarqueeStart.y, PlaygroundTemplateMarqueeEnd.y));
+
+                            PlaygroundTemplateSelectedNodeIds.clear();
+                            for (const auto &node : PlaygroundTemplateNodes) {
+                                const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
+                                if (semanticOperator == nullptr) continue;
+                                const auto nodePos = nodeScreenPos(node);
+                                const auto nodeSize = nodeScreenSize(*semanticOperator);
+                                const auto nodeEnd = ImVec2(nodePos.x + nodeSize.x, nodePos.y + nodeSize.y);
+                                const bool bIntersect =
+                                    !(nodeEnd.x < rectMin.x || nodePos.x > rectMax.x || nodeEnd.y < rectMin.y || nodePos.y > rectMax.y);
+                                if (!bIntersect) continue;
+                                appendUniqueNodeSelection(node.NodeId);
+                            }
+                            if (!PlaygroundTemplateSelectedNodeIds.empty()) {
+                                PlaygroundTemplateSelectedNodeId = PlaygroundTemplateSelectedNodeIds.front();
+                                PlaygroundTemplateStatus =
+                                    "[Info] Selected " + Slab::ToStr(PlaygroundTemplateSelectedNodeIds.size()) + " node(s).";
+                            } else {
+                                PlaygroundTemplateSelectedNodeId.clear();
+                            }
+                        }
+
+                        bPlaygroundTemplateMarqueeSelecting = false;
+                    }
+                }
+
+                if (bPlaygroundTemplateMarqueeSelecting && ImGui::IsMouseDown(ImGuiMouseButton_Left)) {
+                    const auto rectMin = ImVec2(
+                        std::min(PlaygroundTemplateMarqueeStart.x, PlaygroundTemplateMarqueeEnd.x),
+                        std::min(PlaygroundTemplateMarqueeStart.y, PlaygroundTemplateMarqueeEnd.y));
+                    const auto rectMax = ImVec2(
+                        std::max(PlaygroundTemplateMarqueeStart.x, PlaygroundTemplateMarqueeEnd.x),
+                        std::max(PlaygroundTemplateMarqueeStart.y, PlaygroundTemplateMarqueeEnd.y));
+                    drawList->AddRectFilled(rectMin, rectMax, IM_COL32(236, 194, 92, 32), 3.0f);
+                    drawList->AddRect(rectMin, rectMax, IM_COL32(236, 194, 92, 200), 3.0f, 0, 1.25f);
+                }
+
+                if (!PlaygroundTemplateConnectingNodeId.empty()) {
+                    const auto *sourceNode = findTemplateNodeConst(PlaygroundTemplateConnectingNodeId);
+                    if (sourceNode != nullptr) {
+                        const auto *sourceOperator = semanticCatalog.FindOperatorById(sourceNode->SemanticOperatorId);
+                        if (sourceOperator != nullptr) {
+                            const auto portVec = bPlaygroundTemplateConnectingFromOutput
+                                ? sourceOperator->CodomainPorts
+                                : sourceOperator->DomainPorts;
+                            const auto portIt = std::find_if(portVec.begin(), portVec.end(), [&](const auto &port) {
+                                return port.PortId == PlaygroundTemplateConnectingPortId;
+                            });
+                            if (portIt != portVec.end()) {
+                                const int index = static_cast<int>(std::distance(portVec.begin(), portIt));
+                                const auto sourcePin = portPinPosition(
+                                    *sourceNode,
+                                    *sourceOperator,
+                                    bPlaygroundTemplateConnectingFromOutput,
+                                    index);
+                                drawList->AddBezierCubic(
+                                    sourcePin,
+                                    ImVec2(sourcePin.x + (bPlaygroundTemplateConnectingFromOutput ? 48.0f : -48.0f), sourcePin.y),
+                                    ImVec2(mousePos.x + (bPlaygroundTemplateConnectingFromOutput ? -24.0f : 24.0f), mousePos.y),
+                                    mousePos,
+                                    IM_COL32(232, 206, 118, 220),
+                                    2.0f);
+                            }
+                        }
+                    }
+
+                    if (bMouseInCanvas && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                        clearTemplateConnectionState();
+                        PlaygroundTemplateStatus = "[Info] Connection cancelled.";
+                    }
+                }
+
+                if (bPlaygroundTemplateShowMinimap && !PlaygroundTemplateNodes.empty()) {
+                    const auto minimapSize = ImVec2(
+                        std::clamp(canvasSize.x * 0.20f, 140.0f, 220.0f),
+                        std::clamp(canvasSize.y * 0.25f, 90.0f, 140.0f));
+                    const auto minimapPos = ImVec2(
+                        canvasEnd.x - minimapSize.x - 12.0f,
+                        canvasEnd.y - minimapSize.y - 12.0f);
+                    const auto minimapEnd = ImVec2(minimapPos.x + minimapSize.x, minimapPos.y + minimapSize.y);
+                    drawList->AddRectFilled(minimapPos, minimapEnd, IM_COL32(18, 22, 30, 220), 5.0f);
+                    drawList->AddRect(minimapPos, minimapEnd, IM_COL32(96, 110, 138, 220), 5.0f, 0, 1.0f);
+
+                    float minX = std::numeric_limits<float>::max();
+                    float minY = std::numeric_limits<float>::max();
+                    float maxX = std::numeric_limits<float>::lowest();
+                    float maxY = std::numeric_limits<float>::lowest();
+                    for (const auto &node : PlaygroundTemplateNodes) {
+                        const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
+                        if (semanticOperator == nullptr) continue;
+                        const auto nodeSize = nodeScreenSize(*semanticOperator);
+                        minX = std::min(minX, node.Position.x);
+                        minY = std::min(minY, node.Position.y);
+                        maxX = std::max(maxX, node.Position.x + nodeSize.x);
+                        maxY = std::max(maxY, node.Position.y + nodeSize.y);
+                    }
+
+                    if (minX <= maxX && minY <= maxY) {
+                        const auto graphWidth = std::max(1.0f, maxX - minX);
+                        const auto graphHeight = std::max(1.0f, maxY - minY);
+                        const auto mapX = [minX, graphWidth, minimapPos, minimapSize](const float x) {
+                            return minimapPos.x + (x - minX) * (minimapSize.x / graphWidth);
+                        };
+                        const auto mapY = [minY, graphHeight, minimapPos, minimapSize](const float y) {
+                            return minimapPos.y + (y - minY) * (minimapSize.y / graphHeight);
+                        };
+
+                        for (const auto &node : PlaygroundTemplateNodes) {
+                            const auto *semanticOperator = semanticCatalog.FindOperatorById(node.SemanticOperatorId);
+                            if (semanticOperator == nullptr) continue;
+                            const auto nodeSize = nodeScreenSize(*semanticOperator);
+                            const auto p0 = ImVec2(mapX(node.Position.x), mapY(node.Position.y));
+                            const auto p1 = ImVec2(
+                                mapX(node.Position.x + nodeSize.x),
+                                mapY(node.Position.y + nodeSize.y));
+                            drawList->AddRectFilled(p0, p1, IM_COL32(98, 136, 194, 180), 2.0f);
+                        }
+
+                        const auto viewMin = ImVec2(-PlaygroundTemplatePan.x, -PlaygroundTemplatePan.y);
+                        const auto viewMax = ImVec2(viewMin.x + canvasSize.x, viewMin.y + canvasSize.y);
+                        const auto vp0 = ImVec2(mapX(viewMin.x), mapY(viewMin.y));
+                        const auto vp1 = ImVec2(mapX(viewMax.x), mapY(viewMax.y));
+                        drawList->AddRect(vp0, vp1, IM_COL32(246, 202, 116, 240), 2.0f, 0, 1.3f);
+                    }
+                }
+
+                drawList->PopClipRect();
+                ImGui::SetCursorScreenPos(ImVec2(canvasPos.x, canvasEnd.y));
+                ImGui::TextDisabled(
+                    "Template graph: %zu nodes, %zu edges | Shortcuts: A add, Del delete, F fit | Right-drag pans.",
+                    PlaygroundTemplateNodes.size(),
+                    PlaygroundTemplateEdges.size());
+
+                ImGui::TableSetColumnIndex(1);
+                if (ImGui::BeginChild("TemplateInspectorChild", ImVec2(0.0f, 0.0f), false)) {
+                    ImGui::TextDisabled("Inspector");
+                    ImGui::Separator();
+                    ImGui::Text("Selected nodes: %zu", PlaygroundTemplateSelectedNodeIds.size());
+                    ImGui::Text("Selected edge: %s",
+                        PlaygroundTemplateSelectedEdgeId.empty()
+                            ? "<none>"
+                            : PlaygroundTemplateSelectedEdgeId.c_str());
+
+                    const auto *selectedEdge = findTemplateEdgeConst(PlaygroundTemplateSelectedEdgeId);
+                    if (!PlaygroundTemplateSelectedEdgeId.empty() && selectedEdge == nullptr) {
+                        PlaygroundTemplateSelectedEdgeId.clear();
+                    }
+
+                    if (selectedEdge != nullptr) {
+                        ImGui::SeparatorText("Edge");
+                        ImGui::Text("Id: %s", selectedEdge->EdgeId.c_str());
+                        ImGui::TextDisabled(
+                            "%s:%s -> %s:%s",
+                            selectedEdge->FromNodeId.c_str(),
+                            selectedEdge->FromPortId.c_str(),
+                            selectedEdge->ToNodeId.c_str(),
+                            selectedEdge->ToPortId.c_str());
+                        ImGui::Text("Match: %s", selectedEdge->MatchReason.c_str());
+                        if (!selectedEdge->Diagnostics.empty()) {
+                            for (const auto &diagnostic : selectedEdge->Diagnostics) {
+                                ImGui::TextDisabled("%s", diagnostic.c_str());
+                            }
+                        }
+
+                        Slab::Vector<Slab::Str> suggestions = selectedEdge->SuggestedCoercionOperatorIds;
+                        if (suggestions.empty()) {
+                            const auto *fromNode = findTemplateNodeConst(selectedEdge->FromNodeId);
+                            const auto *toNode = findTemplateNodeConst(selectedEdge->ToNodeId);
+                            if (fromNode != nullptr && toNode != nullptr) {
+                                const auto *fromOperator = semanticCatalog.FindOperatorById(fromNode->SemanticOperatorId);
+                                const auto *toOperator = semanticCatalog.FindOperatorById(toNode->SemanticOperatorId);
+                                if (fromOperator != nullptr && toOperator != nullptr) {
+                                    const auto *fromPort = findOutputPort(*fromOperator, selectedEdge->FromPortId);
+                                    const auto *toPort = findInputPort(*toOperator, selectedEdge->ToPortId);
+                                    if (fromPort != nullptr && toPort != nullptr) {
+                                        const auto match = evaluateSpaceMatch(fromPort->SpaceId, toPort->SpaceId);
+                                        suggestions = match.SuggestedCoercionOperatorIds;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (!suggestions.empty()) {
+                            ImGui::TextDisabled("Suggested coercions:");
+                            for (std::size_t i = 0; i < suggestions.size(); ++i) {
+                                const auto buttonLabel = "Insert " + TruncateLabel(suggestions[i], 46) + "##edge_suggestion_" + Slab::ToStr(i);
+                                if (ImGui::Button(buttonLabel.c_str())) {
+                                    (void) insertCoercionNode(
+                                        selectedEdge->FromNodeId,
+                                        selectedEdge->FromPortId,
+                                        selectedEdge->ToNodeId,
+                                        selectedEdge->ToPortId,
+                                        suggestions,
+                                        selectedEdge->EdgeId);
+                                }
+                            }
+                        }
+
+                        if (ImGui::Button("Delete This Edge")) {
+                            const auto previousCount = PlaygroundTemplateEdges.size();
+                            PlaygroundTemplateEdges.erase(
+                                std::remove_if(
+                                    PlaygroundTemplateEdges.begin(),
+                                    PlaygroundTemplateEdges.end(),
+                                    [&](const auto &edge) { return edge.EdgeId == selectedEdge->EdgeId; }),
+                                PlaygroundTemplateEdges.end());
+                            if (previousCount != PlaygroundTemplateEdges.size()) {
+                                PlaygroundTemplateStatus = "[Ok] Deleted selected edge.";
+                                PlaygroundTemplateSelectedEdgeId.clear();
+                                markDirty();
+                            }
+                        }
+                    }
+
+                    const auto *selectedNode = findTemplateNodeConst(PlaygroundTemplateSelectedNodeId);
+                    if (selectedNode != nullptr) {
+                        const auto *selectedNodeOperator = semanticCatalog.FindOperatorById(selectedNode->SemanticOperatorId);
+                        ImGui::SeparatorText("Node");
+                        ImGui::Text("Id: %s", selectedNode->NodeId.c_str());
+                        if (selectedNodeOperator != nullptr) {
+                            ImGui::Text("Operator: %s", selectedNodeOperator->DisplayName.c_str());
+                            ImGui::TextDisabled("%s", selectedNodeOperator->OperatorId.c_str());
+                            if (!selectedNodeOperator->LatexSymbol.empty()) {
+                                ImGui::TextDisabled("LaTeX: %s", selectedNodeOperator->LatexSymbol.c_str());
+                            }
+                            ImGui::Text("Inputs: %zu | Outputs: %zu",
+                                selectedNodeOperator->DomainPorts.size(),
+                                selectedNodeOperator->CodomainPorts.size());
+                            const auto bindings = semanticCatalog.QueryBindingsForOperator(selectedNodeOperator->OperatorId);
+                            ImGui::Text("Bindings: %zu", bindings.size());
+                            for (std::size_t i = 0; i < bindings.size() && i < 6; ++i) {
+                                const auto &binding = bindings[i];
+                                ImGui::TextDisabled(
+                                    "%s::%s",
+                                    TruncateLabel(binding.TargetInterfaceId, 42).c_str(),
+                                    TruncateLabel(binding.TargetOperationId, 30).c_str());
+                            }
+                        } else {
+                            ImGui::TextDisabled("Operator schema missing.");
+                        }
+                    }
+
+                    const auto compilePreview = buildCompilePreview();
+                    ImGui::SeparatorText("Compile Preview");
+                    ImGui::Text("Bound nodes: %zu", compilePreview.BoundNodes);
+                    ImGui::Text("Unbound nodes: %zu", compilePreview.UnboundNodes);
+                    ImGui::Text("Exact edges: %zu", compilePreview.ExactEdges);
+                    ImGui::Text("Needs coercion: %zu", compilePreview.CoercionEdges);
+                    ImGui::Text("Incompatible edges: %zu", compilePreview.IncompatibleEdges);
+
+                    if (ImGui::BeginTable(
+                            "TemplateCompileNodesTable",
+                            3,
+                            ImGuiTableFlags_BordersInnerV |
+                            ImGuiTableFlags_RowBg |
+                            ImGuiTableFlags_SizingStretchProp)) {
+                        ImGui::TableSetupColumn("Node");
+                        ImGui::TableSetupColumn("Operator");
+                        ImGui::TableSetupColumn("Binding");
+                        ImGui::TableHeadersRow();
+                        for (const auto &compiledNode : compilePreview.Nodes) {
+                            ImGui::TableNextRow();
+                            ImGui::TableSetColumnIndex(0);
+                            ImGui::TextUnformatted(compiledNode.NodeId.c_str());
+                            ImGui::TableSetColumnIndex(1);
+                            ImGui::TextUnformatted(compiledNode.DisplayName.c_str());
+                            ImGui::TableSetColumnIndex(2);
+                            if (compiledNode.bBound) {
+                                ImGui::TextUnformatted(TruncateLabel(compiledNode.BindingLabel, 54).c_str());
+                            } else {
+                                ImGui::TextColored(ImVec4(0.93f, 0.72f, 0.30f, 1.0f), "Unbound");
+                            }
+                        }
+                        ImGui::EndTable();
+                    }
+
+                    if (!compilePreview.Edges.empty()) {
+                        ImGui::SeparatorText("Edge Diagnostics");
+                        for (const auto &compiledEdge : compilePreview.Edges) {
+                            const bool bIncompatible = compiledEdge.MatchReason == "Incompatible";
+                            const auto color = bIncompatible
+                                ? ImVec4(0.93f, 0.40f, 0.40f, 1.0f)
+                                : ImVec4(0.93f, 0.73f, 0.30f, 1.0f);
+                            ImGui::TextColored(color, "%s (%s)", compiledEdge.EdgeId.c_str(), compiledEdge.MatchReason.c_str());
+                            ImGui::TextDisabled("%s", TruncateLabel(compiledEdge.Summary, 84).c_str());
+                            for (const auto &diagnostic : compiledEdge.Diagnostics) {
+                                ImGui::TextDisabled("%s", TruncateLabel(diagnostic, 84).c_str());
+                            }
+                            if (!compiledEdge.SuggestedCoercionOperatorIds.empty()) {
+                                ImGui::TextDisabled(
+                                    "Coercions: %s",
+                                    TruncateLabel(Slab::ToStr(compiledEdge.SuggestedCoercionOperatorIds), 84).c_str());
+                            }
+                            ImGui::Separator();
+                        }
+                    }
+                }
+                ImGui::EndChild();
+                ImGui::EndTable();
             }
 
-            if (!PlaygroundTemplateConnectingNodeId.empty()) {
-                const auto *sourceNode = findTemplateNodeConst(PlaygroundTemplateConnectingNodeId);
-                if (sourceNode != nullptr) {
-                    const auto *sourceOperator = semanticCatalog.FindOperatorById(sourceNode->SemanticOperatorId);
-                    if (sourceOperator != nullptr) {
-                        const auto portVec = bPlaygroundTemplateConnectingFromOutput
-                            ? sourceOperator->CodomainPorts
-                            : sourceOperator->DomainPorts;
-                        const auto portIt = std::find_if(portVec.begin(), portVec.end(), [&](const auto &port) {
-                            return port.PortId == PlaygroundTemplateConnectingPortId;
-                        });
-                        if (portIt != portVec.end()) {
-                            const int index = static_cast<int>(std::distance(portVec.begin(), portIt));
-                            const auto sourcePin = portPinPosition(
-                                *sourceNode,
-                                *sourceOperator,
-                                bPlaygroundTemplateConnectingFromOutput,
-                                index);
-                            const auto mousePos = ImGui::GetIO().MousePos;
-                            drawList->AddBezierCubic(
-                                sourcePin,
-                                ImVec2(sourcePin.x + (bPlaygroundTemplateConnectingFromOutput ? 48.0f : -48.0f), sourcePin.y),
-                                ImVec2(mousePos.x + (bPlaygroundTemplateConnectingFromOutput ? -24.0f : 24.0f), mousePos.y),
-                                mousePos,
-                                IM_COL32(232, 206, 118, 220),
-                                2.0f);
-                        }
-                    }
-                }
-
-                if (ImGui::IsMouseClicked(ImGuiMouseButton_Right) && ImGui::IsWindowHovered()) {
-                    clearTemplateConnectionState();
-                    PlaygroundTemplateStatus = "[Info] Connection cancelled.";
-                }
-            }
-
-            drawList->PopClipRect();
-            ImGui::SetCursorScreenPos(ImVec2(canvasPos.x, canvasEnd.y));
-            ImGui::TextDisabled(
-                "Template graph: %zu nodes, %zu edges. Right-drag canvas to pan.",
-                PlaygroundTemplateNodes.size(),
-                PlaygroundTemplateEdges.size());
             ImGui::EndTabItem();
         }
 
@@ -3724,10 +4994,17 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
 
                 ImGui::InputText("Source Endpoint", sourceBuffer.data(), sourceBuffer.size());
                 ImGui::InputText("Target Endpoint", targetBuffer.data(), targetBuffer.size());
+                const auto previousSource = PlaygroundRoutingSourceEndpoint;
+                const auto previousTarget = PlaygroundRoutingTargetEndpoint;
                 PlaygroundRoutingSourceEndpoint = sourceBuffer.data();
                 PlaygroundRoutingTargetEndpoint = targetBuffer.data();
+                if (PlaygroundRoutingSourceEndpoint != previousSource ||
+                    PlaygroundRoutingTargetEndpoint != previousTarget) {
+                    markDirty();
+                }
             }
 
+            const auto previousRouteKind = PlaygroundRoutingEdgeKind;
             int routeKindIndex = static_cast<int>(PlaygroundRoutingEdgeKind);
             const char *routeKindLabels[] = {
                 "ValueFlow",
@@ -3742,6 +5019,7 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                 static_cast<int>(std::size(routeKindLabels)));
             routeKindIndex = std::clamp(routeKindIndex, 0, 3);
             PlaygroundRoutingEdgeKind = static_cast<ERoutingGraphEdgeKind>(routeKindIndex);
+            if (PlaygroundRoutingEdgeKind != previousRouteKind) markDirty();
 
             if (ImGui::Button("Add Route")) {
                 if (PlaygroundRoutingSourceEndpoint.empty() || PlaygroundRoutingTargetEndpoint.empty()) {
@@ -3755,12 +5033,14 @@ auto FLabV2WindowManager::DrawGraphPlaygroundPanel() -> void {
                     edge.Kind = PlaygroundRoutingEdgeKind;
                     PlaygroundRoutingEdges.push_back(std::move(edge));
                     PlaygroundRoutingStatus = "[Ok] Added routing edge (" + Slab::Str(routeKindLabel(PlaygroundRoutingEdgeKind)) + ").";
+                    markDirty();
                 }
             }
             ImGui::SameLine();
             if (ImGui::Button("Clear Routes")) {
                 PlaygroundRoutingEdges.clear();
                 PlaygroundRoutingStatus = "[Ok] Cleared routing playground edges.";
+                markDirty();
             }
 
             if (!PlaygroundRoutingStatus.empty()) {

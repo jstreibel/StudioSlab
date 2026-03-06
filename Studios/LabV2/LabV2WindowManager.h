@@ -213,11 +213,13 @@ private:
 
     Slab::Vector<FTemplateGraphPlaygroundNode> PlaygroundTemplateNodes;
     Slab::Vector<FTemplateGraphPlaygroundEdge> PlaygroundTemplateEdges;
+    Slab::Vector<Slab::Str> PlaygroundTemplateSelectedNodeIds;
     std::size_t PlaygroundTemplateNodeCounter = 0;
     std::size_t PlaygroundTemplateEdgeCounter = 0;
     std::size_t PlaygroundTemplateCoercionCounter = 0;
     Slab::Str PlaygroundTemplateSelectedOperatorId;
     Slab::Str PlaygroundTemplateSelectedNodeId;
+    Slab::Str PlaygroundTemplateSelectedEdgeId;
     Slab::Str PlaygroundTemplateConnectingNodeId;
     Slab::Str PlaygroundTemplateConnectingPortId;
     bool bPlaygroundTemplateConnectingFromOutput = false;
@@ -225,6 +227,10 @@ private:
     FTemplateGraphPendingCoercionSuggestion PlaygroundTemplatePendingCoercion;
     ImVec2 PlaygroundTemplatePan = ImVec2(90.0f, 70.0f);
     bool bPlaygroundTemplateShowGrid = true;
+    bool bPlaygroundTemplateShowMinimap = true;
+    bool bPlaygroundTemplateMarqueeSelecting = false;
+    ImVec2 PlaygroundTemplateMarqueeStart = ImVec2(0.0f, 0.0f);
+    ImVec2 PlaygroundTemplateMarqueeEnd = ImVec2(0.0f, 0.0f);
 
     Slab::Vector<FRoutingGraphPlaygroundEdge> PlaygroundRoutingEdges;
     std::size_t PlaygroundRoutingEdgeCounter = 0;
@@ -233,6 +239,13 @@ private:
     ERoutingGraphEdgeKind PlaygroundRoutingEdgeKind = ERoutingGraphEdgeKind::ValueFlow;
     Slab::Str PlaygroundRoutingStatus;
     Slab::Str PlaygroundRuntimeFilter;
+    Slab::Str PlaygroundPersistenceFilePath = "Build/bin/labv2_graph_playground.json";
+    Slab::Str PlaygroundPersistenceStatus;
+    bool bPlaygroundAutosave = true;
+    bool bPlaygroundStateLoaded = false;
+    bool bPlaygroundDirty = false;
+    double PlaygroundLastAutosaveTimestampSeconds = 0.0;
+    double PlaygroundAutosaveIntervalSeconds = 1.25;
 
     bool bUseDockspaceLayout = true;
     bool bResetDockLayoutRequested = false;
@@ -291,6 +304,9 @@ private:
     auto DrawSchemesInspectorPanel() -> void;
     auto DrawSchemesBlueprintGraphPanel() -> void;
     auto DrawGraphPlaygroundPanel() -> void;
+    auto MarkGraphPlaygroundDirty() -> void;
+    auto SaveGraphPlaygroundStateToFile() -> bool;
+    auto LoadGraphPlaygroundStateFromFile() -> bool;
     auto DrawPlotsInspectorPanel() -> void;
     auto DrawLegacySidePane() -> void;
     auto BuildDefaultDockLayout(unsigned int dockspaceId, EWorkspaceTab workspace) -> void;
