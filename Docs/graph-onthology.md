@@ -1,6 +1,6 @@
 # StudioSlab Graph Ontology and Semantic Layer
 
-**Status:** Design direction (target architecture)  
+**Status:** Design direction with partial implementation baseline (`2026-03-06`)  
 **Audience:** StudioSlab core devs (reflection/runtime/graph tooling)  
 **Motivation:** Build a coherent graph system that supports:
 - instantiable, reusable simulation setups (Template graphs),
@@ -8,6 +8,27 @@
 - patchbay-style binding between existing endpoints (Routing graphs),
 - reusable visualization pipelines (Viz graphs),
 - a mathematical “meaning layer” (Semantic/Theory graph) with LaTeX.
+
+## 0. Implementation Snapshot (`2026-03-06`)
+
+Implemented substrate baseline:
+- shared graph model in `Slab/Core/Reflection/V2/GraphSubstrateV2.h`
+- graph modes currently represented in substrate enum:
+  - `Semantic`, `Template`, `Runtime`, `Routing`, `SchemesBlueprint`
+- common carriers in code:
+  - node/edge/port/member metadata and policy structs
+  - graph document + canvas state
+  - reflection-catalog-to-graph adapter projection
+
+Current LabV2 usage:
+- Schemes `Blueprint Graph` now builds node/edge/canvas view state from substrate documents.
+- Graph Playground `Template` and `Routing` modes use substrate documents as source-of-truth.
+- Runtime panel currently consumes substrate-derived summaries (counts) and remains a read-mostly surface.
+
+Not yet implemented from this ontology:
+- semantic operator execution compilation (`Template -> Runtime`)
+- first-class visualization graph mode
+- semantics-driven coercion/rewrite passes
 
 ---
 
@@ -333,28 +354,28 @@ A Template Graph pipeline can render:
 
 ## 10. Implementation Roadmap (Pragmatic)
 
-### Phase 1: Semantic Core + Overlay (no UI rewrite)
+### Phase 1: Semantic Core + Overlay (no UI rewrite) [active]
 - Implement `FSpace`, `FSemanticOperator`, `FImplementationBinding` registry.
 - Implement a **semantics overlay** keyed by (interfaceId,paramId) and (interfaceId,opId,portName).
 - Seed a small operator/space library.
 - Bind a couple of semantic ops to real reflection ops.
 - Add unit tests.
 
-### Phase 2: Typed pin graph substrate (new execution graph)
+### Phase 2: Typed pin graph substrate (new execution graph) [partial]
 - Introduce a true typed-pin execution graph representation (dataflow).
 - Allow Template Graph compilation to Runtime Graph.
 - Use semantic matching + coercion nodes.
 
-### Phase 3: Routing graph formalization
+### Phase 3: Routing graph formalization [partial]
 - Standardize handle-based endpoints.
 - Add connect/disconnect operations + policy enforcement.
 - Provide patchbay view.
 
-### Phase 4: Visualization templates + binding
+### Phase 4: Visualization templates + binding [todo]
 - First-class viz templates as Template Graphs or dedicated mode.
 - “Attach viewer template to handle” workflows.
 
-### Phase 5: Semantic relations and rewrites (optional optimization)
+### Phase 5: Semantic relations and rewrites (optional optimization) [todo]
 - inverse/adjoint links
 - basic rewrite hints (e.g., `F^{-1}∘F = Id`)
 - suggestion and simplification passes
@@ -365,7 +386,8 @@ A Template Graph pipeline can render:
 
 Current state:
 - Reflection V2 is solid and widely used.
-- LabV2 graph UI is reflection-driven and schema-driven (not typed-pin execution graph).
+- A shared graph substrate exists and is integrated in LabV2 Schemes + Graph Playground surfaces.
+- LabV2 graph UI is still primarily reflection-driven/schema-driven; substrate is the common data model, not yet a full execution compiler.
 - Legacy “Blueprints” exists with hardcoded PinType.
 
 Migration approach:

@@ -80,6 +80,16 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - hover quick actions invoke reflection operations from graph nodes (`Get`/`Set`/`Apply`/`Invoke`)
   - graph trace rail logs recent invoke outcomes and latency
 
+## Progress Notes (2026-03-06)
+
+- `LAB-10` progressed: Schemes graph now consumes a shared substrate graph document:
+  - substrate node view-model integration in `Blueprint Graph` surface
+  - edge rendering switched to substrate edges (`FromNodeId`/`ToNodeId`) instead of local ad-hoc reconstruction
+  - canvas pan/grid state moved to substrate canvas state
+- Graph Playground mode convergence progressed:
+  - template and routing playground paths now use shared `FGraphDocumentV2` state
+  - one substrate now carries common graph primitives across Schemes/Template/Routing/Runtime summaries
+
 ### `P0` `RV2-00` — Reflection V2 contract freeze — done
 - Define `Interface`/`Parameter`/`Operation` schema contracts.
 - Define operation invocation result shape and policy enums.

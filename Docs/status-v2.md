@@ -2,11 +2,11 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-03-05`
-- Last implementation update: `2026-03-05` (Plot2D legacy-to-V2 reflection bridge + legacy discovery/id hooks)
-- Last architecture-doc update: `2026-03-05` (catalog registry docs + indexed technical debt follow-ups)
-- Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-04`
-- Build-target sanity check date: `2026-03-04` (`StudioSlab`, `Studios`, `SlabTests`, `testsuite` present in `cmake-build-debug`)
+- Snapshot date: `2026-03-06`
+- Last implementation update: `2026-03-06` (shared graph substrate baseline + Schemes/Playground migration)
+- Last architecture-doc update: `2026-03-06` (graph substrate + LabV2 graph docs refresh)
+- Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-06`
+- Build-target sanity check date: `2026-03-06` (`StudioSlab` build passes in `cmake-build-debug`)
 
 ## Implemented Baseline
 
@@ -113,6 +113,21 @@
   - artist slot/z-order metadata access
   - artist parameter get/set extension points for bridge-driven reflection
 - Plot inspector empty-state message now reflects mixed-source discovery (V2 + legacy).
+
+## Recent Updates (`2026-03-06`, implementation)
+
+- Graph substrate baseline landed in Reflection V2:
+  - shared model under `Slab/Core/Reflection/V2/GraphSubstrateV2.h`
+  - common vocabulary for graph mode/node/edge/port/member/policy/canvas metadata
+  - graph document adapter projection from reflection catalogs
+- LabV2 Graph Playground migration progressed to shared substrate documents:
+  - Template mode now uses `FGraphDocumentV2` as source of truth (nodes, edges, canvas)
+  - Routing mode now uses `FGraphDocumentV2` edges with shared edge-kind enum
+- LabV2 Schemes `Blueprint Graph` now consumes substrate-backed graph data:
+  - per-interface graph document generated from reflection catalog
+  - node view-models are built from substrate nodes
+  - edge rendering is now driven by substrate edges instead of local ad-hoc link reconstruction
+  - canvas pan/grid state is tracked on substrate canvas state
 
 ## Reflection Working-Memory Caveats (Current)
 

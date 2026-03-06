@@ -15,15 +15,17 @@
 4. `Docs/reflection-v2-contract.md`
 5. `Docs/reflection-v2-migration-plan.md`
 6. `Docs/reflection-v2-implementation.md`
-7. Focused quick path for Plot2D reflection:
+7. Graph semantics/design direction when graph-surface changes are in scope:
+   - `Docs/graph-onthology.md`
+8. Focused quick path for Plot2D reflection:
    - `Docs/plot2d-reflection-v2-quick.md`
-8. Registry-focused discovery/routing details:
+9. Registry-focused discovery/routing details:
    - `Docs/index-reflection-catalog-registry-v2.md`
    - `Docs/reflection-catalog-registry-v2-overview.md`
    - `Docs/reflection-catalog-registry-v2-routing.md`
-9. Technical debt follow-up queue:
+10. Technical debt follow-up queue:
    - `Docs/technical-debt.md`
-10. One planning context:
+11. One planning context:
    - `Docs/v2-feature-backlog.md`
    - `Docs/v2-model-coverage-matrix.md`
 
@@ -34,6 +36,7 @@
   - `Slab/Core/Reflection/V2/ReflectionCodecsV2.h`
   - `Slab/Core/Reflection/V2/ReflectionInvokeV2.h`
   - `Slab/Core/Reflection/V2/ReflectionCatalogRegistryV2.h`
+  - `Slab/Core/Reflection/V2/GraphSubstrateV2.h`
   - `Slab/Core/Reflection/V2/LegacyInterfaceAdapterV2.h`
 - Legacy reflection seed (current):
   - `Lib/Core/Controller/Interface.h`
@@ -64,6 +67,7 @@
 ## Known Gaps / Agent Warnings
 
 - `Blueprint Graph` is currently a visualization surface, not a full graph-execution editor.
+- `Blueprint Graph` now uses a shared substrate document for nodes/edges/canvas, but execution/pin authoring is still out of scope.
 - Graph node edits/layout are in-memory only; positions are not persisted across process restarts.
 - Identifier styles are intentionally mixed:
   - legacy adapter ids keep snake_case compatibility

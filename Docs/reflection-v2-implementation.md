@@ -1,6 +1,6 @@
 # Reflection V2 Implementation Notes (RV2-01..RV2-04)
 
-## Scope (2026-03-04)
+## Scope (2026-03-06)
 
 Implemented vertical slice across LabV2 Schemes and CLI using one shared reflection contract and invoke path.
 
@@ -10,6 +10,7 @@ Shared reflection runtime (header-only):
 - `Slab/Core/Reflection/V2/ReflectionTypesV2.h`
 - `Slab/Core/Reflection/V2/ReflectionCodecsV2.h`
 - `Slab/Core/Reflection/V2/ReflectionInvokeV2.h`
+- `Slab/Core/Reflection/V2/GraphSubstrateV2.h`
 - `Slab/Core/Reflection/V2/LegacyInterfaceAdapterV2.h`
 
 LabV2 Schemes consumer:
@@ -67,8 +68,9 @@ Under `Schemes` workspace:
 - set/apply actions with structured result output
 - `Blueprint Graph` panel:
 - node-canvas view for selected interface
-- parameter and operation nodes linked through interface node
+- parameter and operation nodes linked through interface node (rendered from substrate edges)
 - node drag + canvas pan + grid + auto-layout reset controls
+- shared graph substrate document for nodes/edges/canvas in Schemes surface
 - graph interactions currently drive selection/navigation, not operation execution wiring
 
 ## CLI Behavior

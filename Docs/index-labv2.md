@@ -16,6 +16,8 @@
    - `Docs/plot-window-ux-contract.md`
 4. Active planning context:
    - `Docs/v2-feature-backlog.md`
+5. For Schemes/graph-surface semantics and mode boundaries:
+   - `Docs/graph-onthology.md`
 
 ## Core Code Map
 
@@ -30,6 +32,7 @@
   - `Studios/LabV2/LabV2WindowManager.cpp`
 - Plot reflection catalog bridge surfaces:
   - `Slab/Core/Reflection/V2/ReflectionCatalogRegistryV2.h`
+  - `Slab/Core/Reflection/V2/GraphSubstrateV2.h`
   - `Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.h`
   - `Slab/Graphics/Plot2D/V2/LegacyPlotReflectionAdapterV2.h`
 - Shared LabV2 panel draw surfaces:
