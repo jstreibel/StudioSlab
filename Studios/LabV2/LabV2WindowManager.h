@@ -18,7 +18,33 @@
 #include <array>
 #include <deque>
 #include <map>
+#include <memory>
 #include <vector>
+
+class FLabV2GraphPlaygroundController;
+
+struct FLabV2SubstrateGraphCanvasAction {
+    Slab::Str Label;
+    Slab::Str Hint;
+    bool bEnabled = true;
+    std::function<void()> Execute;
+};
+
+struct FLabV2SubstrateGraphVisualNode {
+    Slab::Core::Reflection::V2::FGraphNodeV2 *Node = nullptr;
+    Slab::Str Title;
+    Slab::Str Subtitle;
+    Slab::Vector<std::pair<Slab::Str, ImU32>> Badges;
+    int InputPins = 1;
+    int OutputPins = 1;
+    ImVec2 Size = ImVec2(320.0f, 132.0f);
+};
+
+struct FLabV2SubstrateGraphCanvasInteraction {
+    Slab::Str ClickedNodeId;
+    Slab::Str ClickedEdgeId;
+    bool bBackgroundClicked = false;
+};
 
 class FLabV2WindowManager final : public Slab::Graphics::FWindowManager {
 public:
@@ -45,6 +71,8 @@ public:
     [[nodiscard]] auto GetLiveControlHub() const -> Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2>;
 
 private:
+    friend class FLabV2GraphPlaygroundController;
+
     enum class EWorkspaceTab : unsigned char {
         Simulations = 0,
         Schemes,
@@ -95,6 +123,7 @@ private:
     Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> LiveDataHub;
     Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> LiveControlHub;
     Slab::TPointer<class FSimulationManagerV2> SimulationManager;
+    std::unique_ptr<FLabV2GraphPlaygroundController> GraphPlaygroundController;
     Slab::Core::Reflection::V2::FLegacyReflectionCatalogAdapterV2 ReflectionAdapter;
     Slab::Graphics::Plot2D::V2::FPlotReflectionCatalogV2 PlotReflectionAdapter;
     Slab::Str LegacyCatalogSourceId;
@@ -180,6 +209,10 @@ private:
         Slab::Str Summary;
     };
 
+    Slab::Core::Reflection::V2::FGraphDocumentV2 PlaygroundSemanticDocument;
+    Slab::Vector<Slab::Str> PlaygroundSemanticVisibleNodeIds;
+    Slab::Str PlaygroundSemanticFilter;
+    float PlaygroundSemanticBottomPanelHeight = 220.0f;
     Slab::Core::Reflection::V2::FGraphDocumentV2 PlaygroundTemplateDocument;
     Slab::Vector<Slab::Str> PlaygroundTemplateSelectedNodeIds;
     std::size_t PlaygroundTemplateNodeCounter = 0;
@@ -192,6 +225,7 @@ private:
     Slab::Str PlaygroundTemplateConnectingPortId;
     bool bPlaygroundTemplateConnectingFromOutput = false;
     Slab::Str PlaygroundTemplateStatus;
+    float PlaygroundTemplateBottomPanelHeight = 220.0f;
     FTemplateGraphPendingCoercionSuggestion PlaygroundTemplatePendingCoercion;
     bool bPlaygroundTemplateMarqueeSelecting = false;
     ImVec2 PlaygroundTemplateMarqueeStart = ImVec2(0.0f, 0.0f);
@@ -199,12 +233,28 @@ private:
 
     Slab::Core::Reflection::V2::FGraphDocumentV2 PlaygroundRoutingDocument;
     std::size_t PlaygroundRoutingEdgeCounter = 0;
+    std::size_t PlaygroundRoutingEndpointCounter = 0;
+    Slab::Vector<Slab::Str> PlaygroundRoutingStandaloneEndpoints;
     Slab::Str PlaygroundRoutingSourceEndpoint;
     Slab::Str PlaygroundRoutingTargetEndpoint;
     Slab::Core::Reflection::V2::EGraphEdgeKindV2 PlaygroundRoutingEdgeKind =
         Slab::Core::Reflection::V2::EGraphEdgeKindV2::ValueFlow;
     Slab::Str PlaygroundRoutingStatus;
+    Slab::Str PlaygroundRoutingLastOperationSummary;
+    Slab::StrVector PlaygroundRoutingLastOperationDiagnostics;
+    std::size_t PlaygroundRoutingConnectAttemptCount = 0;
+    std::size_t PlaygroundRoutingConnectSuccessCount = 0;
+    std::size_t PlaygroundRoutingConnectFailureCount = 0;
+    float PlaygroundRoutingBottomPanelHeight = 220.0f;
+    Slab::Core::Reflection::V2::FGraphDocumentV2 PlaygroundRuntimeDocument;
+    Slab::Core::Reflection::V2::FGraphDocumentV2 PlaygroundRuntimeInstanceDocument;
+    std::size_t PlaygroundRuntimeInstanceCounter = 0;
+    Slab::Str PlaygroundRuntimeInstanceId;
+    Slab::Str PlaygroundRuntimeInstanceStatus;
+    Slab::StrVector PlaygroundRuntimeInstanceDiagnostics;
+    bool bPlaygroundRuntimeUseInstantiatedGraph = false;
     Slab::Str PlaygroundRuntimeFilter;
+    float PlaygroundRuntimeBottomPanelHeight = 220.0f;
     Slab::Str PlaygroundPersistenceFilePath = "Build/bin/labv2_graph_playground.json";
     Slab::Str PlaygroundPersistenceStatus;
     bool bPlaygroundAutosave = true;
@@ -273,6 +323,10 @@ private:
     auto MarkGraphPlaygroundDirty() -> void;
     auto SaveGraphPlaygroundStateToFile() -> bool;
     auto LoadGraphPlaygroundStateFromFile() -> bool;
+    auto DrawGraphPlaygroundPanelImpl() -> void;
+    auto MarkGraphPlaygroundDirtyImpl() -> void;
+    auto SaveGraphPlaygroundStateToFileImpl() -> bool;
+    auto LoadGraphPlaygroundStateFromFileImpl() -> bool;
     auto DrawPlotsInspectorPanel() -> void;
     auto DrawLegacySidePane() -> void;
     auto BuildDefaultDockLayout(unsigned int dockspaceId, EWorkspaceTab workspace) -> void;
@@ -293,6 +347,19 @@ private:
     auto InvokeSelectedPlotOperation(const Slab::Core::Reflection::V2::FInterfaceSchemaV2 &interfaceSchema,
                                      const Slab::Str &operationId,
                                      const Slab::Core::Reflection::V2::FInvocationContextV2 &context) -> void;
+    auto DrawSubstrateGraphCanvasCommon(
+        const char *canvasId,
+        Slab::Core::Reflection::V2::FGraphDocumentV2 &document,
+        Slab::Vector<FLabV2SubstrateGraphVisualNode> &nodes,
+        float &bottomPanelHeight,
+        const std::function<Slab::Vector<FLabV2SubstrateGraphCanvasAction>(const ImVec2 &)> &buildAddNodeActions,
+        const std::function<Slab::Vector<FLabV2SubstrateGraphCanvasAction>(
+            const Slab::Core::Reflection::V2::FGraphNodeV2 &,
+            Slab::Core::Reflection::V2::FGraphPortV2 *,
+            Slab::Core::Reflection::V2::EGraphPortDirectionV2,
+            const ImVec2 &)> &buildConnectNodeActions,
+        const std::function<void()> &markDirty,
+        FLabV2SubstrateGraphCanvasInteraction *interaction = nullptr) -> void;
     [[nodiscard]] auto GetTopMenuInset() const -> float;
     auto RequestSimulationLauncherVisible() -> void;
     auto SaveWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;

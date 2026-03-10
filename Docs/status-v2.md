@@ -120,14 +120,31 @@
   - shared model under `Slab/Core/Reflection/V2/GraphSubstrateV2.h`
   - common vocabulary for graph mode/node/edge/port/member/policy/canvas metadata
   - graph document adapter projection from reflection catalogs
-- LabV2 Graph Playground migration progressed to shared substrate documents:
-  - Template mode now uses `FGraphDocumentV2` as source of truth (nodes, edges, canvas)
-  - Routing mode now uses `FGraphDocumentV2` edges with shared edge-kind enum
+- LabV2 Graph Playground migration now uses shared substrate documents across all modes:
+  - Semantic mode now builds/edits a substrate `FGraphDocumentV2` (spaces/operators + value-flow edges)
+  - Template mode uses `FGraphDocumentV2` as source of truth (nodes, edges, canvas)
+  - Runtime mode now renders/edit-pans a substrate `FGraphDocumentV2` built from merged reflection catalog snapshots
+  - Routing mode uses `FGraphDocumentV2` edges with shared edge-kind enum and substrate-backed endpoint nodes
 - LabV2 Schemes `Blueprint Graph` now consumes substrate-backed graph data:
   - per-interface graph document generated from reflection catalog
   - node view-models are built from substrate nodes
   - edge rendering is now driven by substrate edges instead of local ad-hoc link reconstruction
   - canvas pan/grid state is tracked on substrate canvas state
+- Shared graph canvas renderer now backs Schemes and all Graph Playground modes:
+  - extracted common canvas/pin/context/splitter behavior to `LabV2SubstrateGraphCanvas.cpp`
+  - Template mode migrated off its legacy custom renderer path onto the shared substrate canvas path
+  - Schemes `Blueprint Graph` migrated to the shared substrate canvas path while keeping policy badges, selection, and invoke/copy node actions
+  - Schemes legacy right-click dummy creation menu for Plot window/artist was intentionally removed from graph canvas behavior
+- Graph Playground first user-story slice advanced:
+  - Template mode adds explicit `Instantiate Runtime` action producing a runtime instance graph artifact
+  - Runtime mode supports dual view (`Reflection Snapshot` vs `Instantiated Graph`) with status + diagnostics + endpoint table
+  - Routing mode consumes runtime instance endpoints, supports endpoint selection/import, and performs connect through an invocation path (`InvokeOperationV2`)
+  - routing edges are added only on successful operation results; failures surface actionable diagnostics and operation telemetry
+  - runtime instance session state (graph + diagnostics + view toggle) now persists to playground state file
+- LabV2 window-manager decomposition started to control file growth:
+  - Graph Playground logic moved behind `FLabV2GraphPlaygroundController` facade
+  - Graph Playground draw and serialization moved into dedicated translation units
+  - Schemes/plots panel draw paths moved to `LabV2WindowManagerSchemesPanels.cpp`
 
 ## Reflection Working-Memory Caveats (Current)
 

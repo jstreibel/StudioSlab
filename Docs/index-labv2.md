@@ -16,6 +16,7 @@
    - `Docs/plot-window-ux-contract.md`
 4. Active planning context:
    - `Docs/v2-feature-backlog.md`
+   - `Docs/graph-first-user-story-checklist.md`
 5. For Schemes/graph-surface semantics and mode boundaries:
    - `Docs/graph-onthology.md`
 
@@ -30,6 +31,12 @@
 - Top-level shell/window orchestration:
   - `Studios/LabV2/LabV2WindowManager.h`
   - `Studios/LabV2/LabV2WindowManager.cpp`
+  - `Studios/LabV2/LabV2WindowManagerSchemesPanels.cpp`
+  - `Studios/LabV2/LabV2WindowManagerGraphPlayground.cpp`
+  - `Studios/LabV2/LabV2WindowManagerGraphPlaygroundSerialization.cpp`
+  - `Studios/LabV2/LabV2SubstrateGraphCanvas.cpp`
+  - `Studios/LabV2/LabV2GraphPlaygroundController.h`
+  - `Studios/LabV2/LabV2GraphPlaygroundController.cpp`
 - Plot reflection catalog bridge surfaces:
   - `Slab/Core/Reflection/V2/ReflectionCatalogRegistryV2.h`
   - `Slab/Core/Reflection/V2/GraphSubstrateV2.h`

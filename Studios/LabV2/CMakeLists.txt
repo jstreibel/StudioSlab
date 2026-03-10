@@ -3,7 +3,13 @@ add_executable( StudioSlab
         StudioSlabV2App.cpp
         StudioSlabV2App.h
         LabV2WindowManager.cpp
+        LabV2WindowManagerSchemesPanels.cpp
+        LabV2WindowManagerGraphPlayground.cpp
+        LabV2WindowManagerGraphPlaygroundSerialization.cpp
+        LabV2SubstrateGraphCanvas.cpp
         LabV2WindowManager.h
+        LabV2GraphPlaygroundController.cpp
+        LabV2GraphPlaygroundController.h
         LabV2Panels.cpp
         LabV2Panels.h
         SimulationManagerV2.cpp

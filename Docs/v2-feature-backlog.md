@@ -87,8 +87,15 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - edge rendering switched to substrate edges (`FromNodeId`/`ToNodeId`) instead of local ad-hoc reconstruction
   - canvas pan/grid state moved to substrate canvas state
 - Graph Playground mode convergence progressed:
-  - template and routing playground paths now use shared `FGraphDocumentV2` state
-  - one substrate now carries common graph primitives across Schemes/Template/Routing/Runtime summaries
+  - semantic/template/runtime/routing playground paths now use shared `FGraphDocumentV2` state
+  - one substrate now carries common graph primitives across Schemes and all Graph Playground mode canvases
+  - shared substrate canvas renderer now drives all Graph Playground modes plus Schemes `Blueprint Graph`
+  - Schemes graph dropped its right-click dummy plot/artist creation menu while preserving policy-driven node graph usage
+- Graph Playground first user-story implementation progressed:
+  - Template -> Runtime instantiation action landed (with bound/unbound + edge diagnostics surface)
+  - Runtime mode now toggles between reflection snapshot and instantiated runtime graph
+  - Routing mode now sources/selects runtime endpoints and executes connect through an invocation path before mutating graph edges
+  - routing operation telemetry and runtime-instantiation session state persistence added
 
 ### `P0` `RV2-00` — Reflection V2 contract freeze — done
 - Define `Interface`/`Parameter`/`Operation` schema contracts.

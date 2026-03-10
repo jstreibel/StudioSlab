@@ -22,8 +22,8 @@ Implemented substrate baseline:
 
 Current LabV2 usage:
 - Schemes `Blueprint Graph` now builds node/edge/canvas view state from substrate documents.
-- Graph Playground `Template` and `Routing` modes use substrate documents as source-of-truth.
-- Runtime panel currently consumes substrate-derived summaries (counts) and remains a read-mostly surface.
+- Graph Playground `Semantic`, `Template`, `Runtime`, and `Routing` modes use substrate documents as source-of-truth.
+- Graph Playground mode canvases share substrate canvas behavior (pan/grid state) and a common substrate-based renderer path.
 
 Not yet implemented from this ontology:
 - semantic operator execution compilation (`Template -> Runtime`)
