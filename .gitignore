@@ -55,6 +55,7 @@ cmake-build-*
 
 ,idea
 .idea/*
+/.idea/vcs.xml
 
 /Slab/bin/Fields-RtoR
 /Slab/bin/Fields-RtoR-PeriodicBC

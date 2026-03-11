@@ -55,18 +55,6 @@ namespace {
         return Typesetting::MakeTextRequest(text, MakeTextStyle(fontPixels));
     }
 
-    auto MakeDefinitionSubtitle(const ModelV2::FDefinitionV2 &definition) -> Slab::Str {
-        Slab::Str subtitle = definition.DisplayName.empty() ? definition.DefinitionId : definition.DisplayName;
-        subtitle += " | ";
-        subtitle += ToString(definition.Kind);
-        return subtitle;
-    }
-
-    auto MakeRelationSubtitle(const ModelV2::FRelationV2 &relation) -> Slab::Str {
-        if (!relation.Name.empty()) return relation.Name + " | " + ToString(relation.Kind);
-        return relation.RelationId + " | " + ToString(relation.Kind);
-    }
-
     struct FModelInspectorTheme {
         float BaseFontSize = 0.0f;
         Typesetting::FImGuiTypesetDrawOptions SectionTextOptions;
@@ -74,12 +62,10 @@ namespace {
         Typesetting::FImGuiTypesetDrawOptions DetailMathOptions;
     };
 
-    auto MakeSelectableRowOptions(const Slab::Str &secondaryText,
-                                  const ImVec4 &accentColor,
+    auto MakeSelectableRowOptions(const ImVec4 &accentColor,
                                   const bool bSelected) -> Typesetting::FImGuiSelectableTypesetRowOptions {
         Typesetting::FImGuiSelectableTypesetRowOptions rowOptions;
         rowOptions.bSelected = bSelected;
-        rowOptions.SecondaryText = secondaryText;
         rowOptions.PrimaryTint = ImGui::GetColorU32(ImGuiCol_Text);
         rowOptions.SecondaryTint = ImGui::GetColorU32(ImGuiCol_TextDisabled);
         rowOptions.HoveredBackgroundTint =
@@ -96,20 +82,14 @@ namespace {
         return rowOptions;
     }
 
-    auto MakeDefinitionRowOptions(const ModelV2::FDefinitionV2 &definition,
+    auto MakeDefinitionRowOptions(const ModelV2::FDefinitionV2 &,
                                   const bool bSelected) -> Typesetting::FImGuiSelectableTypesetRowOptions {
-        return MakeSelectableRowOptions(
-            MakeDefinitionSubtitle(definition),
-            ImVec4(0.29f, 0.60f, 0.45f, 1.0f),
-            bSelected);
+        return MakeSelectableRowOptions(ImVec4(0.29f, 0.60f, 0.45f, 1.0f), bSelected);
     }
 
-    auto MakeRelationRowOptions(const ModelV2::FRelationV2 &relation,
+    auto MakeRelationRowOptions(const ModelV2::FRelationV2 &,
                                 const bool bSelected) -> Typesetting::FImGuiSelectableTypesetRowOptions {
-        return MakeSelectableRowOptions(
-            MakeRelationSubtitle(relation),
-            ImVec4(0.31f, 0.49f, 0.74f, 1.0f),
-            bSelected);
+        return MakeSelectableRowOptions(ImVec4(0.31f, 0.49f, 0.74f, 1.0f), bSelected);
     }
 
     auto DrawDefinitionDetails(Typesetting::FTypesettingService &typesettingService,
@@ -540,7 +520,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
             ImGui::TableNextColumn();
             ImGui::BeginChild("ModelFocusedDetailsPane", ImVec2(0.0f, 0.0f), true);
 
-            ImGui::SeparatorText("Focused Details");
+            ImGui::SeparatorText("Details");
             if (!focusedId.empty()) {
                 ImGui::TextDisabled(
                     "Focused: %s | Source: %s",
