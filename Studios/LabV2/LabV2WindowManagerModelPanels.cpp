@@ -408,10 +408,15 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
     const float layoutWidth = ImGui::GetContentRegionAvail().x;
     const float layoutHeight = std::max(ImGui::GetContentRegionAvail().y, 0.0f);
     const float listColumnWidth = std::clamp(layoutWidth * 0.32f, 260.0f, 380.0f);
-    const float bottomPaneSpacing = ImGui::GetStyle().ItemSpacing.y;
-    float scratchpadHeight = std::clamp(layoutHeight * 0.33f, 120.0f, 240.0f);
-    if (layoutHeight > 0.0f) scratchpadHeight = std::min(scratchpadHeight, layoutHeight * 0.45f);
-    const float topPaneHeight = std::max(0.0f, layoutHeight - scratchpadHeight - bottomPaneSpacing);
+    const float layoutSplitterThickness = 6.0f;
+    const float minScratchpadHeight = std::clamp(layoutHeight * 0.20f, 72.0f, 180.0f);
+    const float minTopPaneHeight = std::clamp(layoutHeight * 0.35f, 96.0f, 240.0f);
+    const float maxScratchpadHeight =
+        std::max(minScratchpadHeight, layoutHeight - minTopPaneHeight - layoutSplitterThickness);
+    float scratchpadHeight =
+        std::clamp(ModelScratchpadHeight, minScratchpadHeight, maxScratchpadHeight);
+    const float topPaneHeight =
+        std::max(0.0f, layoutHeight - scratchpadHeight - layoutSplitterThickness);
 
     ImGui::TextDisabled("Hover a row to preview it in the inspector. Click a row to pin selection.");
 
@@ -570,8 +575,33 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         }
 
         ImGui::EndChild();
-        ImGui::Dummy(ImVec2(0.0f, bottomPaneSpacing));
     }
+
+    ImGui::InvisibleButton("##ModelScratchpadSplitter", ImVec2(-FLT_MIN, layoutSplitterThickness));
+    const bool bScratchpadSplitterHovered = ImGui::IsItemHovered();
+    const bool bScratchpadSplitterActive = ImGui::IsItemActive();
+    if (bScratchpadSplitterHovered || bScratchpadSplitterActive) {
+        ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeNS);
+    }
+    if (bScratchpadSplitterActive && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 0.0f)) {
+        scratchpadHeight = std::clamp(
+            scratchpadHeight - ImGui::GetIO().MouseDelta.y,
+            minScratchpadHeight,
+            maxScratchpadHeight);
+        ModelScratchpadHeight = scratchpadHeight;
+    } else {
+        ModelScratchpadHeight = scratchpadHeight;
+    }
+
+    const auto scratchpadSplitterRectMin = ImGui::GetItemRectMin();
+    const auto scratchpadSplitterRectMax = ImGui::GetItemRectMax();
+    const float scratchpadSplitterCenterY =
+        0.5f * (scratchpadSplitterRectMin.y + scratchpadSplitterRectMax.y);
+    ImGui::GetWindowDrawList()->AddLine(
+        ImVec2(scratchpadSplitterRectMin.x + 2.0f, scratchpadSplitterCenterY),
+        ImVec2(scratchpadSplitterRectMax.x - 2.0f, scratchpadSplitterCenterY),
+        bScratchpadSplitterActive ? IM_COL32(246, 202, 116, 210) : IM_COL32(96, 108, 124, 192),
+        bScratchpadSplitterActive ? 2.0f : 1.0f);
 
     ImGui::BeginChild("ModelScratchpadPane", ImVec2(0.0f, 0.0f), true);
     drawScratchpad();

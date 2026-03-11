@@ -175,6 +175,7 @@ private:
     int ModelScratchMode = 1;
     Slab::Str ModelScratchInput;
     float ModelCatalogDefinitionsHeight = 220.0f;
+    float ModelScratchpadHeight = 220.0f;
     struct FSchemeOperationTraceEntry {
         std::size_t SequenceId = 0;
         Slab::Str InterfaceId;
