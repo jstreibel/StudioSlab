@@ -267,6 +267,10 @@ add_library(${LIB_GRAPHICS} STATIC
         Plot2D/Util/PlottingRegion2D.h
 		ImGui/ImGui-SingleSlabWindow-Wrapper.cpp
 		ImGui/ImGui-SingleSlabWindow-Wrapper.h
+		Typesetting/TypesettingService.cpp
+		Typesetting/TypesettingService.h
+		Typesetting/ImGuiTypesetting.cpp
+		Typesetting/ImGuiTypesetting.h
         Plot2D/Util/FieldTextureKontraption.cpp
         Plot2D/Util/PlotStyleGUI.cpp
         Plot2D/Util/PlotStyleGUI.h
@@ -363,6 +367,7 @@ target_link_libraries(${LIB_GRAPHICS}
 		Slab-Math
 
 		${NANOTEX_LIBS}
+		freetype
 )
 target_include_directories(${LIB_GRAPHICS} PUBLIC ${NANOTEX_DIR}/src)
 

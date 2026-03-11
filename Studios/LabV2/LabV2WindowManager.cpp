@@ -13,6 +13,7 @@
 #endif
 
 #include "Core/SlabCore.h"
+#include "Core/Model/V2/ModelSeedsV2.h"
 #include "Core/Reflection/V2/ReflectionCodecsV2.h"
 #include "Core/Reflection/V2/GraphSubstrateV2.h"
 #include "Core/Reflection/V2/ReflectionInvokeV2.h"
@@ -30,6 +31,7 @@
 #include "Graphics/Plot2D/V2/Backends/OpenGLRenderBackendV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionSchemaV2.h"
+#include "Graphics/Typesetting/TypesettingService.h"
 #include "Graphics/Window/WindowStyles.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
@@ -47,7 +49,45 @@
 
 namespace {
 
+    namespace ModelV2 = Slab::Core::Model::V2;
+    namespace Typesetting = Slab::Graphics::Typesetting;
+
     constexpr bool CEnableBlueprintGraphTuningUi = false;
+
+    auto PrewarmModelTypesettingCache(Typesetting::FTypesettingService &service,
+                                      const Slab::Vector<ModelV2::FModelV2> &models) -> void {
+        const float baseFontSize =
+            ImGui::GetCurrentContext() != nullptr && ImGui::GetFontSize() > 0.0f
+                ? ImGui::GetFontSize()
+                : 18.0f;
+
+        const auto makeMathRequest = [&](const Slab::Str &latex, const float fontSize) {
+            Typesetting::FTypesetStyle style;
+            style.FontPixelSize = fontSize;
+            return Typesetting::MakeMathRequest(latex, style);
+        };
+
+        for (const auto &model : models) {
+            for (const auto &definition : model.Definitions) {
+                service.ResolveRenderable(makeMathRequest(ModelV2::RenderDialectDefinitionV2(definition, &model), baseFontSize * 1.02f));
+                if (definition.DeclaredType.has_value()) {
+                    service.ResolveRenderable(makeMathRequest(ModelV2::RenderDialectTypeExprV2(*definition.DeclaredType, &model), baseFontSize));
+                }
+                if (!definition.SourceText.empty()) {
+                    service.ResolveRenderable(makeMathRequest(definition.SourceText, baseFontSize * 1.12f));
+                }
+            }
+
+            for (const auto &relation : model.Relations) {
+                service.ResolveRenderable(makeMathRequest(ModelV2::RenderDialectRelationV2(relation, &model), baseFontSize * 1.04f));
+                service.ResolveRenderable(makeMathRequest(ModelV2::RenderDialectExpressionV2(relation.Left, &model), baseFontSize));
+                service.ResolveRenderable(makeMathRequest(ModelV2::RenderDialectExpressionV2(relation.Right, &model), baseFontSize));
+                if (!relation.SourceText.empty()) {
+                    service.ResolveRenderable(makeMathRequest(relation.SourceText, baseFontSize * 1.12f));
+                }
+            }
+        }
+    }
 
     auto AddExitMenuEntry(const Slab::Graphics::FPlatformWindow &platformWindow,
                           Slab::Graphics::FImGuiContext &imguiContext) -> void {
@@ -71,16 +111,19 @@ namespace {
     constexpr auto WindowTitleSimulationLauncher = "Simulation Launcher";
     constexpr auto WindowTitleSchemesInspector = "Interface Inspector";
     constexpr auto WindowTitleBlueprintGraph = "Blueprint Graph";
+    constexpr auto WindowTitleModelInspector = "Model Layer";
     constexpr auto WindowTitleGraphPlayground = "Graph Playground";
     constexpr auto WindowTitlePlotInspector = "Plot Inspector";
     constexpr auto PopupBlueprintGraphContext = "SchemesBlueprintGraphContext";
     constexpr auto DockspaceHostName = "##LabDockspaceHost";
     constexpr auto DockspaceNameSimulations = "##LabDockspace-Simulations";
     constexpr auto DockspaceNameSchemes = "##LabDockspace-Schemes";
+    constexpr auto DockspaceNameModels = "##LabDockspace-Models";
     constexpr auto DockspaceNameGraphPlayground = "##LabDockspace-GraphPlayground";
     constexpr auto DockspaceNamePlots = "##LabDockspace-Plots";
     constexpr auto WorkspaceTabSimulations = "Simulations";
     constexpr auto WorkspaceTabSchemes = "Schemes";
+    constexpr auto WorkspaceTabModels = "Model";
     constexpr auto WorkspaceTabGraphPlayground = "Graph Playground";
     constexpr auto WorkspaceTabPlots = "Plots";
     constexpr auto PlotWindowInterfaceIdPrefix = "v2.plot.window.";
@@ -905,6 +948,9 @@ namespace {
 
 FLabV2WindowManager::FLabV2WindowManager()
 : SidePaneWidth(FStudioConfigV2::SidePaneWidth) {
+    ModelDemoCatalog = Slab::Core::Model::V2::BuildDemoModelsV2();
+    ModelScratchInput = "\\ddot x + \\omega^2 x = 0";
+
     SchemesBlueprintDocument.Mode = Slab::Core::Reflection::V2::EGraphModeV2::SchemesBlueprint;
     SchemesBlueprintDocument.Canvas.PanX = 80.0f;
     SchemesBlueprintDocument.Canvas.PanY = 80.0f;
@@ -939,6 +985,8 @@ FLabV2WindowManager::FLabV2WindowManager()
     ImGuiContext = Slab::DynamicPointerCast<Slab::Graphics::FImGuiContext>(imGuiModule->CreateContext(platformWindow));
     ImGuiContext->SetManualRender(true);
     ImGuiContext->SetMainMenuPresentation(Slab::Graphics::FImGuiContext::EMainMenuPresentation::Hidden);
+    UiTypesettingService = std::make_unique<Slab::Graphics::Typesetting::FTypesettingService>();
+    PrewarmModelTypesettingCache(*UiTypesettingService, ModelDemoCatalog);
 
     LiveDataHub = Slab::New<Slab::Math::LiveData::V2::FLiveDataHubV2>();
     LiveControlHub = Slab::New<Slab::Math::LiveControl::V2::FLiveControlHubV2>();
@@ -1775,6 +1823,7 @@ auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab works
         bShowWindowViews,
         bShowWindowSchemeInspector,
         bShowWindowBlueprintGraph,
+        bShowWindowModelInspector,
         bShowWindowGraphPlayground,
         bShowWindowPlotInspector
     };
@@ -1792,6 +1841,7 @@ auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab works
     bShowWindowViews = cfg.bShowWindowViews;
     bShowWindowSchemeInspector = cfg.bShowWindowSchemeInspector;
     bShowWindowBlueprintGraph = cfg.bShowWindowBlueprintGraph;
+    bShowWindowModelInspector = cfg.bShowWindowModelInspector;
     bShowWindowGraphPlayground = cfg.bShowWindowGraphPlayground;
     bShowWindowPlotInspector = cfg.bShowWindowPlotInspector;
 }
@@ -1933,6 +1983,7 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
 
             drawTab(EWorkspaceTab::Simulations, WorkspaceTabSimulations);
             drawTab(EWorkspaceTab::Schemes, WorkspaceTabSchemes);
+            drawTab(EWorkspaceTab::Models, WorkspaceTabModels);
             drawTab(EWorkspaceTab::GraphPlayground, WorkspaceTabGraphPlayground);
             drawTab(EWorkspaceTab::Plots, WorkspaceTabPlots);
 
@@ -1984,6 +2035,7 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
     if (ImGui::Begin("##LabWorkspaceStrip", nullptr, flags)) {
         const char *workspaceLabel = WorkspaceTabSimulations;
         if (ActiveWorkspace == EWorkspaceTab::Schemes) workspaceLabel = WorkspaceTabSchemes;
+        if (ActiveWorkspace == EWorkspaceTab::Models) workspaceLabel = WorkspaceTabModels;
         if (ActiveWorkspace == EWorkspaceTab::GraphPlayground) workspaceLabel = WorkspaceTabGraphPlayground;
         if (ActiveWorkspace == EWorkspaceTab::Plots) workspaceLabel = WorkspaceTabPlots;
 
@@ -2007,6 +2059,8 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
         } else if (ActiveWorkspace == EWorkspaceTab::Schemes) {
             drawToggle("Inspector", &bShowWindowSchemeInspector);
             drawToggle("Blueprint Graph", &bShowWindowBlueprintGraph);
+        } else if (ActiveWorkspace == EWorkspaceTab::Models) {
+            drawToggle("Model Layer", &bShowWindowModelInspector);
         } else if (ActiveWorkspace == EWorkspaceTab::GraphPlayground) {
             drawToggle("Graph Playground", &bShowWindowGraphPlayground);
         } else {
@@ -2069,6 +2123,8 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
         const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.35f, nullptr, &dockMain);
         ImGui::DockBuilderDockWindow(WindowTitleSchemesInspector, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleBlueprintGraph, dockMain);
+    } else if (workspace == EWorkspaceTab::Models) {
+        ImGui::DockBuilderDockWindow(WindowTitleModelInspector, dockMain);
     } else if (workspace == EWorkspaceTab::GraphPlayground) {
         ImGui::DockBuilderDockWindow(WindowTitleGraphPlayground, dockMain);
     } else {
@@ -2117,6 +2173,8 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
             static_cast<unsigned int>(ImGui::GetID(DockspaceNameSimulations));
         const auto dockspaceIdSchemes =
             static_cast<unsigned int>(ImGui::GetID(DockspaceNameSchemes));
+        const auto dockspaceIdModels =
+            static_cast<unsigned int>(ImGui::GetID(DockspaceNameModels));
         const auto dockspaceIdGraphPlayground =
             static_cast<unsigned int>(ImGui::GetID(DockspaceNameGraphPlayground));
         const auto dockspaceIdPlots =
@@ -2125,19 +2183,22 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
         if (!bWorkspaceLayoutsBootstrapped) {
             BuildDefaultDockLayout(dockspaceIdSimulations, EWorkspaceTab::Simulations);
             BuildDefaultDockLayout(dockspaceIdSchemes, EWorkspaceTab::Schemes);
+            BuildDefaultDockLayout(dockspaceIdModels, EWorkspaceTab::Models);
             BuildDefaultDockLayout(dockspaceIdGraphPlayground, EWorkspaceTab::GraphPlayground);
             BuildDefaultDockLayout(dockspaceIdPlots, EWorkspaceTab::Plots);
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Simulations)] = true;
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Schemes)] = true;
+            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Models)] = true;
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::GraphPlayground)] = true;
             WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Plots)] = true;
             bWorkspaceLayoutsBootstrapped = true;
             RequestViewRetile();
         }
 
-        const auto dockspaceIdFor = [dockspaceIdSimulations, dockspaceIdSchemes, dockspaceIdGraphPlayground, dockspaceIdPlots]
+        const auto dockspaceIdFor = [dockspaceIdSimulations, dockspaceIdSchemes, dockspaceIdModels, dockspaceIdGraphPlayground, dockspaceIdPlots]
             (const EWorkspaceTab workspace) -> unsigned int {
                 if (workspace == EWorkspaceTab::Schemes) return dockspaceIdSchemes;
+                if (workspace == EWorkspaceTab::Models) return dockspaceIdModels;
                 if (workspace == EWorkspaceTab::GraphPlayground) return dockspaceIdGraphPlayground;
                 if (workspace == EWorkspaceTab::Plots) return dockspaceIdPlots;
                 return dockspaceIdSimulations;
@@ -2168,6 +2229,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
 
         drawWorkspaceDockspace(dockspaceIdSimulations, EWorkspaceTab::Simulations);
         drawWorkspaceDockspace(dockspaceIdSchemes, EWorkspaceTab::Schemes);
+        drawWorkspaceDockspace(dockspaceIdModels, EWorkspaceTab::Models);
         drawWorkspaceDockspace(dockspaceIdGraphPlayground, EWorkspaceTab::GraphPlayground);
         drawWorkspaceDockspace(dockspaceIdPlots, EWorkspaceTab::Plots);
 #endif
@@ -2179,7 +2241,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
 
 auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfaceRegistration> {
     std::vector<FPanelSurfaceRegistration> registry;
-    registry.reserve(12);
+    registry.reserve(13);
 
     registry.push_back(FPanelSurfaceRegistration{
         WindowTitleLab,
@@ -2206,6 +2268,8 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
             if (ActiveWorkspace == EWorkspaceTab::Schemes) {
                 ImGui::Checkbox("Interface Inspector", &bShowWindowSchemeInspector);
                 ImGui::Checkbox("Blueprint Graph", &bShowWindowBlueprintGraph);
+            } else if (ActiveWorkspace == EWorkspaceTab::Models) {
+                ImGui::Checkbox("Model Layer", &bShowWindowModelInspector);
             } else if (ActiveWorkspace == EWorkspaceTab::GraphPlayground) {
                 ImGui::Checkbox("Graph Playground", &bShowWindowGraphPlayground);
             } else if (ActiveWorkspace == EWorkspaceTab::Plots) {
@@ -2311,6 +2375,17 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleModelInspector,
+        EWorkspaceTab::Models,
+        &bShowWindowModelInspector,
+        false,
+        false,
+        [this]() {
+            DrawModelInspectorPanel();
+        }
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
         WindowTitleGraphPlayground,
         EWorkspaceTab::GraphPlayground,
         &bShowWindowGraphPlayground,
@@ -2400,6 +2475,7 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
         ImGui::Checkbox("Live Control", &bShowWindowLiveControl);
         ImGui::Checkbox("Live Interaction", &bShowWindowLiveInteraction);
         ImGui::Checkbox("Views", &bShowWindowViews);
+        ImGui::Checkbox("Model Layer", &bShowWindowModelInspector);
 
         if (bShowWindowTasks) {
             Slab::Studios::LabV2::Panels::ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);
@@ -2425,6 +2501,10 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
 
         if (bShowWindowViews) {
             DrawViewManagerPanel();
+        }
+
+        if (bShowWindowModelInspector) {
+            DrawModelInspectorPanel();
         }
 
         if (const auto windowWidth = static_cast<int>(ImGui::GetWindowWidth()); SidePaneWidth != windowWidth) {
@@ -2471,6 +2551,19 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
                 if (SimulationManager != nullptr) {
                     SimulationManager->DrawLauncherContents();
                 }
+            }
+            ImGui::End();
+        }
+
+        if (bShowWindowModelInspector) {
+            ImGui::SetNextWindowPos(
+                ImVec2(
+                    static_cast<float>(FStudioConfigV2::SidePaneWidth + 580),
+                    GetTopMenuInset() + 24.0f),
+                ImGuiCond_Appearing);
+            ImGui::SetNextWindowSize(ImVec2(720, 720), ImGuiCond_Appearing);
+            if (ImGui::Begin(WindowTitleModelInspector, &bShowWindowModelInspector)) {
+                DrawModelInspectorPanel();
             }
             ImGui::End();
         }

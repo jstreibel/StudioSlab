@@ -10,6 +10,7 @@
 #include "Core/Reflection/V2/ReflectionCatalogRegistryV2.h"
 #include "Core/Reflection/V2/GraphSubstrateV2.h"
 #include "Core/Reflection/V2/SemanticTypesV1.h"
+#include "Core/Model/V2/ModelTypesV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionCatalogV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
 #include "imgui.h"
@@ -22,6 +23,10 @@
 #include <vector>
 
 class FLabV2GraphPlaygroundController;
+
+namespace Slab::Graphics::Typesetting {
+    class FTypesettingService;
+}
 
 struct FLabV2SubstrateGraphCanvasAction {
     Slab::Str Label;
@@ -76,6 +81,7 @@ private:
     enum class EWorkspaceTab : unsigned char {
         Simulations = 0,
         Schemes,
+        Models,
         GraphPlayground,
         Plots
     };
@@ -99,11 +105,12 @@ private:
         bool bShowWindowViews = true;
         bool bShowWindowSchemeInspector = false;
         bool bShowWindowBlueprintGraph = false;
+        bool bShowWindowModelInspector = false;
         bool bShowWindowGraphPlayground = false;
         bool bShowWindowPlotInspector = false;
     };
 
-    static constexpr std::size_t WorkspaceCount = 4;
+    static constexpr std::size_t WorkspaceCount = 5;
     using FSlabWindowPtr = Slab::TPointer<Slab::Graphics::FSlabWindow>;
     using FSlabWindowVec = Slab::Vector<FSlabWindowPtr>;
     struct FPendingSlabWindow {
@@ -159,6 +166,15 @@ private:
     std::map<Slab::Str, Slab::Str> PlotParameterDraftByKey;
     Slab::Str PlotsLastOperationSummary;
     Slab::Core::Reflection::V2::FValueMapV2 PlotsLastOperationOutput;
+
+    Slab::Vector<Slab::Core::Model::V2::FModelV2> ModelDemoCatalog;
+    int SelectedModelIndex = 0;
+    Slab::Str SelectedModelDefinitionId;
+    Slab::Str SelectedModelRelationId;
+    bool bSelectedModelDetailIsRelation = false;
+    int ModelScratchMode = 1;
+    Slab::Str ModelScratchInput;
+    float ModelCatalogDefinitionsHeight = 220.0f;
     struct FSchemeOperationTraceEntry {
         std::size_t SequenceId = 0;
         Slab::Str InterfaceId;
@@ -169,6 +185,7 @@ private:
     };
     std::deque<FSchemeOperationTraceEntry> SchemesOperationTrace;
     std::size_t SchemesOperationTraceSequence = 0;
+    std::unique_ptr<Slab::Graphics::Typesetting::FTypesettingService> UiTypesettingService;
     Slab::Core::Reflection::V2::FGraphDocumentV2 SchemesBlueprintDocument;
     std::map<Slab::Str, ImVec2> BlueprintNodePositionById;
     bool bShowBlueprintLegend = true;
@@ -272,12 +289,13 @@ private:
     unsigned int DockspaceId = 0;
     EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Simulations;
     bool bWorkspaceLayoutsBootstrapped = false;
-    std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false, false};
+    std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false, false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, true, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, true}
+        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false, false, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true, false, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, true, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, true, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, false, true}
     };
     float WorkspaceTabsHeight = 0.0f;
     float WorkspaceStripHeight = 0.0f;
@@ -291,6 +309,7 @@ private:
     bool bShowWindowViews = true;
     bool bShowWindowSchemeInspector = true;
     bool bShowWindowBlueprintGraph = true;
+    bool bShowWindowModelInspector = true;
     bool bShowWindowGraphPlayground = true;
     bool bShowWindowPlotInspector = true;
     bool bHasLastMousePosition = false;
@@ -319,6 +338,7 @@ private:
     auto DrawPanelSurface(const FPanelSurfaceRegistration &registration) -> void;
     auto DrawSchemesInspectorPanel() -> void;
     auto DrawSchemesBlueprintGraphPanel() -> void;
+    auto DrawModelInspectorPanel() -> void;
     auto DrawGraphPlaygroundPanel() -> void;
     auto MarkGraphPlaygroundDirty() -> void;
     auto SaveGraphPlaygroundStateToFile() -> bool;

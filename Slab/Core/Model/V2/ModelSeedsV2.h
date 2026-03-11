@@ -1,0 +1,299 @@
+#ifndef STUDIOSLAB_MODEL_SEEDS_V2_H
+#define STUDIOSLAB_MODEL_SEEDS_V2_H
+
+#include "ModelNotationV2.h"
+
+namespace Slab::Core::Model::V2 {
+
+    namespace Detail {
+
+        inline auto RequireParsedDefinitionV2(const Str &source, const FNotationContextV2 *context = nullptr)
+            -> FParsedDefinitionNotationV2 {
+            const auto parsed = ParseDefinitionNotationV2(source, context);
+            if (!parsed.IsOk()) {
+                throw Exception(
+                    "Failed to parse model definition notation '" + source +
+                    "' at " + ToStr(parsed.Error.Position) + ": " + parsed.Error.Message);
+            }
+            return *parsed.Value;
+        }
+
+        inline auto RequireParsedRelationV2(const Str &relationId,
+                                            const ERelationKindV2 kind,
+                                            const Str &source,
+                                            const FNotationContextV2 *context = nullptr) -> FRelationV2 {
+            const auto parsed = ParseRelationNotationV2(relationId, kind, source, context);
+            if (!parsed.IsOk()) {
+                throw Exception(
+                    "Failed to parse model relation notation '" + source +
+                    "' at " + ToStr(parsed.Error.Position) + ": " + parsed.Error.Message);
+            }
+            return *parsed.Value;
+        }
+
+    } // namespace Detail
+
+    inline auto BuildHarmonicOscillatorModelV2() -> FModelV2 {
+        FModelV2 model;
+        model.ModelId = "model.harmonic_oscillator";
+        model.Name = "Harmonic Oscillator";
+        model.Description =
+            "Finite-dimensional ODE model with one scalar displacement, one scalar momentum, "
+            "symbolic parameters, and equivalent second-order and first-order relations.";
+        model.Tags = {"model", "ode", "classical-mechanics"};
+
+        {
+            auto parsed = Detail::RequireParsedDefinitionV2("t \\in \\mathbb{R}");
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "coord.t",
+                EDefinitionKindV2::Coordinate,
+                parsed,
+                "Time",
+                "Time coordinate for the oscillator.");
+            definition.CoordinateRole = ECoordinateRoleV2::Time;
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            auto parsed = Detail::RequireParsedDefinitionV2("m \\in \\mathbb{R}");
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "param.m",
+                EDefinitionKindV2::ScalarParameter,
+                parsed,
+                "Mass",
+                "Symbolic mass parameter.");
+            definition.Tags = {"parameter"};
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            auto parsed = Detail::RequireParsedDefinitionV2("k \\in \\mathbb{R}");
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "param.k",
+                EDefinitionKindV2::ScalarParameter,
+                parsed,
+                "Spring Constant",
+                "Symbolic stiffness parameter.");
+            definition.Tags = {"parameter"};
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            auto parsed = Detail::RequireParsedDefinitionV2("\\omega \\in \\mathbb{R}");
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "param.omega",
+                EDefinitionKindV2::ScalarParameter,
+                parsed,
+                "Angular Frequency",
+                "Symbolic angular frequency.");
+            definition.Tags = {"parameter"};
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            auto parsed = Detail::RequireParsedDefinitionV2("x : \\mathbb{R} \\to \\mathbb{R}", &context);
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "state.x",
+                EDefinitionKindV2::StateVariable,
+                parsed,
+                "Displacement",
+                "Scalar configuration coordinate x(t).",
+                {"coord.t"});
+            definition.Tags = {"state", "configuration"};
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            auto parsed = Detail::RequireParsedDefinitionV2("p : \\mathbb{R} \\to \\mathbb{R}", &context);
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "state.p",
+                EDefinitionKindV2::StateVariable,
+                parsed,
+                "Momentum",
+                "Scalar momentum p(t).",
+                {"coord.t"});
+            definition.Tags = {"state", "momentum"};
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            auto parsed = Detail::RequireParsedDefinitionV2("E : \\mathbb{R} \\to \\mathbb{R}", &context);
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "obs.energy",
+                EDefinitionKindV2::ObservableSymbol,
+                parsed,
+                "Energy",
+                "Mechanical energy observable along the trajectory.",
+                {"coord.t"},
+                {"state.x", "state.p", "param.m", "param.k"});
+            definition.Tags = {"observable", "energy"};
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            auto relation = Detail::RequireParsedRelationV2(
+                "relation.oscillator.second_order",
+                ERelationKindV2::DifferentialEquation,
+                "\\ddot x + \\omega^2 x = 0",
+                &context);
+            relation.Name = "Second-order Equation";
+            relation.Description = "Platonic second-order oscillator equation.";
+            relation.Tags = {"equation", "ode"};
+            model.Relations.push_back(std::move(relation));
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            auto relation = Detail::RequireParsedRelationV2(
+                "relation.oscillator.first_order_x",
+                ERelationKindV2::DifferentialEquation,
+                "\\dot x = p / m",
+                &context);
+            relation.Name = "First-order Position Equation";
+            relation.Description = "Canonical first-order form for x.";
+            relation.Tags = {"equation", "ode", "first-order"};
+            model.Relations.push_back(std::move(relation));
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            auto relation = Detail::RequireParsedRelationV2(
+                "relation.oscillator.first_order_p",
+                ERelationKindV2::DifferentialEquation,
+                "\\dot p = -k x",
+                &context);
+            relation.Name = "First-order Momentum Equation";
+            relation.Description = "Canonical first-order form for p.";
+            relation.Tags = {"equation", "ode", "first-order"};
+            model.Relations.push_back(std::move(relation));
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            auto relation = Detail::RequireParsedRelationV2(
+                "relation.oscillator.frequency_constraint",
+                ERelationKindV2::Constraint,
+                "\\omega^2 = k / m",
+                &context);
+            relation.Name = "Frequency Constraint";
+            relation.Description = "Symbolic relation between k, m, and omega.";
+            relation.Tags = {"constraint"};
+            model.Relations.push_back(std::move(relation));
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            auto relation = Detail::RequireParsedRelationV2(
+                "relation.oscillator.energy",
+                ERelationKindV2::Identity,
+                "E = p^2 / (2 m) + k x^2 / 2",
+                &context);
+            relation.Name = "Energy Observable";
+            relation.Description = "Symbolic energy observable over the trajectory.";
+            relation.Tags = {"observable", "identity"};
+            model.Relations.push_back(std::move(relation));
+        }
+
+        return model;
+    }
+
+    inline auto BuildKleinGordonModelV2() -> FModelV2 {
+        FModelV2 model;
+        model.ModelId = "model.klein_gordon";
+        model.Name = "Klein-Gordon Field";
+        model.Description =
+            "Field-theoretic model with an abstract scalar field over symbolic spacetime dimension "
+            "and an explicit d'Alembertian operator symbol.";
+        model.Tags = {"model", "pde", "field-theory", "spacetime"};
+        model.Metadata["ambient_space"] = "Minkowski-like";
+
+        {
+            auto parsed = Detail::RequireParsedDefinitionV2("d \\in \\mathbb{R}");
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "param.d",
+                EDefinitionKindV2::ScalarParameter,
+                parsed,
+                "Spatial Dimension Symbol",
+                "Open symbolic spatial dimension used in the field domain.");
+            definition.Tags = {"parameter", "dimension"};
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            auto parsed = Detail::RequireParsedDefinitionV2("m \\in \\mathbb{R}");
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "param.m",
+                EDefinitionKindV2::ScalarParameter,
+                parsed,
+                "Mass",
+                "Symbolic Klein-Gordon mass parameter.");
+            definition.Tags = {"parameter", "mass"};
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            auto parsed = Detail::RequireParsedDefinitionV2("\\phi : \\mathbb{R}^{d+1} \\to \\mathbb{R}", &context);
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "field.phi",
+                EDefinitionKindV2::Field,
+                parsed,
+                "Scalar Field",
+                "Abstract scalar field over symbolic spacetime.");
+            definition.Tags = {"field", "scalar"};
+            definition.Metadata["ambient_space"] = "Minkowski-like";
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            const auto *fieldDefinition = FindDefinitionByIdV2(model, "field.phi");
+            if (fieldDefinition == nullptr || !fieldDefinition->DeclaredType.has_value()) {
+                throw Exception("Klein-Gordon seed requires the phi field definition before Box.");
+            }
+
+            FDefinitionV2 definition;
+            definition.DefinitionId = "operator.box";
+            definition.Symbol = "Box";
+            definition.PreferredNotation = "\\Box";
+            definition.DisplayName = "d'Alembertian";
+            definition.Description = "Abstract wave operator on the scalar field.";
+            definition.Kind = EDefinitionKindV2::OperatorSymbol;
+            definition.OperatorStyle = EOperatorApplicationStyleV2::Prefix;
+            definition.DeclaredType = MakeFunctionTypeV2({*fieldDefinition->DeclaredType}, *fieldDefinition->DeclaredType);
+            definition.SourceText =
+                "\\Box : (\\mathbb{R}^{d+1} \\to \\mathbb{R}) \\to (\\mathbb{R}^{d+1} \\to \\mathbb{R})";
+            definition.Tags = {"operator", "wave"};
+            definition.Metadata["ambient_space"] = "Minkowski-like";
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            auto relation = Detail::RequireParsedRelationV2(
+                "relation.klein_gordon.equation",
+                ERelationKindV2::OperatorEquation,
+                "\\Box \\phi + m^2 \\phi = 0",
+                &context);
+            relation.Name = "Klein-Gordon Equation";
+            relation.Description = "Abstract Klein-Gordon field equation with symbolic mass.";
+            relation.Tags = {"equation", "operator", "pde"};
+            model.Relations.push_back(std::move(relation));
+        }
+
+        return model;
+    }
+
+    inline auto BuildDemoModelsV2() -> Vector<FModelV2> {
+        return {
+            BuildHarmonicOscillatorModelV2(),
+            BuildKleinGordonModelV2()
+        };
+    }
+
+} // namespace Slab::Core::Model::V2
+
+#endif // STUDIOSLAB_MODEL_SEEDS_V2_H

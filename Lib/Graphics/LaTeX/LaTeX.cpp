@@ -10,14 +10,20 @@
 
 #include "Core/Tools/Resources.h"
 
+#include <mutex>
+
 namespace Slab::Graphics::LaTeX {
 
     void Init() {
-        tex::LaTeX::init(Core::Resources::NanoTeXFolder);
+        static std::once_flag initOnce;
+        std::call_once(initOnce, []() {
+            tex::LaTeX::init(Core::Resources::NanoTeXFolder);
+        });
     }
 
     void Release() {
-        tex::LaTeX::release();
+        // NanoTeX's bundled release path is not stable in this environment.
+        // Keep the shared runtime alive for the process lifetime.
     }
 
 }
