@@ -42,6 +42,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 - Plot2D reflection quick path: `Docs/plot2d-reflection-v2-quick.md`
 - Platform feasibility: `Docs/platform-wasm-feasibility.md`
 - Runtime/UI contracts: `Docs/graphics-composition-contract.md`, `Docs/plot-window-ux-contract.md`, `Docs/slab-root-migration-policy.md`
+- Typesetting/UI math bridge: `Docs/typesetting-bridge.md`
 - Monitoring architecture (LiveView vs listeners): `Docs/monitoring-liveview-vs-listeners.md`
 - Validation logs: `Docs/validation/imgui-blueprints-smoke.md`, `Docs/validation/imgui-upstream-parity-log.md`
 - Technical debt TODO backlog: `Docs/technical-debt.md`

@@ -14,6 +14,7 @@
 3. UI/runtime contracts:
    - `Docs/graphics-composition-contract.md`
    - `Docs/plot-window-ux-contract.md`
+   - `Docs/typesetting-bridge.md`
 4. Active planning context:
    - `Docs/v2-feature-backlog.md`
    - `Docs/graph-first-user-story-checklist.md`
@@ -51,6 +52,11 @@
 - Shared LabV2-adjacent helpers:
   - `Slab/Studios/Common/VisualHost.h`
   - `Slab/Studios/Common/SessionLiveViewStatsV2.h`
+- Typesetting bridge:
+  - `Docs/typesetting-bridge.md`
+  - `Lib/Graphics/Typesetting/TypesettingService.h`
+  - `Lib/Graphics/Typesetting/ImGuiTypesetting.h`
+  - `Studios/LabV2/LabV2WindowManagerModelPanels.cpp`
 
 ## Change Patterns
 
