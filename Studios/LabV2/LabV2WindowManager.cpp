@@ -949,7 +949,6 @@ namespace {
 FLabV2WindowManager::FLabV2WindowManager()
 : SidePaneWidth(FStudioConfigV2::SidePaneWidth) {
     ModelDemoCatalog = Slab::Core::Model::V2::BuildDemoModelsV2();
-    ModelScratchInput = "\\ddot x + \\omega^2 x = 0";
 
     SchemesBlueprintDocument.Mode = Slab::Core::Reflection::V2::EGraphModeV2::SchemesBlueprint;
     SchemesBlueprintDocument.Canvas.PanX = 80.0f;

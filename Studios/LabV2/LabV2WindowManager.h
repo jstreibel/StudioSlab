@@ -11,6 +11,7 @@
 #include "Core/Reflection/V2/GraphSubstrateV2.h"
 #include "Core/Reflection/V2/SemanticTypesV1.h"
 #include "Core/Model/V2/ModelTypesV2.h"
+#include "Core/Model/V2/ModelAuthoringV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionCatalogV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
 #include "imgui.h"
@@ -172,8 +173,11 @@ private:
     Slab::Str SelectedModelDefinitionId;
     Slab::Str SelectedModelRelationId;
     bool bSelectedModelDetailIsRelation = false;
-    int ModelScratchMode = 1;
-    Slab::Str ModelScratchInput;
+    std::map<Slab::Str, Slab::Core::Model::V2::FModelEditorBufferV2> ModelEditorBuffersByKey;
+    Slab::Str SelectedModelAssumptionId;
+    Slab::Str ModelEditorStatus;
+    Slab::Core::Model::V2::FModelChangeRecordV2 ModelLastChangeRecord;
+    bool bModelHasLastChangeRecord = false;
     float ModelCatalogDefinitionsHeight = 220.0f;
     float ModelScratchpadHeight = 220.0f;
     struct FSchemeOperationTraceEntry {

@@ -87,6 +87,23 @@ namespace Slab::Core::Model::V2 {
         Warning
     };
 
+    enum class EAssumptionStatusV2 : unsigned char {
+        Implicit,
+        Accepted,
+        Dismissed
+    };
+
+    enum class EModelObjectKindV2 : unsigned char {
+        Definition,
+        Relation,
+        Assumption
+    };
+
+    enum class EModelChangeOriginV2 : unsigned char {
+        DirectEdit,
+        AcceptedInference
+    };
+
     struct FExpressionV2;
     using FExpressionPtrV2 = TPointer<FExpressionV2>;
 
@@ -161,12 +178,33 @@ namespace Slab::Core::Model::V2 {
         std::map<Str, Str> Metadata;
     };
 
+    struct FAssumptionStateV2 {
+        Str AssumptionId;
+        EAssumptionStatusV2 Status = EAssumptionStatusV2::Implicit;
+        Str SourceSignature;
+        Str MaterializedDefinitionId;
+        std::map<Str, Str> Metadata;
+    };
+
+    struct FModelChangeRecordV2 {
+        Str ChangeId;
+        EModelObjectKindV2 ObjectKind = EModelObjectKindV2::Definition;
+        Str ObjectId;
+        Str PreviousCanonicalNotation;
+        Str NewCanonicalNotation;
+        EModelChangeOriginV2 Origin = EModelChangeOriginV2::DirectEdit;
+        Str SourceId;
+        std::map<Str, Str> Metadata;
+    };
+
     struct FModelV2 {
         Str ModelId;
         Str Name;
         Str Description;
         Vector<FDefinitionV2> Definitions;
         Vector<FRelationV2> Relations;
+        Vector<FAssumptionStateV2> AssumptionStates;
+        Vector<FModelChangeRecordV2> ChangeLog;
         StrVector Tags;
         std::map<Str, Str> Metadata;
     };
@@ -318,6 +356,35 @@ namespace Slab::Core::Model::V2 {
         switch (value) {
             case EValidationSeverityV2::Error: return "Error";
             case EValidationSeverityV2::Warning: return "Warning";
+        }
+
+        return "Unknown";
+    }
+
+    inline auto ToString(const EAssumptionStatusV2 value) -> const char * {
+        switch (value) {
+            case EAssumptionStatusV2::Implicit: return "Implicit";
+            case EAssumptionStatusV2::Accepted: return "Accepted";
+            case EAssumptionStatusV2::Dismissed: return "Dismissed";
+        }
+
+        return "Unknown";
+    }
+
+    inline auto ToString(const EModelObjectKindV2 value) -> const char * {
+        switch (value) {
+            case EModelObjectKindV2::Definition: return "Definition";
+            case EModelObjectKindV2::Relation: return "Relation";
+            case EModelObjectKindV2::Assumption: return "Assumption";
+        }
+
+        return "Unknown";
+    }
+
+    inline auto ToString(const EModelChangeOriginV2 value) -> const char * {
+        switch (value) {
+            case EModelChangeOriginV2::DirectEdit: return "DirectEdit";
+            case EModelChangeOriginV2::AcceptedInference: return "AcceptedInference";
         }
 
         return "Unknown";
@@ -503,6 +570,30 @@ namespace Slab::Core::Model::V2 {
             return relation.RelationId == relationId;
         });
         if (it == model.Relations.end()) return nullptr;
+        return &(*it);
+    }
+
+    inline auto FindRelationByIdV2(FModelV2 &model, const Str &relationId) -> FRelationV2 * {
+        const auto it = std::find_if(model.Relations.begin(), model.Relations.end(), [&](const auto &relation) {
+            return relation.RelationId == relationId;
+        });
+        if (it == model.Relations.end()) return nullptr;
+        return &(*it);
+    }
+
+    inline auto FindAssumptionStateByIdV2(const FModelV2 &model, const Str &assumptionId) -> const FAssumptionStateV2 * {
+        const auto it = std::find_if(model.AssumptionStates.begin(), model.AssumptionStates.end(), [&](const auto &state) {
+            return state.AssumptionId == assumptionId;
+        });
+        if (it == model.AssumptionStates.end()) return nullptr;
+        return &(*it);
+    }
+
+    inline auto FindAssumptionStateByIdV2(FModelV2 &model, const Str &assumptionId) -> FAssumptionStateV2 * {
+        const auto it = std::find_if(model.AssumptionStates.begin(), model.AssumptionStates.end(), [&](const auto &state) {
+            return state.AssumptionId == assumptionId;
+        });
+        if (it == model.AssumptionStates.end()) return nullptr;
         return &(*it);
     }
 

@@ -1,5 +1,6 @@
 #include <catch2/catch_all.hpp>
 
+#include "Core/Model/V2/ModelAuthoringV2.h"
 #include "Core/Model/V2/ModelSeedsV2.h"
 
 namespace {
@@ -8,6 +9,14 @@ namespace {
         return std::any_of(result.Messages.begin(), result.Messages.end(), [&](const auto &message) {
             return message.Severity == Slab::Core::Model::V2::EValidationSeverityV2::Error &&
                    message.Message.find(needle) != Slab::Str::npos;
+        });
+    }
+
+    auto HasSemanticDiagnosticContaining(const Slab::Vector<Slab::Core::Model::V2::FSemanticDiagnosticV2> &diagnostics,
+                                         const Slab::Str &code,
+                                         const Slab::Str &needle) -> bool {
+        return std::any_of(diagnostics.begin(), diagnostics.end(), [&](const auto &diagnostic) {
+            return diagnostic.Code == code && diagnostic.Message.find(needle) != Slab::Str::npos;
         });
     }
 
@@ -173,4 +182,176 @@ TEST_CASE("Model V2 validation catches invalid derivative and operator applicati
     const auto operatorValidation = ValidateModelV2(kg);
     REQUIRE_FALSE(operatorValidation.IsOk());
     CHECK(HasErrorContaining(operatorValidation, "argument[0]"));
+}
+
+TEST_CASE("Model V2 transactional relation editing previews before apply", "[ModelV2][Editor]") {
+    using namespace Slab::Core::Model::V2;
+
+    auto model = BuildHarmonicOscillatorModelV2();
+    auto editor = MakeEditorBufferForRelationV2(model, "relation.oscillator.second_order");
+    REQUIRE(editor.has_value());
+
+    const auto *originalRelation = FindRelationByIdV2(model, "relation.oscillator.second_order");
+    REQUIRE(originalRelation != nullptr);
+    CHECK(originalRelation->SourceText == "\\ddot x + \\omega^2 x = 0");
+
+    SetEditorBufferDraftV2(*editor, "\\dot x = p / m");
+    REQUIRE(ParseEditorBufferPreviewV2(model, *editor));
+    REQUIRE(editor->RelationPreview.has_value());
+    CHECK(editor->RelationPreview->InferredClass == ERelationSemanticClassV2::FirstOrderODELike);
+    CHECK(editor->RelationPreview->bCanApply);
+
+    const auto *unchangedRelation = FindRelationByIdV2(model, "relation.oscillator.second_order");
+    REQUIRE(unchangedRelation != nullptr);
+    CHECK(unchangedRelation->SourceText == "\\ddot x + \\omega^2 x = 0");
+
+    FModelChangeRecordV2 changeRecord;
+    REQUIRE(ApplyEditorBufferV2(model, *editor, EModelChangeOriginV2::DirectEdit, &changeRecord));
+    CHECK(changeRecord.ObjectId == "relation.oscillator.second_order");
+    CHECK(changeRecord.PreviousCanonicalNotation == "\\ddot x + \\omega^2 x = 0");
+    CHECK(changeRecord.NewCanonicalNotation == "\\dot x = p / m");
+
+    const auto *appliedRelation = FindRelationByIdV2(model, "relation.oscillator.second_order");
+    REQUIRE(appliedRelation != nullptr);
+    CHECK(appliedRelation->SourceText == "\\dot x = p / m");
+}
+
+TEST_CASE("Model V2 transactional definition editing supports apply and revert", "[ModelV2][Editor]") {
+    using namespace Slab::Core::Model::V2;
+
+    auto model = BuildHarmonicOscillatorModelV2();
+    auto editor = MakeEditorBufferForDefinitionV2(model, "param.m");
+    REQUIRE(editor.has_value());
+
+    SetEditorBufferDraftV2(*editor, "m \\in \\mathbb{C}");
+    REQUIRE(ParseEditorBufferPreviewV2(model, *editor));
+    REQUIRE(editor->DefinitionPreview.has_value());
+    CHECK(editor->DefinitionPreview->bCanApply);
+
+    const auto *originalDefinition = FindDefinitionByIdV2(model, "param.m");
+    REQUIRE(originalDefinition != nullptr);
+    CHECK(originalDefinition->SourceText == "m \\in \\mathbb{R}");
+
+    REQUIRE(RevertEditorBufferV2(model, *editor));
+    CHECK(editor->DraftNotation == "m \\in \\mathbb{R}");
+    CHECK_FALSE(editor->bDraftDirty);
+    CHECK(FindDefinitionByIdV2(model, "param.m")->SourceText == "m \\in \\mathbb{R}");
+
+    SetEditorBufferDraftV2(*editor, "m \\in \\mathbb{C}");
+    REQUIRE(ParseEditorBufferPreviewV2(model, *editor));
+    FModelChangeRecordV2 changeRecord;
+    REQUIRE(ApplyEditorBufferV2(model, *editor, EModelChangeOriginV2::DirectEdit, &changeRecord));
+    CHECK(changeRecord.ObjectId == "param.m");
+
+    const auto *appliedDefinition = FindDefinitionByIdV2(model, "param.m");
+    REQUIRE(appliedDefinition != nullptr);
+    CHECK(appliedDefinition->SourceText == "m \\in \\mathbb{C}");
+}
+
+TEST_CASE("Model V2 editor distinguishes parse errors from semantic issues", "[ModelV2][Editor][Diagnostics]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto oscillator = BuildHarmonicOscillatorModelV2();
+    auto parseFailure = MakeEditorBufferForRelationV2(oscillator, "relation.oscillator.second_order");
+    REQUIRE(parseFailure.has_value());
+    SetEditorBufferDraftV2(*parseFailure, "\\frac{x}{y} = 0");
+    CHECK_FALSE(ParseEditorBufferPreviewV2(oscillator, *parseFailure));
+    REQUIRE(parseFailure->RelationPreview.has_value());
+    CHECK_FALSE(parseFailure->RelationPreview->bParseOk);
+    CHECK(HasSemanticDiagnosticContaining(parseFailure->RelationPreview->Diagnostics, "parse_error", "derivative"));
+
+    const auto kg = BuildKleinGordonModelV2();
+    auto semanticFailure = MakeEditorBufferForRelationV2(kg, "relation.klein_gordon.equation");
+    REQUIRE(semanticFailure.has_value());
+    SetEditorBufferDraftV2(*semanticFailure, "\\Box \\phi + m^2 \\psi = 0");
+    REQUIRE(ParseEditorBufferPreviewV2(kg, *semanticFailure));
+    REQUIRE(semanticFailure->RelationPreview.has_value());
+    CHECK_FALSE(semanticFailure->RelationPreview->bCanApply);
+    CHECK(HasSemanticDiagnosticContaining(semanticFailure->RelationPreview->Diagnostics, "unresolved_symbol", "\\psi"));
+    CHECK(HasSemanticDiagnosticContaining(semanticFailure->RelationPreview->Diagnostics, "inferred_undeclared_role", "\\psi"));
+    CHECK(HasSemanticDiagnosticContaining(semanticFailure->RelationPreview->Diagnostics, "deferred_semantics", "\\psi"));
+}
+
+TEST_CASE("Model V2 semantic report infers oscillator assumptions", "[ModelV2][Inference]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildHarmonicOscillatorModelV2();
+    const auto report = BuildModelSemanticReportV2(model);
+
+    const auto relationIt = std::find_if(report.Relations.begin(), report.Relations.end(), [&](const auto &relationReport) {
+        return relationReport.RelationId == "relation.oscillator.second_order";
+    });
+    REQUIRE(relationIt != report.Relations.end());
+    CHECK(relationIt->InferredClass == ERelationSemanticClassV2::SecondOrderODELike);
+
+    const auto hasXStateAssumption = std::any_of(report.Assumptions.begin(), report.Assumptions.end(), [&](const auto &assumption) {
+        return assumption.SourceId == "relation.oscillator.second_order" &&
+            assumption.TargetId == "state.x" &&
+            assumption.Kind == EAssumptionKindV2::DefinitionRole &&
+            assumption.InferredKind.has_value() &&
+            *assumption.InferredKind == EDefinitionKindV2::StateVariable;
+    });
+    CHECK(hasXStateAssumption);
+
+    const auto hasOmegaParameterAssumption = std::any_of(report.Assumptions.begin(), report.Assumptions.end(), [&](const auto &assumption) {
+        return assumption.SourceId == "relation.oscillator.second_order" &&
+            assumption.TargetId == "param.omega" &&
+            assumption.Kind == EAssumptionKindV2::DefinitionRole &&
+            assumption.InferredKind.has_value() &&
+            *assumption.InferredKind == EDefinitionKindV2::ScalarParameter;
+    });
+    CHECK(hasOmegaParameterAssumption);
+}
+
+TEST_CASE("Model V2 semantic report infers Klein-Gordon assumptions", "[ModelV2][Inference]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildKleinGordonModelV2();
+    const auto report = BuildModelSemanticReportV2(model);
+
+    const auto relationIt = std::find_if(report.Relations.begin(), report.Relations.end(), [&](const auto &relationReport) {
+        return relationReport.RelationId == "relation.klein_gordon.equation";
+    });
+    REQUIRE(relationIt != report.Relations.end());
+    CHECK(relationIt->InferredClass == ERelationSemanticClassV2::FieldEquationLike);
+
+    const auto phiIt = std::find_if(relationIt->ReferencedSymbols.begin(), relationIt->ReferencedSymbols.end(), [&](const auto &symbol) {
+        return symbol.ReferenceId == "field.phi";
+    });
+    REQUIRE(phiIt != relationIt->ReferencedSymbols.end());
+    REQUIRE(phiIt->InferredKind.has_value());
+    CHECK(*phiIt->InferredKind == EDefinitionKindV2::Field);
+
+    const auto boxIt = std::find_if(relationIt->ReferencedSymbols.begin(), relationIt->ReferencedSymbols.end(), [&](const auto &symbol) {
+        return symbol.ReferenceId == "operator.box";
+    });
+    REQUIRE(boxIt != relationIt->ReferencedSymbols.end());
+    REQUIRE(boxIt->InferredKind.has_value());
+    CHECK(*boxIt->InferredKind == EDefinitionKindV2::OperatorSymbol);
+
+    const auto massIt = std::find_if(relationIt->ReferencedSymbols.begin(), relationIt->ReferencedSymbols.end(), [&](const auto &symbol) {
+        return symbol.ReferenceId == "param.m";
+    });
+    REQUIRE(massIt != relationIt->ReferencedSymbols.end());
+    REQUIRE(massIt->InferredKind.has_value());
+    CHECK(*massIt->InferredKind == EDefinitionKindV2::ScalarParameter);
+}
+
+TEST_CASE("Model V2 semantic report compares declared and inferred roles", "[ModelV2][Inference][Diagnostics]") {
+    using namespace Slab::Core::Model::V2;
+
+    auto model = BuildHarmonicOscillatorModelV2();
+    auto *x = FindDefinitionByIdV2(model, "state.x");
+    REQUIRE(x != nullptr);
+    x->Kind = EDefinitionKindV2::ScalarParameter;
+
+    const auto report = BuildModelSemanticReportV2(model);
+    const auto reportIt = std::find_if(report.Definitions.begin(), report.Definitions.end(), [&](const auto &definitionReport) {
+        return definitionReport.DefinitionId == "state.x";
+    });
+    REQUIRE(reportIt != report.Definitions.end());
+    REQUIRE(reportIt->InferredKind.has_value());
+    CHECK(*reportIt->InferredKind == EDefinitionKindV2::StateVariable);
+    CHECK(reportIt->bRoleMismatchesDeclared);
+    CHECK(HasSemanticDiagnosticContaining(reportIt->Diagnostics, "declared_inferred_mismatch", "disagrees"));
 }
