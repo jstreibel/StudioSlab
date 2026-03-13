@@ -103,8 +103,15 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - added model-level `BaseVocabulary` preset selection and ambient entry resolution
   - added preset baseline for `core_math`, `classical_mechanics`, and `relativistic_field_theory`
   - semantic origin reporting now distinguishes local definitions, base vocabulary, and assumptions
-  - Model tab now shows inspectable readonly `Base Vocabulary` above local `Definitions`
+  - Model workspace now exposes inspectable readonly `Base Vocabulary` as a dedicated semantic surface
   - notation conventions use preview LaTeX templates instead of bare command tokens
+- `LAB-13` done: Model-tab semantic navigation and transactional authoring pass:
+  - cross-highlighting and reference navigation now connect vocabulary, definitions, relations, assumptions, and inspector diagnostics
+  - model-level semantic status/classification summary now reports health, unresolved symbols, pending assumptions, and inferred model character
+  - draft semantic delta preview compares canonical vs preview semantic state before apply
+  - draft-only assumptions/materializations are navigable during preview
+  - direct create flow exists for new local definitions and new local relations
+  - Model workspace moved from one stacked panel to separate dockable windows for vocabulary, definitions, relations, editor, assumptions, and inspector
 
 ### `P0` `RV2-00` — Reflection V2 contract freeze — done
 - Define `Interface`/`Parameter`/`Operation` schema contracts.
@@ -186,6 +193,12 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - model-level ambient `BaseVocabulary`
   - origin-aware semantic inspection
   - inspectable ambient vocabulary section in the Model tab
+- `P1` `LAB-13` — Model tab semantic navigation + authoring surfaces — done
+  - semantic cross-highlighting and clickable provenance/dependency navigation
+  - model-level semantic health/classification summary
+  - draft semantic delta preview and draft-only object inspection
+  - direct creation of local definitions/relations
+  - dockable Model workspace surfaces
 
 ### Coverage Portfolio
 - `P1` `CVG-01` — MD V2 scoping — done

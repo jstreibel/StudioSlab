@@ -3,8 +3,8 @@
 ## Snapshot Metadata
 
 - Snapshot date: `2026-03-13`
-- Last implementation update: `2026-03-13` (Model-tab ambient semantic environment baseline)
-- Last architecture-doc update: `2026-03-13` (Model-tab semantic environment + LabV2 model docs refresh)
+- Last implementation update: `2026-03-13` (Model-tab docked semantic authoring surfaces + direct create flow)
+- Last architecture-doc update: `2026-03-13` (Model-tab docked authoring/status docs refresh)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-13`
 - Build-target sanity check date: `2026-03-13` (`StudioSlab` build passes in `cmake-build-debug`)
 
@@ -159,15 +159,30 @@
   - local explicit definitions
   - active base-vocabulary entries
   - inferred / assumed local semantics
-- Model-tab UI now exposes `Base Vocabulary` as a readonly ambient section above local `Definitions`:
+- Model workspace now exposes `Base Vocabulary` as a dedicated readonly semantic surface:
   - entries are inspectable and origin-aware
   - symbol-like entries render directly as LaTeX
   - notation-convention entries use preview LaTeX templates (for example `\\dot{\\mathrm{state}}`, `\\ddot{\\mathrm{state}}`, `\\partial_{\\mu}`)
-  - dedicated splitters exist between `Base Vocabulary` / `Definitions` and `Definitions` / `Relations`
 - Seeded model alignment:
   - Harmonic Oscillator now uses `classical_mechanics`
   - Klein-Gordon now uses `relativistic_field_theory`
   - ambient `\\Box` is supplied by vocabulary instead of requiring only heuristic inference or a local `operator.box` definition
+- Model workspace authoring/navigation pass landed:
+  - semantic navigation/cross-highlighting now spans vocabulary, definitions, relations, assumptions, and inspector links
+  - model-level semantic status/classification summary is computed from semantic overview data
+  - draft semantic delta preview now compares canonical vs preview semantic state
+  - draft-only assumptions/materializations are navigable before apply
+  - direct creation flow exists for new local definitions and new local relations
+  - Model workspace is split into dockable surfaces:
+    - `Model Vocabulary`
+    - `Model Definitions`
+    - `Model Relations`
+    - `Model Notation Editor`
+    - `Model Assumptions`
+    - `Model Inspector`
+- Current authoring constraint:
+  - unresolved-symbol diagnostics remain blocking errors for canonical apply
+  - users resolve them by creating a local definition or materializing an inferred assumption
 
 ## Reflection Working-Memory Caveats (Current)
 
@@ -204,6 +219,7 @@
 - Unified persistence/provenance model across assets/runs/studies
 - Web/wasm target path (toolchain/build/backend split) is not implemented
 - User-authored base-vocabulary editing and richer semantic-environment provenance are not implemented
+- exact notation-span navigation from diagnostics/selection is not implemented
 
 ## Conflict Rule
 

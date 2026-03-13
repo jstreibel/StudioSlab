@@ -78,21 +78,38 @@
   2. keep top-level panel ownership and docking in `LabV2WindowManager.*`
   3. keep reusable panel draw logic in `LabV2Panels.*`
   4. keep numerics logic inside shared simulation/runtime modules
+- Add/change Model workspace behavior:
+  1. update `LabV2WindowManagerModelPanels.cpp`
+  2. keep dock titles/visibility/default layout in `LabV2WindowManager.cpp`
+  3. keep semantic preview/create/apply logic in `ModelAuthoringV2.h`
+  4. keep coverage in `Lib/tests/test_model_v2.cpp`
 
 ## Current UI Invariants (Docked Mode)
 
 - Slab monitor windows are rendered/interactive only in the `Monitor` workspace.
 - `Simulations` and `Schemes` workspaces should not show monitor slab-window leftovers.
 - Simulation launcher labels should avoid `V2` prefixing and model-specific clutter where a generic control label is sufficient.
-- In the Model tab, `Base Vocabulary` is ambient/readonly and sits above local `Definitions`.
+- In the Model workspace, semantic concerns are split into dockable windows instead of one monolithic panel.
+- The Model window order should remain conceptually stable:
+  - `Vocabulary`
+  - `Definitions`
+  - `Relations`
+  - `Notation Editor`
+  - `Assumptions`
+  - `Inspector`
+- In the Model workspace, `Base Vocabulary` is ambient/readonly and full object details belong in `Model Inspector`, not repeated in catalog panes.
+- New model content creation is transactional:
+  - preview first
+  - canonical mutation only on `Create` / `Apply`
+  - unresolved-symbol errors block apply until resolved or materialized
 
 ## Validation Minimum
 
 - Build:
-  - `cmake --build cmake-build-debug --target StudioSlabV2 SlabTests -j8`
+  - `cmake --build cmake-build-debug --target StudioSlab testsuite -j8`
 - Runtime smoke:
-  - `./Build/bin/StudioSlabV2`
-  - `./Build/bin/SlabTests list`
+  - `./Build/bin/StudioSlab`
+  - `./Build/bin/testsuite "[ModelV2]"`
 - If changing ImGui/layout behavior:
   - `Scripts/imgui-runtime-smoke.sh`
   - `Scripts/imgui-provider-runtime-matrix.sh`

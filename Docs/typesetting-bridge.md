@@ -96,26 +96,25 @@ Current adapter responsibilities:
 - draw through current ImGui draw list
 - return useful row bounds and hover/press state for selection-ready UI
 
-## Model Panel V1 Behavior
+## Model Panel Behavior
 
-Current `Model` panel usage:
-- `Base Vocabulary` sits above local `Definitions` as an ambient/readonly section
+Current `Model` workspace usage:
+- `Model Vocabulary`, `Model Definitions`, `Model Relations`, `Model Notation Editor`, `Model Assumptions`, and `Model Inspector` are separate dockable windows
+- `Base Vocabulary` remains an ambient/readonly catalog surface
 - Base-vocabulary entries are inspectable but not edited like local definitions
 - symbol-like vocabulary entries render as direct LaTeX (`\\mathbb{R}`, `\\Box`)
 - notation-convention entries render using preview templates (`\\dot{\\mathrm{state}}`, `\\ddot{\\mathrm{state}}`, `\\partial_{\\mu}`)
 - `Definitions` and `Relations` rows show only the typeset formula
-- detailed metadata stays in `Details`
+- detailed metadata stays in `Model Inspector`
 - hover previews an item immediately
 - click pins the current selection
-- `Details` reports whether focus came from hover preview or pinned selection
-- `Base Vocabulary` / `Definitions` has an internal vertical splitter
-- `Definitions` and `Relations` have an internal vertical splitter
-- `Notation Scratchpad` sits below the main content and has its own vertical splitter
+- `Model Inspector` reports whether focus came from hover preview or pinned selection
+- `Model Notation Editor` owns draft preview/apply for existing items and direct create flow for new local items
 
 Current layout intent:
 - keep deterministic row bounds for later selection/highlighting work
-- avoid panel-wide scrolling in normal use
-- allow internal child scrolling where detail volume exceeds pane height
+- avoid redundant detail rendering in catalog panes when inspector is visible
+- allow workspace docking/layout changes without changing semantic selection behavior
 
 ## Manual Validation
 
@@ -124,12 +123,11 @@ Minimum manual checks after touching this surface:
 - verify seeded Harmonic Oscillator and Klein-Gordon rows render readable math
 - verify `Base Vocabulary` entries render readable math and convention previews
 - verify first open does not rerasterize every frame after warm-up
-- verify row hover and pinned selection update `Details` correctly
+- verify row hover and pinned selection update `Model Inspector` correctly
 - verify row highlight bounds match hit area
-- verify `Base Vocabulary` / `Definitions` splitter drags cleanly
-- verify `Definitions` / `Relations` splitter drags cleanly
-- verify scratchpad splitter drags cleanly
-- verify main panel does not degrade into one large scrolling surface in normal window sizes
+- verify each Model surface docks/undocks without losing semantic selection
+- verify `Model Vocabulary` does not nest an extra scrollbar inside the workspace scroll
+- verify `Model Inspector` remains the only detailed semantic-object summary surface
 
 ## Known Gaps
 

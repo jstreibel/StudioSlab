@@ -105,19 +105,30 @@ Non-goal in this layer:
 
 ## UI Contract
 
-Current Model-tab layout:
-- `Base Vocabulary` sits above local `Definitions` in the left catalog rail
-- it is visible, inspectable, and explicitly marked ambient/readonly
+Current Model workspace layout:
+- separate dockable windows preserve semantic order:
+  1. `Model Vocabulary`
+  2. `Model Definitions`
+  3. `Model Relations`
+  4. `Model Notation Editor`
+  5. `Model Assumptions`
+  6. `Model Inspector`
+- `Base Vocabulary` remains ambient/readonly
 - `Definitions` and `Relations` remain the local editable content
+- `Assumptions` remain visible as inferred/proposed semantics, not silently canonized
+- selection, cross-highlighting, and inspector provenance are shared across the docked surfaces
 
 Inspector/rendering rules:
 - symbol-like entries render directly as LaTeX
 - convention-like entries use preview LaTeX templates
 - the UI should show whether a vocabulary entry is built-in, overridden locally, or specialized locally
 
-Current left-rail splitters:
-- `Base Vocabulary` / `Definitions`
-- `Definitions` / `Relations`
+Authoring rules:
+- existing `Definitions` and `Relations` are edited transactionally in `Model Notation Editor`
+- new `Definitions` and new `Relations` can be created directly from dedicated composers
+- create/edit preview must stay transactional until `Apply` / `Create`
+- unresolved-symbol errors still block canonical apply
+- a missing symbol is resolved either by creating an explicit local `Definition` or by materializing an inferred assumption when that path exists
 
 ## Seed Expectations
 
@@ -142,3 +153,5 @@ Important validation point:
 - no user-authored base-vocabulary editor yet
 - indexed/tensor/operator language remains minimal
 - override/specialization tracking is metadata-based, not full provenance/version history
+- direct creation is single-object only; there is no batch authoring/undo stack yet
+- draft-only objects are navigable in preview, but exact notation-span navigation is still absent
