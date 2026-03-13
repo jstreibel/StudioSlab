@@ -2211,7 +2211,13 @@ auto FLabV2WindowManager::PrepareModelWorkspaceViewState() -> FModelWorkspaceVie
     state.DraftPreviewAssumptions = GetEditorBufferPreviewAssumptions(state.ActiveEditorBuffer);
     state.Model = &model;
     state.bAvailable = true;
+    const bool bSelectionUsesDraftOverview =
+        state.ActiveDraftOverview != nullptr && state.SelectionOverview == state.ActiveDraftOverview;
     CachedModelWorkspaceViewState = state;
+    CachedModelWorkspaceViewState.SelectionOverview =
+        bSelectionUsesDraftOverview && CachedModelWorkspaceViewState.ActiveDraftOverview != nullptr
+            ? CachedModelWorkspaceViewState.ActiveDraftOverview
+            : &CachedModelWorkspaceViewState.Overview;
     CachedModelWorkspaceFrame = frameIndex;
     bModelWorkspaceViewStateDirty = false;
     return CachedModelWorkspaceViewState;
