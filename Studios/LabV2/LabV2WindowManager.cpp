@@ -112,6 +112,12 @@ namespace {
     constexpr auto WindowTitleSchemesInspector = "Interface Inspector";
     constexpr auto WindowTitleBlueprintGraph = "Blueprint Graph";
     constexpr auto WindowTitleModelInspector = "Model Layer";
+    constexpr auto WindowTitleModelVocabulary = "Model Vocabulary";
+    constexpr auto WindowTitleModelDefinitions = "Model Definitions";
+    constexpr auto WindowTitleModelRelations = "Model Relations";
+    constexpr auto WindowTitleModelEditor = "Model Notation Editor";
+    constexpr auto WindowTitleModelAssumptions = "Model Assumptions";
+    constexpr auto WindowTitleModelDetails = "Model Inspector";
     constexpr auto WindowTitleGraphPlayground = "Graph Playground";
     constexpr auto WindowTitlePlotInspector = "Plot Inspector";
     constexpr auto PopupBlueprintGraphContext = "SchemesBlueprintGraphContext";
@@ -1823,6 +1829,12 @@ auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab works
         bShowWindowSchemeInspector,
         bShowWindowBlueprintGraph,
         bShowWindowModelInspector,
+        bShowWindowModelVocabulary,
+        bShowWindowModelDefinitions,
+        bShowWindowModelRelations,
+        bShowWindowModelEditor,
+        bShowWindowModelAssumptions,
+        bShowWindowModelDetails,
         bShowWindowGraphPlayground,
         bShowWindowPlotInspector
     };
@@ -1841,6 +1853,12 @@ auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab works
     bShowWindowSchemeInspector = cfg.bShowWindowSchemeInspector;
     bShowWindowBlueprintGraph = cfg.bShowWindowBlueprintGraph;
     bShowWindowModelInspector = cfg.bShowWindowModelInspector;
+    bShowWindowModelVocabulary = cfg.bShowWindowModelVocabulary;
+    bShowWindowModelDefinitions = cfg.bShowWindowModelDefinitions;
+    bShowWindowModelRelations = cfg.bShowWindowModelRelations;
+    bShowWindowModelEditor = cfg.bShowWindowModelEditor;
+    bShowWindowModelAssumptions = cfg.bShowWindowModelAssumptions;
+    bShowWindowModelDetails = cfg.bShowWindowModelDetails;
     bShowWindowGraphPlayground = cfg.bShowWindowGraphPlayground;
     bShowWindowPlotInspector = cfg.bShowWindowPlotInspector;
 }
@@ -2059,7 +2077,13 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
             drawToggle("Inspector", &bShowWindowSchemeInspector);
             drawToggle("Blueprint Graph", &bShowWindowBlueprintGraph);
         } else if (ActiveWorkspace == EWorkspaceTab::Models) {
-            drawToggle("Model Layer", &bShowWindowModelInspector);
+            drawToggle("Summary", &bShowWindowModelInspector);
+            drawToggle("Vocabulary", &bShowWindowModelVocabulary);
+            drawToggle("Definitions", &bShowWindowModelDefinitions);
+            drawToggle("Relations", &bShowWindowModelRelations);
+            drawToggle("Editor", &bShowWindowModelEditor);
+            drawToggle("Assumptions", &bShowWindowModelAssumptions);
+            drawToggle("Inspector", &bShowWindowModelDetails);
         } else if (ActiveWorkspace == EWorkspaceTab::GraphPlayground) {
             drawToggle("Graph Playground", &bShowWindowGraphPlayground);
         } else {
@@ -2123,7 +2147,22 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
         ImGui::DockBuilderDockWindow(WindowTitleSchemesInspector, dockLeft);
         ImGui::DockBuilderDockWindow(WindowTitleBlueprintGraph, dockMain);
     } else if (workspace == EWorkspaceTab::Models) {
-        ImGui::DockBuilderDockWindow(WindowTitleModelInspector, dockMain);
+        ImGuiID dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.26f, nullptr, &dockMain);
+        ImGuiID dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.28f, nullptr, &dockMain);
+        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.34f, nullptr, &dockMain);
+        const auto dockCenterTop = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Up, 0.24f, nullptr, &dockMain);
+
+        const auto dockLeftBottom = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.38f, nullptr, &dockLeft);
+        const auto dockLeftMiddle = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.44f, nullptr, &dockLeft);
+        const auto dockRightBottom = ImGui::DockBuilderSplitNode(dockRight, ImGuiDir_Down, 0.42f, nullptr, &dockRight);
+
+        ImGui::DockBuilderDockWindow(WindowTitleModelVocabulary, dockLeft);
+        ImGui::DockBuilderDockWindow(WindowTitleModelDefinitions, dockLeftMiddle);
+        ImGui::DockBuilderDockWindow(WindowTitleModelRelations, dockLeftBottom);
+        ImGui::DockBuilderDockWindow(WindowTitleModelInspector, dockCenterTop);
+        ImGui::DockBuilderDockWindow(WindowTitleModelEditor, dockMain);
+        ImGui::DockBuilderDockWindow(WindowTitleModelDetails, dockRight);
+        ImGui::DockBuilderDockWindow(WindowTitleModelAssumptions, dockRightBottom);
     } else if (workspace == EWorkspaceTab::GraphPlayground) {
         ImGui::DockBuilderDockWindow(WindowTitleGraphPlayground, dockMain);
     } else {
@@ -2240,7 +2279,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
 
 auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfaceRegistration> {
     std::vector<FPanelSurfaceRegistration> registry;
-    registry.reserve(13);
+    registry.reserve(19);
 
     registry.push_back(FPanelSurfaceRegistration{
         WindowTitleLab,
@@ -2269,6 +2308,12 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
                 ImGui::Checkbox("Blueprint Graph", &bShowWindowBlueprintGraph);
             } else if (ActiveWorkspace == EWorkspaceTab::Models) {
                 ImGui::Checkbox("Model Layer", &bShowWindowModelInspector);
+                ImGui::Checkbox("Model Vocabulary", &bShowWindowModelVocabulary);
+                ImGui::Checkbox("Model Definitions", &bShowWindowModelDefinitions);
+                ImGui::Checkbox("Model Relations", &bShowWindowModelRelations);
+                ImGui::Checkbox("Model Notation Editor", &bShowWindowModelEditor);
+                ImGui::Checkbox("Model Assumptions", &bShowWindowModelAssumptions);
+                ImGui::Checkbox("Model Inspector", &bShowWindowModelDetails);
             } else if (ActiveWorkspace == EWorkspaceTab::GraphPlayground) {
                 ImGui::Checkbox("Graph Playground", &bShowWindowGraphPlayground);
             } else if (ActiveWorkspace == EWorkspaceTab::Plots) {
@@ -2385,6 +2430,72 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleModelVocabulary,
+        EWorkspaceTab::Models,
+        &bShowWindowModelVocabulary,
+        false,
+        false,
+        [this]() {
+            DrawModelVocabularyPanel();
+        }
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleModelDefinitions,
+        EWorkspaceTab::Models,
+        &bShowWindowModelDefinitions,
+        false,
+        false,
+        [this]() {
+            DrawModelDefinitionsPanel();
+        }
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleModelRelations,
+        EWorkspaceTab::Models,
+        &bShowWindowModelRelations,
+        false,
+        false,
+        [this]() {
+            DrawModelRelationsPanel();
+        }
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleModelEditor,
+        EWorkspaceTab::Models,
+        &bShowWindowModelEditor,
+        false,
+        false,
+        [this]() {
+            DrawModelEditorPanel();
+        }
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleModelAssumptions,
+        EWorkspaceTab::Models,
+        &bShowWindowModelAssumptions,
+        false,
+        false,
+        [this]() {
+            DrawModelAssumptionsPanel();
+        }
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
+        WindowTitleModelDetails,
+        EWorkspaceTab::Models,
+        &bShowWindowModelDetails,
+        false,
+        false,
+        [this]() {
+            DrawModelDetailsPanel();
+        }
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
         WindowTitleGraphPlayground,
         EWorkspaceTab::GraphPlayground,
         &bShowWindowGraphPlayground,
@@ -2475,6 +2586,12 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
         ImGui::Checkbox("Live Interaction", &bShowWindowLiveInteraction);
         ImGui::Checkbox("Views", &bShowWindowViews);
         ImGui::Checkbox("Model Layer", &bShowWindowModelInspector);
+        ImGui::Checkbox("Model Vocabulary", &bShowWindowModelVocabulary);
+        ImGui::Checkbox("Model Definitions", &bShowWindowModelDefinitions);
+        ImGui::Checkbox("Model Relations", &bShowWindowModelRelations);
+        ImGui::Checkbox("Model Notation Editor", &bShowWindowModelEditor);
+        ImGui::Checkbox("Model Assumptions", &bShowWindowModelAssumptions);
+        ImGui::Checkbox("Model Inspector", &bShowWindowModelDetails);
 
         if (bShowWindowTasks) {
             Slab::Studios::LabV2::Panels::ShowTasksPanel(TaskNameFilter, bTaskOnlyRunning, bTaskHideSuccess, bTaskOnlyNumeric);

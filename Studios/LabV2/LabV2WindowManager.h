@@ -107,6 +107,12 @@ private:
         bool bShowWindowSchemeInspector = false;
         bool bShowWindowBlueprintGraph = false;
         bool bShowWindowModelInspector = false;
+        bool bShowWindowModelVocabulary = false;
+        bool bShowWindowModelDefinitions = false;
+        bool bShowWindowModelRelations = false;
+        bool bShowWindowModelEditor = false;
+        bool bShowWindowModelAssumptions = false;
+        bool bShowWindowModelDetails = false;
         bool bShowWindowGraphPlayground = false;
         bool bShowWindowPlotInspector = false;
     };
@@ -171,6 +177,7 @@ private:
     Slab::Vector<Slab::Core::Model::V2::FModelV2> ModelDemoCatalog;
     int SelectedModelIndex = 0;
     Slab::Core::Model::V2::FSemanticObjectRefV2 SelectedModelSemanticObject;
+    bool bSelectedModelSemanticObjectUsesDraftPreview = false;
     Slab::Core::Model::V2::FSemanticObjectRefV2 ModelPendingScrollTarget;
     Slab::Str SelectedModelVocabularyEntryId;
     Slab::Str SelectedModelDefinitionId;
@@ -184,6 +191,46 @@ private:
     float ModelCatalogVocabularyHeight = 132.0f;
     float ModelCatalogDefinitionsHeight = 220.0f;
     float ModelScratchpadHeight = 220.0f;
+    bool bShowWindowModelVocabulary = true;
+    bool bShowWindowModelDefinitions = true;
+    bool bShowWindowModelRelations = true;
+    bool bShowWindowModelEditor = true;
+    bool bShowWindowModelAssumptions = true;
+    bool bShowWindowModelDetails = true;
+    bool bShowModelNewDefinitionComposer = false;
+    Slab::Str ModelNewDefinitionId = "param.new_symbol";
+    Slab::Str ModelNewDefinitionDisplayName;
+    Slab::Str ModelNewDefinitionNotation = "\\alpha \\in \\mathbb{R}";
+    Slab::Core::Model::V2::EDefinitionKindV2 ModelNewDefinitionKind =
+        Slab::Core::Model::V2::EDefinitionKindV2::ScalarParameter;
+    Slab::Core::Model::V2::ECoordinateRoleV2 ModelNewDefinitionCoordinateRole =
+        Slab::Core::Model::V2::ECoordinateRoleV2::Generic;
+    Slab::Core::Model::V2::EOperatorApplicationStyleV2 ModelNewDefinitionOperatorStyle =
+        Slab::Core::Model::V2::EOperatorApplicationStyleV2::Prefix;
+    Slab::TOptional<Slab::Core::Model::V2::FDefinitionDraftPreviewV2> ModelNewDefinitionPreview;
+    Slab::Str ModelNewDefinitionStatus;
+    bool bShowModelNewRelationComposer = false;
+    Slab::Str ModelNewRelationId = "relation.new_equation";
+    Slab::Str ModelNewRelationName;
+    Slab::Str ModelNewRelationNotation = "x = 0";
+    Slab::Core::Model::V2::ERelationKindV2 ModelNewRelationKind =
+        Slab::Core::Model::V2::ERelationKindV2::Equation;
+    Slab::TOptional<Slab::Core::Model::V2::FRelationDraftPreviewV2> ModelNewRelationPreview;
+    Slab::Str ModelNewRelationStatus;
+
+    struct FModelWorkspaceViewState {
+        bool bAvailable = false;
+        Slab::Core::Model::V2::FModelV2 *Model = nullptr;
+        const Slab::Core::Model::V2::FBaseVocabularyPresetV2 *ActiveVocabularyPreset = nullptr;
+        Slab::Core::Model::V2::FModelSemanticOverviewV2 Overview;
+        const Slab::Core::Model::V2::FModelSemanticOverviewV2 *SelectionOverview = nullptr;
+        const Slab::Core::Model::V2::FModelSemanticOverviewV2 *ActiveDraftOverview = nullptr;
+        Slab::Core::Model::V2::FSemanticSelectionContextV2 SelectionContext;
+        Slab::Core::Model::V2::FModelEditorBufferV2 *ActiveEditorBuffer = nullptr;
+        Slab::Vector<Slab::Core::Model::V2::FDefinitionV2> DraftPreviewDefinitions;
+        const Slab::Vector<Slab::Core::Model::V2::FSemanticAssumptionV2> *DraftPreviewAssumptions = nullptr;
+    };
+
     struct FSchemeOperationTraceEntry {
         std::size_t SequenceId = 0;
         Slab::Str InterfaceId;
@@ -300,11 +347,11 @@ private:
     bool bWorkspaceLayoutsBootstrapped = false;
     std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false, false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false, false, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true, false, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, true, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, true, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, false, true}
+        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true}
     };
     float WorkspaceTabsHeight = 0.0f;
     float WorkspaceStripHeight = 0.0f;
@@ -318,7 +365,7 @@ private:
     bool bShowWindowViews = true;
     bool bShowWindowSchemeInspector = true;
     bool bShowWindowBlueprintGraph = true;
-    bool bShowWindowModelInspector = true;
+    bool bShowWindowModelInspector = false;
     bool bShowWindowGraphPlayground = true;
     bool bShowWindowPlotInspector = true;
     bool bHasLastMousePosition = false;
@@ -347,7 +394,18 @@ private:
     auto DrawPanelSurface(const FPanelSurfaceRegistration &registration) -> void;
     auto DrawSchemesInspectorPanel() -> void;
     auto DrawSchemesBlueprintGraphPanel() -> void;
+    [[nodiscard]] auto PrepareModelWorkspaceViewState() -> FModelWorkspaceViewState;
+    auto SelectModelSemanticObject(const Slab::Core::Model::V2::FModelV2 &model,
+                                   const Slab::Core::Model::V2::FSemanticObjectRefV2 &ref,
+                                   bool bRequestScroll = false,
+                                   bool bUseDraftPreview = false) -> void;
     auto DrawModelInspectorPanel() -> void;
+    auto DrawModelVocabularyPanel() -> void;
+    auto DrawModelDefinitionsPanel() -> void;
+    auto DrawModelRelationsPanel() -> void;
+    auto DrawModelEditorPanel() -> void;
+    auto DrawModelAssumptionsPanel() -> void;
+    auto DrawModelDetailsPanel() -> void;
     auto DrawGraphPlaygroundPanel() -> void;
     auto MarkGraphPlaygroundDirty() -> void;
     auto SaveGraphPlaygroundStateToFile() -> bool;

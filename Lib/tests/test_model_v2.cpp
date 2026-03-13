@@ -379,6 +379,381 @@ TEST_CASE("Model V2 editor distinguishes parse errors from semantic issues", "[M
     CHECK(HasSemanticDiagnosticContaining(semanticFailure->RelationPreview->Diagnostics, "deferred_semantics", "\\psi"));
 }
 
+TEST_CASE("Model V2 draft preview computes semantic delta for edited relations", "[ModelV2][Editor][DraftDelta]") {
+    using namespace Slab::Core::Model::V2;
+
+    auto model = BuildHarmonicOscillatorModelV2();
+    auto editor = MakeEditorBufferForRelationV2(model, "relation.oscillator.second_order");
+    REQUIRE(editor.has_value());
+
+    SetEditorBufferDraftV2(*editor, "\\dot x = p / m");
+    REQUIRE(ParseEditorBufferPreviewV2(model, *editor));
+    REQUIRE(editor->RelationPreview.has_value());
+    REQUIRE(editor->RelationPreview->SemanticDelta.has_value());
+
+    const auto &delta = *editor->RelationPreview->SemanticDelta;
+    REQUIRE(delta.CanonicalRelationClass.has_value());
+    REQUIRE(delta.DraftRelationClass.has_value());
+    CHECK(*delta.CanonicalRelationClass == ERelationSemanticClassV2::SecondOrderODELike);
+    CHECK(*delta.DraftRelationClass == ERelationSemanticClassV2::FirstOrderODELike);
+    CHECK(std::any_of(delta.DependencyChanges.begin(), delta.DependencyChanges.end(), [](const auto &change) {
+        return change.Kind == ESemanticDeltaKindV2::Added && change.Link.Target.ObjectId == "state.p";
+    }));
+    CHECK(std::any_of(delta.DependencyChanges.begin(), delta.DependencyChanges.end(), [](const auto &change) {
+        return change.Kind == ESemanticDeltaKindV2::Removed && change.Link.Target.ObjectId == "param.omega";
+    }));
+    CHECK(std::any_of(delta.AmbientDependencyChanges.begin(), delta.AmbientDependencyChanges.end(), [](const auto &change) {
+        return change.Kind == ESemanticDeltaKindV2::Removed &&
+            change.Link.Target.ObjectId == "vocab.classical_mechanics.notation.ddot";
+    }));
+}
+
+TEST_CASE("Model V2 draft preview exposes unresolved symbol and assumption delta", "[ModelV2][Editor][DraftDelta][Assumptions]") {
+    using namespace Slab::Core::Model::V2;
+
+    auto kg = BuildKleinGordonModelV2();
+    auto editor = MakeEditorBufferForRelationV2(kg, "relation.klein_gordon.equation");
+    REQUIRE(editor.has_value());
+
+    SetEditorBufferDraftV2(*editor, "\\Box \\phi + m^2 \\psi = 0");
+    REQUIRE(ParseEditorBufferPreviewV2(kg, *editor));
+    REQUIRE(editor->RelationPreview.has_value());
+    REQUIRE(editor->RelationPreview->SemanticDelta.has_value());
+
+    const auto &delta = *editor->RelationPreview->SemanticDelta;
+    CHECK(delta.CanonicalStatus.UnresolvedSymbolCount == 0);
+    CHECK(delta.DraftStatus.UnresolvedSymbolCount == 1);
+    CHECK(delta.DraftStatus.SemanticHealth == ESemanticHealthV2::Error);
+    CHECK(std::any_of(delta.ReferencedSymbolChanges.begin(), delta.ReferencedSymbolChanges.end(), [](const auto &change) {
+        return change.Kind == ESemanticDeltaKindV2::Added &&
+            change.Symbol.SymbolText == "\\psi" &&
+            !change.Symbol.bResolved;
+    }));
+    CHECK(std::any_of(delta.AssumptionChanges.begin(), delta.AssumptionChanges.end(), [](const auto &change) {
+        return change.Kind == ESemanticDeltaKindV2::Added &&
+            change.Assumption.TargetSymbol == "\\psi" &&
+            change.Assumption.bWouldCreateDefinition;
+    }));
+}
+
+TEST_CASE("Model V2 preview overview exposes draft assumptions and materialization objects", "[ModelV2][Editor][DraftObjects]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto kg = BuildKleinGordonModelV2();
+    auto editor = MakeEditorBufferForRelationV2(kg, "relation.klein_gordon.equation");
+    REQUIRE(editor.has_value());
+
+    SetEditorBufferDraftV2(*editor, "\\Box \\psi + m^2 \\psi = 0");
+    REQUIRE(ParseEditorBufferPreviewV2(kg, *editor));
+    REQUIRE(editor->RelationPreview.has_value());
+    REQUIRE(editor->RelationPreview->SemanticOverview.has_value());
+
+    const auto &draftOverview = *editor->RelationPreview->SemanticOverview;
+    const auto assumptionIt = std::find_if(
+        editor->RelationPreview->Assumptions.begin(),
+        editor->RelationPreview->Assumptions.end(),
+        [](const auto &assumption) {
+            return assumption.TargetSymbol == "\\psi" && assumption.bWouldCreateDefinition;
+        });
+    REQUIRE(assumptionIt != editor->RelationPreview->Assumptions.end());
+
+    const auto materializationPreview = BuildAssumptionMaterializationPreviewV2(kg, *assumptionIt, &draftOverview);
+    REQUIRE(materializationPreview.ProposedDefinition.has_value());
+
+    const auto *draftAssumptionObject = draftOverview.FindObject(MakeAssumptionObjectRefV2(assumptionIt->AssumptionId));
+    REQUIRE(draftAssumptionObject != nullptr);
+    CHECK(std::any_of(draftAssumptionObject->TargetLinks.begin(), draftAssumptionObject->TargetLinks.end(), [&](const auto &link) {
+        return link.Target.ObjectId == materializationPreview.ProposedDefinition->DefinitionId;
+    }));
+
+    const auto *draftDefinitionObject = draftOverview.FindObject(MakeDefinitionObjectRefV2(materializationPreview.ProposedDefinition->DefinitionId));
+    REQUIRE(draftDefinitionObject != nullptr);
+    CHECK(draftDefinitionObject->OriginDetail == assumptionIt->AssumptionId);
+    CHECK(std::any_of(draftDefinitionObject->SourceLinks.begin(), draftDefinitionObject->SourceLinks.end(), [&](const auto &link) {
+        return link.Target.ObjectId == assumptionIt->AssumptionId;
+    }));
+}
+
+TEST_CASE("Model V2 preview diagnostics navigate to draft assumptions", "[ModelV2][Editor][DraftDiagnostics]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto kg = BuildKleinGordonModelV2();
+    auto editor = MakeEditorBufferForRelationV2(kg, "relation.klein_gordon.equation");
+    REQUIRE(editor.has_value());
+
+    SetEditorBufferDraftV2(*editor, "\\Box \\phi + m^2 \\psi = 0");
+    REQUIRE(ParseEditorBufferPreviewV2(kg, *editor));
+    REQUIRE(editor->RelationPreview.has_value());
+    REQUIRE(editor->RelationPreview->SemanticOverview.has_value());
+
+    const auto &draftOverview = *editor->RelationPreview->SemanticOverview;
+    const auto *draftRelationObject = draftOverview.FindObject(MakeRelationObjectRefV2("relation.klein_gordon.equation"));
+    REQUIRE(draftRelationObject != nullptr);
+
+    const auto diagnosticIt = std::find_if(draftRelationObject->Diagnostics.begin(), draftRelationObject->Diagnostics.end(), [](const auto &diagnostic) {
+        return diagnostic.Diagnostic.Code == "inferred_undeclared_role" &&
+            diagnostic.Diagnostic.Message.find("\\psi") != Slab::Str::npos;
+    });
+    REQUIRE(diagnosticIt != draftRelationObject->Diagnostics.end());
+    REQUIRE(diagnosticIt->NavigateTo.has_value());
+    CHECK(diagnosticIt->NavigateTo->Kind == ESemanticObjectKindV2::Assumption);
+}
+
+TEST_CASE("Model V2 draft selection context includes preview-created definitions", "[ModelV2][Editor][DraftNavigation]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto kg = BuildKleinGordonModelV2();
+    auto editor = MakeEditorBufferForRelationV2(kg, "relation.klein_gordon.equation");
+    REQUIRE(editor.has_value());
+
+    SetEditorBufferDraftV2(*editor, "\\Box \\psi + m^2 \\psi = 0");
+    REQUIRE(ParseEditorBufferPreviewV2(kg, *editor));
+    REQUIRE(editor->RelationPreview.has_value());
+    REQUIRE(editor->RelationPreview->SemanticOverview.has_value());
+
+    const auto &draftOverview = *editor->RelationPreview->SemanticOverview;
+    const auto selection = BuildSemanticSelectionContextV2(
+        draftOverview,
+        MakeRelationObjectRefV2("relation.klein_gordon.equation"));
+
+    CHECK(SelectionContains(selection.DependencyKeys, MakeDefinitionObjectRefV2("field.psi")));
+    CHECK_FALSE(selection.RelatedAssumptionKeys.empty());
+}
+
+TEST_CASE("Model V2 draft reference resolution targets preview-created objects", "[ModelV2][Editor][DraftNavigation][References]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto kg = BuildKleinGordonModelV2();
+    auto editor = MakeEditorBufferForRelationV2(kg, "relation.klein_gordon.equation");
+    REQUIRE(editor.has_value());
+
+    SetEditorBufferDraftV2(*editor, "\\Box \\psi + m^2 \\psi = 0");
+    REQUIRE(ParseEditorBufferPreviewV2(kg, *editor));
+    REQUIRE(editor->RelationPreview.has_value());
+    REQUIRE(editor->RelationPreview->SemanticOverview.has_value());
+
+    const auto &draftOverview = *editor->RelationPreview->SemanticOverview;
+    const auto psiIt = std::find_if(
+        editor->RelationPreview->ReferencedSymbols.begin(),
+        editor->RelationPreview->ReferencedSymbols.end(),
+        [](const auto &symbol) { return symbol.SymbolText == "\\psi"; });
+    REQUIRE(psiIt != editor->RelationPreview->ReferencedSymbols.end());
+
+    const auto psiTarget = ResolveReferencedSymbolNavigationTargetV2(draftOverview, *psiIt);
+    REQUIRE(psiTarget.has_value());
+    CHECK(psiTarget->Kind == ESemanticObjectKindV2::Definition);
+    CHECK(psiTarget->ObjectId == "field.psi");
+
+    const auto boxIt = std::find_if(
+        editor->RelationPreview->ReferencedSymbols.begin(),
+        editor->RelationPreview->ReferencedSymbols.end(),
+        [](const auto &symbol) { return symbol.ReferenceId == "vocab.relativistic_field_theory.operator.box"; });
+    REQUIRE(boxIt != editor->RelationPreview->ReferencedSymbols.end());
+
+    const auto boxTarget = ResolveReferencedSymbolNavigationTargetV2(draftOverview, *boxIt);
+    REQUIRE(boxTarget.has_value());
+    CHECK(boxTarget->Kind == ESemanticObjectKindV2::VocabularyEntry);
+    CHECK(boxTarget->ObjectId == "vocab.relativistic_field_theory.operator.box");
+}
+
+TEST_CASE("Model V2 oscillator damping draft preview stays navigable", "[ModelV2][Editor][DraftNavigation][Oscillator]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto oscillator = BuildHarmonicOscillatorModelV2();
+    auto editor = MakeEditorBufferForRelationV2(oscillator, "relation.oscillator.second_order");
+    REQUIRE(editor.has_value());
+
+    SetEditorBufferDraftV2(*editor, "\\ddot x + \\gamma \\dot x + \\omega^2 x = 0");
+    REQUIRE(ParseEditorBufferPreviewV2(oscillator, *editor));
+    REQUIRE(editor->RelationPreview.has_value());
+    REQUIRE(editor->RelationPreview->SemanticOverview.has_value());
+
+    const auto &draftOverview = *editor->RelationPreview->SemanticOverview;
+    const auto gammaIt = std::find_if(
+        editor->RelationPreview->ReferencedSymbols.begin(),
+        editor->RelationPreview->ReferencedSymbols.end(),
+        [](const auto &symbol) { return symbol.SymbolText == "\\gamma"; });
+    REQUIRE(gammaIt != editor->RelationPreview->ReferencedSymbols.end());
+
+    const auto gammaTarget = ResolveReferencedSymbolNavigationTargetV2(draftOverview, *gammaIt);
+    REQUIRE(gammaTarget.has_value());
+    CHECK(gammaTarget->Kind == ESemanticObjectKindV2::Definition);
+    CHECK(gammaTarget->ObjectId == "param.gamma");
+
+    const auto selection = BuildSemanticSelectionContextV2(
+        draftOverview,
+        MakeRelationObjectRefV2("relation.oscillator.second_order"));
+    CHECK(SelectionContains(selection.DependencyKeys, MakeDefinitionObjectRefV2("param.gamma")));
+
+    REQUIRE(RevertEditorBufferV2(oscillator, *editor));
+    CHECK_FALSE(editor->bPreviewCurrent);
+    CHECK_FALSE(editor->RelationPreview.has_value());
+    CHECK(editor->DraftNotation == editor->CanonicalNotation);
+}
+
+TEST_CASE("Model V2 assumption materialization preview proposes explicit definition", "[ModelV2][Assumptions][Materialization]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto kg = BuildKleinGordonModelV2();
+    auto editor = MakeEditorBufferForRelationV2(kg, "relation.klein_gordon.equation");
+    REQUIRE(editor.has_value());
+
+    SetEditorBufferDraftV2(*editor, "\\Box \\psi + m^2 \\psi = 0");
+    REQUIRE(ParseEditorBufferPreviewV2(kg, *editor));
+    REQUIRE(editor->RelationPreview.has_value());
+
+    const auto assumptionIt = std::find_if(
+        editor->RelationPreview->Assumptions.begin(),
+        editor->RelationPreview->Assumptions.end(),
+        [](const auto &assumption) {
+            return assumption.TargetSymbol == "\\psi" && assumption.bWouldCreateDefinition;
+        });
+    REQUIRE(assumptionIt != editor->RelationPreview->Assumptions.end());
+
+    const auto materializationPreview = BuildAssumptionMaterializationPreviewV2(kg, *assumptionIt);
+    CHECK(materializationPreview.bAvailable);
+    CHECK(materializationPreview.bWouldCreateDefinition);
+    CHECK(materializationPreview.LifecyclePhase == EAssumptionLifecyclePhaseV2::Implicit);
+    REQUIRE(materializationPreview.ProposedDefinition.has_value());
+    CHECK(materializationPreview.SuggestedDefinitionId == "field.psi");
+    CHECK(materializationPreview.ProposedDefinition->Metadata.at("accepted_assumption_id") == assumptionIt->AssumptionId);
+    CHECK(materializationPreview.OutcomeLabel.find("create a new local definition") != Slab::Str::npos);
+}
+
+TEST_CASE("Model V2 direct creation supports damping parameter workflow", "[ModelV2][Editor][Create]") {
+    using namespace Slab::Core::Model::V2;
+
+    auto model = BuildHarmonicOscillatorModelV2();
+
+    const auto gammaPreview = PreviewNewDefinitionV2(
+        model,
+        "param.gamma",
+        EDefinitionKindV2::ScalarParameter,
+        ECoordinateRoleV2::Generic,
+        EOperatorApplicationStyleV2::Prefix,
+        "\\gamma \\in \\mathbb{R}",
+        "Damping Coefficient");
+    REQUIRE(gammaPreview.bParseOk);
+    REQUIRE(gammaPreview.bCanApply);
+    REQUIRE(gammaPreview.ProposedDefinition.has_value());
+    CHECK(gammaPreview.ProposedDefinition->DefinitionId == "param.gamma");
+    CHECK(gammaPreview.ProposedDefinition->Symbol == "gamma");
+
+    FModelChangeRecordV2 definitionChange;
+    REQUIRE(ApplyNewDefinitionPreviewV2(model, gammaPreview, &definitionChange));
+    CHECK(definitionChange.ObjectKind == EModelObjectKindV2::Definition);
+    CHECK(definitionChange.ObjectId == "param.gamma");
+    REQUIRE(FindDefinitionByIdV2(model, "param.gamma") != nullptr);
+
+    const auto dampedRelationPreview = PreviewNewRelationV2(
+        model,
+        "relation.oscillator.damped",
+        ERelationKindV2::DifferentialEquation,
+        "\\ddot x + \\gamma \\dot x + \\omega^2 x = 0",
+        "Damped Oscillator");
+    REQUIRE(dampedRelationPreview.bParseOk);
+    REQUIRE(dampedRelationPreview.bCanApply);
+    REQUIRE(dampedRelationPreview.ProposedRelation.has_value());
+    CHECK(dampedRelationPreview.InferredClass == ERelationSemanticClassV2::SecondOrderODELike);
+    CHECK(std::any_of(
+        dampedRelationPreview.ReferencedSymbols.begin(),
+        dampedRelationPreview.ReferencedSymbols.end(),
+        [](const auto &symbol) { return symbol.ReferenceId == "param.gamma"; }));
+
+    FModelChangeRecordV2 relationChange;
+    REQUIRE(ApplyNewRelationPreviewV2(model, dampedRelationPreview, &relationChange));
+    CHECK(relationChange.ObjectKind == EModelObjectKindV2::Relation);
+    CHECK(relationChange.ObjectId == "relation.oscillator.damped");
+    REQUIRE(FindRelationByIdV2(model, "relation.oscillator.damped") != nullptr);
+
+    const auto validation = ValidateModelV2(model);
+    REQUIRE(validation.IsOk());
+
+    const auto overview = BuildModelSemanticOverviewV2(model);
+    CHECK(overview.Status.UnresolvedSymbolCount == 0);
+    const auto *gammaObject = overview.FindObject(MakeDefinitionObjectRefV2("param.gamma"));
+    REQUIRE(gammaObject != nullptr);
+    CHECK(std::any_of(gammaObject->UsedBy.begin(), gammaObject->UsedBy.end(), [](const auto &link) {
+        return link.Target.ObjectId == "relation.oscillator.damped";
+    }));
+}
+
+TEST_CASE("Model V2 direct creation preview rejects duplicate ids", "[ModelV2][Editor][Create]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildHarmonicOscillatorModelV2();
+
+    const auto duplicateDefinitionPreview = PreviewNewDefinitionV2(
+        model,
+        "state.x",
+        EDefinitionKindV2::StateVariable,
+        ECoordinateRoleV2::Generic,
+        EOperatorApplicationStyleV2::Prefix,
+        "x : \\mathbb{R} \\to \\mathbb{R}");
+    REQUIRE_FALSE(duplicateDefinitionPreview.bCanApply);
+    CHECK(HasSemanticDiagnosticContaining(
+        duplicateDefinitionPreview.Diagnostics,
+        "duplicate_definition_id",
+        "already exists"));
+
+    const auto duplicateRelationPreview = PreviewNewRelationV2(
+        model,
+        "relation.oscillator.second_order",
+        ERelationKindV2::DifferentialEquation,
+        "\\ddot x + \\omega^2 x = 0");
+    REQUIRE_FALSE(duplicateRelationPreview.bCanApply);
+    CHECK(HasSemanticDiagnosticContaining(
+        duplicateRelationPreview.Diagnostics,
+        "duplicate_relation_id",
+        "already exists"));
+}
+
+TEST_CASE("Model V2 accepted assumption materializes local definition with provenance", "[ModelV2][Assumptions][Materialization]") {
+    using namespace Slab::Core::Model::V2;
+
+    auto kg = BuildKleinGordonModelV2();
+    auto editor = MakeEditorBufferForRelationV2(kg, "relation.klein_gordon.equation");
+    REQUIRE(editor.has_value());
+
+    SetEditorBufferDraftV2(*editor, "\\Box \\psi + m^2 \\psi = 0");
+    REQUIRE(ParseEditorBufferPreviewV2(kg, *editor));
+    REQUIRE(editor->RelationPreview.has_value());
+    const auto assumptionIt = std::find_if(editor->RelationPreview->Assumptions.begin(), editor->RelationPreview->Assumptions.end(), [](const auto &assumption) {
+        return assumption.TargetSymbol == "\\psi" && assumption.bWouldCreateDefinition;
+    });
+    REQUIRE(assumptionIt != editor->RelationPreview->Assumptions.end());
+    const auto acceptedAssumptionId = assumptionIt->AssumptionId;
+
+    FModelChangeRecordV2 assumptionChangeRecord;
+    REQUIRE(AcceptAssumptionV2(kg, *assumptionIt, &assumptionChangeRecord));
+    CHECK(assumptionChangeRecord.ObjectKind == EModelObjectKindV2::Definition);
+
+    const auto *psiDefinition = FindDefinitionByIdV2(kg, assumptionChangeRecord.ObjectId);
+    REQUIRE(psiDefinition != nullptr);
+    CHECK(psiDefinition->Metadata.contains("accepted_assumption_id"));
+    CHECK(psiDefinition->Metadata.at("accepted_assumption_id") == acceptedAssumptionId);
+
+    REQUIRE(ParseEditorBufferPreviewV2(kg, *editor));
+    REQUIRE(editor->RelationPreview.has_value());
+    CHECK(editor->RelationPreview->bCanApply);
+
+    FModelChangeRecordV2 relationChangeRecord;
+    REQUIRE(ApplyEditorBufferV2(kg, *editor, EModelChangeOriginV2::DirectEdit, &relationChangeRecord));
+
+    const auto overview = BuildModelSemanticOverviewV2(kg);
+    const auto *psiObject = overview.FindObject(MakeDefinitionObjectRefV2(assumptionChangeRecord.ObjectId));
+    REQUIRE(psiObject != nullptr);
+    CHECK(std::any_of(psiObject->SourceLinks.begin(), psiObject->SourceLinks.end(), [&](const auto &link) {
+        return link.Target.ObjectId == acceptedAssumptionId;
+    }));
+
+    const auto *assumptionObject = overview.FindObject(MakeAssumptionObjectRefV2(acceptedAssumptionId));
+    REQUIRE(assumptionObject != nullptr);
+    CHECK(std::any_of(assumptionObject->TargetLinks.begin(), assumptionObject->TargetLinks.end(), [&](const auto &link) {
+        return link.Target.ObjectId == assumptionChangeRecord.ObjectId;
+    }));
+}
+
 TEST_CASE("Model V2 semantic report infers oscillator assumptions", "[ModelV2][Inference]") {
     using namespace Slab::Core::Model::V2;
 

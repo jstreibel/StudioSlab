@@ -242,6 +242,92 @@ namespace Slab::Core::Model::V2 {
         std::set<Str> ConflictKeys;
     };
 
+    enum class ESemanticDeltaKindV2 : unsigned char {
+        Added,
+        Removed,
+        Changed
+    };
+
+    struct FSemanticNavigationDeltaV2 {
+        ESemanticDeltaKindV2 Kind = ESemanticDeltaKindV2::Added;
+        FSemanticNavigationLinkV2 Link;
+        Str PreviousDetail;
+        Str NewDetail;
+    };
+
+    struct FReferencedSymbolDeltaV2 {
+        ESemanticDeltaKindV2 Kind = ESemanticDeltaKindV2::Added;
+        FReferencedSymbolSemanticV2 Symbol;
+        bool bResolutionChanged = false;
+        bool bOriginChanged = false;
+        bool bDeclaredKindChanged = false;
+        bool bInferredKindChanged = false;
+        bool bArgumentDependenciesChanged = false;
+        bool bCanonicalResolved = false;
+        ESemanticOriginV2 CanonicalOrigin = ESemanticOriginV2::Unresolved;
+        TOptional<EDefinitionKindV2> CanonicalDeclaredKind;
+        TOptional<EDefinitionKindV2> CanonicalInferredKind;
+        Vector<Str> CanonicalArgumentDefinitionIds;
+    };
+
+    struct FSemanticAssumptionDeltaV2 {
+        ESemanticDeltaKindV2 Kind = ESemanticDeltaKindV2::Added;
+        FSemanticAssumptionV2 Assumption;
+        EAssumptionStatusV2 CanonicalStatus = EAssumptionStatusV2::Implicit;
+        Str CanonicalMaterializedDefinitionId;
+        bool bStatusChanged = false;
+        bool bMaterializationChanged = false;
+    };
+
+    struct FSemanticDiagnosticDeltaV2 {
+        ESemanticDeltaKindV2 Kind = ESemanticDeltaKindV2::Added;
+        FSemanticDiagnosticV2 Diagnostic;
+    };
+
+    struct FModelSemanticDraftDeltaV2 {
+        bool bAvailable = false;
+        FModelSemanticStatusSummaryV2 CanonicalStatus;
+        FModelSemanticStatusSummaryV2 DraftStatus;
+        Str CanonicalInterpretation;
+        Str DraftInterpretation;
+        TOptional<EDefinitionKindV2> CanonicalInferredKind;
+        TOptional<EDefinitionKindV2> DraftInferredKind;
+        TOptional<ERelationSemanticClassV2> CanonicalRelationClass;
+        TOptional<ERelationSemanticClassV2> DraftRelationClass;
+        bool bCanonicalConflict = false;
+        bool bDraftConflict = false;
+        Vector<FReferencedSymbolDeltaV2> ReferencedSymbolChanges;
+        Vector<FSemanticNavigationDeltaV2> DependencyChanges;
+        Vector<FSemanticNavigationDeltaV2> AmbientDependencyChanges;
+        Vector<FSemanticNavigationDeltaV2> UsedByChanges;
+        Vector<FSemanticNavigationDeltaV2> AssumptionLinkChanges;
+        Vector<FSemanticNavigationDeltaV2> OverrideChanges;
+        Vector<FSemanticAssumptionDeltaV2> AssumptionChanges;
+        Vector<FSemanticDiagnosticDeltaV2> DiagnosticChanges;
+    };
+
+    enum class EAssumptionLifecyclePhaseV2 : unsigned char {
+        Implicit,
+        Accepted,
+        Dismissed,
+        Materialized
+    };
+
+    struct FAssumptionMaterializationPreviewV2 {
+        bool bAvailable = false;
+        bool bWouldCreateDefinition = false;
+        bool bAlreadyMaterialized = false;
+        EAssumptionLifecyclePhaseV2 LifecyclePhase = EAssumptionLifecyclePhaseV2::Implicit;
+        Str LifecycleLabel;
+        Str OutcomeLabel;
+        Str SuggestedDefinitionId;
+        Str ProposedNotation;
+        TOptional<FTypeExprV2> ProposedType;
+        TOptional<FDefinitionV2> ProposedDefinition;
+        TOptional<FSemanticObjectRefV2> MaterializedObjectRef;
+        Vector<FSemanticNavigationLinkV2> ProposedDependencies;
+    };
+
     struct FDefinitionDraftPreviewV2 {
         Str DefinitionId;
         Str CanonicalNotation;
@@ -257,6 +343,8 @@ namespace Slab::Core::Model::V2 {
         Vector<FReferencedSymbolSemanticV2> ReferencedSymbols;
         Vector<FSemanticDiagnosticV2> Diagnostics;
         Vector<FSemanticAssumptionV2> Assumptions;
+        TOptional<FModelSemanticOverviewV2> SemanticOverview;
+        TOptional<FModelSemanticDraftDeltaV2> SemanticDelta;
     };
 
     struct FRelationDraftPreviewV2 {
@@ -274,6 +362,8 @@ namespace Slab::Core::Model::V2 {
         Vector<FReferencedSymbolSemanticV2> ReferencedSymbols;
         Vector<FSemanticDiagnosticV2> Diagnostics;
         Vector<FSemanticAssumptionV2> Assumptions;
+        TOptional<FModelSemanticOverviewV2> SemanticOverview;
+        TOptional<FModelSemanticDraftDeltaV2> SemanticDelta;
     };
 
     struct FModelEditorBufferV2 {
@@ -323,6 +413,27 @@ namespace Slab::Core::Model::V2 {
         }
 
         return "Unknown";
+    }
+
+    inline auto ToString(const ESemanticDeltaKindV2 value) -> const char * {
+        switch (value) {
+            case ESemanticDeltaKindV2::Added: return "Added";
+            case ESemanticDeltaKindV2::Removed: return "Removed";
+            case ESemanticDeltaKindV2::Changed: return "Changed";
+        }
+
+        return "Changed";
+    }
+
+    inline auto ToString(const EAssumptionLifecyclePhaseV2 value) -> const char * {
+        switch (value) {
+            case EAssumptionLifecyclePhaseV2::Implicit: return "Implicit";
+            case EAssumptionLifecyclePhaseV2::Accepted: return "Accepted";
+            case EAssumptionLifecyclePhaseV2::Dismissed: return "Dismissed";
+            case EAssumptionLifecyclePhaseV2::Materialized: return "Materialized";
+        }
+
+        return "Implicit";
     }
 
     inline auto ToString(const ESemanticObjectKindV2 value) -> const char * {
@@ -383,6 +494,11 @@ namespace Slab::Core::Model::V2 {
         if (!relation.SourceText.empty()) return relation.SourceText;
         return RenderDialectRelationV2(relation, model);
     }
+
+    inline auto BuildAssumptionMaterializationPreviewV2(const FModelV2 &model,
+                                                        const FSemanticAssumptionV2 &assumption,
+                                                        const FModelSemanticOverviewV2 *pOverview = nullptr)
+        -> FAssumptionMaterializationPreviewV2;
 
     inline auto StableHashStringV2(const Str &value) -> Str {
         constexpr std::uint64_t Offset = 1469598103934665603ull;
@@ -941,10 +1057,48 @@ namespace Slab::Core::Model::V2 {
             return candidate;
         }
 
+        inline auto BuildDefinitionFromAssumptionV2(const FModelV2 &model,
+                                                    const FSemanticAssumptionV2 &assumption) -> TOptional<FDefinitionV2> {
+            if (!(assumption.bWouldCreateDefinition && assumption.InferredKind.has_value())) return std::nullopt;
+
+            FDefinitionV2 definition;
+            definition.DefinitionId = BuildDefinitionIdSuggestionV2(model, *assumption.InferredKind, assumption.TargetSymbol);
+            definition.Symbol = NormalizeSymbolAliasV2(assumption.TargetSymbol);
+            definition.PreferredNotation = assumption.TargetSymbol.empty() ? definition.Symbol : assumption.TargetSymbol;
+            definition.DisplayName = definition.PreferredNotation.empty() ? definition.DefinitionId : definition.PreferredNotation;
+            definition.Kind = *assumption.InferredKind;
+            definition.SourceText = definition.PreferredNotation.empty() ? definition.Symbol : definition.PreferredNotation;
+            definition.ArgumentDefinitionIds = assumption.ProposedArgumentDefinitionIds;
+            if (assumption.ProposedType.has_value()) definition.DeclaredType = *assumption.ProposedType;
+            definition.Metadata["accepted_assumption_id"] = assumption.AssumptionId;
+            return definition;
+        }
+
         inline auto EnsureAssumptionStateV2(FModelV2 &model, const Str &assumptionId) -> FAssumptionStateV2 & {
             if (auto *existing = FindAssumptionStateByIdV2(model, assumptionId); existing != nullptr) return *existing;
             model.AssumptionStates.push_back(FAssumptionStateV2{.AssumptionId = assumptionId});
             return model.AssumptionStates.back();
+        }
+
+        inline auto BuildReferencedSymbolKeyV2(const FReferencedSymbolSemanticV2 &symbol) -> Str {
+            if (!symbol.ReferenceId.empty()) return "ref:" + symbol.ReferenceId;
+            return "sym:" + NormalizeSymbolAliasV2(symbol.SymbolText);
+        }
+
+        inline auto BuildDiagnosticKeyV2(const FSemanticDiagnosticV2 &diagnostic) -> Str {
+            return diagnostic.Code + "|" + diagnostic.EntityId + "|" + diagnostic.Context + "|" + diagnostic.Message;
+        }
+
+        inline auto BuildNavigationLinkKeyV2(const FSemanticNavigationLinkV2 &link) -> Str {
+            return MakeSemanticObjectKeyV2(link.Target);
+        }
+
+        template<typename TValue>
+        inline auto OptionalValuesEqualV2(const TOptional<TValue> &lhs,
+                                          const TOptional<TValue> &rhs) -> bool {
+            if (lhs.has_value() != rhs.has_value()) return false;
+            if (!lhs.has_value()) return true;
+            return *lhs == *rhs;
         }
 
         inline auto BuildDefinitionReportFromModelV2(const FModelV2 &model,
@@ -1229,6 +1383,37 @@ namespace Slab::Core::Model::V2 {
             return std::nullopt;
         }
 
+        inline auto ResolveDraftObjectRefForReferencedSymbolV2(const FModelSemanticOverviewV2 &overview,
+                                                               const FReferencedSymbolSemanticV2 &symbol)
+            -> TOptional<FSemanticObjectRefV2> {
+            if (const auto ref = ResolveObjectRefForReferencedSymbolV2(symbol); ref.has_value()) {
+                return ref;
+            }
+
+            for (const auto &[key, object] : overview.ObjectsByKey) {
+                (void) key;
+                if (object.Ref.Kind != ESemanticObjectKindV2::Definition) continue;
+                if (object.StatusLabel != "draft only") continue;
+                if (!symbol.SymbolText.empty() && object.DisplayLabel == symbol.SymbolText) {
+                    return object.Ref;
+                }
+                if (!symbol.SymbolText.empty() && object.CanonicalNotation.find(symbol.SymbolText) != Str::npos) {
+                    return object.Ref;
+                }
+            }
+
+            for (const auto &assumption : overview.Report.Assumptions) {
+                if (!symbol.SymbolText.empty() && assumption.TargetSymbol == symbol.SymbolText) {
+                    return MakeAssumptionObjectRefV2(assumption.AssumptionId);
+                }
+                if (!symbol.ReferenceId.empty() && assumption.TargetId == symbol.ReferenceId) {
+                    return MakeAssumptionObjectRefV2(assumption.AssumptionId);
+                }
+            }
+
+            return std::nullopt;
+        }
+
         inline auto ResolveAssumptionTargetRefV2(const FModelV2 &model,
                                                  const FSemanticAssumptionV2 &assumption)
             -> TOptional<FSemanticObjectRefV2> {
@@ -1365,7 +1550,7 @@ namespace Slab::Core::Model::V2 {
         }
 
         inline auto BuildAssumptionStatusLabelV2(const FSemanticAssumptionV2 &assumption) -> Str {
-            Str label = ToString(assumption.Status);
+            Str label = !assumption.MaterializedDefinitionId.empty() ? "Materialized" : ToString(assumption.Status);
             if (assumption.bMismatchesDeclaredRole) label += " | mismatch / warning";
             else if (assumption.bMatchesDeclaredRole) label += " | agrees with local definition";
             return label;
@@ -1609,6 +1794,19 @@ namespace Slab::Core::Model::V2 {
                 Detail::AppendNavigationLinkUniqueV2(object->*member, std::move(link));
             }
         };
+
+        for (const auto &definition : model.Definitions) {
+            if (!(definition.Metadata.contains("accepted_assumption_id"))) continue;
+            const auto assumptionId = definition.Metadata.at("accepted_assumption_id");
+            if (Detail::FindSemanticAssumptionV2(overview.Report, assumptionId) == nullptr) continue;
+
+            const auto definitionRef = MakeDefinitionObjectRefV2(definition.DefinitionId);
+            const auto assumptionRef = MakeAssumptionObjectRefV2(assumptionId);
+            appendLink(
+                definitionRef,
+                &FSemanticObjectOverviewV2::SourceLinks,
+                Detail::MakeNavigationLinkV2(overview.ObjectsByKey, assumptionRef, "materialized from assumption"));
+        }
 
         for (const auto &definition : model.Definitions) {
             const auto sourceRef = MakeDefinitionObjectRefV2(definition.DefinitionId);
@@ -1887,6 +2085,587 @@ namespace Slab::Core::Model::V2 {
         return overview;
     }
 
+    namespace Detail {
+
+        inline auto TextMentionsDraftObjectV2(const FSemanticDiagnosticV2 &diagnostic,
+                                              const FSemanticObjectOverviewV2 &object) -> bool {
+            if (!object.Ref.IsValid()) return false;
+            if (!object.DisplayLabel.empty() && diagnostic.Message.find(object.DisplayLabel) != Str::npos) return true;
+            if (!object.CanonicalNotation.empty() && diagnostic.Message.find(object.CanonicalNotation) != Str::npos) return true;
+            if (!object.Ref.ObjectId.empty() && diagnostic.Message.find(object.Ref.ObjectId) != Str::npos) return true;
+            return false;
+        }
+
+        inline auto AppendDraftNavigationLinkIfObjectExistsV2(
+            FModelSemanticOverviewV2 &overview,
+            const FSemanticObjectRefV2 &sourceRef,
+            Vector<FSemanticNavigationLinkV2> FSemanticObjectOverviewV2::*member,
+            const FSemanticObjectRefV2 &targetRef,
+            const Str &detail,
+            const bool bAmbient = false,
+            const bool bReadonly = false,
+            const bool bConflict = false,
+            const bool bOverride = false) -> void {
+            auto *sourceObject = FindObjectOverviewV2(overview.ObjectsByKey, sourceRef);
+            if (sourceObject == nullptr) return;
+            if (FindObjectOverviewV2(overview.ObjectsByKey, targetRef) == nullptr) return;
+            AppendNavigationLinkUniqueV2(
+                sourceObject->*member,
+                MakeNavigationLinkV2(
+                    overview.ObjectsByKey,
+                    targetRef,
+                    detail,
+                    bAmbient,
+                    bReadonly,
+                    bConflict,
+                    bOverride));
+        }
+
+        inline auto BuildDraftMaterializationObjectOverviewV2(const FDefinitionV2 &definition,
+                                                              const FSemanticAssumptionV2 &assumption,
+                                                              const FModelV2 &model)
+            -> FSemanticObjectOverviewV2 {
+            FSemanticObjectOverviewV2 object;
+            object.Ref = MakeDefinitionObjectRefV2(definition.DefinitionId);
+            object.DisplayLabel = RenderDefinitionLabelV2(definition);
+            object.CanonicalNotation = RenderDialectDefinitionV2(definition, &model);
+            object.KindLabel = ToString(definition.Kind);
+            object.CategoryLabel = "draft materialization";
+            object.OriginLabel = "Assumed / inferred semantics";
+            object.OriginDetail = assumption.AssumptionId;
+            object.StatusLabel = "draft only";
+            object.Description = assumption.Detail;
+            object.DeclaredKind = definition.Kind;
+            object.InferredKind = definition.Kind;
+            return object;
+        }
+
+        inline auto RebindDiagnosticNavigationsToDraftObjectsV2(FModelSemanticOverviewV2 &overview) -> void {
+            auto collectCandidateRefs = [&](const FSemanticObjectOverviewV2 &object) {
+                Vector<FSemanticObjectRefV2> refs;
+                const auto collect = [&](const Vector<FSemanticNavigationLinkV2> &links) {
+                    for (const auto &link : links) {
+                        if (!link.Target.IsValid()) continue;
+                        if (std::find_if(refs.begin(), refs.end(), [&](const auto &existing) {
+                                return AreSemanticObjectRefsEqualV2(existing, link.Target);
+                            }) != refs.end()) {
+                            continue;
+                        }
+                        refs.push_back(link.Target);
+                    }
+                };
+
+                collect(object.RelatedAssumptions);
+                collect(object.TargetLinks);
+                collect(object.SourceLinks);
+                collect(object.DependsOn);
+                collect(object.AmbientDependencies);
+                collect(object.UsedBy);
+                collect(object.LocalOverrides);
+                return refs;
+            };
+
+            for (auto &[key, object] : overview.ObjectsByKey) {
+                (void) key;
+                const auto candidateRefs = collectCandidateRefs(object);
+                for (auto &diagnosticNavigation : object.Diagnostics) {
+                    if (diagnosticNavigation.NavigateTo.has_value() &&
+                        !AreSemanticObjectRefsEqualV2(*diagnosticNavigation.NavigateTo, object.Ref)) {
+                        continue;
+                    }
+
+                    for (const auto &candidateRef : candidateRefs) {
+                        const auto *candidateObject = FindObjectOverviewV2(overview.ObjectsByKey, candidateRef);
+                        if (candidateObject == nullptr) continue;
+                        if (!TextMentionsDraftObjectV2(diagnosticNavigation.Diagnostic, *candidateObject)) continue;
+                        diagnosticNavigation.NavigateTo = candidateRef;
+                        break;
+                    }
+                }
+            }
+        }
+
+    } // namespace Detail
+
+    inline auto BuildDraftSemanticOverviewV2(const FModelV2 &model) -> FModelSemanticOverviewV2 {
+        auto overview = BuildModelSemanticOverviewV2(model);
+
+        for (const auto &assumption : overview.Report.Assumptions) {
+            const auto materializationPreview = BuildAssumptionMaterializationPreviewV2(model, assumption, &overview);
+            if (!materializationPreview.ProposedDefinition.has_value()) continue;
+
+            const auto &draftDefinition = *materializationPreview.ProposedDefinition;
+            auto object = Detail::BuildDraftMaterializationObjectOverviewV2(draftDefinition, assumption, model);
+            const auto draftDefinitionRef = object.Ref;
+            overview.ObjectsByKey[MakeSemanticObjectKeyV2(draftDefinitionRef)] = std::move(object);
+
+            Detail::AppendDraftNavigationLinkIfObjectExistsV2(
+                overview,
+                MakeAssumptionObjectRefV2(assumption.AssumptionId),
+                &FSemanticObjectOverviewV2::TargetLinks,
+                draftDefinitionRef,
+                "would materialize into local definition");
+            Detail::AppendDraftNavigationLinkIfObjectExistsV2(
+                overview,
+                draftDefinitionRef,
+                &FSemanticObjectOverviewV2::SourceLinks,
+                MakeAssumptionObjectRefV2(assumption.AssumptionId),
+                "materialized from draft assumption");
+
+            for (const auto &dependencyId : draftDefinition.ArgumentDefinitionIds) {
+                if (FindDefinitionByIdV2(model, dependencyId) == nullptr) continue;
+                const auto dependencyRef = MakeDefinitionObjectRefV2(dependencyId);
+                Detail::AppendDraftNavigationLinkIfObjectExistsV2(
+                    overview,
+                    draftDefinitionRef,
+                    &FSemanticObjectOverviewV2::DependsOn,
+                    dependencyRef,
+                    "proposed dependency");
+                Detail::AppendDraftNavigationLinkIfObjectExistsV2(
+                    overview,
+                    dependencyRef,
+                    &FSemanticObjectOverviewV2::UsedBy,
+                    draftDefinitionRef,
+                    "used by draft materialization");
+            }
+
+            if (const auto sourceObjectRef = Detail::ResolveObjectRefByIdV2(model, assumption.SourceId); sourceObjectRef.has_value()) {
+                Detail::AppendDraftNavigationLinkIfObjectExistsV2(
+                    overview,
+                    draftDefinitionRef,
+                    &FSemanticObjectOverviewV2::UsedBy,
+                    *sourceObjectRef,
+                    "materializes a symbol referenced by this draft");
+                Detail::AppendDraftNavigationLinkIfObjectExistsV2(
+                    overview,
+                    *sourceObjectRef,
+                    &FSemanticObjectOverviewV2::DependsOn,
+                    draftDefinitionRef,
+                    "draft-created symbol");
+            }
+        }
+
+        Detail::RebindDiagnosticNavigationsToDraftObjectsV2(overview);
+        return overview;
+    }
+
+    inline auto ResolveReferencedSymbolNavigationTargetV2(const FModelSemanticOverviewV2 &overview,
+                                                          const FReferencedSymbolSemanticV2 &symbol)
+        -> TOptional<FSemanticObjectRefV2> {
+        return Detail::ResolveDraftObjectRefForReferencedSymbolV2(overview, symbol);
+    }
+
+    namespace Detail {
+
+        inline auto CollectObjectReferencedSymbolsV2(const FModelSemanticOverviewV2 &overview,
+                                                     const FSemanticObjectRefV2 &ref)
+            -> Vector<FReferencedSymbolSemanticV2> {
+            if (ref.Kind == ESemanticObjectKindV2::Definition) {
+                if (const auto *report = FindDefinitionSemanticReportV2(overview.Report, ref.ObjectId); report != nullptr) {
+                    return report->ReferencedSymbols;
+                }
+            } else if (ref.Kind == ESemanticObjectKindV2::Relation) {
+                if (const auto *report = FindRelationSemanticReportV2(overview.Report, ref.ObjectId); report != nullptr) {
+                    return report->ReferencedSymbols;
+                }
+            }
+
+            return {};
+        }
+
+        inline auto CollectObjectDiagnosticsV2(const FModelSemanticOverviewV2 &overview,
+                                               const FSemanticObjectRefV2 &ref)
+            -> Vector<FSemanticDiagnosticV2> {
+            if (ref.Kind == ESemanticObjectKindV2::Definition) {
+                if (const auto *report = FindDefinitionSemanticReportV2(overview.Report, ref.ObjectId); report != nullptr) {
+                    return report->Diagnostics;
+                }
+            } else if (ref.Kind == ESemanticObjectKindV2::Relation) {
+                if (const auto *report = FindRelationSemanticReportV2(overview.Report, ref.ObjectId); report != nullptr) {
+                    return report->Diagnostics;
+                }
+            }
+
+            return {};
+        }
+
+        inline auto CollectObjectInterpretationV2(const FModelSemanticOverviewV2 &overview,
+                                                  const FSemanticObjectRefV2 &ref) -> Str {
+            if (ref.Kind == ESemanticObjectKindV2::Definition) {
+                if (const auto *report = FindDefinitionSemanticReportV2(overview.Report, ref.ObjectId); report != nullptr) {
+                    return report->NormalizedInterpretation;
+                }
+            } else if (ref.Kind == ESemanticObjectKindV2::Relation) {
+                if (const auto *report = FindRelationSemanticReportV2(overview.Report, ref.ObjectId); report != nullptr) {
+                    return report->NormalizedInterpretation;
+                }
+            }
+
+            return {};
+        }
+
+        inline auto CollectObjectInferredKindV2(const FModelSemanticOverviewV2 &overview,
+                                                const FSemanticObjectRefV2 &ref)
+            -> TOptional<EDefinitionKindV2> {
+            if (ref.Kind != ESemanticObjectKindV2::Definition) return std::nullopt;
+            if (const auto *report = FindDefinitionSemanticReportV2(overview.Report, ref.ObjectId); report != nullptr) {
+                return report->InferredKind;
+            }
+            return std::nullopt;
+        }
+
+        inline auto CollectObjectInferredClassV2(const FModelSemanticOverviewV2 &overview,
+                                                 const FSemanticObjectRefV2 &ref)
+            -> TOptional<ERelationSemanticClassV2> {
+            if (ref.Kind != ESemanticObjectKindV2::Relation) return std::nullopt;
+            if (const auto *report = FindRelationSemanticReportV2(overview.Report, ref.ObjectId); report != nullptr) {
+                return TOptional<ERelationSemanticClassV2>{report->InferredClass};
+            }
+            return std::nullopt;
+        }
+
+        inline auto DiffNavigationLinksV2(const Vector<FSemanticNavigationLinkV2> &canonicalLinks,
+                                          const Vector<FSemanticNavigationLinkV2> &draftLinks)
+            -> Vector<FSemanticNavigationDeltaV2> {
+            Vector<FSemanticNavigationDeltaV2> deltas;
+
+            std::map<Str, const FSemanticNavigationLinkV2 *> canonicalByKey;
+            for (const auto &link : canonicalLinks) {
+                canonicalByKey[BuildNavigationLinkKeyV2(link)] = &link;
+            }
+
+            for (const auto &link : draftLinks) {
+                const auto key = BuildNavigationLinkKeyV2(link);
+                if (const auto it = canonicalByKey.find(key); it != canonicalByKey.end()) {
+                    const auto *canonical = it->second;
+                    const bool bChanged =
+                        canonical->Detail != link.Detail ||
+                        canonical->bAmbient != link.bAmbient ||
+                        canonical->bReadonly != link.bReadonly ||
+                        canonical->bConflict != link.bConflict ||
+                        canonical->bOverride != link.bOverride;
+                    if (bChanged) {
+                        deltas.push_back(FSemanticNavigationDeltaV2{
+                            .Kind = ESemanticDeltaKindV2::Changed,
+                            .Link = link,
+                            .PreviousDetail = canonical->Detail,
+                            .NewDetail = link.Detail
+                        });
+                    }
+                    canonicalByKey.erase(it);
+                    continue;
+                }
+
+                deltas.push_back(FSemanticNavigationDeltaV2{
+                    .Kind = ESemanticDeltaKindV2::Added,
+                    .Link = link,
+                    .NewDetail = link.Detail
+                });
+            }
+
+            for (const auto &entry : canonicalByKey) {
+                const auto *canonical = entry.second;
+                deltas.push_back(FSemanticNavigationDeltaV2{
+                    .Kind = ESemanticDeltaKindV2::Removed,
+                    .Link = *canonical,
+                    .PreviousDetail = canonical->Detail
+                });
+            }
+
+            return deltas;
+        }
+
+        inline auto DiffReferencedSymbolsV2(const Vector<FReferencedSymbolSemanticV2> &canonicalSymbols,
+                                            const Vector<FReferencedSymbolSemanticV2> &draftSymbols)
+            -> Vector<FReferencedSymbolDeltaV2> {
+            Vector<FReferencedSymbolDeltaV2> deltas;
+
+            std::map<Str, const FReferencedSymbolSemanticV2 *> canonicalByKey;
+            for (const auto &symbol : canonicalSymbols) {
+                canonicalByKey[BuildReferencedSymbolKeyV2(symbol)] = &symbol;
+            }
+
+            for (const auto &symbol : draftSymbols) {
+                const auto key = BuildReferencedSymbolKeyV2(symbol);
+                if (const auto it = canonicalByKey.find(key); it != canonicalByKey.end()) {
+                    const auto *canonical = it->second;
+                    const bool bResolutionChanged = canonical->bResolved != symbol.bResolved;
+                    const bool bOriginChanged = canonical->Origin != symbol.Origin;
+                    const bool bDeclaredKindChanged = !OptionalValuesEqualV2(canonical->DeclaredKind, symbol.DeclaredKind);
+                    const bool bInferredKindChanged = !OptionalValuesEqualV2(canonical->InferredKind, symbol.InferredKind);
+                    const bool bArgumentDependenciesChanged =
+                        canonical->InferredArgumentDefinitionIds != symbol.InferredArgumentDefinitionIds;
+                    if (bResolutionChanged || bOriginChanged || bDeclaredKindChanged || bInferredKindChanged || bArgumentDependenciesChanged) {
+                        FReferencedSymbolDeltaV2 delta;
+                        delta.Kind = ESemanticDeltaKindV2::Changed;
+                        delta.Symbol = symbol;
+                        delta.bResolutionChanged = bResolutionChanged;
+                        delta.bOriginChanged = bOriginChanged;
+                        delta.bDeclaredKindChanged = bDeclaredKindChanged;
+                        delta.bInferredKindChanged = bInferredKindChanged;
+                        delta.bArgumentDependenciesChanged = bArgumentDependenciesChanged;
+                        delta.bCanonicalResolved = canonical->bResolved;
+                        delta.CanonicalOrigin = canonical->Origin;
+                        delta.CanonicalDeclaredKind = canonical->DeclaredKind;
+                        delta.CanonicalInferredKind = canonical->InferredKind;
+                        delta.CanonicalArgumentDefinitionIds = canonical->InferredArgumentDefinitionIds;
+                        deltas.push_back(std::move(delta));
+                    }
+                    canonicalByKey.erase(it);
+                    continue;
+                }
+
+                deltas.push_back(FReferencedSymbolDeltaV2{
+                    .Kind = ESemanticDeltaKindV2::Added,
+                    .Symbol = symbol
+                });
+            }
+
+            for (const auto &entry : canonicalByKey) {
+                const auto *canonical = entry.second;
+                FReferencedSymbolDeltaV2 delta;
+                delta.Kind = ESemanticDeltaKindV2::Removed;
+                delta.Symbol = *canonical;
+                delta.bCanonicalResolved = canonical->bResolved;
+                delta.CanonicalOrigin = canonical->Origin;
+                delta.CanonicalDeclaredKind = canonical->DeclaredKind;
+                delta.CanonicalInferredKind = canonical->InferredKind;
+                delta.CanonicalArgumentDefinitionIds = canonical->InferredArgumentDefinitionIds;
+                deltas.push_back(std::move(delta));
+            }
+
+            return deltas;
+        }
+
+        inline auto DiffDiagnosticsV2(const Vector<FSemanticDiagnosticV2> &canonicalDiagnostics,
+                                      const Vector<FSemanticDiagnosticV2> &draftDiagnostics)
+            -> Vector<FSemanticDiagnosticDeltaV2> {
+            Vector<FSemanticDiagnosticDeltaV2> deltas;
+
+            std::map<Str, const FSemanticDiagnosticV2 *> canonicalByKey;
+            for (const auto &diagnostic : canonicalDiagnostics) {
+                canonicalByKey[BuildDiagnosticKeyV2(diagnostic)] = &diagnostic;
+            }
+
+            for (const auto &diagnostic : draftDiagnostics) {
+                const auto key = BuildDiagnosticKeyV2(diagnostic);
+                if (const auto it = canonicalByKey.find(key); it != canonicalByKey.end()) {
+                    canonicalByKey.erase(it);
+                    continue;
+                }
+
+                deltas.push_back(FSemanticDiagnosticDeltaV2{
+                    .Kind = ESemanticDeltaKindV2::Added,
+                    .Diagnostic = diagnostic
+                });
+            }
+
+            for (const auto &entry : canonicalByKey) {
+                deltas.push_back(FSemanticDiagnosticDeltaV2{
+                    .Kind = ESemanticDeltaKindV2::Removed,
+                    .Diagnostic = *entry.second
+                });
+            }
+
+            return deltas;
+        }
+
+        inline auto CollectRelatedAssumptionIdsV2(const FSemanticObjectOverviewV2 *object) -> std::set<Str> {
+            std::set<Str> assumptionIds;
+            if (object == nullptr) return assumptionIds;
+
+            for (const auto &link : object->RelatedAssumptions) {
+                if (link.Target.Kind != ESemanticObjectKindV2::Assumption || link.Target.ObjectId.empty()) continue;
+                assumptionIds.insert(link.Target.ObjectId);
+            }
+
+            if (object->Ref.Kind == ESemanticObjectKindV2::Assumption && object->Ref.IsValid()) {
+                assumptionIds.insert(object->Ref.ObjectId);
+            }
+
+            return assumptionIds;
+        }
+
+        inline auto DiffAssumptionsV2(const FModelSemanticOverviewV2 &canonicalOverview,
+                                      const FModelSemanticOverviewV2 &draftOverview,
+                                      const std::set<Str> &assumptionIds)
+            -> Vector<FSemanticAssumptionDeltaV2> {
+            Vector<FSemanticAssumptionDeltaV2> deltas;
+
+            for (const auto &assumptionId : assumptionIds) {
+                const auto *canonical = FindSemanticAssumptionV2(canonicalOverview.Report, assumptionId);
+                const auto *draft = FindSemanticAssumptionV2(draftOverview.Report, assumptionId);
+
+                if (canonical == nullptr && draft == nullptr) continue;
+                if (canonical == nullptr && draft != nullptr) {
+                    deltas.push_back(FSemanticAssumptionDeltaV2{
+                        .Kind = ESemanticDeltaKindV2::Added,
+                        .Assumption = *draft
+                    });
+                    continue;
+                }
+                if (canonical != nullptr && draft == nullptr) {
+                    deltas.push_back(FSemanticAssumptionDeltaV2{
+                        .Kind = ESemanticDeltaKindV2::Removed,
+                        .Assumption = *canonical,
+                        .CanonicalStatus = canonical->Status,
+                        .CanonicalMaterializedDefinitionId = canonical->MaterializedDefinitionId
+                    });
+                    continue;
+                }
+
+                const bool bStatusChanged = canonical->Status != draft->Status;
+                const bool bMaterializationChanged = canonical->MaterializedDefinitionId != draft->MaterializedDefinitionId;
+                const bool bMeaningChanged =
+                    canonical->Category != draft->Category ||
+                    canonical->Detail != draft->Detail ||
+                    canonical->bWouldCreateDefinition != draft->bWouldCreateDefinition ||
+                    canonical->bMatchesDeclaredRole != draft->bMatchesDeclaredRole ||
+                    canonical->bMismatchesDeclaredRole != draft->bMismatchesDeclaredRole ||
+                    canonical->ProposedArgumentDefinitionIds != draft->ProposedArgumentDefinitionIds ||
+                    !OptionalValuesEqualV2(canonical->DeclaredKind, draft->DeclaredKind) ||
+                    !OptionalValuesEqualV2(canonical->InferredKind, draft->InferredKind);
+
+                if (bStatusChanged || bMaterializationChanged || bMeaningChanged) {
+                    deltas.push_back(FSemanticAssumptionDeltaV2{
+                        .Kind = ESemanticDeltaKindV2::Changed,
+                        .Assumption = *draft,
+                        .CanonicalStatus = canonical->Status,
+                        .CanonicalMaterializedDefinitionId = canonical->MaterializedDefinitionId,
+                        .bStatusChanged = bStatusChanged,
+                        .bMaterializationChanged = bMaterializationChanged
+                    });
+                }
+            }
+
+            return deltas;
+        }
+
+        inline auto DetermineAssumptionLifecyclePhaseV2(const FModelV2 &model,
+                                                        const FSemanticAssumptionV2 &assumption)
+            -> EAssumptionLifecyclePhaseV2 {
+            if (!assumption.MaterializedDefinitionId.empty() &&
+                FindDefinitionByIdV2(model, assumption.MaterializedDefinitionId) != nullptr) {
+                return EAssumptionLifecyclePhaseV2::Materialized;
+            }
+
+            switch (assumption.Status) {
+                case EAssumptionStatusV2::Accepted: return EAssumptionLifecyclePhaseV2::Accepted;
+                case EAssumptionStatusV2::Dismissed: return EAssumptionLifecyclePhaseV2::Dismissed;
+                case EAssumptionStatusV2::Implicit: return EAssumptionLifecyclePhaseV2::Implicit;
+            }
+
+            return EAssumptionLifecyclePhaseV2::Implicit;
+        }
+
+    } // namespace Detail
+
+    inline auto BuildModelSemanticDraftDeltaV2(const FModelSemanticOverviewV2 &canonicalOverview,
+                                               const FModelSemanticOverviewV2 &draftOverview,
+                                               const FSemanticObjectRefV2 &targetRef) -> FModelSemanticDraftDeltaV2 {
+        FModelSemanticDraftDeltaV2 delta;
+        delta.bAvailable = true;
+        delta.CanonicalStatus = canonicalOverview.Status;
+        delta.DraftStatus = draftOverview.Status;
+        delta.CanonicalInterpretation = Detail::CollectObjectInterpretationV2(canonicalOverview, targetRef);
+        delta.DraftInterpretation = Detail::CollectObjectInterpretationV2(draftOverview, targetRef);
+        delta.CanonicalInferredKind = Detail::CollectObjectInferredKindV2(canonicalOverview, targetRef);
+        delta.DraftInferredKind = Detail::CollectObjectInferredKindV2(draftOverview, targetRef);
+        delta.CanonicalRelationClass = Detail::CollectObjectInferredClassV2(canonicalOverview, targetRef);
+        delta.DraftRelationClass = Detail::CollectObjectInferredClassV2(draftOverview, targetRef);
+
+        const auto *canonicalObject = canonicalOverview.FindObject(targetRef);
+        const auto *draftObject = draftOverview.FindObject(targetRef);
+        if (canonicalObject != nullptr) delta.bCanonicalConflict = canonicalObject->bConflict;
+        if (draftObject != nullptr) delta.bDraftConflict = draftObject->bConflict;
+
+        delta.ReferencedSymbolChanges = Detail::DiffReferencedSymbolsV2(
+            Detail::CollectObjectReferencedSymbolsV2(canonicalOverview, targetRef),
+            Detail::CollectObjectReferencedSymbolsV2(draftOverview, targetRef));
+        delta.DiagnosticChanges = Detail::DiffDiagnosticsV2(
+            Detail::CollectObjectDiagnosticsV2(canonicalOverview, targetRef),
+            Detail::CollectObjectDiagnosticsV2(draftOverview, targetRef));
+
+        delta.DependencyChanges = Detail::DiffNavigationLinksV2(
+            canonicalObject != nullptr ? canonicalObject->DependsOn : Vector<FSemanticNavigationLinkV2>{},
+            draftObject != nullptr ? draftObject->DependsOn : Vector<FSemanticNavigationLinkV2>{});
+        delta.AmbientDependencyChanges = Detail::DiffNavigationLinksV2(
+            canonicalObject != nullptr ? canonicalObject->AmbientDependencies : Vector<FSemanticNavigationLinkV2>{},
+            draftObject != nullptr ? draftObject->AmbientDependencies : Vector<FSemanticNavigationLinkV2>{});
+        delta.UsedByChanges = Detail::DiffNavigationLinksV2(
+            canonicalObject != nullptr ? canonicalObject->UsedBy : Vector<FSemanticNavigationLinkV2>{},
+            draftObject != nullptr ? draftObject->UsedBy : Vector<FSemanticNavigationLinkV2>{});
+        delta.AssumptionLinkChanges = Detail::DiffNavigationLinksV2(
+            canonicalObject != nullptr ? canonicalObject->RelatedAssumptions : Vector<FSemanticNavigationLinkV2>{},
+            draftObject != nullptr ? draftObject->RelatedAssumptions : Vector<FSemanticNavigationLinkV2>{});
+        delta.OverrideChanges = Detail::DiffNavigationLinksV2(
+            canonicalObject != nullptr ? canonicalObject->LocalOverrides : Vector<FSemanticNavigationLinkV2>{},
+            draftObject != nullptr ? draftObject->LocalOverrides : Vector<FSemanticNavigationLinkV2>{});
+
+        auto assumptionIds = Detail::CollectRelatedAssumptionIdsV2(canonicalObject);
+        const auto draftAssumptionIds = Detail::CollectRelatedAssumptionIdsV2(draftObject);
+        assumptionIds.insert(draftAssumptionIds.begin(), draftAssumptionIds.end());
+        delta.AssumptionChanges = Detail::DiffAssumptionsV2(canonicalOverview, draftOverview, assumptionIds);
+
+        return delta;
+    }
+
+    inline auto BuildAssumptionMaterializationPreviewV2(const FModelV2 &model,
+                                                        const FSemanticAssumptionV2 &assumption,
+                                                        const FModelSemanticOverviewV2 *pOverview)
+        -> FAssumptionMaterializationPreviewV2 {
+        FAssumptionMaterializationPreviewV2 preview;
+        preview.bAvailable = true;
+        preview.bWouldCreateDefinition = assumption.bWouldCreateDefinition && assumption.InferredKind.has_value();
+        preview.ProposedType = assumption.ProposedType;
+
+        FModelSemanticOverviewV2 ownedOverview;
+        const auto *overview = pOverview;
+        if (overview == nullptr) {
+            ownedOverview = BuildModelSemanticOverviewV2(model);
+            overview = &ownedOverview;
+        }
+
+        preview.LifecyclePhase = Detail::DetermineAssumptionLifecyclePhaseV2(model, assumption);
+        preview.LifecycleLabel = ToString(preview.LifecyclePhase);
+
+        if (!assumption.MaterializedDefinitionId.empty() &&
+            FindDefinitionByIdV2(model, assumption.MaterializedDefinitionId) != nullptr) {
+            preview.bAlreadyMaterialized = true;
+            preview.MaterializedObjectRef = MakeDefinitionObjectRefV2(assumption.MaterializedDefinitionId);
+            preview.OutcomeLabel = "Already materialized into explicit local model content.";
+        } else if (preview.bWouldCreateDefinition) {
+            if (const auto proposedDefinition = Detail::BuildDefinitionFromAssumptionV2(model, assumption); proposedDefinition.has_value()) {
+                preview.ProposedDefinition = *proposedDefinition;
+                preview.SuggestedDefinitionId = proposedDefinition->DefinitionId;
+                preview.ProposedNotation = RenderDialectDefinitionV2(*proposedDefinition, &model);
+                preview.ProposedType = proposedDefinition->DeclaredType;
+                preview.OutcomeLabel = "Accepting will create a new local definition.";
+                for (const auto &dependencyId : proposedDefinition->ArgumentDefinitionIds) {
+                    if (overview->FindObject(MakeDefinitionObjectRefV2(dependencyId)) == nullptr) continue;
+                    Detail::AppendNavigationLinkUniqueV2(
+                        preview.ProposedDependencies,
+                        Detail::MakeNavigationLinkV2(
+                            overview->ObjectsByKey,
+                            MakeDefinitionObjectRefV2(dependencyId),
+                            "proposed dependency"));
+                }
+            }
+        } else if (assumption.Status == EAssumptionStatusV2::Accepted) {
+            preview.OutcomeLabel = "Accepted into canonical semantics without creating a new local definition.";
+        } else if (assumption.Status == EAssumptionStatusV2::Dismissed) {
+            preview.OutcomeLabel = "Dismissed; no canonical artifact will be created.";
+        } else if (assumption.bMismatchesDeclaredRole) {
+            preview.OutcomeLabel = "Implicit proposal that conflicts with explicit local meaning.";
+        } else if (assumption.bMatchesDeclaredRole) {
+            preview.OutcomeLabel = "Implicit proposal already aligned with explicit local meaning.";
+        } else {
+            preview.OutcomeLabel = "Implicit proposal; accepting canonizes its semantic consequence.";
+        }
+
+        return preview;
+    }
+
     inline auto BuildSemanticSelectionContextV2(const FModelSemanticOverviewV2 &overview,
                                                 const FSemanticObjectRefV2 &selected) -> FSemanticSelectionContextV2 {
         FSemanticSelectionContextV2 context;
@@ -2016,6 +2795,13 @@ namespace Slab::Core::Model::V2 {
             *definition = proposedDefinition;
         }
 
+        const auto canonicalOverview = BuildModelSemanticOverviewV2(model);
+        preview.SemanticOverview = BuildDraftSemanticOverviewV2(previewModel);
+        preview.SemanticDelta = BuildModelSemanticDraftDeltaV2(
+            canonicalOverview,
+            *preview.SemanticOverview,
+            MakeDefinitionObjectRefV2(selectedDefinition.DefinitionId));
+
         const auto semanticReport = BuildModelSemanticReportV2(previewModel);
         if (const auto it = std::find_if(
                 semanticReport.Definitions.begin(),
@@ -2033,6 +2819,124 @@ namespace Slab::Core::Model::V2 {
             Detail::AppendInferenceDiagnosticsForSymbolV2(
                 symbol,
                 selectedDefinition.DefinitionId,
+                "Definition",
+                preview.Diagnostics);
+        }
+
+        preview.bHasBlockingErrors = std::any_of(
+            semanticReport.Diagnostics.begin(),
+            semanticReport.Diagnostics.end(),
+            [](const auto &diagnostic) { return diagnostic.Severity == EValidationSeverityV2::Error; });
+        preview.bCanApply = preview.bParseOk && !preview.bHasBlockingErrors;
+        if (preview.NormalizedInterpretation.empty()) {
+            preview.NormalizedInterpretation = preview.NormalizedProjection;
+        }
+        return preview;
+    }
+
+    inline auto PreviewNewDefinitionV2(const FModelV2 &model,
+                                       const Str &definitionId,
+                                       const EDefinitionKindV2 kind,
+                                       const ECoordinateRoleV2 coordinateRole,
+                                       const EOperatorApplicationStyleV2 operatorStyle,
+                                       const Str &draftNotation,
+                                       const Str &displayName = {},
+                                       const Str &description = {}) -> FDefinitionDraftPreviewV2 {
+        FDefinitionDraftPreviewV2 preview;
+        preview.DefinitionId = definitionId;
+        preview.CanonicalNotation = {};
+        preview.DraftNotation = draftNotation;
+
+        if (definitionId.empty()) {
+            preview.Diagnostics.push_back(FSemanticDiagnosticV2{
+                .Severity = EValidationSeverityV2::Error,
+                .Code = "missing_definition_id",
+                .EntityId = definitionId,
+                .Context = "Definition",
+                .Message = "definition id is empty"
+            });
+            preview.bHasBlockingErrors = true;
+            return preview;
+        }
+
+        if (FindDefinitionByIdV2(model, definitionId) != nullptr) {
+            preview.Diagnostics.push_back(FSemanticDiagnosticV2{
+                .Severity = EValidationSeverityV2::Error,
+                .Code = "duplicate_definition_id",
+                .EntityId = definitionId,
+                .Context = "Definition",
+                .Message = "definition id '" + definitionId + "' already exists"
+            });
+            preview.bHasBlockingErrors = true;
+            return preview;
+        }
+
+        const auto context = FNotationContextV2::FromModel(model);
+        const auto parsed = ParseDefinitionNotationV2(draftNotation, &context);
+        if (!parsed.IsOk()) {
+            preview.ParseError = parsed.Error;
+            preview.Diagnostics.push_back(FSemanticDiagnosticV2{
+                .Severity = EValidationSeverityV2::Error,
+                .Code = "parse_error",
+                .EntityId = definitionId,
+                .Context = "Definition",
+                .Message = parsed.Error.Message
+            });
+            preview.bHasBlockingErrors = true;
+            return preview;
+        }
+
+        preview.bParseOk = true;
+
+        FDefinitionV2 proposedDefinition;
+        proposedDefinition.DefinitionId = definitionId;
+        proposedDefinition.Kind = kind;
+        proposedDefinition.CoordinateRole =
+            kind == EDefinitionKindV2::Coordinate ? coordinateRole : ECoordinateRoleV2::Generic;
+        proposedDefinition.OperatorStyle = operatorStyle;
+        proposedDefinition.Symbol = parsed.Value->CanonicalSymbol;
+        proposedDefinition.PreferredNotation = parsed.Value->SourceSymbolText;
+        proposedDefinition.SourceText = draftNotation;
+        proposedDefinition.DisplayName = !displayName.empty()
+            ? displayName
+            : (!proposedDefinition.PreferredNotation.empty() ? proposedDefinition.PreferredNotation : proposedDefinition.DefinitionId);
+        proposedDefinition.Description = description;
+        if (parsed.Value->bMembership && parsed.Value->MembershipSpace.has_value()) {
+            proposedDefinition.DeclaredType = MakeSpaceTypeV2(*parsed.Value->MembershipSpace);
+        } else if (parsed.Value->DeclaredType.has_value()) {
+            proposedDefinition.DeclaredType = *parsed.Value->DeclaredType;
+        }
+
+        preview.ProposedDefinition = proposedDefinition;
+        preview.NormalizedProjection = RenderDialectDefinitionV2(proposedDefinition, &model);
+
+        auto previewModel = model;
+        previewModel.Definitions.push_back(proposedDefinition);
+
+        const auto canonicalOverview = BuildModelSemanticOverviewV2(model);
+        preview.SemanticOverview = BuildDraftSemanticOverviewV2(previewModel);
+        preview.SemanticDelta = BuildModelSemanticDraftDeltaV2(
+            canonicalOverview,
+            *preview.SemanticOverview,
+            MakeDefinitionObjectRefV2(definitionId));
+
+        const auto semanticReport = BuildModelSemanticReportV2(previewModel);
+        if (const auto it = std::find_if(
+                semanticReport.Definitions.rbegin(),
+                semanticReport.Definitions.rend(),
+                [&](const auto &report) { return report.DefinitionId == definitionId; });
+            it != semanticReport.Definitions.rend()) {
+            preview.NormalizedInterpretation = it->NormalizedInterpretation;
+            preview.InferredKind = it->InferredKind;
+            preview.Assumptions = it->Assumptions;
+            preview.Diagnostics = it->Diagnostics;
+        }
+
+        preview.ReferencedSymbols = CollectDefinitionPreviewReferencesV2(previewModel, proposedDefinition);
+        for (const auto &symbol : preview.ReferencedSymbols) {
+            Detail::AppendInferenceDiagnosticsForSymbolV2(
+                symbol,
+                definitionId,
                 "Definition",
                 preview.Diagnostics);
         }
@@ -2089,12 +2993,118 @@ namespace Slab::Core::Model::V2 {
             *relation = proposedRelation;
         }
 
+        const auto canonicalOverview = BuildModelSemanticOverviewV2(model);
+        preview.SemanticOverview = BuildDraftSemanticOverviewV2(previewModel);
+        preview.SemanticDelta = BuildModelSemanticDraftDeltaV2(
+            canonicalOverview,
+            *preview.SemanticOverview,
+            MakeRelationObjectRefV2(selectedRelation.RelationId));
+
         const auto semanticReport = BuildModelSemanticReportV2(previewModel);
         if (const auto it = std::find_if(
                 semanticReport.Relations.begin(),
                 semanticReport.Relations.end(),
                 [&](const auto &report) { return report.RelationId == selectedRelation.RelationId; });
             it != semanticReport.Relations.end()) {
+            preview.NormalizedProjection = RenderDialectRelationV2(proposedRelation, &previewModel);
+            preview.NormalizedInterpretation = it->NormalizedInterpretation;
+            preview.InferredClass = it->InferredClass;
+            preview.ReferencedSymbols = it->ReferencedSymbols;
+            preview.Diagnostics = it->Diagnostics;
+            preview.Assumptions = it->Assumptions;
+        }
+
+        preview.bHasBlockingErrors = std::any_of(
+            semanticReport.Diagnostics.begin(),
+            semanticReport.Diagnostics.end(),
+            [](const auto &diagnostic) { return diagnostic.Severity == EValidationSeverityV2::Error; });
+        preview.bCanApply = preview.bParseOk && !preview.bHasBlockingErrors;
+        if (preview.NormalizedProjection.empty()) {
+            preview.NormalizedProjection = RenderDialectRelationV2(proposedRelation, &previewModel);
+        }
+        if (preview.NormalizedInterpretation.empty()) {
+            preview.NormalizedInterpretation = preview.NormalizedProjection;
+        }
+        return preview;
+    }
+
+    inline auto PreviewNewRelationV2(const FModelV2 &model,
+                                     const Str &relationId,
+                                     const ERelationKindV2 kind,
+                                     const Str &draftNotation,
+                                     const Str &name = {},
+                                     const Str &description = {}) -> FRelationDraftPreviewV2 {
+        FRelationDraftPreviewV2 preview;
+        preview.RelationId = relationId;
+        preview.CanonicalNotation = {};
+        preview.DraftNotation = draftNotation;
+
+        if (relationId.empty()) {
+            preview.Diagnostics.push_back(FSemanticDiagnosticV2{
+                .Severity = EValidationSeverityV2::Error,
+                .Code = "missing_relation_id",
+                .EntityId = relationId,
+                .Context = "Relation",
+                .Message = "relation id is empty"
+            });
+            preview.bHasBlockingErrors = true;
+            return preview;
+        }
+
+        if (FindRelationByIdV2(model, relationId) != nullptr) {
+            preview.Diagnostics.push_back(FSemanticDiagnosticV2{
+                .Severity = EValidationSeverityV2::Error,
+                .Code = "duplicate_relation_id",
+                .EntityId = relationId,
+                .Context = "Relation",
+                .Message = "relation id '" + relationId + "' already exists"
+            });
+            preview.bHasBlockingErrors = true;
+            return preview;
+        }
+
+        const auto context = FNotationContextV2::FromModel(model);
+        const auto parsed = ParseRelationNotationV2(
+            relationId,
+            kind,
+            draftNotation,
+            &context);
+        if (!parsed.IsOk()) {
+            preview.ParseError = parsed.Error;
+            preview.Diagnostics.push_back(FSemanticDiagnosticV2{
+                .Severity = EValidationSeverityV2::Error,
+                .Code = "parse_error",
+                .EntityId = relationId,
+                .Context = "Relation",
+                .Message = parsed.Error.Message
+            });
+            preview.bHasBlockingErrors = true;
+            return preview;
+        }
+
+        preview.bParseOk = true;
+
+        auto proposedRelation = *parsed.Value;
+        proposedRelation.Name = name;
+        proposedRelation.Description = description;
+        preview.ProposedRelation = proposedRelation;
+
+        auto previewModel = model;
+        previewModel.Relations.push_back(proposedRelation);
+
+        const auto canonicalOverview = BuildModelSemanticOverviewV2(model);
+        preview.SemanticOverview = BuildDraftSemanticOverviewV2(previewModel);
+        preview.SemanticDelta = BuildModelSemanticDraftDeltaV2(
+            canonicalOverview,
+            *preview.SemanticOverview,
+            MakeRelationObjectRefV2(relationId));
+
+        const auto semanticReport = BuildModelSemanticReportV2(previewModel);
+        if (const auto it = std::find_if(
+                semanticReport.Relations.rbegin(),
+                semanticReport.Relations.rend(),
+                [&](const auto &report) { return report.RelationId == relationId; });
+            it != semanticReport.Relations.rend()) {
             preview.NormalizedProjection = RenderDialectRelationV2(proposedRelation, &previewModel);
             preview.NormalizedInterpretation = it->NormalizedInterpretation;
             preview.InferredClass = it->InferredClass;
@@ -2220,6 +3230,44 @@ namespace Slab::Core::Model::V2 {
         return RevertEditorBufferV2(model, buffer);
     }
 
+    inline auto ApplyNewDefinitionPreviewV2(FModelV2 &model,
+                                            const FDefinitionDraftPreviewV2 &preview,
+                                            FModelChangeRecordV2 *pOutChangeRecord = nullptr) -> bool {
+        if (!preview.bCanApply || !preview.ProposedDefinition.has_value()) return false;
+        if (preview.DefinitionId.empty() || FindDefinitionByIdV2(model, preview.DefinitionId) != nullptr) return false;
+
+        model.Definitions.push_back(*preview.ProposedDefinition);
+
+        FModelChangeRecordV2 changeRecord;
+        changeRecord.ObjectKind = EModelObjectKindV2::Definition;
+        changeRecord.ObjectId = preview.DefinitionId;
+        changeRecord.PreviousCanonicalNotation = {};
+        changeRecord.NewCanonicalNotation = preview.DraftNotation;
+        changeRecord.Origin = EModelChangeOriginV2::DirectEdit;
+        ApplyModelChangeRecordV2(model, changeRecord);
+        if (pOutChangeRecord != nullptr) *pOutChangeRecord = model.ChangeLog.back();
+        return true;
+    }
+
+    inline auto ApplyNewRelationPreviewV2(FModelV2 &model,
+                                          const FRelationDraftPreviewV2 &preview,
+                                          FModelChangeRecordV2 *pOutChangeRecord = nullptr) -> bool {
+        if (!preview.bCanApply || !preview.ProposedRelation.has_value()) return false;
+        if (preview.RelationId.empty() || FindRelationByIdV2(model, preview.RelationId) != nullptr) return false;
+
+        model.Relations.push_back(*preview.ProposedRelation);
+
+        FModelChangeRecordV2 changeRecord;
+        changeRecord.ObjectKind = EModelObjectKindV2::Relation;
+        changeRecord.ObjectId = preview.RelationId;
+        changeRecord.PreviousCanonicalNotation = {};
+        changeRecord.NewCanonicalNotation = preview.DraftNotation;
+        changeRecord.Origin = EModelChangeOriginV2::DirectEdit;
+        ApplyModelChangeRecordV2(model, changeRecord);
+        if (pOutChangeRecord != nullptr) *pOutChangeRecord = model.ChangeLog.back();
+        return true;
+    }
+
     inline auto SetAssumptionStatusV2(FModelV2 &model,
                                       const Str &assumptionId,
                                       const EAssumptionStatusV2 status,
@@ -2236,33 +3284,26 @@ namespace Slab::Core::Model::V2 {
                                    FModelChangeRecordV2 *pOutChangeRecord = nullptr) -> bool {
         if (assumption.AssumptionId.empty()) return false;
 
-        if (assumption.bWouldCreateDefinition && assumption.InferredKind.has_value()) {
-            if (const auto proposedKind = assumption.InferredKind; proposedKind.has_value()) {
-                FDefinitionV2 definition;
-                definition.DefinitionId = Detail::BuildDefinitionIdSuggestionV2(model, *proposedKind, assumption.TargetSymbol);
-                definition.Symbol = NormalizeSymbolAliasV2(assumption.TargetSymbol);
-                definition.PreferredNotation = assumption.TargetSymbol;
-                definition.DisplayName = assumption.TargetSymbol;
-                definition.Kind = *proposedKind;
-                definition.SourceText = assumption.TargetSymbol;
-                definition.ArgumentDefinitionIds = assumption.ProposedArgumentDefinitionIds;
-                if (assumption.ProposedType.has_value()) definition.DeclaredType = *assumption.ProposedType;
-                definition.Metadata["accepted_assumption_id"] = assumption.AssumptionId;
-                model.Definitions.push_back(definition);
+        if (const auto proposedDefinition = Detail::BuildDefinitionFromAssumptionV2(model, assumption);
+            proposedDefinition.has_value()) {
+            model.Definitions.push_back(*proposedDefinition);
 
-                SetAssumptionStatusV2(model, assumption.AssumptionId, EAssumptionStatusV2::Accepted, definition.DefinitionId);
+            SetAssumptionStatusV2(
+                model,
+                assumption.AssumptionId,
+                EAssumptionStatusV2::Accepted,
+                proposedDefinition->DefinitionId);
 
-                FModelChangeRecordV2 changeRecord;
-                changeRecord.ObjectKind = EModelObjectKindV2::Definition;
-                changeRecord.ObjectId = definition.DefinitionId;
-                changeRecord.PreviousCanonicalNotation = {};
-                changeRecord.NewCanonicalNotation = RenderDialectDefinitionV2(definition, &model);
-                changeRecord.Origin = EModelChangeOriginV2::AcceptedInference;
-                changeRecord.SourceId = assumption.AssumptionId;
-                ApplyModelChangeRecordV2(model, changeRecord);
-                if (pOutChangeRecord != nullptr) *pOutChangeRecord = model.ChangeLog.back();
-                return true;
-            }
+            FModelChangeRecordV2 changeRecord;
+            changeRecord.ObjectKind = EModelObjectKindV2::Definition;
+            changeRecord.ObjectId = proposedDefinition->DefinitionId;
+            changeRecord.PreviousCanonicalNotation = {};
+            changeRecord.NewCanonicalNotation = RenderDialectDefinitionV2(*proposedDefinition, &model);
+            changeRecord.Origin = EModelChangeOriginV2::AcceptedInference;
+            changeRecord.SourceId = assumption.AssumptionId;
+            ApplyModelChangeRecordV2(model, changeRecord);
+            if (pOutChangeRecord != nullptr) *pOutChangeRecord = model.ChangeLog.back();
+            return true;
         }
 
         SetAssumptionStatusV2(model, assumption.AssumptionId, EAssumptionStatusV2::Accepted, assumption.MaterializedDefinitionId);

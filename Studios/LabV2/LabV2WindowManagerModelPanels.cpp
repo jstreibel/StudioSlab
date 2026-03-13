@@ -140,6 +140,71 @@ namespace {
         return &buffer;
     }
 
+    auto GetEditorBufferPreviewOverview(const ModelV2::FModelEditorBufferV2 *buffer) -> const ModelV2::FModelSemanticOverviewV2 * {
+        if (buffer == nullptr || !buffer->bPreviewCurrent) return nullptr;
+        if (buffer->TargetKind == ModelV2::EModelObjectKindV2::Definition &&
+            buffer->DefinitionPreview.has_value() &&
+            buffer->DefinitionPreview->SemanticOverview.has_value()) {
+            return &(*buffer->DefinitionPreview->SemanticOverview);
+        }
+        if (buffer->TargetKind == ModelV2::EModelObjectKindV2::Relation &&
+            buffer->RelationPreview.has_value() &&
+            buffer->RelationPreview->SemanticOverview.has_value()) {
+            return &(*buffer->RelationPreview->SemanticOverview);
+        }
+        return nullptr;
+    }
+
+    auto GetEditorBufferPreviewAssumptions(const ModelV2::FModelEditorBufferV2 *buffer)
+        -> const Slab::Vector<ModelV2::FSemanticAssumptionV2> * {
+        if (buffer == nullptr || !buffer->bPreviewCurrent) return nullptr;
+        if (buffer->TargetKind == ModelV2::EModelObjectKindV2::Definition &&
+            buffer->DefinitionPreview.has_value()) {
+            return &buffer->DefinitionPreview->Assumptions;
+        }
+        if (buffer->TargetKind == ModelV2::EModelObjectKindV2::Relation &&
+            buffer->RelationPreview.has_value()) {
+            return &buffer->RelationPreview->Assumptions;
+        }
+        return nullptr;
+    }
+
+    auto FindDraftProposedDefinition(const ModelV2::FModelV2 &model,
+                                     const ModelV2::FModelEditorBufferV2 *buffer,
+                                     const ModelV2::FModelSemanticOverviewV2 *previewOverview,
+                                     const Slab::Str &definitionId) -> Slab::TOptional<ModelV2::FDefinitionV2> {
+        const auto *assumptions = GetEditorBufferPreviewAssumptions(buffer);
+        if (assumptions == nullptr) return std::nullopt;
+
+        for (const auto &assumption : *assumptions) {
+            const auto materializationPreview = ModelV2::BuildAssumptionMaterializationPreviewV2(model, assumption, previewOverview);
+            if (!materializationPreview.ProposedDefinition.has_value()) continue;
+            if (materializationPreview.ProposedDefinition->DefinitionId == definitionId) {
+                return materializationPreview.ProposedDefinition;
+            }
+        }
+
+        return std::nullopt;
+    }
+
+    auto CollectDraftProposedDefinitions(const ModelV2::FModelV2 &model,
+                                         const ModelV2::FModelEditorBufferV2 *buffer,
+                                         const ModelV2::FModelSemanticOverviewV2 *previewOverview)
+        -> Slab::Vector<ModelV2::FDefinitionV2> {
+        Slab::Vector<ModelV2::FDefinitionV2> definitions;
+        const auto *assumptions = GetEditorBufferPreviewAssumptions(buffer);
+        if (assumptions == nullptr) return definitions;
+
+        std::set<Slab::Str> definitionIds;
+        for (const auto &assumption : *assumptions) {
+            const auto materializationPreview = ModelV2::BuildAssumptionMaterializationPreviewV2(model, assumption, previewOverview);
+            if (!materializationPreview.ProposedDefinition.has_value()) continue;
+            if (!definitionIds.insert(materializationPreview.ProposedDefinition->DefinitionId).second) continue;
+            definitions.push_back(*materializationPreview.ProposedDefinition);
+        }
+        return definitions;
+    }
+
     auto ResolveHighlightState(const ModelV2::FSemanticSelectionContextV2 &selectionContext,
                                const ModelV2::FModelSemanticOverviewV2 &overview,
                                const ModelV2::FSemanticObjectRefV2 &ref) -> FSemanticRowHighlightState {
@@ -245,6 +310,24 @@ namespace {
     auto MakeAssumptionRowOptions(const FSemanticRowHighlightState &highlightState,
                                   const float baseFontSize) -> Typesetting::FImGuiSelectableTypesetRowOptions {
         return MakeContextualRowOptions(ImVec4(0.79f, 0.42f, 0.20f, 1.0f), highlightState, baseFontSize);
+    }
+
+    auto MakeDraftDefinitionRowOptions(const FSemanticRowHighlightState &highlightState,
+                                       const float baseFontSize) -> Typesetting::FImGuiSelectableTypesetRowOptions {
+        auto rowOptions = MakeDefinitionRowOptions(highlightState, baseFontSize);
+        rowOptions.SecondaryText = "draft only";
+        rowOptions.SecondaryStyle.FontPixelSize = baseFontSize * 0.76f;
+        rowOptions.SecondaryTint = ImGui::GetColorU32(ImVec4(0.76f, 0.60f, 0.22f, 0.95f));
+        return rowOptions;
+    }
+
+    auto MakeDraftAssumptionRowOptions(const FSemanticRowHighlightState &highlightState,
+                                       const float baseFontSize) -> Typesetting::FImGuiSelectableTypesetRowOptions {
+        auto rowOptions = MakeAssumptionRowOptions(highlightState, baseFontSize);
+        rowOptions.SecondaryText = "draft preview";
+        rowOptions.SecondaryStyle.FontPixelSize = baseFontSize * 0.76f;
+        rowOptions.SecondaryTint = ImGui::GetColorU32(ImVec4(0.76f, 0.60f, 0.22f, 0.95f));
+        return rowOptions;
     }
 
     auto HealthTint(const ModelV2::ESemanticHealthV2 health) -> ImVec4 {
@@ -355,6 +438,23 @@ namespace {
         }
     }
 
+    auto DrawRawDiagnosticList(const Slab::Vector<ModelV2::FSemanticDiagnosticV2> &diagnostics) -> void;
+
+    template<typename FNavigate>
+    auto DrawPreviewDiagnosticSection(const ModelV2::FModelSemanticOverviewV2 *overview,
+                                      const ModelV2::FSemanticObjectRefV2 &objectRef,
+                                      const Slab::Vector<ModelV2::FSemanticDiagnosticV2> &fallbackDiagnostics,
+                                      const FNavigate &navigate) -> void {
+        if (overview != nullptr) {
+            if (const auto *object = overview->FindObject(objectRef); object != nullptr && !object->Diagnostics.empty()) {
+                DrawDiagnosticNavigationSection(object->Diagnostics, navigate);
+                return;
+            }
+        }
+
+        DrawRawDiagnosticList(fallbackDiagnostics);
+    }
+
     auto DrawRawDiagnosticList(const Slab::Vector<ModelV2::FSemanticDiagnosticV2> &diagnostics) -> void {
         if (diagnostics.empty()) return;
         ImGui::SeparatorText("Diagnostics");
@@ -368,15 +468,28 @@ namespace {
         }
     }
 
-    auto DrawReferencedSymbols(const Slab::Vector<ModelV2::FReferencedSymbolSemanticV2> &symbols) -> void {
+    template<typename FNavigate>
+    auto DrawReferencedSymbols(const ModelV2::FModelSemanticOverviewV2 *overview,
+                               const Slab::Vector<ModelV2::FReferencedSymbolSemanticV2> &symbols,
+                               const FNavigate &navigate) -> void {
         if (symbols.empty()) return;
         ImGui::SeparatorText("Referenced Symbols");
         for (const auto &symbol : symbols) {
+            const auto navigationTarget =
+                overview != nullptr ? ModelV2::ResolveReferencedSymbolNavigationTargetV2(*overview, symbol) : Slab::TOptional<ModelV2::FSemanticObjectRefV2>{};
             ImGui::PushID(symbol.SymbolText.c_str());
-            ImGui::BulletText(
-                "%s | %s",
-                symbol.SymbolText.c_str(),
-                symbol.bResolved ? "resolved" : "unresolved");
+            if (navigationTarget.has_value()) {
+                if (ImGui::SmallButton((symbol.SymbolText.empty() ? symbol.ReferenceId : symbol.SymbolText).c_str())) {
+                    navigate(*navigationTarget);
+                }
+                ImGui::SameLine();
+                ImGui::TextDisabled("%s", symbol.bResolved ? "resolved" : "unresolved");
+            } else {
+                ImGui::BulletText(
+                    "%s | %s",
+                    symbol.SymbolText.c_str(),
+                    symbol.bResolved ? "resolved" : "unresolved");
+            }
             if (!symbol.ReferenceId.empty()) {
                 const auto label = symbol.Origin == ModelV2::ESemanticOriginV2::BaseVocabulary
                     ? "Vocabulary entry"
@@ -411,24 +524,346 @@ namespace {
         }
     }
 
-    auto DrawAssumptionSummary(const Slab::Vector<ModelV2::FSemanticAssumptionV2> &assumptions) -> void {
-        if (assumptions.empty()) return;
-        ImGui::SeparatorText("Assumptions");
+    template<typename FNavigate, typename FAccept>
+    auto DrawDraftAssumptionWorkflowSummary(ModelV2::FModelV2 &model,
+                                            const Slab::Vector<ModelV2::FSemanticAssumptionV2> &assumptions,
+                                            const ModelV2::FModelSemanticOverviewV2 *previewOverview,
+                                            const FNavigate &navigate,
+                                            const FAccept &acceptAssumption) -> bool {
+        if (assumptions.empty()) return false;
+        ImGui::SeparatorText("Assumption Workflow");
         for (const auto &assumption : assumptions) {
+            const auto materializationPreview = ModelV2::BuildAssumptionMaterializationPreviewV2(model, assumption, previewOverview);
             ImGui::PushID(assumption.AssumptionId.c_str());
-            ImGui::BulletText(
-                "%s | %s | %s",
-                assumption.Category.c_str(),
-                assumption.TargetSymbol.empty() ? assumption.TargetId.c_str() : assumption.TargetSymbol.c_str(),
-                ModelV2::ToString(assumption.Status));
-            if (!assumption.SourceId.empty()) {
-                ImGui::TextDisabled("Source: %s", assumption.SourceId.c_str());
+            const auto assumptionLabel = assumption.TargetSymbol.empty() ? assumption.TargetId : assumption.TargetSymbol;
+            if (ImGui::SmallButton(assumptionLabel.c_str())) {
+                navigate(ModelV2::MakeAssumptionObjectRefV2(assumption.AssumptionId));
             }
+            ImGui::SameLine();
+            ImGui::TextDisabled("%s | %s", assumption.Category.c_str(), materializationPreview.LifecycleLabel.c_str());
             if (!assumption.Detail.empty()) {
                 ImGui::TextWrapped("%s", assumption.Detail.c_str());
             }
+            if (materializationPreview.ProposedDefinition.has_value()) {
+                ImGui::TextDisabled("Would materialize as: %s", materializationPreview.SuggestedDefinitionId.c_str());
+                ImGui::SameLine();
+                if (ImGui::SmallButton("Inspect Draft Object")) {
+                    navigate(ModelV2::MakeDefinitionObjectRefV2(materializationPreview.SuggestedDefinitionId));
+                }
+            }
+            if (!materializationPreview.OutcomeLabel.empty()) {
+                ImGui::TextWrapped("%s", materializationPreview.OutcomeLabel.c_str());
+            }
+
+            if (assumption.Status != ModelV2::EAssumptionStatusV2::Accepted) {
+                const char *buttonLabel = materializationPreview.ProposedDefinition.has_value()
+                    ? "Materialize into model"
+                    : "Accept into model";
+                if (ImGui::SmallButton(buttonLabel)) {
+                    const bool bMutated = acceptAssumption(assumption, materializationPreview);
+                    if (bMutated) {
+                        ImGui::PopID();
+                        return true;
+                    }
+                }
+            }
             ImGui::PopID();
         }
+        return false;
+    }
+
+    auto DeltaTint(const ModelV2::ESemanticDeltaKindV2 kind) -> ImVec4 {
+        switch (kind) {
+            case ModelV2::ESemanticDeltaKindV2::Added:
+                return ImVec4(0.32f, 0.66f, 0.42f, 1.0f);
+            case ModelV2::ESemanticDeltaKindV2::Removed:
+                return ImVec4(0.80f, 0.33f, 0.31f, 1.0f);
+            case ModelV2::ESemanticDeltaKindV2::Changed:
+                return ImVec4(0.84f, 0.64f, 0.24f, 1.0f);
+        }
+
+        return ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
+    }
+
+    auto DeltaPrefix(const ModelV2::ESemanticDeltaKindV2 kind) -> const char * {
+        switch (kind) {
+            case ModelV2::ESemanticDeltaKindV2::Added: return "+";
+            case ModelV2::ESemanticDeltaKindV2::Removed: return "-";
+            case ModelV2::ESemanticDeltaKindV2::Changed: return "~";
+        }
+
+        return "~";
+    }
+
+    auto DrawDraftStatusDeltaLine(const char *label,
+                                  const Slab::Str &canonicalValue,
+                                  const Slab::Str &draftValue) -> void {
+        const bool bChanged = canonicalValue != draftValue;
+        if (!bChanged) {
+            ImGui::TextDisabled("%s: %s", label, draftValue.c_str());
+            return;
+        }
+
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.84f, 0.64f, 0.24f, 1.0f));
+        ImGui::TextWrapped("%s: %s -> %s", label, canonicalValue.c_str(), draftValue.c_str());
+        ImGui::PopStyleColor();
+    }
+
+    auto JoinIds(const Slab::Vector<Slab::Str> &ids) -> Slab::Str {
+        Slab::Str result;
+        for (std::size_t i = 0; i < ids.size(); ++i) {
+            if (i != 0) result += ", ";
+            result += ids[i];
+        }
+        return result;
+    }
+
+    auto BuildReferencedSymbolDeltaSummary(const ModelV2::FReferencedSymbolDeltaV2 &delta) -> Slab::Str {
+        if (delta.Kind == ModelV2::ESemanticDeltaKindV2::Added) {
+            return delta.Symbol.bResolved
+                ? "new referenced symbol now resolved"
+                : "new referenced symbol remains unresolved";
+        }
+        if (delta.Kind == ModelV2::ESemanticDeltaKindV2::Removed) {
+            return "reference removed from draft";
+        }
+
+        Slab::Str summary;
+        if (delta.bResolutionChanged) {
+            summary += delta.bCanonicalResolved ? "resolved -> unresolved" : "unresolved -> resolved";
+        }
+        if (delta.bOriginChanged) {
+            if (!summary.empty()) summary += " | ";
+            summary += Slab::Str("origin: ") + ModelV2::ToString(delta.CanonicalOrigin) +
+                " -> " + ModelV2::ToString(delta.Symbol.Origin);
+        }
+        if (delta.bDeclaredKindChanged) {
+            if (!summary.empty()) summary += " | ";
+            summary += "declared role changed";
+        }
+        if (delta.bInferredKindChanged) {
+            if (!summary.empty()) summary += " | ";
+            summary += "inferred role changed";
+        }
+        if (delta.bArgumentDependenciesChanged) {
+            if (!summary.empty()) summary += " | ";
+            summary += "argument dependencies changed";
+        }
+        return summary.empty() ? "semantic reference changed" : summary;
+    }
+
+    template<typename FNavigate>
+    auto DrawNavigationDeltaSection(const char *title,
+                                    const Slab::Vector<ModelV2::FSemanticNavigationDeltaV2> &deltas,
+                                    const FNavigate &navigate) -> void {
+        if (deltas.empty()) return;
+        ImGui::SeparatorText(title);
+        for (std::size_t i = 0; i < deltas.size(); ++i) {
+            const auto &delta = deltas[i];
+            ImGui::PushID(static_cast<int>(i));
+            ImGui::PushStyleColor(ImGuiCol_Text, DeltaTint(delta.Kind));
+            ImGui::TextUnformatted(DeltaPrefix(delta.Kind));
+            ImGui::PopStyleColor();
+            ImGui::SameLine();
+            if (delta.Link.Target.IsValid()) {
+                if (ImGui::SmallButton(delta.Link.Label.c_str())) {
+                    navigate(delta.Link.Target);
+                }
+            } else {
+                ImGui::TextUnformatted(delta.Link.Label.c_str());
+            }
+
+            Slab::Str detail = delta.Kind == ModelV2::ESemanticDeltaKindV2::Changed &&
+                    delta.PreviousDetail != delta.NewDetail && !delta.NewDetail.empty()
+                ? delta.PreviousDetail + " -> " + delta.NewDetail
+                : (!delta.NewDetail.empty() ? delta.NewDetail : delta.PreviousDetail);
+            if (!detail.empty()) {
+                ImGui::SameLine();
+                ImGui::TextDisabled("%s", detail.c_str());
+            }
+            ImGui::PopID();
+        }
+    }
+
+    auto DrawReferencedSymbolDeltaSection(const char *title,
+                                          const Slab::Vector<ModelV2::FReferencedSymbolDeltaV2> &deltas) -> void {
+        if (deltas.empty()) return;
+        ImGui::SeparatorText(title);
+        for (const auto &delta : deltas) {
+            const auto label = delta.Symbol.SymbolText.empty() ? delta.Symbol.ReferenceId : delta.Symbol.SymbolText;
+            ImGui::PushStyleColor(ImGuiCol_Text, DeltaTint(delta.Kind));
+            ImGui::BulletText("%s %s", DeltaPrefix(delta.Kind), label.c_str());
+            ImGui::PopStyleColor();
+            ImGui::TextDisabled("%s", BuildReferencedSymbolDeltaSummary(delta).c_str());
+            if (delta.Symbol.InferredKind.has_value()) {
+                ImGui::TextDisabled("Draft inferred role: %s", ModelV2::ToString(*delta.Symbol.InferredKind));
+            }
+        }
+    }
+
+    auto BuildAssumptionDeltaSummary(const ModelV2::FSemanticAssumptionDeltaV2 &delta) -> Slab::Str {
+        if (delta.Kind == ModelV2::ESemanticDeltaKindV2::Added) {
+            return delta.Assumption.bWouldCreateDefinition
+                ? "new semantic proposal would materialize as a local definition"
+                : "new semantic proposal";
+        }
+        if (delta.Kind == ModelV2::ESemanticDeltaKindV2::Removed) {
+            return "proposal removed by draft";
+        }
+
+        Slab::Str summary;
+        if (delta.bStatusChanged) {
+            summary += Slab::Str("status: ") + ModelV2::ToString(delta.CanonicalStatus) +
+                " -> " + ModelV2::ToString(delta.Assumption.Status);
+        }
+        if (delta.bMaterializationChanged) {
+            if (!summary.empty()) summary += " | ";
+            summary += "materialization changed";
+        }
+        if (summary.empty()) summary = "proposal meaning changed";
+        return summary;
+    }
+
+    template<typename FNavigate>
+    auto DrawAssumptionDeltaSection(const char *title,
+                                    const Slab::Vector<ModelV2::FSemanticAssumptionDeltaV2> &deltas,
+                                    const FNavigate &navigate) -> void {
+        if (deltas.empty()) return;
+        ImGui::SeparatorText(title);
+        for (std::size_t i = 0; i < deltas.size(); ++i) {
+            const auto &delta = deltas[i];
+            const auto label = delta.Assumption.TargetSymbol.empty()
+                ? (delta.Assumption.TargetId.empty() ? delta.Assumption.AssumptionId : delta.Assumption.TargetId)
+                : delta.Assumption.TargetSymbol;
+            ImGui::PushID(static_cast<int>(i));
+            ImGui::PushStyleColor(ImGuiCol_Text, DeltaTint(delta.Kind));
+            ImGui::TextUnformatted(DeltaPrefix(delta.Kind));
+            ImGui::PopStyleColor();
+            ImGui::SameLine();
+            if (ImGui::SmallButton(label.c_str())) {
+                navigate(ModelV2::MakeAssumptionObjectRefV2(delta.Assumption.AssumptionId));
+            }
+            ImGui::SameLine();
+            ImGui::TextDisabled("%s", delta.Assumption.Category.c_str());
+            ImGui::TextDisabled("%s", BuildAssumptionDeltaSummary(delta).c_str());
+            if (!delta.Assumption.Detail.empty()) {
+                ImGui::TextWrapped("%s", delta.Assumption.Detail.c_str());
+            }
+            ImGui::PopID();
+        }
+    }
+
+    auto DrawDiagnosticDeltaSection(const char *title,
+                                    const Slab::Vector<ModelV2::FSemanticDiagnosticDeltaV2> &deltas) -> void {
+        if (deltas.empty()) return;
+        ImGui::SeparatorText(title);
+        for (const auto &delta : deltas) {
+            const auto tint = delta.Kind == ModelV2::ESemanticDeltaKindV2::Removed
+                ? ImVec4(0.32f, 0.66f, 0.42f, 1.0f)
+                : DeltaTint(delta.Kind);
+            ImGui::PushStyleColor(ImGuiCol_Text, tint);
+            ImGui::BulletText(
+                "%s [%s] %s: %s",
+                DeltaPrefix(delta.Kind),
+                delta.Diagnostic.Code.c_str(),
+                delta.Diagnostic.Context.c_str(),
+                delta.Diagnostic.Message.c_str());
+            ImGui::PopStyleColor();
+        }
+    }
+
+    auto DraftDeltaHasChanges(const ModelV2::FModelSemanticDraftDeltaV2 &delta) -> bool {
+        return delta.CanonicalStatus.ParseHealth != delta.DraftStatus.ParseHealth ||
+            delta.CanonicalStatus.SemanticHealth != delta.DraftStatus.SemanticHealth ||
+            delta.CanonicalStatus.UnresolvedSymbolCount != delta.DraftStatus.UnresolvedSymbolCount ||
+            delta.CanonicalStatus.PendingAssumptionCount != delta.DraftStatus.PendingAssumptionCount ||
+            delta.CanonicalStatus.DeferredCount != delta.DraftStatus.DeferredCount ||
+            delta.CanonicalStatus.Classification.ModelClass != delta.DraftStatus.Classification.ModelClass ||
+            delta.CanonicalStatus.Classification.Character != delta.DraftStatus.Classification.Character ||
+            delta.CanonicalInterpretation != delta.DraftInterpretation ||
+            delta.CanonicalInferredKind != delta.DraftInferredKind ||
+            delta.CanonicalRelationClass != delta.DraftRelationClass ||
+            delta.bCanonicalConflict != delta.bDraftConflict ||
+            !delta.ReferencedSymbolChanges.empty() ||
+            !delta.DependencyChanges.empty() ||
+            !delta.AmbientDependencyChanges.empty() ||
+            !delta.UsedByChanges.empty() ||
+            !delta.AssumptionLinkChanges.empty() ||
+            !delta.OverrideChanges.empty() ||
+            !delta.AssumptionChanges.empty() ||
+            !delta.DiagnosticChanges.empty();
+    }
+
+    template<typename FNavigate>
+    auto DrawDraftSemanticDelta(const ModelV2::FModelSemanticDraftDeltaV2 &delta,
+                                const FNavigate &navigate) -> void {
+        ImGui::SeparatorText("Draft Semantic Delta");
+        DrawDraftStatusDeltaLine(
+            "Parse health",
+            ModelV2::ToString(delta.CanonicalStatus.ParseHealth),
+            ModelV2::ToString(delta.DraftStatus.ParseHealth));
+        DrawDraftStatusDeltaLine(
+            "Semantic health",
+            ModelV2::ToString(delta.CanonicalStatus.SemanticHealth),
+            ModelV2::ToString(delta.DraftStatus.SemanticHealth));
+        DrawDraftStatusDeltaLine(
+            "Unresolved symbols",
+            std::to_string(delta.CanonicalStatus.UnresolvedSymbolCount),
+            std::to_string(delta.DraftStatus.UnresolvedSymbolCount));
+        DrawDraftStatusDeltaLine(
+            "Pending assumptions",
+            std::to_string(delta.CanonicalStatus.PendingAssumptionCount),
+            std::to_string(delta.DraftStatus.PendingAssumptionCount));
+        DrawDraftStatusDeltaLine(
+            "Deferred semantics",
+            std::to_string(delta.CanonicalStatus.DeferredCount),
+            std::to_string(delta.DraftStatus.DeferredCount));
+        DrawDraftStatusDeltaLine(
+            "Model class",
+            delta.CanonicalStatus.Classification.ModelClass,
+            delta.DraftStatus.Classification.ModelClass);
+        DrawDraftStatusDeltaLine(
+            "Character",
+            delta.CanonicalStatus.Classification.Character,
+            delta.DraftStatus.Classification.Character);
+
+        ImGui::SeparatorText("Draft Interpretation");
+        if (delta.CanonicalInferredKind.has_value() || delta.DraftInferredKind.has_value()) {
+            DrawDraftStatusDeltaLine(
+                "Inferred role",
+                delta.CanonicalInferredKind.has_value() ? ModelV2::ToString(*delta.CanonicalInferredKind) : "-",
+                delta.DraftInferredKind.has_value() ? ModelV2::ToString(*delta.DraftInferredKind) : "-");
+        }
+        if (delta.CanonicalRelationClass.has_value() || delta.DraftRelationClass.has_value()) {
+            DrawDraftStatusDeltaLine(
+                "Relation class",
+                delta.CanonicalRelationClass.has_value() ? ModelV2::ToString(*delta.CanonicalRelationClass) : "-",
+                delta.DraftRelationClass.has_value() ? ModelV2::ToString(*delta.DraftRelationClass) : "-");
+        }
+        DrawDraftStatusDeltaLine(
+            "Conflict state",
+            delta.bCanonicalConflict ? "warning" : "clear",
+            delta.bDraftConflict ? "warning" : "clear");
+        if (!delta.DraftInterpretation.empty()) {
+            if (delta.CanonicalInterpretation != delta.DraftInterpretation && !delta.CanonicalInterpretation.empty()) {
+                ImGui::TextDisabled("Canonical: %s", delta.CanonicalInterpretation.c_str());
+            }
+            ImGui::TextWrapped("Draft: %s", delta.DraftInterpretation.c_str());
+        }
+
+        if (!DraftDeltaHasChanges(delta)) {
+            ImGui::TextDisabled("No semantic delta from canonical state.");
+            return;
+        }
+
+        DrawReferencedSymbolDeltaSection("Reference Changes", delta.ReferencedSymbolChanges);
+        DrawNavigationDeltaSection("Dependency Changes", delta.DependencyChanges, navigate);
+        DrawNavigationDeltaSection("Ambient Dependency Changes", delta.AmbientDependencyChanges, navigate);
+        DrawNavigationDeltaSection("Reverse Dependency Changes", delta.UsedByChanges, navigate);
+        DrawNavigationDeltaSection("Assumption Link Changes", delta.AssumptionLinkChanges, navigate);
+        DrawNavigationDeltaSection("Override / Specialization Changes", delta.OverrideChanges, navigate);
+        DrawAssumptionDeltaSection("Assumption Changes", delta.AssumptionChanges, navigate);
+        DrawDiagnosticDeltaSection("Diagnostic Changes", delta.DiagnosticChanges);
     }
 
     template<typename FNavigate>
@@ -485,6 +920,7 @@ namespace {
                 theme.DetailMathOptions);
         }
 
+        DrawSemanticLinkSection("Origin / Source", objectOverview.SourceLinks, navigate);
         DrawSemanticLinkSection("Depends On", objectOverview.DependsOn, navigate);
         DrawSemanticLinkSection("Ambient Dependencies", objectOverview.AmbientDependencies, navigate);
         DrawSemanticLinkSection("Used By", objectOverview.UsedBy, navigate);
@@ -576,8 +1012,10 @@ namespace {
 
     template<typename FNavigate>
     auto DrawAssumptionInspector(Typesetting::FTypesettingService &typesettingService,
+                                 const ModelV2::FModelV2 &model,
                                  const ModelV2::FSemanticAssumptionV2 &assumption,
                                  const ModelV2::FSemanticObjectOverviewV2 &objectOverview,
+                                 const ModelV2::FAssumptionMaterializationPreviewV2 &materializationPreview,
                                  const FModelInspectorTheme &theme,
                                  const FNavigate &navigate) -> void {
         const auto title = assumption.TargetSymbol.empty()
@@ -589,6 +1027,7 @@ namespace {
         ImGui::SeparatorText("Identity");
         ImGui::BulletText("Origin: %s", objectOverview.OriginLabel.c_str());
         ImGui::BulletText("Status: %s", objectOverview.StatusLabel.c_str());
+        ImGui::BulletText("Lifecycle: %s", materializationPreview.LifecycleLabel.c_str());
         if (!assumption.Category.empty()) ImGui::BulletText("Category: %s", assumption.Category.c_str());
         if (assumption.DeclaredKind.has_value() || assumption.InferredKind.has_value()) {
             ImGui::BulletText(
@@ -611,6 +1050,34 @@ namespace {
                 dependencySummary += assumption.ProposedArgumentDefinitionIds[i];
             }
             ImGui::TextDisabled("Proposed dependency: %s", dependencySummary.c_str());
+        }
+        if (!materializationPreview.OutcomeLabel.empty()) {
+            ImGui::TextWrapped("%s", materializationPreview.OutcomeLabel.c_str());
+        }
+        if (assumption.ProposedType.has_value()) {
+            Typesetting::ImGuiTypesetLabelValue(
+                typesettingService,
+                "Proposed Type",
+                MakeMathRequest(ModelV2::RenderDialectTypeExprV2(*assumption.ProposedType, &model), theme.BaseFontSize),
+                theme.SecondaryTextOptions,
+                theme.DetailMathOptions);
+        }
+
+        if (materializationPreview.bAlreadyMaterialized) {
+            ImGui::SeparatorText("Materialized Local Artifact");
+            if (materializationPreview.MaterializedObjectRef.has_value() &&
+                ImGui::SmallButton(materializationPreview.MaterializedObjectRef->ObjectId.c_str())) {
+                navigate(*materializationPreview.MaterializedObjectRef);
+            }
+        } else if (materializationPreview.ProposedDefinition.has_value()) {
+            ImGui::SeparatorText("Materialization Preview");
+            ImGui::BulletText("Suggested definition id: %s", materializationPreview.SuggestedDefinitionId.c_str());
+            ImGui::BulletText("Proposed kind: %s", ModelV2::ToString(materializationPreview.ProposedDefinition->Kind));
+            Typesetting::ImGuiTypesetMath(
+                typesettingService,
+                materializationPreview.ProposedNotation,
+                theme.DetailMathOptions);
+            DrawSemanticLinkSection("Proposed Dependencies", materializationPreview.ProposedDependencies, navigate);
         }
 
         DrawSemanticLinkSection("Source", objectOverview.SourceLinks, navigate);
@@ -653,6 +1120,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
     auto &model = ModelDemoCatalog[SelectedModelIndex];
     if (bModelChanged) {
         SelectedModelSemanticObject = {};
+        bSelectedModelSemanticObjectUsesDraftPreview = false;
         ModelPendingScrollTarget = {};
         SelectedModelVocabularyEntryId.clear();
         SelectedModelDefinitionId.clear();
@@ -695,6 +1163,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
     if (bVocabularyChanged) {
         ModelPendingScrollTarget = {};
         SelectedModelSemanticObject = {};
+        bSelectedModelSemanticObjectUsesDraftPreview = false;
         SelectedModelVocabularyEntryId.clear();
         SelectedModelAssumptionId.clear();
         ModelEditorBuffersByKey.clear();
@@ -732,19 +1201,31 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         SelectedModelRelationId = model.Relations.front().RelationId;
     }
 
-    auto selectSemanticObject = [&](const FSemanticObjectRefV2 &ref, const bool bRequestScroll = false) {
+    const auto editorTargetKind = bSelectedModelDetailIsRelation ? EModelObjectKindV2::Relation : EModelObjectKindV2::Definition;
+    const auto editorTargetId = bSelectedModelDetailIsRelation ? SelectedModelRelationId : SelectedModelDefinitionId;
+    auto *activeEditorBuffer = EnsureEditorBuffer(ModelEditorBuffersByKey, model, editorTargetKind, editorTargetId);
+    const auto *activeDraftOverview = GetEditorBufferPreviewOverview(activeEditorBuffer);
+
+    auto selectSemanticObject = [&](const FSemanticObjectRefV2 &ref,
+                                    const bool bRequestScroll = false,
+                                    const bool bUseDraftPreview = false) {
         if (!ref.IsValid()) return;
         SelectedModelSemanticObject = ref;
+        bSelectedModelSemanticObjectUsesDraftPreview = bUseDraftPreview;
         if (bRequestScroll) ModelPendingScrollTarget = ref;
 
         switch (ref.Kind) {
             case ESemanticObjectKindV2::Definition:
-                SelectedModelDefinitionId = ref.ObjectId;
-                bSelectedModelDetailIsRelation = false;
+                if (!bUseDraftPreview && FindDefinitionByIdV2(model, ref.ObjectId) != nullptr) {
+                    SelectedModelDefinitionId = ref.ObjectId;
+                    bSelectedModelDetailIsRelation = false;
+                }
                 break;
             case ESemanticObjectKindV2::Relation:
-                SelectedModelRelationId = ref.ObjectId;
-                bSelectedModelDetailIsRelation = true;
+                if (!bUseDraftPreview && FindRelationByIdV2(model, ref.ObjectId) != nullptr) {
+                    SelectedModelRelationId = ref.ObjectId;
+                    bSelectedModelDetailIsRelation = true;
+                }
                 break;
             case ESemanticObjectKindV2::VocabularyEntry:
                 SelectedModelVocabularyEntryId = ref.ObjectId;
@@ -756,28 +1237,65 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
     };
 
     auto navigateToSemanticObject = [&](const FSemanticObjectRefV2 &ref) {
-        selectSemanticObject(ref, true);
+        selectSemanticObject(ref, true, false);
     };
 
-    if (SelectedModelSemanticObject.IsValid() && overview.FindObject(SelectedModelSemanticObject) == nullptr) {
-        SelectedModelSemanticObject = {};
+    auto navigateToDraftSemanticObject = [&](const FSemanticObjectRefV2 &ref) {
+        selectSemanticObject(ref, true, true);
+    };
+
+    const auto *selectionOverview = &overview;
+    if (SelectedModelSemanticObject.IsValid()) {
+        const bool bSelectionIsActiveEditorTarget =
+            (editorTargetKind == EModelObjectKindV2::Definition &&
+             SelectedModelSemanticObject.Kind == ESemanticObjectKindV2::Definition &&
+             SelectedModelSemanticObject.ObjectId == editorTargetId) ||
+            (editorTargetKind == EModelObjectKindV2::Relation &&
+             SelectedModelSemanticObject.Kind == ESemanticObjectKindV2::Relation &&
+             SelectedModelSemanticObject.ObjectId == editorTargetId);
+
+        if (activeDraftOverview != nullptr &&
+            (bSelectedModelSemanticObjectUsesDraftPreview || bSelectionIsActiveEditorTarget) &&
+            activeDraftOverview->FindObject(SelectedModelSemanticObject) != nullptr) {
+            selectionOverview = activeDraftOverview;
+            bSelectedModelSemanticObjectUsesDraftPreview = bSelectedModelSemanticObjectUsesDraftPreview || bSelectionIsActiveEditorTarget;
+        } else if (overview.FindObject(SelectedModelSemanticObject) != nullptr) {
+            bSelectedModelSemanticObjectUsesDraftPreview = false;
+        } else if (activeDraftOverview != nullptr && activeDraftOverview->FindObject(SelectedModelSemanticObject) != nullptr) {
+            bSelectedModelSemanticObjectUsesDraftPreview = true;
+            selectionOverview = activeDraftOverview;
+        } else {
+            SelectedModelSemanticObject = {};
+            bSelectedModelSemanticObjectUsesDraftPreview = false;
+        }
     }
     if (!SelectedModelSemanticObject.IsValid()) {
         if (!SelectedModelDefinitionId.empty() && FindDefinitionByIdV2(model, SelectedModelDefinitionId) != nullptr) {
-            selectSemanticObject(MakeDefinitionObjectRefV2(SelectedModelDefinitionId));
+            selectSemanticObject(MakeDefinitionObjectRefV2(SelectedModelDefinitionId), false, false);
         } else if (!SelectedModelRelationId.empty() && FindRelationByIdV2(model, SelectedModelRelationId) != nullptr) {
-            selectSemanticObject(MakeRelationObjectRefV2(SelectedModelRelationId));
+            selectSemanticObject(MakeRelationObjectRefV2(SelectedModelRelationId), false, false);
         } else if (!SelectedModelVocabularyEntryId.empty()) {
-            selectSemanticObject(MakeVocabularyObjectRefV2(SelectedModelVocabularyEntryId));
+            selectSemanticObject(MakeVocabularyObjectRefV2(SelectedModelVocabularyEntryId), false, false);
         } else if (!semanticReport.Assumptions.empty()) {
-            selectSemanticObject(MakeAssumptionObjectRefV2(semanticReport.Assumptions.front().AssumptionId));
+            selectSemanticObject(MakeAssumptionObjectRefV2(semanticReport.Assumptions.front().AssumptionId), false, false);
         }
     }
     if (!SelectedModelSemanticObject.IsValid() && !resolvedVocabularyEntries.empty()) {
-        selectSemanticObject(MakeVocabularyObjectRefV2(resolvedVocabularyEntries.front().Entry.EntryId));
+        selectSemanticObject(MakeVocabularyObjectRefV2(resolvedVocabularyEntries.front().Entry.EntryId), false, false);
+    }
+    if (SelectedModelSemanticObject.IsValid() &&
+        bSelectedModelSemanticObjectUsesDraftPreview &&
+        activeDraftOverview != nullptr &&
+        activeDraftOverview->FindObject(SelectedModelSemanticObject) != nullptr) {
+        selectionOverview = activeDraftOverview;
+    } else {
+        selectionOverview = &overview;
+        bSelectedModelSemanticObjectUsesDraftPreview = false;
     }
 
-    const auto selectionContext = BuildSemanticSelectionContextV2(overview, SelectedModelSemanticObject);
+    const auto selectionContext = BuildSemanticSelectionContextV2(*selectionOverview, SelectedModelSemanticObject);
+    const auto draftPreviewDefinitions = CollectDraftProposedDefinitions(model, activeEditorBuffer, activeDraftOverview);
+    const auto *draftPreviewAssumptions = GetEditorBufferPreviewAssumptions(activeEditorBuffer);
 
     auto &typesettingService = *UiTypesettingService;
     const auto baseFontSize = ImGui::GetFontSize();
@@ -813,6 +1331,11 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         overview.Status.OverrideCount,
         overview.Status.SpecializationCount,
         validation.ErrorCount());
+    ImGui::TextDisabled(
+        "Accepted assumptions: %zu | Dismissed: %zu | Deferred: %zu",
+        overview.Status.AcceptedAssumptionCount,
+        overview.Status.DismissedAssumptionCount,
+        overview.Status.DeferredCount);
 
     DrawSummaryLinkStrip("State", overview.Status.CanonicalStateVariables, navigateToSemanticObject);
     DrawSummaryLinkStrip("Parameters", overview.Status.Parameters, navigateToSemanticObject);
@@ -852,6 +1375,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         std::clamp(ModelScratchpadHeight, minScratchpadHeight, maxScratchpadHeight);
     const float topPaneHeight =
         std::max(0.0f, layoutHeight - scratchpadHeight - layoutSplitterThickness);
+    bool bUiStateChangedThisFrame = false;
 
     ImGui::TextDisabled("Selection drives the inspector. The editor follows the last selected definition or relation.");
 
@@ -892,13 +1416,11 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
             if (activeVocabularyPreset != nullptr) {
                 ImGui::TextDisabled("%s (%s)", activeVocabularyPreset->Name.c_str(), activeVocabularyPreset->PresetId.c_str());
             }
-            ImGui::Dummy(ImVec2(0.0f, baseFontSize * 0.45f));
+            ImGui::Dummy(ImVec2(0.0f, baseFontSize * 0.55f));
 
-            const float vocabularyEntriesHeight = std::clamp(vocabularyPanelHeight * 0.48f, 84.0f, 152.0f);
-            ImGui::BeginChild("ModelVocabularyEntriesList", ImVec2(0.0f, vocabularyEntriesHeight), false);
             for (const auto &entry : resolvedVocabularyEntries) {
                 const auto ref = MakeVocabularyObjectRefV2(entry.Entry.EntryId);
-                const auto highlightState = ResolveHighlightState(selectionContext, overview, ref);
+                const auto highlightState = ResolveHighlightState(selectionContext, *selectionOverview, ref);
                 ImGui::PushID(entry.Entry.EntryId.c_str());
                 const auto rowResult = Typesetting::ImGuiTypesetSelectableRow(
                     typesettingService,
@@ -911,23 +1433,6 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                 }
                 consumePendingScroll(ref);
                 ImGui::PopID();
-            }
-            ImGui::EndChild();
-            ImGui::Dummy(ImVec2(0.0f, baseFontSize * 0.35f));
-
-            if (const auto *selectedVocabularyEntry = FindResolvedVocabularyEntry(resolvedVocabularyEntries, SelectedModelVocabularyEntryId);
-                selectedVocabularyEntry != nullptr) {
-                Typesetting::ImGuiTypesetMath(
-                    typesettingService,
-                    RenderBaseVocabularyEntryLatexV2(selectedVocabularyEntry->Entry),
-                    inspectorTheme.DetailMathOptions);
-                ImGui::TextDisabled(
-                    "%s | %s",
-                    ToString(selectedVocabularyEntry->Entry.Kind),
-                    ToString(selectedVocabularyEntry->OverrideStatus));
-                if (!selectedVocabularyEntry->Entry.SemanticRoleSummary.empty()) {
-                    ImGui::TextWrapped("%s", selectedVocabularyEntry->Entry.SemanticRoleSummary.c_str());
-                }
             }
             ImGui::EndChild();
 
@@ -969,7 +1474,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
             ImGui::SeparatorText("Definitions");
             for (const auto &definition : model.Definitions) {
                 const auto ref = MakeDefinitionObjectRefV2(definition.DefinitionId);
-                const auto highlightState = ResolveHighlightState(selectionContext, overview, ref);
+                const auto highlightState = ResolveHighlightState(selectionContext, *selectionOverview, ref);
                 ImGui::PushID(definition.DefinitionId.c_str());
                 const auto rowResult = Typesetting::ImGuiTypesetSelectableRow(
                     typesettingService,
@@ -982,6 +1487,25 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                 }
                 consumePendingScroll(ref);
                 ImGui::PopID();
+            }
+            if (!draftPreviewDefinitions.empty()) {
+                ImGui::SeparatorText("Draft Materializations");
+                for (const auto &definition : draftPreviewDefinitions) {
+                    const auto ref = MakeDefinitionObjectRefV2(definition.DefinitionId);
+                    const auto highlightState = ResolveHighlightState(selectionContext, *selectionOverview, ref);
+                    ImGui::PushID(("draft." + definition.DefinitionId).c_str());
+                    const auto rowResult = Typesetting::ImGuiTypesetSelectableRow(
+                        typesettingService,
+                        "##ModelDraftDefinitionRow",
+                        MakeMathRequest(RenderDialectDefinitionV2(definition, &model), baseFontSize * 1.02f),
+                        MakeDraftDefinitionRowOptions(highlightState, baseFontSize));
+                    AddTooltipForLastItem("Preview-only local definition inferred from the current draft. Select it to inspect provenance and dependencies before applying.");
+                    if (rowResult.bPressed) {
+                        selectSemanticObject(ref, false, true);
+                    }
+                    consumePendingScroll(ref);
+                    ImGui::PopID();
+                }
             }
             ImGui::EndChild();
 
@@ -1012,7 +1536,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
             ImGui::SeparatorText("Relations");
             for (const auto &relation : model.Relations) {
                 const auto ref = MakeRelationObjectRefV2(relation.RelationId);
-                const auto highlightState = ResolveHighlightState(selectionContext, overview, ref);
+                const auto highlightState = ResolveHighlightState(selectionContext, *selectionOverview, ref);
                 ImGui::PushID(relation.RelationId.c_str());
                 const auto rowResult = Typesetting::ImGuiTypesetSelectableRow(
                     typesettingService,
@@ -1032,33 +1556,42 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
             ImGui::TableNextColumn();
             ImGui::BeginChild("ModelFocusedDetailsPane", ImVec2(0.0f, 0.0f), true);
             ImGui::SeparatorText("Inspector");
-            if (const auto *selectedObject = overview.FindObject(SelectedModelSemanticObject); selectedObject != nullptr) {
+            const auto inspectorNavigate = [&](const FSemanticObjectRefV2 &ref) {
+                if (bSelectedModelSemanticObjectUsesDraftPreview) navigateToDraftSemanticObject(ref);
+                else navigateToSemanticObject(ref);
+            };
+            if (const auto *selectedObject = selectionOverview->FindObject(SelectedModelSemanticObject); selectedObject != nullptr) {
                 if (SelectedModelSemanticObject.Kind == ESemanticObjectKindV2::Definition) {
                     const auto *definition = FindDefinitionByIdV2(model, SelectedModelSemanticObject.ObjectId);
-                    const auto *definitionReport = FindDefinitionReport(semanticReport, SelectedModelSemanticObject.ObjectId);
-                    ModelV2::FModelEditorBufferV2 *editorBuffer = EnsureEditorBuffer(
-                        ModelEditorBuffersByKey,
-                        model,
-                        EModelObjectKindV2::Definition,
-                        SelectedModelSemanticObject.ObjectId);
+                    const auto *definitionReport = FindDefinitionReport(selectionOverview->Report, SelectedModelSemanticObject.ObjectId);
+                    ModelV2::FModelEditorBufferV2 *editorBuffer = definition != nullptr
+                        ? EnsureEditorBuffer(
+                              ModelEditorBuffersByKey,
+                              model,
+                              EModelObjectKindV2::Definition,
+                              SelectedModelSemanticObject.ObjectId)
+                        : activeEditorBuffer;
                     const auto *definitionPreview =
                         editorBuffer != nullptr && editorBuffer->DefinitionPreview.has_value()
                             ? &(*editorBuffer->DefinitionPreview)
                             : nullptr;
-                    if (definition != nullptr) {
+                    const auto draftDefinition = definition == nullptr && bSelectedModelSemanticObjectUsesDraftPreview
+                        ? FindDraftProposedDefinition(model, activeEditorBuffer, activeDraftOverview, SelectedModelSemanticObject.ObjectId)
+                        : Slab::TOptional<ModelV2::FDefinitionV2>{};
+                    if (definition != nullptr || draftDefinition.has_value()) {
                         DrawDefinitionInspector(
                             typesettingService,
                             model,
-                            *definition,
+                            definition != nullptr ? *definition : *draftDefinition,
                             *selectedObject,
                             definitionReport,
                             definitionPreview,
                             inspectorTheme,
-                            navigateToSemanticObject);
+                            inspectorNavigate);
                     }
                 } else if (SelectedModelSemanticObject.Kind == ESemanticObjectKindV2::Relation) {
                     const auto *relation = FindRelationByIdV2(model, SelectedModelSemanticObject.ObjectId);
-                    const auto *relationReport = FindRelationReport(semanticReport, SelectedModelSemanticObject.ObjectId);
+                    const auto *relationReport = FindRelationReport(selectionOverview->Report, SelectedModelSemanticObject.ObjectId);
                     ModelV2::FModelEditorBufferV2 *editorBuffer = EnsureEditorBuffer(
                         ModelEditorBuffersByKey,
                         model,
@@ -1077,7 +1610,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                             relationReport,
                             relationPreview,
                             inspectorTheme,
-                            navigateToSemanticObject);
+                            inspectorNavigate);
                     }
                 } else if (SelectedModelSemanticObject.Kind == ESemanticObjectKindV2::VocabularyEntry) {
                     if (const auto *entry = FindResolvedVocabularyEntry(resolvedVocabularyEntries, SelectedModelSemanticObject.ObjectId);
@@ -1087,17 +1620,20 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                             *entry,
                             *selectedObject,
                             inspectorTheme,
-                            navigateToSemanticObject);
+                            inspectorNavigate);
                     }
                 } else if (SelectedModelSemanticObject.Kind == ESemanticObjectKindV2::Assumption) {
-                    if (const auto *assumption = FindAssumptionReport(semanticReport, SelectedModelSemanticObject.ObjectId);
+                    if (const auto *assumption = FindAssumptionReport(selectionOverview->Report, SelectedModelSemanticObject.ObjectId);
                         assumption != nullptr) {
+                        const auto materializationPreview = BuildAssumptionMaterializationPreviewV2(model, *assumption, selectionOverview);
                         DrawAssumptionInspector(
                             typesettingService,
+                            model,
                             *assumption,
                             *selectedObject,
+                            materializationPreview,
                             inspectorTheme,
-                            navigateToSemanticObject);
+                            inspectorNavigate);
                     }
                 }
             } else {
@@ -1148,9 +1684,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         ImGui::BeginChild("ModelEditorPane", ImVec2(0.0f, 0.0f), true);
         ImGui::SeparatorText("Notation Editor");
 
-        const auto editorTargetKind = bSelectedModelDetailIsRelation ? EModelObjectKindV2::Relation : EModelObjectKindV2::Definition;
-        const auto editorTargetId = bSelectedModelDetailIsRelation ? SelectedModelRelationId : SelectedModelDefinitionId;
-        auto *editorBuffer = EnsureEditorBuffer(ModelEditorBuffersByKey, model, editorTargetKind, editorTargetId);
+        auto *editorBuffer = activeEditorBuffer;
         if (editorBuffer == nullptr) {
             ImGui::TextDisabled("Select a definition or relation to edit.");
         } else {
@@ -1181,6 +1715,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                 } else {
                     ModelEditorStatus = "[Error] Could not parse draft for " + editorBuffer->TargetId + ".";
                 }
+                bUiStateChangedThisFrame = true;
             }
             ImGui::SameLine();
             const bool bCanApply = editorBuffer->TargetKind == EModelObjectKindV2::Definition
@@ -1201,6 +1736,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                 } else {
                     ModelEditorStatus = "[Error] Apply failed for " + editorBuffer->TargetId + ".";
                 }
+                bUiStateChangedThisFrame = true;
             }
             ImGui::EndDisabled();
             ImGui::SameLine();
@@ -1208,17 +1744,51 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
             if (ImGui::Button("Revert / Cancel")) {
                 if (RevertEditorBufferV2(model, *editorBuffer)) {
                     ModelEditorStatus = "[Ok] Restored canonical notation for " + editorBuffer->TargetId + ".";
+                    if (bSelectedModelSemanticObjectUsesDraftPreview) {
+                        if (editorBuffer->TargetKind == EModelObjectKindV2::Definition) {
+                            selectSemanticObject(MakeDefinitionObjectRefV2(editorBuffer->TargetId), false, false);
+                        } else if (editorBuffer->TargetKind == EModelObjectKindV2::Relation) {
+                            selectSemanticObject(MakeRelationObjectRefV2(editorBuffer->TargetId), false, false);
+                        }
+                    }
                 }
+                bUiStateChangedThisFrame = true;
             }
             ImGui::EndDisabled();
 
-            if (!editorBuffer->bPreviewCurrent) {
+            const auto acceptDraftAssumption = [&](const auto &assumption,
+                                                   const auto &materializationPreview) -> bool {
+                FModelChangeRecordV2 changeRecord;
+                if (!AcceptAssumptionV2(model, assumption, &changeRecord)) return false;
+
+                ModelLastChangeRecord = changeRecord;
+                bModelHasLastChangeRecord = true;
+                if (materializationPreview.ProposedDefinition.has_value()) {
+                    ModelEditorStatus =
+                        "[Ok] Materialized draft assumption '" + assumption.AssumptionId +
+                        "' as '" + materializationPreview.ProposedDefinition->DefinitionId + "'.";
+                } else {
+                    ModelEditorStatus = "[Ok] Accepted draft assumption '" + assumption.AssumptionId + "'.";
+                }
+
+                ParseEditorBufferPreviewV2(model, *editorBuffer);
+
+                if (changeRecord.ObjectKind == EModelObjectKindV2::Definition && !changeRecord.ObjectId.empty()) {
+                    selectSemanticObject(MakeDefinitionObjectRefV2(changeRecord.ObjectId), true);
+                }
+                return true;
+            };
+
+            if (bUiStateChangedThisFrame) {
+                ImGui::TextDisabled("Refreshing preview state...");
+            } else if (!editorBuffer->bPreviewCurrent) {
                 ImGui::TextDisabled("Preview the current draft before applying.");
             } else if (editorBuffer->TargetKind == EModelObjectKindV2::Definition && editorBuffer->DefinitionPreview.has_value()) {
                 const auto &preview = *editorBuffer->DefinitionPreview;
                 if (!preview.bParseOk && preview.ParseError.has_value()) {
                     DrawRawDiagnosticList(preview.Diagnostics);
                 } else {
+                    ImGui::SeparatorText("Draft Interpretation");
                     Typesetting::ImGuiTypesetLabelValue(
                         typesettingService,
                         "Normalized",
@@ -1231,15 +1801,33 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                     if (!preview.NormalizedInterpretation.empty()) {
                         ImGui::TextWrapped("%s", preview.NormalizedInterpretation.c_str());
                     }
-                    DrawReferencedSymbols(preview.ReferencedSymbols);
-                    DrawRawDiagnosticList(preview.Diagnostics);
-                    DrawAssumptionSummary(preview.Assumptions);
+                    if (preview.SemanticDelta.has_value()) {
+                        DrawDraftSemanticDelta(*preview.SemanticDelta, navigateToDraftSemanticObject);
+                    }
+                    DrawReferencedSymbols(
+                        preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+                        preview.ReferencedSymbols,
+                        navigateToDraftSemanticObject);
+                    DrawPreviewDiagnosticSection(
+                        preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+                        MakeDefinitionObjectRefV2(preview.DefinitionId),
+                        preview.Diagnostics,
+                        navigateToDraftSemanticObject);
+                    if (DrawDraftAssumptionWorkflowSummary(
+                        model,
+                        preview.Assumptions,
+                        preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+                        navigateToDraftSemanticObject,
+                        acceptDraftAssumption)) {
+                        bUiStateChangedThisFrame = true;
+                    }
                 }
             } else if (editorBuffer->TargetKind == EModelObjectKindV2::Relation && editorBuffer->RelationPreview.has_value()) {
                 const auto &preview = *editorBuffer->RelationPreview;
                 if (!preview.bParseOk && preview.ParseError.has_value()) {
                     DrawRawDiagnosticList(preview.Diagnostics);
                 } else {
+                    ImGui::SeparatorText("Draft Interpretation");
                     Typesetting::ImGuiTypesetLabelValue(
                         typesettingService,
                         "Normalized",
@@ -1250,9 +1838,26 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                     if (!preview.NormalizedInterpretation.empty()) {
                         ImGui::TextWrapped("%s", preview.NormalizedInterpretation.c_str());
                     }
-                    DrawReferencedSymbols(preview.ReferencedSymbols);
-                    DrawRawDiagnosticList(preview.Diagnostics);
-                    DrawAssumptionSummary(preview.Assumptions);
+                    if (preview.SemanticDelta.has_value()) {
+                        DrawDraftSemanticDelta(*preview.SemanticDelta, navigateToDraftSemanticObject);
+                    }
+                    DrawReferencedSymbols(
+                        preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+                        preview.ReferencedSymbols,
+                        navigateToDraftSemanticObject);
+                    DrawPreviewDiagnosticSection(
+                        preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+                        MakeRelationObjectRefV2(preview.RelationId),
+                        preview.Diagnostics,
+                        navigateToDraftSemanticObject);
+                    if (DrawDraftAssumptionWorkflowSummary(
+                        model,
+                        preview.Assumptions,
+                        preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+                        navigateToDraftSemanticObject,
+                        acceptDraftAssumption)) {
+                        bUiStateChangedThisFrame = true;
+                    }
                 }
             }
         }
@@ -1261,12 +1866,58 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         ImGui::TableNextColumn();
         ImGui::BeginChild("ModelAssumptionsPane", ImVec2(0.0f, 0.0f), true);
         ImGui::SeparatorText("Assumed / Inferred Semantics");
-        if (semanticReport.Assumptions.empty()) {
+        const bool bHasDraftPreviewAssumptions =
+            draftPreviewAssumptions != nullptr && !draftPreviewAssumptions->empty();
+        if (bUiStateChangedThisFrame) {
+            ImGui::TextDisabled("Refreshing semantic state...");
+        } else if (semanticReport.Assumptions.empty() && !bHasDraftPreviewAssumptions) {
             ImGui::TextDisabled("No implicit or accepted semantics are currently available.");
         } else {
+            if (bHasDraftPreviewAssumptions) {
+                ImGui::SeparatorText("Draft Preview");
+                for (const auto &assumption : *draftPreviewAssumptions) {
+                    const auto materializationPreview = BuildAssumptionMaterializationPreviewV2(
+                        model,
+                        assumption,
+                        activeDraftOverview != nullptr ? activeDraftOverview : &overview);
+                    const auto ref = MakeAssumptionObjectRefV2(assumption.AssumptionId);
+                    const auto highlightState = ResolveHighlightState(selectionContext, *selectionOverview, ref);
+                    ImGui::PushID(("draft." + assumption.AssumptionId).c_str());
+                    const auto rowResult = Typesetting::ImGuiTypesetSelectableRow(
+                        typesettingService,
+                        "##ModelDraftAssumptionRow",
+                        Typesetting::MakeTextRequest(
+                            assumption.TargetSymbol.empty() ? assumption.Category : assumption.TargetSymbol,
+                            Typesetting::FTypesetStyle{.FontPixelSize = baseFontSize * 0.95f}),
+                        MakeDraftAssumptionRowOptions(highlightState, baseFontSize));
+                    if (rowResult.bPressed) {
+                        selectSemanticObject(ref, false, true);
+                    }
+                    consumePendingScroll(ref);
+                    ImGui::TextDisabled(
+                        "%s | source: %s | lifecycle: %s",
+                        assumption.Category.c_str(),
+                        assumption.SourceId.c_str(),
+                        materializationPreview.LifecycleLabel.c_str());
+                    if (!materializationPreview.SuggestedDefinitionId.empty()) {
+                        ImGui::TextDisabled("Would create: %s", materializationPreview.SuggestedDefinitionId.c_str());
+                    }
+                    if (!assumption.Detail.empty()) {
+                        ImGui::TextWrapped("%s", assumption.Detail.c_str());
+                    }
+                    ImGui::Separator();
+                    ImGui::PopID();
+                }
+            }
+
+            if (bHasDraftPreviewAssumptions && !semanticReport.Assumptions.empty()) {
+                ImGui::SeparatorText("Canonical State");
+            }
+
             for (const auto &assumption : semanticReport.Assumptions) {
+                const auto materializationPreview = BuildAssumptionMaterializationPreviewV2(model, assumption, &overview);
                 const auto ref = MakeAssumptionObjectRefV2(assumption.AssumptionId);
-                const auto highlightState = ResolveHighlightState(selectionContext, overview, ref);
+                const auto highlightState = ResolveHighlightState(selectionContext, *selectionOverview, ref);
                 ImGui::PushID(assumption.AssumptionId.c_str());
                 const auto rowResult = Typesetting::ImGuiTypesetSelectableRow(
                     typesettingService,
@@ -1284,8 +1935,18 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                     assumption.Category.c_str(),
                     assumption.SourceId.c_str(),
                     ToString(assumption.Status));
+                Slab::Str lifecycleSummary = materializationPreview.LifecycleLabel;
+                if (!materializationPreview.SuggestedDefinitionId.empty()) {
+                    lifecycleSummary += " | local artifact: " + materializationPreview.SuggestedDefinitionId;
+                }
+                ImGui::TextDisabled(
+                    "Lifecycle: %s",
+                    lifecycleSummary.c_str());
                 if (!assumption.Detail.empty()) {
                     ImGui::TextWrapped("%s", assumption.Detail.c_str());
+                }
+                if (!materializationPreview.OutcomeLabel.empty()) {
+                    ImGui::TextWrapped("%s", materializationPreview.OutcomeLabel.c_str());
                 }
                 if (assumption.DeclaredKind.has_value() || assumption.InferredKind.has_value()) {
                     ImGui::TextDisabled(
@@ -1309,18 +1970,27 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                 };
 
                 if (assumption.Status != EAssumptionStatusV2::Accepted) {
-                    if (ImGui::Button("Accept")) {
+                    const char *acceptLabel =
+                        materializationPreview.ProposedDefinition.has_value() ? "Accept / Materialize" : "Accept";
+                    if (ImGui::Button(acceptLabel)) {
                         FModelChangeRecordV2 changeRecord;
                         if (AcceptAssumptionV2(model, assumption, &changeRecord)) {
                             ModelLastChangeRecord = changeRecord;
                             bModelHasLastChangeRecord = true;
-                            ModelEditorStatus = "[Ok] Accepted semantic assumption '" + assumption.AssumptionId + "'.";
+                            if (materializationPreview.ProposedDefinition.has_value()) {
+                                ModelEditorStatus =
+                                    "[Ok] Materialized semantic assumption '" + assumption.AssumptionId +
+                                    "' as '" + materializationPreview.ProposedDefinition->DefinitionId + "'.";
+                            } else {
+                                ModelEditorStatus = "[Ok] Accepted semantic assumption '" + assumption.AssumptionId + "'.";
+                            }
                             if (!changeRecord.ObjectId.empty() &&
                                 changeRecord.ObjectKind == EModelObjectKindV2::Definition) {
                                 selectSemanticObject(MakeDefinitionObjectRefV2(changeRecord.ObjectId), true);
                             } else {
                                 selectSemanticObject(ref);
                             }
+                            bUiStateChangedThisFrame = true;
                         }
                     }
                     ImGui::SameLine();
@@ -1334,6 +2004,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                     if (SetAssumptionStatusV2(model, assumption.AssumptionId, EAssumptionStatusV2::Implicit)) {
                         pushAssumptionStatusChange(previousStatus, EAssumptionStatusV2::Implicit);
                         ModelEditorStatus = "[Ok] Kept assumption '" + assumption.AssumptionId + "' implicit.";
+                        bUiStateChangedThisFrame = true;
                     }
                 }
                 ImGui::EndDisabled();
@@ -1347,11 +2018,13 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                     if (SetAssumptionStatusV2(model, assumption.AssumptionId, EAssumptionStatusV2::Dismissed)) {
                         pushAssumptionStatusChange(previousStatus, EAssumptionStatusV2::Dismissed);
                         ModelEditorStatus = "[Ok] Dismissed assumption '" + assumption.AssumptionId + "'.";
+                        bUiStateChangedThisFrame = true;
                     }
                 }
                 ImGui::EndDisabled();
                 ImGui::Separator();
                 ImGui::PopID();
+                if (bUiStateChangedThisFrame) break;
             }
         }
         ImGui::EndChild();
@@ -1359,4 +2032,838 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         ImGui::EndTable();
     }
     ImGui::EndChild();
+}
+
+auto FLabV2WindowManager::SelectModelSemanticObject(const Slab::Core::Model::V2::FModelV2 &model,
+                                                    const Slab::Core::Model::V2::FSemanticObjectRefV2 &ref,
+                                                    const bool bRequestScroll,
+                                                    const bool bUseDraftPreview) -> void {
+    using namespace Slab::Core::Model::V2;
+
+    if (!ref.IsValid()) return;
+
+    SelectedModelSemanticObject = ref;
+    bSelectedModelSemanticObjectUsesDraftPreview = bUseDraftPreview;
+    if (bRequestScroll) ModelPendingScrollTarget = ref;
+
+    switch (ref.Kind) {
+        case ESemanticObjectKindV2::Definition:
+            if (!bUseDraftPreview && FindDefinitionByIdV2(model, ref.ObjectId) != nullptr) {
+                SelectedModelDefinitionId = ref.ObjectId;
+                bSelectedModelDetailIsRelation = false;
+            }
+            break;
+        case ESemanticObjectKindV2::Relation:
+            if (!bUseDraftPreview && FindRelationByIdV2(model, ref.ObjectId) != nullptr) {
+                SelectedModelRelationId = ref.ObjectId;
+                bSelectedModelDetailIsRelation = true;
+            }
+            break;
+        case ESemanticObjectKindV2::VocabularyEntry:
+            SelectedModelVocabularyEntryId = ref.ObjectId;
+            break;
+        case ESemanticObjectKindV2::Assumption:
+            SelectedModelAssumptionId = ref.ObjectId;
+            break;
+    }
+}
+
+auto FLabV2WindowManager::PrepareModelWorkspaceViewState() -> FModelWorkspaceViewState {
+    using namespace Slab::Core::Model::V2;
+
+    FModelWorkspaceViewState state;
+
+    if (ModelDemoCatalog.empty()) {
+        ModelDemoCatalog = BuildDemoModelsV2();
+    }
+    if (ModelDemoCatalog.empty()) return state;
+
+    if (SelectedModelIndex < 0 || SelectedModelIndex >= static_cast<int>(ModelDemoCatalog.size())) {
+        SelectedModelIndex = 0;
+    }
+
+    auto &model = ModelDemoCatalog[SelectedModelIndex];
+    const auto &vocabularyPresets = GetBaseVocabularyPresetCatalogV2();
+    if ((model.BaseVocabulary.ActivePresetId.empty() ||
+         FindBaseVocabularyPresetByIdV2(model.BaseVocabulary.ActivePresetId) == nullptr) &&
+        !vocabularyPresets.empty()) {
+        model.BaseVocabulary.ActivePresetId = vocabularyPresets.front().PresetId;
+    }
+
+    state.ActiveVocabularyPreset = FindBaseVocabularyPresetByIdV2(model.BaseVocabulary.ActivePresetId);
+    if (state.ActiveVocabularyPreset == nullptr && !vocabularyPresets.empty()) {
+        state.ActiveVocabularyPreset = &vocabularyPresets.front();
+        model.BaseVocabulary.ActivePresetId = state.ActiveVocabularyPreset->PresetId;
+    }
+
+    state.Overview = BuildModelSemanticOverviewV2(model);
+    const auto &semanticReport = state.Overview.Report;
+    const auto &resolvedVocabularyEntries = state.Overview.VocabularyEntries;
+
+    if (SelectedModelVocabularyEntryId.empty() && !resolvedVocabularyEntries.empty()) {
+        SelectedModelVocabularyEntryId = resolvedVocabularyEntries.front().Entry.EntryId;
+    }
+    if (!SelectedModelVocabularyEntryId.empty() &&
+        FindResolvedVocabularyEntry(resolvedVocabularyEntries, SelectedModelVocabularyEntryId) == nullptr &&
+        !resolvedVocabularyEntries.empty()) {
+        SelectedModelVocabularyEntryId = resolvedVocabularyEntries.front().Entry.EntryId;
+    }
+
+    if (SelectedModelDefinitionId.empty() && !model.Definitions.empty()) {
+        SelectedModelDefinitionId = model.Definitions.front().DefinitionId;
+    }
+    if (SelectedModelRelationId.empty() && !model.Relations.empty()) {
+        SelectedModelRelationId = model.Relations.front().RelationId;
+    }
+    if (!SelectedModelDefinitionId.empty() &&
+        FindDefinitionByIdV2(model, SelectedModelDefinitionId) == nullptr &&
+        !model.Definitions.empty()) {
+        SelectedModelDefinitionId = model.Definitions.front().DefinitionId;
+    }
+    if (!SelectedModelRelationId.empty() &&
+        FindRelationByIdV2(model, SelectedModelRelationId) == nullptr &&
+        !model.Relations.empty()) {
+        SelectedModelRelationId = model.Relations.front().RelationId;
+    }
+
+    const auto editorTargetKind = bSelectedModelDetailIsRelation ? EModelObjectKindV2::Relation : EModelObjectKindV2::Definition;
+    const auto editorTargetId = bSelectedModelDetailIsRelation ? SelectedModelRelationId : SelectedModelDefinitionId;
+    state.ActiveEditorBuffer = EnsureEditorBuffer(ModelEditorBuffersByKey, model, editorTargetKind, editorTargetId);
+    state.ActiveDraftOverview = GetEditorBufferPreviewOverview(state.ActiveEditorBuffer);
+    state.SelectionOverview = &state.Overview;
+
+    if (SelectedModelSemanticObject.IsValid()) {
+        const bool bSelectionIsActiveEditorTarget =
+            (editorTargetKind == EModelObjectKindV2::Definition &&
+             SelectedModelSemanticObject.Kind == ESemanticObjectKindV2::Definition &&
+             SelectedModelSemanticObject.ObjectId == editorTargetId) ||
+            (editorTargetKind == EModelObjectKindV2::Relation &&
+             SelectedModelSemanticObject.Kind == ESemanticObjectKindV2::Relation &&
+             SelectedModelSemanticObject.ObjectId == editorTargetId);
+
+        if (state.ActiveDraftOverview != nullptr &&
+            (bSelectedModelSemanticObjectUsesDraftPreview || bSelectionIsActiveEditorTarget) &&
+            state.ActiveDraftOverview->FindObject(SelectedModelSemanticObject) != nullptr) {
+            state.SelectionOverview = state.ActiveDraftOverview;
+            bSelectedModelSemanticObjectUsesDraftPreview =
+                bSelectedModelSemanticObjectUsesDraftPreview || bSelectionIsActiveEditorTarget;
+        } else if (state.Overview.FindObject(SelectedModelSemanticObject) != nullptr) {
+            bSelectedModelSemanticObjectUsesDraftPreview = false;
+        } else if (state.ActiveDraftOverview != nullptr &&
+                   state.ActiveDraftOverview->FindObject(SelectedModelSemanticObject) != nullptr) {
+            bSelectedModelSemanticObjectUsesDraftPreview = true;
+            state.SelectionOverview = state.ActiveDraftOverview;
+        } else {
+            SelectedModelSemanticObject = {};
+            bSelectedModelSemanticObjectUsesDraftPreview = false;
+        }
+    }
+
+    if (!SelectedModelSemanticObject.IsValid()) {
+        if (!SelectedModelDefinitionId.empty() && FindDefinitionByIdV2(model, SelectedModelDefinitionId) != nullptr) {
+            SelectModelSemanticObject(model, MakeDefinitionObjectRefV2(SelectedModelDefinitionId), false, false);
+        } else if (!SelectedModelRelationId.empty() && FindRelationByIdV2(model, SelectedModelRelationId) != nullptr) {
+            SelectModelSemanticObject(model, MakeRelationObjectRefV2(SelectedModelRelationId), false, false);
+        } else if (!SelectedModelVocabularyEntryId.empty()) {
+            SelectModelSemanticObject(model, MakeVocabularyObjectRefV2(SelectedModelVocabularyEntryId), false, false);
+        } else if (!semanticReport.Assumptions.empty()) {
+            SelectModelSemanticObject(model, MakeAssumptionObjectRefV2(semanticReport.Assumptions.front().AssumptionId), false, false);
+        }
+    }
+    if (!SelectedModelSemanticObject.IsValid() && !resolvedVocabularyEntries.empty()) {
+        SelectModelSemanticObject(model, MakeVocabularyObjectRefV2(resolvedVocabularyEntries.front().Entry.EntryId), false, false);
+    }
+
+    if (SelectedModelSemanticObject.IsValid() &&
+        bSelectedModelSemanticObjectUsesDraftPreview &&
+        state.ActiveDraftOverview != nullptr &&
+        state.ActiveDraftOverview->FindObject(SelectedModelSemanticObject) != nullptr) {
+        state.SelectionOverview = state.ActiveDraftOverview;
+    } else {
+        state.SelectionOverview = &state.Overview;
+        bSelectedModelSemanticObjectUsesDraftPreview = false;
+    }
+
+    state.SelectionContext = BuildSemanticSelectionContextV2(*state.SelectionOverview, SelectedModelSemanticObject);
+    state.DraftPreviewDefinitions = CollectDraftProposedDefinitions(model, state.ActiveEditorBuffer, state.ActiveDraftOverview);
+    state.DraftPreviewAssumptions = GetEditorBufferPreviewAssumptions(state.ActiveEditorBuffer);
+    state.Model = &model;
+    state.bAvailable = true;
+    return state;
+}
+
+auto FLabV2WindowManager::DrawModelVocabularyPanel() -> void {
+    using namespace Slab::Core::Model::V2;
+
+    if (ModelDemoCatalog.empty()) {
+        ModelDemoCatalog = BuildDemoModelsV2();
+    }
+    if (ModelDemoCatalog.empty()) {
+        ImGui::TextDisabled("No demo models available.");
+        return;
+    }
+
+    if (SelectedModelIndex < 0 || SelectedModelIndex >= static_cast<int>(ModelDemoCatalog.size())) {
+        SelectedModelIndex = 0;
+    }
+
+    const auto resetModelWorkspaceState = [&]() {
+        SelectedModelSemanticObject = {};
+        bSelectedModelSemanticObjectUsesDraftPreview = false;
+        ModelPendingScrollTarget = {};
+        SelectedModelVocabularyEntryId.clear();
+        SelectedModelDefinitionId.clear();
+        SelectedModelRelationId.clear();
+        SelectedModelAssumptionId.clear();
+        bSelectedModelDetailIsRelation = false;
+        ModelEditorBuffersByKey.clear();
+        ModelEditorStatus.clear();
+        bModelHasLastChangeRecord = false;
+        ModelNewDefinitionPreview.reset();
+        ModelNewRelationPreview.reset();
+        ModelNewDefinitionStatus.clear();
+        ModelNewRelationStatus.clear();
+    };
+
+    bool bModelChanged = false;
+    if (ImGui::BeginCombo("Seed Model", ModelDemoCatalog[SelectedModelIndex].Name.c_str())) {
+        for (int i = 0; i < static_cast<int>(ModelDemoCatalog.size()); ++i) {
+            const bool bSelected = i == SelectedModelIndex;
+            if (ImGui::Selectable(ModelDemoCatalog[i].Name.c_str(), bSelected)) {
+                SelectedModelIndex = i;
+                bModelChanged = true;
+            }
+            if (bSelected) ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+    AddTooltipForLastItem("Switch between seeded reference models.");
+    if (bModelChanged) {
+        resetModelWorkspaceState();
+    }
+
+    auto &model = ModelDemoCatalog[SelectedModelIndex];
+    const auto &vocabularyPresets = GetBaseVocabularyPresetCatalogV2();
+    if ((model.BaseVocabulary.ActivePresetId.empty() ||
+         FindBaseVocabularyPresetByIdV2(model.BaseVocabulary.ActivePresetId) == nullptr) &&
+        !vocabularyPresets.empty()) {
+        model.BaseVocabulary.ActivePresetId = vocabularyPresets.front().PresetId;
+    }
+
+    bool bVocabularyChanged = false;
+    const auto *activeVocabularyPreset = FindBaseVocabularyPresetByIdV2(model.BaseVocabulary.ActivePresetId);
+    if (activeVocabularyPreset == nullptr && !vocabularyPresets.empty()) {
+        activeVocabularyPreset = &vocabularyPresets.front();
+        model.BaseVocabulary.ActivePresetId = activeVocabularyPreset->PresetId;
+    }
+
+    if (ImGui::BeginCombo(
+            "Base Vocabulary",
+            activeVocabularyPreset != nullptr ? activeVocabularyPreset->Name.c_str() : "<none>")) {
+        for (const auto &preset : vocabularyPresets) {
+            const bool bSelected = preset.PresetId == model.BaseVocabulary.ActivePresetId;
+            if (ImGui::Selectable(preset.Name.c_str(), bSelected)) {
+                model.BaseVocabulary.ActivePresetId = preset.PresetId;
+                bVocabularyChanged = true;
+            }
+            if (bSelected) ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+    if (bVocabularyChanged) {
+        resetModelWorkspaceState();
+        ModelEditorStatus = "[Ok] Switched base vocabulary to '" + model.BaseVocabulary.ActivePresetId + "'.";
+    }
+
+    const auto state = PrepareModelWorkspaceViewState();
+    if (!state.bAvailable || state.Model == nullptr) {
+        ImGui::TextDisabled("No model state available.");
+        return;
+    }
+
+    auto &typesettingService = *UiTypesettingService;
+    const auto baseFontSize = ImGui::GetFontSize();
+    ImGui::TextDisabled("Ambient / Readonly");
+    if (state.ActiveVocabularyPreset != nullptr) {
+        ImGui::TextDisabled("%s (%s)", state.ActiveVocabularyPreset->Name.c_str(), state.ActiveVocabularyPreset->PresetId.c_str());
+    }
+    ImGui::SeparatorText("Model Status");
+    DrawSemanticSummaryBadge("Parse", ToString(state.Overview.Status.ParseHealth), HealthTint(state.Overview.Status.ParseHealth));
+    ImGui::SameLine();
+    DrawSemanticSummaryBadge("Semantic", ToString(state.Overview.Status.SemanticHealth), HealthTint(state.Overview.Status.SemanticHealth));
+    ImGui::SameLine();
+    ImGui::TextDisabled("Unresolved: %zu", state.Overview.Status.UnresolvedSymbolCount);
+    ImGui::Dummy(ImVec2(0.0f, baseFontSize * 0.35f));
+
+    const auto consumePendingScroll = [&](const FSemanticObjectRefV2 &ref) {
+        if (!ModelPendingScrollTarget.IsValid()) return;
+        if (!AreSemanticObjectRefsEqualV2(ModelPendingScrollTarget, ref)) return;
+        ImGui::SetScrollHereY(0.35f);
+        ModelPendingScrollTarget = {};
+    };
+
+    for (const auto &entry : state.Overview.VocabularyEntries) {
+        const auto ref = MakeVocabularyObjectRefV2(entry.Entry.EntryId);
+        const auto highlightState = ResolveHighlightState(state.SelectionContext, *state.SelectionOverview, ref);
+        ImGui::PushID(entry.Entry.EntryId.c_str());
+        const auto rowResult = Typesetting::ImGuiTypesetSelectableRow(
+            typesettingService,
+            "##ModelVocabularyEntryRow",
+            MakeMathRequest(RenderBaseVocabularyEntryLatexV2(entry.Entry), baseFontSize * 0.98f),
+            MakeVocabularyRowOptions(highlightState, baseFontSize));
+        if (rowResult.bPressed) {
+            SelectModelSemanticObject(*state.Model, ref, false, false);
+        }
+        consumePendingScroll(ref);
+        ImGui::PopID();
+    }
+}
+
+auto FLabV2WindowManager::DrawModelDefinitionsPanel() -> void {
+    using namespace Slab::Core::Model::V2;
+
+    auto state = PrepareModelWorkspaceViewState();
+    if (!state.bAvailable || state.Model == nullptr) {
+        ImGui::TextDisabled("No model state available.");
+        return;
+    }
+
+    auto &model = *state.Model;
+    auto &typesettingService = *UiTypesettingService;
+    const auto baseFontSize = ImGui::GetFontSize();
+
+    if (ImGui::Button(bShowModelNewDefinitionComposer ? "Close Composer" : "New Definition")) {
+        bShowModelNewDefinitionComposer = !bShowModelNewDefinitionComposer;
+    }
+    if (bShowModelNewDefinitionComposer) {
+        ImGui::SeparatorText("Create Definition");
+        char idBuffer[256];
+        SetTextBufferFromString(ModelNewDefinitionId, idBuffer, sizeof(idBuffer));
+        if (ImGui::InputText("Definition Id", idBuffer, sizeof(idBuffer))) {
+            ModelNewDefinitionId = idBuffer;
+            ModelNewDefinitionPreview.reset();
+        }
+
+        char displayBuffer[256];
+        SetTextBufferFromString(ModelNewDefinitionDisplayName, displayBuffer, sizeof(displayBuffer));
+        if (ImGui::InputText("Display Name", displayBuffer, sizeof(displayBuffer))) {
+            ModelNewDefinitionDisplayName = displayBuffer;
+            ModelNewDefinitionPreview.reset();
+        }
+
+        constexpr EDefinitionKindV2 DefinitionKinds[] = {
+            EDefinitionKindV2::ScalarParameter,
+            EDefinitionKindV2::Coordinate,
+            EDefinitionKindV2::StateVariable,
+            EDefinitionKindV2::Field,
+            EDefinitionKindV2::OperatorSymbol,
+            EDefinitionKindV2::ObservableSymbol
+        };
+        if (ImGui::BeginCombo("Kind", ToString(ModelNewDefinitionKind))) {
+            for (const auto definitionKind : DefinitionKinds) {
+                const bool bSelected = definitionKind == ModelNewDefinitionKind;
+                if (ImGui::Selectable(ToString(definitionKind), bSelected)) {
+                    ModelNewDefinitionKind = definitionKind;
+                    ModelNewDefinitionPreview.reset();
+                }
+                if (bSelected) ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        char notationBuffer[4096];
+        SetTextBufferFromString(ModelNewDefinitionNotation, notationBuffer, sizeof(notationBuffer));
+        if (ImGui::InputTextMultiline(
+                "##ModelNewDefinitionNotation",
+                notationBuffer,
+                sizeof(notationBuffer),
+                ImVec2(-FLT_MIN, 100.0f),
+                ImGuiInputTextFlags_AllowTabInput)) {
+            ModelNewDefinitionNotation = notationBuffer;
+            ModelNewDefinitionPreview.reset();
+        }
+
+        const auto refreshDefinitionPreview = [&]() {
+            ModelNewDefinitionPreview = PreviewNewDefinitionV2(
+                model,
+                ModelNewDefinitionId,
+                ModelNewDefinitionKind,
+                ModelNewDefinitionCoordinateRole,
+                ModelNewDefinitionOperatorStyle,
+                ModelNewDefinitionNotation,
+                ModelNewDefinitionDisplayName);
+            ModelNewDefinitionStatus = ModelNewDefinitionPreview->bCanApply
+                ? "[Ok] Previewed new definition '" + ModelNewDefinitionId + "'."
+                : "[Error] New definition preview has blocking issues.";
+        };
+
+        if (ImGui::Button("Preview Create")) {
+            refreshDefinitionPreview();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Create Definition")) {
+            if (!ModelNewDefinitionPreview.has_value()) refreshDefinitionPreview();
+            FModelChangeRecordV2 changeRecord;
+            if (ModelNewDefinitionPreview.has_value() &&
+                ApplyNewDefinitionPreviewV2(model, *ModelNewDefinitionPreview, &changeRecord)) {
+                ModelLastChangeRecord = changeRecord;
+                bModelHasLastChangeRecord = true;
+                ModelNewDefinitionStatus = "[Ok] Created definition '" + changeRecord.ObjectId + "'.";
+                SelectModelSemanticObject(model, MakeDefinitionObjectRefV2(changeRecord.ObjectId), true, false);
+                bShowModelNewDefinitionComposer = false;
+                ModelNewDefinitionPreview.reset();
+            }
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel Create")) {
+            bShowModelNewDefinitionComposer = false;
+            ModelNewDefinitionPreview.reset();
+            ModelNewDefinitionStatus.clear();
+        }
+        if (!ModelNewDefinitionStatus.empty()) {
+            ImGui::TextWrapped("%s", ModelNewDefinitionStatus.c_str());
+        }
+        if (ModelNewDefinitionPreview.has_value()) {
+            DrawRawDiagnosticList(ModelNewDefinitionPreview->Diagnostics);
+        }
+        ImGui::Separator();
+    }
+
+    const auto consumePendingScroll = [&](const FSemanticObjectRefV2 &ref) {
+        if (!ModelPendingScrollTarget.IsValid()) return;
+        if (!AreSemanticObjectRefsEqualV2(ModelPendingScrollTarget, ref)) return;
+        ImGui::SetScrollHereY(0.35f);
+        ModelPendingScrollTarget = {};
+    };
+
+    for (const auto &definition : model.Definitions) {
+        const auto ref = MakeDefinitionObjectRefV2(definition.DefinitionId);
+        const auto highlightState = ResolveHighlightState(state.SelectionContext, *state.SelectionOverview, ref);
+        ImGui::PushID(definition.DefinitionId.c_str());
+        const auto rowResult = Typesetting::ImGuiTypesetSelectableRow(
+            typesettingService,
+            "##ModelDefinitionRow",
+            MakeMathRequest(RenderDialectDefinitionV2(definition, &model), baseFontSize * 1.02f),
+            MakeDefinitionRowOptions(highlightState, baseFontSize));
+        if (rowResult.bPressed) {
+            SelectModelSemanticObject(model, ref, false, false);
+        }
+        consumePendingScroll(ref);
+        ImGui::PopID();
+    }
+
+    if (!state.DraftPreviewDefinitions.empty()) {
+        ImGui::SeparatorText("Draft Materializations");
+        for (const auto &definition : state.DraftPreviewDefinitions) {
+            const auto ref = MakeDefinitionObjectRefV2(definition.DefinitionId);
+            const auto highlightState = ResolveHighlightState(state.SelectionContext, *state.SelectionOverview, ref);
+            ImGui::PushID(("draft." + definition.DefinitionId).c_str());
+            const auto rowResult = Typesetting::ImGuiTypesetSelectableRow(
+                typesettingService,
+                "##ModelDraftDefinitionRow",
+                MakeMathRequest(RenderDialectDefinitionV2(definition, &model), baseFontSize * 1.02f),
+                MakeDraftDefinitionRowOptions(highlightState, baseFontSize));
+            if (rowResult.bPressed) {
+                SelectModelSemanticObject(model, ref, false, true);
+            }
+            consumePendingScroll(ref);
+            ImGui::PopID();
+        }
+    }
+}
+
+auto FLabV2WindowManager::DrawModelRelationsPanel() -> void {
+    using namespace Slab::Core::Model::V2;
+
+    auto state = PrepareModelWorkspaceViewState();
+    if (!state.bAvailable || state.Model == nullptr) {
+        ImGui::TextDisabled("No model state available.");
+        return;
+    }
+
+    auto &model = *state.Model;
+    auto &typesettingService = *UiTypesettingService;
+    const auto baseFontSize = ImGui::GetFontSize();
+
+    if (ImGui::Button(bShowModelNewRelationComposer ? "Close Composer" : "New Relation")) {
+        bShowModelNewRelationComposer = !bShowModelNewRelationComposer;
+    }
+    if (bShowModelNewRelationComposer) {
+        ImGui::SeparatorText("Create Relation");
+        char idBuffer[256];
+        SetTextBufferFromString(ModelNewRelationId, idBuffer, sizeof(idBuffer));
+        if (ImGui::InputText("Relation Id", idBuffer, sizeof(idBuffer))) {
+            ModelNewRelationId = idBuffer;
+            ModelNewRelationPreview.reset();
+        }
+
+        char nameBuffer[256];
+        SetTextBufferFromString(ModelNewRelationName, nameBuffer, sizeof(nameBuffer));
+        if (ImGui::InputText("Name", nameBuffer, sizeof(nameBuffer))) {
+            ModelNewRelationName = nameBuffer;
+            ModelNewRelationPreview.reset();
+        }
+
+        constexpr ERelationKindV2 RelationKinds[] = {
+            ERelationKindV2::Equation,
+            ERelationKindV2::DifferentialEquation,
+            ERelationKindV2::OperatorEquation,
+            ERelationKindV2::Constraint,
+            ERelationKindV2::Identity,
+            ERelationKindV2::SymbolicCondition
+        };
+        if (ImGui::BeginCombo("Relation Kind", ToString(ModelNewRelationKind))) {
+            for (const auto relationKind : RelationKinds) {
+                const bool bSelected = relationKind == ModelNewRelationKind;
+                if (ImGui::Selectable(ToString(relationKind), bSelected)) {
+                    ModelNewRelationKind = relationKind;
+                    ModelNewRelationPreview.reset();
+                }
+                if (bSelected) ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        char notationBuffer[4096];
+        SetTextBufferFromString(ModelNewRelationNotation, notationBuffer, sizeof(notationBuffer));
+        if (ImGui::InputTextMultiline(
+                "##ModelNewRelationNotation",
+                notationBuffer,
+                sizeof(notationBuffer),
+                ImVec2(-FLT_MIN, 120.0f),
+                ImGuiInputTextFlags_AllowTabInput)) {
+            ModelNewRelationNotation = notationBuffer;
+            ModelNewRelationPreview.reset();
+        }
+
+        const auto refreshRelationPreview = [&]() {
+            ModelNewRelationPreview = PreviewNewRelationV2(
+                model,
+                ModelNewRelationId,
+                ModelNewRelationKind,
+                ModelNewRelationNotation,
+                ModelNewRelationName);
+            ModelNewRelationStatus = ModelNewRelationPreview->bCanApply
+                ? "[Ok] Previewed new relation '" + ModelNewRelationId + "'."
+                : "[Error] New relation preview has blocking issues.";
+        };
+
+        if (ImGui::Button("Preview Create")) {
+            refreshRelationPreview();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Create Relation")) {
+            if (!ModelNewRelationPreview.has_value()) refreshRelationPreview();
+            FModelChangeRecordV2 changeRecord;
+            if (ModelNewRelationPreview.has_value() &&
+                ApplyNewRelationPreviewV2(model, *ModelNewRelationPreview, &changeRecord)) {
+                ModelLastChangeRecord = changeRecord;
+                bModelHasLastChangeRecord = true;
+                ModelNewRelationStatus = "[Ok] Created relation '" + changeRecord.ObjectId + "'.";
+                SelectModelSemanticObject(model, MakeRelationObjectRefV2(changeRecord.ObjectId), true, false);
+                bShowModelNewRelationComposer = false;
+                ModelNewRelationPreview.reset();
+            }
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel Create")) {
+            bShowModelNewRelationComposer = false;
+            ModelNewRelationPreview.reset();
+            ModelNewRelationStatus.clear();
+        }
+        if (!ModelNewRelationStatus.empty()) {
+            ImGui::TextWrapped("%s", ModelNewRelationStatus.c_str());
+        }
+        if (ModelNewRelationPreview.has_value()) {
+            DrawRawDiagnosticList(ModelNewRelationPreview->Diagnostics);
+        }
+        ImGui::Separator();
+    }
+
+    const auto consumePendingScroll = [&](const FSemanticObjectRefV2 &ref) {
+        if (!ModelPendingScrollTarget.IsValid()) return;
+        if (!AreSemanticObjectRefsEqualV2(ModelPendingScrollTarget, ref)) return;
+        ImGui::SetScrollHereY(0.35f);
+        ModelPendingScrollTarget = {};
+    };
+
+    for (const auto &relation : model.Relations) {
+        const auto ref = MakeRelationObjectRefV2(relation.RelationId);
+        const auto highlightState = ResolveHighlightState(state.SelectionContext, *state.SelectionOverview, ref);
+        ImGui::PushID(relation.RelationId.c_str());
+        const auto rowResult = Typesetting::ImGuiTypesetSelectableRow(
+            typesettingService,
+            "##ModelRelationRow",
+            MakeMathRequest(RenderDialectRelationV2(relation, &model), baseFontSize * 1.04f),
+            MakeRelationRowOptions(highlightState, baseFontSize));
+        if (rowResult.bPressed) {
+            SelectModelSemanticObject(model, ref, false, false);
+        }
+        consumePendingScroll(ref);
+        ImGui::PopID();
+    }
+}
+
+auto FLabV2WindowManager::DrawModelEditorPanel() -> void {
+    using namespace Slab::Core::Model::V2;
+
+    auto state = PrepareModelWorkspaceViewState();
+    if (!state.bAvailable || state.Model == nullptr) {
+        ImGui::TextDisabled("No model state available.");
+        return;
+    }
+
+    auto &model = *state.Model;
+    auto *editorBuffer = state.ActiveEditorBuffer;
+    if (editorBuffer == nullptr) {
+        ImGui::TextDisabled("Select a definition or relation to edit.");
+        return;
+    }
+
+    auto &typesettingService = *UiTypesettingService;
+    const auto baseFontSize = ImGui::GetFontSize();
+    FModelInspectorTheme inspectorTheme;
+    inspectorTheme.BaseFontSize = baseFontSize;
+    inspectorTheme.SecondaryTextOptions.Style.FontPixelSize = baseFontSize * 0.92f;
+    inspectorTheme.SecondaryTextOptions.Tint = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+    inspectorTheme.DetailMathOptions.Style.FontPixelSize = baseFontSize * 1.12f;
+    inspectorTheme.DetailMathOptions.Tint = ImGui::GetColorU32(ImGuiCol_Text);
+
+    const auto navigateToDraftSemanticObject = [&](const FSemanticObjectRefV2 &ref) {
+        SelectModelSemanticObject(model, ref, true, true);
+    };
+
+    bool bUiStateChangedThisFrame = false;
+    ImGui::TextDisabled(
+        "Target: %s | Kind: %s | Source: %s",
+        editorBuffer->TargetId.c_str(),
+        ToString(editorBuffer->TargetKind),
+        editorBuffer->bDraftDirty ? "draft" : "canonical");
+    Typesetting::ImGuiTypesetMath(typesettingService, editorBuffer->CanonicalNotation, inspectorTheme.DetailMathOptions);
+
+    char buffer[4096];
+    SetTextBufferFromString(editorBuffer->DraftNotation, buffer, sizeof(buffer));
+    if (ImGui::InputTextMultiline(
+            "##ModelEditorDraftNotation",
+            buffer,
+            sizeof(buffer),
+            ImVec2(-FLT_MIN, 120.0f),
+            ImGuiInputTextFlags_AllowTabInput)) {
+        SetEditorBufferDraftV2(*editorBuffer, buffer);
+    }
+
+    if (ImGui::Button("Parse / Preview")) {
+        if (ParseEditorBufferPreviewV2(model, *editorBuffer)) {
+            ModelEditorStatus = "[Ok] Parsed draft for " + editorBuffer->TargetId + ".";
+        } else {
+            ModelEditorStatus = "[Error] Could not parse draft for " + editorBuffer->TargetId + ".";
+        }
+        bUiStateChangedThisFrame = true;
+    }
+    ImGui::SameLine();
+    const bool bCanApply = editorBuffer->TargetKind == EModelObjectKindV2::Definition
+        ? (editorBuffer->DefinitionPreview.has_value() && editorBuffer->DefinitionPreview->bCanApply && editorBuffer->bPreviewCurrent)
+        : (editorBuffer->RelationPreview.has_value() && editorBuffer->RelationPreview->bCanApply && editorBuffer->bPreviewCurrent);
+    ImGui::BeginDisabled(!bCanApply);
+    if (ImGui::Button("Apply")) {
+        FModelChangeRecordV2 changeRecord;
+        if (ApplyEditorBufferV2(model, *editorBuffer, EModelChangeOriginV2::DirectEdit, &changeRecord)) {
+            ModelLastChangeRecord = changeRecord;
+            bModelHasLastChangeRecord = true;
+            ModelEditorStatus = "[Ok] Applied canonical update to " + changeRecord.ObjectId + ".";
+            if (editorBuffer->TargetKind == EModelObjectKindV2::Definition) {
+                SelectModelSemanticObject(model, MakeDefinitionObjectRefV2(changeRecord.ObjectId), false, false);
+            } else {
+                SelectModelSemanticObject(model, MakeRelationObjectRefV2(changeRecord.ObjectId), false, false);
+            }
+        }
+        bUiStateChangedThisFrame = true;
+    }
+    ImGui::EndDisabled();
+    ImGui::SameLine();
+    ImGui::BeginDisabled(!editorBuffer->bDraftDirty && !editorBuffer->bPreviewCurrent);
+    if (ImGui::Button("Revert / Cancel")) {
+        RevertEditorBufferV2(model, *editorBuffer);
+        bUiStateChangedThisFrame = true;
+    }
+    ImGui::EndDisabled();
+
+    if (bUiStateChangedThisFrame || !editorBuffer->bPreviewCurrent) {
+        return;
+    }
+
+    if (editorBuffer->TargetKind == EModelObjectKindV2::Definition && editorBuffer->DefinitionPreview.has_value()) {
+        const auto &preview = *editorBuffer->DefinitionPreview;
+        DrawRawDiagnosticList(preview.Diagnostics);
+        if (preview.SemanticDelta.has_value()) {
+            DrawDraftSemanticDelta(*preview.SemanticDelta, navigateToDraftSemanticObject);
+        }
+    } else if (editorBuffer->TargetKind == EModelObjectKindV2::Relation && editorBuffer->RelationPreview.has_value()) {
+        const auto &preview = *editorBuffer->RelationPreview;
+        DrawRawDiagnosticList(preview.Diagnostics);
+        if (preview.SemanticDelta.has_value()) {
+            DrawDraftSemanticDelta(*preview.SemanticDelta, navigateToDraftSemanticObject);
+        }
+    }
+}
+
+auto FLabV2WindowManager::DrawModelAssumptionsPanel() -> void {
+    using namespace Slab::Core::Model::V2;
+
+    auto state = PrepareModelWorkspaceViewState();
+    if (!state.bAvailable || state.Model == nullptr) {
+        ImGui::TextDisabled("No model state available.");
+        return;
+    }
+
+    auto &model = *state.Model;
+    auto &typesettingService = *UiTypesettingService;
+    const auto baseFontSize = ImGui::GetFontSize();
+    const auto &overview = state.Overview;
+    const auto &semanticReport = overview.Report;
+
+    const bool bHasDraftPreviewAssumptions =
+        state.DraftPreviewAssumptions != nullptr && !state.DraftPreviewAssumptions->empty();
+    if (semanticReport.Assumptions.empty() && !bHasDraftPreviewAssumptions) {
+        ImGui::TextDisabled("No implicit or accepted semantics are currently available.");
+        return;
+    }
+
+    if (bHasDraftPreviewAssumptions) {
+        ImGui::SeparatorText("Draft Preview");
+        for (const auto &assumption : *state.DraftPreviewAssumptions) {
+            const auto ref = MakeAssumptionObjectRefV2(assumption.AssumptionId);
+            const auto highlightState = ResolveHighlightState(state.SelectionContext, *state.SelectionOverview, ref);
+            ImGui::PushID(("draft." + assumption.AssumptionId).c_str());
+            const auto rowResult = Typesetting::ImGuiTypesetSelectableRow(
+                typesettingService,
+                "##ModelDraftAssumptionRow",
+                Typesetting::MakeTextRequest(
+                    assumption.TargetSymbol.empty() ? assumption.Category : assumption.TargetSymbol,
+                    Typesetting::FTypesetStyle{.FontPixelSize = baseFontSize * 0.95f}),
+                MakeDraftAssumptionRowOptions(highlightState, baseFontSize));
+            if (rowResult.bPressed) {
+                SelectModelSemanticObject(model, ref, false, true);
+            }
+            ImGui::PopID();
+        }
+    }
+
+    if (bHasDraftPreviewAssumptions && !semanticReport.Assumptions.empty()) {
+        ImGui::SeparatorText("Canonical State");
+    }
+    for (const auto &assumption : semanticReport.Assumptions) {
+        const auto ref = MakeAssumptionObjectRefV2(assumption.AssumptionId);
+        const auto highlightState = ResolveHighlightState(state.SelectionContext, *state.SelectionOverview, ref);
+        ImGui::PushID(assumption.AssumptionId.c_str());
+        const auto rowResult = Typesetting::ImGuiTypesetSelectableRow(
+            typesettingService,
+            "##ModelAssumptionRow",
+            Typesetting::MakeTextRequest(
+                assumption.TargetSymbol.empty() ? assumption.Category : assumption.TargetSymbol,
+                Typesetting::FTypesetStyle{.FontPixelSize = baseFontSize * 0.95f}),
+            MakeAssumptionRowOptions(highlightState, baseFontSize));
+        if (rowResult.bPressed) {
+            SelectModelSemanticObject(model, ref, false, false);
+        }
+        ImGui::PopID();
+    }
+}
+
+auto FLabV2WindowManager::DrawModelDetailsPanel() -> void {
+    using namespace Slab::Core::Model::V2;
+
+    auto state = PrepareModelWorkspaceViewState();
+    if (!state.bAvailable || state.Model == nullptr) {
+        ImGui::TextDisabled("No model state available.");
+        return;
+    }
+
+    auto &model = *state.Model;
+    auto &typesettingService = *UiTypesettingService;
+    const auto baseFontSize = ImGui::GetFontSize();
+    FModelInspectorTheme inspectorTheme;
+    inspectorTheme.BaseFontSize = baseFontSize;
+    inspectorTheme.SectionTextOptions.Style.FontPixelSize = baseFontSize * 1.05f;
+    inspectorTheme.SectionTextOptions.Tint = ImGui::GetColorU32(ImGuiCol_Text);
+    inspectorTheme.SecondaryTextOptions.Style.FontPixelSize = baseFontSize * 0.92f;
+    inspectorTheme.SecondaryTextOptions.Tint = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+    inspectorTheme.DetailMathOptions.Style.FontPixelSize = baseFontSize * 1.12f;
+    inspectorTheme.DetailMathOptions.Tint = ImGui::GetColorU32(ImGuiCol_Text);
+
+    const auto navigate = [&](const FSemanticObjectRefV2 &ref) {
+        if (bSelectedModelSemanticObjectUsesDraftPreview) SelectModelSemanticObject(model, ref, true, true);
+        else SelectModelSemanticObject(model, ref, true, false);
+    };
+
+    if (const auto *selectedObject = state.SelectionOverview->FindObject(SelectedModelSemanticObject); selectedObject != nullptr) {
+        if (SelectedModelSemanticObject.Kind == ESemanticObjectKindV2::Definition) {
+            const auto *definition = FindDefinitionByIdV2(model, SelectedModelSemanticObject.ObjectId);
+            const auto *definitionReport = FindDefinitionReport(state.SelectionOverview->Report, SelectedModelSemanticObject.ObjectId);
+            FModelEditorBufferV2 *editorBuffer = definition != nullptr
+                ? EnsureEditorBuffer(ModelEditorBuffersByKey, model, EModelObjectKindV2::Definition, SelectedModelSemanticObject.ObjectId)
+                : state.ActiveEditorBuffer;
+            const auto *definitionPreview =
+                editorBuffer != nullptr && editorBuffer->DefinitionPreview.has_value()
+                    ? &(*editorBuffer->DefinitionPreview)
+                    : nullptr;
+            const auto draftDefinition = definition == nullptr && bSelectedModelSemanticObjectUsesDraftPreview
+                ? FindDraftProposedDefinition(model, state.ActiveEditorBuffer, state.ActiveDraftOverview, SelectedModelSemanticObject.ObjectId)
+                : Slab::TOptional<FDefinitionV2>{};
+            if (definition != nullptr || draftDefinition.has_value()) {
+                DrawDefinitionInspector(
+                    typesettingService,
+                    model,
+                    definition != nullptr ? *definition : *draftDefinition,
+                    *selectedObject,
+                    definitionReport,
+                    definitionPreview,
+                    inspectorTheme,
+                    navigate);
+            }
+        } else if (SelectedModelSemanticObject.Kind == ESemanticObjectKindV2::Relation) {
+            const auto *relation = FindRelationByIdV2(model, SelectedModelSemanticObject.ObjectId);
+            const auto *relationReport = FindRelationReport(state.SelectionOverview->Report, SelectedModelSemanticObject.ObjectId);
+            FModelEditorBufferV2 *editorBuffer = EnsureEditorBuffer(
+                ModelEditorBuffersByKey,
+                model,
+                EModelObjectKindV2::Relation,
+                SelectedModelSemanticObject.ObjectId);
+            const auto *relationPreview =
+                editorBuffer != nullptr && editorBuffer->RelationPreview.has_value()
+                    ? &(*editorBuffer->RelationPreview)
+                    : nullptr;
+            if (relation != nullptr) {
+                DrawRelationInspector(
+                    typesettingService,
+                    model,
+                    *relation,
+                    *selectedObject,
+                    relationReport,
+                    relationPreview,
+                    inspectorTheme,
+                    navigate);
+            }
+        } else if (SelectedModelSemanticObject.Kind == ESemanticObjectKindV2::VocabularyEntry) {
+            if (const auto *entry = FindResolvedVocabularyEntry(state.Overview.VocabularyEntries, SelectedModelSemanticObject.ObjectId);
+                entry != nullptr) {
+                DrawVocabularyInspector(typesettingService, *entry, *selectedObject, inspectorTheme, navigate);
+            }
+        } else if (SelectedModelSemanticObject.Kind == ESemanticObjectKindV2::Assumption) {
+            if (const auto *assumption = FindAssumptionReport(state.SelectionOverview->Report, SelectedModelSemanticObject.ObjectId);
+                assumption != nullptr) {
+                const auto materializationPreview = BuildAssumptionMaterializationPreviewV2(model, *assumption, state.SelectionOverview);
+                DrawAssumptionInspector(
+                    typesettingService,
+                    model,
+                    *assumption,
+                    *selectedObject,
+                    materializationPreview,
+                    inspectorTheme,
+                    navigate);
+            }
+        }
+    } else {
+        ImGui::TextDisabled("Select a vocabulary entry, definition, relation, or assumption.");
+    }
 }
