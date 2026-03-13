@@ -56,11 +56,7 @@ namespace Slab::Core::Model::V2 {
     }
 
     inline auto NormalizeSymbolAliasV2(Str alias) -> Str {
-        alias = TrimAsciiCopyV2(std::move(alias));
-        while (!alias.empty() && alias.front() == '\\') {
-            alias.erase(alias.begin());
-        }
-        return alias;
+        return NormalizeSymbolAliasTextV2(std::move(alias));
     }
 
     class FNotationContextV2 {
@@ -73,6 +69,13 @@ namespace Slab::Core::Model::V2 {
             BindingsByAlias[normalized] = FReferenceV2{definition.DefinitionId, alias};
         }
 
+        auto RegisterAlias(const Str &alias, const FBaseVocabularyEntryV2 &entry, const bool overwriteExisting = false) -> void {
+            const auto normalized = NormalizeSymbolAliasV2(alias);
+            if (normalized.empty()) return;
+            if (!overwriteExisting && BindingsByAlias.contains(normalized)) return;
+            BindingsByAlias[normalized] = FReferenceV2{entry.EntryId, alias};
+        }
+
     public:
         FNotationContextV2() = default;
 
@@ -81,6 +84,10 @@ namespace Slab::Core::Model::V2 {
             for (const auto &definition : model.Definitions) {
                 RegisterAlias(definition.Symbol, definition);
                 if (!definition.PreferredNotation.empty()) RegisterAlias(definition.PreferredNotation, definition);
+            }
+            for (const auto &entry : ResolveBaseVocabularyPresetEntriesV2(model.BaseVocabulary.ActivePresetId)) {
+                RegisterAlias(entry.Symbol, entry);
+                if (!entry.PreferredNotation.empty()) RegisterAlias(entry.PreferredNotation, entry);
             }
         }
 
@@ -103,9 +110,15 @@ namespace Slab::Core::Model::V2 {
             return FindDefinitionByIdV2(*Model, reference.ReferenceId);
         }
 
+        [[nodiscard]] auto FindSemanticEntry(const FReferenceV2 &reference) const -> FResolvedSemanticEntryV2 {
+            if (Model == nullptr || !reference.IsBound()) return {};
+            return ResolveSemanticEntryV2(*Model, reference);
+        }
+
         [[nodiscard]] auto FindDefaultDerivativeVariable(const FReferenceV2 &reference) const -> TOptional<FReferenceV2> {
-            const auto *definition = FindDefinition(reference);
-            if (definition == nullptr) return std::nullopt;
+            const auto resolved = FindSemanticEntry(reference);
+            if (resolved.Definition == nullptr) return std::nullopt;
+            const auto *definition = resolved.Definition;
             if (definition->ArgumentDefinitionIds.empty()) return std::nullopt;
 
             const auto *coordinate = FindDefinitionByIdV2(*Model, definition->ArgumentDefinitionIds.front());
@@ -523,14 +536,17 @@ namespace Slab::Core::Model::V2 {
                     auto reference = MakeReferenceFromToken(token);
 
                     if (reference.IsBound() && Context != nullptr) {
-                        if (const auto *definition = Context->FindDefinition(reference);
-                            definition != nullptr &&
-                            definition->Kind == EDefinitionKindV2::OperatorSymbol &&
+                        const auto resolved = Context->FindSemanticEntry(reference);
+                        const auto declaredKind = resolved.GetDeclaredKind();
+                        if (resolved.IsResolved() &&
+                            declaredKind.has_value() &&
+                            *declaredKind == EDefinitionKindV2::OperatorSymbol &&
                             CanStartPrimaryV2(Peek())) {
                             Vector<FExpressionPtrV2> arguments;
-                            const auto domainCount = definition->DeclaredType.has_value() &&
-                                definition->DeclaredType->Kind == ETypeExprKindV2::Function
-                                ? definition->DeclaredType->Domain.size()
+                            const auto *declaredType = resolved.GetDeclaredType();
+                            const auto domainCount = declaredType != nullptr &&
+                                declaredType->Kind == ETypeExprKindV2::Function
+                                ? declaredType->Domain.size()
                                 : std::size_t{1};
                             for (std::size_t i = 0; i < std::max<std::size_t>(domainCount, 1); ++i) {
                                 auto argument = ParseUnaryExpression();
@@ -788,8 +804,9 @@ namespace Slab::Core::Model::V2 {
                                           const FModelV2 *model = nullptr) -> Str {
         const auto renderRef = [model](const FReferenceV2 &reference) -> Str {
             if (model != nullptr && reference.IsBound()) {
-                if (const auto *definition = FindDefinitionByIdV2(*model, reference.ReferenceId); definition != nullptr) {
-                    return RenderDefinitionLabelV2(*definition);
+                const auto resolved = ResolveSemanticEntryV2(*model, reference);
+                if (resolved.IsResolved()) {
+                    return resolved.GetDisplayLabel();
                 }
             }
             return reference.DisplayText();

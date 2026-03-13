@@ -43,6 +43,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 - Platform feasibility: `Docs/platform-wasm-feasibility.md`
 - Runtime/UI contracts: `Docs/graphics-composition-contract.md`, `Docs/plot-window-ux-contract.md`, `Docs/slab-root-migration-policy.md`
 - Typesetting/UI math bridge: `Docs/typesetting-bridge.md`
+- Model-tab semantic environment: `Docs/model-v2-semantic-environment.md`
 - Monitoring architecture (LiveView vs listeners): `Docs/monitoring-liveview-vs-listeners.md`
 - Validation logs: `Docs/validation/imgui-blueprints-smoke.md`, `Docs/validation/imgui-upstream-parity-log.md`
 - Technical debt TODO backlog: `Docs/technical-debt.md`

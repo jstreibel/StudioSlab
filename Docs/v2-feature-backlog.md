@@ -97,6 +97,15 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - Routing mode now sources/selects runtime endpoints and executes connect through an invocation path before mutating graph edges
   - routing operation telemetry and runtime-instantiation session state persistence added
 
+## Progress Notes (2026-03-13)
+
+- `LAB-12` done: Model-tab ambient semantic environment baseline:
+  - added model-level `BaseVocabulary` preset selection and ambient entry resolution
+  - added preset baseline for `core_math`, `classical_mechanics`, and `relativistic_field_theory`
+  - semantic origin reporting now distinguishes local definitions, base vocabulary, and assumptions
+  - Model tab now shows inspectable readonly `Base Vocabulary` above local `Definitions`
+  - notation conventions use preview LaTeX templates instead of bare command tokens
+
 ### `P0` `RV2-00` — Reflection V2 contract freeze — done
 - Define `Interface`/`Parameter`/`Operation` schema contracts.
 - Define operation invocation result shape and policy enums.
@@ -173,6 +182,10 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `P1` `LAB-11` — Schemes graph persistence
   - persist per-interface node positions/pan/viewport preferences
   - restore layout state on workspace startup
+- `P1` `LAB-12` — Model tab semantic environment baseline — done
+  - model-level ambient `BaseVocabulary`
+  - origin-aware semantic inspection
+  - inspectable ambient vocabulary section in the Model tab
 
 ### Coverage Portfolio
 - `P1` `CVG-01` — MD V2 scoping — done

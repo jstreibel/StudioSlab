@@ -15,10 +15,12 @@
    - `Docs/graphics-composition-contract.md`
    - `Docs/plot-window-ux-contract.md`
    - `Docs/typesetting-bridge.md`
-4. Active planning context:
+4. For Model-tab semantic-environment work:
+   - `Docs/model-v2-semantic-environment.md`
+5. Active planning context:
    - `Docs/v2-feature-backlog.md`
    - `Docs/graph-first-user-story-checklist.md`
-5. For Schemes/graph-surface semantics and mode boundaries:
+6. For Schemes/graph-surface semantics and mode boundaries:
    - `Docs/graph-onthology.md`
 
 ## Core Code Map
@@ -57,6 +59,13 @@
   - `Lib/Graphics/Typesetting/TypesettingService.h`
   - `Lib/Graphics/Typesetting/ImGuiTypesetting.h`
   - `Studios/LabV2/LabV2WindowManagerModelPanels.cpp`
+- Model semantic environment:
+  - `Docs/model-v2-semantic-environment.md`
+  - `Slab/Core/Model/V2/ModelTypesV2.h`
+  - `Slab/Core/Model/V2/ModelNotationV2.h`
+  - `Slab/Core/Model/V2/ModelAuthoringV2.h`
+  - `Slab/Core/Model/V2/ModelSeedsV2.h`
+  - `Lib/tests/test_model_v2.cpp`
 
 ## Change Patterns
 
@@ -75,6 +84,7 @@
 - Slab monitor windows are rendered/interactive only in the `Monitor` workspace.
 - `Simulations` and `Schemes` workspaces should not show monitor slab-window leftovers.
 - Simulation launcher labels should avoid `V2` prefixing and model-specific clutter where a generic control label is sufficient.
+- In the Model tab, `Base Vocabulary` is ambient/readonly and sits above local `Definitions`.
 
 ## Validation Minimum
 

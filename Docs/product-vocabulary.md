@@ -60,6 +60,22 @@ Examples:
 
 `Model` is **not** the same as `Study`.
 
+### `BaseVocabulary`
+A readonly ambient semantic environment attached to a `Model`.
+
+Examples:
+- scalar sets such as `\\mathbb{R}`
+- ambient operators such as `\\Box`
+- notation conventions such as `\\dot{\\mathrm{state}}`
+
+`BaseVocabulary` is not the same as local `Definitions`.
+It supplies inherited semantic context that local definitions and relations may refer to, refine, or override.
+
+### `NotationContext`
+The authoring/projection layer used to parse and render notation against model semantics.
+
+`NotationContext` is not a peer ontological layer beside `Definitions` and `Relations`.
+
 ### `Transform`
 A data operation.
 
@@ -199,4 +215,3 @@ Prefer:
 
 Avoid overloading:
 - “Model” to mean a full authored presentation/project
-

@@ -20,6 +20,11 @@ namespace {
         });
     }
 
+    auto SelectionContains(const std::set<Slab::Str> &keys,
+                           const Slab::Core::Model::V2::FSemanticObjectRefV2 &ref) -> bool {
+        return keys.contains(Slab::Core::Model::V2::MakeSemanticObjectKeyV2(ref));
+    }
+
 } // namespace
 
 TEST_CASE("Model V2 harmonic oscillator seed is well-formed", "[ModelV2]") {
@@ -30,6 +35,7 @@ TEST_CASE("Model V2 harmonic oscillator seed is well-formed", "[ModelV2]") {
 
     REQUIRE(validation.IsOk());
     CHECK(model.ModelId == "model.harmonic_oscillator");
+    CHECK(model.BaseVocabulary.ActivePresetId == "classical_mechanics");
     CHECK(model.Definitions.size() >= 7);
     CHECK(model.Relations.size() >= 5);
 
@@ -60,6 +66,7 @@ TEST_CASE("Model V2 Klein-Gordon seed is well-formed", "[ModelV2]") {
 
     REQUIRE(validation.IsOk());
     CHECK(model.ModelId == "model.klein_gordon");
+    CHECK(model.BaseVocabulary.ActivePresetId == "relativistic_field_theory");
 
     const auto *phi = FindDefinitionByIdV2(model, "field.phi");
     REQUIRE(phi != nullptr);
@@ -68,16 +75,116 @@ TEST_CASE("Model V2 Klein-Gordon seed is well-formed", "[ModelV2]") {
     CHECK(RenderDialectDefinitionV2(*phi, &model).find("\\phi") != Slab::Str::npos);
     CHECK(RenderDialectDefinitionV2(*phi, &model).find("d + 1") != Slab::Str::npos);
 
-    const auto *box = FindDefinitionByIdV2(model, "operator.box");
-    REQUIRE(box != nullptr);
-    CHECK(box->Kind == EDefinitionKindV2::OperatorSymbol);
-    REQUIRE(box->DeclaredType.has_value());
-    CHECK(box->DeclaredType->Kind == ETypeExprKindV2::Function);
+    CHECK(FindDefinitionByIdV2(model, "operator.box") == nullptr);
+    const auto resolvedVocabulary = ResolveModelBaseVocabularyEntriesV2(model);
+    const auto boxIt = std::find_if(resolvedVocabulary.begin(), resolvedVocabulary.end(), [&](const auto &entry) {
+        return entry.Entry.EntryId == "vocab.relativistic_field_theory.operator.box";
+    });
+    REQUIRE(boxIt != resolvedVocabulary.end());
+    CHECK(boxIt->OverrideStatus == EVocabularyOverrideStatusV2::BuiltIn);
+    REQUIRE(boxIt->Entry.DefinitionKind.has_value());
+    CHECK(*boxIt->Entry.DefinitionKind == EDefinitionKindV2::OperatorSymbol);
 
     const auto *equation = FindRelationByIdV2(model, "relation.klein_gordon.equation");
     REQUIRE(equation != nullptr);
     CHECK(equation->Kind == ERelationKindV2::OperatorEquation);
     CHECK(RenderDialectRelationV2(*equation, &model).find("\\Box \\phi") != Slab::Str::npos);
+}
+
+TEST_CASE("Model V2 base vocabulary presets resolve inherited entries", "[ModelV2][Vocabulary]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto &catalog = GetBaseVocabularyPresetCatalogV2();
+    REQUIRE(catalog.size() >= 3);
+
+    const auto coreEntries = ResolveBaseVocabularyPresetEntriesV2("core_math");
+    CHECK(std::any_of(coreEntries.begin(), coreEntries.end(), [&](const auto &entry) {
+        return entry.EntryId == "vocab.core_math.set.reals" && entry.PreferredNotation == "\\mathbb{R}";
+    }));
+    CHECK(std::any_of(coreEntries.begin(), coreEntries.end(), [&](const auto &entry) {
+        return entry.EntryId == "vocab.core_math.set.complexes" && entry.PreferredNotation == "\\mathbb{C}";
+    }));
+    CHECK(std::any_of(coreEntries.begin(), coreEntries.end(), [&](const auto &entry) {
+        return entry.EntryId == "vocab.core_math.set.naturals" && entry.PreferredNotation == "\\mathbb{N}";
+    }));
+
+    const auto mechanicsEntries = ResolveBaseVocabularyPresetEntriesV2("classical_mechanics");
+    CHECK(std::any_of(mechanicsEntries.begin(), mechanicsEntries.end(), [&](const auto &entry) {
+        return entry.EntryId == "vocab.core_math.set.reals";
+    }));
+    CHECK(std::any_of(mechanicsEntries.begin(), mechanicsEntries.end(), [&](const auto &entry) {
+        return entry.EntryId == "vocab.classical_mechanics.notation.ddot";
+    }));
+    const auto ddotIt = std::find_if(mechanicsEntries.begin(), mechanicsEntries.end(), [&](const auto &entry) {
+        return entry.EntryId == "vocab.classical_mechanics.notation.ddot";
+    });
+    REQUIRE(ddotIt != mechanicsEntries.end());
+    CHECK(RenderBaseVocabularyEntryLatexV2(*ddotIt) == "\\ddot{\\mathrm{state}}");
+
+    const auto fieldTheoryEntries = ResolveBaseVocabularyPresetEntriesV2("relativistic_field_theory");
+    CHECK(std::any_of(fieldTheoryEntries.begin(), fieldTheoryEntries.end(), [&](const auto &entry) {
+        return entry.EntryId == "vocab.relativistic_field_theory.operator.box";
+    }));
+    CHECK(std::any_of(fieldTheoryEntries.begin(), fieldTheoryEntries.end(), [&](const auto &entry) {
+        return entry.EntryId == "vocab.relativistic_field_theory.operator.partial";
+    }));
+}
+
+TEST_CASE("Model V2 notation context resolves ambient vocabulary before inference", "[ModelV2][Vocabulary]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildKleinGordonModelV2();
+    const auto context = FNotationContextV2::FromModel(model);
+
+    const auto boxReference = context.FindReference("\\Box");
+    REQUIRE(boxReference.has_value());
+    CHECK(boxReference->ReferenceId == "vocab.relativistic_field_theory.operator.box");
+    const auto resolvedBoxEntry = FindBaseVocabularyEntryByIdV2(model, boxReference->ReferenceId);
+    REQUIRE(resolvedBoxEntry.has_value());
+    CHECK(RenderBaseVocabularyEntryLatexV2(*resolvedBoxEntry) == "\\Box");
+
+    const auto relation = ParseRelationNotationV2(
+        "relation.test.kg",
+        ERelationKindV2::OperatorEquation,
+        "\\Box \\phi + m^2 \\phi = 0",
+        &context);
+    REQUIRE(relation.IsOk());
+    REQUIRE(relation.Value->Left != nullptr);
+    CHECK(relation.Value->Left->Kind == EExpressionKindV2::Binary);
+}
+
+TEST_CASE("Model V2 local definitions override ambient vocabulary aliases", "[ModelV2][Vocabulary]") {
+    using namespace Slab::Core::Model::V2;
+
+    auto model = BuildKleinGordonModelV2();
+    const auto *phi = FindDefinitionByIdV2(model, "field.phi");
+    REQUIRE(phi != nullptr);
+    REQUIRE(phi->DeclaredType.has_value());
+
+    FDefinitionV2 localBox;
+    localBox.DefinitionId = "operator.box.local";
+    localBox.Symbol = "Box";
+    localBox.PreferredNotation = "\\Box";
+    localBox.DisplayName = "Local Box";
+    localBox.Kind = EDefinitionKindV2::OperatorSymbol;
+    localBox.OperatorStyle = EOperatorApplicationStyleV2::Prefix;
+    localBox.DeclaredType = MakeFunctionTypeV2({*phi->DeclaredType}, *phi->DeclaredType);
+    localBox.SourceText = "\\Box : (\\mathbb{R}^{d+1} \\to \\mathbb{R}) \\to (\\mathbb{R}^{d+1} \\to \\mathbb{R})";
+    localBox.Metadata["base_vocabulary_entry_id"] = "vocab.relativistic_field_theory.operator.box";
+    model.Definitions.push_back(localBox);
+
+    const auto context = FNotationContextV2::FromModel(model);
+    const auto boxReference = context.FindReference("\\Box");
+    REQUIRE(boxReference.has_value());
+    CHECK(boxReference->ReferenceId == "operator.box.local");
+
+    const auto resolvedVocabulary = ResolveModelBaseVocabularyEntriesV2(model);
+    const auto boxIt = std::find_if(resolvedVocabulary.begin(), resolvedVocabulary.end(), [&](const auto &entry) {
+        return entry.Entry.EntryId == "vocab.relativistic_field_theory.operator.box";
+    });
+    REQUIRE(boxIt != resolvedVocabulary.end());
+    CHECK(boxIt->OverrideStatus == EVocabularyOverrideStatusV2::SpecializedLocally);
+    CHECK(boxIt->LocalDefinitionId == "operator.box.local");
 }
 
 TEST_CASE("Model V2 notation parser supports constrained definition and relation syntax", "[ModelV2][Notation]") {
@@ -323,9 +430,10 @@ TEST_CASE("Model V2 semantic report infers Klein-Gordon assumptions", "[ModelV2]
     CHECK(*phiIt->InferredKind == EDefinitionKindV2::Field);
 
     const auto boxIt = std::find_if(relationIt->ReferencedSymbols.begin(), relationIt->ReferencedSymbols.end(), [&](const auto &symbol) {
-        return symbol.ReferenceId == "operator.box";
+        return symbol.ReferenceId == "vocab.relativistic_field_theory.operator.box";
     });
     REQUIRE(boxIt != relationIt->ReferencedSymbols.end());
+    CHECK(boxIt->Origin == ESemanticOriginV2::BaseVocabulary);
     REQUIRE(boxIt->InferredKind.has_value());
     CHECK(*boxIt->InferredKind == EDefinitionKindV2::OperatorSymbol);
 
@@ -335,6 +443,12 @@ TEST_CASE("Model V2 semantic report infers Klein-Gordon assumptions", "[ModelV2]
     REQUIRE(massIt != relationIt->ReferencedSymbols.end());
     REQUIRE(massIt->InferredKind.has_value());
     CHECK(*massIt->InferredKind == EDefinitionKindV2::ScalarParameter);
+
+    const bool hasBoxAssumption = std::any_of(report.Assumptions.begin(), report.Assumptions.end(), [&](const auto &assumption) {
+        return assumption.TargetId == "vocab.relativistic_field_theory.operator.box" ||
+            assumption.TargetSymbol == "\\Box";
+    });
+    CHECK_FALSE(hasBoxAssumption);
 }
 
 TEST_CASE("Model V2 semantic report compares declared and inferred roles", "[ModelV2][Inference][Diagnostics]") {
@@ -354,4 +468,226 @@ TEST_CASE("Model V2 semantic report compares declared and inferred roles", "[Mod
     CHECK(*reportIt->InferredKind == EDefinitionKindV2::StateVariable);
     CHECK(reportIt->bRoleMismatchesDeclared);
     CHECK(HasSemanticDiagnosticContaining(reportIt->Diagnostics, "declared_inferred_mismatch", "disagrees"));
+}
+
+TEST_CASE("Model V2 harmonic oscillator report shows ambient classical mechanics vocabulary", "[ModelV2][Vocabulary][Inference]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildHarmonicOscillatorModelV2();
+    const auto report = BuildModelSemanticReportV2(model);
+    const auto relationIt = std::find_if(report.Relations.begin(), report.Relations.end(), [&](const auto &relationReport) {
+        return relationReport.RelationId == "relation.oscillator.second_order";
+    });
+    REQUIRE(relationIt != report.Relations.end());
+
+    const auto dotIt = std::find_if(relationIt->ReferencedSymbols.begin(), relationIt->ReferencedSymbols.end(), [&](const auto &symbol) {
+        return symbol.ReferenceId == "vocab.classical_mechanics.notation.ddot";
+    });
+    REQUIRE(dotIt != relationIt->ReferencedSymbols.end());
+    CHECK(dotIt->Origin == ESemanticOriginV2::BaseVocabulary);
+
+    const auto xIt = std::find_if(relationIt->ReferencedSymbols.begin(), relationIt->ReferencedSymbols.end(), [&](const auto &symbol) {
+        return symbol.ReferenceId == "state.x";
+    });
+    REQUIRE(xIt != relationIt->ReferencedSymbols.end());
+    CHECK(xIt->Origin == ESemanticOriginV2::LocalDefinition);
+}
+
+TEST_CASE("Model V2 definition report exposes ambient type dependencies and unresolved origin", "[ModelV2][Vocabulary][Diagnostics]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto oscillator = BuildHarmonicOscillatorModelV2();
+    const auto report = BuildModelSemanticReportV2(oscillator);
+    const auto definitionIt = std::find_if(report.Definitions.begin(), report.Definitions.end(), [&](const auto &definitionReport) {
+        return definitionReport.DefinitionId == "state.x";
+    });
+    REQUIRE(definitionIt != report.Definitions.end());
+    const auto realSpaceIt = std::find_if(definitionIt->ReferencedSymbols.begin(), definitionIt->ReferencedSymbols.end(), [&](const auto &symbol) {
+        return symbol.ReferenceId == "vocab.core_math.set.reals";
+    });
+    REQUIRE(realSpaceIt != definitionIt->ReferencedSymbols.end());
+    CHECK(realSpaceIt->Origin == ESemanticOriginV2::BaseVocabulary);
+
+    const auto kg = BuildKleinGordonModelV2();
+    auto preview = MakeEditorBufferForRelationV2(kg, "relation.klein_gordon.equation");
+    REQUIRE(preview.has_value());
+    SetEditorBufferDraftV2(*preview, "\\Box \\phi + m^2 \\psi = 0");
+    REQUIRE(ParseEditorBufferPreviewV2(kg, *preview));
+    REQUIRE(preview->RelationPreview.has_value());
+    const auto psiIt = std::find_if(preview->RelationPreview->ReferencedSymbols.begin(), preview->RelationPreview->ReferencedSymbols.end(), [&](const auto &symbol) {
+        return symbol.SymbolText == "\\psi";
+    });
+    REQUIRE(psiIt != preview->RelationPreview->ReferencedSymbols.end());
+    CHECK(psiIt->Origin == ESemanticOriginV2::Unresolved);
+}
+
+TEST_CASE("Model V2 semantic overview exposes oscillator navigation links", "[ModelV2][Navigation]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildHarmonicOscillatorModelV2();
+    const auto overview = BuildModelSemanticOverviewV2(model);
+    const auto xRef = MakeDefinitionObjectRefV2("state.x");
+    const auto *xObject = overview.FindObject(xRef);
+    REQUIRE(xObject != nullptr);
+
+    CHECK(std::any_of(xObject->AmbientDependencies.begin(), xObject->AmbientDependencies.end(), [](const auto &link) {
+        return link.Target.ObjectId == "vocab.core_math.set.reals";
+    }));
+    CHECK(std::any_of(xObject->UsedBy.begin(), xObject->UsedBy.end(), [](const auto &link) {
+        return link.Target.ObjectId == "relation.oscillator.second_order";
+    }));
+    CHECK(std::any_of(xObject->UsedBy.begin(), xObject->UsedBy.end(), [](const auto &link) {
+        return link.Target.ObjectId == "relation.oscillator.energy";
+    }));
+    CHECK(std::any_of(xObject->RelatedAssumptions.begin(), xObject->RelatedAssumptions.end(), [&](const auto &link) {
+        const auto assumptionIt = std::find_if(overview.Report.Assumptions.begin(), overview.Report.Assumptions.end(), [&](const auto &assumption) {
+            return assumption.AssumptionId == link.Target.ObjectId;
+        });
+        return assumptionIt != overview.Report.Assumptions.end() &&
+            assumptionIt->TargetId == "state.x";
+    }));
+
+    const auto selection = BuildSemanticSelectionContextV2(overview, xRef);
+    CHECK(SelectionContains(selection.UsedByKeys, MakeRelationObjectRefV2("relation.oscillator.second_order")));
+    CHECK(SelectionContains(selection.UsedByKeys, MakeRelationObjectRefV2("relation.oscillator.energy")));
+    CHECK_FALSE(selection.RelatedAssumptionKeys.empty());
+}
+
+TEST_CASE("Model V2 relation overview exposes ambient and local dependencies", "[ModelV2][Navigation][Vocabulary]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto oscillator = BuildHarmonicOscillatorModelV2();
+    const auto oscillatorOverview = BuildModelSemanticOverviewV2(oscillator);
+    const auto *secondOrder = oscillatorOverview.FindObject(MakeRelationObjectRefV2("relation.oscillator.second_order"));
+    REQUIRE(secondOrder != nullptr);
+    CHECK(std::any_of(secondOrder->DependsOn.begin(), secondOrder->DependsOn.end(), [](const auto &link) {
+        return link.Target.ObjectId == "state.x";
+    }));
+    CHECK(std::any_of(secondOrder->DependsOn.begin(), secondOrder->DependsOn.end(), [](const auto &link) {
+        return link.Target.ObjectId == "param.omega";
+    }));
+    CHECK(std::any_of(secondOrder->AmbientDependencies.begin(), secondOrder->AmbientDependencies.end(), [](const auto &link) {
+        return link.Target.ObjectId == "vocab.classical_mechanics.notation.ddot";
+    }));
+
+    const auto kg = BuildKleinGordonModelV2();
+    const auto kgOverview = BuildModelSemanticOverviewV2(kg);
+    const auto *kgEquation = kgOverview.FindObject(MakeRelationObjectRefV2("relation.klein_gordon.equation"));
+    REQUIRE(kgEquation != nullptr);
+    CHECK(std::any_of(kgEquation->DependsOn.begin(), kgEquation->DependsOn.end(), [](const auto &link) {
+        return link.Target.ObjectId == "field.phi";
+    }));
+    CHECK(std::any_of(kgEquation->DependsOn.begin(), kgEquation->DependsOn.end(), [](const auto &link) {
+        return link.Target.ObjectId == "param.m";
+    }));
+    CHECK(std::any_of(kgEquation->AmbientDependencies.begin(), kgEquation->AmbientDependencies.end(), [](const auto &link) {
+        return link.Target.ObjectId == "vocab.relativistic_field_theory.operator.box";
+    }));
+}
+
+TEST_CASE("Model V2 status summary classifies oscillator and Klein-Gordon", "[ModelV2][Status][Classification]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto oscillatorOverview = BuildModelSemanticOverviewV2(BuildHarmonicOscillatorModelV2());
+    CHECK(oscillatorOverview.Status.Classification.ModelClass == "finite-dimensional dynamical system");
+    CHECK(oscillatorOverview.Status.Classification.Character == "ODE-like");
+    CHECK(oscillatorOverview.Status.ActiveBaseVocabularyId == "classical_mechanics");
+    CHECK(oscillatorOverview.Status.UnresolvedSymbolCount == 0);
+    CHECK(std::any_of(
+        oscillatorOverview.Status.CanonicalStateVariables.begin(),
+        oscillatorOverview.Status.CanonicalStateVariables.end(),
+        [](const auto &link) { return link.Target.ObjectId == "state.x"; }));
+    CHECK(std::any_of(
+        oscillatorOverview.Status.CanonicalStateVariables.begin(),
+        oscillatorOverview.Status.CanonicalStateVariables.end(),
+        [](const auto &link) { return link.Target.ObjectId == "state.p"; }));
+    CHECK(std::any_of(
+        oscillatorOverview.Status.Parameters.begin(),
+        oscillatorOverview.Status.Parameters.end(),
+        [](const auto &link) { return link.Target.ObjectId == "param.m"; }));
+
+    const auto kgOverview = BuildModelSemanticOverviewV2(BuildKleinGordonModelV2());
+    CHECK(kgOverview.Status.Classification.ModelClass == "scalar field model");
+    CHECK(kgOverview.Status.Classification.Character == "PDE-like");
+    CHECK(kgOverview.Status.ActiveBaseVocabularyId == "relativistic_field_theory");
+    CHECK(kgOverview.Status.UnresolvedSymbolCount == 0);
+    CHECK(std::any_of(
+        kgOverview.Status.Fields.begin(),
+        kgOverview.Status.Fields.end(),
+        [](const auto &link) { return link.Target.ObjectId == "field.phi"; }));
+    CHECK(std::any_of(
+        kgOverview.Status.Operators.begin(),
+        kgOverview.Status.Operators.end(),
+        [](const auto &link) { return link.Target.ObjectId == "vocab.relativistic_field_theory.operator.box"; }));
+}
+
+TEST_CASE("Model V2 vocabulary overview reports ambient usage and local specialization links", "[ModelV2][Navigation][Override]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto oscillatorOverview = BuildModelSemanticOverviewV2(BuildHarmonicOscillatorModelV2());
+    const auto *realNumbers = oscillatorOverview.FindObject(MakeVocabularyObjectRefV2("vocab.core_math.set.reals"));
+    REQUIRE(realNumbers != nullptr);
+    CHECK(realNumbers->bReadonly);
+    CHECK(realNumbers->bAmbient);
+    CHECK(std::any_of(realNumbers->UsedBy.begin(), realNumbers->UsedBy.end(), [](const auto &link) {
+        return link.Target.ObjectId == "state.x";
+    }));
+
+    auto kg = BuildKleinGordonModelV2();
+    const auto *phi = FindDefinitionByIdV2(kg, "field.phi");
+    REQUIRE(phi != nullptr);
+    REQUIRE(phi->DeclaredType.has_value());
+
+    FDefinitionV2 localBox;
+    localBox.DefinitionId = "operator.box.local";
+    localBox.Symbol = "Box";
+    localBox.PreferredNotation = "\\Box";
+    localBox.DisplayName = "Local Box";
+    localBox.Kind = EDefinitionKindV2::OperatorSymbol;
+    localBox.OperatorStyle = EOperatorApplicationStyleV2::Prefix;
+    localBox.DeclaredType = MakeFunctionTypeV2({*phi->DeclaredType}, *phi->DeclaredType);
+    localBox.SourceText = "\\Box : (\\mathbb{R}^{d+1} \\to \\mathbb{R}) \\to (\\mathbb{R}^{d+1} \\to \\mathbb{R})";
+    localBox.Metadata["base_vocabulary_entry_id"] = "vocab.relativistic_field_theory.operator.box";
+    kg.Definitions.push_back(localBox);
+
+    const auto kgOverview = BuildModelSemanticOverviewV2(kg);
+    const auto *boxVocabulary = kgOverview.FindObject(MakeVocabularyObjectRefV2("vocab.relativistic_field_theory.operator.box"));
+    REQUIRE(boxVocabulary != nullptr);
+    CHECK(boxVocabulary->bLocalOverride);
+    CHECK(std::any_of(boxVocabulary->LocalOverrides.begin(), boxVocabulary->LocalOverrides.end(), [](const auto &link) {
+        return link.Target.ObjectId == "operator.box.local";
+    }));
+}
+
+TEST_CASE("Model V2 assumption overview exposes source target and conflict navigation", "[ModelV2][Navigation][Assumptions]") {
+    using namespace Slab::Core::Model::V2;
+
+    auto model = BuildHarmonicOscillatorModelV2();
+    auto *x = FindDefinitionByIdV2(model, "state.x");
+    REQUIRE(x != nullptr);
+    x->Kind = EDefinitionKindV2::ScalarParameter;
+
+    const auto overview = BuildModelSemanticOverviewV2(model);
+    const auto assumptionIt = std::find_if(overview.Report.Assumptions.begin(), overview.Report.Assumptions.end(), [](const auto &assumption) {
+        return assumption.SourceId == "relation.oscillator.second_order" &&
+            assumption.TargetId == "state.x" &&
+            assumption.Kind == EAssumptionKindV2::DefinitionRole;
+    });
+    REQUIRE(assumptionIt != overview.Report.Assumptions.end());
+
+    const auto assumptionRef = MakeAssumptionObjectRefV2(assumptionIt->AssumptionId);
+    const auto *assumptionObject = overview.FindObject(assumptionRef);
+    REQUIRE(assumptionObject != nullptr);
+    CHECK(assumptionObject->bConflict);
+    CHECK(std::any_of(assumptionObject->SourceLinks.begin(), assumptionObject->SourceLinks.end(), [](const auto &link) {
+        return link.Target.ObjectId == "relation.oscillator.second_order";
+    }));
+    CHECK(std::any_of(assumptionObject->TargetLinks.begin(), assumptionObject->TargetLinks.end(), [](const auto &link) {
+        return link.Target.ObjectId == "state.x";
+    }));
+
+    const auto selection = BuildSemanticSelectionContextV2(overview, assumptionRef);
+    CHECK(SelectionContains(selection.SourceKeys, MakeRelationObjectRefV2("relation.oscillator.second_order")));
+    CHECK(SelectionContains(selection.TargetKeys, MakeDefinitionObjectRefV2("state.x")));
+    CHECK(SelectionContains(selection.ConflictKeys, MakeDefinitionObjectRefV2("state.x")));
 }

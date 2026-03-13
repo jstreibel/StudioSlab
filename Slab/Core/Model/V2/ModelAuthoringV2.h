@@ -48,6 +48,11 @@ namespace Slab::Core::Model::V2 {
         Str SymbolText;
         Str ReferenceId;
         bool bResolved = false;
+        ESemanticOriginV2 Origin = ESemanticOriginV2::Unresolved;
+        Str OriginDetail;
+        Str SourcePresetId;
+        TOptional<EBaseVocabularyEntryKindV2> VocabularyKind;
+        Str SemanticRoleSummary;
         StrVector UsageLabels;
         TOptional<EDefinitionKindV2> DeclaredKind;
         TOptional<EDefinitionKindV2> InferredKind;
@@ -82,6 +87,7 @@ namespace Slab::Core::Model::V2 {
         Str CanonicalNotation;
         Str NormalizedInterpretation;
         TOptional<EDefinitionKindV2> InferredKind;
+        Vector<FReferencedSymbolSemanticV2> ReferencedSymbols;
         Vector<Str> InferredArgumentDefinitionIds;
         bool bRoleMatchesDeclared = false;
         bool bRoleMismatchesDeclared = false;
@@ -106,6 +112,134 @@ namespace Slab::Core::Model::V2 {
         Vector<FRelationSemanticReportV2> Relations;
         Vector<FSemanticAssumptionV2> Assumptions;
         Vector<FSemanticDiagnosticV2> Diagnostics;
+    };
+
+    enum class ESemanticObjectKindV2 : unsigned char {
+        Definition,
+        Relation,
+        VocabularyEntry,
+        Assumption
+    };
+
+    enum class ESemanticHealthV2 : unsigned char {
+        Ok,
+        Deferred,
+        Warning,
+        Error
+    };
+
+    struct FSemanticObjectRefV2 {
+        ESemanticObjectKindV2 Kind = ESemanticObjectKindV2::Definition;
+        Str ObjectId;
+
+        [[nodiscard]] auto IsValid() const -> bool {
+            return !ObjectId.empty();
+        }
+    };
+
+    struct FSemanticNavigationLinkV2 {
+        FSemanticObjectRefV2 Target;
+        Str Label;
+        Str Detail;
+        bool bAmbient = false;
+        bool bReadonly = false;
+        bool bConflict = false;
+        bool bOverride = false;
+    };
+
+    struct FSemanticDiagnosticNavigationV2 {
+        FSemanticDiagnosticV2 Diagnostic;
+        TOptional<FSemanticObjectRefV2> NavigateTo;
+    };
+
+    struct FSemanticObjectOverviewV2 {
+        FSemanticObjectRefV2 Ref;
+        Str DisplayLabel;
+        Str CanonicalNotation;
+        Str KindLabel;
+        Str CategoryLabel;
+        Str OriginLabel;
+        Str OriginDetail;
+        Str StatusLabel;
+        Str Description;
+        bool bReadonly = false;
+        bool bAmbient = false;
+        bool bConflict = false;
+        bool bLocalOverride = false;
+        TOptional<EDefinitionKindV2> DeclaredKind;
+        TOptional<EDefinitionKindV2> InferredKind;
+        TOptional<ERelationSemanticClassV2> InferredRelationClass;
+        TOptional<EAssumptionStatusV2> AssumptionStatus;
+        Vector<FSemanticNavigationLinkV2> SourceLinks;
+        Vector<FSemanticNavigationLinkV2> TargetLinks;
+        Vector<FSemanticNavigationLinkV2> DependsOn;
+        Vector<FSemanticNavigationLinkV2> AmbientDependencies;
+        Vector<FSemanticNavigationLinkV2> UsedBy;
+        Vector<FSemanticNavigationLinkV2> RelatedAssumptions;
+        Vector<FSemanticNavigationLinkV2> LocalOverrides;
+        Vector<FSemanticDiagnosticNavigationV2> Diagnostics;
+    };
+
+    struct FModelSemanticClassificationV2 {
+        Str ModelClass;
+        Str Character;
+        StrVector Traits;
+        bool bInferred = true;
+    };
+
+    struct FModelSemanticStatusSummaryV2 {
+        ESemanticHealthV2 ParseHealth = ESemanticHealthV2::Ok;
+        ESemanticHealthV2 SemanticHealth = ESemanticHealthV2::Ok;
+        std::size_t ValidationErrorCount = 0;
+        std::size_t ValidationWarningCount = 0;
+        std::size_t UnresolvedSymbolCount = 0;
+        std::size_t PendingAssumptionCount = 0;
+        std::size_t AcceptedAssumptionCount = 0;
+        std::size_t DismissedAssumptionCount = 0;
+        std::size_t OverrideCount = 0;
+        std::size_t SpecializationCount = 0;
+        std::size_t DeferredCount = 0;
+        Str ActiveBaseVocabularyId;
+        Str ActiveBaseVocabularyName;
+        FModelSemanticClassificationV2 Classification;
+        Vector<FSemanticNavigationLinkV2> CanonicalStateVariables;
+        Vector<FSemanticNavigationLinkV2> Parameters;
+        Vector<FSemanticNavigationLinkV2> Fields;
+        Vector<FSemanticNavigationLinkV2> Operators;
+        Vector<FSemanticNavigationLinkV2> Observables;
+    };
+
+    struct FModelSemanticOverviewV2 {
+        Vector<FResolvedBaseVocabularyEntryV2> VocabularyEntries;
+        FValidationResultV2 Validation;
+        FModelSemanticReportV2 Report;
+        FModelSemanticStatusSummaryV2 Status;
+        std::map<Str, FSemanticObjectOverviewV2> ObjectsByKey;
+
+        [[nodiscard]] auto FindObject(const FSemanticObjectRefV2 &ref) const -> const FSemanticObjectOverviewV2 * {
+            Str prefix = "Definition";
+            switch (ref.Kind) {
+                case ESemanticObjectKindV2::Definition: prefix = "Definition"; break;
+                case ESemanticObjectKindV2::Relation: prefix = "Relation"; break;
+                case ESemanticObjectKindV2::VocabularyEntry: prefix = "VocabularyEntry"; break;
+                case ESemanticObjectKindV2::Assumption: prefix = "Assumption"; break;
+            }
+            const auto it = ObjectsByKey.find(prefix + Str("::") + ref.ObjectId);
+            if (it == ObjectsByKey.end()) return nullptr;
+            return &it->second;
+        }
+    };
+
+    struct FSemanticSelectionContextV2 {
+        FSemanticObjectRefV2 Selected;
+        std::set<Str> DependencyKeys;
+        std::set<Str> AmbientDependencyKeys;
+        std::set<Str> UsedByKeys;
+        std::set<Str> RelatedAssumptionKeys;
+        std::set<Str> SourceKeys;
+        std::set<Str> TargetKeys;
+        std::set<Str> OverrideKeys;
+        std::set<Str> ConflictKeys;
     };
 
     struct FDefinitionDraftPreviewV2 {
@@ -191,6 +325,53 @@ namespace Slab::Core::Model::V2 {
         return "Unknown";
     }
 
+    inline auto ToString(const ESemanticObjectKindV2 value) -> const char * {
+        switch (value) {
+            case ESemanticObjectKindV2::Definition: return "Definition";
+            case ESemanticObjectKindV2::Relation: return "Relation";
+            case ESemanticObjectKindV2::VocabularyEntry: return "VocabularyEntry";
+            case ESemanticObjectKindV2::Assumption: return "Assumption";
+        }
+
+        return "Unknown";
+    }
+
+    inline auto ToString(const ESemanticHealthV2 value) -> const char * {
+        switch (value) {
+            case ESemanticHealthV2::Ok: return "Ok";
+            case ESemanticHealthV2::Deferred: return "Deferred";
+            case ESemanticHealthV2::Warning: return "Warning";
+            case ESemanticHealthV2::Error: return "Error";
+        }
+
+        return "Unknown";
+    }
+
+    inline auto MakeDefinitionObjectRefV2(const Str &definitionId) -> FSemanticObjectRefV2 {
+        return FSemanticObjectRefV2{ESemanticObjectKindV2::Definition, definitionId};
+    }
+
+    inline auto MakeRelationObjectRefV2(const Str &relationId) -> FSemanticObjectRefV2 {
+        return FSemanticObjectRefV2{ESemanticObjectKindV2::Relation, relationId};
+    }
+
+    inline auto MakeVocabularyObjectRefV2(const Str &entryId) -> FSemanticObjectRefV2 {
+        return FSemanticObjectRefV2{ESemanticObjectKindV2::VocabularyEntry, entryId};
+    }
+
+    inline auto MakeAssumptionObjectRefV2(const Str &assumptionId) -> FSemanticObjectRefV2 {
+        return FSemanticObjectRefV2{ESemanticObjectKindV2::Assumption, assumptionId};
+    }
+
+    inline auto MakeSemanticObjectKeyV2(const FSemanticObjectRefV2 &ref) -> Str {
+        return Str(ToString(ref.Kind)) + "::" + ref.ObjectId;
+    }
+
+    inline auto AreSemanticObjectRefsEqualV2(const FSemanticObjectRefV2 &lhs,
+                                             const FSemanticObjectRefV2 &rhs) -> bool {
+        return lhs.Kind == rhs.Kind && lhs.ObjectId == rhs.ObjectId;
+    }
+
     inline auto MakeCanonicalDefinitionNotationV2(const FDefinitionV2 &definition,
                                                   const FModelV2 *model = nullptr) -> Str {
         if (!definition.SourceText.empty()) return definition.SourceText;
@@ -263,6 +444,8 @@ namespace Slab::Core::Model::V2 {
             Str SymbolText;
             Str ReferenceId;
             bool bResolved = false;
+            bool bSeenAsSpace = false;
+            bool bSeenAsNotationConvention = false;
             bool bSeenAsArithmeticTerm = false;
             bool bSeenAsFunctionCallee = false;
             bool bSeenAsOperatorCallee = false;
@@ -300,6 +483,20 @@ namespace Slab::Core::Model::V2 {
             return entry;
         }
 
+        inline auto RegisterAmbientAliasEvidenceV2(const FModelV2 &model,
+                                                   std::map<Str, FSymbolEvidenceV2> &evidenceByKey,
+                                                   const Str &alias,
+                                                   const char *usageLabel,
+                                                   const bool bAsSpace = false,
+                                                   const bool bAsNotationConvention = false) -> void {
+            const auto reference = FindBaseVocabularyReferenceByAliasV2(model, alias)
+                .value_or(MakeReferenceV2({}, alias));
+            auto &entry = RegisterEvidenceV2(evidenceByKey, reference);
+            if (bAsSpace) entry.bSeenAsSpace = true;
+            if (bAsNotationConvention) entry.bSeenAsNotationConvention = true;
+            entry.UsageLabels.insert(usageLabel);
+        }
+
         inline auto CollectTypeDimensionEvidenceV2(const FExpressionPtrV2 &expression,
                                                    std::map<Str, FSymbolEvidenceV2> &evidenceByKey) -> void {
             if (expression == nullptr) return;
@@ -318,16 +515,27 @@ namespace Slab::Core::Model::V2 {
         }
 
         inline auto CollectTypeEvidenceV2(const FTypeExprV2 &type,
+                                          const FModelV2 &model,
                                           std::map<Str, FSymbolEvidenceV2> &evidenceByKey) -> void {
             if (type.Kind == ETypeExprKindV2::Space) {
+                if (type.Space.Kind == ESpaceKindV2::RealNumbers) {
+                    RegisterAmbientAliasEvidenceV2(model, evidenceByKey, "\\mathbb{R}", "space", true, false);
+                } else if (type.Space.Kind == ESpaceKindV2::ComplexNumbers) {
+                    RegisterAmbientAliasEvidenceV2(model, evidenceByKey, "\\mathbb{C}", "space", true, false);
+                } else {
+                    const auto alias = type.Space.Name == "N"
+                        ? Str("\\mathbb{N}")
+                        : type.Space.Name;
+                    RegisterAmbientAliasEvidenceV2(model, evidenceByKey, alias, "space", true, false);
+                }
                 if (type.Space.Dimension.has_value()) CollectTypeDimensionEvidenceV2(*type.Space.Dimension, evidenceByKey);
                 return;
             }
 
             for (const auto &domainType : type.Domain) {
-                CollectTypeEvidenceV2(domainType, evidenceByKey);
+                CollectTypeEvidenceV2(domainType, model, evidenceByKey);
             }
-            if (type.Codomain != nullptr) CollectTypeEvidenceV2(*type.Codomain, evidenceByKey);
+            if (type.Codomain != nullptr) CollectTypeEvidenceV2(*type.Codomain, model, evidenceByKey);
         }
 
         inline auto MaybeMarkCoordinateArgumentsV2(FSymbolEvidenceV2 &entry,
@@ -393,9 +601,15 @@ namespace Slab::Core::Model::V2 {
                     const auto order = static_cast<int>(expression->DerivativeVariables.size());
                     if (expression->DerivativeFlavor == EDerivativeFlavorV2::Ordinary) {
                         structure.MaxOrdinaryDerivativeOrder = std::max(structure.MaxOrdinaryDerivativeOrder, order);
+                        if (order == 1) {
+                            RegisterAmbientAliasEvidenceV2(model, evidenceByKey, "\\dot", "notation-convention", false, true);
+                        } else if (order == 2) {
+                            RegisterAmbientAliasEvidenceV2(model, evidenceByKey, "\\ddot", "notation-convention", false, true);
+                        }
                     } else {
                         structure.MaxPartialDerivativeOrder = std::max(structure.MaxPartialDerivativeOrder, order);
                         structure.bUsesFieldLikeUsage = true;
+                        RegisterAmbientAliasEvidenceV2(model, evidenceByKey, "\\partial", "notation-convention", false, true);
                     }
 
                     for (const auto &variable : expression->DerivativeVariables) {
@@ -431,6 +645,9 @@ namespace Slab::Core::Model::V2 {
         }
 
         inline auto ChooseInferredRoleV2(const FSymbolEvidenceV2 &evidence) -> EDefinitionSemanticRoleV2 {
+            if (evidence.bSeenAsSpace || evidence.bSeenAsNotationConvention) {
+                return EDefinitionSemanticRoleV2::Unknown;
+            }
             if (evidence.bSeenAsDerivativeVariable) return EDefinitionSemanticRoleV2::CoordinateLike;
             if (evidence.bSeenAsOperatorCallee) return EDefinitionSemanticRoleV2::OperatorLike;
             if (evidence.bSeenAsDerivativeTargetPartial || evidence.bSeenAsOperatorArgument) {
@@ -635,13 +852,25 @@ namespace Slab::Core::Model::V2 {
             const auto inferredRole = ChooseInferredRoleV2(evidence);
             symbol.InferredKind = SemanticRoleToDefinitionKindV2(inferredRole);
             if (evidence.bResolved) {
-                if (const auto *definition = FindDefinitionByIdV2(model, evidence.ReferenceId); definition != nullptr) {
-                    symbol.DeclaredKind = definition->Kind;
-                    if (symbol.InferredKind.has_value()) {
-                        symbol.bDeclaredInferredAgreement = *symbol.InferredKind == definition->Kind;
-                        symbol.bDeclaredInferredMismatch = *symbol.InferredKind != definition->Kind;
-                    }
+                const auto resolved = ResolveSemanticEntryV2(model, MakeReferenceV2(evidence.ReferenceId, evidence.SymbolText));
+                symbol.Origin = resolved.Origin;
+                if (resolved.Definition != nullptr) {
+                    symbol.DeclaredKind = resolved.Definition->Kind;
+                    symbol.OriginDetail = resolved.Definition->DefinitionId;
+                } else if (resolved.VocabularyEntry.has_value()) {
+                    symbol.DeclaredKind = resolved.VocabularyEntry->DefinitionKind;
+                    symbol.OriginDetail = resolved.VocabularyEntry->SourcePresetId;
+                    symbol.SourcePresetId = resolved.VocabularyEntry->SourcePresetId;
+                    symbol.VocabularyKind = resolved.VocabularyEntry->Kind;
+                    symbol.SemanticRoleSummary = resolved.VocabularyEntry->SemanticRoleSummary;
                 }
+
+                if (symbol.InferredKind.has_value() && symbol.DeclaredKind.has_value()) {
+                    symbol.bDeclaredInferredAgreement = *symbol.InferredKind == *symbol.DeclaredKind;
+                    symbol.bDeclaredInferredMismatch = *symbol.InferredKind != *symbol.DeclaredKind;
+                }
+            } else {
+                symbol.Origin = ESemanticOriginV2::Unresolved;
             }
             return symbol;
         }
@@ -734,6 +963,20 @@ namespace Slab::Core::Model::V2 {
                 report.UsedByRelationIds = usedIt->second;
             }
 
+            report.Diagnostics = ConvertValidationDiagnosticsV2(validationMessages);
+
+            if (definition.DeclaredType.has_value()) {
+                std::map<Str, FSymbolEvidenceV2> typeEvidenceByKey;
+                CollectTypeEvidenceV2(*definition.DeclaredType, model, typeEvidenceByKey);
+                report.ReferencedSymbols.reserve(typeEvidenceByKey.size());
+                for (const auto &[key, evidence] : typeEvidenceByKey) {
+                    (void) key;
+                    auto symbol = BuildReferencedSymbolSemanticV2(model, evidence);
+                    AppendInferenceDiagnosticsForSymbolV2(symbol, definition.DefinitionId, "Definition", report.Diagnostics);
+                    report.ReferencedSymbols.push_back(std::move(symbol));
+                }
+            }
+
             const auto evidenceKey = NormalizeSemanticSymbolKeyV2(MakeReferenceV2(definition.DefinitionId, RenderDefinitionLabelV2(definition)));
             if (const auto evidenceIt = globalEvidenceByKey.find(evidenceKey); evidenceIt != globalEvidenceByKey.end()) {
                 const auto inferredRole = ChooseInferredRoleV2(evidenceIt->second);
@@ -752,7 +995,6 @@ namespace Slab::Core::Model::V2 {
                     RenderRoleInterpretationV2(DefinitionKindToSemanticRoleV2(definition.Kind), {});
             }
 
-            report.Diagnostics = ConvertValidationDiagnosticsV2(validationMessages);
             if (report.bRoleMismatchesDeclared && report.InferredKind.has_value()) {
                 AppendDiagnosticIfMissingV2(
                     report.Diagnostics,
@@ -798,7 +1040,7 @@ namespace Slab::Core::Model::V2 {
 
             const auto sourceSignature = MakeRelationSourceSignatureV2(report);
             for (const auto &symbol : report.ReferencedSymbols) {
-                if (symbol.InferredKind.has_value()) {
+                if (symbol.InferredKind.has_value() && symbol.Origin != ESemanticOriginV2::BaseVocabulary) {
                     FSemanticAssumptionV2 assumption;
                     assumption.AssumptionId = MakeRoleAssumptionIdV2(sourceSignature, symbol);
                     assumption.Kind = EAssumptionKindV2::DefinitionRole;
@@ -825,6 +1067,7 @@ namespace Slab::Core::Model::V2 {
                 }
 
                 if (!symbol.InferredArgumentDefinitionIds.empty() &&
+                    symbol.Origin != ESemanticOriginV2::BaseVocabulary &&
                     symbol.InferredKind.has_value() &&
                     *symbol.InferredKind != EDefinitionKindV2::Coordinate) {
                     FSemanticAssumptionV2 assumption;
@@ -880,7 +1123,7 @@ namespace Slab::Core::Model::V2 {
         std::map<Str, Detail::FSymbolEvidenceV2> globalEvidenceByKey;
         for (const auto &definition : model.Definitions) {
             if (!definition.DeclaredType.has_value()) continue;
-            Detail::CollectTypeEvidenceV2(*definition.DeclaredType, globalEvidenceByKey);
+            Detail::CollectTypeEvidenceV2(*definition.DeclaredType, model, globalEvidenceByKey);
         }
         for (const auto &relation : model.Relations) {
             Detail::FRelationStructureV2 structure;
@@ -931,6 +1174,756 @@ namespace Slab::Core::Model::V2 {
         return report;
     }
 
+    namespace Detail {
+
+        inline auto FindDefinitionSemanticReportV2(const FModelSemanticReportV2 &report,
+                                                   const Str &definitionId) -> const FDefinitionSemanticReportV2 * {
+            const auto it = std::find_if(report.Definitions.begin(), report.Definitions.end(), [&](const auto &entry) {
+                return entry.DefinitionId == definitionId;
+            });
+            if (it == report.Definitions.end()) return nullptr;
+            return &(*it);
+        }
+
+        inline auto FindRelationSemanticReportV2(const FModelSemanticReportV2 &report,
+                                                 const Str &relationId) -> const FRelationSemanticReportV2 * {
+            const auto it = std::find_if(report.Relations.begin(), report.Relations.end(), [&](const auto &entry) {
+                return entry.RelationId == relationId;
+            });
+            if (it == report.Relations.end()) return nullptr;
+            return &(*it);
+        }
+
+        inline auto FindSemanticAssumptionV2(const FModelSemanticReportV2 &report,
+                                             const Str &assumptionId) -> const FSemanticAssumptionV2 * {
+            const auto it = std::find_if(report.Assumptions.begin(), report.Assumptions.end(), [&](const auto &entry) {
+                return entry.AssumptionId == assumptionId;
+            });
+            if (it == report.Assumptions.end()) return nullptr;
+            return &(*it);
+        }
+
+        inline auto FindResolvedVocabularyEntryByIdV2(const Vector<FResolvedBaseVocabularyEntryV2> &entries,
+                                                      const Str &entryId) -> const FResolvedBaseVocabularyEntryV2 * {
+            const auto it = std::find_if(entries.begin(), entries.end(), [&](const auto &entry) {
+                return entry.Entry.EntryId == entryId;
+            });
+            if (it == entries.end()) return nullptr;
+            return &(*it);
+        }
+
+        inline auto ResolveObjectRefByIdV2(const FModelV2 &model,
+                                           const Str &objectId) -> TOptional<FSemanticObjectRefV2> {
+            if (objectId.empty()) return std::nullopt;
+            if (FindDefinitionByIdV2(model, objectId) != nullptr) return MakeDefinitionObjectRefV2(objectId);
+            if (FindRelationByIdV2(model, objectId) != nullptr) return MakeRelationObjectRefV2(objectId);
+            if (FindBaseVocabularyEntryByIdV2(model, objectId).has_value()) return MakeVocabularyObjectRefV2(objectId);
+            return std::nullopt;
+        }
+
+        inline auto ResolveObjectRefForReferencedSymbolV2(const FReferencedSymbolSemanticV2 &symbol)
+            -> TOptional<FSemanticObjectRefV2> {
+            if (!symbol.bResolved || symbol.ReferenceId.empty()) return std::nullopt;
+            if (symbol.Origin == ESemanticOriginV2::BaseVocabulary) return MakeVocabularyObjectRefV2(symbol.ReferenceId);
+            if (symbol.Origin == ESemanticOriginV2::LocalDefinition) return MakeDefinitionObjectRefV2(symbol.ReferenceId);
+            return std::nullopt;
+        }
+
+        inline auto ResolveAssumptionTargetRefV2(const FModelV2 &model,
+                                                 const FSemanticAssumptionV2 &assumption)
+            -> TOptional<FSemanticObjectRefV2> {
+            if (!assumption.MaterializedDefinitionId.empty() &&
+                FindDefinitionByIdV2(model, assumption.MaterializedDefinitionId) != nullptr) {
+                return MakeDefinitionObjectRefV2(assumption.MaterializedDefinitionId);
+            }
+            return ResolveObjectRefByIdV2(model, assumption.TargetId);
+        }
+
+        inline auto FindObjectOverviewV2(std::map<Str, FSemanticObjectOverviewV2> &objectsByKey,
+                                         const FSemanticObjectRefV2 &ref) -> FSemanticObjectOverviewV2 * {
+            const auto it = objectsByKey.find(MakeSemanticObjectKeyV2(ref));
+            if (it == objectsByKey.end()) return nullptr;
+            return &it->second;
+        }
+
+        inline auto FindObjectOverviewV2(const std::map<Str, FSemanticObjectOverviewV2> &objectsByKey,
+                                         const FSemanticObjectRefV2 &ref) -> const FSemanticObjectOverviewV2 * {
+            const auto it = objectsByKey.find(MakeSemanticObjectKeyV2(ref));
+            if (it == objectsByKey.end()) return nullptr;
+            return &it->second;
+        }
+
+        inline auto MakeObjectLabelFallbackV2(const FSemanticObjectRefV2 &ref) -> Str {
+            if (!ref.ObjectId.empty()) return ref.ObjectId;
+            return ToString(ref.Kind);
+        }
+
+        inline auto MakeNavigationLinkV2(const std::map<Str, FSemanticObjectOverviewV2> &objectsByKey,
+                                         const FSemanticObjectRefV2 &target,
+                                         Str detail = {},
+                                         const bool bAmbient = false,
+                                         const bool bReadonly = false,
+                                         const bool bConflict = false,
+                                         const bool bOverride = false) -> FSemanticNavigationLinkV2 {
+            FSemanticNavigationLinkV2 link;
+            link.Target = target;
+            link.Detail = std::move(detail);
+            link.bAmbient = bAmbient;
+            link.bReadonly = bReadonly;
+            link.bConflict = bConflict;
+            link.bOverride = bOverride;
+
+            if (const auto *object = FindObjectOverviewV2(objectsByKey, target); object != nullptr) {
+                link.Label = object->DisplayLabel.empty() ? MakeObjectLabelFallbackV2(target) : object->DisplayLabel;
+                if (link.bReadonly || object->bReadonly) link.bReadonly = true;
+                if (link.bAmbient || object->bAmbient) link.bAmbient = true;
+                if (link.bConflict || object->bConflict) link.bConflict = true;
+                if (link.bOverride || object->bLocalOverride) link.bOverride = true;
+            } else {
+                link.Label = MakeObjectLabelFallbackV2(target);
+            }
+
+            return link;
+        }
+
+        inline auto AppendNavigationLinkUniqueV2(Vector<FSemanticNavigationLinkV2> &links,
+                                                 FSemanticNavigationLinkV2 link) -> void {
+            if (!link.Target.IsValid()) return;
+            const auto it = std::find_if(links.begin(), links.end(), [&](const auto &existing) {
+                return AreSemanticObjectRefsEqualV2(existing.Target, link.Target);
+            });
+            if (it == links.end()) {
+                links.push_back(std::move(link));
+                return;
+            }
+
+            if (it->Label.empty()) it->Label = link.Label;
+            if (it->Detail.empty()) it->Detail = link.Detail;
+            it->bAmbient = it->bAmbient || link.bAmbient;
+            it->bReadonly = it->bReadonly || link.bReadonly;
+            it->bConflict = it->bConflict || link.bConflict;
+            it->bOverride = it->bOverride || link.bOverride;
+        }
+
+        inline auto AppendDiagnosticNavigationUniqueV2(Vector<FSemanticDiagnosticNavigationV2> &diagnostics,
+                                                       FSemanticDiagnosticNavigationV2 diagnostic) -> void {
+            const auto it = std::find_if(diagnostics.begin(), diagnostics.end(), [&](const auto &existing) {
+                return existing.Diagnostic.Code == diagnostic.Diagnostic.Code &&
+                    existing.Diagnostic.EntityId == diagnostic.Diagnostic.EntityId &&
+                    existing.Diagnostic.Context == diagnostic.Diagnostic.Context &&
+                    existing.Diagnostic.Message == diagnostic.Diagnostic.Message;
+            });
+            if (it != diagnostics.end()) return;
+            diagnostics.push_back(std::move(diagnostic));
+        }
+
+        inline auto BuildDiagnosticNavigationV2(const FModelV2 &model,
+                                                const FSemanticDiagnosticV2 &diagnostic,
+                                                const FSemanticObjectRefV2 &defaultTarget)
+            -> FSemanticDiagnosticNavigationV2 {
+            FSemanticDiagnosticNavigationV2 navigation;
+            navigation.Diagnostic = diagnostic;
+            navigation.NavigateTo = ResolveObjectRefByIdV2(model, diagnostic.EntityId);
+            if (!navigation.NavigateTo.has_value() && defaultTarget.IsValid()) {
+                navigation.NavigateTo = defaultTarget;
+            }
+            return navigation;
+        }
+
+        inline auto JoinUsageLabelsV2(const StrVector &labels) -> Str {
+            Str result;
+            for (std::size_t i = 0; i < labels.size(); ++i) {
+                if (i != 0) result += ", ";
+                result += labels[i];
+            }
+            return result;
+        }
+
+        inline auto BuildDefinitionStatusLabelV2(const FDefinitionSemanticReportV2 *report,
+                                                 const FDefinitionV2 &definition) -> Str {
+            if (report != nullptr && report->bRoleMismatchesDeclared) return "mismatch / warning";
+            if (definition.Metadata.contains("accepted_assumption_id")) return "materialized from assumption";
+            return "local explicit";
+        }
+
+        inline auto BuildRelationStatusLabelV2(const FRelationSemanticReportV2 *report) -> Str {
+            if (report == nullptr || report->InferredClass == ERelationSemanticClassV2::Unknown) return "local relation";
+            return Str(ToString(report->InferredClass));
+        }
+
+        inline auto BuildVocabularyStatusLabelV2(const FResolvedBaseVocabularyEntryV2 &entry) -> Str {
+            switch (entry.OverrideStatus) {
+                case EVocabularyOverrideStatusV2::BuiltIn:
+                    return "ambient readonly";
+                case EVocabularyOverrideStatusV2::OverriddenLocally:
+                    return "ambient readonly | overridden locally";
+                case EVocabularyOverrideStatusV2::SpecializedLocally:
+                    return "ambient readonly | specialized locally";
+            }
+
+            return "ambient readonly";
+        }
+
+        inline auto BuildAssumptionStatusLabelV2(const FSemanticAssumptionV2 &assumption) -> Str {
+            Str label = ToString(assumption.Status);
+            if (assumption.bMismatchesDeclaredRole) label += " | mismatch / warning";
+            else if (assumption.bMatchesDeclaredRole) label += " | agrees with local definition";
+            return label;
+        }
+
+        inline auto CountUniqueDiagnosticsV2(const FModelSemanticReportV2 &report,
+                                             std::size_t *pWarningCount = nullptr,
+                                             std::size_t *pDeferredCount = nullptr,
+                                             bool *pHasParseError = nullptr) -> void {
+            std::set<Str> keys;
+            std::size_t warningCount = 0;
+            std::size_t deferredCount = 0;
+            bool bHasParseError = false;
+
+            const auto consumeDiagnostics = [&](const Vector<FSemanticDiagnosticV2> &diagnostics) {
+                for (const auto &diagnostic : diagnostics) {
+                    const auto key = diagnostic.Code + "|" + diagnostic.EntityId + "|" + diagnostic.Context + "|" + diagnostic.Message;
+                    if (!keys.insert(key).second) continue;
+                    if (diagnostic.Severity == EValidationSeverityV2::Warning) ++warningCount;
+                    if (diagnostic.Code == "deferred_semantics") ++deferredCount;
+                    if (diagnostic.Code == "parse_error") bHasParseError = true;
+                }
+            };
+
+            consumeDiagnostics(report.Diagnostics);
+            for (const auto &definition : report.Definitions) consumeDiagnostics(definition.Diagnostics);
+            for (const auto &relation : report.Relations) consumeDiagnostics(relation.Diagnostics);
+
+            if (pWarningCount != nullptr) *pWarningCount = warningCount;
+            if (pDeferredCount != nullptr) *pDeferredCount = deferredCount;
+            if (pHasParseError != nullptr) *pHasParseError = bHasParseError;
+        }
+
+        inline auto CountUnresolvedSymbolsV2(const FModelSemanticReportV2 &report) -> std::size_t {
+            std::set<Str> keys;
+            const auto consumeSymbols = [&](const Vector<FReferencedSymbolSemanticV2> &symbols) {
+                for (const auto &symbol : symbols) {
+                    if (symbol.bResolved || symbol.Origin != ESemanticOriginV2::Unresolved) continue;
+                    keys.insert(symbol.SymbolText.empty() ? symbol.ReferenceId : symbol.SymbolText);
+                }
+            };
+
+            for (const auto &definition : report.Definitions) consumeSymbols(definition.ReferencedSymbols);
+            for (const auto &relation : report.Relations) consumeSymbols(relation.ReferencedSymbols);
+            return keys.size();
+        }
+
+        inline auto DetermineSemanticHealthV2(const std::size_t validationErrors,
+                                              const std::size_t unresolvedSymbols,
+                                              const std::size_t warningCount,
+                                              const std::size_t deferredCount,
+                                              const std::size_t pendingAssumptions) -> ESemanticHealthV2 {
+            if (validationErrors > 0 || unresolvedSymbols > 0) return ESemanticHealthV2::Error;
+            const auto nonDeferredWarnings = warningCount > deferredCount ? warningCount - deferredCount : 0;
+            if (nonDeferredWarnings > 0) return ESemanticHealthV2::Warning;
+            if (deferredCount > 0 || pendingAssumptions > 0) return ESemanticHealthV2::Deferred;
+            return ESemanticHealthV2::Ok;
+        }
+
+        inline auto AddSummaryLinkUniqueV2(Vector<FSemanticNavigationLinkV2> &links,
+                                           const std::map<Str, FSemanticObjectOverviewV2> &objectsByKey,
+                                           const FSemanticObjectRefV2 &ref) -> void {
+            AppendNavigationLinkUniqueV2(links, MakeNavigationLinkV2(objectsByKey, ref));
+        }
+
+        inline auto BuildModelClassificationV2(const FModelV2 &model,
+                                               const FModelSemanticReportV2 &report,
+                                               const Vector<FResolvedBaseVocabularyEntryV2> &vocabularyEntries)
+            -> FModelSemanticClassificationV2 {
+            FModelSemanticClassificationV2 classification;
+
+            const auto stateCount = static_cast<std::size_t>(std::count_if(model.Definitions.begin(), model.Definitions.end(), [](const auto &definition) {
+                return definition.Kind == EDefinitionKindV2::StateVariable;
+            }));
+            const auto fieldCount = static_cast<std::size_t>(std::count_if(model.Definitions.begin(), model.Definitions.end(), [](const auto &definition) {
+                return definition.Kind == EDefinitionKindV2::Field;
+            }));
+            const auto observableCount = static_cast<std::size_t>(std::count_if(model.Definitions.begin(), model.Definitions.end(), [](const auto &definition) {
+                return definition.Kind == EDefinitionKindV2::ObservableSymbol;
+            }));
+            const auto constraintLikeCount = static_cast<std::size_t>(std::count_if(model.Relations.begin(), model.Relations.end(), [](const auto &relation) {
+                return relation.Kind == ERelationKindV2::Constraint ||
+                    relation.Kind == ERelationKindV2::Identity ||
+                    relation.Kind == ERelationKindV2::SymbolicCondition;
+            }));
+            const auto pdeLikeCount = static_cast<std::size_t>(std::count_if(report.Relations.begin(), report.Relations.end(), [](const auto &relation) {
+                return relation.InferredClass == ERelationSemanticClassV2::PDELike ||
+                    relation.InferredClass == ERelationSemanticClassV2::FieldEquationLike;
+            }));
+            const auto odeLikeCount = static_cast<std::size_t>(std::count_if(report.Relations.begin(), report.Relations.end(), [](const auto &relation) {
+                return relation.InferredClass == ERelationSemanticClassV2::DifferentialEquationLike ||
+                    relation.InferredClass == ERelationSemanticClassV2::FirstOrderODELike ||
+                    relation.InferredClass == ERelationSemanticClassV2::SecondOrderODELike;
+            }));
+
+            if (fieldCount > 0) {
+                classification.ModelClass = fieldCount == 1 ? "scalar field model" : "field model";
+            } else if (stateCount > 0) {
+                classification.ModelClass = "finite-dimensional dynamical system";
+            } else if (constraintLikeCount > 0 && constraintLikeCount >= std::max<std::size_t>(1, model.Relations.size() / 2)) {
+                classification.ModelClass = "algebraic/constraint-heavy model";
+            } else {
+                classification.ModelClass = "symbolic model";
+            }
+
+            if (pdeLikeCount > 0) classification.Character = "PDE-like";
+            else if (odeLikeCount > 0) classification.Character = "ODE-like";
+            else if (constraintLikeCount > 0) classification.Character = "algebraic/constraint-heavy";
+            else classification.Character = "mixed symbolic";
+
+            if (observableCount > 0) classification.Traits.push_back("observable-rich");
+            if (constraintLikeCount > 0) classification.Traits.push_back("constraint-heavy");
+            if (fieldCount > 0) classification.Traits.push_back("field-oriented");
+            if (std::any_of(vocabularyEntries.begin(), vocabularyEntries.end(), [](const auto &entry) {
+                    return entry.OverrideStatus != EVocabularyOverrideStatusV2::BuiltIn;
+                })) {
+                classification.Traits.push_back("ambient-specialized");
+            }
+
+            return classification;
+        }
+
+    } // namespace Detail
+
+    inline auto BuildModelSemanticOverviewV2(const FModelV2 &model) -> FModelSemanticOverviewV2 {
+        FModelSemanticOverviewV2 overview;
+        overview.VocabularyEntries = ResolveModelBaseVocabularyEntriesV2(model);
+        overview.Validation = ValidateModelV2(model);
+        overview.Report = BuildModelSemanticReportV2(model);
+
+        std::map<Str, const FResolvedBaseVocabularyEntryV2 *> vocabularyByLocalDefinitionId;
+        for (const auto &entry : overview.VocabularyEntries) {
+            if (!entry.LocalDefinitionId.empty()) {
+                vocabularyByLocalDefinitionId[entry.LocalDefinitionId] = &entry;
+            }
+        }
+
+        for (const auto &entry : overview.VocabularyEntries) {
+            FSemanticObjectOverviewV2 object;
+            object.Ref = MakeVocabularyObjectRefV2(entry.Entry.EntryId);
+            object.DisplayLabel = RenderBaseVocabularyEntryLabelV2(entry.Entry);
+            object.CanonicalNotation = RenderBaseVocabularyEntryLatexV2(entry.Entry);
+            object.KindLabel = ToString(entry.Entry.Kind);
+            object.CategoryLabel = entry.Entry.DefinitionKind.has_value()
+                ? ToString(*entry.Entry.DefinitionKind)
+                : ToString(entry.Entry.Kind);
+            object.OriginLabel = "BaseVocabulary";
+            object.OriginDetail = entry.Entry.SourcePresetId;
+            object.StatusLabel = Detail::BuildVocabularyStatusLabelV2(entry);
+            object.Description = entry.Entry.Description.empty() ? entry.Entry.SemanticRoleSummary : entry.Entry.Description;
+            object.bReadonly = true;
+            object.bAmbient = true;
+            object.DeclaredKind = entry.Entry.DefinitionKind;
+            if (entry.OverrideStatus != EVocabularyOverrideStatusV2::BuiltIn) object.bLocalOverride = true;
+            overview.ObjectsByKey[MakeSemanticObjectKeyV2(object.Ref)] = std::move(object);
+        }
+
+        for (const auto &definition : model.Definitions) {
+            const auto *definitionReport = Detail::FindDefinitionSemanticReportV2(overview.Report, definition.DefinitionId);
+
+            FSemanticObjectOverviewV2 object;
+            object.Ref = MakeDefinitionObjectRefV2(definition.DefinitionId);
+            object.DisplayLabel = RenderDefinitionLabelV2(definition);
+            object.CanonicalNotation = MakeCanonicalDefinitionNotationV2(definition, &model);
+            object.KindLabel = ToString(definition.Kind);
+            object.CategoryLabel = "local symbol";
+            object.OriginLabel = "LocalDefinition";
+            object.OriginDetail = definition.Metadata.contains("accepted_assumption_id")
+                ? definition.Metadata.at("accepted_assumption_id")
+                : definition.DefinitionId;
+            object.StatusLabel = Detail::BuildDefinitionStatusLabelV2(definitionReport, definition);
+            object.Description = definition.Description;
+            object.DeclaredKind = definition.Kind;
+            if (definitionReport != nullptr) {
+                object.InferredKind = definitionReport->InferredKind;
+                object.bConflict = definitionReport->bRoleMismatchesDeclared;
+                object.CategoryLabel = definitionReport->InferredKind.has_value()
+                    ? ToString(*definitionReport->InferredKind)
+                    : object.CategoryLabel;
+                for (const auto &diagnostic : definitionReport->Diagnostics) {
+                    Detail::AppendDiagnosticNavigationUniqueV2(
+                        object.Diagnostics,
+                        Detail::BuildDiagnosticNavigationV2(model, diagnostic, object.Ref));
+                }
+            }
+            if (const auto it = vocabularyByLocalDefinitionId.find(definition.DefinitionId); it != vocabularyByLocalDefinitionId.end()) {
+                object.bLocalOverride = true;
+            }
+            overview.ObjectsByKey[MakeSemanticObjectKeyV2(object.Ref)] = std::move(object);
+        }
+
+        for (const auto &relation : model.Relations) {
+            const auto *relationReport = Detail::FindRelationSemanticReportV2(overview.Report, relation.RelationId);
+
+            FSemanticObjectOverviewV2 object;
+            object.Ref = MakeRelationObjectRefV2(relation.RelationId);
+            object.DisplayLabel = relation.Name.empty() ? relation.RelationId : relation.Name;
+            object.CanonicalNotation = MakeCanonicalRelationNotationV2(relation, &model);
+            object.KindLabel = ToString(relation.Kind);
+            object.CategoryLabel = "local relation";
+            object.OriginLabel = "Relation-local usage";
+            object.OriginDetail = relation.RelationId;
+            object.StatusLabel = Detail::BuildRelationStatusLabelV2(relationReport);
+            object.Description = relation.Description;
+            if (relationReport != nullptr) {
+                object.InferredRelationClass = relationReport->InferredClass;
+                object.CategoryLabel = ToString(relationReport->InferredClass);
+                for (const auto &diagnostic : relationReport->Diagnostics) {
+                    Detail::AppendDiagnosticNavigationUniqueV2(
+                        object.Diagnostics,
+                        Detail::BuildDiagnosticNavigationV2(model, diagnostic, object.Ref));
+                }
+            }
+            overview.ObjectsByKey[MakeSemanticObjectKeyV2(object.Ref)] = std::move(object);
+        }
+
+        for (const auto &assumption : overview.Report.Assumptions) {
+            FSemanticObjectOverviewV2 object;
+            object.Ref = MakeAssumptionObjectRefV2(assumption.AssumptionId);
+            object.DisplayLabel = assumption.TargetSymbol.empty()
+                ? (assumption.Category.empty() ? assumption.AssumptionId : assumption.Category)
+                : assumption.TargetSymbol;
+            object.CanonicalNotation = object.DisplayLabel;
+            object.KindLabel = ToString(assumption.Kind);
+            object.CategoryLabel = assumption.Category;
+            object.OriginLabel = "Assumed / inferred semantics";
+            object.OriginDetail = assumption.SourceId;
+            object.StatusLabel = Detail::BuildAssumptionStatusLabelV2(assumption);
+            object.Description = assumption.Detail;
+            object.AssumptionStatus = assumption.Status;
+            object.DeclaredKind = assumption.DeclaredKind;
+            object.InferredKind = assumption.InferredKind;
+            object.bConflict = assumption.bMismatchesDeclaredRole;
+            overview.ObjectsByKey[MakeSemanticObjectKeyV2(object.Ref)] = std::move(object);
+        }
+
+        const auto appendLink = [&](const FSemanticObjectRefV2 &sourceRef,
+                                    Vector<FSemanticNavigationLinkV2> FSemanticObjectOverviewV2::*member,
+                                    FSemanticNavigationLinkV2 link) {
+            if (auto *object = Detail::FindObjectOverviewV2(overview.ObjectsByKey, sourceRef); object != nullptr) {
+                Detail::AppendNavigationLinkUniqueV2(object->*member, std::move(link));
+            }
+        };
+
+        for (const auto &definition : model.Definitions) {
+            const auto sourceRef = MakeDefinitionObjectRefV2(definition.DefinitionId);
+            const auto *definitionReport = Detail::FindDefinitionSemanticReportV2(overview.Report, definition.DefinitionId);
+
+            auto addDefinitionDependency = [&](const Str &dependencyId, const Str &detail) {
+                if (dependencyId.empty() || dependencyId == definition.DefinitionId) return;
+                if (FindDefinitionByIdV2(model, dependencyId) == nullptr) return;
+                const auto targetRef = MakeDefinitionObjectRefV2(dependencyId);
+                appendLink(sourceRef, &FSemanticObjectOverviewV2::DependsOn, Detail::MakeNavigationLinkV2(overview.ObjectsByKey, targetRef, detail));
+                appendLink(targetRef, &FSemanticObjectOverviewV2::UsedBy, Detail::MakeNavigationLinkV2(overview.ObjectsByKey, sourceRef, "uses this definition"));
+            };
+
+            for (const auto &dependencyId : definition.ArgumentDefinitionIds) {
+                addDefinitionDependency(dependencyId, "argument dependency");
+            }
+            for (const auto &dependencyId : definition.DependencyDefinitionIds) {
+                addDefinitionDependency(dependencyId, "declared dependency");
+            }
+            if (definitionReport != nullptr) {
+                for (const auto &dependencyId : definitionReport->InferredArgumentDefinitionIds) {
+                    addDefinitionDependency(dependencyId, "inferred dependency");
+                }
+                for (const auto &symbol : definitionReport->ReferencedSymbols) {
+                    const auto targetRef = Detail::ResolveObjectRefForReferencedSymbolV2(symbol);
+                    if (!targetRef.has_value()) continue;
+                    const auto detail = symbol.SymbolText.empty() ? "referenced symbol" : symbol.SymbolText;
+                    if (targetRef->Kind == ESemanticObjectKindV2::VocabularyEntry) {
+                        appendLink(
+                            sourceRef,
+                            &FSemanticObjectOverviewV2::AmbientDependencies,
+                            Detail::MakeNavigationLinkV2(overview.ObjectsByKey, *targetRef, detail, true, true));
+                    } else if (!AreSemanticObjectRefsEqualV2(*targetRef, sourceRef)) {
+                        appendLink(
+                            sourceRef,
+                            &FSemanticObjectOverviewV2::DependsOn,
+                            Detail::MakeNavigationLinkV2(overview.ObjectsByKey, *targetRef, detail));
+                    }
+                    appendLink(
+                        *targetRef,
+                        &FSemanticObjectOverviewV2::UsedBy,
+                        Detail::MakeNavigationLinkV2(overview.ObjectsByKey, sourceRef, "used by definition"));
+                }
+            }
+            if (const auto it = vocabularyByLocalDefinitionId.find(definition.DefinitionId); it != vocabularyByLocalDefinitionId.end()) {
+                const auto targetRef = MakeVocabularyObjectRefV2(it->second->Entry.EntryId);
+                appendLink(
+                    sourceRef,
+                    &FSemanticObjectOverviewV2::LocalOverrides,
+                    Detail::MakeNavigationLinkV2(
+                        overview.ObjectsByKey,
+                        targetRef,
+                        ToString(it->second->OverrideStatus),
+                        true,
+                        true,
+                        false,
+                        true));
+                appendLink(
+                    targetRef,
+                    &FSemanticObjectOverviewV2::LocalOverrides,
+                    Detail::MakeNavigationLinkV2(
+                        overview.ObjectsByKey,
+                        sourceRef,
+                        ToString(it->second->OverrideStatus),
+                        true,
+                        false,
+                        false,
+                        true));
+            }
+        }
+
+        for (const auto &relation : model.Relations) {
+            const auto sourceRef = MakeRelationObjectRefV2(relation.RelationId);
+            const auto *relationReport = Detail::FindRelationSemanticReportV2(overview.Report, relation.RelationId);
+            if (relationReport == nullptr) continue;
+
+            for (const auto &symbol : relationReport->ReferencedSymbols) {
+                const auto targetRef = Detail::ResolveObjectRefForReferencedSymbolV2(symbol);
+                if (!targetRef.has_value()) continue;
+                const auto detail = symbol.SymbolText.empty()
+                    ? Detail::JoinUsageLabelsV2(symbol.UsageLabels)
+                    : symbol.SymbolText;
+                if (targetRef->Kind == ESemanticObjectKindV2::VocabularyEntry) {
+                    appendLink(
+                        sourceRef,
+                        &FSemanticObjectOverviewV2::AmbientDependencies,
+                        Detail::MakeNavigationLinkV2(overview.ObjectsByKey, *targetRef, detail, true, true));
+                } else {
+                    appendLink(
+                        sourceRef,
+                        &FSemanticObjectOverviewV2::DependsOn,
+                        Detail::MakeNavigationLinkV2(overview.ObjectsByKey, *targetRef, detail));
+                }
+                appendLink(
+                    *targetRef,
+                    &FSemanticObjectOverviewV2::UsedBy,
+                    Detail::MakeNavigationLinkV2(overview.ObjectsByKey, sourceRef, "used by relation"));
+            }
+
+            for (const auto &assumption : relationReport->Assumptions) {
+                const auto assumptionRef = MakeAssumptionObjectRefV2(assumption.AssumptionId);
+                appendLink(
+                    sourceRef,
+                    &FSemanticObjectOverviewV2::RelatedAssumptions,
+                    Detail::MakeNavigationLinkV2(
+                        overview.ObjectsByKey,
+                        assumptionRef,
+                        assumption.Detail,
+                        false,
+                        false,
+                        assumption.bMismatchesDeclaredRole));
+            }
+        }
+
+        for (const auto &assumption : overview.Report.Assumptions) {
+            const auto sourceRef = MakeAssumptionObjectRefV2(assumption.AssumptionId);
+            const auto sourceObjectRef = Detail::ResolveObjectRefByIdV2(model, assumption.SourceId);
+            if (sourceObjectRef.has_value()) {
+                appendLink(
+                    sourceRef,
+                    &FSemanticObjectOverviewV2::SourceLinks,
+                    Detail::MakeNavigationLinkV2(overview.ObjectsByKey, *sourceObjectRef, "inferred from source"));
+                appendLink(
+                    *sourceObjectRef,
+                    &FSemanticObjectOverviewV2::RelatedAssumptions,
+                    Detail::MakeNavigationLinkV2(
+                        overview.ObjectsByKey,
+                        sourceRef,
+                        assumption.Detail,
+                        false,
+                        false,
+                        assumption.bMismatchesDeclaredRole));
+            }
+
+            const auto targetObjectRef = Detail::ResolveAssumptionTargetRefV2(model, assumption);
+            if (targetObjectRef.has_value()) {
+                appendLink(
+                    sourceRef,
+                    &FSemanticObjectOverviewV2::TargetLinks,
+                    Detail::MakeNavigationLinkV2(
+                        overview.ObjectsByKey,
+                        *targetObjectRef,
+                        assumption.bMismatchesDeclaredRole
+                            ? "conflicts with explicit local meaning"
+                            : "affected object",
+                        targetObjectRef->Kind == ESemanticObjectKindV2::VocabularyEntry,
+                        targetObjectRef->Kind == ESemanticObjectKindV2::VocabularyEntry,
+                        assumption.bMismatchesDeclaredRole));
+                appendLink(
+                    *targetObjectRef,
+                    &FSemanticObjectOverviewV2::RelatedAssumptions,
+                    Detail::MakeNavigationLinkV2(
+                        overview.ObjectsByKey,
+                        sourceRef,
+                        assumption.Detail,
+                        targetObjectRef->Kind == ESemanticObjectKindV2::VocabularyEntry,
+                        targetObjectRef->Kind == ESemanticObjectKindV2::VocabularyEntry,
+                        assumption.bMismatchesDeclaredRole));
+            }
+        }
+
+        for (const auto &relation : model.Relations) {
+            const auto relationRef = MakeRelationObjectRefV2(relation.RelationId);
+            const auto *relationObject = Detail::FindObjectOverviewV2(overview.ObjectsByKey, relationRef);
+            if (relationObject == nullptr || relationObject->RelatedAssumptions.empty()) continue;
+
+            for (const auto &dependency : relationObject->DependsOn) {
+                for (const auto &assumption : relationObject->RelatedAssumptions) {
+                    appendLink(
+                        dependency.Target,
+                        &FSemanticObjectOverviewV2::RelatedAssumptions,
+                        Detail::MakeNavigationLinkV2(
+                            overview.ObjectsByKey,
+                            assumption.Target,
+                            assumption.Detail,
+                            false,
+                            false,
+                            assumption.bConflict));
+                }
+            }
+            for (const auto &dependency : relationObject->AmbientDependencies) {
+                for (const auto &assumption : relationObject->RelatedAssumptions) {
+                    appendLink(
+                        dependency.Target,
+                        &FSemanticObjectOverviewV2::RelatedAssumptions,
+                        Detail::MakeNavigationLinkV2(
+                            overview.ObjectsByKey,
+                            assumption.Target,
+                            assumption.Detail,
+                            true,
+                            true,
+                            assumption.bConflict));
+                }
+            }
+        }
+
+        overview.Status.ActiveBaseVocabularyId = model.BaseVocabulary.ActivePresetId;
+        if (const auto *preset = FindBaseVocabularyPresetByIdV2(model.BaseVocabulary.ActivePresetId); preset != nullptr) {
+            overview.Status.ActiveBaseVocabularyName = preset->Name;
+        } else {
+            overview.Status.ActiveBaseVocabularyName = model.BaseVocabulary.ActivePresetId;
+        }
+
+        overview.Status.ValidationErrorCount = overview.Validation.ErrorCount();
+        Detail::CountUniqueDiagnosticsV2(
+            overview.Report,
+            &overview.Status.ValidationWarningCount,
+            &overview.Status.DeferredCount,
+            nullptr);
+        overview.Status.UnresolvedSymbolCount = Detail::CountUnresolvedSymbolsV2(overview.Report);
+        overview.Status.PendingAssumptionCount = static_cast<std::size_t>(std::count_if(
+            overview.Report.Assumptions.begin(),
+            overview.Report.Assumptions.end(),
+            [](const auto &assumption) { return assumption.Status == EAssumptionStatusV2::Implicit; }));
+        overview.Status.AcceptedAssumptionCount = static_cast<std::size_t>(std::count_if(
+            overview.Report.Assumptions.begin(),
+            overview.Report.Assumptions.end(),
+            [](const auto &assumption) { return assumption.Status == EAssumptionStatusV2::Accepted; }));
+        overview.Status.DismissedAssumptionCount = static_cast<std::size_t>(std::count_if(
+            model.AssumptionStates.begin(),
+            model.AssumptionStates.end(),
+            [](const auto &state) { return state.Status == EAssumptionStatusV2::Dismissed; }));
+        overview.Status.OverrideCount = static_cast<std::size_t>(std::count_if(
+            overview.VocabularyEntries.begin(),
+            overview.VocabularyEntries.end(),
+            [](const auto &entry) { return entry.OverrideStatus == EVocabularyOverrideStatusV2::OverriddenLocally; }));
+        overview.Status.SpecializationCount = static_cast<std::size_t>(std::count_if(
+            overview.VocabularyEntries.begin(),
+            overview.VocabularyEntries.end(),
+            [](const auto &entry) { return entry.OverrideStatus == EVocabularyOverrideStatusV2::SpecializedLocally; }));
+        overview.Status.ParseHealth = ESemanticHealthV2::Ok;
+        overview.Status.SemanticHealth = Detail::DetermineSemanticHealthV2(
+            overview.Status.ValidationErrorCount,
+            overview.Status.UnresolvedSymbolCount,
+            overview.Status.ValidationWarningCount,
+            overview.Status.DeferredCount,
+            overview.Status.PendingAssumptionCount);
+        overview.Status.Classification = Detail::BuildModelClassificationV2(model, overview.Report, overview.VocabularyEntries);
+
+        for (const auto &definition : model.Definitions) {
+            const auto ref = MakeDefinitionObjectRefV2(definition.DefinitionId);
+            switch (definition.Kind) {
+                case EDefinitionKindV2::StateVariable:
+                    Detail::AddSummaryLinkUniqueV2(overview.Status.CanonicalStateVariables, overview.ObjectsByKey, ref);
+                    break;
+                case EDefinitionKindV2::ScalarParameter:
+                    Detail::AddSummaryLinkUniqueV2(overview.Status.Parameters, overview.ObjectsByKey, ref);
+                    break;
+                case EDefinitionKindV2::Field:
+                    Detail::AddSummaryLinkUniqueV2(overview.Status.Fields, overview.ObjectsByKey, ref);
+                    break;
+                case EDefinitionKindV2::OperatorSymbol:
+                    Detail::AddSummaryLinkUniqueV2(overview.Status.Operators, overview.ObjectsByKey, ref);
+                    break;
+                case EDefinitionKindV2::ObservableSymbol:
+                    Detail::AddSummaryLinkUniqueV2(overview.Status.Observables, overview.ObjectsByKey, ref);
+                    break;
+                case EDefinitionKindV2::Coordinate:
+                    break;
+            }
+        }
+
+        for (const auto &relation : overview.Report.Relations) {
+            for (const auto &symbol : relation.ReferencedSymbols) {
+                if (symbol.Origin != ESemanticOriginV2::BaseVocabulary) continue;
+                if (!(symbol.DeclaredKind.has_value() && *symbol.DeclaredKind == EDefinitionKindV2::OperatorSymbol) &&
+                    !(symbol.InferredKind.has_value() && *symbol.InferredKind == EDefinitionKindV2::OperatorSymbol)) {
+                    continue;
+                }
+                if (const auto ref = Detail::ResolveObjectRefForReferencedSymbolV2(symbol); ref.has_value()) {
+                    Detail::AddSummaryLinkUniqueV2(overview.Status.Operators, overview.ObjectsByKey, *ref);
+                }
+            }
+        }
+
+        return overview;
+    }
+
+    inline auto BuildSemanticSelectionContextV2(const FModelSemanticOverviewV2 &overview,
+                                                const FSemanticObjectRefV2 &selected) -> FSemanticSelectionContextV2 {
+        FSemanticSelectionContextV2 context;
+        context.Selected = selected;
+
+        const auto *object = overview.FindObject(selected);
+        if (object == nullptr) return context;
+
+        const auto consumeLinks = [](const Vector<FSemanticNavigationLinkV2> &links, std::set<Str> &keys) {
+            for (const auto &link : links) {
+                if (!link.Target.IsValid()) continue;
+                keys.insert(MakeSemanticObjectKeyV2(link.Target));
+            }
+        };
+
+        consumeLinks(object->DependsOn, context.DependencyKeys);
+        consumeLinks(object->AmbientDependencies, context.AmbientDependencyKeys);
+        consumeLinks(object->UsedBy, context.UsedByKeys);
+        consumeLinks(object->RelatedAssumptions, context.RelatedAssumptionKeys);
+        consumeLinks(object->SourceLinks, context.SourceKeys);
+        consumeLinks(object->TargetLinks, context.TargetKeys);
+        consumeLinks(object->LocalOverrides, context.OverrideKeys);
+
+        if (object->bConflict) context.ConflictKeys.insert(MakeSemanticObjectKeyV2(selected));
+        if (selected.Kind == ESemanticObjectKindV2::Assumption && object->bConflict) {
+            consumeLinks(object->TargetLinks, context.ConflictKeys);
+        }
+        for (const auto &assumptionLink : object->RelatedAssumptions) {
+            if (const auto *assumptionObject = overview.FindObject(assumptionLink.Target);
+                assumptionObject != nullptr && assumptionObject->bConflict) {
+                context.ConflictKeys.insert(MakeSemanticObjectKeyV2(assumptionLink.Target));
+            }
+        }
+
+        return context;
+    }
+
     inline auto MakeEditorBufferForDefinitionV2(const FModelV2 &model,
                                                 const Str &definitionId) -> TOptional<FModelEditorBufferV2> {
         const auto *definition = FindDefinitionByIdV2(model, definitionId);
@@ -970,7 +1963,7 @@ namespace Slab::Core::Model::V2 {
         if (!definition.DeclaredType.has_value()) return symbols;
 
         std::map<Str, Detail::FSymbolEvidenceV2> evidenceByKey;
-        Detail::CollectTypeEvidenceV2(*definition.DeclaredType, evidenceByKey);
+        Detail::CollectTypeEvidenceV2(*definition.DeclaredType, model, evidenceByKey);
         symbols.reserve(evidenceByKey.size());
         for (const auto &[key, evidence] : evidenceByKey) {
             (void) key;

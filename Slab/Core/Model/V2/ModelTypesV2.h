@@ -104,6 +104,28 @@ namespace Slab::Core::Model::V2 {
         AcceptedInference
     };
 
+    enum class EBaseVocabularyEntryKindV2 : unsigned char {
+        ScalarSet,
+        Operator,
+        RelationSymbol,
+        NotationConvention,
+        FunctionConvention,
+        ArithmeticConvention
+    };
+
+    enum class EVocabularyOverrideStatusV2 : unsigned char {
+        BuiltIn,
+        OverriddenLocally,
+        SpecializedLocally
+    };
+
+    enum class ESemanticOriginV2 : unsigned char {
+        LocalDefinition,
+        BaseVocabulary,
+        Assumed,
+        Unresolved
+    };
+
     struct FExpressionV2;
     using FExpressionPtrV2 = TPointer<FExpressionV2>;
 
@@ -134,6 +156,25 @@ namespace Slab::Core::Model::V2 {
         Vector<FTypeExprV2> Domain;
         TPointer<FTypeExprV2> Codomain = nullptr;
         Str SourceText;
+    };
+
+    struct FBaseVocabularyEntryV2 {
+        Str EntryId;
+        Str Symbol;
+        Str PreferredNotation;
+        Str PreviewLatex;
+        Str DisplayName;
+        Str Description;
+        EBaseVocabularyEntryKindV2 Kind = EBaseVocabularyEntryKindV2::NotationConvention;
+        Str SemanticRoleSummary;
+        Str SourcePresetId;
+        TOptional<EDefinitionKindV2> DefinitionKind;
+        EOperatorApplicationStyleV2 OperatorStyle = EOperatorApplicationStyleV2::Prefix;
+        TOptional<FTypeExprV2> DeclaredType;
+        bool bGenericUnaryScalarFunctionOperator = false;
+        Str SourceText;
+        StrVector Tags;
+        std::map<Str, Str> Metadata;
     };
 
     struct FDefinitionV2 {
@@ -197,10 +238,32 @@ namespace Slab::Core::Model::V2 {
         std::map<Str, Str> Metadata;
     };
 
+    struct FBaseVocabularyPresetV2 {
+        Str PresetId;
+        Str Name;
+        Str Description;
+        Str ParentPresetId;
+        Vector<FBaseVocabularyEntryV2> Entries;
+        StrVector Tags;
+        std::map<Str, Str> Metadata;
+    };
+
+    struct FModelBaseVocabularyV2 {
+        Str ActivePresetId;
+        std::map<Str, Str> Metadata;
+    };
+
+    struct FResolvedBaseVocabularyEntryV2 {
+        FBaseVocabularyEntryV2 Entry;
+        EVocabularyOverrideStatusV2 OverrideStatus = EVocabularyOverrideStatusV2::BuiltIn;
+        Str LocalDefinitionId;
+    };
+
     struct FModelV2 {
         Str ModelId;
         Str Name;
         Str Description;
+        FModelBaseVocabularyV2 BaseVocabulary;
         Vector<FDefinitionV2> Definitions;
         Vector<FRelationV2> Relations;
         Vector<FAssumptionStateV2> AssumptionStates;
@@ -390,6 +453,40 @@ namespace Slab::Core::Model::V2 {
         return "Unknown";
     }
 
+    inline auto ToString(const EBaseVocabularyEntryKindV2 value) -> const char * {
+        switch (value) {
+            case EBaseVocabularyEntryKindV2::ScalarSet: return "ScalarSet";
+            case EBaseVocabularyEntryKindV2::Operator: return "Operator";
+            case EBaseVocabularyEntryKindV2::RelationSymbol: return "RelationSymbol";
+            case EBaseVocabularyEntryKindV2::NotationConvention: return "NotationConvention";
+            case EBaseVocabularyEntryKindV2::FunctionConvention: return "FunctionConvention";
+            case EBaseVocabularyEntryKindV2::ArithmeticConvention: return "ArithmeticConvention";
+        }
+
+        return "Unknown";
+    }
+
+    inline auto ToString(const EVocabularyOverrideStatusV2 value) -> const char * {
+        switch (value) {
+            case EVocabularyOverrideStatusV2::BuiltIn: return "BuiltIn";
+            case EVocabularyOverrideStatusV2::OverriddenLocally: return "OverriddenLocally";
+            case EVocabularyOverrideStatusV2::SpecializedLocally: return "SpecializedLocally";
+        }
+
+        return "Unknown";
+    }
+
+    inline auto ToString(const ESemanticOriginV2 value) -> const char * {
+        switch (value) {
+            case ESemanticOriginV2::LocalDefinition: return "LocalDefinition";
+            case ESemanticOriginV2::BaseVocabulary: return "BaseVocabulary";
+            case ESemanticOriginV2::Assumed: return "Assumed";
+            case ESemanticOriginV2::Unresolved: return "Unresolved";
+        }
+
+        return "Unknown";
+    }
+
     inline auto TrimAsciiCopyV2(Str value) -> Str {
         const auto isSpace = [](const unsigned char c) {
             return std::isspace(c) != 0;
@@ -400,6 +497,14 @@ namespace Slab::Core::Model::V2 {
 
         const auto end = std::find_if_not(value.rbegin(), value.rend(), isSpace).base();
         return Str(begin, end);
+    }
+
+    inline auto NormalizeSymbolAliasTextV2(Str alias) -> Str {
+        alias = TrimAsciiCopyV2(std::move(alias));
+        while (!alias.empty() && alias.front() == '\\') {
+            alias.erase(alias.begin());
+        }
+        return alias;
     }
 
     inline auto MakeReferenceV2(Str referenceId, Str symbolText = {}) -> FReferenceV2 {
@@ -541,6 +646,299 @@ namespace Slab::Core::Model::V2 {
         return MakeBinaryExprV2(EBinaryOperatorV2::Power, std::move(base), std::move(exponent));
     }
 
+    inline auto MakeVocabularyEntryV2(Str entryId,
+                                      Str symbol,
+                                      Str preferredNotation,
+                                      const EBaseVocabularyEntryKindV2 kind,
+                                      Str summary,
+                                      Str sourcePresetId,
+                                      Str displayName = {},
+                                      Str description = {}) -> FBaseVocabularyEntryV2 {
+        FBaseVocabularyEntryV2 entry;
+        entry.EntryId = std::move(entryId);
+        entry.Symbol = std::move(symbol);
+        entry.PreferredNotation = std::move(preferredNotation);
+        entry.Kind = kind;
+        entry.SemanticRoleSummary = std::move(summary);
+        entry.SourcePresetId = std::move(sourcePresetId);
+        entry.DisplayName = displayName.empty() ? entry.PreferredNotation : std::move(displayName);
+        entry.Description = std::move(description);
+        return entry;
+    }
+
+    inline auto RenderBaseVocabularyEntryLatexV2(const FBaseVocabularyEntryV2 &entry) -> Str {
+        if (!entry.PreviewLatex.empty()) return entry.PreviewLatex;
+        if (!entry.PreferredNotation.empty()) return entry.PreferredNotation;
+        return entry.Symbol;
+    }
+
+    inline auto RenderBaseVocabularyEntryLabelV2(const FBaseVocabularyEntryV2 &entry) -> Str {
+        if (!entry.DisplayName.empty()) return entry.DisplayName;
+        if (!entry.PreferredNotation.empty()) return entry.PreferredNotation;
+        if (!entry.Symbol.empty()) return entry.Symbol;
+        return entry.EntryId;
+    }
+
+    inline auto BuildCoreMathVocabularyPresetV2() -> FBaseVocabularyPresetV2 {
+        FBaseVocabularyPresetV2 preset;
+        preset.PresetId = "core_math";
+        preset.Name = "Core Math";
+        preset.Description =
+            "Ambient scalar sets, basic relation symbols, and authoring conventions shared by most models.";
+        preset.Tags = {"math", "ambient", "core"};
+
+        auto reals = MakeVocabularyEntryV2(
+            "vocab.core_math.set.reals",
+            "R",
+            "\\mathbb{R}",
+            EBaseVocabularyEntryKindV2::ScalarSet,
+            "Scalar set of real numbers used as an ambient codomain/domain.",
+            preset.PresetId,
+            "Real Numbers",
+            "Built-in real scalar set available without a local Definition.");
+        reals.SourceText = "\\mathbb{R}";
+        reals.Tags = {"set", "scalar"};
+        preset.Entries.push_back(std::move(reals));
+
+        auto complexes = MakeVocabularyEntryV2(
+            "vocab.core_math.set.complexes",
+            "C",
+            "\\mathbb{C}",
+            EBaseVocabularyEntryKindV2::ScalarSet,
+            "Scalar set of complex numbers used as an ambient codomain/domain.",
+            preset.PresetId,
+            "Complex Numbers",
+            "Built-in complex scalar set available without a local Definition.");
+        complexes.SourceText = "\\mathbb{C}";
+        complexes.Tags = {"set", "scalar"};
+        preset.Entries.push_back(std::move(complexes));
+
+        auto naturals = MakeVocabularyEntryV2(
+            "vocab.core_math.set.naturals",
+            "N",
+            "\\mathbb{N}",
+            EBaseVocabularyEntryKindV2::ScalarSet,
+            "Scalar set of natural numbers available as ambient mathematical language.",
+            preset.PresetId,
+            "Natural Numbers",
+            "Built-in natural-number set available without a local Definition.");
+        naturals.SourceText = "\\mathbb{N}";
+        naturals.Tags = {"set", "scalar"};
+        preset.Entries.push_back(std::move(naturals));
+
+        auto membership = MakeVocabularyEntryV2(
+            "vocab.core_math.relation.membership",
+            "in",
+            "\\in",
+            EBaseVocabularyEntryKindV2::RelationSymbol,
+            "Ambient set-membership relation used in scalar declarations.",
+            preset.PresetId,
+            "Membership",
+            "Membership relation used by definition notation such as x \\in \\mathbb{R}.");
+        membership.SourceText = "\\in";
+        membership.Tags = {"relation", "notation"};
+        preset.Entries.push_back(std::move(membership));
+
+        auto arrow = MakeVocabularyEntryV2(
+            "vocab.core_math.relation.arrow",
+            "to",
+            "\\to",
+            EBaseVocabularyEntryKindV2::FunctionConvention,
+            "Ambient function-arrow convention used in type declarations.",
+            preset.PresetId,
+            "Function Arrow",
+            "Function-type arrow used by authoring notation such as f : X \\to Y.");
+        arrow.SourceText = "\\to";
+        arrow.Tags = {"relation", "notation"};
+        preset.Entries.push_back(std::move(arrow));
+
+        auto equality = MakeVocabularyEntryV2(
+            "vocab.core_math.relation.equality",
+            "=",
+            "=",
+            EBaseVocabularyEntryKindV2::RelationSymbol,
+            "Ambient equality relation used by model relations.",
+            preset.PresetId,
+            "Equality",
+            "Equality relation separating left and right relation expressions.");
+        equality.SourceText = "=";
+        equality.Tags = {"relation", "notation"};
+        preset.Entries.push_back(std::move(equality));
+
+        auto multiplication = MakeVocabularyEntryV2(
+            "vocab.core_math.arithmetic.multiplication",
+            "*",
+            "*",
+            EBaseVocabularyEntryKindV2::ArithmeticConvention,
+            "Ambient multiplication and implicit product convention.",
+            preset.PresetId,
+            "Multiplication",
+            "Implicit and explicit multiplication conventions available in expression authoring.");
+        multiplication.Tags = {"arithmetic", "notation"};
+        preset.Entries.push_back(std::move(multiplication));
+
+        auto power = MakeVocabularyEntryV2(
+            "vocab.core_math.arithmetic.power",
+            "^",
+            "^",
+            EBaseVocabularyEntryKindV2::ArithmeticConvention,
+            "Ambient exponentiation convention.",
+            preset.PresetId,
+            "Exponentiation",
+            "Power notation available in definitions and relations.");
+        power.Tags = {"arithmetic", "notation"};
+        preset.Entries.push_back(std::move(power));
+
+        auto grouping = MakeVocabularyEntryV2(
+            "vocab.core_math.notation.grouping",
+            "()",
+            "()",
+            EBaseVocabularyEntryKindV2::NotationConvention,
+            "Ambient grouping convention for expression authoring.",
+            preset.PresetId,
+            "Grouping",
+            "Parentheses and grouping conventions used by the current notation layer.");
+        grouping.Tags = {"notation"};
+        preset.Entries.push_back(std::move(grouping));
+
+        return preset;
+    }
+
+    inline auto BuildClassicalMechanicsVocabularyPresetV2() -> FBaseVocabularyPresetV2 {
+        FBaseVocabularyPresetV2 preset;
+        preset.PresetId = "classical_mechanics";
+        preset.Name = "Classical Mechanics";
+        preset.Description =
+            "Core Math plus ambient time-derivative conventions for ODE-style authoring.";
+        preset.ParentPresetId = "core_math";
+        preset.Tags = {"mechanics", "ode", "ambient"};
+
+        auto dot = MakeVocabularyEntryV2(
+            "vocab.classical_mechanics.notation.dot",
+            "dot",
+            "\\dot",
+            EBaseVocabularyEntryKindV2::NotationConvention,
+            "Time-derivative notation convention for first ordinary derivatives.",
+            preset.PresetId,
+            "Dot Derivative",
+            "First-order ordinary time-derivative convention for symbols such as \\dot x.");
+        dot.PreviewLatex = "\\dot{\\mathrm{state}}";
+        dot.SourceText = "\\dot";
+        dot.Tags = {"derivative", "notation", "time"};
+        preset.Entries.push_back(std::move(dot));
+
+        auto ddot = MakeVocabularyEntryV2(
+            "vocab.classical_mechanics.notation.ddot",
+            "ddot",
+            "\\ddot",
+            EBaseVocabularyEntryKindV2::NotationConvention,
+            "Time-derivative notation convention for second ordinary derivatives.",
+            preset.PresetId,
+            "Double-Dot Derivative",
+            "Second-order ordinary time-derivative convention for symbols such as \\ddot x.");
+        ddot.PreviewLatex = "\\ddot{\\mathrm{state}}";
+        ddot.SourceText = "\\ddot";
+        ddot.Tags = {"derivative", "notation", "time"};
+        preset.Entries.push_back(std::move(ddot));
+
+        return preset;
+    }
+
+    inline auto BuildRelativisticFieldTheoryVocabularyPresetV2() -> FBaseVocabularyPresetV2 {
+        FBaseVocabularyPresetV2 preset;
+        preset.PresetId = "relativistic_field_theory";
+        preset.Name = "Relativistic Field Theory";
+        preset.Description =
+            "Core Math plus ambient operator vocabulary for Klein-Gordon-like authoring.";
+        preset.ParentPresetId = "core_math";
+        preset.Tags = {"field-theory", "pde", "ambient"};
+
+        auto box = MakeVocabularyEntryV2(
+            "vocab.relativistic_field_theory.operator.box",
+            "Box",
+            "\\Box",
+            EBaseVocabularyEntryKindV2::Operator,
+            "Ambient d'Alembert / wave-operator family symbol without fixing coordinates or metric realization.",
+            preset.PresetId,
+            "d'Alembertian",
+            "Unary ambient operator placeholder for spacetime field equations such as \\Box \\phi = 0.");
+        box.DefinitionKind = EDefinitionKindV2::OperatorSymbol;
+        box.bGenericUnaryScalarFunctionOperator = true;
+        box.PreviewLatex = "\\Box";
+        box.SourceText = "\\Box";
+        box.Tags = {"operator", "field-theory", "wave"};
+        preset.Entries.push_back(std::move(box));
+
+        auto partial = MakeVocabularyEntryV2(
+            "vocab.relativistic_field_theory.operator.partial",
+            "partial",
+            "\\partial",
+            EBaseVocabularyEntryKindV2::Operator,
+            "Partial-derivative operator family placeholder for spacetime authoring.",
+            preset.PresetId,
+            "Partial Derivative",
+            "Minimal ambient placeholder for partial-derivative notation. Indexed forms remain future work.");
+        partial.DefinitionKind = EDefinitionKindV2::OperatorSymbol;
+        partial.bGenericUnaryScalarFunctionOperator = true;
+        partial.PreviewLatex = "\\partial_{\\mu}";
+        partial.SourceText = "\\partial";
+        partial.Tags = {"operator", "field-theory", "derivative"};
+        preset.Entries.push_back(std::move(partial));
+
+        auto spacetimeNotation = MakeVocabularyEntryV2(
+            "vocab.relativistic_field_theory.notation.spacetime",
+            "spacetime",
+            "spacetime",
+            EBaseVocabularyEntryKindV2::NotationConvention,
+            "Ambient spacetime-oriented authoring convention without committing to coordinates or signature.",
+            preset.PresetId,
+            "Spacetime Convention",
+            "Signals that indexed and spacetime-oriented notation belongs to the ambient language rather than local Definitions.");
+        spacetimeNotation.Tags = {"notation", "field-theory", "spacetime"};
+        preset.Entries.push_back(std::move(spacetimeNotation));
+
+        return preset;
+    }
+
+    inline auto GetBaseVocabularyPresetCatalogV2() -> const Vector<FBaseVocabularyPresetV2> & {
+        static const Vector<FBaseVocabularyPresetV2> Catalog = {
+            BuildCoreMathVocabularyPresetV2(),
+            BuildClassicalMechanicsVocabularyPresetV2(),
+            BuildRelativisticFieldTheoryVocabularyPresetV2()
+        };
+        return Catalog;
+    }
+
+    inline auto FindBaseVocabularyPresetByIdV2(const Str &presetId) -> const FBaseVocabularyPresetV2 * {
+        const auto &catalog = GetBaseVocabularyPresetCatalogV2();
+        const auto it = std::find_if(catalog.begin(), catalog.end(), [&](const auto &preset) {
+            return preset.PresetId == presetId;
+        });
+        if (it == catalog.end()) return nullptr;
+        return &(*it);
+    }
+
+    inline auto ResolveBaseVocabularyPresetEntriesV2(const Str &presetId) -> Vector<FBaseVocabularyEntryV2> {
+        const auto *preset = FindBaseVocabularyPresetByIdV2(presetId);
+        if (preset == nullptr) return {};
+
+        Vector<FBaseVocabularyEntryV2> entries;
+        if (!preset->ParentPresetId.empty()) {
+            entries = ResolveBaseVocabularyPresetEntriesV2(preset->ParentPresetId);
+        }
+
+        for (auto entry : preset->Entries) {
+            if (entry.SourcePresetId.empty()) entry.SourcePresetId = preset->PresetId;
+            const auto it = std::find_if(entries.begin(), entries.end(), [&](const auto &existing) {
+                return existing.EntryId == entry.EntryId;
+            });
+            if (it == entries.end()) entries.push_back(std::move(entry));
+            else *it = std::move(entry);
+        }
+
+        return entries;
+    }
+
     inline auto FindDefinitionByIdV2(const FModelV2 &model, const Str &definitionId) -> const FDefinitionV2 * {
         const auto it = std::find_if(model.Definitions.begin(), model.Definitions.end(), [&](const auto &definition) {
             return definition.DefinitionId == definitionId;
@@ -563,6 +961,163 @@ namespace Slab::Core::Model::V2 {
         });
         if (it == model.Definitions.end()) return nullptr;
         return &(*it);
+    }
+
+    inline auto FindMatchingLocalDefinitionForVocabularyEntryV2(const FModelV2 &model,
+                                                                const FBaseVocabularyEntryV2 &entry) -> const FDefinitionV2 * {
+        const auto normalizedEntrySymbol = NormalizeSymbolAliasTextV2(
+            entry.PreferredNotation.empty() ? entry.Symbol : entry.PreferredNotation);
+        const auto matchesExplicitEntryId = [&](const FDefinitionV2 &definition) {
+            const auto it = definition.Metadata.find("base_vocabulary_entry_id");
+            return it != definition.Metadata.end() && it->second == entry.EntryId;
+        };
+        const auto matchesAlias = [&](const FDefinitionV2 &definition) {
+            return NormalizeSymbolAliasTextV2(definition.Symbol) == normalizedEntrySymbol ||
+                NormalizeSymbolAliasTextV2(definition.PreferredNotation) == normalizedEntrySymbol;
+        };
+
+        const auto explicitIt = std::find_if(model.Definitions.begin(), model.Definitions.end(), matchesExplicitEntryId);
+        if (explicitIt != model.Definitions.end()) return &(*explicitIt);
+
+        const auto aliasIt = std::find_if(model.Definitions.begin(), model.Definitions.end(), matchesAlias);
+        if (aliasIt == model.Definitions.end()) return nullptr;
+        return &(*aliasIt);
+    }
+
+    inline auto ClassifyVocabularyOverrideStatusV2(const FBaseVocabularyEntryV2 &entry,
+                                                   const FDefinitionV2 *definition) -> EVocabularyOverrideStatusV2 {
+        if (definition == nullptr) return EVocabularyOverrideStatusV2::BuiltIn;
+
+        if (const auto it = definition->Metadata.find("base_vocabulary_override_mode");
+            it != definition->Metadata.end()) {
+            if (it->second == "override") return EVocabularyOverrideStatusV2::OverriddenLocally;
+            if (it->second == "specialize") return EVocabularyOverrideStatusV2::SpecializedLocally;
+        }
+
+        if (entry.DefinitionKind.has_value() && definition->Kind == *entry.DefinitionKind) {
+            return EVocabularyOverrideStatusV2::SpecializedLocally;
+        }
+
+        return EVocabularyOverrideStatusV2::OverriddenLocally;
+    }
+
+    inline auto ResolveModelBaseVocabularyEntriesV2(const FModelV2 &model) -> Vector<FResolvedBaseVocabularyEntryV2> {
+        Vector<FResolvedBaseVocabularyEntryV2> resolved;
+        const auto presetEntries = ResolveBaseVocabularyPresetEntriesV2(model.BaseVocabulary.ActivePresetId);
+        resolved.reserve(presetEntries.size());
+
+        for (const auto &entry : presetEntries) {
+            FResolvedBaseVocabularyEntryV2 resolvedEntry;
+            resolvedEntry.Entry = entry;
+            if (const auto *definition = FindMatchingLocalDefinitionForVocabularyEntryV2(model, entry); definition != nullptr) {
+                resolvedEntry.LocalDefinitionId = definition->DefinitionId;
+                resolvedEntry.OverrideStatus = ClassifyVocabularyOverrideStatusV2(entry, definition);
+            }
+            resolved.push_back(std::move(resolvedEntry));
+        }
+
+        return resolved;
+    }
+
+    inline auto FindBaseVocabularyEntryByIdV2(const FModelV2 &model, const Str &entryId) -> TOptional<FBaseVocabularyEntryV2> {
+        const auto entries = ResolveBaseVocabularyPresetEntriesV2(model.BaseVocabulary.ActivePresetId);
+        const auto it = std::find_if(entries.begin(), entries.end(), [&](const auto &entry) {
+            return entry.EntryId == entryId;
+        });
+        if (it == entries.end()) return std::nullopt;
+        return *it;
+    }
+
+    inline auto FindBaseVocabularyEntryByAliasV2(const FModelV2 &model, const Str &alias) -> TOptional<FBaseVocabularyEntryV2> {
+        const auto normalizedAlias = NormalizeSymbolAliasTextV2(alias);
+        if (normalizedAlias.empty()) return std::nullopt;
+
+        const auto entries = ResolveBaseVocabularyPresetEntriesV2(model.BaseVocabulary.ActivePresetId);
+        const auto it = std::find_if(entries.begin(), entries.end(), [&](const auto &entry) {
+            return NormalizeSymbolAliasTextV2(entry.Symbol) == normalizedAlias ||
+                NormalizeSymbolAliasTextV2(entry.PreferredNotation) == normalizedAlias;
+        });
+        if (it == entries.end()) return std::nullopt;
+        return *it;
+    }
+
+    inline auto FindBaseVocabularyReferenceByAliasV2(const FModelV2 &model, const Str &alias) -> TOptional<FReferenceV2> {
+        if (const auto entry = FindBaseVocabularyEntryByAliasV2(model, alias); entry.has_value()) {
+            return MakeReferenceV2(entry->EntryId, alias);
+        }
+        return std::nullopt;
+    }
+
+    struct FResolvedSemanticEntryV2 {
+        ESemanticOriginV2 Origin = ESemanticOriginV2::Unresolved;
+        const FDefinitionV2 *Definition = nullptr;
+        TOptional<FBaseVocabularyEntryV2> VocabularyEntry;
+
+        [[nodiscard]] auto IsResolved() const -> bool {
+            return Definition != nullptr || VocabularyEntry.has_value();
+        }
+
+        [[nodiscard]] auto GetDeclaredKind() const -> TOptional<EDefinitionKindV2> {
+            if (Definition != nullptr) return Definition->Kind;
+            if (VocabularyEntry.has_value()) return VocabularyEntry->DefinitionKind;
+            return std::nullopt;
+        }
+
+        [[nodiscard]] auto GetDeclaredType() const -> const FTypeExprV2 * {
+            if (Definition != nullptr && Definition->DeclaredType.has_value()) return &(*Definition->DeclaredType);
+            if (VocabularyEntry.has_value() && VocabularyEntry->DeclaredType.has_value()) return &(*VocabularyEntry->DeclaredType);
+            return nullptr;
+        }
+
+        [[nodiscard]] auto GetOperatorStyle() const -> EOperatorApplicationStyleV2 {
+            if (Definition != nullptr) return Definition->OperatorStyle;
+            if (VocabularyEntry.has_value()) return VocabularyEntry->OperatorStyle;
+            return EOperatorApplicationStyleV2::Prefix;
+        }
+
+        [[nodiscard]] auto IsGenericUnaryScalarFunctionOperator() const -> bool {
+            return VocabularyEntry.has_value() && VocabularyEntry->bGenericUnaryScalarFunctionOperator;
+        }
+
+        [[nodiscard]] auto GetReferenceId() const -> Str {
+            if (Definition != nullptr) return Definition->DefinitionId;
+            if (VocabularyEntry.has_value()) return VocabularyEntry->EntryId;
+            return {};
+        }
+
+        [[nodiscard]] auto GetDisplayLabel() const -> Str {
+            if (Definition != nullptr) {
+                if (!Definition->PreferredNotation.empty()) return Definition->PreferredNotation;
+                if (!Definition->Symbol.empty()) return Definition->Symbol;
+                return Definition->DefinitionId;
+            }
+            if (VocabularyEntry.has_value()) {
+                if (!VocabularyEntry->PreferredNotation.empty()) return VocabularyEntry->PreferredNotation;
+                if (!VocabularyEntry->Symbol.empty()) return VocabularyEntry->Symbol;
+                return VocabularyEntry->EntryId;
+            }
+            return {};
+        }
+    };
+
+    inline auto ResolveSemanticEntryV2(const FModelV2 &model, const FReferenceV2 &reference) -> FResolvedSemanticEntryV2 {
+        if (!reference.IsBound()) return {};
+
+        if (const auto *definition = FindDefinitionByIdV2(model, reference.ReferenceId); definition != nullptr) {
+            return FResolvedSemanticEntryV2{
+                .Origin = ESemanticOriginV2::LocalDefinition,
+                .Definition = definition
+            };
+        }
+
+        if (const auto entry = FindBaseVocabularyEntryByIdV2(model, reference.ReferenceId); entry.has_value()) {
+            return FResolvedSemanticEntryV2{
+                .Origin = ESemanticOriginV2::BaseVocabulary,
+                .VocabularyEntry = entry
+            };
+        }
+
+        return {};
     }
 
     inline auto FindRelationByIdV2(const FModelV2 &model, const Str &relationId) -> const FRelationV2 * {
@@ -766,8 +1321,10 @@ namespace Slab::Core::Model::V2 {
                 return false;
             case EExpressionKindV2::Symbol: {
                 if (!expression->Reference.IsBound()) return !expression->Reference.SymbolText.empty();
-                const auto *definition = FindDefinitionByIdV2(model, expression->Reference.ReferenceId);
-                return definition != nullptr && IsDifferentiableDefinitionKindV2(definition->Kind);
+                const auto resolved = ResolveSemanticEntryV2(model, expression->Reference);
+                if (resolved.Definition != nullptr) return IsDifferentiableDefinitionKindV2(resolved.Definition->Kind);
+                if (const auto kind = resolved.GetDeclaredKind(); kind.has_value()) return IsDifferentiableDefinitionKindV2(*kind);
+                return false;
             }
             case EExpressionKindV2::FunctionApplication:
             case EExpressionKindV2::OperatorApplication:
@@ -804,14 +1361,16 @@ namespace Slab::Core::Model::V2 {
                     return fail("symbol '" + expression->Reference.DisplayText() + "' is unresolved");
                 }
 
-                const auto *definition = FindDefinitionByIdV2(model, expression->Reference.ReferenceId);
-                if (definition == nullptr) {
+                const auto resolved = ResolveSemanticEntryV2(model, expression->Reference);
+                if (!resolved.IsResolved()) {
                     return fail("symbol '" + expression->Reference.ReferenceId + "' is undefined");
                 }
-                if (!definition->DeclaredType.has_value()) {
-                    return fail("definition '" + definition->DefinitionId + "' has no declared type");
+
+                const auto *declaredType = resolved.GetDeclaredType();
+                if (declaredType == nullptr) {
+                    return fail("definition '" + resolved.GetReferenceId() + "' has no declared type");
                 }
-                return definition->DeclaredType;
+                return *declaredType;
             }
             case EExpressionKindV2::Unary: {
                 if (expression->Children.size() != 1) return fail("unary expression must have one child");
@@ -887,20 +1446,32 @@ namespace Slab::Core::Model::V2 {
                     return fail("callee '" + expression->Reference.DisplayText() + "' is unresolved");
                 }
 
-                const auto *definition = FindDefinitionByIdV2(model, expression->Reference.ReferenceId);
-                if (definition == nullptr) {
+                const auto resolved = ResolveSemanticEntryV2(model, expression->Reference);
+                if (!resolved.IsResolved()) {
                     return fail("callee '" + expression->Reference.ReferenceId + "' is undefined");
                 }
-                if (!definition->DeclaredType.has_value()) {
-                    return fail("callee '" + definition->DefinitionId + "' has no declared type");
+
+                const auto *declaredType = resolved.GetDeclaredType();
+                if (declaredType == nullptr) {
+                    if (resolved.IsGenericUnaryScalarFunctionOperator() && expression->Children.size() == 1) {
+                        Str argumentError;
+                        const auto argumentType = InferExpressionTypeV2(model, expression->Children.front(), &argumentError);
+                        if (!argumentType.has_value()) return fail("argument[0] for '" + resolved.GetReferenceId() + "': " + argumentError);
+                        if (argumentType->Kind != ETypeExprKindV2::Function || !IsScalarTypeV2(*argumentType)) {
+                            return fail("argument[0] for '" + resolved.GetReferenceId() +
+                                        "' must be a scalar-valued function-like expression");
+                        }
+                        return argumentType;
+                    }
+                    return fail("callee '" + resolved.GetReferenceId() + "' has no declared type");
                 }
-                if (definition->DeclaredType->Kind != ETypeExprKindV2::Function || definition->DeclaredType->Codomain == nullptr) {
-                    return fail("callee '" + definition->DefinitionId + "' is not callable");
+                if (declaredType->Kind != ETypeExprKindV2::Function || declaredType->Codomain == nullptr) {
+                    return fail("callee '" + resolved.GetReferenceId() + "' is not callable");
                 }
 
-                const auto &signature = *definition->DeclaredType;
+                const auto &signature = *declaredType;
                 if (signature.Domain.size() != expression->Children.size()) {
-                    return fail("callee '" + definition->DefinitionId + "' expects " +
+                    return fail("callee '" + resolved.GetReferenceId() + "' expects " +
                                 ToStr(signature.Domain.size()) + " arguments, got " +
                                 ToStr(expression->Children.size()));
                 }
@@ -909,10 +1480,10 @@ namespace Slab::Core::Model::V2 {
                     Str argumentError;
                     const auto argumentType = InferExpressionTypeV2(model, expression->Children[i], &argumentError);
                     if (!argumentType.has_value()) {
-                        return fail("argument[" + ToStr(i) + "] for '" + definition->DefinitionId + "': " + argumentError);
+                        return fail("argument[" + ToStr(i) + "] for '" + resolved.GetReferenceId() + "': " + argumentError);
                     }
                     if (!AreTypesEquivalentV2(signature.Domain[i], *argumentType)) {
-                        return fail("argument[" + ToStr(i) + "] for '" + definition->DefinitionId +
+                        return fail("argument[" + ToStr(i) + "] for '" + resolved.GetReferenceId() +
                                     "' has type '" + RenderTypeExprV2(*argumentType) +
                                     "', expected '" + RenderTypeExprV2(signature.Domain[i]) + "'");
                     }
@@ -1120,8 +1691,8 @@ namespace Slab::Core::Model::V2 {
                                 Str("reference '") + node.Reference.DisplayText() + "' is unresolved");
                             return;
                         }
-                        const auto *definition = FindDefinitionByIdV2(model, node.Reference.ReferenceId);
-                        if (definition == nullptr) {
+                        const auto resolved = ResolveSemanticEntryV2(model, node.Reference);
+                        if (!resolved.IsResolved()) {
                             result.Add(
                                 EValidationSeverityV2::Error,
                                 relation.RelationId,
@@ -1129,23 +1700,25 @@ namespace Slab::Core::Model::V2 {
                                 Str("reference '") + node.Reference.ReferenceId + "' is undefined");
                             return;
                         }
+                        const auto declaredKind = resolved.GetDeclaredKind();
                         if (node.Kind == EExpressionKindV2::FunctionApplication &&
-                            !(definition->Kind == EDefinitionKindV2::StateVariable ||
-                              definition->Kind == EDefinitionKindV2::Field ||
-                              definition->Kind == EDefinitionKindV2::ObservableSymbol)) {
+                            !(declaredKind.has_value() &&
+                              (*declaredKind == EDefinitionKindV2::StateVariable ||
+                               *declaredKind == EDefinitionKindV2::Field ||
+                               *declaredKind == EDefinitionKindV2::ObservableSymbol))) {
                             result.Add(
                                 EValidationSeverityV2::Error,
                                 relation.RelationId,
                                 sideLabel,
-                                Str("function application uses non-function definition '") + definition->DefinitionId + "'");
+                                Str("function application uses non-function definition '") + resolved.GetReferenceId() + "'");
                         }
                         if (node.Kind == EExpressionKindV2::OperatorApplication &&
-                            definition->Kind != EDefinitionKindV2::OperatorSymbol) {
+                            !(declaredKind.has_value() && *declaredKind == EDefinitionKindV2::OperatorSymbol)) {
                             result.Add(
                                 EValidationSeverityV2::Error,
                                 relation.RelationId,
                                 sideLabel,
-                                Str("operator application uses non-operator definition '") + definition->DefinitionId + "'");
+                                Str("operator application uses non-operator definition '") + resolved.GetReferenceId() + "'");
                         }
                     }
 

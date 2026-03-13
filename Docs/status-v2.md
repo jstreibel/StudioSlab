@@ -2,11 +2,11 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-03-06`
-- Last implementation update: `2026-03-06` (shared graph substrate baseline + Schemes/Playground migration)
-- Last architecture-doc update: `2026-03-06` (graph substrate + LabV2 graph docs refresh)
-- Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-06`
-- Build-target sanity check date: `2026-03-06` (`StudioSlab` build passes in `cmake-build-debug`)
+- Snapshot date: `2026-03-13`
+- Last implementation update: `2026-03-13` (Model-tab ambient semantic environment baseline)
+- Last architecture-doc update: `2026-03-13` (Model-tab semantic environment + LabV2 model docs refresh)
+- Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-13`
+- Build-target sanity check date: `2026-03-13` (`StudioSlab` build passes in `cmake-build-debug`)
 
 ## Implemented Baseline
 
@@ -146,6 +146,29 @@
   - Graph Playground draw and serialization moved into dedicated translation units
   - Schemes/plots panel draw paths moved to `LabV2WindowManagerSchemesPanels.cpp`
 
+## Recent Updates (`2026-03-13`, implementation)
+
+- Model V2 semantic-environment baseline landed:
+  - `FModelV2` now carries model-level `BaseVocabulary` preset selection
+  - ambient entries are structured semantic entries rather than display-only labels
+  - current preset catalog:
+    - `core_math`
+    - `classical_mechanics`
+    - `relativistic_field_theory`
+- Resolution and diagnostics now distinguish:
+  - local explicit definitions
+  - active base-vocabulary entries
+  - inferred / assumed local semantics
+- Model-tab UI now exposes `Base Vocabulary` as a readonly ambient section above local `Definitions`:
+  - entries are inspectable and origin-aware
+  - symbol-like entries render directly as LaTeX
+  - notation-convention entries use preview LaTeX templates (for example `\\dot{\\mathrm{state}}`, `\\ddot{\\mathrm{state}}`, `\\partial_{\\mu}`)
+  - dedicated splitters exist between `Base Vocabulary` / `Definitions` and `Definitions` / `Relations`
+- Seeded model alignment:
+  - Harmonic Oscillator now uses `classical_mechanics`
+  - Klein-Gordon now uses `relativistic_field_theory`
+  - ambient `\\Box` is supplied by vocabulary instead of requiring only heuristic inference or a local `operator.box` definition
+
 ## Reflection Working-Memory Caveats (Current)
 
 - Schemes `Blueprint Graph` is a visualization/navigation surface, not yet a full graph-execution editor.
@@ -180,6 +203,7 @@
 - LiveControl recording/replay and sequence-time integration
 - Unified persistence/provenance model across assets/runs/studies
 - Web/wasm target path (toolchain/build/backend split) is not implemented
+- User-authored base-vocabulary editing and richer semantic-environment provenance are not implemented
 
 ## Conflict Rule
 

@@ -99,11 +99,16 @@ Current adapter responsibilities:
 ## Model Panel V1 Behavior
 
 Current `Model` panel usage:
+- `Base Vocabulary` sits above local `Definitions` as an ambient/readonly section
+- Base-vocabulary entries are inspectable but not edited like local definitions
+- symbol-like vocabulary entries render as direct LaTeX (`\\mathbb{R}`, `\\Box`)
+- notation-convention entries render using preview templates (`\\dot{\\mathrm{state}}`, `\\ddot{\\mathrm{state}}`, `\\partial_{\\mu}`)
 - `Definitions` and `Relations` rows show only the typeset formula
 - detailed metadata stays in `Details`
 - hover previews an item immediately
 - click pins the current selection
 - `Details` reports whether focus came from hover preview or pinned selection
+- `Base Vocabulary` / `Definitions` has an internal vertical splitter
 - `Definitions` and `Relations` have an internal vertical splitter
 - `Notation Scratchpad` sits below the main content and has its own vertical splitter
 
@@ -117,9 +122,11 @@ Current layout intent:
 Minimum manual checks after touching this surface:
 - open `Model`
 - verify seeded Harmonic Oscillator and Klein-Gordon rows render readable math
+- verify `Base Vocabulary` entries render readable math and convention previews
 - verify first open does not rerasterize every frame after warm-up
 - verify row hover and pinned selection update `Details` correctly
 - verify row highlight bounds match hit area
+- verify `Base Vocabulary` / `Definitions` splitter drags cleanly
 - verify `Definitions` / `Relations` splitter drags cleanly
 - verify scratchpad splitter drags cleanly
 - verify main panel does not degrade into one large scrolling surface in normal window sizes

@@ -170,6 +170,9 @@ private:
 
     Slab::Vector<Slab::Core::Model::V2::FModelV2> ModelDemoCatalog;
     int SelectedModelIndex = 0;
+    Slab::Core::Model::V2::FSemanticObjectRefV2 SelectedModelSemanticObject;
+    Slab::Core::Model::V2::FSemanticObjectRefV2 ModelPendingScrollTarget;
+    Slab::Str SelectedModelVocabularyEntryId;
     Slab::Str SelectedModelDefinitionId;
     Slab::Str SelectedModelRelationId;
     bool bSelectedModelDetailIsRelation = false;
@@ -178,6 +181,7 @@ private:
     Slab::Str ModelEditorStatus;
     Slab::Core::Model::V2::FModelChangeRecordV2 ModelLastChangeRecord;
     bool bModelHasLastChangeRecord = false;
+    float ModelCatalogVocabularyHeight = 132.0f;
     float ModelCatalogDefinitionsHeight = 220.0f;
     float ModelScratchpadHeight = 220.0f;
     struct FSchemeOperationTraceEntry {

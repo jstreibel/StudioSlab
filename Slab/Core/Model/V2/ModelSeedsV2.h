@@ -40,6 +40,7 @@ namespace Slab::Core::Model::V2 {
         model.Description =
             "Finite-dimensional ODE model with one scalar displacement, one scalar momentum, "
             "symbolic parameters, and equivalent second-order and first-order relations.";
+        model.BaseVocabulary.ActivePresetId = "classical_mechanics";
         model.Tags = {"model", "ode", "classical-mechanics"};
 
         {
@@ -207,7 +208,8 @@ namespace Slab::Core::Model::V2 {
         model.Name = "Klein-Gordon Field";
         model.Description =
             "Field-theoretic model with an abstract scalar field over symbolic spacetime dimension "
-            "and an explicit d'Alembertian operator symbol.";
+            "and an ambient d'Alembertian operator from the active vocabulary.";
+        model.BaseVocabulary.ActivePresetId = "relativistic_field_theory";
         model.Tags = {"model", "pde", "field-theory", "spacetime"};
         model.Metadata["ambient_space"] = "Minkowski-like";
 
@@ -245,28 +247,6 @@ namespace Slab::Core::Model::V2 {
                 "Scalar Field",
                 "Abstract scalar field over symbolic spacetime.");
             definition.Tags = {"field", "scalar"};
-            definition.Metadata["ambient_space"] = "Minkowski-like";
-            model.Definitions.push_back(std::move(definition));
-        }
-
-        {
-            const auto *fieldDefinition = FindDefinitionByIdV2(model, "field.phi");
-            if (fieldDefinition == nullptr || !fieldDefinition->DeclaredType.has_value()) {
-                throw Exception("Klein-Gordon seed requires the phi field definition before Box.");
-            }
-
-            FDefinitionV2 definition;
-            definition.DefinitionId = "operator.box";
-            definition.Symbol = "Box";
-            definition.PreferredNotation = "\\Box";
-            definition.DisplayName = "d'Alembertian";
-            definition.Description = "Abstract wave operator on the scalar field.";
-            definition.Kind = EDefinitionKindV2::OperatorSymbol;
-            definition.OperatorStyle = EOperatorApplicationStyleV2::Prefix;
-            definition.DeclaredType = MakeFunctionTypeV2({*fieldDefinition->DeclaredType}, *fieldDefinition->DeclaredType);
-            definition.SourceText =
-                "\\Box : (\\mathbb{R}^{d+1} \\to \\mathbb{R}) \\to (\\mathbb{R}^{d+1} \\to \\mathbb{R})";
-            definition.Tags = {"operator", "wave"};
             definition.Metadata["ambient_space"] = "Minkowski-like";
             model.Definitions.push_back(std::move(definition));
         }
