@@ -1130,6 +1130,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         ModelEditorBuffersByKey.clear();
         ModelEditorStatus.clear();
         bModelHasLastChangeRecord = false;
+        InvalidateModelWorkspaceViewState();
     }
 
     const auto &vocabularyPresets = GetBaseVocabularyPresetCatalogV2();
@@ -1168,6 +1169,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         SelectedModelAssumptionId.clear();
         ModelEditorBuffersByKey.clear();
         ModelEditorStatus = "[Ok] Switched base vocabulary to '" + model.BaseVocabulary.ActivePresetId + "'.";
+        InvalidateModelWorkspaceViewState();
     }
 
     const auto overview = BuildModelSemanticOverviewV2(model);
@@ -1234,6 +1236,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                 SelectedModelAssumptionId = ref.ObjectId;
                 break;
         }
+        InvalidateModelWorkspaceViewState();
     };
 
     auto navigateToSemanticObject = [&](const FSemanticObjectRefV2 &ref) {
@@ -1707,6 +1710,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                     ImVec2(-FLT_MIN, 120.0f),
                     ImGuiInputTextFlags_AllowTabInput)) {
                 SetEditorBufferDraftV2(*editorBuffer, buffer);
+                InvalidateModelWorkspaceViewState();
             }
 
             if (ImGui::Button("Parse / Preview")) {
@@ -1715,6 +1719,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                 } else {
                     ModelEditorStatus = "[Error] Could not parse draft for " + editorBuffer->TargetId + ".";
                 }
+                InvalidateModelWorkspaceViewState();
                 bUiStateChangedThisFrame = true;
             }
             ImGui::SameLine();
@@ -1736,6 +1741,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                 } else {
                     ModelEditorStatus = "[Error] Apply failed for " + editorBuffer->TargetId + ".";
                 }
+                InvalidateModelWorkspaceViewState();
                 bUiStateChangedThisFrame = true;
             }
             ImGui::EndDisabled();
@@ -1752,6 +1758,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                         }
                     }
                 }
+                InvalidateModelWorkspaceViewState();
                 bUiStateChangedThisFrame = true;
             }
             ImGui::EndDisabled();
@@ -1772,6 +1779,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                 }
 
                 ParseEditorBufferPreviewV2(model, *editorBuffer);
+                InvalidateModelWorkspaceViewState();
 
                 if (changeRecord.ObjectKind == EModelObjectKindV2::Definition && !changeRecord.ObjectId.empty()) {
                     selectSemanticObject(MakeDefinitionObjectRefV2(changeRecord.ObjectId), true);
@@ -1990,6 +1998,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                             } else {
                                 selectSemanticObject(ref);
                             }
+                            InvalidateModelWorkspaceViewState();
                             bUiStateChangedThisFrame = true;
                         }
                     }
@@ -2034,6 +2043,12 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
     ImGui::EndChild();
 }
 
+auto FLabV2WindowManager::InvalidateModelWorkspaceViewState() -> void {
+    CachedModelWorkspaceFrame = -1;
+    bModelWorkspaceViewStateDirty = true;
+    CachedModelWorkspaceViewState = {};
+}
+
 auto FLabV2WindowManager::SelectModelSemanticObject(const Slab::Core::Model::V2::FModelV2 &model,
                                                     const Slab::Core::Model::V2::FSemanticObjectRefV2 &ref,
                                                     const bool bRequestScroll,
@@ -2066,10 +2081,17 @@ auto FLabV2WindowManager::SelectModelSemanticObject(const Slab::Core::Model::V2:
             SelectedModelAssumptionId = ref.ObjectId;
             break;
     }
+
+    InvalidateModelWorkspaceViewState();
 }
 
 auto FLabV2WindowManager::PrepareModelWorkspaceViewState() -> FModelWorkspaceViewState {
     using namespace Slab::Core::Model::V2;
+
+    const auto frameIndex = ImGui::GetFrameCount();
+    if (!bModelWorkspaceViewStateDirty && CachedModelWorkspaceFrame == frameIndex) {
+        return CachedModelWorkspaceViewState;
+    }
 
     FModelWorkspaceViewState state;
 
@@ -2189,7 +2211,10 @@ auto FLabV2WindowManager::PrepareModelWorkspaceViewState() -> FModelWorkspaceVie
     state.DraftPreviewAssumptions = GetEditorBufferPreviewAssumptions(state.ActiveEditorBuffer);
     state.Model = &model;
     state.bAvailable = true;
-    return state;
+    CachedModelWorkspaceViewState = state;
+    CachedModelWorkspaceFrame = frameIndex;
+    bModelWorkspaceViewStateDirty = false;
+    return CachedModelWorkspaceViewState;
 }
 
 auto FLabV2WindowManager::DrawModelVocabularyPanel() -> void {
@@ -2223,6 +2248,7 @@ auto FLabV2WindowManager::DrawModelVocabularyPanel() -> void {
         ModelNewRelationPreview.reset();
         ModelNewDefinitionStatus.clear();
         ModelNewRelationStatus.clear();
+        InvalidateModelWorkspaceViewState();
     };
 
     bool bModelChanged = false;
@@ -2650,6 +2676,7 @@ auto FLabV2WindowManager::DrawModelEditorPanel() -> void {
             ImVec2(-FLT_MIN, 120.0f),
             ImGuiInputTextFlags_AllowTabInput)) {
         SetEditorBufferDraftV2(*editorBuffer, buffer);
+        InvalidateModelWorkspaceViewState();
     }
 
     if (ImGui::Button("Parse / Preview")) {
@@ -2658,6 +2685,7 @@ auto FLabV2WindowManager::DrawModelEditorPanel() -> void {
         } else {
             ModelEditorStatus = "[Error] Could not parse draft for " + editorBuffer->TargetId + ".";
         }
+        InvalidateModelWorkspaceViewState();
         bUiStateChangedThisFrame = true;
     }
     ImGui::SameLine();
@@ -2677,6 +2705,7 @@ auto FLabV2WindowManager::DrawModelEditorPanel() -> void {
                 SelectModelSemanticObject(model, MakeRelationObjectRefV2(changeRecord.ObjectId), false, false);
             }
         }
+        InvalidateModelWorkspaceViewState();
         bUiStateChangedThisFrame = true;
     }
     ImGui::EndDisabled();
@@ -2684,6 +2713,7 @@ auto FLabV2WindowManager::DrawModelEditorPanel() -> void {
     ImGui::BeginDisabled(!editorBuffer->bDraftDirty && !editorBuffer->bPreviewCurrent);
     if (ImGui::Button("Revert / Cancel")) {
         RevertEditorBufferV2(model, *editorBuffer);
+        InvalidateModelWorkspaceViewState();
         bUiStateChangedThisFrame = true;
     }
     ImGui::EndDisabled();

@@ -230,6 +230,9 @@ private:
         Slab::Vector<Slab::Core::Model::V2::FDefinitionV2> DraftPreviewDefinitions;
         const Slab::Vector<Slab::Core::Model::V2::FSemanticAssumptionV2> *DraftPreviewAssumptions = nullptr;
     };
+    FModelWorkspaceViewState CachedModelWorkspaceViewState;
+    int CachedModelWorkspaceFrame = -1;
+    bool bModelWorkspaceViewStateDirty = true;
 
     struct FSchemeOperationTraceEntry {
         std::size_t SequenceId = 0;
@@ -395,6 +398,7 @@ private:
     auto DrawSchemesInspectorPanel() -> void;
     auto DrawSchemesBlueprintGraphPanel() -> void;
     [[nodiscard]] auto PrepareModelWorkspaceViewState() -> FModelWorkspaceViewState;
+    auto InvalidateModelWorkspaceViewState() -> void;
     auto SelectModelSemanticObject(const Slab::Core::Model::V2::FModelV2 &model,
                                    const Slab::Core::Model::V2::FSemanticObjectRefV2 &ref,
                                    bool bRequestScroll = false,
