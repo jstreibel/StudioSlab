@@ -14,6 +14,8 @@
 3. UI/runtime contracts:
    - `Docs/graphics-composition-contract.md`
    - `Docs/plot-window-ux-contract.md`
+   - `Docs/Plot2D-V2-Scheme.md`
+   - `Docs/plot2d-v2-migration-plan.md`
    - `Docs/typesetting-bridge.md`
 4. For Model-tab semantic-environment work:
    - `Docs/model-v2-semantic-environment.md`
@@ -45,6 +47,8 @@
   - `Slab/Graphics/Plot2D/V2/PlotArtistV2.h`
   - `Slab/Graphics/Plot2D/V2/Plot2DWindowV2.h`
   - `Slab/Graphics/Plot2D/V2/Artists/ModelSemanticGraphArtistV2.h`
+  - `Docs/Plot2D-V2-Scheme.md`
+  - `Docs/plot2d-v2-migration-plan.md`
 - Plot reflection catalog bridge surfaces:
   - `Slab/Core/Reflection/V2/ReflectionCatalogRegistryV2.h`
   - `Slab/Core/Reflection/V2/GraphSubstrateV2.h`
@@ -107,6 +111,8 @@
   - `Inspector`
 - In the Model workspace, `Base Vocabulary` is ambient/readonly and full object details belong in `Model Inspector`, not repeated in catalog panes.
 - The `Model Semantic Graph` plot window is a read-only navigation surface tied to shared model selection.
+- Plot V2 controls stay viewport-attached in the host layer; the scene layer should not absorb ImGui toolbar/detail logic.
+- Artist visibility/z-order edits should work from V2 plot host controls without re-coupling artists to the renderer.
 - New model content creation is transactional:
   - preview first
   - canonical mutation only on `Create` / `Apply`

@@ -394,7 +394,42 @@ namespace Slab::Graphics::Plot2D::V2 {
 
             for (const auto &slot : window->GetArtists()) {
                 if (slot.Artist == nullptr) continue;
-                AddEntityDescriptor(slot.Artist->DescribeReflection(), previousPending);
+
+                auto descriptor = slot.Artist->DescribeReflection();
+                descriptor.Parameters.push_back(FPlotReflectionParameterBindingV2{
+                    .Schema = ReflectionV2::FParameterSchemaV2{
+                        .ParameterId = "z_order",
+                        .DisplayName = "Z Order",
+                        .Description = "Artist layering order inside the parent window.",
+                        .TypeId = ReflectionV2::CTypeIdScalarInt32,
+                        .Mutability = ReflectionV2::EParameterMutability::RuntimeMutable,
+                        .Exposure = ReflectionV2::EParameterExposure::WritableExposed
+                    },
+                    .ReadCurrent = [window, artist = slot.Artist, zOrder = slot.ZOrder] {
+                        int currentZOrder = zOrder;
+                        (void) window->TryGetArtistZOrder(artist, currentZOrder);
+                        return ReflectionV2::MakeIntValue(currentZOrder);
+                    },
+                    .WriteLiveValue = [window, artist = slot.Artist](const ReflectionV2::FReflectionValueV2 &value) {
+                        int parsed = 0;
+                        try {
+                            parsed = std::stoi(value.Encoded);
+                        } catch (const std::exception &e) {
+                            return ReflectionV2::FOperationResultV2::Error(
+                                "plot2d_v2.artist.parse_z_order",
+                                "Could not parse integer for parameter 'z_order': " + Str(e.what()));
+                        }
+
+                        if (!window->SetArtistZOrder(artist, parsed)) {
+                            return ReflectionV2::FOperationResultV2::Error(
+                                "plot2d_v2.artist.z_order_set_failed",
+                                "Could not set z-order for artist '" + artist->GetArtistId() + "'.");
+                        }
+
+                        return ReflectionV2::FOperationResultV2::Ok();
+                    }
+                });
+                AddEntityDescriptor(std::move(descriptor), previousPending);
             }
         }
 

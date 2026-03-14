@@ -57,6 +57,8 @@ namespace Slab::Graphics::Plot2D::V2 {
         [[nodiscard]] auto GetArtists() const -> const Vector<FArtistSlotV2> &;
         [[nodiscard]] auto GetArtistsInDrawOrder() const -> Vector<FArtistSlotV2>;
         [[nodiscard]] auto FindArtistById(const Str &artistId) const -> FPlotArtistV2_ptr;
+        [[nodiscard]] auto TryGetArtistZOrder(const FPlotArtistV2_ptr &artist, int &zOrderOut) const -> bool;
+        auto SetArtistZOrder(const FPlotArtistV2_ptr &artist, int zOrder) -> bool;
 
         auto FitRegionToArtists(DevFloat paddingFraction = 0.05) -> bool;
 

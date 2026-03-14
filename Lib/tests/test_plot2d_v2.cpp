@@ -184,6 +184,21 @@ TEST_CASE("Plot2D V2 reflection catalog supports query and set", "[Plot2DV2][Ref
     REQUIRE(setArtistVisibleResult.IsOk());
     REQUIRE_FALSE(points->IsVisible());
 
+    ReflectionV2::FValueMapV2 setArtistZOrderInputs;
+    setArtistZOrderInputs["parameter_id"] = ReflectionV2::MakeStringValue("z_order");
+    setArtistZOrderInputs["value"] = ReflectionV2::MakeEncodedValue(ReflectionV2::CTypeIdScalarInt32, "7");
+
+    const auto setArtistZOrderResult = catalog.Invoke(
+        artistInterfaceId,
+        CPlotOperationIdCommandSetParameterV2,
+        setArtistZOrderInputs,
+        context);
+
+    REQUIRE(setArtistZOrderResult.IsOk());
+    int updatedZOrder = 0;
+    REQUIRE(window.TryGetArtistZOrder(points, updatedZOrder));
+    REQUIRE(updatedZOrder == 7);
+
     const auto fitResult = catalog.Invoke(
         windowInterfaceId,
         "command.window.fit_to_artists",
@@ -192,6 +207,18 @@ TEST_CASE("Plot2D V2 reflection catalog supports query and set", "[Plot2DV2][Ref
 
     REQUIRE(fitResult.IsOk());
     REQUIRE(fitResult.OutputMap.at("fitted").Encoded == "true");
+
+    const auto listArtistsResult = catalog.Invoke(
+        windowInterfaceId,
+        "query.window.list_artists",
+        {},
+        context);
+    REQUIRE(listArtistsResult.IsOk());
+    REQUIRE(listArtistsResult.OutputMap.at("artist_count").Encoded == "2");
+    REQUIRE(listArtistsResult.OutputMap.at("artist.0.id").Encoded == function->GetArtistId());
+    REQUIRE(listArtistsResult.OutputMap.at("artist.1.id").Encoded == points->GetArtistId());
+    REQUIRE(listArtistsResult.OutputMap.at("artist.1.z_order").Encoded == "7");
+    REQUIRE(listArtistsResult.OutputMap.at("artist.1.visible").Encoded == "false");
 
     REQUIRE(function->GetSampleCount() == 16);
     const auto doubleSamplesResult = catalog.Invoke(

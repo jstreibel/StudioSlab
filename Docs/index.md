@@ -51,6 +51,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 - Graph semantics and ontology direction: `Docs/graph-onthology.md`
 - Reflection catalog registry deep-dive: `Docs/index-reflection-catalog-registry-v2.md`, `Docs/reflection-catalog-registry-v2-overview.md`, `Docs/reflection-catalog-registry-v2-routing.md`, `Docs/reflection-catalog-registry-v2-source-wiring.md`
 - Plot2D reflection quick path: `Docs/plot2d-reflection-v2-quick.md`
+- Plot2D V2 scheme + migration plan: `Docs/Plot2D-V2-Scheme.md`, `Docs/plot2d-v2-migration-plan.md`
 - Platform feasibility: `Docs/platform-wasm-feasibility.md`
 - Runtime/UI contracts: `Docs/graphics-composition-contract.md`, `Docs/plot-window-ux-contract.md`, `Docs/slab-root-migration-policy.md`
 - Typesetting/UI math bridge: `Docs/typesetting-bridge.md`

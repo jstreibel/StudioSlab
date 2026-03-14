@@ -1,115 +1,131 @@
-# Plot2D Window V2 Scheme
+# Plot2D V2 Scheme
 
 ## Goals
-- Keep Plot Window behavior familiar: a window owns multiple artists and draws 2D content.
-- Decouple rendering backend from both window and artist logic.
-- Make Plot Window and artists reflectable through Reflection V2 schemas and operations.
-- Keep migration incremental: V1 and V2 can coexist.
 
-## Non-goals (current iteration)
-- Full parity with every legacy artist type in one pass.
-- Immediate replacement of `FPlot2DWindow` legacy runtime path.
-- Locking into one graphics API (OpenGL/Vulkan/D3D/WebGL/Cairo).
+- Keep the legacy mental model: one plot window owns multiple artists.
+- Keep render backends decoupled from both the window and the artists.
+- Keep host/UI/input behavior out of the artists.
+- Keep legacy and V2 plot paths discoverable together during migration.
 
 ## Architecture
 
-### 1) Scene Model Layer (Backend-Agnostic)
-- `FPlot2DWindowV2`
-  - Owns window identity, title, region, viewport, and artist slots with z-order.
-  - Builds a backend-neutral draw list from artists.
-  - Supports fit-to-artists range review (similar legacy auto-range behavior).
-- `FPlotArtistV2`
-  - Base class for artists.
-  - Emits draw commands, never direct API calls.
-  - Exposes reflection descriptor fragments.
+### 1. Scene layer
 
-### 2) Draw Command Layer
+- `FPlot2DWindowV2`
+  - owns window id, title, region, viewport, auto-fit flag
+  - owns artist slots and z-order
+  - builds a backend-neutral draw list
+  - dispatches artist hit-test / pointer / keyboard events
+- `FPlotArtistV2`
+  - emits draw commands only
+  - exposes reflection parameters/operations
+  - may participate in hit-testing and interaction
+
+### 2. Draw-command layer
+
 - `FPlotDrawListV2`
-  - Collects draw commands and legend entries.
-- Command types:
   - `FPolylineCommandV2`
   - `FPointSetCommandV2`
   - `FRectangleCommandV2`
   - `FTextCommandV2`
-- Coordinate spaces:
-  - Plot space (data coordinates)
-  - Screen space (pixel/UI overlays)
 
-### 3) Rendering Backend Layer
+Coordinate spaces:
+- plot space
+- screen space
+
+### 3. Backend layer
+
 - `IPlotRenderBackendV2`
-  - Single backend contract: `Render(frameContext, drawList)`.
-  - Backends can target legacy OpenGL, modern OpenGL, Vulkan, Direct3D, WebGL bridge, Cairo, or software.
-- Implemented in this iteration:
-  - `FRecordingRenderBackendV2` (test backend) for deterministic verification of command emission.
+  - `Render(frameContext, drawList)`
+- current backends:
+  - `FOpenGLRenderBackendV2`
+  - `FRecordingRenderBackendV2`
 
-### 4) Reflection Layer
-- `IPlotReflectableEntityV2`
-  - Shared reflection surface for windows and artists.
-- Window/artist reflection descriptors:
-  - Parameters with typed schemas, mutability, exposure, and current/set handlers.
-  - Operations for both generic parameter commands and entity-specific commands.
+### 4. Host layer
+
+- current host: `FPlot2DWindowHostV2` in `Studios/LabV2/LabV2WindowManager.cpp`
+
+Responsibilities:
+- slab-window hosting
+- pan / zoom / fit / aspect-lock camera behavior
+- viewport-attached toolbar/detail UI
+- forwarding pointer/keyboard events into the V2 scene
+
+This is intentionally separate from `FPlot2DWindowV2`.
+
+### 5. Reflection / migration layer
+
 - `FPlotReflectionCatalogV2`
-  - Discovers live windows/artists.
-  - Builds `FReflectionCatalogV2`.
-  - Exposes invocation path with Reflection V2 operation guardrails.
-  - Provides default ops equivalent to existing adapter patterns:
-    - `query.parameters`
-    - `query.parameter.get`
-    - `command.parameter.set`
-    - `command.parameter.apply_pending`
+  - composed discovery across V2 and legacy plots
+  - default parameter operations (`query.parameters`, `query.parameter.get`, `command.parameter.set`, `command.parameter.apply_pending`)
+- `FLegacyPlotReflectionAdapterV2`
+  - projects legacy `FPlot2DWindow` and `FArtist` into the same reflection catalog
 
-## Artist Set in V2 (current)
+## Current V2 Artist Set
+
+- `FBackgroundArtistV2`
 - `FAxisArtistV2`
-  - Grid + principal axes, with reflected toggles and tick density.
 - `FPointSetArtistV2`
-  - Point/polyline rendering with reflected style controls.
 - `FRtoRFunctionArtistV2`
-  - Functional sampling over domain with reflected sample/domain parameters.
+- `FModelSemanticGraphArtistV2`
 
-## Reflection Contract Details
+## Implemented Interaction Baseline
 
-### Window Parameters (initial set)
-- `window_id` (const)
-- `title` (runtime mutable)
-- `x_min`, `x_max`, `y_min`, `y_max` (runtime mutable)
-- `auto_fit_ranges` (runtime mutable)
-- `artist_count` (const)
+- window-host pan / zoom / fit
+- artist hit-testing
+- artist pointer event dispatch
+- artist keyboard event dispatch
+- semantic-graph click activation
+- semantic-graph keyboard controls
+- attached plot toolbar/detail controls in LabV2 host
 
-### Window Operations
+## Current Reflection Baseline
+
+### Window
+
+- `window_id`
+- `title`
+- `x_min`
+- `x_max`
+- `y_min`
+- `y_max`
+- `auto_fit_ranges`
+- `artist_count`
+
+Operations:
 - `command.window.fit_to_artists`
-  - Optional `padding_fraction` input.
-  - Outputs fitted flag and resulting bounds.
 - `query.window.list_artists`
-  - Returns current artist ids and count.
 
-### Artist Common Parameters
-- `artist_id` (const)
-- `artist_type` (const)
-- `label` (runtime mutable)
-- `visible` (runtime mutable)
-- `affect_graph_ranges` (runtime mutable)
+### Artist common parameters
 
-## Migration Strategy
+- `artist_id`
+- `artist_type`
+- `parent_window_id`
+- `label`
+- `visible`
+- `affect_graph_ranges`
+- `z_order`
 
-### Phase 1 (implemented)
-- Introduce V2 side-by-side under `Slab/Graphics/Plot2D/V2`.
-- Keep legacy classes unchanged.
-- Use test backend to validate behavior and reflection semantics.
+## Migration Status
 
-### Phase 2
-- Add runtime backends (legacy GL adapter first for immediate visual parity).
-- Port additional artists (`R2toR`, sections, history, overlays).
-- Add legacy-to-V2 reflection bridge so legacy windows/artists are discoverable in one catalog.
+### Landed
 
-### Phase 3
-- Integrate V2 reflection catalog composition in Lab/CLI surfaces.
-- Add compatibility shims for old plotter APIs where needed.
+- V2 scene/backend separation
+- legacy + V2 mixed reflection discovery
+- OpenGL backend adapter for V2 draw commands
+- recording backend tests
+- first interactive V2 artist
+- host-side attached controls parity first slice
 
-### Phase 4
-- Decommission direct OpenGL calls from artist logic.
-- Keep backends swappable per window/context.
+### Still Missing
 
-## File Map (this iteration)
+- labels/x-hair parity
+- history / `R2Section` / `R2toR` V2-native artists
+- extraction of the host from `LabV2WindowManager.cpp`
+- generic export story beyond the current OpenGL-host path
+
+## File Map
+
 - `Slab/Graphics/Plot2D/V2/Plot2DWindowV2.*`
 - `Slab/Graphics/Plot2D/V2/PlotArtistV2.*`
 - `Slab/Graphics/Plot2D/V2/Plot2DDrawListV2.*`
@@ -118,11 +134,11 @@
 - `Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.*`
 - `Slab/Graphics/Plot2D/V2/LegacyPlotReflectionAdapterV2.*`
 - `Slab/Graphics/Plot2D/V2/Artists/*ArtistV2.*`
-- `Slab/Graphics/Plot2D/V2/Backends/RecordingRenderBackendV2.*`
-- `Slab/Graphics/Plot2D/V2/Plot2DV2.h`
+- `Slab/Graphics/Plot2D/V2/Backends/*`
+- `Studios/LabV2/LabV2WindowManager.cpp`
+- `Lib/tests/test_plot2d_v2.cpp`
 
-## Validation
-- Added Catch2 coverage in `Lib/tests/test_plot2d_v2.cpp`:
-  - Draw command emission through backend abstraction.
-  - Fit-to-artists bounds behavior.
-  - Reflection query/set and window command execution.
+## Companion Doc
+
+Implementation sequencing and remaining migration phases are tracked in:
+- `Docs/plot2d-v2-migration-plan.md`

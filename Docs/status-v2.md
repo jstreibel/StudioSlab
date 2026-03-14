@@ -4,7 +4,7 @@
 
 - Snapshot date: `2026-03-14`
 - Last implementation update: `2026-03-14` (Model semantic graph + ODE realization `RZ-00..03`)
-- Last architecture-doc update: `2026-03-14` (doc routing taxonomy + `RZ-03` handoff)
+- Last architecture-doc update: `2026-03-14` (plot migration docs + `RZ-03` handoff retained)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
 - Build-target sanity check date: `2026-03-14` (`StudioSlab` and `testsuite` build pass in `cmake-build-debug`)
 
@@ -195,6 +195,10 @@
 - Plot V2 interaction baseline extended:
   - artists can now participate in pointer hit-testing and keyboard event handling
   - the semantic-graph artist is the first built-in consumer of that interaction path
+- Plot V2 host/control parity first slice landed:
+  - LabV2 V2-plot hosts now expose viewport-attached toolbar/detail controls instead of acting as render-only wrappers
+  - V2 artist z-order is now surfaced through reflection and editable from host-side layer controls
+  - `query.window.list_artists` for V2 windows now reports per-artist id/label/z-order/visibility metadata
 - ODE realization descent `RZ-00..02` is implemented:
   - one ODE realization descriptor is derived from canonical `Model V2` semantics
   - readiness is computed from semantic health, state coverage, and explicit model-level initial conditions

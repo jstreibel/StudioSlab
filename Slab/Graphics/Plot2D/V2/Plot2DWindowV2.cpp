@@ -156,6 +156,30 @@ namespace Slab::Graphics::Plot2D::V2 {
         return it->Artist;
     }
 
+    auto FPlot2DWindowV2::TryGetArtistZOrder(const FPlotArtistV2_ptr &artist, int &zOrderOut) const -> bool {
+        if (artist == nullptr) return false;
+
+        const auto it = std::find_if(Artists.begin(), Artists.end(), [&](const FArtistSlotV2 &slot) {
+            return slot.Artist == artist;
+        });
+        if (it == Artists.end()) return false;
+
+        zOrderOut = it->ZOrder;
+        return true;
+    }
+
+    auto FPlot2DWindowV2::SetArtistZOrder(const FPlotArtistV2_ptr &artist, const int zOrder) -> bool {
+        if (artist == nullptr) return false;
+
+        const auto it = std::find_if(Artists.begin(), Artists.end(), [&](const FArtistSlotV2 &slot) {
+            return slot.Artist == artist;
+        });
+        if (it == Artists.end()) return false;
+
+        it->ZOrder = zOrder;
+        return true;
+    }
+
     auto FPlot2DWindowV2::FitRegionToArtists(const DevFloat paddingFraction) -> bool {
         bool haveBounds = false;
 
@@ -493,14 +517,23 @@ namespace Slab::Graphics::Plot2D::V2 {
                                             const ReflectionV2::FInvocationContextV2 &) {
             (void) inputs;
 
+            ReflectionV2::FValueMapV2 output;
             StrVector artistIds;
             artistIds.reserve(Artists.size());
-            for (const auto &slot : Artists) {
+            int index = 0;
+            for (const auto &slot : GetArtistsInDrawOrder()) {
                 if (slot.Artist == nullptr) continue;
+
                 artistIds.push_back(slot.Artist->GetArtistId());
+
+                const auto prefix = "artist." + ToStr(index) + ".";
+                output[prefix + "id"] = ReflectionV2::MakeStringValue(slot.Artist->GetArtistId());
+                output[prefix + "label"] = ReflectionV2::MakeStringValue(slot.Artist->GetLabel());
+                output[prefix + "z_order"] = ReflectionV2::MakeIntValue(slot.ZOrder);
+                output[prefix + "visible"] = ReflectionV2::MakeBoolValue(slot.Artist->IsVisible());
+                ++index;
             }
 
-            ReflectionV2::FValueMapV2 output;
             output["window_id"] = ReflectionV2::MakeStringValue(WindowId);
             output["artist_count"] = ReflectionV2::MakeIntValue(static_cast<int>(artistIds.size()));
             output["artist_ids"] = ReflectionV2::MakeStringListValue(artistIds);

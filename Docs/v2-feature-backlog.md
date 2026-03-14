@@ -120,6 +120,10 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - graph projection comes from `FModelSemanticOverviewV2`
   - graph is read-only, selection-linked, and rendered on `Plot V2`
   - hover HUD, edge inspection, click activation, neighborhood-hop controls, label toggle, and fit-to-graph are in place
+- `LAB-15` done: Plot V2 host-control parity first slice:
+  - added a migration-plan doc and updated the Plot2D V2 scheme doc to match the actual architecture
+  - LabV2 V2-plot hosts now provide attached toolbar/detail controls instead of being render-only shells
+  - V2 artist z-order is now reflected and editable, restoring layer-control parity needed by the host overlay
 - `RZ-00` done: ODE realization contract freeze implemented in code.
 - `RZ-01` done: ODE descriptor extraction and readiness gating implemented from canonical model semantics.
 - `RZ-02` done: model-level ODE initial-condition semantics implemented and validated.
@@ -225,6 +229,12 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - plot-based graph projection from semantic overview data
   - click-through selection into the Model workspace
   - keyboard/pointer interaction for neighborhood, labels, and fit
+- `P1` `LAB-15` — Plot V2 host-control parity — done
+  - attached toolbar/detail controls on the V2 host
+  - reflected V2 artist z-order and richer artist-list metadata
+- `P1` `LAB-16` — Plot V2 shared host + remaining artist migration
+  - extract the V2 plot host out of `LabV2WindowManager.cpp`
+  - port remaining legacy plot artists (`Labels`, `XHair`, `History`, `R2Section`, `R2toR`) into V2-native paths
 
 ### Model -> Realization Descent
 - `P1` `RZ-00` — ODE realization contract freeze — done

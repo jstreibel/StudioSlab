@@ -62,6 +62,16 @@ namespace Slab::Graphics::Plot2D::V2 {
         typeBinding.ReadCurrent = [this] { return ReflectionV2::MakeStringValue(GetArtistTypeId()); };
         bindings.push_back(std::move(typeBinding));
 
+        FPlotReflectionParameterBindingV2 parentWindowBinding;
+        parentWindowBinding.Schema.ParameterId = "parent_window_id";
+        parentWindowBinding.Schema.DisplayName = "Parent Window Id";
+        parentWindowBinding.Schema.Description = "Stable id of the window that owns this artist.";
+        parentWindowBinding.Schema.TypeId = ReflectionV2::CTypeIdScalarString;
+        parentWindowBinding.Schema.Mutability = ReflectionV2::EParameterMutability::Const;
+        parentWindowBinding.Schema.Exposure = ReflectionV2::EParameterExposure::ReadOnlyExposed;
+        parentWindowBinding.ReadCurrent = [this] { return ReflectionV2::MakeStringValue(ParentWindowId); };
+        bindings.push_back(std::move(parentWindowBinding));
+
         FPlotReflectionParameterBindingV2 labelBinding;
         labelBinding.Schema.ParameterId = "label";
         labelBinding.Schema.DisplayName = "Label";

@@ -32,6 +32,7 @@
 #include "Graphics/Plot2D/V2/Backends/OpenGLRenderBackendV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionSchemaV2.h"
+#include "Graphics/OpenGL/Utils.h"
 #include "Graphics/Typesetting/TypesettingService.h"
 #include "Graphics/Window/WindowStyles.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
@@ -236,12 +237,18 @@ namespace {
         bool bLeftDragCommitted = false;
         bool bRightDragCommitted = false;
         bool bLeftPressStartedOnInteractiveTarget = false;
+        bool bShowInterface = false;
+        bool bPendingContextPopup = false;
 
         [[nodiscard]] static auto DistanceSquared(const Slab::Graphics::FPoint2D &lhs,
                                                   const Slab::Graphics::FPoint2D &rhs) -> Slab::DevFloat {
             const auto dx = lhs.x - rhs.x;
             const auto dy = lhs.y - rhs.y;
             return (dx * dx) + (dy * dy);
+        }
+
+        [[nodiscard]] auto MakeOverlayId(const char *suffix) const -> Slab::Str {
+            return Slab::Str(suffix) + "##" + PlotWindowId;
         }
 
         [[nodiscard]] auto BuildPointerEvent(const FPlot2DWindowV2 &window,
@@ -321,15 +328,375 @@ namespace {
             bAnimationStateInitialized = true;
         }
 
-        auto AnimateToFittedRegion(FPlot2DWindowV2 &window, const Slab::DevFloat paddingFraction = 0.08) -> bool {
-            const auto previousRegion = BuildAnimatedRegion();
-            if (!window.FitRegionToArtists(paddingFraction)) return false;
+        auto EnforceUnitAspectRatio(Slab::Graphics::RectR &region) const -> void {
+            if (!bLockUnitAspectRatio) return;
 
-            const auto fittedRegion = window.GetRegion();
-            window.SetAutoFitRanges(false);
+            const auto viewport = GetViewport();
+            const auto viewportWidth = static_cast<Slab::DevFloat>(std::max(1, viewport.GetWidth()));
+            const auto viewportHeight = static_cast<Slab::DevFloat>(std::max(1, viewport.GetHeight()));
+            const auto viewportAspect = viewportWidth / viewportHeight;
+            if (viewportAspect <= 0.0) return;
+
+            const auto yCenter = region.yCenter();
+            const auto halfWidth = static_cast<Slab::DevFloat>(
+                std::max(0.5 * region.GetWidth(), static_cast<Slab::DevFloat>(1e-8)));
+            const auto halfHeight = static_cast<Slab::DevFloat>(
+                std::max(halfWidth / viewportAspect, static_cast<Slab::DevFloat>(1e-8)));
+            region.yMin = yCenter - halfHeight;
+            region.yMax = yCenter + halfHeight;
+        }
+
+        auto TryBuildFittedRegion(FPlot2DWindowV2 &window,
+                                  Slab::Graphics::RectR &fittedRegionOut,
+                                  const Slab::DevFloat paddingFraction = 0.08) const -> bool {
+            const auto previousRegion = window.GetRegion();
+            if (!window.FitRegionToArtists(paddingFraction)) {
+                window.SetRegion(previousRegion);
+                return false;
+            }
+
+            fittedRegionOut = window.GetRegion();
             window.SetRegion(previousRegion);
+            EnforceUnitAspectRatio(fittedRegionOut);
+            return true;
+        }
+
+        auto AnimateToFittedRegion(FPlot2DWindowV2 &window, const Slab::DevFloat paddingFraction = 0.08) -> bool {
+            Slab::Graphics::RectR fittedRegion{};
+            if (!TryBuildFittedRegion(window, fittedRegion, paddingFraction)) return false;
+
+            window.SetAutoFitRanges(false);
             AnimateRegionTo(fittedRegion);
             return true;
+        }
+
+        auto ZoomAroundCenter(FPlot2DWindowV2 &window, const Slab::DevFloat scale) -> void {
+            auto region = BuildAnimatedRegion();
+            const auto xCenter = region.xCenter();
+            const auto yCenter = region.yCenter();
+            const auto halfWidth = static_cast<Slab::DevFloat>(
+                std::max(0.5 * region.GetWidth() * scale, static_cast<Slab::DevFloat>(1e-8)));
+            const auto halfHeight = static_cast<Slab::DevFloat>(
+                std::max(0.5 * region.GetHeight() * scale, static_cast<Slab::DevFloat>(1e-8)));
+            region = {
+                xCenter - halfWidth,
+                xCenter + halfWidth,
+                yCenter - halfHeight,
+                yCenter + halfHeight
+            };
+            EnforceUnitAspectRatio(region);
+            window.SetAutoFitRanges(false);
+            AnimateRegionTo(region);
+        }
+
+        auto SaveSnapshot() const -> void {
+            const auto width = std::max(1, GetWidth());
+            const auto height = std::max(1, GetHeight());
+            const auto fileName = PlotWindowId + ".png";
+            (void) Slab::Graphics::OpenGL::OutputToPNG(const_cast<FPlot2DWindowHostV2 *>(this), fileName, width, height);
+        }
+
+        [[nodiscard]] static auto IsOverlayEditableParameter(
+            const Slab::Graphics::Plot2D::V2::FPlotReflectionParameterBindingV2 &parameter) -> bool {
+            using namespace Slab::Core::Reflection::V2;
+
+            if (parameter.Schema.Exposure != EParameterExposure::WritableExposed) return false;
+            if (parameter.Schema.Mutability != EParameterMutability::RuntimeMutable) return false;
+            if (parameter.Schema.ParameterId == "visible" ||
+                parameter.Schema.ParameterId == "z_order" ||
+                parameter.Schema.ParameterId == "label") {
+                return false;
+            }
+
+            return parameter.Schema.TypeId == CTypeIdScalarBool ||
+                   parameter.Schema.TypeId == CTypeIdScalarInt32 ||
+                   parameter.Schema.TypeId == CTypeIdScalarFloat64;
+        }
+
+        auto DrawReflectionParameterControl(
+            Slab::Graphics::Plot2D::V2::FPlotReflectionParameterBindingV2 &parameter) -> void {
+            using namespace Slab::Core::Reflection::V2;
+
+            if (!IsOverlayEditableParameter(parameter) || !parameter.ReadCurrent || !parameter.WriteLiveValue) return;
+
+            const auto currentValue = parameter.ReadCurrent();
+            ImGui::PushID(parameter.Schema.ParameterId.c_str());
+
+            if (parameter.Schema.TypeId == CTypeIdScalarBool) {
+                bool value = false;
+                (void) ParseBoolValue(currentValue.Encoded, value);
+                if (ImGui::Checkbox(parameter.Schema.DisplayName.c_str(), &value)) {
+                    (void) parameter.WriteLiveValue(MakeBoolValue(value));
+                }
+            } else if (parameter.Schema.TypeId == CTypeIdScalarInt32) {
+                int value = 0;
+                try {
+                    value = std::stoi(currentValue.Encoded);
+                } catch (...) {
+                    value = 0;
+                }
+
+                const auto minValue = parameter.Schema.Minimum.has_value()
+                    ? static_cast<int>(*parameter.Schema.Minimum)
+                    : std::numeric_limits<int>::min();
+                const auto maxValue = parameter.Schema.Maximum.has_value()
+                    ? static_cast<int>(*parameter.Schema.Maximum)
+                    : std::numeric_limits<int>::max();
+                const auto speed = parameter.Schema.Step.value_or(1.0);
+
+                bool changed = false;
+                if (parameter.Schema.Minimum.has_value() || parameter.Schema.Maximum.has_value()) {
+                    changed = ImGui::SliderInt(parameter.Schema.DisplayName.c_str(), &value, minValue, maxValue);
+                } else {
+                    changed = ImGui::DragInt(
+                        parameter.Schema.DisplayName.c_str(),
+                        &value,
+                        static_cast<float>(speed),
+                        minValue,
+                        maxValue);
+                }
+
+                if (changed) {
+                    (void) parameter.WriteLiveValue(MakeIntValue(value));
+                }
+            } else if (parameter.Schema.TypeId == CTypeIdScalarFloat64) {
+                float value = 0.0f;
+                try {
+                    value = static_cast<float>(std::stod(currentValue.Encoded));
+                } catch (...) {
+                    value = 0.0f;
+                }
+
+                const auto minValue = parameter.Schema.Minimum.value_or(-1.0e12);
+                const auto maxValue = parameter.Schema.Maximum.value_or(1.0e12);
+                const auto speed = parameter.Schema.Step.value_or(0.01);
+
+                bool changed = false;
+                if (parameter.Schema.Minimum.has_value() || parameter.Schema.Maximum.has_value()) {
+                    changed = ImGui::SliderFloat(
+                        parameter.Schema.DisplayName.c_str(),
+                        &value,
+                        static_cast<float>(minValue),
+                        static_cast<float>(maxValue));
+                } else {
+                    changed = ImGui::DragFloat(
+                        parameter.Schema.DisplayName.c_str(),
+                        &value,
+                        static_cast<float>(speed));
+                }
+
+                if (changed) {
+                    (void) parameter.WriteLiveValue(MakeFloatValue(static_cast<Slab::DevFloat>(value)));
+                }
+            }
+
+            if (!parameter.Schema.Description.empty() && ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort)) {
+                ImGui::BeginTooltip();
+                ImGui::PushTextWrapPos(ImGui::GetFontSize() * 36.0f);
+                ImGui::TextUnformatted(parameter.Schema.Description.c_str());
+                ImGui::PopTextWrapPos();
+                ImGui::EndTooltip();
+            }
+
+            ImGui::PopID();
+        }
+
+        auto DrawOverlay(FPlot2DWindowV2 &window) -> void {
+            const auto viewport = GetViewport();
+            if (viewport.GetWidth() <= 0 || viewport.GetHeight() <= 0) return;
+
+            constexpr float Margin = 8.0f;
+            constexpr float ToolbarHeight = 0.0f;
+            constexpr float DetailWidthMin = 310.0f;
+            constexpr float DetailWidthMax = 460.0f;
+
+            const auto toolbarPos = ImVec2(
+                static_cast<float>(viewport.xMin) + Margin,
+                static_cast<float>(viewport.yMin) + Margin);
+            const auto navPos = ImVec2(
+                static_cast<float>(viewport.xMax) - 244.0f,
+                static_cast<float>(viewport.yMin) + Margin);
+
+            ImGui::SetNextWindowPos(toolbarPos, ImGuiCond_Always);
+            ImGui::SetNextWindowBgAlpha(0.78f);
+            constexpr auto OverlayFlags =
+                ImGuiWindowFlags_NoDecoration |
+                ImGuiWindowFlags_NoMove |
+                ImGuiWindowFlags_NoSavedSettings |
+                ImGuiWindowFlags_NoDocking |
+                ImGuiWindowFlags_AlwaysAutoResize;
+
+            if (ImGui::Begin(MakeOverlayId("PlotV2Toolbar").c_str(), nullptr, OverlayFlags)) {
+                if (ImGui::Button("Save")) {
+                    SaveSnapshot();
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Fit")) {
+                    (void) AnimateToFittedRegion(window);
+                }
+                ImGui::SameLine();
+                bool autoFit = window.GetAutoFitRanges();
+                if (ImGui::Checkbox("Auto", &autoFit)) {
+                    window.SetAutoFitRanges(autoFit);
+                }
+                ImGui::SameLine();
+                if (ImGui::Button(bShowInterface ? "Hide UI" : "Show UI")) {
+                    bShowInterface = !bShowInterface;
+                }
+
+                if (bPendingContextPopup) {
+                    ImGui::OpenPopup(MakeOverlayId("PlotV2Context").c_str());
+                    bPendingContextPopup = false;
+                }
+
+                if (ImGui::BeginPopup(MakeOverlayId("PlotV2Context").c_str())) {
+                    bool autoFitPopup = window.GetAutoFitRanges();
+                    if (ImGui::MenuItem("Auto fit", nullptr, autoFitPopup)) {
+                        window.SetAutoFitRanges(!autoFitPopup);
+                    }
+                    if (ImGui::MenuItem("Show detail", nullptr, bShowInterface)) {
+                        bShowInterface = !bShowInterface;
+                    }
+                    if (ImGui::MenuItem("Fit now")) {
+                        (void) AnimateToFittedRegion(window);
+                    }
+                    if (ImGui::MenuItem("Lock 1:1", nullptr, bLockUnitAspectRatio)) {
+                        bLockUnitAspectRatio = !bLockUnitAspectRatio;
+                        auto region = BuildAnimatedRegion();
+                        EnforceUnitAspectRatio(region);
+                        SetRegionImmediate(window, region);
+                    }
+                    if (ImGui::MenuItem("Save graph")) {
+                        SaveSnapshot();
+                    }
+                    ImGui::EndPopup();
+                }
+            }
+            ImGui::End();
+
+            ImGui::SetNextWindowPos(navPos, ImGuiCond_Always);
+            ImGui::SetNextWindowBgAlpha(0.72f);
+            if (ImGui::Begin(MakeOverlayId("PlotV2Nav").c_str(), nullptr, OverlayFlags)) {
+                if (ImGui::Button("+")) {
+                    ZoomAroundCenter(window, 0.85);
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("-")) {
+                    ZoomAroundCenter(window, 1.15);
+                }
+                ImGui::SameLine();
+                if (ImGui::Button(bLockUnitAspectRatio ? "1:1 On" : "1:1")) {
+                    bLockUnitAspectRatio = !bLockUnitAspectRatio;
+                    auto region = BuildAnimatedRegion();
+                    EnforceUnitAspectRatio(region);
+                    SetRegionImmediate(window, region);
+                }
+            }
+            ImGui::End();
+
+            if (!bShowInterface) return;
+
+            const auto detailWidth = std::clamp(
+                static_cast<float>(viewport.GetWidth()) * 0.30f,
+                DetailWidthMin,
+                DetailWidthMax);
+            const auto detailHeight = std::max(
+                220.0f,
+                static_cast<float>(viewport.GetHeight()) - 2.0f * Margin - ToolbarHeight);
+            const auto detailPos = ImVec2(
+                static_cast<float>(viewport.xMax) - detailWidth - Margin,
+                static_cast<float>(viewport.yMin) + 46.0f);
+
+            ImGui::SetNextWindowPos(detailPos, ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(detailWidth, detailHeight), ImGuiCond_Always);
+            ImGui::SetNextWindowBgAlpha(0.80f);
+            constexpr auto DetailFlags =
+                ImGuiWindowFlags_NoDocking |
+                ImGuiWindowFlags_NoCollapse |
+                ImGuiWindowFlags_NoMove |
+                ImGuiWindowFlags_NoResize |
+                ImGuiWindowFlags_NoSavedSettings;
+
+            if (ImGui::Begin(MakeOverlayId("PlotV2Detail").c_str(), nullptr, DetailFlags)) {
+                if (ImGui::CollapsingHeader("View", ImGuiTreeNodeFlags_DefaultOpen)) {
+                    const auto region = BuildAnimatedRegion();
+                    ImGui::Text("Auto fit: %s", window.GetAutoFitRanges() ? "On" : "Off");
+                    ImGui::Text("Detail panel: %s", bShowInterface ? "Visible" : "Hidden");
+                    ImGui::Text("1:1 lock: %s", bLockUnitAspectRatio ? "On" : "Off");
+                    ImGui::Text("x:[%.4g, %.4g]  y:[%.4g, %.4g]",
+                        region.xMin,
+                        region.xMax,
+                        region.yMin,
+                        region.yMax);
+                    ImGui::Text("w=%.4g  h=%.4g", region.GetWidth(), region.GetHeight());
+                    if (ImGui::Button("Fit To Artists")) {
+                        (void) AnimateToFittedRegion(window);
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Save PNG")) {
+                        SaveSnapshot();
+                    }
+                }
+
+                if (ImGui::CollapsingHeader("Layers", ImGuiTreeNodeFlags_DefaultOpen)) {
+                    auto orderedArtists = window.GetArtistsInDrawOrder();
+                    for (const auto &slot : orderedArtists) {
+                        if (slot.Artist == nullptr) continue;
+
+                        int zOrder = slot.ZOrder;
+                        (void) window.TryGetArtistZOrder(slot.Artist, zOrder);
+                        bool visible = slot.Artist->IsVisible();
+
+                        ImGui::PushID(slot.Artist.get());
+                        if (ImGui::ArrowButton("##up", ImGuiDir_Up)) {
+                            (void) window.SetArtistZOrder(slot.Artist, zOrder + 1);
+                        }
+                        ImGui::SameLine();
+                        if (ImGui::ArrowButton("##down", ImGuiDir_Down)) {
+                            (void) window.SetArtistZOrder(slot.Artist, zOrder - 1);
+                        }
+                        ImGui::SameLine();
+                        if (ImGui::Checkbox("##visible", &visible)) {
+                            slot.Artist->SetVisible(visible);
+                        }
+                        ImGui::SameLine();
+                        ImGui::TextUnformatted(slot.Artist->GetLabel().c_str());
+                        ImGui::SameLine();
+                        ImGui::TextDisabled("(z=%d)", zOrder);
+                        ImGui::PopID();
+                    }
+                }
+
+                if (ImGui::CollapsingHeader("Artist Controls", ImGuiTreeNodeFlags_DefaultOpen)) {
+                    const auto availRegion = ImGui::GetContentRegionAvail();
+                    ImGui::BeginChild(
+                        MakeOverlayId("PlotV2ArtistControls").c_str(),
+                        ImVec2(availRegion.x, 0.0f),
+                        ImGuiChildFlags_Border);
+
+                    for (const auto &slot : window.GetArtistsInDrawOrder()) {
+                        if (slot.Artist == nullptr || !slot.Artist->IsVisible()) continue;
+
+                        auto descriptor = slot.Artist->DescribeReflection();
+                        const bool hasEditableControls = std::any_of(
+                            descriptor.Parameters.begin(),
+                            descriptor.Parameters.end(),
+                            [](const auto &parameter) { return IsOverlayEditableParameter(parameter); });
+                        if (!hasEditableControls) continue;
+
+                        if (ImGui::CollapsingHeader(
+                                (slot.Artist->GetLabel() + "##artist_controls").c_str(),
+                                ImGuiTreeNodeFlags_DefaultOpen)) {
+                            for (auto &parameter : descriptor.Parameters) {
+                                DrawReflectionParameterControl(parameter);
+                            }
+                        }
+                    }
+
+                    ImGui::EndChild();
+                }
+            }
+            ImGui::End();
         }
 
     public:
@@ -384,6 +751,11 @@ namespace {
                 }
 
                 if (button == Slab::Graphics::MouseButton_RIGHT) {
+                    if (!bRightDragCommitted) {
+                        bPendingContextPopup = true;
+                        bRightDragCommitted = false;
+                        return true;
+                    }
                     bRightDragCommitted = false;
                 }
             }
@@ -400,6 +772,13 @@ namespace {
             if (window == nullptr) return false;
 
             SyncAnimationStateFromWindow(*window);
+
+            if (state == Slab::Graphics::Release &&
+                key == Slab::Graphics::Key_TAB &&
+                modKeys.Mod_Shift == Slab::Graphics::Press) {
+                bShowInterface = !bShowInterface;
+                return true;
+            }
 
             if (state == Slab::Graphics::Press || state == Slab::Graphics::Repeat) {
                 if (key == Slab::Graphics::Key_F || key == Slab::Graphics::Key_f) {
@@ -492,6 +871,7 @@ namespace {
                         const auto x0 = region.xCenter();
                         const auto hw = static_cast<Slab::DevFloat>(0.5 * region.GetWidth() * d);
                         region = {x0 - hw, x0 + hw, region.yMin, region.yMax};
+                        EnforceUnitAspectRatio(region);
                     } else {
                         constexpr Slab::DevFloat factor = 0.01;
                         const auto dw = static_cast<Slab::DevFloat>(1.0 - factor * static_cast<Slab::DevFloat>(dx));
@@ -577,6 +957,14 @@ namespace {
             return true;
         }
 
+        auto RegisterDeferredDrawCalls(const Slab::Graphics::FPlatformWindow &platformWindow) -> void override {
+            FSlabWindow::RegisterDeferredDrawCalls(platformWindow);
+
+            auto *window = FindWindow();
+            if (window == nullptr) return;
+            DrawOverlay(*window);
+        }
+
         auto ImmediateDraw(const Slab::Graphics::FPlatformWindow &platformWindow) -> void override {
             FSlabWindow::ImmediateDraw(platformWindow);
 
@@ -595,9 +983,17 @@ namespace {
             }
 
             SyncAnimationStateFromWindow(*window);
+            const bool bAutoFitRanges = window->GetAutoFitRanges();
+            if (bAutoFitRanges) {
+                Slab::Graphics::RectR fittedRegion{};
+                if (TryBuildFittedRegion(*window, fittedRegion)) {
+                    SetRegionImmediate(*window, fittedRegion);
+                }
+            }
             window->SetRegion(BuildAnimatedRegion());
-
+            if (bAutoFitRanges) window->SetAutoFitRanges(false);
             (void) window->Render(RenderBackend);
+            if (bAutoFitRanges) window->SetAutoFitRanges(true);
         }
 
         [[nodiscard]] auto GetPlotWindowId() const -> const Slab::Str & {
