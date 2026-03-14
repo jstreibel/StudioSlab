@@ -36,6 +36,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 
 - Product/domain: `Docs/product-direction.md`, `Docs/product-vocabulary.md`, `Docs/domain-model-ux-surfaces-spec.md`, `Docs/study-model-spec.md`, `Docs/sequence-control-spec.md`
 - V2 planning/slices: `Docs/v2-feature-backlog.md`, `Docs/v2-model-coverage-matrix.md`, `Docs/live-control-v2-spec.md`, `Docs/live-parameters-v2-slice-scope.md`, `Docs/kg-r2tor-v2-slice-scope.md`, `Docs/md-v2-slice-scope.md`, `Docs/functional-minimization-v2-slice-scope.md`
+- Model -> realization descent: `Docs/ode-realization-descent-plan.md`
 - Reflection: `Docs/index-reflection-v2.md`, `Docs/reflection-v2-decision-log.md`, `Docs/reflection-v2-contract.md`, `Docs/reflection-v2-migration-plan.md`, `Docs/reflection-v2-implementation.md`
 - Graph semantics and ontology direction: `Docs/graph-onthology.md`
 - Reflection catalog registry deep-dive: `Docs/index-reflection-catalog-registry-v2.md`, `Docs/reflection-catalog-registry-v2-overview.md`, `Docs/reflection-catalog-registry-v2-routing.md`, `Docs/reflection-catalog-registry-v2-source-wiring.md`

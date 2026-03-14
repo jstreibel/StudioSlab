@@ -2,9 +2,9 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-03-13`
+- Snapshot date: `2026-03-14`
 - Last implementation update: `2026-03-13` (Model-tab docked semantic authoring surfaces + direct create flow)
-- Last architecture-doc update: `2026-03-13` (Model-tab docked authoring/status docs refresh)
+- Last architecture-doc update: `2026-03-14` (ODE model->realization descent plan added)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-13`
 - Build-target sanity check date: `2026-03-13` (`StudioSlab` build passes in `cmake-build-debug`)
 
@@ -210,6 +210,15 @@
   - `RV2-02`: done
   - `RV2-03`: done
   - `RV2-04`: done
+
+## Planned Next Slice (Design)
+
+- ODE-first descent from `Model V2` into `Realization` is now documented in:
+  - `Docs/ode-realization-descent-plan.md`
+- current recommendation:
+  - freeze one ODE realization-facing contract first
+  - derive readiness from canonical model semantics
+  - validate on harmonic oscillator / damped oscillator before broader realization work
 
 ## Known Missing Pieces
 

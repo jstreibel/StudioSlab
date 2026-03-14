@@ -200,6 +200,18 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - direct creation of local definitions/relations
   - dockable Model workspace surfaces
 
+### Model -> Realization Descent
+- `P1` `RZ-00` — ODE realization contract freeze
+  - plan reference: `Docs/ode-realization-descent-plan.md`
+  - define one realization-facing descriptor derived from canonical `Model V2` semantics
+  - gate on semantic readiness: no unresolved symbols, no blocking errors, no required pending assumptions
+- `P1` `RZ-01` — ODE descriptor extraction
+  - derive time coordinate, state variables, parameters, observables, and selected relations
+  - validate first on harmonic oscillator / damped oscillator
+- `P1` `RZ-02` — ODE initial-condition semantics
+  - add explicit initial-condition slots for the ODE slice only
+  - keep boundary/control semantics out of this slice
+
 ### Coverage Portfolio
 - `P1` `CVG-01` — MD V2 scoping — done
 - `P1` `CVG-02` — MD `V2-H` -> `V2-M` — done

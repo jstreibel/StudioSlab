@@ -13,8 +13,9 @@
 1. `Docs/status-v2.md`
 2. `SPEC.md` (V2 architecture and constraints)
 3. One focused spec:
-   - control/input: `Docs/live-control-v2-spec.md`
-   - live runtime params: `Docs/live-parameters-v2-slice-scope.md`
+  - ODE model->realization descent: `Docs/ode-realization-descent-plan.md`
+  - control/input: `Docs/live-control-v2-spec.md`
+  - live runtime params: `Docs/live-parameters-v2-slice-scope.md`
    - sequencing/time: `Docs/sequence-control-spec.md`
   - monitoring data-path tradeoffs: `Docs/monitoring-liveview-vs-listeners.md`
   - reflection contract/migration: `Docs/reflection-v2-contract.md`, `Docs/reflection-v2-migration-plan.md`, `Docs/reflection-v2-implementation.md`
