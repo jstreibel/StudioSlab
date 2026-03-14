@@ -255,6 +255,62 @@ namespace Slab::Core::Model::V2 {
         return model;
     }
 
+    inline auto BuildDampedHarmonicOscillatorModelV2() -> FModelV2 {
+        auto model = BuildHarmonicOscillatorModelV2();
+        model.ModelId = "model.damped_harmonic_oscillator";
+        model.Name = "Damped Harmonic Oscillator";
+        model.Description =
+            "Finite-dimensional ODE model with explicit linear damping, canonical first-order state equations, "
+            "symbolic parameters, and one explicit model-level initial state.";
+        model.Tags = {"model", "ode", "classical-mechanics", "damped"};
+
+        {
+            auto parsed = Detail::RequireParsedDefinitionV2("\\gamma \\in \\mathbb{R}");
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "param.gamma",
+                EDefinitionKindV2::ScalarParameter,
+                parsed,
+                "Damping Coefficient",
+                "Linear damping coefficient for the oscillator.");
+            definition.Tags = {"parameter", "damping"};
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            auto dampedSecondOrder = Detail::RequireParsedRelationV2(
+                "relation.oscillator.second_order",
+                ERelationKindV2::DifferentialEquation,
+                "\\ddot x + \\gamma \\dot x + \\omega^2 x = 0",
+                &context);
+            dampedSecondOrder.Name = "Damped Second-order Equation";
+            dampedSecondOrder.Description = "Platonic damped second-order oscillator equation.";
+            dampedSecondOrder.Tags = {"equation", "ode", "damped"};
+
+            if (auto *relation = FindRelationByIdV2(model, "relation.oscillator.second_order"); relation != nullptr) {
+                *relation = std::move(dampedSecondOrder);
+            }
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            auto dampedMomentum = Detail::RequireParsedRelationV2(
+                "relation.oscillator.first_order_p",
+                ERelationKindV2::DifferentialEquation,
+                "\\dot p = -\\gamma p - k x",
+                &context);
+            dampedMomentum.Name = "Damped First-order Momentum Equation";
+            dampedMomentum.Description = "Canonical first-order form for p with linear damping.";
+            dampedMomentum.Tags = {"equation", "ode", "first-order", "damped"};
+
+            if (auto *relation = FindRelationByIdV2(model, "relation.oscillator.first_order_p"); relation != nullptr) {
+                *relation = std::move(dampedMomentum);
+            }
+        }
+
+        return model;
+    }
+
     inline auto BuildKleinGordonModelV2() -> FModelV2 {
         FModelV2 model;
         model.ModelId = "model.klein_gordon";
@@ -323,6 +379,7 @@ namespace Slab::Core::Model::V2 {
     inline auto BuildDemoModelsV2() -> Vector<FModelV2> {
         return {
             BuildHarmonicOscillatorModelV2(),
+            BuildDampedHarmonicOscillatorModelV2(),
             BuildKleinGordonModelV2()
         };
     }

@@ -111,6 +111,21 @@ TEST_CASE("Model V2 Klein-Gordon seed is well-formed", "[ModelV2]") {
     CHECK(RenderDialectRelationV2(*equation, &model).find("\\Box \\phi") != Slab::Str::npos);
 }
 
+TEST_CASE("Model V2 damped harmonic oscillator seed is well-formed", "[ModelV2]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildDampedHarmonicOscillatorModelV2();
+    const auto validation = ValidateModelV2(model);
+
+    REQUIRE(validation.IsOk());
+    CHECK(model.ModelId == "model.damped_harmonic_oscillator");
+    REQUIRE(FindDefinitionByIdV2(model, "param.gamma") != nullptr);
+
+    const auto *equation = FindRelationByIdV2(model, "relation.oscillator.second_order");
+    REQUIRE(equation != nullptr);
+    CHECK(RenderDialectRelationV2(*equation, &model).find("\\gamma") != Slab::Str::npos);
+}
+
 TEST_CASE("Model V2 base vocabulary presets resolve inherited entries", "[ModelV2][Vocabulary]") {
     using namespace Slab::Core::Model::V2;
 
@@ -1096,6 +1111,22 @@ TEST_CASE("Model V2 ODE realization rejects Klein-Gordon", "[ModelV2][Realizatio
         descriptor.Diagnostics,
         "pde_character_out_of_scope",
         "PDE-like"));
+}
+
+TEST_CASE("Model V2 ODE realization extracts damped oscillator", "[ModelV2][Realization][ODE]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildDampedHarmonicOscillatorModelV2();
+    const auto descriptor = BuildODERealizationDescriptorV2(model);
+
+    REQUIRE(descriptor.IsReady());
+    CHECK(std::any_of(descriptor.Parameters.begin(), descriptor.Parameters.end(), [](const auto &parameter) {
+        return parameter.DefinitionId == "param.gamma";
+    }));
+    CHECK(std::any_of(descriptor.SelectedRelations.begin(), descriptor.SelectedRelations.end(), [](const auto &relation) {
+        return relation.StateDefinitionId == "state.p" &&
+            relation.ExplicitExpressionNotation.find("\\gamma") != Slab::Str::npos;
+    }));
 }
 
 TEST_CASE("Model V2 ODE realization requires a first-order equation per state", "[ModelV2][Realization][ODE]") {
