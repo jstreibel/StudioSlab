@@ -2,13 +2,16 @@
 #include <cmath>
 
 #include "Graphics/Plot2D/V2/Plot2DV2.h"
+#include "Graphics/Utils.h"
 
+#include "Core/Model/V2/ModelSeedsV2.h"
 #include "Core/Reflection/V2/ReflectionCodecsV2.h"
 
 namespace {
 
     using namespace Slab;
     using namespace Slab::Graphics::Plot2D::V2;
+    namespace ModelV2 = Slab::Core::Model::V2;
     using Slab::Graphics::FPoint2D;
     using Slab::Graphics::PlotStyle;
 
@@ -266,4 +269,74 @@ TEST_CASE("Plot2D V2 background and axis artists emit baseline visual commands",
     }
 
     REQUIRE(foundRegionBackground);
+}
+
+TEST_CASE("Plot2D V2 dispatches semantic graph hit targets to interactive artists", "[Plot2DV2][ModelGraph]") {
+    auto model = ModelV2::BuildHarmonicOscillatorModelV2();
+    const auto overview = ModelV2::BuildModelSemanticOverviewV2(model);
+    const auto selectedRef = ModelV2::MakeDefinitionObjectRefV2("state.x");
+
+    auto artist = New<FModelSemanticGraphArtistV2>();
+    artist->SetSemanticOverview(overview, selectedRef);
+
+    REQUIRE_FALSE(artist->GetNodes().empty());
+    REQUIRE_FALSE(artist->GetEdges().empty());
+
+    const auto selectedNodeIt = std::find_if(
+        artist->GetNodes().begin(),
+        artist->GetNodes().end(),
+        [&](const auto &node) {
+            return ModelV2::AreSemanticObjectRefsEqualV2(node.Ref, selectedRef);
+        });
+    REQUIRE(selectedNodeIt != artist->GetNodes().end());
+    REQUIRE(selectedNodeIt->HopDistance == 0);
+    REQUIRE(selectedNodeIt->Position.x == Catch::Approx(0.0));
+    REQUIRE(selectedNodeIt->Position.y == Catch::Approx(0.0));
+
+    FPlot2DWindowV2 window("Semantic Graph Test", {-12.0, 12.0, -10.0, 10.0}, {0, 800, 0, 600});
+    window.AddArtist(artist);
+    window.SetViewport({0, 800, 0, 600});
+
+    bool bActivated = false;
+    ModelV2::FSemanticObjectRefV2 activatedRef;
+    artist->SetOnSemanticObjectActivated([&](const auto &ref) {
+        bActivated = true;
+        activatedRef = ref;
+    });
+
+    const auto viewportPosition = Slab::Graphics::FromSpaceToViewportCoord(
+        selectedNodeIt->Position,
+        window.GetRegion(),
+        window.GetViewport());
+    const auto plotPosition = window.ViewportToPlotCoord(viewportPosition);
+
+    const auto hit = window.HitTestArtists(plotPosition, viewportPosition);
+    REQUIRE(hit.has_value());
+    REQUIRE(hit->Artist == artist);
+    REQUIRE(hit->Target.TargetId == selectedNodeIt->NodeId);
+
+    FPlotPointerEventV2 moveEvent;
+    moveEvent.Kind = EPlotPointerEventKindV2::Move;
+    moveEvent.PlotPosition = plotPosition;
+    moveEvent.ViewportPosition = viewportPosition;
+    REQUIRE(window.DispatchPointerEvent(moveEvent));
+
+    FPlotPointerEventV2 pressEvent;
+    pressEvent.Kind = EPlotPointerEventKindV2::Button;
+    pressEvent.PlotPosition = plotPosition;
+    pressEvent.ViewportPosition = viewportPosition;
+    pressEvent.Button = Slab::Graphics::MouseButton_LEFT;
+    pressEvent.ButtonState = Slab::Graphics::Press;
+    REQUIRE(window.DispatchPointerEvent(pressEvent));
+
+    FPlotPointerEventV2 releaseEvent;
+    releaseEvent.Kind = EPlotPointerEventKindV2::Button;
+    releaseEvent.PlotPosition = plotPosition;
+    releaseEvent.ViewportPosition = viewportPosition;
+    releaseEvent.Button = Slab::Graphics::MouseButton_LEFT;
+    releaseEvent.ButtonState = Slab::Graphics::Release;
+    REQUIRE(window.DispatchPointerEvent(releaseEvent));
+
+    REQUIRE(bActivated);
+    REQUIRE(ModelV2::AreSemanticObjectRefsEqualV2(activatedRef, selectedRef));
 }

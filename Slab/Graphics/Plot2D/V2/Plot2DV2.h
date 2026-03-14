@@ -7,6 +7,7 @@
 
 #include "Artists/AxisArtistV2.h"
 #include "Artists/BackgroundArtistV2.h"
+#include "Artists/ModelSemanticGraphArtistV2.h"
 #include "Artists/PointSetArtistV2.h"
 #include "Artists/RtoRFunctionArtistV2.h"
 

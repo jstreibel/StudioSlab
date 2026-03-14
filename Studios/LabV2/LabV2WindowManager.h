@@ -144,6 +144,10 @@ private:
     Slab::Str PlotCatalogSourceId;
     Slab::Vector<Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr> PlotWindowsV2;
     std::map<Slab::Str, FSlabWindowPtr> PlotWindowHostsByWindowId;
+    Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr ModelSemanticGraphWindowV2;
+    Slab::Graphics::Plot2D::V2::FPlotArtistV2_ptr ModelSemanticGraphArtistV2;
+    Slab::Str ModelSemanticGraphWindowId = "model_semantic_graph";
+    bool bPendingFocusModelSemanticGraphWindow = false;
     std::size_t BlueprintPlotWindowCreateCount = 0;
     std::size_t BlueprintPlotArtistCreateCount = 0;
 
@@ -383,6 +387,11 @@ private:
     auto AddSlabWindowInWorkspace(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window,
                                   EWorkspaceTab workspace,
                                   bool hidden = false) -> void;
+    auto EnsureModelSemanticGraphWindow() -> void;
+    auto SyncModelSemanticGraphWindow(const Slab::Core::Model::V2::FModelV2 &model,
+                                      const Slab::Core::Model::V2::FModelSemanticOverviewV2 &overview,
+                                      bool bUsesDraftPreview) -> void;
+    auto FocusModelSemanticGraphWindow() -> void;
     auto SyncPlotWorkspaceWindows() -> void;
     auto PruneClosedSlabWindows() -> bool;
     [[nodiscard]] auto GetWorkspaceForWindow(const FSlabWindowPtr &window) const -> EWorkspaceTab;

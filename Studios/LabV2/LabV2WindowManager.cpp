@@ -28,6 +28,7 @@
 #include "Graphics/Plot2D/V2/Artists/PointSetArtistV2.h"
 #include "Graphics/Plot2D/V2/Artists/RtoRFunctionArtistV2.h"
 #include "Graphics/Plot2D/V2/Artists/BackgroundArtistV2.h"
+#include "Graphics/Plot2D/V2/Artists/ModelSemanticGraphArtistV2.h"
 #include "Graphics/Plot2D/V2/Backends/OpenGLRenderBackendV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionSchemaV2.h"
@@ -230,6 +231,39 @@ namespace {
         bool bAnimationStateInitialized = false;
         bool bLockUnitAspectRatio = false;
         double AnimationTimeSeconds = 0.28;
+        Slab::Graphics::FPoint2D LeftMouseDownViewportPosition{};
+        Slab::Graphics::FPoint2D RightMouseDownViewportPosition{};
+        bool bLeftDragCommitted = false;
+        bool bRightDragCommitted = false;
+        bool bLeftPressStartedOnInteractiveTarget = false;
+
+        [[nodiscard]] static auto DistanceSquared(const Slab::Graphics::FPoint2D &lhs,
+                                                  const Slab::Graphics::FPoint2D &rhs) -> Slab::DevFloat {
+            const auto dx = lhs.x - rhs.x;
+            const auto dy = lhs.y - rhs.y;
+            return (dx * dx) + (dy * dy);
+        }
+
+        [[nodiscard]] auto BuildPointerEvent(const FPlot2DWindowV2 &window,
+                                             const Slab::Graphics::Plot2D::V2::EPlotPointerEventKindV2 kind,
+                                             const Slab::Graphics::FPoint2D &viewportPosition,
+                                             const Slab::Graphics::EMouseButton button = Slab::Graphics::MouseButton_LEFT,
+                                             const Slab::Graphics::EKeyState buttonState = Slab::Graphics::Release,
+                                             const Slab::Graphics::EModKeys modKeys = {},
+                                             const double wheelDx = 0.0,
+                                             const double wheelDy = 0.0) const
+            -> Slab::Graphics::Plot2D::V2::FPlotPointerEventV2 {
+            return {
+                .Kind = kind,
+                .PlotPosition = window.ViewportToPlotCoord(viewportPosition),
+                .ViewportPosition = viewportPosition,
+                .Button = button,
+                .ButtonState = buttonState,
+                .ModKeys = modKeys,
+                .WheelDx = wheelDx,
+                .WheelDy = wheelDy
+            };
+        }
 
         [[nodiscard]] auto FindWindow() const -> FPlot2DWindowV2 * {
             const auto windows = FPlot2DWindowV2::GetLiveWindows();
@@ -297,7 +331,53 @@ namespace {
         auto NotifyMouseButton(const Slab::Graphics::EMouseButton button,
                                const Slab::Graphics::EKeyState state,
                                const Slab::Graphics::EModKeys keys) -> bool override {
-            return FSlabWindow::NotifyMouseButton(button, state, keys);
+            if (FSlabWindow::NotifyMouseButton(button, state, keys)) return true;
+
+            auto *window = FindWindow();
+            if (window == nullptr) return false;
+
+            SyncAnimationStateFromWindow(*window);
+            const auto viewportPosition = GetMouseViewportCoord();
+
+            if (state == Slab::Graphics::Press) {
+                if (button == Slab::Graphics::MouseButton_LEFT) {
+                    LeftMouseDownViewportPosition = viewportPosition;
+                    bLeftDragCommitted = false;
+
+                    const auto plotPosition = window->ViewportToPlotCoord(viewportPosition);
+                    bLeftPressStartedOnInteractiveTarget =
+                        window->HitTestArtists(plotPosition, viewportPosition).has_value();
+                    return window->DispatchPointerEvent(
+                        BuildPointerEvent(*window, Slab::Graphics::Plot2D::V2::EPlotPointerEventKindV2::Button,
+                                          viewportPosition, button, state, keys));
+                }
+
+                if (button == Slab::Graphics::MouseButton_RIGHT) {
+                    RightMouseDownViewportPosition = viewportPosition;
+                    bRightDragCommitted = false;
+                }
+
+                return false;
+            }
+
+            if (state == Slab::Graphics::Release) {
+                if (button == Slab::Graphics::MouseButton_LEFT) {
+                    const bool bDispatchRelease = !bLeftDragCommitted;
+                    bLeftDragCommitted = false;
+                    bLeftPressStartedOnInteractiveTarget = false;
+                    if (!bDispatchRelease) return false;
+
+                    return window->DispatchPointerEvent(
+                        BuildPointerEvent(*window, Slab::Graphics::Plot2D::V2::EPlotPointerEventKindV2::Button,
+                                          viewportPosition, button, state, keys));
+                }
+
+                if (button == Slab::Graphics::MouseButton_RIGHT) {
+                    bRightDragCommitted = false;
+                }
+            }
+
+            return false;
         }
 
         auto NotifyMouseMotion(const int x, const int y, const int dx, const int dy) -> bool override {
@@ -311,53 +391,80 @@ namespace {
             const auto mouseState = GetMouseState();
             if (mouseState == nullptr) return false;
 
+            const auto viewportPosition = GetMouseViewportCoord();
+            constexpr Slab::DevFloat DragThresholdSq = 6.0 * 6.0;
+
             auto region = BuildAnimatedRegion();
             bool bHandled = false;
 
             if (mouseState->IsLeftPressed()) {
-                const auto viewportWidth = static_cast<Slab::DevFloat>(std::max(1, GetWidth()));
-                const auto viewportHeight = static_cast<Slab::DevFloat>(std::max(1, GetHeight()));
+                const auto dragDistanceSq = DistanceSquared(viewportPosition, LeftMouseDownViewportPosition);
+                if (!bLeftPressStartedOnInteractiveTarget && dragDistanceSq >= DragThresholdSq) {
+                    bLeftDragCommitted = true;
+                }
 
-                const auto dxClamped = -static_cast<Slab::DevFloat>(mouseState->dx) / viewportWidth;
-                const auto dyClamped = static_cast<Slab::DevFloat>(mouseState->dy) / viewportHeight;
+                if (bLeftDragCommitted) {
+                    const auto viewportWidth = static_cast<Slab::DevFloat>(std::max(1, GetWidth()));
+                    const auto viewportHeight = static_cast<Slab::DevFloat>(std::max(1, GetHeight()));
 
-                const auto dxGraph = region.GetWidth() * dxClamped;
-                const auto dyGraph = region.GetHeight() * dyClamped;
+                    const auto dxClamped = -static_cast<Slab::DevFloat>(mouseState->dx) / viewportWidth;
+                    const auto dyClamped = static_cast<Slab::DevFloat>(mouseState->dy) / viewportHeight;
 
-                region = {
-                    region.xMin + dxGraph,
-                    region.xMax + dxGraph,
-                    region.yMin + dyGraph,
-                    region.yMax + dyGraph
-                };
+                    const auto dxGraph = region.GetWidth() * dxClamped;
+                    const auto dyGraph = region.GetHeight() * dyClamped;
 
-                window->SetAutoFitRanges(false);
-                SetRegionImmediate(*window, region);
-                bHandled = true;
+                    region = {
+                        region.xMin + dxGraph,
+                        region.xMax + dxGraph,
+                        region.yMin + dyGraph,
+                        region.yMax + dyGraph
+                    };
+
+                    window->SetAutoFitRanges(false);
+                    SetRegionImmediate(*window, region);
+                    bHandled = true;
+                } else {
+                    bHandled = window->DispatchPointerEvent(
+                        BuildPointerEvent(*window, Slab::Graphics::Plot2D::V2::EPlotPointerEventKindV2::Move,
+                                          viewportPosition));
+                }
             }
 
             if (mouseState->IsRightPressed()) {
-                if (bLockUnitAspectRatio) {
-                    constexpr Slab::DevFloat factor = 0.01;
-                    const auto d = static_cast<Slab::DevFloat>(1.0 - factor * static_cast<Slab::DevFloat>(dx - dy));
-                    const auto x0 = region.xCenter();
-                    const auto hw = static_cast<Slab::DevFloat>(0.5 * region.GetWidth() * d);
-                    region = {x0 - hw, x0 + hw, region.yMin, region.yMax};
-                } else {
-                    constexpr Slab::DevFloat factor = 0.01;
-                    const auto dw = static_cast<Slab::DevFloat>(1.0 - factor * static_cast<Slab::DevFloat>(dx));
-                    const auto dh = static_cast<Slab::DevFloat>(1.0 + factor * static_cast<Slab::DevFloat>(dy));
-
-                    const auto x0 = region.xCenter();
-                    const auto y0 = region.yCenter();
-                    const auto hw = static_cast<Slab::DevFloat>(0.5 * region.GetWidth() * dw);
-                    const auto hh = static_cast<Slab::DevFloat>(0.5 * region.GetHeight() * dh);
-                    region = {x0 - hw, x0 + hw, y0 - hh, y0 + hh};
+                const auto dragDistanceSq = DistanceSquared(viewportPosition, RightMouseDownViewportPosition);
+                if (dragDistanceSq >= DragThresholdSq) {
+                    bRightDragCommitted = true;
                 }
 
-                window->SetAutoFitRanges(false);
-                SetRegionImmediate(*window, region);
-                bHandled = true;
+                if (bRightDragCommitted) {
+                    if (bLockUnitAspectRatio) {
+                        constexpr Slab::DevFloat factor = 0.01;
+                        const auto d = static_cast<Slab::DevFloat>(1.0 - factor * static_cast<Slab::DevFloat>(dx - dy));
+                        const auto x0 = region.xCenter();
+                        const auto hw = static_cast<Slab::DevFloat>(0.5 * region.GetWidth() * d);
+                        region = {x0 - hw, x0 + hw, region.yMin, region.yMax};
+                    } else {
+                        constexpr Slab::DevFloat factor = 0.01;
+                        const auto dw = static_cast<Slab::DevFloat>(1.0 - factor * static_cast<Slab::DevFloat>(dx));
+                        const auto dh = static_cast<Slab::DevFloat>(1.0 + factor * static_cast<Slab::DevFloat>(dy));
+
+                        const auto x0 = region.xCenter();
+                        const auto y0 = region.yCenter();
+                        const auto hw = static_cast<Slab::DevFloat>(0.5 * region.GetWidth() * dw);
+                        const auto hh = static_cast<Slab::DevFloat>(0.5 * region.GetHeight() * dh);
+                        region = {x0 - hw, x0 + hw, y0 - hh, y0 + hh};
+                    }
+
+                    window->SetAutoFitRanges(false);
+                    SetRegionImmediate(*window, region);
+                    bHandled = true;
+                }
+            }
+
+            if (!mouseState->IsLeftPressed() && !mouseState->IsRightPressed()) {
+                bHandled = window->DispatchPointerEvent(
+                    BuildPointerEvent(*window, Slab::Graphics::Plot2D::V2::EPlotPointerEventKindV2::Move,
+                                      viewportPosition)) || bHandled;
             }
 
             return bHandled;
@@ -371,6 +478,17 @@ namespace {
             if (window == nullptr) return false;
 
             SyncAnimationStateFromWindow(*window);
+            const auto viewportPosition = GetMouseViewportCoord();
+            if (window->DispatchPointerEvent(
+                    BuildPointerEvent(*window, Slab::Graphics::Plot2D::V2::EPlotPointerEventKindV2::Wheel,
+                                      viewportPosition,
+                                      Slab::Graphics::MouseButton_LEFT,
+                                      Slab::Graphics::Release,
+                                      {},
+                                      dx,
+                                      dy))) {
+                return true;
+            }
 
             constexpr Slab::DevFloat factor = 1.2;
             const auto d = std::pow(factor, -dy);
@@ -1080,6 +1198,85 @@ auto FLabV2WindowManager::AddSlabWindowInWorkspace(
     NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
 }
 
+auto FLabV2WindowManager::EnsureModelSemanticGraphWindow() -> void {
+    using namespace Slab::Graphics::Plot2D::V2;
+
+    if (ModelSemanticGraphWindowV2 != nullptr && ModelSemanticGraphArtistV2 != nullptr) return;
+
+    auto window = Slab::New<FPlot2DWindowV2>(
+        "Model Semantic Graph",
+        Slab::Graphics::RectR{-12.0, 12.0, -10.0, 10.0},
+        Slab::Graphics::RectI{0, 1280, 0, 920});
+    window->SetWindowId(ModelSemanticGraphWindowId);
+    window->SetAutoFitRanges(false);
+
+    auto background = Slab::New<FBackgroundArtistV2>(Slab::Graphics::FColor::FromHex("#0B1320"));
+    background->SetUseThemeColor(false);
+    background->SetAffectGraphRanges(false);
+
+    auto graphArtist = Slab::New<FModelSemanticGraphArtistV2>();
+    graphArtist->SetOnSemanticObjectActivated([this](const Slab::Core::Model::V2::FSemanticObjectRefV2 &ref) {
+        if (ModelDemoCatalog.empty()) {
+            ModelDemoCatalog = Slab::Core::Model::V2::BuildDemoModelsV2();
+        }
+        if (ModelDemoCatalog.empty()) return;
+        if (SelectedModelIndex < 0 || SelectedModelIndex >= static_cast<int>(ModelDemoCatalog.size())) return;
+
+        SelectModelSemanticObject(
+            ModelDemoCatalog[SelectedModelIndex],
+            ref,
+            true,
+            bSelectedModelSemanticObjectUsesDraftPreview);
+
+        const auto state = PrepareModelWorkspaceViewState();
+        if (state.bAvailable && state.Model != nullptr && state.SelectionOverview != nullptr) {
+            const bool bUsesDraftPreview =
+                state.ActiveDraftOverview != nullptr && state.SelectionOverview == state.ActiveDraftOverview;
+            SyncModelSemanticGraphWindow(*state.Model, *state.SelectionOverview, bUsesDraftPreview);
+        }
+    });
+
+    window->AddArtist(background, -100);
+    window->AddArtist(graphArtist, 0);
+
+    ModelSemanticGraphWindowV2 = window;
+    ModelSemanticGraphArtistV2 = graphArtist;
+    PlotWindowsV2.push_back(window);
+}
+
+auto FLabV2WindowManager::SyncModelSemanticGraphWindow(const Slab::Core::Model::V2::FModelV2 &model,
+                                                       const Slab::Core::Model::V2::FModelSemanticOverviewV2 &overview,
+                                                       const bool bUsesDraftPreview) -> void {
+    using namespace Slab::Graphics::Plot2D::V2;
+
+    EnsureModelSemanticGraphWindow();
+    if (ModelSemanticGraphWindowV2 == nullptr || ModelSemanticGraphArtistV2 == nullptr) return;
+
+    const auto graphArtist = Slab::DynamicPointerCast<FModelSemanticGraphArtistV2>(ModelSemanticGraphArtistV2);
+    if (graphArtist == nullptr) return;
+
+    graphArtist->SetLabel("Semantic Graph");
+    graphArtist->SetSemanticOverview(overview, SelectedModelSemanticObject);
+
+    const auto titleSuffix = bUsesDraftPreview ? " [Draft]" : "";
+    ModelSemanticGraphWindowV2->SetTitle("Model Semantic Graph - " + model.Name + titleSuffix);
+}
+
+auto FLabV2WindowManager::FocusModelSemanticGraphWindow() -> void {
+    EnsureModelSemanticGraphWindow();
+
+    SelectedPlotInterfaceId = PlotWindowInterfaceIdPrefix + ModelSemanticGraphWindowId;
+    bShowWindowPlotInspector = true;
+    bPendingFocusModelSemanticGraphWindow = true;
+    SetActiveWorkspace(EWorkspaceTab::Plots);
+
+    if (const auto it = PlotWindowHostsByWindowId.find(ModelSemanticGraphWindowId);
+        it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
+        FocusWindow(it->second);
+        bPendingFocusModelSemanticGraphWindow = false;
+    }
+}
+
 auto FLabV2WindowManager::QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void {
     QueueSlabWindowInWorkspace(window, EWorkspaceTab::Simulations);
 }
@@ -1405,6 +1602,14 @@ auto FLabV2WindowManager::SyncPlotWorkspaceWindows() -> void {
         auto host = Slab::New<FPlot2DWindowHostV2>(windowId, displayName);
         PlotWindowHostsByWindowId[windowId] = host;
         QueueSlabWindowInWorkspace(host, EWorkspaceTab::Plots);
+    }
+
+    if (bPendingFocusModelSemanticGraphWindow) {
+        if (const auto it = PlotWindowHostsByWindowId.find(ModelSemanticGraphWindowId);
+            it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
+            FocusWindow(it->second);
+            bPendingFocusModelSemanticGraphWindow = false;
+        }
     }
 }
 

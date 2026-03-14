@@ -1,5 +1,6 @@
 #include "LabV2WindowManager.h"
 
+#include "Core/Model/V2/ModelRealizationV2.h"
 #include "Core/Model/V2/ModelSeedsV2.h"
 #include "Graphics/Typesetting/ImGuiTypesetting.h"
 #include "imgui.h"
@@ -1375,6 +1376,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
     const auto selectionContext = BuildSemanticSelectionContextV2(*selectionOverview, SelectedModelSemanticObject);
     const auto draftPreviewDefinitions = CollectDraftProposedDefinitions(model, activeEditorBuffer, activeDraftOverview);
     const auto *draftPreviewAssumptions = GetEditorBufferPreviewAssumptions(activeEditorBuffer);
+    SyncModelSemanticGraphWindow(model, *selectionOverview, bSelectedModelSemanticObjectUsesDraftPreview);
 
     auto &typesettingService = *UiTypesettingService;
     const auto baseFontSize = ImGui::GetFontSize();
@@ -1421,6 +1423,80 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
     DrawSummaryLinkStrip("Fields", overview.Status.Fields, navigateToSemanticObject);
     DrawSummaryLinkStrip("Operators", overview.Status.Operators, navigateToSemanticObject);
     DrawSummaryLinkStrip("Observables", overview.Status.Observables, navigateToSemanticObject);
+
+    ImGui::SeparatorText("Semantic Graph");
+    if (ImGui::Button("Open in Plots")) {
+        FocusModelSemanticGraphWindow();
+    }
+    AddTooltipForLastItem("Open the read-only semantic knowledge graph as a Plot2D V2 surface. Clicking nodes in the graph reuses the current model selection.");
+    if (SelectedModelSemanticObject.IsValid()) {
+        ImGui::SameLine();
+        ImGui::TextDisabled("Centered on: %s", SelectedModelSemanticObject.ObjectId.c_str());
+    }
+
+    const auto odeDescriptor = BuildODERealizationDescriptorV2(model, &overview);
+    const auto realizationBadgeTint = odeDescriptor.IsReady()
+        ? ImVec4(0.33f, 0.67f, 0.45f, 1.0f)
+        : ImVec4(0.82f, 0.28f, 0.28f, 1.0f);
+    ImGui::SeparatorText("ODE Realization");
+    DrawSemanticSummaryBadge("Readiness", ToString(odeDescriptor.Readiness), realizationBadgeTint);
+    ImGui::SameLine();
+    ImGui::TextDisabled("Strategy: %s", ToString(odeDescriptor.Strategy));
+    AddTooltipForLastItem("Derived from canonical model semantics only. This slice stays conservative: it selects explicit first-order state equations and does not commit to a solver/runtime policy.");
+
+    if (odeDescriptor.TimeCoordinate.has_value()) {
+        ImGui::TextDisabled("Time:");
+        ImGui::SameLine();
+        if (ImGui::SmallButton(odeDescriptor.TimeCoordinate->DisplayLabel.c_str())) {
+            navigateToSemanticObject(MakeDefinitionObjectRefV2(odeDescriptor.TimeCoordinate->DefinitionId));
+        }
+        AddTooltipForLastItem(odeDescriptor.TimeCoordinate->CanonicalNotation);
+    } else {
+        ImGui::TextDisabled("Time: unresolved for ODE descent");
+    }
+
+    if (!odeDescriptor.SelectedRelations.empty()) {
+        ImGui::TextDisabled("Selected relations:");
+        ImGui::SameLine();
+        for (std::size_t i = 0; i < odeDescriptor.SelectedRelations.size(); ++i) {
+            const auto &selectedRelation = odeDescriptor.SelectedRelations[i];
+            ImGui::PushID(static_cast<int>(i));
+            const auto buttonLabel = selectedRelation.StateDisplayLabel + " <- " + selectedRelation.DisplayLabel;
+            if (ImGui::SmallButton(buttonLabel.c_str())) {
+                navigateToSemanticObject(MakeRelationObjectRefV2(selectedRelation.RelationId));
+            }
+            AddTooltipForLastItem(
+                selectedRelation.CanonicalNotation + "\n" +
+                selectedRelation.DerivativeNotation + " = " + selectedRelation.ExplicitExpressionNotation);
+            ImGui::PopID();
+            if (i + 1 < odeDescriptor.SelectedRelations.size()) ImGui::SameLine();
+        }
+    } else {
+        ImGui::TextDisabled("Selected relations: none");
+    }
+
+    if (!odeDescriptor.Diagnostics.empty()) {
+        ImGui::TextDisabled("Diagnostics:");
+        for (std::size_t i = 0; i < odeDescriptor.Diagnostics.size(); ++i) {
+            const auto &diagnostic = odeDescriptor.Diagnostics[i];
+            ImGui::PushID(static_cast<int>(i));
+            ImGui::PushStyleColor(
+                ImGuiCol_Text,
+                diagnostic.Severity == EValidationSeverityV2::Error
+                    ? ImVec4(0.82f, 0.28f, 0.28f, 1.0f)
+                    : ImVec4(0.86f, 0.55f, 0.22f, 1.0f));
+            ImGui::BulletText("%s", diagnostic.Message.c_str());
+            ImGui::PopStyleColor();
+
+            if (diagnostic.Source.has_value()) {
+                ImGui::SameLine();
+                if (ImGui::SmallButton("Jump")) {
+                    navigateToSemanticObject(*diagnostic.Source);
+                }
+            }
+            ImGui::PopID();
+        }
+    }
 
     if (!overview.Status.Classification.Traits.empty()) {
         Slab::Str traits;
@@ -2385,6 +2461,7 @@ auto FLabV2WindowManager::PrepareModelWorkspaceViewState() -> FModelWorkspaceVie
     state.bAvailable = true;
     const bool bSelectionUsesDraftOverview =
         state.ActiveDraftOverview != nullptr && state.SelectionOverview == state.ActiveDraftOverview;
+    SyncModelSemanticGraphWindow(model, *state.SelectionOverview, bSelectionUsesDraftOverview);
     CachedModelWorkspaceViewState = state;
     CachedModelWorkspaceViewState.SelectionOverview =
         bSelectionUsesDraftOverview && CachedModelWorkspaceViewState.ActiveDraftOverview != nullptr

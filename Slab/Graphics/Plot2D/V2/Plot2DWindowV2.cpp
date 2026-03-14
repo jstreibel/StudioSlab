@@ -1,6 +1,7 @@
 #include "Plot2DWindowV2.h"
 
 #include "Core/Reflection/V2/ReflectionCodecsV2.h"
+#include "Graphics/Utils.h"
 
 #include <algorithm>
 #include <cctype>
@@ -209,15 +210,18 @@ namespace Slab::Graphics::Plot2D::V2 {
         return true;
     }
 
-    auto FPlot2DWindowV2::BuildDrawList() const -> FPlotDrawListV2 {
-        FPlotDrawListV2 drawList;
-
-        const FPlotFrameContextV2 frame = {
+    auto FPlot2DWindowV2::BuildFrameContext() const -> FPlotFrameContextV2 {
+        return {
             .PlotRegion = Region,
             .Viewport = Viewport,
             .WindowId = WindowId,
             .Title = Title
         };
+    }
+
+    auto FPlot2DWindowV2::BuildDrawList() const -> FPlotDrawListV2 {
+        FPlotDrawListV2 drawList;
+        const auto frame = BuildFrameContext();
 
         for (const auto &slot : GetArtistsInDrawOrder()) {
             if (slot.Artist == nullptr || !slot.Artist->IsVisible()) continue;
@@ -234,15 +238,46 @@ namespace Slab::Graphics::Plot2D::V2 {
         }
 
         const auto drawList = BuildDrawList();
-
-        const FPlotFrameContextV2 frame = {
-            .PlotRegion = Region,
-            .Viewport = Viewport,
-            .WindowId = WindowId,
-            .Title = Title
-        };
-
+        const auto frame = BuildFrameContext();
         return backend.Render(frame, drawList);
+    }
+
+    auto FPlot2DWindowV2::ViewportToPlotCoord(const FPoint2D &viewportCoord) const -> FPoint2D {
+        if (Viewport.GetWidth() <= 0 || Viewport.GetHeight() <= 0) return {};
+        return Slab::Graphics::FromViewportToSpaceCoord(viewportCoord, Region, Viewport);
+    }
+
+    auto FPlot2DWindowV2::HitTestArtists(const FPoint2D &plotPosition,
+                                         const FPoint2D &viewportPosition) const
+        -> std::optional<FPlotArtistHitResultV2> {
+        const auto frame = BuildFrameContext();
+        auto ordered = GetArtistsInDrawOrder();
+
+        for (auto it = ordered.rbegin(); it != ordered.rend(); ++it) {
+            if (it->Artist == nullptr || !it->Artist->IsVisible()) continue;
+
+            const auto hit = it->Artist->HitTest(frame, plotPosition, viewportPosition);
+            if (!hit.has_value()) continue;
+
+            return FPlotArtistHitResultV2{
+                .Artist = it->Artist,
+                .Target = *hit
+            };
+        }
+
+        return std::nullopt;
+    }
+
+    auto FPlot2DWindowV2::DispatchPointerEvent(const FPlotPointerEventV2 &event) -> bool {
+        const auto frame = BuildFrameContext();
+        auto ordered = GetArtistsInDrawOrder();
+
+        for (auto it = ordered.rbegin(); it != ordered.rend(); ++it) {
+            if (it->Artist == nullptr || !it->Artist->IsVisible()) continue;
+            if (it->Artist->HandlePointerEvent(frame, event)) return true;
+        }
+
+        return false;
     }
 
     auto FPlot2DWindowV2::SetWindowId(Str windowId) -> void {

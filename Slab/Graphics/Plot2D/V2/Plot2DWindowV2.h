@@ -16,6 +16,11 @@ namespace Slab::Graphics::Plot2D::V2 {
             FPlotArtistV2_ptr Artist = nullptr;
         };
 
+        struct FPlotArtistHitResultV2 {
+            FPlotArtistV2_ptr Artist = nullptr;
+            FPlotHitTargetV2 Target;
+        };
+
     private:
         static std::mutex RegistryMutex;
         static std::map<Str, FPlot2DWindowV2 *> Registry;
@@ -55,8 +60,14 @@ namespace Slab::Graphics::Plot2D::V2 {
 
         auto FitRegionToArtists(DevFloat paddingFraction = 0.05) -> bool;
 
+        [[nodiscard]] auto BuildFrameContext() const -> FPlotFrameContextV2;
         auto BuildDrawList() const -> FPlotDrawListV2;
         auto Render(IPlotRenderBackendV2 &backend) const -> bool;
+        [[nodiscard]] auto ViewportToPlotCoord(const FPoint2D &viewportCoord) const -> FPoint2D;
+        [[nodiscard]] auto HitTestArtists(const FPoint2D &plotPosition,
+                                          const FPoint2D &viewportPosition) const
+            -> std::optional<FPlotArtistHitResultV2>;
+        auto DispatchPointerEvent(const FPlotPointerEventV2 &event) -> bool;
 
         auto SetWindowId(Str windowId) -> void;
         [[nodiscard]] auto GetWindowId() const -> const Str &;

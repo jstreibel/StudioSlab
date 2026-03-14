@@ -15,6 +15,23 @@ namespace Slab::Graphics::Plot2D::V2 {
         return std::nullopt;
     }
 
+    auto FPlotArtistV2::HitTest(const FPlotFrameContextV2 &frame,
+                                const FPoint2D &plotPosition,
+                                const FPoint2D &viewportPosition) const
+        -> std::optional<FPlotHitTargetV2> {
+        (void) frame;
+        (void) plotPosition;
+        (void) viewportPosition;
+        return std::nullopt;
+    }
+
+    auto FPlotArtistV2::HandlePointerEvent(const FPlotFrameContextV2 &frame,
+                                           const FPlotPointerEventV2 &event) -> bool {
+        (void) frame;
+        (void) event;
+        return false;
+    }
+
     auto FPlotArtistV2::BuildReflectionParameterBindings() -> Vector<FPlotReflectionParameterBindingV2> {
         Vector<FPlotReflectionParameterBindingV2> bindings;
 

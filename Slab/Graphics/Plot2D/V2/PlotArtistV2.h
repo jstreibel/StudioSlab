@@ -1,11 +1,36 @@
 #ifndef STUDIOSLAB_PLOT_ARTIST_V2_H
 #define STUDIOSLAB_PLOT_ARTIST_V2_H
 
+#include "Graphics/Backend/Events/KeyMap.h"
 #include "Plot2DDrawListV2.h"
 #include "Plot2DRenderBackendV2.h"
 #include "PlotReflectionSchemaV2.h"
 
 namespace Slab::Graphics::Plot2D::V2 {
+
+    struct FPlotHitTargetV2 {
+        Str TargetId;
+        Str DisplayLabel;
+        Str Detail;
+    };
+
+    enum class EPlotPointerEventKindV2 : unsigned char {
+        Move,
+        Button,
+        Wheel,
+        Leave
+    };
+
+    struct FPlotPointerEventV2 {
+        EPlotPointerEventKindV2 Kind = EPlotPointerEventKindV2::Move;
+        FPoint2D PlotPosition{};
+        FPoint2D ViewportPosition{};
+        EMouseButton Button = MouseButton_LEFT;
+        EKeyState ButtonState = Release;
+        EModKeys ModKeys{};
+        double WheelDx = 0.0;
+        double WheelDy = 0.0;
+    };
 
     class FPlotArtistV2 : public IPlotReflectableEntityV2 {
         Str ArtistId;
@@ -26,6 +51,12 @@ namespace Slab::Graphics::Plot2D::V2 {
                                       FPlotDrawListV2 &drawList) const -> void = 0;
 
         [[nodiscard]] virtual auto ComputePlotBounds() const -> std::optional<RectR>;
+        [[nodiscard]] virtual auto HitTest(const FPlotFrameContextV2 &frame,
+                                           const FPoint2D &plotPosition,
+                                           const FPoint2D &viewportPosition) const
+            -> std::optional<FPlotHitTargetV2>;
+        virtual auto HandlePointerEvent(const FPlotFrameContextV2 &frame,
+                                        const FPlotPointerEventV2 &event) -> bool;
         [[nodiscard]] virtual auto GetArtistTypeId() const -> Str = 0;
 
         auto SetArtistId(Str artistId) -> void;

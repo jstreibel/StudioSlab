@@ -1,6 +1,7 @@
 #include <catch2/catch_all.hpp>
 
 #include "Core/Model/V2/ModelAuthoringV2.h"
+#include "Core/Model/V2/ModelRealizationV2.h"
 #include "Core/Model/V2/ModelSeedsV2.h"
 
 namespace {
@@ -15,6 +16,15 @@ namespace {
     auto HasSemanticDiagnosticContaining(const Slab::Vector<Slab::Core::Model::V2::FSemanticDiagnosticV2> &diagnostics,
                                          const Slab::Str &code,
                                          const Slab::Str &needle) -> bool {
+        return std::any_of(diagnostics.begin(), diagnostics.end(), [&](const auto &diagnostic) {
+            return diagnostic.Code == code && diagnostic.Message.find(needle) != Slab::Str::npos;
+        });
+    }
+
+    auto HasRealizationDiagnosticContaining(
+        const Slab::Vector<Slab::Core::Model::V2::FODERealizationDiagnosticV2> &diagnostics,
+        const Slab::Str &code,
+        const Slab::Str &needle) -> bool {
         return std::any_of(diagnostics.begin(), diagnostics.end(), [&](const auto &diagnostic) {
             return diagnostic.Code == code && diagnostic.Message.find(needle) != Slab::Str::npos;
         });
@@ -1009,6 +1019,84 @@ TEST_CASE("Model V2 status summary classifies oscillator and Klein-Gordon", "[Mo
         kgOverview.Status.Operators.begin(),
         kgOverview.Status.Operators.end(),
         [](const auto &link) { return link.Target.ObjectId == "vocab.relativistic_field_theory.operator.box"; }));
+}
+
+TEST_CASE("Model V2 ODE realization descriptor extracts harmonic oscillator", "[ModelV2][Realization][ODE]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildHarmonicOscillatorModelV2();
+    const auto descriptor = BuildODERealizationDescriptorV2(model);
+
+    REQUIRE(descriptor.IsReady());
+    CHECK(descriptor.Readiness == EODERealizationReadinessV2::Ready);
+    CHECK(descriptor.Strategy == EODERealizationStrategyV2::ExplicitFirstOrderSystem);
+    CHECK(descriptor.ModelClass == "finite-dimensional dynamical system");
+    CHECK(descriptor.ModelCharacter == "ODE-like");
+
+    REQUIRE(descriptor.TimeCoordinate.has_value());
+    CHECK(descriptor.TimeCoordinate->DefinitionId == "coord.t");
+
+    REQUIRE(descriptor.StateVariables.size() == 2);
+    CHECK(descriptor.StateVariables[0].DefinitionId == "state.x");
+    CHECK(descriptor.StateVariables[1].DefinitionId == "state.p");
+
+    CHECK(std::any_of(descriptor.Parameters.begin(), descriptor.Parameters.end(), [](const auto &parameter) {
+        return parameter.DefinitionId == "param.m";
+    }));
+    CHECK(std::any_of(descriptor.Parameters.begin(), descriptor.Parameters.end(), [](const auto &parameter) {
+        return parameter.DefinitionId == "param.k";
+    }));
+    CHECK(std::any_of(descriptor.Observables.begin(), descriptor.Observables.end(), [](const auto &observable) {
+        return observable.DefinitionId == "obs.energy";
+    }));
+
+    REQUIRE(descriptor.SelectedRelations.size() == 2);
+    CHECK(descriptor.SelectedRelations[0].RelationId == "relation.oscillator.first_order_x");
+    CHECK(descriptor.SelectedRelations[0].StateDefinitionId == "state.x");
+    CHECK(descriptor.SelectedRelations[1].RelationId == "relation.oscillator.first_order_p");
+    CHECK(descriptor.SelectedRelations[1].StateDefinitionId == "state.p");
+
+    CHECK(HasRealizationDiagnosticContaining(
+        descriptor.Diagnostics,
+        "ignored_ode_like_relation",
+        "Second-order Equation"));
+}
+
+TEST_CASE("Model V2 ODE realization rejects Klein-Gordon", "[ModelV2][Realization][ODE]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildKleinGordonModelV2();
+    const auto descriptor = BuildODERealizationDescriptorV2(model);
+
+    REQUIRE_FALSE(descriptor.IsReady());
+    CHECK(descriptor.Readiness == EODERealizationReadinessV2::Blocked);
+    CHECK(HasRealizationDiagnosticContaining(
+        descriptor.Diagnostics,
+        "field_model_out_of_scope",
+        "out of scope"));
+    CHECK(HasRealizationDiagnosticContaining(
+        descriptor.Diagnostics,
+        "pde_character_out_of_scope",
+        "PDE-like"));
+}
+
+TEST_CASE("Model V2 ODE realization requires a first-order equation per state", "[ModelV2][Realization][ODE]") {
+    using namespace Slab::Core::Model::V2;
+
+    auto model = BuildHarmonicOscillatorModelV2();
+    model.Relations.erase(
+        std::remove_if(model.Relations.begin(), model.Relations.end(), [](const auto &relation) {
+            return relation.RelationId == "relation.oscillator.first_order_p";
+        }),
+        model.Relations.end());
+
+    const auto descriptor = BuildODERealizationDescriptorV2(model);
+
+    REQUIRE_FALSE(descriptor.IsReady());
+    CHECK(HasRealizationDiagnosticContaining(
+        descriptor.Diagnostics,
+        "missing_explicit_first_order_relation",
+        "canonical state"));
 }
 
 TEST_CASE("Model V2 vocabulary overview reports ambient usage and local specialization links", "[ModelV2][Navigation][Override]") {

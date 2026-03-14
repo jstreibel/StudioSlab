@@ -301,6 +301,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/AxisArtistV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/BackgroundArtistV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/BackgroundArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/ModelSemanticGraphArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/ModelSemanticGraphArtistV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/PointSetArtistV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/PointSetArtistV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/RtoRFunctionArtistV2.cpp
