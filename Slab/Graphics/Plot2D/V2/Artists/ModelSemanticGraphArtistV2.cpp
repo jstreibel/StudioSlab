@@ -19,6 +19,13 @@ namespace Slab::Graphics::Plot2D::V2 {
         constexpr DevFloat CHopRingSpacing = 5.4;
         constexpr DevFloat CLayoutOuterMargin = 2.3;
         constexpr DevFloat CPi = 3.14159265358979323846;
+        constexpr DevFloat CEdgeHitTolerancePixels = 8.5;
+        constexpr DevFloat CHudPaddingX = 12.0;
+        constexpr DevFloat CHudPaddingY = 10.0;
+        constexpr DevFloat CHudLineHeight = 15.0;
+        constexpr DevFloat CHudSectionGap = 10.0;
+        constexpr DevFloat CHudCardGap = 10.0;
+        constexpr DevFloat CHudApproxCharWidth = 7.0;
 
         [[nodiscard]] auto KindRank(const ModelV2::ESemanticObjectKindV2 kind) -> int {
             switch (kind) {
@@ -37,10 +44,20 @@ namespace Slab::Graphics::Plot2D::V2 {
             return label.substr(0, maxChars - 3) + "...";
         }
 
+        [[nodiscard]] auto ApproximateHudTextWidth(const Str &text) -> DevFloat {
+            return static_cast<DevFloat>(text.size()) * CHudApproxCharWidth;
+        }
+
         [[nodiscard]] auto DisplayLabelForObject(const ModelV2::FSemanticObjectOverviewV2 &object) -> Str {
             if (!object.DisplayLabel.empty()) return CompactLabel(object.DisplayLabel);
             if (!object.CanonicalNotation.empty()) return CompactLabel(object.CanonicalNotation);
             return CompactLabel(object.Ref.ObjectId);
+        }
+
+        [[nodiscard]] auto FullDisplayLabelForObject(const ModelV2::FSemanticObjectOverviewV2 &object) -> Str {
+            if (!object.DisplayLabel.empty()) return object.DisplayLabel;
+            if (!object.CanonicalNotation.empty()) return object.CanonicalNotation;
+            return object.Ref.ObjectId;
         }
 
         [[nodiscard]] auto SubtitleForObject(const ModelV2::FSemanticObjectOverviewV2 &object) -> Str {
@@ -120,6 +137,110 @@ namespace Slab::Graphics::Plot2D::V2 {
             return style;
         }
 
+        [[nodiscard]] auto EdgeKindLabel(const FModelSemanticGraphArtistV2::EEdgeKind kind) -> Str {
+            switch (kind) {
+                case FModelSemanticGraphArtistV2::EEdgeKind::Dependency: return "Depends On";
+                case FModelSemanticGraphArtistV2::EEdgeKind::AmbientDependency: return "Ambient Dependency";
+                case FModelSemanticGraphArtistV2::EEdgeKind::SourceLink: return "Source Link";
+                case FModelSemanticGraphArtistV2::EEdgeKind::TargetLink: return "Target Link";
+                case FModelSemanticGraphArtistV2::EEdgeKind::Assumption: return "Assumption";
+                case FModelSemanticGraphArtistV2::EEdgeKind::Override: return "Override";
+            }
+
+            return "Link";
+        }
+
+        [[nodiscard]] auto DistanceToSegmentSquaredPixels(const FPoint2D &plotPosition,
+                                                          const FPoint2D &a,
+                                                          const FPoint2D &b,
+                                                          const FPoint2D &pixelSize) -> DevFloat {
+            const auto scaledAx = a.x / pixelSize.x;
+            const auto scaledAy = a.y / pixelSize.y;
+            const auto scaledBx = b.x / pixelSize.x;
+            const auto scaledBy = b.y / pixelSize.y;
+            const auto scaledPx = plotPosition.x / pixelSize.x;
+            const auto scaledPy = plotPosition.y / pixelSize.y;
+
+            const auto abx = scaledBx - scaledAx;
+            const auto aby = scaledBy - scaledAy;
+            const auto apx = scaledPx - scaledAx;
+            const auto apy = scaledPy - scaledAy;
+
+            const auto abLengthSquared = (abx * abx) + (aby * aby);
+            if (abLengthSquared <= 1.0e-9) {
+                return (apx * apx) + (apy * apy);
+            }
+
+            const auto t = std::clamp(((apx * abx) + (apy * aby)) / abLengthSquared, static_cast<DevFloat>(0.0), static_cast<DevFloat>(1.0));
+            const auto closestX = scaledAx + (t * abx);
+            const auto closestY = scaledAy + (t * aby);
+            const auto dx = scaledPx - closestX;
+            const auto dy = scaledPy - closestY;
+            return (dx * dx) + (dy * dy);
+        }
+
+        auto AddHudCard(FPlotDrawListV2 &drawList,
+                        const FPlotFrameContextV2 &frame,
+                        const DevFloat xMin,
+                        DevFloat yTop,
+                        const Str &title,
+                        const Vector<Str> &lines,
+                        const FColor &accentColor) -> DevFloat {
+            (void) frame;
+            if (title.empty() && lines.empty()) return yTop;
+
+            DevFloat width = ApproximateHudTextWidth(title);
+            for (const auto &line : lines) {
+                width = std::max(width, ApproximateHudTextWidth(line));
+            }
+
+            width += (2.0 * CHudPaddingX);
+            const auto lineCount = static_cast<DevFloat>(std::max<std::size_t>(1, lines.size()));
+            const auto height =
+                (2.0 * CHudPaddingY) + CHudLineHeight + ((lineCount - 1.0) * CHudLineHeight) + CHudSectionGap;
+
+            const RectR backgroundRect{
+                xMin,
+                xMin + width,
+                yTop - height,
+                yTop
+            };
+            drawList.AddRectangle(FRectangleCommandV2{
+                .Rectangle = backgroundRect,
+                .Color = FColor::FromHex("#0C1320").WithAlpha(0.86f),
+                .bFilled = true,
+                .CoordinateSpace = EPlotCoordinateSpaceV2::Screen
+            });
+
+            drawList.AddRectangle(FRectangleCommandV2{
+                .Rectangle = backgroundRect,
+                .Color = accentColor.WithAlpha(0.92f),
+                .bFilled = false,
+                .CoordinateSpace = EPlotCoordinateSpaceV2::Screen
+            });
+
+            const auto textX = xMin + CHudPaddingX;
+            auto textY = yTop - CHudPaddingY - CHudLineHeight;
+            drawList.AddText(FTextCommandV2{
+                .Text = title,
+                .Location = {textX, textY},
+                .Color = accentColor,
+                .CoordinateSpace = EPlotCoordinateSpaceV2::Screen
+            });
+
+            for (const auto &line : lines) {
+                textY -= CHudLineHeight;
+                drawList.AddText(FTextCommandV2{
+                    .Text = CompactLabel(line, 84),
+                    .Location = {textX, textY},
+                    .Color = White.WithAlpha(0.95f),
+                    .CoordinateSpace = EPlotCoordinateSpaceV2::Screen
+                });
+            }
+
+            return backgroundRect.yMin - CHudCardGap;
+        }
+
         [[nodiscard]] auto AppendTraversalTargets(const ModelV2::FSemanticObjectOverviewV2 &object)
             -> Vector<ModelV2::FSemanticObjectRefV2> {
             Vector<ModelV2::FSemanticObjectRefV2> refs;
@@ -159,6 +280,7 @@ namespace Slab::Graphics::Plot2D::V2 {
         Edges.clear();
         NodeIndexById.clear();
         HoveredNodeId.clear();
+        HoveredEdgeId.clear();
         PressedNodeId.clear();
 
         if (overview.ObjectsByKey.empty()) {
@@ -234,7 +356,11 @@ namespace Slab::Graphics::Plot2D::V2 {
             node.Ref = object.Ref;
             node.NodeId = key;
             node.Label = DisplayLabelForObject(object);
+            node.FullLabel = FullDisplayLabelForObject(object);
             node.Subtitle = CompactLabel(SubtitleForObject(object), 22);
+            node.KindLabel = object.KindLabel;
+            node.CanonicalNotation = object.CanonicalNotation;
+            node.Description = object.Description;
             node.Kind = object.Ref.Kind;
             node.bReadonly = object.bReadonly;
             node.bAmbient = object.bAmbient;
@@ -267,6 +393,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                 edge.SourceNodeId = sourceKey;
                 edge.TargetNodeId = targetKey;
                 edge.Kind = kind;
+                edge.Label = EdgeKindLabel(kind);
                 edge.Detail = link.Detail.empty() ? link.Label : link.Detail;
                 edge.bAmbient = link.bAmbient;
                 edge.bConflict = link.bConflict;
@@ -335,6 +462,38 @@ namespace Slab::Graphics::Plot2D::V2 {
         if (it == NodeIndexById.end()) return nullptr;
         if (it->second >= Nodes.size()) return nullptr;
         return &Nodes[it->second];
+    }
+
+    auto FModelSemanticGraphArtistV2::FindEdgeById(const Str &edgeId) const -> const FGraphEdgeV2 * {
+        const auto it = std::find_if(Edges.begin(), Edges.end(), [&](const auto &edge) {
+            return edge.EdgeId == edgeId;
+        });
+        if (it == Edges.end()) return nullptr;
+        return &(*it);
+    }
+
+    auto FModelSemanticGraphArtistV2::FindEdgeHitId(const FPlotFrameContextV2 &frame,
+                                                    const FPoint2D &plotPosition) const -> Str {
+        if (Edges.empty()) return {};
+
+        const auto pixelSize = PixelSizeInSpace(frame.PlotRegion, frame.Viewport);
+        const auto toleranceSquared = CEdgeHitTolerancePixels * CEdgeHitTolerancePixels;
+
+        const FGraphEdgeV2 *bestEdge = nullptr;
+        DevFloat bestDistance = std::numeric_limits<DevFloat>::max();
+        for (const auto &edge : Edges) {
+            const auto *source = FindNodeById(edge.SourceNodeId);
+            const auto *target = FindNodeById(edge.TargetNodeId);
+            if (source == nullptr || target == nullptr) continue;
+
+            const auto distance = DistanceToSegmentSquaredPixels(plotPosition, source->Position, target->Position, pixelSize);
+            if (distance > toleranceSquared || distance >= bestDistance) continue;
+
+            bestDistance = distance;
+            bestEdge = &edge;
+        }
+
+        return bestEdge != nullptr ? bestEdge->EdgeId : Str{};
     }
 
     auto FModelSemanticGraphArtistV2::BuildReflectionParameterBindings() -> Vector<FPlotReflectionParameterBindingV2> {
@@ -464,10 +623,33 @@ namespace Slab::Graphics::Plot2D::V2 {
             const auto *target = FindNodeById(edge.TargetNodeId);
             if (source == nullptr || target == nullptr) continue;
 
+            const bool bTouchesSelection =
+                ModelV2::AreSemanticObjectRefsEqualV2(source->Ref, SelectedObject) ||
+                ModelV2::AreSemanticObjectRefsEqualV2(target->Ref, SelectedObject);
+            const bool bHovered = edge.EdgeId == HoveredEdgeId;
+
             FPolylineCommandV2 command;
             command.Style = EdgeStyleForKind(edge);
+            if (bTouchesSelection || bHovered) {
+                auto highlightStyle = command.Style;
+                highlightStyle.thickness = bHovered ? 2.7f : 2.05f;
+                highlightStyle.lineColor = EdgeColorForKind(edge).WithAlpha(bHovered ? 1.0f : 0.96f);
+                command.Style = highlightStyle;
+            }
             command.Points = {source->Position, target->Position};
             drawList.AddPolyline(std::move(command));
+
+            if (bHovered) {
+                FTextCommandV2 edgeLabel;
+                edgeLabel.Text = edge.Label;
+                edgeLabel.Location = {
+                    static_cast<DevFloat>(0.5 * (source->Position.x + target->Position.x)) + labelOffsetX,
+                    static_cast<DevFloat>(0.5 * (source->Position.y + target->Position.y)) + labelOffsetY
+                };
+                edgeLabel.Color = EdgeColorForKind(edge).WithAlpha(0.96f);
+                edgeLabel.CoordinateSpace = EPlotCoordinateSpaceV2::Plot;
+                drawList.AddText(std::move(edgeLabel));
+            }
         }
 
         for (const auto &node : Nodes) {
@@ -514,6 +696,82 @@ namespace Slab::Graphics::Plot2D::V2 {
                 subtitleCommand.CoordinateSpace = EPlotCoordinateSpaceV2::Plot;
                 drawList.AddText(std::move(subtitleCommand));
             }
+        }
+
+        if (!Nodes.empty()) {
+            DevFloat topY = static_cast<DevFloat>(frame.Viewport.GetHeight()) - 14.0;
+
+            const auto *selectedNode = [&]() -> const FGraphNodeV2 * {
+                for (const auto &node : Nodes) {
+                    if (ModelV2::AreSemanticObjectRefsEqualV2(node.Ref, SelectedObject)) return &node;
+                }
+                return nullptr;
+            }();
+
+            if (selectedNode != nullptr) {
+                Vector<Str> lines;
+                lines.push_back(selectedNode->FullLabel + " [" + selectedNode->KindLabel + "]");
+                if (!selectedNode->CanonicalNotation.empty()) lines.push_back(selectedNode->CanonicalNotation);
+                else if (!selectedNode->Description.empty()) lines.push_back(selectedNode->Description);
+                lines.push_back("Neighborhood hops: " + ToStr(NeighborhoodHops));
+                topY = AddHudCard(
+                    drawList,
+                    frame,
+                    14.0,
+                    topY,
+                    "Selected",
+                    lines,
+                    FColor::FromHex("#F2C66D"));
+            }
+
+            if (!HoveredNodeId.empty() && HoveredNodeId != (selectedNode != nullptr ? selectedNode->NodeId : Str{})) {
+                if (const auto *hoveredNode = FindNodeById(HoveredNodeId); hoveredNode != nullptr) {
+                    Vector<Str> lines;
+                    lines.push_back(hoveredNode->FullLabel + " [" + hoveredNode->KindLabel + "]");
+                    if (!hoveredNode->CanonicalNotation.empty()) lines.push_back(hoveredNode->CanonicalNotation);
+                    else if (!hoveredNode->Description.empty()) lines.push_back(hoveredNode->Description);
+                    if (!hoveredNode->Subtitle.empty()) lines.push_back(hoveredNode->Subtitle);
+                    topY = AddHudCard(
+                        drawList,
+                        frame,
+                        14.0,
+                        topY,
+                        "Hover",
+                        lines,
+                        FColor::FromHex("#8CD8F8"));
+                }
+            } else if (!HoveredEdgeId.empty()) {
+                if (const auto *hoveredEdge = FindEdgeById(HoveredEdgeId); hoveredEdge != nullptr) {
+                    const auto *source = FindNodeById(hoveredEdge->SourceNodeId);
+                    const auto *target = FindNodeById(hoveredEdge->TargetNodeId);
+
+                    Vector<Str> lines;
+                    if (source != nullptr && target != nullptr) {
+                        lines.push_back(source->FullLabel + " -> " + target->FullLabel);
+                    }
+                    if (!hoveredEdge->Detail.empty()) lines.push_back(hoveredEdge->Detail);
+                    topY = AddHudCard(
+                        drawList,
+                        frame,
+                        14.0,
+                        topY,
+                        "Hover Edge: " + hoveredEdge->Label,
+                        lines,
+                        EdgeColorForKind(*hoveredEdge));
+                }
+            }
+
+            Vector<Str> statusLines;
+            statusLines.push_back("Nodes: " + ToStr(Nodes.size()) + " | Edges: " + ToStr(Edges.size()));
+            statusLines.push_back("Keys: [ ] adjust radius, L labels, F fit");
+            (void) AddHudCard(
+                drawList,
+                frame,
+                static_cast<DevFloat>(std::max(14, frame.Viewport.GetWidth() - 350)),
+                static_cast<DevFloat>(frame.Viewport.GetHeight()) - 14.0,
+                "Semantic Graph",
+                statusLines,
+                FColor::FromHex("#7DA8D8"));
         }
     }
 
@@ -578,14 +836,17 @@ namespace Slab::Graphics::Plot2D::V2 {
 
         const auto hit = HitTest(frame, event.PlotPosition, event.ViewportPosition);
         const auto hitNodeId = hit.has_value() ? hit->TargetId : Str{};
+        const auto hitEdgeId = hit.has_value() ? Str{} : FindEdgeHitId(frame, event.PlotPosition);
 
         switch (event.Kind) {
             case EPlotPointerEventKindV2::Move:
                 HoveredNodeId = hitNodeId;
-                return hit.has_value();
+                HoveredEdgeId = hit.has_value() ? Str{} : hitEdgeId;
+                return hit.has_value() || !HoveredEdgeId.empty();
 
             case EPlotPointerEventKindV2::Leave:
                 HoveredNodeId.clear();
+                HoveredEdgeId.clear();
                 PressedNodeId.clear();
                 return false;
 
@@ -598,11 +859,13 @@ namespace Slab::Graphics::Plot2D::V2 {
                 if (event.ButtonState == Press) {
                     PressedNodeId = hitNodeId;
                     HoveredNodeId = hitNodeId;
+                    HoveredEdgeId.clear();
                     return hit.has_value();
                 }
 
                 if (event.ButtonState == Release) {
                     HoveredNodeId = hitNodeId;
+                    HoveredEdgeId = hit.has_value() ? Str{} : hitEdgeId;
                     const bool bIsClick = !PressedNodeId.empty() && PressedNodeId == hitNodeId;
                     const auto *node = bIsClick ? FindNodeById(hitNodeId) : nullptr;
                     PressedNodeId.clear();
@@ -613,6 +876,38 @@ namespace Slab::Graphics::Plot2D::V2 {
                     }
                 }
                 return false;
+        }
+
+        return false;
+    }
+
+    auto FModelSemanticGraphArtistV2::HandleKeyboardEvent(const FPlotFrameContextV2 &frame,
+                                                          const FPlotKeyboardEventV2 &event) -> bool {
+        (void) frame;
+
+        if (event.State == Release) return false;
+
+        switch (event.Key) {
+            case Key_LEFT_BRACKET:
+            case Key_MINUS:
+            case Key_KP_SUBTRACT:
+                SetNeighborhoodHops(NeighborhoodHops - 1);
+                return true;
+
+            case Key_RIGHT_BRACKET:
+            case Key_EQUAL:
+            case Key_PLUS:
+            case Key_KP_ADD:
+                SetNeighborhoodHops(NeighborhoodHops + 1);
+                return true;
+
+            case Key_L:
+            case Key_l:
+                SetShowLabels(!bShowLabels);
+                return true;
+
+            default:
+                break;
         }
 
         return false;

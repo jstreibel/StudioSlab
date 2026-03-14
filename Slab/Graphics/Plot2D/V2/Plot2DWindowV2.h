@@ -68,6 +68,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                                           const FPoint2D &viewportPosition) const
             -> std::optional<FPlotArtistHitResultV2>;
         auto DispatchPointerEvent(const FPlotPointerEventV2 &event) -> bool;
+        auto DispatchKeyboardEvent(const FPlotKeyboardEventV2 &event) -> bool;
 
         auto SetWindowId(Str windowId) -> void;
         [[nodiscard]] auto GetWindowId() const -> const Str &;

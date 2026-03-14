@@ -321,6 +321,17 @@ namespace {
             bAnimationStateInitialized = true;
         }
 
+        auto AnimateToFittedRegion(FPlot2DWindowV2 &window, const Slab::DevFloat paddingFraction = 0.08) -> bool {
+            const auto previousRegion = BuildAnimatedRegion();
+            if (!window.FitRegionToArtists(paddingFraction)) return false;
+
+            const auto fittedRegion = window.GetRegion();
+            window.SetAutoFitRanges(false);
+            window.SetRegion(previousRegion);
+            AnimateRegionTo(fittedRegion);
+            return true;
+        }
+
     public:
         FPlot2DWindowHostV2(Slab::Str plotWindowId, Slab::Str title)
         : FSlabWindow(Slab::Graphics::FSlabWindowConfig(std::move(title)))
@@ -378,6 +389,44 @@ namespace {
             }
 
             return false;
+        }
+
+        auto NotifyKeyboard(const Slab::Graphics::EKeyMap key,
+                            const Slab::Graphics::EKeyState state,
+                            const Slab::Graphics::EModKeys modKeys) -> bool override {
+            if (FSlabWindow::NotifyKeyboard(key, state, modKeys)) return true;
+
+            auto *window = FindWindow();
+            if (window == nullptr) return false;
+
+            SyncAnimationStateFromWindow(*window);
+
+            if (state == Slab::Graphics::Press || state == Slab::Graphics::Repeat) {
+                if (key == Slab::Graphics::Key_F || key == Slab::Graphics::Key_f) {
+                    return AnimateToFittedRegion(*window);
+                }
+            }
+
+            const auto handled = window->DispatchKeyboardEvent(
+                Slab::Graphics::Plot2D::V2::FPlotKeyboardEventV2{
+                    .Key = key,
+                    .State = state,
+                    .ModKeys = modKeys
+                });
+            if (!handled) return false;
+
+            if ((state == Slab::Graphics::Press || state == Slab::Graphics::Repeat) &&
+                (key == Slab::Graphics::Key_LEFT_BRACKET ||
+                 key == Slab::Graphics::Key_RIGHT_BRACKET ||
+                 key == Slab::Graphics::Key_MINUS ||
+                 key == Slab::Graphics::Key_EQUAL ||
+                 key == Slab::Graphics::Key_PLUS ||
+                 key == Slab::Graphics::Key_KP_SUBTRACT ||
+                 key == Slab::Graphics::Key_KP_ADD)) {
+                (void) AnimateToFittedRegion(*window);
+            }
+
+            return true;
         }
 
         auto NotifyMouseMotion(const int x, const int y, const int dx, const int dy) -> bool override {

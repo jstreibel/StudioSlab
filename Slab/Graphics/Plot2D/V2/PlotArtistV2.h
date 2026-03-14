@@ -32,6 +32,12 @@ namespace Slab::Graphics::Plot2D::V2 {
         double WheelDy = 0.0;
     };
 
+    struct FPlotKeyboardEventV2 {
+        EKeyMap Key = Key_UNKNOWN;
+        EKeyState State = Release;
+        EModKeys ModKeys{};
+    };
+
     class FPlotArtistV2 : public IPlotReflectableEntityV2 {
         Str ArtistId;
         Str Label;
@@ -57,6 +63,8 @@ namespace Slab::Graphics::Plot2D::V2 {
             -> std::optional<FPlotHitTargetV2>;
         virtual auto HandlePointerEvent(const FPlotFrameContextV2 &frame,
                                         const FPlotPointerEventV2 &event) -> bool;
+        virtual auto HandleKeyboardEvent(const FPlotFrameContextV2 &frame,
+                                         const FPlotKeyboardEventV2 &event) -> bool;
         [[nodiscard]] virtual auto GetArtistTypeId() const -> Str = 0;
 
         auto SetArtistId(Str artistId) -> void;

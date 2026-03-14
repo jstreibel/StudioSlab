@@ -280,6 +280,18 @@ namespace Slab::Graphics::Plot2D::V2 {
         return false;
     }
 
+    auto FPlot2DWindowV2::DispatchKeyboardEvent(const FPlotKeyboardEventV2 &event) -> bool {
+        const auto frame = BuildFrameContext();
+        auto ordered = GetArtistsInDrawOrder();
+
+        for (auto it = ordered.rbegin(); it != ordered.rend(); ++it) {
+            if (it->Artist == nullptr || !it->Artist->IsVisible()) continue;
+            if (it->Artist->HandleKeyboardEvent(frame, event)) return true;
+        }
+
+        return false;
+    }
+
     auto FPlot2DWindowV2::SetWindowId(Str windowId) -> void {
         windowId = NormalizeToken(std::move(windowId));
         if (windowId.empty()) return;

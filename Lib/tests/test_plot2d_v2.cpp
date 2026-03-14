@@ -340,3 +340,78 @@ TEST_CASE("Plot2D V2 dispatches semantic graph hit targets to interactive artist
     REQUIRE(bActivated);
     REQUIRE(ModelV2::AreSemanticObjectRefsEqualV2(activatedRef, selectedRef));
 }
+
+TEST_CASE("Plot2D V2 dispatches semantic graph keyboard controls to artists", "[Plot2DV2][ModelGraph]") {
+    const auto overview = ModelV2::BuildModelSemanticOverviewV2(ModelV2::BuildHarmonicOscillatorModelV2());
+    auto artist = New<FModelSemanticGraphArtistV2>();
+    artist->SetSemanticOverview(overview, ModelV2::MakeDefinitionObjectRefV2("state.x"));
+
+    FPlot2DWindowV2 window("Semantic Graph Keyboard Test", {-12.0, 12.0, -10.0, 10.0}, {0, 800, 0, 600});
+    window.AddArtist(artist);
+
+    REQUIRE(artist->GetNeighborhoodHops() == 2);
+    REQUIRE(artist->GetShowLabels());
+
+    REQUIRE(window.DispatchKeyboardEvent(FPlotKeyboardEventV2{
+        .Key = Slab::Graphics::Key_RIGHT_BRACKET,
+        .State = Slab::Graphics::Press
+    }));
+    CHECK(artist->GetNeighborhoodHops() == 3);
+
+    REQUIRE(window.DispatchKeyboardEvent(FPlotKeyboardEventV2{
+        .Key = Slab::Graphics::Key_l,
+        .State = Slab::Graphics::Press
+    }));
+    CHECK_FALSE(artist->GetShowLabels());
+
+    REQUIRE(window.DispatchKeyboardEvent(FPlotKeyboardEventV2{
+        .Key = Slab::Graphics::Key_MINUS,
+        .State = Slab::Graphics::Press
+    }));
+    CHECK(artist->GetNeighborhoodHops() == 2);
+}
+
+TEST_CASE("Plot2D V2 semantic graph emits screen-space HUD for hovered edges", "[Plot2DV2][ModelGraph]") {
+    const auto overview = ModelV2::BuildModelSemanticOverviewV2(ModelV2::BuildHarmonicOscillatorModelV2());
+    auto artist = New<FModelSemanticGraphArtistV2>();
+    artist->SetShowLabels(false);
+    artist->SetSemanticOverview(overview, ModelV2::MakeDefinitionObjectRefV2("state.x"));
+
+    REQUIRE_FALSE(artist->GetEdges().empty());
+
+    FPlot2DWindowV2 window("Semantic Graph HUD Test", {-12.0, 12.0, -10.0, 10.0}, {0, 800, 0, 600});
+    window.AddArtist(artist);
+    REQUIRE(window.FitRegionToArtists(0.05));
+    window.SetViewport({0, 800, 0, 600});
+
+    const auto &edge = artist->GetEdges().front();
+    const auto sourceNodeIt = std::find_if(
+        artist->GetNodes().begin(),
+        artist->GetNodes().end(),
+        [&](const auto &node) { return node.NodeId == edge.SourceNodeId; });
+    const auto targetNodeIt = std::find_if(
+        artist->GetNodes().begin(),
+        artist->GetNodes().end(),
+        [&](const auto &node) { return node.NodeId == edge.TargetNodeId; });
+    REQUIRE(sourceNodeIt != artist->GetNodes().end());
+    REQUIRE(targetNodeIt != artist->GetNodes().end());
+
+    const FPoint2D midpoint{
+        static_cast<DevFloat>(0.5 * (sourceNodeIt->Position.x + targetNodeIt->Position.x)),
+        static_cast<DevFloat>(0.5 * (sourceNodeIt->Position.y + targetNodeIt->Position.y))
+    };
+    const auto viewportPosition = Slab::Graphics::FromSpaceToViewportCoord(
+        midpoint,
+        window.GetRegion(),
+        window.GetViewport());
+
+    REQUIRE(window.DispatchPointerEvent(FPlotPointerEventV2{
+        .Kind = EPlotPointerEventKindV2::Move,
+        .PlotPosition = midpoint,
+        .ViewportPosition = viewportPosition
+    }));
+
+    const auto drawList = window.BuildDrawList();
+    CHECK(CountRectangleCommands(drawList) >= 2);
+    CHECK(CountTextCommands(drawList) >= 4);
+}

@@ -32,6 +32,13 @@ namespace Slab::Graphics::Plot2D::V2 {
         return false;
     }
 
+    auto FPlotArtistV2::HandleKeyboardEvent(const FPlotFrameContextV2 &frame,
+                                            const FPlotKeyboardEventV2 &event) -> bool {
+        (void) frame;
+        (void) event;
+        return false;
+    }
+
     auto FPlotArtistV2::BuildReflectionParameterBindings() -> Vector<FPlotReflectionParameterBindingV2> {
         Vector<FPlotReflectionParameterBindingV2> bindings;
 

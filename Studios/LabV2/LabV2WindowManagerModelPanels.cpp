@@ -1428,7 +1428,10 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
     if (ImGui::Button("Open in Plots")) {
         FocusModelSemanticGraphWindow();
     }
-    AddTooltipForLastItem("Open the read-only semantic knowledge graph as a Plot2D V2 surface. Clicking nodes in the graph reuses the current model selection.");
+    AddTooltipForLastItem(
+        "Open the read-only semantic knowledge graph as a Plot2D V2 surface. "
+        "Click nodes to reuse the current model selection; use [ and ] to change neighborhood radius, "
+        "L to toggle labels, and F to fit the graph.");
     if (SelectedModelSemanticObject.IsValid()) {
         ImGui::SameLine();
         ImGui::TextDisabled("Centered on: %s", SelectedModelSemanticObject.ObjectId.c_str());

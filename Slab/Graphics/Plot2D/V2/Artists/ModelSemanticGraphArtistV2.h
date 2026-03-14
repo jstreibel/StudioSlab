@@ -25,7 +25,11 @@ namespace Slab::Graphics::Plot2D::V2 {
             Slab::Core::Model::V2::FSemanticObjectRefV2 Ref;
             Str NodeId;
             Str Label;
+            Str FullLabel;
             Str Subtitle;
+            Str KindLabel;
+            Str CanonicalNotation;
+            Str Description;
             Slab::Core::Model::V2::ESemanticObjectKindV2 Kind =
                 Slab::Core::Model::V2::ESemanticObjectKindV2::Definition;
             bool bReadonly = false;
@@ -42,6 +46,7 @@ namespace Slab::Graphics::Plot2D::V2 {
             Str SourceNodeId;
             Str TargetNodeId;
             EEdgeKind Kind = EEdgeKind::Dependency;
+            Str Label;
             Str Detail;
             bool bAmbient = false;
             bool bConflict = false;
@@ -56,6 +61,7 @@ namespace Slab::Graphics::Plot2D::V2 {
         std::optional<Slab::Core::Model::V2::FModelSemanticOverviewV2> LastOverview;
         Slab::Core::Model::V2::FSemanticObjectRefV2 SelectedObject;
         Str HoveredNodeId;
+        Str HoveredEdgeId;
         Str PressedNodeId;
         int NeighborhoodHops = 2;
         bool bShowLabels = true;
@@ -63,6 +69,8 @@ namespace Slab::Graphics::Plot2D::V2 {
 
         auto RebuildLayout() -> void;
         [[nodiscard]] auto FindNodeById(const Str &nodeId) const -> const FGraphNodeV2 *;
+        [[nodiscard]] auto FindEdgeById(const Str &edgeId) const -> const FGraphEdgeV2 *;
+        [[nodiscard]] auto FindEdgeHitId(const FPlotFrameContextV2 &frame, const FPoint2D &plotPosition) const -> Str;
 
     protected:
         [[nodiscard]] auto BuildReflectionParameterBindings() -> Vector<FPlotReflectionParameterBindingV2> override;
@@ -95,6 +103,8 @@ namespace Slab::Graphics::Plot2D::V2 {
             -> std::optional<FPlotHitTargetV2> override;
         auto HandlePointerEvent(const FPlotFrameContextV2 &frame,
                                 const FPlotPointerEventV2 &event) -> bool override;
+        auto HandleKeyboardEvent(const FPlotFrameContextV2 &frame,
+                                 const FPlotKeyboardEventV2 &event) -> bool override;
         [[nodiscard]] auto GetArtistTypeId() const -> Str override;
     };
 
