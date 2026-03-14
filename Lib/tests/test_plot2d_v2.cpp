@@ -6,6 +6,7 @@
 
 #include "Core/Model/V2/ModelSeedsV2.h"
 #include "Core/Reflection/V2/ReflectionCodecsV2.h"
+#include "Math/Function/RtoR2/StraightLine.h"
 
 namespace {
 
@@ -25,6 +26,13 @@ namespace {
 
         auto Clone() const -> TPointer<Type> override {
             return New<FSin2XFunction>(*this);
+        }
+    };
+
+    class FPlaneFunction final : public Slab::Math::R2toR::Function {
+    public:
+        auto operator()(Slab::Math::Real2D x) const -> DevFloat override {
+            return x.x + 2.0 * x.y;
         }
     };
 
@@ -96,6 +104,39 @@ TEST_CASE("Plot2D V2 emits draw commands through backend abstraction", "[Plot2DV
     const auto &frame = backend.GetLastFrame();
     REQUIRE(frame.WindowId == window.GetWindowId());
     REQUIRE(frame.Title == window.GetTitle());
+    REQUIRE(frame.TextMetrics.FontHeightPixels > 0.0);
+    REQUIRE(frame.TextMetrics.LineAdvancePixels >= frame.TextMetrics.FontHeightPixels);
+    REQUIRE(frame.TextMetrics.ApproxCharacterAdvancePixels > 0.0);
+    REQUIRE(frame.HudLayout.TopLeft.x == Catch::Approx(14.0));
+    REQUIRE(frame.HudLayout.TopLeft.y == Catch::Approx(586.0));
+    REQUIRE(frame.HudLayout.TopRight.x == Catch::Approx(786.0));
+    REQUIRE(frame.HudLayout.BottomLeft.y == Catch::Approx(14.0));
+}
+
+TEST_CASE("Plot2D V2 accepts host-provided HUD layout in frame context", "[Plot2DV2]") {
+    FPlot2DWindowV2 window("HUD Layout Test", {-1.0, 1.0, -1.0, 1.0}, {0, 640, 0, 480});
+    window.AddArtist(New<FAxisArtistV2>(), -10);
+
+    auto frame = window.BuildFrameContext();
+    frame.HudLayout.SafeRect = {24.0, 520.0, 18.0, 450.0};
+    frame.HudLayout.TopLeft = {96.0, 450.0};
+    frame.HudLayout.TopRight = {520.0, 450.0};
+    frame.HudLayout.BottomLeft = {24.0, 18.0};
+    frame.HudLayout.BottomRight = {520.0, 18.0};
+    frame.TextMetrics.FontHeightPixels = 23.0;
+    frame.TextMetrics.LineAdvancePixels = 27.0;
+    frame.TextMetrics.ApproxCharacterAdvancePixels = 13.0;
+
+    FRecordingRenderBackendV2 backend;
+    REQUIRE(window.Render(backend, frame));
+
+    const auto &recorded = backend.GetLastFrame();
+    REQUIRE(recorded.HudLayout.SafeRect.xMax == Catch::Approx(520.0));
+    REQUIRE(recorded.HudLayout.TopLeft.x == Catch::Approx(96.0));
+    REQUIRE(recorded.HudLayout.TopRight.y == Catch::Approx(450.0));
+    REQUIRE(recorded.TextMetrics.FontHeightPixels == Catch::Approx(23.0));
+    REQUIRE(recorded.TextMetrics.LineAdvancePixels == Catch::Approx(27.0));
+    REQUIRE(recorded.TextMetrics.ApproxCharacterAdvancePixels == Catch::Approx(13.0));
 }
 
 TEST_CASE("Plot2D V2 fits region to artist bounds", "[Plot2DV2]") {
@@ -263,6 +304,114 @@ TEST_CASE("Plot2D V2 reflection catalog supports query and set", "[Plot2DV2][Ref
     REQUIRE(setDomainResult.IsOk());
     REQUIRE(function->GetDomainXMin() == Catch::Approx(-4.5));
     REQUIRE(function->GetDomainXMax() == Catch::Approx(4.25));
+}
+
+TEST_CASE("Plot2D V2 R2 section artist emits sampled section curves", "[Plot2DV2]") {
+    FPlot2DWindowV2 window("R2 Section Test", {-1.0, 1.0, -1.0, 1.0});
+
+    auto sectionArtist = New<FR2SectionArtistV2>(New<FPlaneFunction>(), 5);
+    sectionArtist->SetLabel("sections");
+    sectionArtist->SetAffectGraphRanges(true);
+    sectionArtist->AddSection(
+        Slab::Math::RtoR2::StraightLine::New({0.0, 0.0}, {1.0, 1.0}),
+        PlotStyle(Slab::Graphics::FlatBlue, Slab::Graphics::LineStrip, false, Slab::Graphics::Nil, 1.5f),
+        "diag");
+    sectionArtist->AddSection(
+        Slab::Math::RtoR2::StraightLine::New({0.0, 1.0}, {1.0, 0.0}),
+        PlotStyle(Slab::Graphics::Red, Slab::Graphics::LineStrip, false, Slab::Graphics::Nil, 1.2f),
+        "anti");
+
+    window.AddArtist(sectionArtist);
+
+    FRecordingRenderBackendV2 backend;
+    REQUIRE(window.Render(backend));
+
+    const auto &drawList = backend.GetLastDrawList();
+    REQUIRE(CountPolylineCommands(drawList) == 2);
+    REQUIRE(drawList.GetLegendEntries().size() == 2);
+    REQUIRE(drawList.GetLegendEntries()[0].Label == "diag");
+    REQUIRE(drawList.GetLegendEntries()[1].Label == "anti");
+
+    const auto bounds = sectionArtist->ComputePlotBounds();
+    REQUIRE(bounds.has_value());
+    REQUIRE(bounds->xMin == Catch::Approx(0.0));
+    REQUIRE(bounds->xMax == Catch::Approx(1.0));
+    REQUIRE(bounds->yMin == Catch::Approx(0.0));
+    REQUIRE(bounds->yMax == Catch::Approx(3.0));
+}
+
+TEST_CASE("Plot2D V2 R2 section artist exposes reflection-driven section controls", "[Plot2DV2][ReflectionV2]") {
+    FPlot2DWindowV2 window("R2 Section Reflection", {-1.0, 1.0, -1.0, 1.0});
+
+    auto sectionArtist = New<FR2SectionArtistV2>(New<FPlaneFunction>(), 5);
+    sectionArtist->AddSection(
+        Slab::Math::RtoR2::StraightLine::New({0.0, 0.0}, {1.0, 1.0}),
+        PlotStyle(Slab::Graphics::FlatBlue, Slab::Graphics::LineStrip, false, Slab::Graphics::Nil, 1.5f),
+        "diag");
+    sectionArtist->AddSection(
+        Slab::Math::RtoR2::StraightLine::New({0.0, 1.0}, {1.0, 0.0}),
+        PlotStyle(Slab::Graphics::GrassGreen, Slab::Graphics::LineStrip, false, Slab::Graphics::Nil, 1.1f),
+        "anti");
+    window.AddArtist(sectionArtist);
+
+    FPlotReflectionCatalogV2 catalog;
+    catalog.RefreshFromLiveWindows();
+
+    const auto artistInterfaceId = Str("v2.plot.artist.") + window.GetWindowId() + "." + sectionArtist->GetArtistId();
+    REQUIRE(catalog.GetInterface(artistInterfaceId) != nullptr);
+
+    const ReflectionV2::FInvocationContextV2 context{
+        .CurrentThread = ReflectionV2::EThreadAffinity::Any,
+        .bRuntimeRunning = false
+    };
+
+    ReflectionV2::FValueMapV2 getSampleCountInputs;
+    getSampleCountInputs["parameter_id"] = ReflectionV2::MakeStringValue("sample_count");
+    const auto getSampleCount = catalog.Invoke(
+        artistInterfaceId,
+        CPlotOperationIdQueryGetParameterV2,
+        getSampleCountInputs,
+        context);
+    REQUIRE(getSampleCount.IsOk());
+    REQUIRE(getSampleCount.OutputMap.at("value").Encoded == "5");
+
+    ReflectionV2::FValueMapV2 setVisibilityInputs;
+    setVisibilityInputs["parameter_id"] = ReflectionV2::MakeStringValue("section_1_visible");
+    setVisibilityInputs["value"] = ReflectionV2::MakeEncodedValue(ReflectionV2::CTypeIdScalarBool, "false");
+    const auto setVisibility = catalog.Invoke(
+        artistInterfaceId,
+        CPlotOperationIdCommandSetParameterV2,
+        setVisibilityInputs,
+        context);
+    REQUIRE(setVisibility.IsOk());
+    REQUIRE_FALSE(sectionArtist->GetSections()[1].bVisible);
+
+    ReflectionV2::FValueMapV2 setThicknessInputs;
+    setThicknessInputs["parameter_id"] = ReflectionV2::MakeStringValue("section_0_line_thickness");
+    setThicknessInputs["value"] = ReflectionV2::MakeEncodedValue(ReflectionV2::CTypeIdScalarFloat64, "2.75");
+    const auto setThickness = catalog.Invoke(
+        artistInterfaceId,
+        CPlotOperationIdCommandSetParameterV2,
+        setThicknessInputs,
+        context);
+    REQUIRE(setThickness.IsOk());
+    REQUIRE(sectionArtist->GetSections()[0].Style.thickness == Catch::Approx(2.75));
+
+    ReflectionV2::FValueMapV2 setSampleCountInputs;
+    setSampleCountInputs["parameter_id"] = ReflectionV2::MakeStringValue("sample_count");
+    setSampleCountInputs["value"] = ReflectionV2::MakeEncodedValue(ReflectionV2::CTypeIdScalarInt32, "9");
+    const auto setSampleCount = catalog.Invoke(
+        artistInterfaceId,
+        CPlotOperationIdCommandSetParameterV2,
+        setSampleCountInputs,
+        context);
+    REQUIRE(setSampleCount.IsOk());
+    REQUIRE(sectionArtist->GetSampleCount() == 9);
+
+    FRecordingRenderBackendV2 backend;
+    REQUIRE(window.Render(backend));
+    REQUIRE(backend.GetLastDrawList().GetLegendEntries().size() == 1);
+    REQUIRE(backend.GetLastDrawList().GetLegendEntries()[0].Label == "diag");
 }
 
 TEST_CASE("Plot2D V2 background and axis artists emit baseline visual commands", "[Plot2DV2]") {
@@ -441,4 +590,19 @@ TEST_CASE("Plot2D V2 semantic graph emits screen-space HUD for hovered edges", "
     const auto drawList = window.BuildDrawList();
     CHECK(CountRectangleCommands(drawList) >= 2);
     CHECK(CountTextCommands(drawList) >= 4);
+
+    DevFloat maxHudWidth = 0.0;
+    DevFloat maxHudHeight = 0.0;
+    for (const auto &commandVariant : drawList.GetCommands()) {
+        const auto *rectangle = std::get_if<FRectangleCommandV2>(&commandVariant);
+        if (rectangle == nullptr) continue;
+        if (!rectangle->bFilled) continue;
+        if (rectangle->CoordinateSpace != EPlotCoordinateSpaceV2::Screen) continue;
+
+        maxHudWidth = std::max(maxHudWidth, rectangle->Rectangle.GetWidth());
+        maxHudHeight = std::max(maxHudHeight, rectangle->Rectangle.GetHeight());
+    }
+
+    CHECK(maxHudWidth >= 300.0);
+    CHECK(maxHudHeight >= 80.0);
 }

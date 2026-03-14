@@ -39,13 +39,14 @@ Current responsibilities:
 
 ### 3. Host / UI / input layer
 
-- `Studios/LabV2/LabV2WindowManager.cpp` (`FPlot2DWindowHostV2`)
+- `Slab/Graphics/Plot2D/V2/Plot2DWindowHostV2.*`
 
 Current responsibilities:
 - slab-window hosting in the `Plots` workspace
 - pan / zoom / fit / aspect-lock camera behavior
 - artist pointer and keyboard event forwarding
 - viewport-attached toolbar/detail UI
+- host-owned HUD layout publication (`FPlotHudLayoutV2`) for artist screen-space overlays
 
 This layer is intentionally outside `FPlot2DWindowV2`.
 
@@ -68,15 +69,23 @@ V2 should preserve the user-facing behavior, but not the legacy coupling.
 - Those remain scene/reflection objects.
 - Plot UI belongs to the host layer.
 
-2. Do not move backend calls back into artists.
+2. Let the host publish layout constraints instead of letting artists guess the corners.
+- Screen-space artist HUDs should anchor through `FPlotFrameContextV2::HudLayout`.
+- Artists should not query ImGui widget geometry directly.
+
+3. Let the frame context publish text metrics instead of letting artists guess HUD spacing.
+- Screen-space HUD cards should size from `FPlotFrameContextV2::TextMetrics`.
+- Artists should not hardcode line heights / padding from one tuned font size.
+
+4. Do not move backend calls back into artists.
 - Artists emit commands only.
 - Backends interpret commands.
 
-3. Use reflection as the generic artist-control surface.
+5. Use reflection as the generic artist-control surface.
 - In legacy, artist GUI is `HasGUI()` / `DrawGUI()`.
 - In V2, generic controls should come from reflected parameters/operations where possible.
 
-4. Keep the legacy reflection bridge until artist coverage is sufficient.
+6. Keep the legacy reflection bridge until artist coverage is sufficient.
 - Mixed discovery is already in place and should remain the compatibility path.
 
 ## Legacy vs V2 Gap Map
@@ -90,6 +99,8 @@ V2 should preserve the user-facing behavior, but not the legacy coupling.
 - first interactive built-in V2 artist (`ModelSemanticGraphArtistV2`)
 - LabV2 V2-plot host for pan/zoom/render
 - viewport-attached toolbar/detail controls on the V2 host
+- host-to-artist HUD layout contract for screen-space overlays
+- frame-published text metrics for font-driven screen-space HUD sizing
 - V2 artist z-order metadata and mutation path
 
 ### Remaining
@@ -98,9 +109,7 @@ V2 should preserve the user-facing behavior, but not the legacy coupling.
   - labels / overlay text
   - x-hair / cursor readout
   - history
-  - `R2Section`
   - `R2toR`
-- move the V2 plot host out of `LabV2WindowManager.cpp` into shared plot infrastructure
 - decide whether any artist still needs custom non-reflection GUI
 - unify export/save behavior for non-OpenGL backends
 
@@ -134,7 +143,7 @@ Status: next
 
 ### `PLOT-03` Shared Host Extraction
 
-Status: next
+Status: done
 
 - move `FPlot2DWindowHostV2` out of `LabV2WindowManager.cpp`
 - keep LabV2 responsible only for workspace orchestration and discovery
@@ -167,9 +176,12 @@ That boundary is strong enough to continue implementation without a redesign fir
 
 ## Known Gaps / Constraints
 
-- V2 attached plot controls currently live in the LabV2 host, not in shared plot infrastructure.
-- Reflection-driven overlay controls currently cover the numeric/bool runtime-mutable path cleanly; more exotic editor widgets can stay in the plot inspector until needed.
+- V2 attached plot controls now live in shared plot infrastructure, but only the current slab-window host path is implemented.
+- Screen-space overlay harmony now depends on artists using `FPlotFrameContextV2::HudLayout` instead of hardcoded viewport corners.
+- Screen-space HUD sizing should now depend on `FPlotFrameContextV2::TextMetrics` instead of hardcoded line-height/width guesses.
+- Reflection-driven overlay controls now cover the `R2Section` per-section visibility/style path cleanly, but more exotic editor widgets can stay in the plot inspector until needed.
 - Legacy `LabelsArtist` and `XHairArtist` behavior is not yet ported into V2-native artists.
+- `History` / `R2toR` remain blocked on the texture-backed field-artist migration path rather than simple polyline draw-list ports.
 
 ## Validation
 

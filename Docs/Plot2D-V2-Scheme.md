@@ -28,6 +28,9 @@
   - `FPointSetCommandV2`
   - `FRectangleCommandV2`
   - `FTextCommandV2`
+- `FPlotFrameContextV2`
+  - carries plot region / viewport plus host-published `FPlotHudLayoutV2` anchors for screen-space HUD placement
+  - carries `FPlotTextMetricsV2` so screen-space HUD sizing can follow the active writer/font metrics instead of hardcoded pixel guesses
 
 Coordinate spaces:
 - plot space
@@ -43,12 +46,13 @@ Coordinate spaces:
 
 ### 4. Host layer
 
-- current host: `FPlot2DWindowHostV2` in `Studios/LabV2/LabV2WindowManager.cpp`
+- shared host: `FPlot2DWindowHostV2` in `Slab/Graphics/Plot2D/V2/Plot2DWindowHostV2.*`
 
 Responsibilities:
 - slab-window hosting
 - pan / zoom / fit / aspect-lock camera behavior
-- viewport-attached toolbar/detail UI
+- legacy-style floating toolbar / right-edge strip plus attached detail UI
+- publishing HUD anchor zones / safe area into the frame context so artist overlays avoid host chrome without learning about ImGui widget geometry
 - forwarding pointer/keyboard events into the V2 scene
 
 This is intentionally separate from `FPlot2DWindowV2`.
@@ -68,6 +72,7 @@ This is intentionally separate from `FPlot2DWindowV2`.
 - `FPointSetArtistV2`
 - `FRtoRFunctionArtistV2`
 - `FModelSemanticGraphArtistV2`
+- `FR2SectionArtistV2`
 
 ## Implemented Interaction Baseline
 
@@ -77,7 +82,9 @@ This is intentionally separate from `FPlot2DWindowV2`.
 - artist keyboard event dispatch
 - semantic-graph click activation
 - semantic-graph keyboard controls
-- attached plot toolbar/detail controls in LabV2 host
+- legacy-style floating plot strips plus attached detail controls in LabV2 host
+- host-published HUD anchors for artist screen-space overlays
+- font-driven screen-space HUD sizing through frame text metrics
 
 ## Current Reflection Baseline
 
@@ -116,18 +123,19 @@ Operations:
 - recording backend tests
 - first interactive V2 artist
 - host-side attached controls parity first slice
+- shared host extraction out of `LabV2WindowManager.cpp`
 
 ### Still Missing
 
 - labels/x-hair parity
-- history / `R2Section` / `R2toR` V2-native artists
-- extraction of the host from `LabV2WindowManager.cpp`
+- history / `R2toR` V2-native artists
 - generic export story beyond the current OpenGL-host path
 
 ## File Map
 
 - `Slab/Graphics/Plot2D/V2/Plot2DWindowV2.*`
 - `Slab/Graphics/Plot2D/V2/PlotArtistV2.*`
+- `Slab/Graphics/Plot2D/V2/Plot2DWindowHostV2.*`
 - `Slab/Graphics/Plot2D/V2/Plot2DDrawListV2.*`
 - `Slab/Graphics/Plot2D/V2/Plot2DRenderBackendV2.h`
 - `Slab/Graphics/Plot2D/V2/PlotReflectionSchemaV2.h`
@@ -135,7 +143,6 @@ Operations:
 - `Slab/Graphics/Plot2D/V2/LegacyPlotReflectionAdapterV2.*`
 - `Slab/Graphics/Plot2D/V2/Artists/*ArtistV2.*`
 - `Slab/Graphics/Plot2D/V2/Backends/*`
-- `Studios/LabV2/LabV2WindowManager.cpp`
 - `Lib/tests/test_plot2d_v2.cpp`
 
 ## Companion Doc

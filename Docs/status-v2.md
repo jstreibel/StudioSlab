@@ -3,7 +3,7 @@
 ## Snapshot Metadata
 
 - Snapshot date: `2026-03-14`
-- Last implementation update: `2026-03-14` (Model semantic graph + ODE realization `RZ-00..03`)
+- Last implementation update: `2026-03-14` (Model semantic graph + Plot V2 shared host extraction + ODE realization `RZ-00..03`)
 - Last architecture-doc update: `2026-03-14` (plot migration docs + `RZ-03` handoff retained)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
 - Build-target sanity check date: `2026-03-14` (`StudioSlab` and `testsuite` build pass in `cmake-build-debug`)
@@ -196,9 +196,22 @@
   - artists can now participate in pointer hit-testing and keyboard event handling
   - the semantic-graph artist is the first built-in consumer of that interaction path
 - Plot V2 host/control parity first slice landed:
-  - LabV2 V2-plot hosts now expose viewport-attached toolbar/detail controls instead of acting as render-only wrappers
+  - LabV2 V2-plot hosts now expose legacy-style floating toolbar / edge-strip controls plus the attached detail panel instead of acting as render-only wrappers
   - V2 artist z-order is now surfaced through reflection and editable from host-side layer controls
   - `query.window.list_artists` for V2 windows now reports per-artist id/label/z-order/visibility metadata
+- Plot V2 host/artist HUD harmony pass landed:
+  - `FPlotFrameContextV2` now carries a host-published `FPlotHudLayoutV2` contract for screen-space artist overlays
+  - `FPlot2DWindowHostV2` publishes anchors that account for the floating toolbar, right-edge strip, and attached detail panel
+  - `FModelSemanticGraphArtistV2` now anchors selection/hover HUD cards to the bottom-left zone and clamps the status card to the top-right safe edge instead of hardcoding the viewport corners
+  - `FPlotFrameContextV2` now also carries writer-derived text metrics so artist HUD cards can size/pad themselves from the active font instead of fixed pixel literals
+- Plot V2 shared-host extraction landed:
+  - `FPlot2DWindowHostV2` now lives under `Slab/Graphics/Plot2D/V2/` instead of being embedded in `LabV2WindowManager.cpp`
+  - duplicated dead host copies were removed from the LabV2 Graph Playground / Schemes translation units
+  - `StudioSlab` and `testsuite` still build after the extraction, and `[Plot2DV2]` remains green
+- Plot V2 `R2Section` parity slice landed:
+  - `FR2SectionArtistV2` now ports the legacy sampled section-curve role into the backend-neutral V2 draw-list path
+  - per-section legend entries plus per-section visibility/style controls are exposed through the generic reflection overlay path
+  - `[Plot2DV2]` coverage now includes V2 `R2Section` draw output, bounds, and reflection mutation checks
 - ODE realization descent `RZ-00..02` is implemented:
   - one ODE realization descriptor is derived from canonical `Model V2` semantics
   - readiness is computed from semantic health, state coverage, and explicit model-level initial conditions

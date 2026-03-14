@@ -63,13 +63,22 @@ namespace Slab::Graphics::Plot2D::V2 {
         auto FitRegionToArtists(DevFloat paddingFraction = 0.05) -> bool;
 
         [[nodiscard]] auto BuildFrameContext() const -> FPlotFrameContextV2;
+        [[nodiscard]] auto BuildFrameContext(const FPlotHudLayoutV2 &hudLayout) const -> FPlotFrameContextV2;
+        auto BuildDrawList(const FPlotFrameContextV2 &frame) const -> FPlotDrawListV2;
         auto BuildDrawList() const -> FPlotDrawListV2;
+        auto Render(IPlotRenderBackendV2 &backend, const FPlotFrameContextV2 &frame) const -> bool;
         auto Render(IPlotRenderBackendV2 &backend) const -> bool;
         [[nodiscard]] auto ViewportToPlotCoord(const FPoint2D &viewportCoord) const -> FPoint2D;
+        [[nodiscard]] auto HitTestArtists(const FPlotFrameContextV2 &frame,
+                                          const FPoint2D &plotPosition,
+                                          const FPoint2D &viewportPosition) const
+            -> std::optional<FPlotArtistHitResultV2>;
         [[nodiscard]] auto HitTestArtists(const FPoint2D &plotPosition,
                                           const FPoint2D &viewportPosition) const
             -> std::optional<FPlotArtistHitResultV2>;
+        auto DispatchPointerEvent(const FPlotFrameContextV2 &frame, const FPlotPointerEventV2 &event) -> bool;
         auto DispatchPointerEvent(const FPlotPointerEventV2 &event) -> bool;
+        auto DispatchKeyboardEvent(const FPlotFrameContextV2 &frame, const FPlotKeyboardEventV2 &event) -> bool;
         auto DispatchKeyboardEvent(const FPlotKeyboardEventV2 &event) -> bool;
 
         auto SetWindowId(Str windowId) -> void;

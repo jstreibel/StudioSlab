@@ -122,8 +122,14 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - hover HUD, edge inspection, click activation, neighborhood-hop controls, label toggle, and fit-to-graph are in place
 - `LAB-15` done: Plot V2 host-control parity first slice:
   - added a migration-plan doc and updated the Plot2D V2 scheme doc to match the actual architecture
-  - LabV2 V2-plot hosts now provide attached toolbar/detail controls instead of being render-only shells
+  - LabV2 V2-plot hosts now provide legacy-style floating toolbar / edge-strip controls plus the attached detail panel instead of being render-only shells
   - V2 artist z-order is now reflected and editable, restoring layer-control parity needed by the host overlay
+- `LAB-16` active: Plot V2 shared-host extraction landed, remaining artist migration stays open:
+  - `FPlot2DWindowHostV2` moved into shared `Slab/Graphics/Plot2D/V2/` infrastructure
+  - duplicated dead host definitions were removed from LabV2 manager translation units
+  - `FR2SectionArtistV2` now covers the legacy sampled section-curve role with reflection-driven per-section controls
+  - Plot V2 frame contexts now carry host HUD anchors plus writer-derived text metrics so screen-space artist HUDs can avoid host chrome and size from the active font
+  - remaining work in this track is the V2-native migration of `Labels`, `XHair`, `History`, and `R2toR`
 - `RZ-00` done: ODE realization contract freeze implemented in code.
 - `RZ-01` done: ODE descriptor extraction and readiness gating implemented from canonical model semantics.
 - `RZ-02` done: model-level ODE initial-condition semantics implemented and validated.
@@ -230,11 +236,12 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - click-through selection into the Model workspace
   - keyboard/pointer interaction for neighborhood, labels, and fit
 - `P1` `LAB-15` — Plot V2 host-control parity — done
-  - attached toolbar/detail controls on the V2 host
+  - legacy-style floating toolbar / edge-strip controls plus attached detail panel on the V2 host
   - reflected V2 artist z-order and richer artist-list metadata
 - `P1` `LAB-16` — Plot V2 shared host + remaining artist migration
-  - extract the V2 plot host out of `LabV2WindowManager.cpp`
-  - port remaining legacy plot artists (`Labels`, `XHair`, `History`, `R2Section`, `R2toR`) into V2-native paths
+  - status: active
+  - extracted the V2 plot host out of `LabV2WindowManager.cpp`
+  - port remaining legacy plot artists (`Labels`, `XHair`, `History`, `R2toR`) into V2-native paths
 
 ### Model -> Realization Descent
 - `P1` `RZ-00` — ODE realization contract freeze — done

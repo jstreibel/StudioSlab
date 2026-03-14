@@ -43,6 +43,8 @@ namespace Slab::Graphics::OpenGL {
         void Write(const Str& Text, FPoint2D penLocation, FColor Color = White,
                    bool Vertical = false) override;
         [[nodiscard]] DevFloat GetFontHeightInPixels() const override;
+        [[nodiscard]] DevFloat GetLineAdvanceInPixels() const override;
+        [[nodiscard]] DevFloat MeasureTextWidthInPixels(const Str &text) const override;
         void Reshape(int w, int h) override;
 
         void Scale(float sx, float sy) override;

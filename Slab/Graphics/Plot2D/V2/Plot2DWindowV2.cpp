@@ -1,6 +1,7 @@
 #include "Plot2DWindowV2.h"
 
 #include "Core/Reflection/V2/ReflectionCodecsV2.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/Utils.h"
 
 #include <algorithm>
@@ -9,6 +10,52 @@
 namespace Slab::Graphics::Plot2D::V2 {
 
     namespace ReflectionV2 = Slab::Core::Reflection::V2;
+
+    namespace {
+
+        constexpr DevFloat CDefaultHudMarginV2 = 14.0;
+
+        auto BuildDefaultTextMetricsV2() -> FPlotTextMetricsV2 {
+            FPlotTextMetricsV2 metrics;
+
+            GraphTheme_ptr theme = nullptr;
+            try {
+                theme = Slab::Graphics::FPlotThemeManager::GetCurrent();
+            } catch (...) {
+                return metrics;
+            }
+
+            const auto writer = theme != nullptr ? theme->LabelsWriter : nullptr;
+            if (writer == nullptr) return metrics;
+
+            const auto fontHeight = std::max<DevFloat>(writer->GetFontHeightInPixels(), 1.0);
+            const auto lineAdvance = std::max<DevFloat>(writer->GetLineAdvanceInPixels(), fontHeight);
+            const auto approxCharacterAdvance = std::max<DevFloat>(
+                writer->MeasureTextWidthInPixels("M"),
+                writer->MeasureTextWidthInPixels("0"));
+
+            metrics.FontHeightPixels = fontHeight;
+            metrics.LineAdvancePixels = lineAdvance;
+            metrics.ApproxCharacterAdvancePixels = std::max<DevFloat>(approxCharacterAdvance, 0.5 * fontHeight);
+            return metrics;
+        }
+
+        auto BuildDefaultHudLayoutV2(const RectI &viewport) -> FPlotHudLayoutV2 {
+            const auto left = static_cast<DevFloat>(viewport.xMin) + CDefaultHudMarginV2;
+            const auto right = std::max(left, static_cast<DevFloat>(viewport.xMax) - CDefaultHudMarginV2);
+            const auto bottom = static_cast<DevFloat>(viewport.yMin) + CDefaultHudMarginV2;
+            const auto top = std::max(bottom, static_cast<DevFloat>(viewport.yMax) - CDefaultHudMarginV2);
+
+            return {
+                .SafeRect = {left, right, bottom, top},
+                .TopLeft = {left, top},
+                .TopRight = {right, top},
+                .BottomLeft = {left, bottom},
+                .BottomRight = {right, bottom}
+            };
+        }
+
+    } // namespace
 
     std::mutex FPlot2DWindowV2::RegistryMutex;
     std::map<Str, FPlot2DWindowV2 *> FPlot2DWindowV2::Registry = {};
@@ -235,17 +282,22 @@ namespace Slab::Graphics::Plot2D::V2 {
     }
 
     auto FPlot2DWindowV2::BuildFrameContext() const -> FPlotFrameContextV2 {
+        return BuildFrameContext(BuildDefaultHudLayoutV2(Viewport));
+    }
+
+    auto FPlot2DWindowV2::BuildFrameContext(const FPlotHudLayoutV2 &hudLayout) const -> FPlotFrameContextV2 {
         return {
             .PlotRegion = Region,
             .Viewport = Viewport,
             .WindowId = WindowId,
-            .Title = Title
+            .Title = Title,
+            .TextMetrics = BuildDefaultTextMetricsV2(),
+            .HudLayout = hudLayout
         };
     }
 
-    auto FPlot2DWindowV2::BuildDrawList() const -> FPlotDrawListV2 {
+    auto FPlot2DWindowV2::BuildDrawList(const FPlotFrameContextV2 &frame) const -> FPlotDrawListV2 {
         FPlotDrawListV2 drawList;
-        const auto frame = BuildFrameContext();
 
         for (const auto &slot : GetArtistsInDrawOrder()) {
             if (slot.Artist == nullptr || !slot.Artist->IsVisible()) continue;
@@ -255,15 +307,23 @@ namespace Slab::Graphics::Plot2D::V2 {
         return drawList;
     }
 
+    auto FPlot2DWindowV2::BuildDrawList() const -> FPlotDrawListV2 {
+        return BuildDrawList(BuildFrameContext());
+    }
+
+    auto FPlot2DWindowV2::Render(IPlotRenderBackendV2 &backend, const FPlotFrameContextV2 &frame) const -> bool {
+        const auto drawList = BuildDrawList(frame);
+        return backend.Render(frame, drawList);
+    }
+
     auto FPlot2DWindowV2::Render(IPlotRenderBackendV2 &backend) const -> bool {
         if (bAutoFitRanges) {
             auto *self = const_cast<FPlot2DWindowV2 *>(this);
             self->FitRegionToArtists();
         }
 
-        const auto drawList = BuildDrawList();
         const auto frame = BuildFrameContext();
-        return backend.Render(frame, drawList);
+        return Render(backend, frame);
     }
 
     auto FPlot2DWindowV2::ViewportToPlotCoord(const FPoint2D &viewportCoord) const -> FPoint2D {
@@ -271,10 +331,10 @@ namespace Slab::Graphics::Plot2D::V2 {
         return Slab::Graphics::FromViewportToSpaceCoord(viewportCoord, Region, Viewport);
     }
 
-    auto FPlot2DWindowV2::HitTestArtists(const FPoint2D &plotPosition,
+    auto FPlot2DWindowV2::HitTestArtists(const FPlotFrameContextV2 &frame,
+                                         const FPoint2D &plotPosition,
                                          const FPoint2D &viewportPosition) const
         -> std::optional<FPlotArtistHitResultV2> {
-        const auto frame = BuildFrameContext();
         auto ordered = GetArtistsInDrawOrder();
 
         for (auto it = ordered.rbegin(); it != ordered.rend(); ++it) {
@@ -292,8 +352,14 @@ namespace Slab::Graphics::Plot2D::V2 {
         return std::nullopt;
     }
 
-    auto FPlot2DWindowV2::DispatchPointerEvent(const FPlotPointerEventV2 &event) -> bool {
-        const auto frame = BuildFrameContext();
+    auto FPlot2DWindowV2::HitTestArtists(const FPoint2D &plotPosition,
+                                         const FPoint2D &viewportPosition) const
+        -> std::optional<FPlotArtistHitResultV2> {
+        return HitTestArtists(BuildFrameContext(), plotPosition, viewportPosition);
+    }
+
+    auto FPlot2DWindowV2::DispatchPointerEvent(const FPlotFrameContextV2 &frame,
+                                               const FPlotPointerEventV2 &event) -> bool {
         auto ordered = GetArtistsInDrawOrder();
 
         for (auto it = ordered.rbegin(); it != ordered.rend(); ++it) {
@@ -304,8 +370,12 @@ namespace Slab::Graphics::Plot2D::V2 {
         return false;
     }
 
-    auto FPlot2DWindowV2::DispatchKeyboardEvent(const FPlotKeyboardEventV2 &event) -> bool {
-        const auto frame = BuildFrameContext();
+    auto FPlot2DWindowV2::DispatchPointerEvent(const FPlotPointerEventV2 &event) -> bool {
+        return DispatchPointerEvent(BuildFrameContext(), event);
+    }
+
+    auto FPlot2DWindowV2::DispatchKeyboardEvent(const FPlotFrameContextV2 &frame,
+                                                const FPlotKeyboardEventV2 &event) -> bool {
         auto ordered = GetArtistsInDrawOrder();
 
         for (auto it = ordered.rbegin(); it != ordered.rend(); ++it) {
@@ -314,6 +384,10 @@ namespace Slab::Graphics::Plot2D::V2 {
         }
 
         return false;
+    }
+
+    auto FPlot2DWindowV2::DispatchKeyboardEvent(const FPlotKeyboardEventV2 &event) -> bool {
+        return DispatchKeyboardEvent(BuildFrameContext(), event);
     }
 
     auto FPlot2DWindowV2::SetWindowId(Str windowId) -> void {

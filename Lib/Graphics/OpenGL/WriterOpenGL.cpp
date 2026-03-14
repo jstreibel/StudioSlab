@@ -7,6 +7,7 @@
 #include "Core/Tools/Resources.h"
 #include "Core/Tools/Log.h"
 
+#include <algorithm>
 #include <string>
 #include <map>
 #include <regex>
@@ -193,6 +194,49 @@ namespace Slab::Graphics::OpenGL {
     }
 
     DevFloat FWriterOpenGL::GetFontHeightInPixels() const { return Font->height; }
+
+    DevFloat FWriterOpenGL::GetLineAdvanceInPixels() const {
+        if (Font == nullptr) return 0.0;
+        return Font->height;
+    }
+
+    DevFloat FWriterOpenGL::MeasureTextWidthInPixels(const Str &text) const {
+        if (Font == nullptr || text.empty()) return 0.0;
+
+        DevFloat penX = 0.0;
+        DevFloat minX = 0.0;
+        DevFloat maxX = 0.0;
+        bool haveGlyph = false;
+        const char *previousCodePoint = nullptr;
+        const auto *raw = text.c_str();
+
+        for (size_t i = 0; i < text.size(); i += Utf8CharacterByteSize(raw + i)) {
+            const auto *codePoint = raw + i;
+            auto *glyph = texture_font_get_glyph(Font, codePoint);
+            if (glyph == nullptr) continue;
+
+            if (previousCodePoint != nullptr) {
+                penX += texture_glyph_get_kerning(glyph, previousCodePoint);
+            }
+
+            const auto x0 = penX + static_cast<DevFloat>(glyph->offset_x);
+            const auto x1 = x0 + static_cast<DevFloat>(glyph->width);
+            if (!haveGlyph) {
+                minX = x0;
+                maxX = x1;
+                haveGlyph = true;
+            } else {
+                minX = std::min(minX, x0);
+                maxX = std::max(maxX, x1);
+            }
+
+            penX += static_cast<DevFloat>(glyph->advance_x);
+            previousCodePoint = codePoint;
+        }
+
+        if (!haveGlyph) return 0.0;
+        return std::max(maxX, penX) - std::min<DevFloat>(0.0, minX);
+    }
 
     void FWriterOpenGL::Reshape(int w, int h) {
         mat4_set_orthographic(&m_Projection, 0, (float) w, 0, (float) h, -1, 1);

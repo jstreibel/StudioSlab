@@ -20,12 +20,20 @@ namespace Slab::Graphics::Plot2D::V2 {
         constexpr DevFloat CLayoutOuterMargin = 2.3;
         constexpr DevFloat CPi = 3.14159265358979323846;
         constexpr DevFloat CEdgeHitTolerancePixels = 8.5;
-        constexpr DevFloat CHudPaddingX = 12.0;
-        constexpr DevFloat CHudPaddingY = 10.0;
-        constexpr DevFloat CHudLineHeight = 15.0;
-        constexpr DevFloat CHudSectionGap = 10.0;
-        constexpr DevFloat CHudCardGap = 10.0;
-        constexpr DevFloat CHudApproxCharWidth = 7.0;
+        constexpr DevFloat CHudMinPaddingX = 14.0;
+        constexpr DevFloat CHudMinPaddingY = 12.0;
+        constexpr DevFloat CHudMinSectionGap = 9.0;
+        constexpr DevFloat CHudMinCardGap = 12.0;
+
+        struct FHudCardMetricsV2 {
+            DevFloat Width = 0.0;
+            DevFloat Height = 0.0;
+            DevFloat PaddingX = 0.0;
+            DevFloat PaddingY = 0.0;
+            DevFloat LineAdvance = 0.0;
+            DevFloat SectionGap = 0.0;
+            DevFloat CardGap = 0.0;
+        };
 
         [[nodiscard]] auto KindRank(const ModelV2::ESemanticObjectKindV2 kind) -> int {
             switch (kind) {
@@ -44,8 +52,38 @@ namespace Slab::Graphics::Plot2D::V2 {
             return label.substr(0, maxChars - 3) + "...";
         }
 
-        [[nodiscard]] auto ApproximateHudTextWidth(const Str &text) -> DevFloat {
-            return static_cast<DevFloat>(text.size()) * CHudApproxCharWidth;
+        [[nodiscard]] auto ResolveHudFontHeight(const FPlotFrameContextV2 &frame) -> DevFloat {
+            return std::max<DevFloat>(frame.TextMetrics.FontHeightPixels, 12.0);
+        }
+
+        [[nodiscard]] auto ResolveHudLineAdvance(const FPlotFrameContextV2 &frame) -> DevFloat {
+            const auto fontHeight = ResolveHudFontHeight(frame);
+            return std::max<DevFloat>(frame.TextMetrics.LineAdvancePixels, fontHeight);
+        }
+
+        [[nodiscard]] auto ResolveHudCharacterAdvance(const FPlotFrameContextV2 &frame) -> DevFloat {
+            const auto fontHeight = ResolveHudFontHeight(frame);
+            return std::max<DevFloat>(frame.TextMetrics.ApproxCharacterAdvancePixels, 0.5 * fontHeight);
+        }
+
+        [[nodiscard]] auto ResolveHudPaddingX(const FPlotFrameContextV2 &frame) -> DevFloat {
+            return std::max<DevFloat>(CHudMinPaddingX, 0.75 * ResolveHudFontHeight(frame));
+        }
+
+        [[nodiscard]] auto ResolveHudPaddingY(const FPlotFrameContextV2 &frame) -> DevFloat {
+            return std::max<DevFloat>(CHudMinPaddingY, 0.55 * ResolveHudLineAdvance(frame));
+        }
+
+        [[nodiscard]] auto ResolveHudSectionGap(const FPlotFrameContextV2 &frame) -> DevFloat {
+            return std::max<DevFloat>(CHudMinSectionGap, 0.45 * ResolveHudLineAdvance(frame));
+        }
+
+        [[nodiscard]] auto ResolveHudCardGap(const FPlotFrameContextV2 &frame) -> DevFloat {
+            return std::max<DevFloat>(CHudMinCardGap, 0.65 * ResolveHudFontHeight(frame));
+        }
+
+        [[nodiscard]] auto ApproximateHudTextWidth(const FPlotFrameContextV2 &frame, const Str &text) -> DevFloat {
+            return static_cast<DevFloat>(text.size()) * ResolveHudCharacterAdvance(frame);
         }
 
         [[nodiscard]] auto DisplayLabelForObject(const ModelV2::FSemanticObjectOverviewV2 &object) -> Str {
@@ -179,30 +217,46 @@ namespace Slab::Graphics::Plot2D::V2 {
             return (dx * dx) + (dy * dy);
         }
 
-        auto AddHudCard(FPlotDrawListV2 &drawList,
-                        const FPlotFrameContextV2 &frame,
-                        const DevFloat xMin,
-                        DevFloat yTop,
-                        const Str &title,
-                        const Vector<Str> &lines,
-                        const FColor &accentColor) -> DevFloat {
-            (void) frame;
-            if (title.empty() && lines.empty()) return yTop;
+        auto MeasureHudCard(const FPlotFrameContextV2 &frame, const Str &title, const Vector<Str> &lines) -> FHudCardMetricsV2 {
+            const auto paddingX = ResolveHudPaddingX(frame);
+            const auto paddingY = ResolveHudPaddingY(frame);
+            const auto lineAdvance = ResolveHudLineAdvance(frame);
+            const auto sectionGap = ResolveHudSectionGap(frame);
 
-            DevFloat width = ApproximateHudTextWidth(title);
+            DevFloat width = ApproximateHudTextWidth(frame, title);
             for (const auto &line : lines) {
-                width = std::max(width, ApproximateHudTextWidth(line));
+                width = std::max(width, ApproximateHudTextWidth(frame, CompactLabel(line, 84)));
             }
 
-            width += (2.0 * CHudPaddingX);
-            const auto lineCount = static_cast<DevFloat>(std::max<std::size_t>(1, lines.size()));
-            const auto height =
-                (2.0 * CHudPaddingY) + CHudLineHeight + ((lineCount - 1.0) * CHudLineHeight) + CHudSectionGap;
+            width += (2.0 * paddingX);
+            const auto detailLineCount = static_cast<DevFloat>(lines.size());
+            auto height = (2.0 * paddingY) + lineAdvance;
+            if (detailLineCount > 0.0) {
+                height += sectionGap + (detailLineCount * lineAdvance);
+            }
 
+            return {
+                .Width = width,
+                .Height = height,
+                .PaddingX = paddingX,
+                .PaddingY = paddingY,
+                .LineAdvance = lineAdvance,
+                .SectionGap = sectionGap,
+                .CardGap = ResolveHudCardGap(frame)
+            };
+        }
+
+        auto DrawHudCard(FPlotDrawListV2 &drawList,
+                         const FHudCardMetricsV2 &metrics,
+                         const DevFloat xMin,
+                         const DevFloat yTop,
+                         const Str &title,
+                         const Vector<Str> &lines,
+                         const FColor &accentColor) -> RectR {
             const RectR backgroundRect{
                 xMin,
-                xMin + width,
-                yTop - height,
+                xMin + metrics.Width,
+                yTop - metrics.Height,
                 yTop
             };
             drawList.AddRectangle(FRectangleCommandV2{
@@ -219,8 +273,8 @@ namespace Slab::Graphics::Plot2D::V2 {
                 .CoordinateSpace = EPlotCoordinateSpaceV2::Screen
             });
 
-            const auto textX = xMin + CHudPaddingX;
-            auto textY = yTop - CHudPaddingY - CHudLineHeight;
+            const auto textX = xMin + metrics.PaddingX;
+            auto textY = yTop - metrics.PaddingY - metrics.LineAdvance;
             drawList.AddText(FTextCommandV2{
                 .Text = title,
                 .Location = {textX, textY},
@@ -228,8 +282,11 @@ namespace Slab::Graphics::Plot2D::V2 {
                 .CoordinateSpace = EPlotCoordinateSpaceV2::Screen
             });
 
+            if (!lines.empty()) {
+                textY -= metrics.SectionGap;
+            }
             for (const auto &line : lines) {
-                textY -= CHudLineHeight;
+                textY -= metrics.LineAdvance;
                 drawList.AddText(FTextCommandV2{
                     .Text = CompactLabel(line, 84),
                     .Location = {textX, textY},
@@ -238,7 +295,44 @@ namespace Slab::Graphics::Plot2D::V2 {
                 });
             }
 
-            return backgroundRect.yMin - CHudCardGap;
+            return backgroundRect;
+        }
+
+        auto AddHudCardFromTopRight(FPlotDrawListV2 &drawList,
+                                    const FPlotFrameContextV2 &frame,
+                                    const DevFloat xRight,
+                                    const DevFloat yTop,
+                                    const Str &title,
+                                    const Vector<Str> &lines,
+                                    const FColor &accentColor) -> DevFloat {
+            if (title.empty() && lines.empty()) return yTop;
+
+            const auto metrics = MeasureHudCard(frame, title, lines);
+            const auto xMin = std::max(frame.HudLayout.SafeRect.xMin, xRight - metrics.Width);
+            const auto rect = DrawHudCard(drawList, metrics, xMin, yTop, title, lines, accentColor);
+            return rect.yMin - metrics.CardGap;
+        }
+
+        auto AddHudCardFromBottomLeft(FPlotDrawListV2 &drawList,
+                                      const FPlotFrameContextV2 &frame,
+                                      const DevFloat xMin,
+                                      const DevFloat yBottom,
+                                      const Str &title,
+                                      const Vector<Str> &lines,
+                                      const FColor &accentColor) -> DevFloat {
+            if (title.empty() && lines.empty()) return yBottom;
+
+            const auto metrics = MeasureHudCard(frame, title, lines);
+            const auto clampedX = std::min(xMin, frame.HudLayout.SafeRect.xMax - metrics.Width);
+            const auto rect = DrawHudCard(
+                drawList,
+                metrics,
+                std::max(frame.HudLayout.SafeRect.xMin, clampedX),
+                yBottom + metrics.Height,
+                title,
+                lines,
+                accentColor);
+            return rect.yMax + metrics.CardGap;
         }
 
         [[nodiscard]] auto AppendTraversalTargets(const ModelV2::FSemanticObjectOverviewV2 &object)
@@ -699,7 +793,8 @@ namespace Slab::Graphics::Plot2D::V2 {
         }
 
         if (!Nodes.empty()) {
-            DevFloat topY = static_cast<DevFloat>(frame.Viewport.GetHeight()) - 14.0;
+            DevFloat bottomY = frame.HudLayout.BottomLeft.y;
+            DevFloat topRightY = frame.HudLayout.TopRight.y;
 
             const auto *selectedNode = [&]() -> const FGraphNodeV2 * {
                 for (const auto &node : Nodes) {
@@ -714,11 +809,11 @@ namespace Slab::Graphics::Plot2D::V2 {
                 if (!selectedNode->CanonicalNotation.empty()) lines.push_back(selectedNode->CanonicalNotation);
                 else if (!selectedNode->Description.empty()) lines.push_back(selectedNode->Description);
                 lines.push_back("Neighborhood hops: " + ToStr(NeighborhoodHops));
-                topY = AddHudCard(
+                bottomY = AddHudCardFromBottomLeft(
                     drawList,
                     frame,
-                    14.0,
-                    topY,
+                    frame.HudLayout.BottomLeft.x,
+                    bottomY,
                     "Selected",
                     lines,
                     FColor::FromHex("#F2C66D"));
@@ -731,11 +826,11 @@ namespace Slab::Graphics::Plot2D::V2 {
                     if (!hoveredNode->CanonicalNotation.empty()) lines.push_back(hoveredNode->CanonicalNotation);
                     else if (!hoveredNode->Description.empty()) lines.push_back(hoveredNode->Description);
                     if (!hoveredNode->Subtitle.empty()) lines.push_back(hoveredNode->Subtitle);
-                    topY = AddHudCard(
+                    bottomY = AddHudCardFromBottomLeft(
                         drawList,
                         frame,
-                        14.0,
-                        topY,
+                        frame.HudLayout.BottomLeft.x,
+                        bottomY,
                         "Hover",
                         lines,
                         FColor::FromHex("#8CD8F8"));
@@ -750,11 +845,11 @@ namespace Slab::Graphics::Plot2D::V2 {
                         lines.push_back(source->FullLabel + " -> " + target->FullLabel);
                     }
                     if (!hoveredEdge->Detail.empty()) lines.push_back(hoveredEdge->Detail);
-                    topY = AddHudCard(
+                    bottomY = AddHudCardFromBottomLeft(
                         drawList,
                         frame,
-                        14.0,
-                        topY,
+                        frame.HudLayout.BottomLeft.x,
+                        bottomY,
                         "Hover Edge: " + hoveredEdge->Label,
                         lines,
                         EdgeColorForKind(*hoveredEdge));
@@ -763,12 +858,12 @@ namespace Slab::Graphics::Plot2D::V2 {
 
             Vector<Str> statusLines;
             statusLines.push_back("Nodes: " + ToStr(Nodes.size()) + " | Edges: " + ToStr(Edges.size()));
-            statusLines.push_back("Keys: [ ] adjust radius, L labels, F fit");
-            (void) AddHudCard(
+            statusLines.push_back("Keys: [ ] radius, L labels, F fit");
+            (void) AddHudCardFromTopRight(
                 drawList,
                 frame,
-                static_cast<DevFloat>(std::max(14, frame.Viewport.GetWidth() - 350)),
-                static_cast<DevFloat>(frame.Viewport.GetHeight()) - 14.0,
+                frame.HudLayout.TopRight.x,
+                topRightY,
                 "Semantic Graph",
                 statusLines,
                 FColor::FromHex("#7DA8D8"));

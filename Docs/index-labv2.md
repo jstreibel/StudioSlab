@@ -46,6 +46,8 @@
 - Plot V2 semantic-graph surface:
   - `Slab/Graphics/Plot2D/V2/PlotArtistV2.h`
   - `Slab/Graphics/Plot2D/V2/Plot2DWindowV2.h`
+  - `Slab/Graphics/Plot2D/V2/Plot2DWindowHostV2.h`
+  - `Slab/Graphics/Plot2D/V2/Artists/R2SectionArtistV2.h`
   - `Slab/Graphics/Plot2D/V2/Artists/ModelSemanticGraphArtistV2.h`
   - `Docs/Plot2D-V2-Scheme.md`
   - `Docs/plot2d-v2-migration-plan.md`
@@ -112,6 +114,8 @@
 - In the Model workspace, `Base Vocabulary` is ambient/readonly and full object details belong in `Model Inspector`, not repeated in catalog panes.
 - The `Model Semantic Graph` plot window is a read-only navigation surface tied to shared model selection.
 - Plot V2 controls stay viewport-attached in the host layer; the scene layer should not absorb ImGui toolbar/detail logic.
+- Plot V2 artists that draw screen-space HUDs should anchor through `FPlotFrameContextV2::HudLayout`, not hardcode viewport corners.
+- Plot V2 screen-space HUDs should size from `FPlotFrameContextV2::TextMetrics`, not from artist-local pixel constants.
 - Artist visibility/z-order edits should work from V2 plot host controls without re-coupling artists to the renderer.
 - New model content creation is transactional:
   - preview first

@@ -291,6 +291,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotArtistV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DWindowV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DWindowV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DWindowHostV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DWindowHostV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotReflectionSchemaV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.h
@@ -305,6 +307,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/ModelSemanticGraphArtistV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/PointSetArtistV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/PointSetArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/R2SectionArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/R2SectionArtistV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/RtoRFunctionArtistV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/RtoRFunctionArtistV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Backends/RecordingRenderBackendV2.cpp

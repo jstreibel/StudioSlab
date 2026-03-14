@@ -5,11 +5,27 @@
 
 namespace Slab::Graphics::Plot2D::V2 {
 
+    struct FPlotTextMetricsV2 {
+        DevFloat FontHeightPixels = 17.0;
+        DevFloat LineAdvancePixels = 17.0;
+        DevFloat ApproxCharacterAdvancePixels = 10.0;
+    };
+
+    struct FPlotHudLayoutV2 {
+        RectR SafeRect{};
+        FPoint2D TopLeft{};
+        FPoint2D TopRight{};
+        FPoint2D BottomLeft{};
+        FPoint2D BottomRight{};
+    };
+
     struct FPlotFrameContextV2 {
         RectR PlotRegion{};
         RectI Viewport{};
         Str WindowId;
         Str Title;
+        FPlotTextMetricsV2 TextMetrics{};
+        FPlotHudLayoutV2 HudLayout{};
     };
 
     class IPlotRenderBackendV2 {
