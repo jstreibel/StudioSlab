@@ -18,18 +18,33 @@ Use this order when docs disagree:
 
 ## Core Planning Docs
 
-- Current status snapshot: `Docs/status-v2.md`
-- Backlog and active items: `Docs/v2-feature-backlog.md`
-- Coverage breadth: `Docs/v2-model-coverage-matrix.md`
-- ODE realization descent plan: `Docs/ode-realization-descent-plan.md`
-- Platform feasibility notes: `Docs/platform-wasm-feasibility.md`
-- Active slice (current): `Docs/functional-minimization-v2-slice-scope.md`
-- Technical debt follow-ups: `Docs/technical-debt.md`
+- Current status snapshot:
+  - `Docs/status-v2.md`
+- Backlog and active items:
+  - `Docs/v2-feature-backlog.md`
+- Coverage breadth:
+  - `Docs/v2-model-coverage-matrix.md`
+- Active handoffs / restart notes:
+  - `Docs/index-handoffs.md`
+  - `Docs/handoff-ode-realization-rz03.md`
+- Focused plan docs:
+  - `Docs/ode-realization-descent-plan.md`
+  - `Docs/platform-wasm-feasibility.md`
+  - `Docs/functional-minimization-v2-slice-scope.md`
+- Technical debt follow-ups:
+  - `Docs/technical-debt.md`
 - Product context:
   - `Docs/product-direction.md`
   - `Docs/domain-model-ux-surfaces-spec.md`
   - `Docs/study-model-spec.md`
   - `Docs/sequence-control-spec.md`
+
+## Planning vs Handoff Rule
+
+- `Docs/v2-feature-backlog.md` is the planning queue.
+- `Docs/ode-realization-descent-plan.md` and slice-scope docs define bounded implementation intent.
+- `Docs/index-handoffs.md` is for restart context after a pause.
+- `Docs/technical-debt.md` is debt tracking, not the active plan unless promoted into backlog/status.
 
 ## Update Protocol
 

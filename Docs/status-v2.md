@@ -3,10 +3,10 @@
 ## Snapshot Metadata
 
 - Snapshot date: `2026-03-14`
-- Last implementation update: `2026-03-13` (Model-tab docked semantic authoring surfaces + direct create flow)
-- Last architecture-doc update: `2026-03-14` (ODE model->realization descent plan added)
-- Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-13`
-- Build-target sanity check date: `2026-03-13` (`StudioSlab` build passes in `cmake-build-debug`)
+- Last implementation update: `2026-03-14` (Model semantic graph + ODE realization `RZ-00..02`)
+- Last architecture-doc update: `2026-03-14` (doc routing taxonomy + `RZ-03` handoff)
+- Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
+- Build-target sanity check date: `2026-03-14` (`StudioSlab` and `testsuite` build pass in `cmake-build-debug`)
 
 ## Implemented Baseline
 
@@ -184,6 +184,26 @@
   - unresolved-symbol diagnostics remain blocking errors for canonical apply
   - users resolve them by creating a local definition or materializing an inferred assumption
 
+## Recent Updates (`2026-03-14`, implementation)
+
+- Model semantic graph surface landed:
+  - `LabV2` now opens a dedicated `Model Semantic Graph` plot window from the Model workspace summary surface
+  - the graph is projected from `FModelSemanticOverviewV2`
+  - graph selection feeds back into shared Model workspace selection
+  - hover HUD and edge inspection are available
+  - graph interaction currently includes pan/zoom, click selection, neighborhood hops, label toggle, and fit-to-graph
+- Plot V2 interaction baseline extended:
+  - artists can now participate in pointer hit-testing and keyboard event handling
+  - the semantic-graph artist is the first built-in consumer of that interaction path
+- ODE realization descent `RZ-00..02` is implemented:
+  - one ODE realization descriptor is derived from canonical `Model V2` semantics
+  - readiness is computed from semantic health, state coverage, and explicit model-level initial conditions
+  - LabV2 `Model Layer` summary now exposes readiness, selected relations, diagnostics, and initial-state visibility
+- Model realization validation now has the intended first boundary:
+  - harmonic oscillator extracts cleanly
+  - damped harmonic oscillator extracts cleanly
+  - Klein-Gordon remains a blocked negative case for the ODE-first descent
+
 ## Reflection Working-Memory Caveats (Current)
 
 - Schemes `Blueprint Graph` is a visualization/navigation surface, not yet a full graph-execution editor.
@@ -210,15 +230,21 @@
   - `RV2-02`: done
   - `RV2-03`: done
   - `RV2-04`: done
+- ODE realization descent status:
+  - `RZ-00`: done
+  - `RZ-01`: done
+  - `RZ-02`: done
+  - `RZ-03`: next runtime bridge
 
-## Planned Next Slice (Design)
+## Planned Next Slice (Implementation)
 
 - ODE-first descent from `Model V2` into `Realization` is now documented in:
   - `Docs/ode-realization-descent-plan.md`
 - current recommendation:
-  - freeze one ODE realization-facing contract first
-  - derive readiness from canonical model semantics
-  - validate on harmonic oscillator / damped oscillator before broader realization work
+  - build `RZ-03` as one descriptor-driven bridge into `FSimulationRecipeV2` + `FStepperSessionV2`
+  - keep the first runtime family to oscillator-class ODEs
+  - do not re-infer semantic roles inside runtime code
+  - keep PDE/field realization out of this first bridge
 
 ## Known Missing Pieces
 
@@ -229,6 +255,8 @@
 - Web/wasm target path (toolchain/build/backend split) is not implemented
 - User-authored base-vocabulary editing and richer semantic-environment provenance are not implemented
 - exact notation-span navigation from diagnostics/selection is not implemented
+- dedicated initial-condition authoring/persistence flow is not implemented
+- descriptor-driven ODE runtime bridge from `Model V2` is not implemented
 
 ## Conflict Rule
 

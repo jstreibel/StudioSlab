@@ -3,7 +3,7 @@
 ## Snapshot
 
 - Date: `2026-03-01`
-- Scope assessed: adding wasm targets for current `StudioSlab`/`StudioSlabV2` codebase
+- Scope assessed: adding wasm targets for the current `StudioSlab` / `LabV2` codebase
 - Result: **high complexity** for full `Slab`/`LabV2` wasm port (`not simple`)
 - Independent bootstrap status: standalone WebGL2 sandbox target added at `Studios/WebGL-WASM/` (not coupled to `Slab` runtime/graphics)
 

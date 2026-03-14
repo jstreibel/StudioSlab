@@ -12,16 +12,32 @@
 
 1. `Docs/status-v2.md`
 2. `SPEC.md` (V2 architecture and constraints)
-3. One focused spec:
+3. When resuming an in-progress slice:
+  - `Docs/index-handoffs.md`
+  - `Docs/handoff-ode-realization-rz03.md`
+4. One focused spec:
   - ODE model->realization descent: `Docs/ode-realization-descent-plan.md`
   - control/input: `Docs/live-control-v2-spec.md`
   - live runtime params: `Docs/live-parameters-v2-slice-scope.md`
-   - sequencing/time: `Docs/sequence-control-spec.md`
+  - sequencing/time: `Docs/sequence-control-spec.md`
   - monitoring data-path tradeoffs: `Docs/monitoring-liveview-vs-listeners.md`
   - reflection contract/migration: `Docs/reflection-v2-contract.md`, `Docs/reflection-v2-migration-plan.md`, `Docs/reflection-v2-implementation.md`
   - plot reflection bridge quick path: `Docs/plot2d-reflection-v2-quick.md`
-4. One active planning doc:
+5. One active planning doc:
    - `Docs/v2-feature-backlog.md` or `Docs/v2-model-coverage-matrix.md`
+
+## Current ODE Realization Boundary
+
+Implemented already:
+- ODE readiness/descriptor extraction from canonical `Model V2` semantics
+- explicit model-level initial conditions for the ODE slice
+- LabV2 visibility for readiness, selected relations, and initial state
+
+Still missing:
+- `RZ-03`, the first descriptor-driven runtime bridge
+- a general runtime evaluator for `Model V2` expressions
+
+Use `Docs/handoff-ode-realization-rz03.md` for the current runtime target.
 
 ## Monitor Data Contract (Current)
 
@@ -43,7 +59,12 @@ Quick start for new monitored slices:
 - Runtime core:
   - `Slab/Math/Numerics/V2/Runtime/SimulationRecipeV2.h`
   - `Slab/Math/Numerics/V2/Runtime/SimulationSessionV2.h`
+  - `Slab/Math/Numerics/V2/Runtime/StepperSessionV2.h`
   - `Slab/Math/Numerics/V2/Task/NumericTaskV2.h`
+- Model-to-runtime boundary:
+  - `Slab/Core/Model/V2/ModelTypesV2.h`
+  - `Slab/Core/Model/V2/ModelRealizationV2.h`
+  - `Slab/Core/Model/V2/ModelSeedsV2.h`
 - Live topics/hubs:
   - `Slab/Math/Data/V2/LiveDataHubV2.h`
   - `Slab/Math/Data/V2/LiveControlHubV2.h`
@@ -75,6 +96,8 @@ Quick start for new monitored slices:
 - LabV2 schemes/panel host (reflection surface insertion point):
   - `Studios/LabV2/LabV2WindowManager.h`
   - `Studios/LabV2/LabV2WindowManager.cpp`
+- LabV2 model realization visibility:
+  - `Studios/LabV2/LabV2WindowManagerModelPanels.cpp`
 
 ## Validation Minimum
 
@@ -86,3 +109,4 @@ Quick start for new monitored slices:
   - `cmake --build cmake-build-debug --target SlabTests StudioSlab -j8`
   - `./Build/bin/SlabTests list`
   - `./Build/bin/StudioSlab`
+  - `./Build/bin/testsuite "[ModelV2]"`

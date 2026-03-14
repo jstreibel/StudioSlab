@@ -45,9 +45,11 @@ Product direction is data-centric:
 
 Start with:
 - `Docs/index.md` (AI/router entrypoint)
+- `Docs/index-docs-structure.md` (doc roles and update rules)
 - `Docs/index-v2-runtime.md` (runtime/data/control work)
 - `Docs/index-labv2.md` (LabV2 shell/UI work)
 - `Docs/index-roadmap.md` (planning/status/priority)
+- `Docs/index-handoffs.md` (resume current slice after a pause)
 - `Docs/index-testing.md` (build/test/smoke)
 - `Docs/status-v2.md` (current implementation snapshot)
 
@@ -64,8 +66,9 @@ Before reading deep docs, AI should:
 1. read `AGENTS.md`
 2. read `Docs/index.md`
 3. select exactly one sub-index based on task
-4. read at most one contract/spec doc plus one roadmap/slice doc
-5. if docs conflict, prefer `Docs/status-v2.md`, then code in `Slab/` and `Studios/LabV2/`
+4. if resuming paused work, read `Docs/index-handoffs.md`
+5. read at most one contract/spec doc plus one roadmap/slice doc
+6. if docs conflict, prefer `Docs/status-v2.md`, then code in `Slab/` and `Studios/LabV2/`
 
 ## Refactor Strategy (Global)
 
@@ -287,7 +290,7 @@ AI should report:
 - graphics render-pass propagation fixes
 - row/column pane framing and event routing fixes
 - shared graphics visual host for `Studios` + `SlabTests`
-- `LabV2` (`StudioSlabV2`) workbench path:
+- `LabV2` (`StudioSlab` binary, `Studios/LabV2` sources) workbench path:
   - observability shell (tasks + LiveData V2 panel)
   - V2 launcher for SPI / KGRtoR plane waves / Metropolis
   - in-app passive V2 monitors
@@ -369,10 +372,12 @@ If a change requires broad coupling across numerics + data + graphics, split it 
 
 - `AGENTS.md` (repo-specific workflow and constraints)
 - `Docs/index.md` (docs entrypoint/router)
+- `Docs/index-docs-structure.md` (doc taxonomy and update rules)
 - `Docs/status-v2.md` (implementation status snapshot)
 - `Docs/index-v2-runtime.md` (runtime/data/control map)
 - `Docs/index-labv2.md` (LabV2 shell/UI map)
 - `Docs/index-roadmap.md` (planning/status precedence)
+- `Docs/index-handoffs.md` (resume-current-slice routing)
 - `Docs/index-testing.md` (build/test/smoke map)
 - `Docs/graphics-composition-contract.md` (render/composition rules)
 - `Docs/plot-window-ux-contract.md` (plot control surface contract)
@@ -384,6 +389,8 @@ If a change requires broad coupling across numerics + data + graphics, split it 
 - `Docs/sequence-control-spec.md` (sequence/control/time-domain draft)
 - `Docs/v2-model-coverage-matrix.md` (broad V2 migration planning matrix)
 - `Docs/v2-feature-backlog.md` (compact planning backlog)
+- `Docs/ode-realization-descent-plan.md` (current model->realization plan)
+- `Docs/handoff-ode-realization-rz03.md` (next ODE runtime bridge handoff)
 - `Docs/live-control-v2-spec.md` (minimal `LiveControl V2` foundation spec)
 - `Docs/live-parameters-v2-slice-scope.md` (runtime parameter control slice)
 - `Docs/monitoring-liveview-vs-listeners.md` (monitoring data-path decision note)

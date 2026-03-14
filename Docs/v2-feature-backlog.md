@@ -113,6 +113,24 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - direct create flow exists for new local definitions and new local relations
   - Model workspace moved from one stacked panel to separate dockable windows for vocabulary, definitions, relations, editor, assumptions, and inspector
 
+## Progress Notes (2026-03-14)
+
+- `LAB-14` done: Model semantic graph plot surface and interaction pass:
+  - `Model Layer` now exposes `Semantic Graph -> Open in Plots`
+  - graph projection comes from `FModelSemanticOverviewV2`
+  - graph is read-only, selection-linked, and rendered on `Plot V2`
+  - hover HUD, edge inspection, click activation, neighborhood-hop controls, label toggle, and fit-to-graph are in place
+- `RZ-00` done: ODE realization contract freeze implemented in code.
+- `RZ-01` done: ODE descriptor extraction and readiness gating implemented from canonical model semantics.
+- `RZ-02` done: model-level ODE initial-condition semantics implemented and validated.
+- ODE realization validation baseline now matches the plan:
+  - harmonic oscillator: positive
+  - damped harmonic oscillator: positive
+  - Klein-Gordon: negative boundary check
+- `RZ-03` is now the next recommended realization slice:
+  - target the existing `FSimulationRecipeV2` + `FStepperSessionV2` runtime seam
+  - keep the bridge descriptor-driven and oscillator-family only
+
 ### `P0` `RV2-00` — Reflection V2 contract freeze — done
 - Define `Interface`/`Parameter`/`Operation` schema contracts.
 - Define operation invocation result shape and policy enums.
@@ -199,18 +217,27 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - draft semantic delta preview and draft-only object inspection
   - direct creation of local definitions/relations
   - dockable Model workspace surfaces
+- `P1` `LAB-14` — Model semantic graph plot surface — done
+  - plot-based graph projection from semantic overview data
+  - click-through selection into the Model workspace
+  - keyboard/pointer interaction for neighborhood, labels, and fit
 
 ### Model -> Realization Descent
-- `P1` `RZ-00` — ODE realization contract freeze
+- `P1` `RZ-00` — ODE realization contract freeze — done
   - plan reference: `Docs/ode-realization-descent-plan.md`
   - define one realization-facing descriptor derived from canonical `Model V2` semantics
   - gate on semantic readiness: no unresolved symbols, no blocking errors, no required pending assumptions
-- `P1` `RZ-01` — ODE descriptor extraction
+- `P1` `RZ-01` — ODE descriptor extraction — done
   - derive time coordinate, state variables, parameters, observables, and selected relations
   - validate first on harmonic oscillator / damped oscillator
-- `P1` `RZ-02` — ODE initial-condition semantics
+- `P1` `RZ-02` — ODE initial-condition semantics — done
   - add explicit initial-condition slots for the ODE slice only
   - keep boundary/control semantics out of this slice
+- `P1` `RZ-03` — First runtime bridge
+  - plan reference: `Docs/ode-realization-descent-plan.md`
+  - handoff reference: `Docs/handoff-ode-realization-rz03.md`
+  - build one descriptor-driven recipe/session/stepper path for oscillator-family models
+  - keep diagnostics explicit and state ordering deterministic
 
 ### Coverage Portfolio
 - `P1` `CVG-01` — MD V2 scoping — done

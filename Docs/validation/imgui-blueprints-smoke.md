@@ -28,7 +28,7 @@
   - No assertion or crash when interacting with links and nodes.
 
 ### 3) LabV2 App (non-blueprint guard)
-- Run: `./Build/bin/StudioSlabV2`
+- Run: `./Build/bin/StudioSlab`
 - Validate:
   - Main UI renders and remains interactive.
   - No global ImGui regressions (menus, panels, plots).

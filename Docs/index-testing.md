@@ -11,19 +11,21 @@
 - Configure (example):
   - `cmake -S . -B cmake-build-debug -DSTUDIOSLAB_CUDA_SUPPORT=ON`
 - Build library and key targets:
-  - `cmake --build cmake-build-debug --target Slab StudioSlabV2 SlabTests testsuite -j8`
+  - `cmake --build cmake-build-debug --target Slab StudioSlab SlabTests testsuite -j8`
 - Run tests:
   - `ctest --test-dir cmake-build-debug --output-on-failure`
 
 ## Runtime Smoke (V2-Focused)
 
-- `./Build/bin/StudioSlabV2`
+- `./Build/bin/StudioSlab`
 - `./Build/bin/SlabTests list`
 - `./Build/bin/SlabTests spi-live-monitor-mock --seconds 5`
 - `./Build/bin/SlabTests metropolis-monitor-smoke --seconds 5`
 - `./Build/bin/SlabTests moldyn-monitor-smoke --seconds 5`
 - `./Build/bin/SlabTests xy-monitor-smoke --seconds 5`
 - `./Build/bin/SlabTests ising-monitor-smoke --seconds 5`
+- `./Build/bin/testsuite "[ModelV2]"`
+- `./Build/bin/testsuite "[Plot2DV2]"`
 
 ## WASM Smoke (Independent Sandbox)
 

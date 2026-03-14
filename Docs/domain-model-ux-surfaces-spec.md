@@ -29,7 +29,7 @@ Out of scope:
   - It is not a claim that the final implementation path is fully known.
 - **Lab** means the conceptual editor/workbench role in the product architecture (scientific control plane / authoring environment).
 - **`Studios/Lab`** refers to the legacy implementation of that workbench role.
-- **`LabV2`** refers to the current new implementation path (`Studios/LabV2`, `StudioSlabV2`) for the future `Lab` concept.
+- **`LabV2`** refers to the current new implementation path (`Studios/LabV2`, the current `StudioSlab` workbench binary, and `StudioSlabV2App` bootstrap classes) for the future `Lab` concept.
 
 ## Core Entity Graph (Conceptual)
 

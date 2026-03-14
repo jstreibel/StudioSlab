@@ -1,7 +1,7 @@
 # V2 Iteration Baseline Sprint
 
 ## Goal
-- Establish a low-entropy baseline before high-velocity StudioSlabV2 feature/UX iteration.
+- Establish a low-entropy baseline before high-velocity `StudioSlab` / `LabV2` feature and UX iteration.
 - Keep upstream ImGui migration stable while V2 work grows.
 
 ## Scope (Short Sprint)

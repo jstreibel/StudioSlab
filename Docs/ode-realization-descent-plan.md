@@ -7,6 +7,12 @@ Define the shortest safe descent from the current `Model V2` authoring surface i
 This is not a general realization spec.
 It is a narrow plan for the first ODE-oriented handoff.
 
+## Status Note (`2026-03-14`)
+
+- `RZ-00`, `RZ-01`, and `RZ-02` are now implemented in code.
+- The current next step is `RZ-03`, the first runtime bridge.
+- Use `Docs/handoff-ode-realization-rz03.md` for restart context before touching runtime code.
+
 ## Use This When
 
 - deciding whether `Model` is ready to feed a first realization slice
@@ -20,7 +26,8 @@ It is a narrow plan for the first ODE-oriented handoff.
 2. `Docs/model-v2-semantic-environment.md`
 3. this file
 4. `Docs/index-v2-runtime.md`
-5. `Docs/domain-model-ux-surfaces-spec.md`
+5. `Docs/handoff-ode-realization-rz03.md`
+6. `Docs/domain-model-ux-surfaces-spec.md`
 
 ## Code Map
 
@@ -120,9 +127,12 @@ Explicitly out of scope for this contract:
 - persistence format
 - field-space / PDE mesh semantics
 
-## 5. One Missing Model Layer Needed Before Descent
+## 5. Model Layer Addition That Was Needed Before Descent
 
-Before implementation starts, add one explicit semantic layer for ODE realization:
+This requirement is now implemented:
+- explicit model-level initial-condition slots for canonical ODE state variables
+
+The missing layer that had to be added before descent was:
 - initial-condition slots for canonical state variables
 
 Why this is the right addition:
@@ -142,6 +152,9 @@ Do not broaden this yet into:
 Goal:
 - define one C++ realization-facing descriptor for ODE-ready models
 
+Status:
+- implemented
+
 Output:
 - contract doc plus code-level data structure
 
@@ -154,6 +167,9 @@ Rules:
 
 Goal:
 - derive the descriptor from `Model V2`
+
+Status:
+- implemented
 
 Minimum contents:
 - time coordinate
@@ -172,6 +188,9 @@ Validation:
 Goal:
 - add explicit initial-condition declarations for the ODE slice
 
+Status:
+- implemented
+
 Rules:
 - keep them model-level, not run-level
 - support only the minimum needed for ODE state initialization
@@ -184,6 +203,9 @@ Validation:
 
 Goal:
 - hand one ODE descriptor into a simple realization/runtime builder
+
+Status:
+- next
 
 Rules:
 - one narrow path
@@ -233,7 +255,7 @@ Questions answered:
 
 ## 10. Recommended Next Action
 
-Implement `RZ-00` first:
-- freeze the ODE realization contract
-- compute ODE readiness from canonical model semantics
-- keep the first implementation target to oscillator-class models
+Implement `RZ-03` next:
+- keep the bridge descriptor-driven
+- target `FSimulationRecipeV2` + `FStepperSessionV2`
+- keep the first runtime family to oscillator-class models

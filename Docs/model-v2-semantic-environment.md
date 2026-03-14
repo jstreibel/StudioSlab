@@ -9,6 +9,7 @@ Use this when changing:
 - model symbol/operator resolution
 - semantic origin reporting
 - Model-tab inspector/catalog behavior
+- model semantic graph visibility and ODE realization readiness surfaces
 
 ## Code Map
 
@@ -18,13 +19,19 @@ Use this when changing:
   - `Slab/Core/Model/V2/ModelNotationV2.h`
 - Semantic inspection / authoring diagnostics:
   - `Slab/Core/Model/V2/ModelAuthoringV2.h`
+- ODE realization contract/extraction:
+  - `Slab/Core/Model/V2/ModelRealizationV2.h`
 - Seeded examples:
   - `Slab/Core/Model/V2/ModelSeedsV2.h`
 - LabV2 Model tab:
   - `Studios/LabV2/LabV2WindowManager.h`
+  - `Studios/LabV2/LabV2WindowManager.cpp`
   - `Studios/LabV2/LabV2WindowManagerModelPanels.cpp`
+- Plot-based semantic graph:
+  - `Slab/Graphics/Plot2D/V2/Artists/ModelSemanticGraphArtistV2.h`
 - Coverage:
   - `Lib/tests/test_model_v2.cpp`
+  - `Lib/tests/test_plot2d_v2.cpp`
 
 ## Current Layering
 
@@ -32,6 +39,7 @@ Treat the Model as having these conceptual parts:
 - `BaseVocabulary`
 - `Definitions`
 - `Relations`
+- `InitialConditions`
 - `AssumedSemantics`
 - `NotationContext`
 
@@ -39,8 +47,13 @@ Important:
 - `BaseVocabulary` is a readonly ambient semantic environment.
 - `Definitions` are explicit local model commitments.
 - `Relations` are explicit local assertions/equations.
+- `InitialConditions` are explicit model-level realization inputs for the current ODE slice.
 - `AssumedSemantics` are inferred proposals/overlays.
 - `NotationContext` is authoring/projection context, not a peer ontological layer beside `Definitions` and `Relations`.
+
+Current realization-facing rule:
+- ODE readiness is derived from canonical semantic overview data plus explicit model-level initial conditions.
+- It is a projection from model semantics, not a separate authored runtime model.
 
 ## BaseVocabulary Contract
 
@@ -115,8 +128,15 @@ Current Model workspace layout:
   6. `Model Inspector`
 - `Base Vocabulary` remains ambient/readonly
 - `Definitions` and `Relations` remain the local editable content
+- `InitialConditions` are currently visible through the summary/realization surfaces, not a dedicated editor pane yet
 - `Assumptions` remain visible as inferred/proposed semantics, not silently canonized
 - selection, cross-highlighting, and inspector provenance are shared across the docked surfaces
+
+Summary and graph surfaces:
+- the visibility toggle labeled `Summary` opens the panel titled `Model Layer`
+- `Model Layer` shows semantic health/classification, the `Semantic Graph -> Open in Plots` action, and the current ODE realization summary
+- `Model Semantic Graph` is rendered on `Plot V2` as a read-only knowledge-graph-like surface
+- graph selection feeds back into the shared Model workspace selection state
 
 Inspector/rendering rules:
 - symbol-like entries render directly as LaTeX
@@ -137,6 +157,13 @@ Authoring rules:
 - active preset: `classical_mechanics`
 - ambient: `\\mathbb{R}`, derivative conventions
 - local: `x`, `p`, `m`, `k`, `\\omega`
+- explicit ODE initial conditions for `x` and `p`
+
+### Damped Harmonic Oscillator
+
+- active preset: `classical_mechanics`
+- local: harmonic-oscillator baseline plus explicit `\\gamma`
+- explicit first-order damping relation and ODE initial conditions
 
 ### Klein-Gordon
 
@@ -155,3 +182,5 @@ Important validation point:
 - override/specialization tracking is metadata-based, not full provenance/version history
 - direct creation is single-object only; there is no batch authoring/undo stack yet
 - draft-only objects are navigable in preview, but exact notation-span navigation is still absent
+- there is no dedicated initial-condition editor surface yet
+- there is no runtime bridge from the ODE descriptor into `FSimulationRecipeV2` yet

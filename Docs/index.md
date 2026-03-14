@@ -20,6 +20,8 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 
 ## Task Router
 
+- Docs taxonomy / what kind of doc to update: `Docs/index-docs-structure.md`
+- Resume an in-progress slice quickly: `Docs/index-handoffs.md`
 - Runtime/data/control implementation: `Docs/index-v2-runtime.md`
 - Reflection/interfaces/operations migration: `Docs/index-reflection-v2.md`
 - Reflection catalog registry specifics: `Docs/index-reflection-catalog-registry-v2.md`
@@ -32,7 +34,15 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 - Current V2 implementation status: `Docs/status-v2.md`
 - Keep date-stamped snapshots there. Other docs can carry design intent and longer rationale.
 
-## Deep Specs (Read Only If Needed)
+## Plans / Next Work
+
+- Planning index: `Docs/index-roadmap.md`
+- Active handoffs: `Docs/index-handoffs.md`
+- Compact backlog: `Docs/v2-feature-backlog.md`
+- Coverage planning: `Docs/v2-model-coverage-matrix.md`
+- Technical debt TODO backlog: `Docs/technical-debt.md`
+
+## Reference / Design Intent (Read Only If Needed)
 
 - Product/domain: `Docs/product-direction.md`, `Docs/product-vocabulary.md`, `Docs/domain-model-ux-surfaces-spec.md`, `Docs/study-model-spec.md`, `Docs/sequence-control-spec.md`
 - V2 planning/slices: `Docs/v2-feature-backlog.md`, `Docs/v2-model-coverage-matrix.md`, `Docs/live-control-v2-spec.md`, `Docs/live-parameters-v2-slice-scope.md`, `Docs/kg-r2tor-v2-slice-scope.md`, `Docs/md-v2-slice-scope.md`, `Docs/functional-minimization-v2-slice-scope.md`
@@ -47,7 +57,6 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 - Model-tab semantic environment: `Docs/model-v2-semantic-environment.md`
 - Monitoring architecture (LiveView vs listeners): `Docs/monitoring-liveview-vs-listeners.md`
 - Validation logs: `Docs/validation/imgui-blueprints-smoke.md`, `Docs/validation/imgui-upstream-parity-log.md`
-- Technical debt TODO backlog: `Docs/technical-debt.md`
 
 ## Maintenance Rule
 
