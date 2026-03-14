@@ -123,13 +123,17 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `RZ-00` done: ODE realization contract freeze implemented in code.
 - `RZ-01` done: ODE descriptor extraction and readiness gating implemented from canonical model semantics.
 - `RZ-02` done: model-level ODE initial-condition semantics implemented and validated.
+- `RZ-03` done: descriptor-driven ODE runtime bridge implemented:
+  - explicit first-order runtime system builder
+  - `FSimulationRecipeV2` + `FStepperSessionV2` handoff
+  - explicit numeric binding map for parameters and initial symbols
 - ODE realization validation baseline now matches the plan:
   - harmonic oscillator: positive
   - damped harmonic oscillator: positive
   - Klein-Gordon: negative boundary check
-- `RZ-03` is now the next recommended realization slice:
-  - target the existing `FSimulationRecipeV2` + `FStepperSessionV2` runtime seam
-  - keep the bridge descriptor-driven and oscillator-family only
+- post-`RZ-03` follow-up is now:
+  - minimal numeric-binding authoring/configuration story
+  - minimal LabV2 launch path from an ODE-ready model
 
 ### `P0` `RV2-00` — Reflection V2 contract freeze — done
 - Define `Interface`/`Parameter`/`Operation` schema contracts.
@@ -233,11 +237,14 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - `P1` `RZ-02` — ODE initial-condition semantics — done
   - add explicit initial-condition slots for the ODE slice only
   - keep boundary/control semantics out of this slice
-- `P1` `RZ-03` — First runtime bridge
+- `P1` `RZ-03` — First runtime bridge — done
   - plan reference: `Docs/ode-realization-descent-plan.md`
   - handoff reference: `Docs/handoff-ode-realization-rz03.md`
   - build one descriptor-driven recipe/session/stepper path for oscillator-family models
   - keep diagnostics explicit and state ordering deterministic
+- `P1` `RZ-04` — ODE launch/binding follow-up
+  - expose the minimal numeric scalar-binding story required by the runtime bridge
+  - add one LabV2 launch path from an ODE-ready model into that bridge
 
 ### Coverage Portfolio
 - `P1` `CVG-01` — MD V2 scoping — done

@@ -9,9 +9,9 @@ It is a narrow plan for the first ODE-oriented handoff.
 
 ## Status Note (`2026-03-14`)
 
-- `RZ-00`, `RZ-01`, and `RZ-02` are now implemented in code.
-- The current next step is `RZ-03`, the first runtime bridge.
-- Use `Docs/handoff-ode-realization-rz03.md` for restart context before touching runtime code.
+- `RZ-00`, `RZ-01`, `RZ-02`, and the core `RZ-03` runtime bridge are now implemented in code.
+- The remaining follow-up is integration work around numeric scalar bindings and a LabV2 launch path.
+- Use `Docs/handoff-ode-realization-rz03.md` for restart context before touching that follow-up work.
 
 ## Use This When
 
@@ -205,7 +205,7 @@ Goal:
 - hand one ODE descriptor into a simple realization/runtime builder
 
 Status:
-- next
+- implemented
 
 Rules:
 - one narrow path
@@ -255,7 +255,9 @@ Questions answered:
 
 ## 10. Recommended Next Action
 
-Implement `RZ-03` next:
+The core descent ladder in this plan is now implemented.
+
+Current follow-up:
 - keep the bridge descriptor-driven
-- target `FSimulationRecipeV2` + `FStepperSessionV2`
-- keep the first runtime family to oscillator-class models
+- add the smallest numeric scalar-binding story needed to launch it
+- add one LabV2 launch path for oscillator-class models

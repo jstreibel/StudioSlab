@@ -21,6 +21,8 @@ Use this when changing:
   - `Slab/Core/Model/V2/ModelAuthoringV2.h`
 - ODE realization contract/extraction:
   - `Slab/Core/Model/V2/ModelRealizationV2.h`
+- ODE runtime bridge:
+  - `Slab/Core/Model/V2/ModelRealizationRuntimeV2.h`
 - Seeded examples:
   - `Slab/Core/Model/V2/ModelSeedsV2.h`
 - LabV2 Model tab:
@@ -54,6 +56,7 @@ Important:
 Current realization-facing rule:
 - ODE readiness is derived from canonical semantic overview data plus explicit model-level initial conditions.
 - It is a projection from model semantics, not a separate authored runtime model.
+- the first runtime bridge consumes that projection plus an explicit numeric scalar-binding map and builds one narrow `FSimulationRecipeV2` path for oscillator-family systems
 
 ## BaseVocabulary Contract
 
@@ -183,4 +186,5 @@ Important validation point:
 - direct creation is single-object only; there is no batch authoring/undo stack yet
 - draft-only objects are navigable in preview, but exact notation-span navigation is still absent
 - there is no dedicated initial-condition editor surface yet
-- there is no runtime bridge from the ODE descriptor into `FSimulationRecipeV2` yet
+- there is no Model workspace launch/config surface for the runtime bridge yet
+- numeric scalar bindings required by the runtime bridge are not authored on the model side yet

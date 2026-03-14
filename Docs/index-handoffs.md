@@ -18,5 +18,5 @@ Handoffs are restart aids. They do not override `Docs/status-v2.md` or the codeb
 ## Current Handoffs
 
 - `Docs/handoff-ode-realization-rz03.md`
-  - next runtime step after implemented `RZ-00`, `RZ-01`, and `RZ-02`
-  - targets the first descriptor-driven ODE runtime bridge
+  - post-`RZ-03` follow-up after the core descriptor-driven runtime bridge landed
+  - targets the remaining launch and numeric-binding follow-up work

@@ -3,7 +3,7 @@
 ## Snapshot Metadata
 
 - Snapshot date: `2026-03-14`
-- Last implementation update: `2026-03-14` (Model semantic graph + ODE realization `RZ-00..02`)
+- Last implementation update: `2026-03-14` (Model semantic graph + ODE realization `RZ-00..03`)
 - Last architecture-doc update: `2026-03-14` (doc routing taxonomy + `RZ-03` handoff)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
 - Build-target sanity check date: `2026-03-14` (`StudioSlab` and `testsuite` build pass in `cmake-build-debug`)
@@ -199,6 +199,10 @@
   - one ODE realization descriptor is derived from canonical `Model V2` semantics
   - readiness is computed from semantic health, state coverage, and explicit model-level initial conditions
   - LabV2 `Model Layer` summary now exposes readiness, selected relations, diagnostics, and initial-state visibility
+- ODE runtime bridge `RZ-03` is implemented:
+  - one descriptor-driven bridge now maps explicit first-order ODE models into a runtime system plus `FSimulationRecipeV2` / `FStepperSessionV2`
+  - the bridge stays narrow and requires an explicit numeric scalar-binding map for parameters and initial symbols
+  - harmonic and damped oscillator runtime paths are covered by `ModelV2` tests
 - Model realization validation now has the intended first boundary:
   - harmonic oscillator extracts cleanly
   - damped harmonic oscillator extracts cleanly
@@ -234,17 +238,18 @@
   - `RZ-00`: done
   - `RZ-01`: done
   - `RZ-02`: done
-  - `RZ-03`: next runtime bridge
+  - `RZ-03`: done
 
-## Planned Next Slice (Implementation)
+## Planned Next Slice (Follow-up)
 
 - ODE-first descent from `Model V2` into `Realization` is now documented in:
   - `Docs/ode-realization-descent-plan.md`
+- original `RZ-00`..`RZ-03` ladder is now implemented
 - current recommendation:
-  - build `RZ-03` as one descriptor-driven bridge into `FSimulationRecipeV2` + `FStepperSessionV2`
-  - keep the first runtime family to oscillator-class ODEs
-  - do not re-infer semantic roles inside runtime code
-  - keep PDE/field realization out of this first bridge
+  - add one minimal launch path from an ODE-ready model into the new runtime bridge
+  - define the smallest authoring/config story for numeric scalar bindings required by the bridge
+  - keep the first launch path to oscillator-family ODEs
+  - keep PDE/field realization out of follow-up work
 
 ## Known Missing Pieces
 
@@ -256,7 +261,8 @@
 - User-authored base-vocabulary editing and richer semantic-environment provenance are not implemented
 - exact notation-span navigation from diagnostics/selection is not implemented
 - dedicated initial-condition authoring/persistence flow is not implemented
-- descriptor-driven ODE runtime bridge from `Model V2` is not implemented
+- ODE-ready model launch path in `LabV2` is not implemented
+- model-owned numeric scalar binding/parameter authoring for the runtime bridge is not implemented
 
 ## Conflict Rule
 

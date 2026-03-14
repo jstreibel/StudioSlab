@@ -1,10 +1,15 @@
 # Handoff: ODE Realization `RZ-03`
 
+## Status Note (`2026-03-14`)
+
+- The core `RZ-03` runtime bridge is now implemented.
+- What remains is follow-up integration: numeric-binding authoring/configuration and one LabV2 launch path.
+
 ## Use This When
 
-- You are continuing the ODE model-to-runtime descent
+- You are continuing the post-`RZ-03` ODE runtime follow-up work
 - You need to know what is already implemented before touching runtime code
-- You want the narrowest safe `RZ-03` landing zone
+- You want the narrowest safe next step after the core runtime bridge landed
 
 ## Current Boundary
 
@@ -12,6 +17,7 @@ Already implemented:
 - `RZ-00`: ODE realization contract in `Slab/Core/Model/V2/ModelRealizationV2.h`
 - `RZ-01`: readiness and descriptor extraction from canonical `Model V2` semantics
 - `RZ-02`: explicit model-level initial conditions in `Slab/Core/Model/V2/ModelTypesV2.h`
+- `RZ-03`: descriptor-driven runtime bridge in `Slab/Core/Model/V2/ModelRealizationRuntimeV2.h`
 - LabV2 summary surface for ODE readiness and initial-state visibility
 - plot-based semantic graph for model navigation in `LabV2`
 
@@ -20,15 +26,17 @@ Validated examples:
 - damped harmonic oscillator: positive case
 - Klein-Gordon: negative boundary check for the ODE-first descent
 
-## `RZ-03` Goal
+## What Landed In `RZ-03`
 
-Build one narrow runtime bridge from `FODERealizationDescriptorV2` into the existing V2 runtime path.
+- explicit first-order runtime-system builder from `FODERealizationDescriptorV2`
+- narrow scalar AST evaluator for literal / symbol / unary / binary arithmetic
+- runtime handoff into `FSimulationRecipeV2` + `FStepperSessionV2`
+- oscillator-family validation on harmonic and damped oscillator
+- explicit diagnostics for missing numeric bindings and unsupported expression kinds
 
-Target shape:
-- descriptor in
-- simple recipe/session/stepper path out
-- diagnostics first
-- oscillator-family scope only
+## Current Follow-Up Goal
+
+Keep the bridge narrow, but make it usable without hand-written test-only config.
 
 ## Runtime Landing Zone
 
@@ -37,6 +45,7 @@ Current V2 runtime seam:
 - `Slab/Math/Numerics/V2/Runtime/SimulationSessionV2.h`
 - `Slab/Math/Numerics/V2/Runtime/StepperSessionV2.h`
 - `Slab/Math/Numerics/V2/Task/NumericTaskV2.h`
+- `Slab/Core/Model/V2/ModelRealizationRuntimeV2.h`
 
 Existing ODE stepping substrate:
 - `Lib/Math/Numerics/ODE/Solver/LinearStepSolver.h`
@@ -47,13 +56,12 @@ Existing ODE stepping substrate:
 Reference recipe pattern:
 - `Lib/Models/Stochastic-Path-Integral/V2/SPI-RecipeV2.cpp`
 
-## Recommended First Slice
+## Recommended Follow-Up Slice
 
 1. Keep the bridge descriptor-driven. Do not re-infer state/parameter roles in runtime code.
-2. Define one deterministic state ordering from `descriptor.StateVariables`.
-3. Build one small scalar/vector `EquationState` implementation for that ordered state.
-4. Build one narrow `LinearStepSolver` adapter that evaluates the selected first-order relations.
-5. Wrap it in `FStepperSessionV2` through one simple `FSimulationRecipeV2`.
+2. Add the smallest authoring/config surface for numeric scalar bindings required by the bridge.
+3. Add one LabV2 launch path from an ODE-ready model into the new runtime builder.
+4. Keep the first launch path to oscillator-family models only.
 
 ## Constraints
 
@@ -69,25 +77,20 @@ Do not:
 - mix live controls into the first bridge
 - build a second semantic-model inference layer in runtime code
 
-## Key Missing Piece To Respect
+## Key Remaining Gaps
 
-There is still no general `Model V2` runtime expression evaluator.
-
-That means the first bridge should stay narrow:
-- either implement a tiny scalar arithmetic evaluator for the selected descriptor expressions
-- or keep the first bridge explicitly limited to oscillator-family arithmetic
-
-In either case, do not hide the limitation.
+- `Model V2` still does not own concrete numeric parameter values.
+- The runtime bridge currently relies on an explicit scalar-binding map supplied at build time.
+- There is no LabV2 launch/config surface for those bindings yet.
 
 ## Suggested Validation
 
-- unit tests for deterministic state ordering and initial-state mapping
-- runtime build test for harmonic oscillator
-- runtime build test for damped harmonic oscillator
-- explicit blocked-path test for Klein-Gordon
+- keep `ModelV2` runtime tests for harmonic and damped oscillator passing
+- add one launch-path test or smoke path once LabV2 can invoke the bridge
+- keep Klein-Gordon blocked before launch
 
 ## Likely UI Follow-Up
 
-After the runtime bridge exists, add one minimal LabV2 launch path from an ODE-ready model.
-
-Keep that launch path secondary to the runtime contract itself.
+The next useful user-facing slice is:
+- one numeric-binding config story for the required scalar symbols
+- one minimal `Run` or `Open in Runtime` path from an ODE-ready model in LabV2

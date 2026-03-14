@@ -32,12 +32,14 @@ Implemented already:
 - ODE readiness/descriptor extraction from canonical `Model V2` semantics
 - explicit model-level initial conditions for the ODE slice
 - LabV2 visibility for readiness, selected relations, and initial state
+- descriptor-driven runtime bridge from the ODE descriptor into `FSimulationRecipeV2` + `FStepperSessionV2`
+- explicit numeric scalar bindings for parameters/initial symbols at runtime-build time
 
 Still missing:
-- `RZ-03`, the first descriptor-driven runtime bridge
-- a general runtime evaluator for `Model V2` expressions
+- model-owned numeric scalar binding authoring/configuration
+- LabV2 launch path from an ODE-ready model into the runtime bridge
 
-Use `Docs/handoff-ode-realization-rz03.md` for the current runtime target.
+Use `Docs/handoff-ode-realization-rz03.md` for the post-`RZ-03` follow-up.
 
 ## Monitor Data Contract (Current)
 
@@ -64,6 +66,7 @@ Quick start for new monitored slices:
 - Model-to-runtime boundary:
   - `Slab/Core/Model/V2/ModelTypesV2.h`
   - `Slab/Core/Model/V2/ModelRealizationV2.h`
+  - `Slab/Core/Model/V2/ModelRealizationRuntimeV2.h`
   - `Slab/Core/Model/V2/ModelSeedsV2.h`
 - Live topics/hubs:
   - `Slab/Math/Data/V2/LiveDataHubV2.h`

@@ -2,6 +2,7 @@
 
 #include "Core/Model/V2/ModelAuthoringV2.h"
 #include "Core/Model/V2/ModelRealizationV2.h"
+#include "Core/Model/V2/ModelRealizationRuntimeV2.h"
 #include "Core/Model/V2/ModelSeedsV2.h"
 
 namespace {
@@ -1169,6 +1170,113 @@ TEST_CASE("Model V2 ODE realization requires initial conditions per state", "[Mo
         descriptor.Diagnostics,
         "missing_initial_condition_assignment",
         "canonical state"));
+}
+
+TEST_CASE("Model V2 ODE runtime bridge builds explicit oscillator runtime", "[ModelV2][Realization][Runtime]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildHarmonicOscillatorModelV2();
+    const auto descriptor = BuildODERealizationDescriptorV2(model);
+    REQUIRE(descriptor.IsReady());
+
+    FODEExplicitFirstOrderRuntimeConfigV2 config;
+    config.TimeStep = 0.05;
+    config.MaxSteps = 32;
+    config.ScalarBindingsByDefinitionId = {
+        {"param.m", 2.0},
+        {"param.k", 8.0},
+        {"param.x0", 1.5},
+        {"param.p0", -0.25}
+    };
+
+    const auto runtime = BuildODEExplicitFirstOrderRuntimeV2(model, descriptor, config);
+
+    REQUIRE(runtime.IsReady());
+    REQUIRE(runtime.System != nullptr);
+    REQUIRE(runtime.Recipe != nullptr);
+    CHECK(runtime.System->GetInitialTime() == Catch::Approx(0.0));
+    CHECK(runtime.System->GetStateDefinitionIds() == Slab::Vector<Slab::Str>{"state.x", "state.p"});
+    REQUIRE(runtime.System->GetInitialStateValues().size() == 2);
+    CHECK(runtime.System->GetInitialStateValues()[0] == Catch::Approx(1.5));
+    CHECK(runtime.System->GetInitialStateValues()[1] == Catch::Approx(-0.25));
+
+    const auto rhs = runtime.System->EvaluateRhs(runtime.System->GetInitialStateValues(), runtime.System->GetInitialTime());
+    REQUIRE(rhs.has_value());
+    REQUIRE(rhs->size() == 2);
+    CHECK((*rhs)[0] == Catch::Approx(-0.125));
+    CHECK((*rhs)[1] == Catch::Approx(-12.0));
+
+    const auto session = runtime.Recipe->BuildSession();
+    REQUIRE(session != nullptr);
+    session->InitializeForCurrentThread();
+
+    const auto beforeState = session->GetCurrentState();
+    REQUIRE(beforeState != nullptr);
+    const auto beforeValues = TryExtractODEExplicitFirstOrderRuntimeStateValuesV2(*beforeState);
+    REQUIRE(beforeValues.has_value());
+    CHECK((*beforeValues)[0] == Catch::Approx(1.5));
+    CHECK((*beforeValues)[1] == Catch::Approx(-0.25));
+
+    session->Step(1);
+
+    const auto afterState = session->GetCurrentState();
+    REQUIRE(afterState != nullptr);
+    const auto afterValues = TryExtractODEExplicitFirstOrderRuntimeStateValuesV2(*afterState);
+    REQUIRE(afterValues.has_value());
+    REQUIRE(afterValues->size() == 2);
+    CHECK((*afterValues)[0] != Catch::Approx((*beforeValues)[0]));
+    CHECK((*afterValues)[1] != Catch::Approx((*beforeValues)[1]));
+}
+
+TEST_CASE("Model V2 ODE runtime bridge supports damped oscillator RHS", "[ModelV2][Realization][Runtime]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildDampedHarmonicOscillatorModelV2();
+    const auto descriptor = BuildODERealizationDescriptorV2(model);
+    REQUIRE(descriptor.IsReady());
+
+    FODEExplicitFirstOrderRuntimeConfigV2 config;
+    config.TimeStep = 0.02;
+    config.ScalarBindingsByDefinitionId = {
+        {"param.m", 1.0},
+        {"param.k", 4.0},
+        {"param.gamma", 0.5},
+        {"param.x0", 2.0},
+        {"param.p0", -3.0}
+    };
+
+    const auto runtime = BuildODEExplicitFirstOrderRuntimeV2(model, descriptor, config);
+
+    REQUIRE(runtime.IsReady());
+    const auto rhs = runtime.System->EvaluateRhs(runtime.System->GetInitialStateValues(), runtime.System->GetInitialTime());
+    REQUIRE(rhs.has_value());
+    REQUIRE(rhs->size() == 2);
+    CHECK((*rhs)[0] == Catch::Approx(-3.0));
+    CHECK((*rhs)[1] == Catch::Approx(-6.5));
+}
+
+TEST_CASE("Model V2 ODE runtime bridge requires numeric bindings for scalar symbols", "[ModelV2][Realization][Runtime]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildHarmonicOscillatorModelV2();
+    const auto descriptor = BuildODERealizationDescriptorV2(model);
+    REQUIRE(descriptor.IsReady());
+
+    FODEExplicitFirstOrderRuntimeConfigV2 config;
+    config.TimeStep = 0.05;
+    config.ScalarBindingsByDefinitionId = {
+        {"param.k", 8.0},
+        {"param.x0", 1.5},
+        {"param.p0", -0.25}
+    };
+
+    const auto runtime = BuildODEExplicitFirstOrderRuntimeV2(model, descriptor, config);
+
+    REQUIRE_FALSE(runtime.IsReady());
+    CHECK(HasRealizationDiagnosticContaining(
+        runtime.Diagnostics,
+        "missing_numeric_binding",
+        "param.m"));
 }
 
 TEST_CASE("Model V2 validates initial-condition targets", "[ModelV2][Validation][InitialConditions]") {
