@@ -575,6 +575,21 @@ TEST_CASE("Model V2 oscillator damping draft preview stays navigable", "[ModelV2
         [](const auto &symbol) { return symbol.SymbolText == "\\gamma"; });
     REQUIRE(gammaIt != editor->RelationPreview->ReferencedSymbols.end());
 
+    const auto gammaUnresolvedDiagnosticCount = std::count_if(
+        editor->RelationPreview->Diagnostics.begin(),
+        editor->RelationPreview->Diagnostics.end(),
+        [](const auto &diagnostic) {
+            return diagnostic.Code == "unresolved_symbol" &&
+                diagnostic.Message.find("\\gamma") != Slab::Str::npos;
+        });
+    CHECK(gammaUnresolvedDiagnosticCount == 1);
+
+    const auto *gammaAssumption = Detail::FindAssumptionForReferencedSymbolV2(editor->RelationPreview->Assumptions, *gammaIt);
+    REQUIRE(gammaAssumption != nullptr);
+    const auto gammaMaterializationPreview = BuildAssumptionMaterializationPreviewV2(oscillator, *gammaAssumption, &draftOverview);
+    REQUIRE(gammaMaterializationPreview.ProposedDefinition.has_value());
+    CHECK(gammaMaterializationPreview.ProposedDefinition->DefinitionId == "param.gamma");
+
     const auto gammaTarget = ResolveReferencedSymbolNavigationTargetV2(draftOverview, *gammaIt);
     REQUIRE(gammaTarget.has_value());
     CHECK(gammaTarget->Kind == ESemanticObjectKindV2::Definition);

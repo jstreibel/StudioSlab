@@ -455,6 +455,70 @@ namespace {
         DrawRawDiagnosticList(fallbackDiagnostics);
     }
 
+    template<typename FNavigate, typename FResolve>
+    auto DrawPreviewDiagnosticSectionWithResolution(
+        const ModelV2::FModelSemanticOverviewV2 *overview,
+        const ModelV2::FSemanticObjectRefV2 &objectRef,
+        const Slab::Vector<ModelV2::FSemanticDiagnosticV2> &fallbackDiagnostics,
+        const Slab::Vector<ModelV2::FReferencedSymbolSemanticV2> &referencedSymbols,
+        const Slab::Vector<ModelV2::FSemanticAssumptionV2> *assumptions,
+        const FNavigate &navigate,
+        const FResolve &resolveSymbol) -> bool {
+        const ModelV2::FSemanticObjectOverviewV2 *object = nullptr;
+        if (overview != nullptr) object = overview->FindObject(objectRef);
+
+        const bool bUseObjectDiagnostics = object != nullptr && !object->Diagnostics.empty();
+        if (!bUseObjectDiagnostics && fallbackDiagnostics.empty()) return false;
+
+        bool bChanged = false;
+        ImGui::SeparatorText("Diagnostics");
+
+        const auto renderDiagnosticRow = [&](const ModelV2::FSemanticDiagnosticV2 &diagnostic,
+                                             const Slab::TOptional<ModelV2::FSemanticObjectRefV2> &navigateTo) {
+            const auto tint = diagnostic.Severity == ModelV2::EValidationSeverityV2::Error
+                ? ImVec4(0.82f, 0.26f, 0.26f, 1.0f)
+                : ImVec4(0.87f, 0.67f, 0.22f, 1.0f);
+
+            ImGui::PushID((diagnostic.Code + "|" + diagnostic.Context + "|" + diagnostic.Message).c_str());
+            if (navigateTo.has_value()) {
+                if (ImGui::SmallButton("Go")) {
+                    navigate(*navigateTo);
+                }
+                ImGui::SameLine();
+            }
+
+            if (diagnostic.Code == "unresolved_symbol") {
+                if (const auto *symbol = ModelV2::Detail::FindReferencedSymbolForDiagnosticV2(referencedSymbols, diagnostic);
+                    symbol != nullptr) {
+                    const auto *assumption = assumptions != nullptr
+                        ? ModelV2::Detail::FindAssumptionForReferencedSymbolV2(*assumptions, *symbol)
+                        : nullptr;
+                    if (ImGui::SmallButton("Resolve")) {
+                        if (resolveSymbol(*symbol, assumption)) bChanged = true;
+                    }
+                    ImGui::SameLine();
+                }
+            }
+
+            ImGui::PushStyleColor(ImGuiCol_Text, tint);
+            ImGui::TextWrapped("[%s] %s: %s", diagnostic.Code.c_str(), diagnostic.Context.c_str(), diagnostic.Message.c_str());
+            ImGui::PopStyleColor();
+            ImGui::PopID();
+        };
+
+        if (bUseObjectDiagnostics) {
+            for (const auto &navigation : object->Diagnostics) {
+                renderDiagnosticRow(navigation.Diagnostic, navigation.NavigateTo);
+            }
+        } else {
+            for (const auto &diagnostic : fallbackDiagnostics) {
+                renderDiagnosticRow(diagnostic, {});
+            }
+        }
+
+        return bChanged;
+    }
+
     auto DrawRawDiagnosticList(const Slab::Vector<ModelV2::FSemanticDiagnosticV2> &diagnostics) -> void {
         if (diagnostics.empty()) return;
         ImGui::SeparatorText("Diagnostics");
@@ -468,11 +532,14 @@ namespace {
         }
     }
 
-    template<typename FNavigate>
+    template<typename FNavigate, typename FResolve>
     auto DrawReferencedSymbols(const ModelV2::FModelSemanticOverviewV2 *overview,
                                const Slab::Vector<ModelV2::FReferencedSymbolSemanticV2> &symbols,
-                               const FNavigate &navigate) -> void {
-        if (symbols.empty()) return;
+                               const Slab::Vector<ModelV2::FSemanticAssumptionV2> *assumptions,
+                               const FNavigate &navigate,
+                               const FResolve &resolveSymbol) -> bool {
+        if (symbols.empty()) return false;
+        bool bChanged = false;
         ImGui::SeparatorText("Referenced Symbols");
         for (const auto &symbol : symbols) {
             const auto navigationTarget =
@@ -520,8 +587,17 @@ namespace {
             if (symbol.InferredKind.has_value()) {
                 ImGui::TextDisabled("Inferred: %s", ModelV2::ToString(*symbol.InferredKind));
             }
+            if (!symbol.bResolved) {
+                const auto *assumption = assumptions != nullptr
+                    ? ModelV2::Detail::FindAssumptionForReferencedSymbolV2(*assumptions, symbol)
+                    : nullptr;
+                if (ImGui::SmallButton(assumption != nullptr ? "Resolve / Materialize" : "Resolve / Define")) {
+                    if (resolveSymbol(symbol, assumption)) bChanged = true;
+                }
+            }
             ImGui::PopID();
         }
+        return bChanged;
     }
 
     template<typename FNavigate, typename FAccept>
@@ -1782,9 +1858,30 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                 InvalidateModelWorkspaceViewState();
 
                 if (changeRecord.ObjectKind == EModelObjectKindV2::Definition && !changeRecord.ObjectId.empty()) {
-                    selectSemanticObject(MakeDefinitionObjectRefV2(changeRecord.ObjectId), true);
+                    ModelPendingScrollTarget = MakeDefinitionObjectRefV2(changeRecord.ObjectId);
                 }
                 return true;
+            };
+
+            const auto resolveDraftReferencedSymbol = [&](const auto &symbol, const auto *assumption) -> bool {
+                const auto *previewOverview = GetEditorBufferPreviewOverview(editorBuffer);
+                if (assumption != nullptr) {
+                    const auto materializationPreview = BuildAssumptionMaterializationPreviewV2(
+                        model,
+                        *assumption,
+                        previewOverview);
+                    if (materializationPreview.ProposedDefinition.has_value()) {
+                        return acceptDraftAssumption(*assumption, materializationPreview);
+                    }
+                }
+
+                PrefillModelNewDefinitionComposerForReferencedSymbol(
+                    model,
+                    symbol,
+                    assumption,
+                    previewOverview,
+                    "[Info] Prefilled definition composer from unresolved draft symbol");
+                return false;
             };
 
             if (bUiStateChangedThisFrame) {
@@ -1812,15 +1909,24 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                     if (preview.SemanticDelta.has_value()) {
                         DrawDraftSemanticDelta(*preview.SemanticDelta, navigateToDraftSemanticObject);
                     }
-                    DrawReferencedSymbols(
+                    if (DrawReferencedSymbols(
                         preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
                         preview.ReferencedSymbols,
-                        navigateToDraftSemanticObject);
-                    DrawPreviewDiagnosticSection(
+                        &preview.Assumptions,
+                        navigateToDraftSemanticObject,
+                        resolveDraftReferencedSymbol)) {
+                        bUiStateChangedThisFrame = true;
+                    }
+                    if (DrawPreviewDiagnosticSectionWithResolution(
                         preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
                         MakeDefinitionObjectRefV2(preview.DefinitionId),
                         preview.Diagnostics,
-                        navigateToDraftSemanticObject);
+                        preview.ReferencedSymbols,
+                        &preview.Assumptions,
+                        navigateToDraftSemanticObject,
+                        resolveDraftReferencedSymbol)) {
+                        bUiStateChangedThisFrame = true;
+                    }
                     if (DrawDraftAssumptionWorkflowSummary(
                         model,
                         preview.Assumptions,
@@ -1849,15 +1955,24 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                     if (preview.SemanticDelta.has_value()) {
                         DrawDraftSemanticDelta(*preview.SemanticDelta, navigateToDraftSemanticObject);
                     }
-                    DrawReferencedSymbols(
+                    if (DrawReferencedSymbols(
                         preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
                         preview.ReferencedSymbols,
-                        navigateToDraftSemanticObject);
-                    DrawPreviewDiagnosticSection(
+                        &preview.Assumptions,
+                        navigateToDraftSemanticObject,
+                        resolveDraftReferencedSymbol)) {
+                        bUiStateChangedThisFrame = true;
+                    }
+                    if (DrawPreviewDiagnosticSectionWithResolution(
                         preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
                         MakeRelationObjectRefV2(preview.RelationId),
                         preview.Diagnostics,
-                        navigateToDraftSemanticObject);
+                        preview.ReferencedSymbols,
+                        &preview.Assumptions,
+                        navigateToDraftSemanticObject,
+                        resolveDraftReferencedSymbol)) {
+                        bUiStateChangedThisFrame = true;
+                    }
                     if (DrawDraftAssumptionWorkflowSummary(
                         model,
                         preview.Assumptions,
@@ -2047,6 +2162,63 @@ auto FLabV2WindowManager::InvalidateModelWorkspaceViewState() -> void {
     CachedModelWorkspaceFrame = -1;
     bModelWorkspaceViewStateDirty = true;
     CachedModelWorkspaceViewState = {};
+}
+
+auto FLabV2WindowManager::PrefillModelNewDefinitionComposer(const Slab::Core::Model::V2::FModelV2 &model,
+                                                            const Slab::Core::Model::V2::FDefinitionV2 &definition,
+                                                            const Slab::Str &status) -> void {
+    using namespace Slab::Core::Model::V2;
+
+    ModelNewDefinitionId = definition.DefinitionId;
+    ModelNewDefinitionDisplayName = definition.DisplayName;
+    ModelNewDefinitionKind = definition.Kind;
+    ModelNewDefinitionCoordinateRole =
+        definition.Kind == EDefinitionKindV2::Coordinate ? definition.CoordinateRole : ECoordinateRoleV2::Generic;
+    ModelNewDefinitionOperatorStyle = definition.OperatorStyle;
+    ModelNewDefinitionNotation = RenderDialectDefinitionV2(definition, &model);
+    ModelNewDefinitionStatus = status;
+    ModelEditorStatus = status;
+    ModelNewDefinitionPreview = PreviewNewDefinitionV2(
+        model,
+        ModelNewDefinitionId,
+        ModelNewDefinitionKind,
+        ModelNewDefinitionCoordinateRole,
+        ModelNewDefinitionOperatorStyle,
+        ModelNewDefinitionNotation,
+        ModelNewDefinitionDisplayName);
+    bShowModelNewDefinitionComposer = true;
+    bShowWindowModelDefinitions = true;
+    InvalidateModelWorkspaceViewState();
+}
+
+auto FLabV2WindowManager::PrefillModelNewDefinitionComposerForReferencedSymbol(
+    const Slab::Core::Model::V2::FModelV2 &model,
+    const Slab::Core::Model::V2::FReferencedSymbolSemanticV2 &symbol,
+    const Slab::Core::Model::V2::FSemanticAssumptionV2 *assumption,
+    const Slab::Core::Model::V2::FModelSemanticOverviewV2 *overview,
+    const Slab::Str &statusPrefix) -> void {
+    using namespace Slab::Core::Model::V2;
+
+    if (assumption != nullptr) {
+        const auto materializationPreview = BuildAssumptionMaterializationPreviewV2(model, *assumption, overview);
+        if (materializationPreview.ProposedDefinition.has_value()) {
+            PrefillModelNewDefinitionComposer(
+                model,
+                *materializationPreview.ProposedDefinition,
+                statusPrefix.empty()
+                    ? "[Info] Prefilled definition composer from unresolved symbol '" + symbol.SymbolText + "'."
+                    : statusPrefix + " '" + symbol.SymbolText + "'.");
+            return;
+        }
+    }
+
+    const auto definition = Detail::BuildDefinitionSuggestionForReferencedSymbolV2(model, symbol);
+    PrefillModelNewDefinitionComposer(
+        model,
+        definition,
+        statusPrefix.empty()
+            ? "[Info] Prefilled definition composer from unresolved symbol '" + symbol.SymbolText + "'."
+            : statusPrefix + " '" + symbol.SymbolText + "'.");
 }
 
 auto FLabV2WindowManager::SelectModelSemanticObject(const Slab::Core::Model::V2::FModelV2 &model,
@@ -2363,6 +2535,26 @@ auto FLabV2WindowManager::DrawModelDefinitionsPanel() -> void {
     auto &model = *state.Model;
     auto &typesettingService = *UiTypesettingService;
     const auto baseFontSize = ImGui::GetFontSize();
+    const auto navigateToCanonicalSemanticObject = [&](const FSemanticObjectRefV2 &ref) {
+        if (state.Overview.FindObject(ref) == nullptr) return;
+        SelectModelSemanticObject(model, ref, true, false);
+    };
+    const auto resolveComposerReferencedSymbol = [&](const auto &symbol, const auto *assumption) -> bool {
+        PrefillModelNewDefinitionComposerForReferencedSymbol(
+            model,
+            symbol,
+            assumption,
+            ModelNewRelationPreview.has_value() && ModelNewRelationPreview->SemanticOverview.has_value()
+                ? &(*ModelNewRelationPreview->SemanticOverview)
+                : nullptr,
+            "[Info] Prefilled definition composer from unresolved new-relation symbol");
+        return false;
+    };
+    const auto refreshActiveEditorPreview = [&]() {
+        if (state.ActiveEditorBuffer == nullptr || !state.ActiveEditorBuffer->bPreviewCurrent) return;
+        ParseEditorBufferPreviewV2(model, *state.ActiveEditorBuffer);
+        InvalidateModelWorkspaceViewState();
+    };
 
     if (ImGui::Button(bShowModelNewDefinitionComposer ? "Close Composer" : "New Definition")) {
         bShowModelNewDefinitionComposer = !bShowModelNewDefinitionComposer;
@@ -2441,7 +2633,14 @@ auto FLabV2WindowManager::DrawModelDefinitionsPanel() -> void {
                 ModelLastChangeRecord = changeRecord;
                 bModelHasLastChangeRecord = true;
                 ModelNewDefinitionStatus = "[Ok] Created definition '" + changeRecord.ObjectId + "'.";
-                SelectModelSemanticObject(model, MakeDefinitionObjectRefV2(changeRecord.ObjectId), true, false);
+                refreshActiveEditorPreview();
+                if (state.ActiveEditorBuffer != nullptr &&
+                    state.ActiveEditorBuffer->bPreviewCurrent &&
+                    state.ActiveEditorBuffer->TargetId != changeRecord.ObjectId) {
+                    ModelPendingScrollTarget = MakeDefinitionObjectRefV2(changeRecord.ObjectId);
+                } else {
+                    SelectModelSemanticObject(model, MakeDefinitionObjectRefV2(changeRecord.ObjectId), true, false);
+                }
                 bShowModelNewDefinitionComposer = false;
                 ModelNewDefinitionPreview.reset();
             }
@@ -2516,6 +2715,21 @@ auto FLabV2WindowManager::DrawModelRelationsPanel() -> void {
     auto &model = *state.Model;
     auto &typesettingService = *UiTypesettingService;
     const auto baseFontSize = ImGui::GetFontSize();
+    const auto navigateToCanonicalSemanticObject = [&](const FSemanticObjectRefV2 &ref) {
+        if (state.Overview.FindObject(ref) == nullptr) return;
+        SelectModelSemanticObject(model, ref, true, false);
+    };
+    const auto resolveComposerReferencedSymbol = [&](const auto &symbol, const auto *assumption) -> bool {
+        PrefillModelNewDefinitionComposerForReferencedSymbol(
+            model,
+            symbol,
+            assumption,
+            ModelNewRelationPreview.has_value() && ModelNewRelationPreview->SemanticOverview.has_value()
+                ? &(*ModelNewRelationPreview->SemanticOverview)
+                : nullptr,
+            "[Info] Prefilled definition composer from unresolved new-relation symbol");
+        return false;
+    };
 
     if (ImGui::Button(bShowModelNewRelationComposer ? "Close Composer" : "New Relation")) {
         bShowModelNewRelationComposer = !bShowModelNewRelationComposer;
@@ -2607,7 +2821,28 @@ auto FLabV2WindowManager::DrawModelRelationsPanel() -> void {
             ImGui::TextWrapped("%s", ModelNewRelationStatus.c_str());
         }
         if (ModelNewRelationPreview.has_value()) {
-            DrawRawDiagnosticList(ModelNewRelationPreview->Diagnostics);
+            const auto &preview = *ModelNewRelationPreview;
+            if (!preview.bParseOk && preview.ParseError.has_value()) {
+                DrawRawDiagnosticList(preview.Diagnostics);
+            } else {
+                if (preview.SemanticDelta.has_value()) {
+                    DrawDraftSemanticDelta(*preview.SemanticDelta, navigateToCanonicalSemanticObject);
+                }
+                DrawReferencedSymbols(
+                    preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+                    preview.ReferencedSymbols,
+                    &preview.Assumptions,
+                    navigateToCanonicalSemanticObject,
+                    resolveComposerReferencedSymbol);
+                DrawPreviewDiagnosticSectionWithResolution(
+                    preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+                    MakeRelationObjectRefV2(preview.RelationId),
+                    preview.Diagnostics,
+                    preview.ReferencedSymbols,
+                    &preview.Assumptions,
+                    navigateToCanonicalSemanticObject,
+                    resolveComposerReferencedSymbol);
+            }
         }
         ImGui::Separator();
     }
@@ -2663,6 +2898,51 @@ auto FLabV2WindowManager::DrawModelEditorPanel() -> void {
 
     const auto navigateToDraftSemanticObject = [&](const FSemanticObjectRefV2 &ref) {
         SelectModelSemanticObject(model, ref, true, true);
+    };
+
+    const auto acceptDraftAssumption = [&](const auto &assumption,
+                                           const auto &materializationPreview) -> bool {
+        FModelChangeRecordV2 changeRecord;
+        if (!AcceptAssumptionV2(model, assumption, &changeRecord)) return false;
+
+        ModelLastChangeRecord = changeRecord;
+        bModelHasLastChangeRecord = true;
+        if (materializationPreview.ProposedDefinition.has_value()) {
+            ModelEditorStatus =
+                "[Ok] Materialized draft assumption '" + assumption.AssumptionId +
+                "' as '" + materializationPreview.ProposedDefinition->DefinitionId + "'.";
+        } else {
+            ModelEditorStatus = "[Ok] Accepted draft assumption '" + assumption.AssumptionId + "'.";
+        }
+
+        ParseEditorBufferPreviewV2(model, *editorBuffer);
+        InvalidateModelWorkspaceViewState();
+
+        if (changeRecord.ObjectKind == EModelObjectKindV2::Definition && !changeRecord.ObjectId.empty()) {
+            ModelPendingScrollTarget = MakeDefinitionObjectRefV2(changeRecord.ObjectId);
+        }
+        return true;
+    };
+
+    const auto resolveDraftReferencedSymbol = [&](const auto &symbol, const auto *assumption) -> bool {
+        const auto *previewOverview = GetEditorBufferPreviewOverview(editorBuffer);
+        if (assumption != nullptr) {
+            const auto materializationPreview = BuildAssumptionMaterializationPreviewV2(
+                model,
+                *assumption,
+                previewOverview);
+            if (materializationPreview.ProposedDefinition.has_value()) {
+                return acceptDraftAssumption(*assumption, materializationPreview);
+            }
+        }
+
+        PrefillModelNewDefinitionComposerForReferencedSymbol(
+            model,
+            symbol,
+            assumption,
+            previewOverview,
+            "[Info] Prefilled definition composer from unresolved draft symbol");
+        return false;
     };
 
     bool bUiStateChangedThisFrame = false;
@@ -2724,21 +3004,109 @@ auto FLabV2WindowManager::DrawModelEditorPanel() -> void {
     }
     ImGui::EndDisabled();
 
+    if (!ModelEditorStatus.empty()) {
+        ImGui::TextWrapped("%s", ModelEditorStatus.c_str());
+    }
+
     if (bUiStateChangedThisFrame || !editorBuffer->bPreviewCurrent) {
         return;
     }
 
     if (editorBuffer->TargetKind == EModelObjectKindV2::Definition && editorBuffer->DefinitionPreview.has_value()) {
         const auto &preview = *editorBuffer->DefinitionPreview;
-        DrawRawDiagnosticList(preview.Diagnostics);
+        if (!preview.bParseOk && preview.ParseError.has_value()) {
+            DrawRawDiagnosticList(preview.Diagnostics);
+            return;
+        }
+
+        ImGui::SeparatorText("Draft Interpretation");
+        Typesetting::ImGuiTypesetLabelValue(
+            typesettingService,
+            "Normalized",
+            MakeMathRequest(preview.NormalizedProjection, baseFontSize),
+            inspectorTheme.SecondaryTextOptions,
+            inspectorTheme.DetailMathOptions);
+        if (preview.InferredKind.has_value()) {
+            ImGui::BulletText("Inferred category: %s", ToString(*preview.InferredKind));
+        }
+        if (!preview.NormalizedInterpretation.empty()) {
+            ImGui::TextWrapped("%s", preview.NormalizedInterpretation.c_str());
+        }
         if (preview.SemanticDelta.has_value()) {
             DrawDraftSemanticDelta(*preview.SemanticDelta, navigateToDraftSemanticObject);
         }
+        if (DrawReferencedSymbols(
+                preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+                preview.ReferencedSymbols,
+                &preview.Assumptions,
+                navigateToDraftSemanticObject,
+                resolveDraftReferencedSymbol)) {
+            return;
+        }
+        if (DrawPreviewDiagnosticSectionWithResolution(
+                preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+                MakeDefinitionObjectRefV2(preview.DefinitionId),
+                preview.Diagnostics,
+                preview.ReferencedSymbols,
+                &preview.Assumptions,
+                navigateToDraftSemanticObject,
+                resolveDraftReferencedSymbol)) {
+            return;
+        }
+        if (DrawDraftAssumptionWorkflowSummary(
+            model,
+            preview.Assumptions,
+            preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+            navigateToDraftSemanticObject,
+            acceptDraftAssumption)) {
+            return;
+        }
     } else if (editorBuffer->TargetKind == EModelObjectKindV2::Relation && editorBuffer->RelationPreview.has_value()) {
         const auto &preview = *editorBuffer->RelationPreview;
-        DrawRawDiagnosticList(preview.Diagnostics);
+        if (!preview.bParseOk && preview.ParseError.has_value()) {
+            DrawRawDiagnosticList(preview.Diagnostics);
+            return;
+        }
+
+        ImGui::SeparatorText("Draft Interpretation");
+        Typesetting::ImGuiTypesetLabelValue(
+            typesettingService,
+            "Normalized",
+            MakeMathRequest(preview.NormalizedProjection, baseFontSize),
+            inspectorTheme.SecondaryTextOptions,
+            inspectorTheme.DetailMathOptions);
+        ImGui::BulletText("Inferred category: %s", ToString(preview.InferredClass));
+        if (!preview.NormalizedInterpretation.empty()) {
+            ImGui::TextWrapped("%s", preview.NormalizedInterpretation.c_str());
+        }
         if (preview.SemanticDelta.has_value()) {
             DrawDraftSemanticDelta(*preview.SemanticDelta, navigateToDraftSemanticObject);
+        }
+        if (DrawReferencedSymbols(
+                preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+                preview.ReferencedSymbols,
+                &preview.Assumptions,
+                navigateToDraftSemanticObject,
+                resolveDraftReferencedSymbol)) {
+            return;
+        }
+        if (DrawPreviewDiagnosticSectionWithResolution(
+                preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+                MakeRelationObjectRefV2(preview.RelationId),
+                preview.Diagnostics,
+                preview.ReferencedSymbols,
+                &preview.Assumptions,
+                navigateToDraftSemanticObject,
+                resolveDraftReferencedSymbol)) {
+            return;
+        }
+        if (DrawDraftAssumptionWorkflowSummary(
+            model,
+            preview.Assumptions,
+            preview.SemanticOverview.has_value() ? &(*preview.SemanticOverview) : nullptr,
+            navigateToDraftSemanticObject,
+            acceptDraftAssumption)) {
+            return;
         }
     }
 }

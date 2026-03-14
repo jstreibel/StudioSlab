@@ -792,11 +792,16 @@ namespace Slab::Core::Model::V2 {
             return "validation";
         }
 
+        inline auto AppendDiagnosticIfMissingV2(Vector<FSemanticDiagnosticV2> &diagnostics,
+                                                FSemanticDiagnosticV2 diagnostic) -> void;
+        inline auto ExtractDiagnosticQuotedTokenV2(const FSemanticDiagnosticV2 &diagnostic) -> Str;
+        inline auto BuildDiagnosticKeyV2(const FSemanticDiagnosticV2 &diagnostic) -> Str;
+
         inline auto ConvertValidationDiagnosticsV2(const Vector<FValidationMessageV2> &messages) -> Vector<FSemanticDiagnosticV2> {
             Vector<FSemanticDiagnosticV2> diagnostics;
             diagnostics.reserve(messages.size());
             for (const auto &message : messages) {
-                diagnostics.push_back(FSemanticDiagnosticV2{
+                AppendDiagnosticIfMissingV2(diagnostics, FSemanticDiagnosticV2{
                     .Severity = message.Severity,
                     .Code = MakeDiagnosticCodeFromValidationMessageV2(message),
                     .EntityId = message.EntityId,
@@ -810,9 +815,7 @@ namespace Slab::Core::Model::V2 {
         inline auto AppendDiagnosticIfMissingV2(Vector<FSemanticDiagnosticV2> &diagnostics,
                                                 FSemanticDiagnosticV2 diagnostic) -> void {
             const auto it = std::find_if(diagnostics.begin(), diagnostics.end(), [&](const auto &existing) {
-                return existing.Code == diagnostic.Code &&
-                    existing.Context == diagnostic.Context &&
-                    existing.Message == diagnostic.Message;
+                return BuildDiagnosticKeyV2(existing) == BuildDiagnosticKeyV2(diagnostic);
             });
             if (it != diagnostics.end()) return;
             diagnostics.push_back(std::move(diagnostic));
@@ -1074,20 +1077,85 @@ namespace Slab::Core::Model::V2 {
             return definition;
         }
 
+        inline auto FindAssumptionForReferencedSymbolV2(const Vector<FSemanticAssumptionV2> &assumptions,
+                                                        const FReferencedSymbolSemanticV2 &symbol)
+            -> const FSemanticAssumptionV2 * {
+            const auto it = std::find_if(assumptions.begin(), assumptions.end(), [&](const auto &assumption) {
+                return (!symbol.SymbolText.empty() && assumption.TargetSymbol == symbol.SymbolText) ||
+                    (!symbol.ReferenceId.empty() && assumption.TargetId == symbol.ReferenceId);
+            });
+            if (it == assumptions.end()) return nullptr;
+            return &(*it);
+        }
+
+        inline auto BuildDefinitionSuggestionForReferencedSymbolV2(const FModelV2 &model,
+                                                                   const FReferencedSymbolSemanticV2 &symbol) -> FDefinitionV2 {
+            const auto kind = symbol.InferredKind.value_or(EDefinitionKindV2::ScalarParameter);
+
+            FDefinitionV2 definition;
+            definition.DefinitionId = BuildDefinitionIdSuggestionV2(model, kind, symbol.SymbolText);
+            definition.Symbol = NormalizeSymbolAliasV2(symbol.SymbolText);
+            definition.PreferredNotation = symbol.SymbolText.empty() ? definition.Symbol : symbol.SymbolText;
+            definition.DisplayName = definition.PreferredNotation.empty() ? definition.DefinitionId : definition.PreferredNotation;
+            definition.Kind = kind;
+            definition.ArgumentDefinitionIds = symbol.InferredArgumentDefinitionIds;
+            if (const auto proposedType = BuildProposedTypeForAssumptionV2(
+                    model,
+                    DefinitionKindToSemanticRoleV2(kind),
+                    symbol.InferredArgumentDefinitionIds);
+                proposedType.has_value()) {
+                definition.DeclaredType = *proposedType;
+            }
+            definition.SourceText = RenderDialectDefinitionV2(definition, &model);
+            return definition;
+        }
+
+        inline auto FindReferencedSymbolForDiagnosticV2(const Vector<FReferencedSymbolSemanticV2> &symbols,
+                                                        const FSemanticDiagnosticV2 &diagnostic)
+            -> const FReferencedSymbolSemanticV2 * {
+            const auto quotedToken = ExtractDiagnosticQuotedTokenV2(diagnostic);
+            const auto normalizedQuotedToken = NormalizeSymbolAliasV2(quotedToken);
+
+            const auto it = std::find_if(symbols.begin(), symbols.end(), [&](const auto &symbol) {
+                if (!quotedToken.empty() &&
+                    (symbol.SymbolText == quotedToken || NormalizeSymbolAliasV2(symbol.SymbolText) == normalizedQuotedToken)) {
+                    return true;
+                }
+                if (!symbol.ReferenceId.empty() && diagnostic.Message.find(symbol.ReferenceId) != Str::npos) return true;
+                return false;
+            });
+            if (it == symbols.end()) return nullptr;
+            return &(*it);
+        }
+
         inline auto EnsureAssumptionStateV2(FModelV2 &model, const Str &assumptionId) -> FAssumptionStateV2 & {
             if (auto *existing = FindAssumptionStateByIdV2(model, assumptionId); existing != nullptr) return *existing;
             model.AssumptionStates.push_back(FAssumptionStateV2{.AssumptionId = assumptionId});
             return model.AssumptionStates.back();
         }
 
-        inline auto BuildReferencedSymbolKeyV2(const FReferencedSymbolSemanticV2 &symbol) -> Str {
-            if (!symbol.ReferenceId.empty()) return "ref:" + symbol.ReferenceId;
-            return "sym:" + NormalizeSymbolAliasV2(symbol.SymbolText);
-        }
+    inline auto BuildReferencedSymbolKeyV2(const FReferencedSymbolSemanticV2 &symbol) -> Str {
+        if (!symbol.ReferenceId.empty()) return "ref:" + symbol.ReferenceId;
+        return "sym:" + NormalizeSymbolAliasV2(symbol.SymbolText);
+    }
 
-        inline auto BuildDiagnosticKeyV2(const FSemanticDiagnosticV2 &diagnostic) -> Str {
-            return diagnostic.Code + "|" + diagnostic.EntityId + "|" + diagnostic.Context + "|" + diagnostic.Message;
+    inline auto ExtractDiagnosticQuotedTokenV2(const FSemanticDiagnosticV2 &diagnostic) -> Str {
+        const auto firstQuote = diagnostic.Message.find('\'');
+        if (firstQuote == Str::npos) return {};
+        const auto secondQuote = diagnostic.Message.find('\'', firstQuote + 1);
+        if (secondQuote == Str::npos || secondQuote <= firstQuote + 1) return {};
+        return diagnostic.Message.substr(firstQuote + 1, secondQuote - firstQuote - 1);
+    }
+
+    inline auto BuildDiagnosticKeyV2(const FSemanticDiagnosticV2 &diagnostic) -> Str {
+        if (diagnostic.Code == "unresolved_symbol") {
+            const auto token = NormalizeSymbolAliasV2(ExtractDiagnosticQuotedTokenV2(diagnostic));
+            if (!token.empty()) {
+                return diagnostic.Code + "|" + diagnostic.EntityId + "|" + diagnostic.Context + "|" + token;
+            }
         }
+        return diagnostic.Code + "|" + diagnostic.EntityId + "|" + diagnostic.Context + "|" + diagnostic.Message;
+    }
 
         inline auto BuildNavigationLinkKeyV2(const FSemanticNavigationLinkV2 &link) -> Str {
             return MakeSemanticObjectKeyV2(link.Target);

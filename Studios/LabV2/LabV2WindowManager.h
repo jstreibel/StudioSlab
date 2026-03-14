@@ -399,6 +399,15 @@ private:
     auto DrawSchemesBlueprintGraphPanel() -> void;
     [[nodiscard]] auto PrepareModelWorkspaceViewState() -> FModelWorkspaceViewState;
     auto InvalidateModelWorkspaceViewState() -> void;
+    auto PrefillModelNewDefinitionComposer(const Slab::Core::Model::V2::FModelV2 &model,
+                                           const Slab::Core::Model::V2::FDefinitionV2 &definition,
+                                           const Slab::Str &status) -> void;
+    auto PrefillModelNewDefinitionComposerForReferencedSymbol(
+        const Slab::Core::Model::V2::FModelV2 &model,
+        const Slab::Core::Model::V2::FReferencedSymbolSemanticV2 &symbol,
+        const Slab::Core::Model::V2::FSemanticAssumptionV2 *assumption = nullptr,
+        const Slab::Core::Model::V2::FModelSemanticOverviewV2 *overview = nullptr,
+        const Slab::Str &statusPrefix = {}) -> void;
     auto SelectModelSemanticObject(const Slab::Core::Model::V2::FModelV2 &model,
                                    const Slab::Core::Model::V2::FSemanticObjectRefV2 &ref,
                                    bool bRequestScroll = false,
