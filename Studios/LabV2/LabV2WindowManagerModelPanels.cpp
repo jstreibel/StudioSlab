@@ -1445,7 +1445,10 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
     DrawSemanticSummaryBadge("Readiness", ToString(odeDescriptor.Readiness), realizationBadgeTint);
     ImGui::SameLine();
     ImGui::TextDisabled("Strategy: %s", ToString(odeDescriptor.Strategy));
-    AddTooltipForLastItem("Derived from canonical model semantics only. This slice stays conservative: it selects explicit first-order state equations and does not commit to a solver/runtime policy.");
+    AddTooltipForLastItem(
+        "Derived from canonical model semantics only. This slice stays conservative: it selects explicit "
+        "first-order state equations, requires one explicit model-level initial state, and does not commit "
+        "to a solver/runtime policy.");
 
     if (odeDescriptor.TimeCoordinate.has_value()) {
         ImGui::TextDisabled("Time:");
@@ -1456,6 +1459,12 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         AddTooltipForLastItem(odeDescriptor.TimeCoordinate->CanonicalNotation);
     } else {
         ImGui::TextDisabled("Time: unresolved for ODE descent");
+    }
+
+    if (odeDescriptor.InitialTimeNotation.has_value()) {
+        ImGui::TextDisabled("Initial time: %s", odeDescriptor.InitialTimeNotation->c_str());
+    } else {
+        ImGui::TextDisabled("Initial time: unresolved for ODE descent");
     }
 
     if (!odeDescriptor.SelectedRelations.empty()) {
@@ -1476,6 +1485,26 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         }
     } else {
         ImGui::TextDisabled("Selected relations: none");
+    }
+
+    if (!odeDescriptor.InitialConditions.empty()) {
+        ImGui::TextDisabled("Initial state:");
+        ImGui::SameLine();
+        for (std::size_t i = 0; i < odeDescriptor.InitialConditions.size(); ++i) {
+            const auto &initialCondition = odeDescriptor.InitialConditions[i];
+            ImGui::PushID(static_cast<int>(i + 1000));
+            const auto buttonLabel = initialCondition.StateDisplayLabel + " <- " + initialCondition.ValueNotation;
+            if (ImGui::SmallButton(buttonLabel.c_str())) {
+                navigateToSemanticObject(MakeDefinitionObjectRefV2(initialCondition.StateDefinitionId));
+            }
+            AddTooltipForLastItem(
+                "Explicit model-level initial condition for ODE descent.\n" +
+                initialCondition.StateDisplayLabel + "(t_0) = " + initialCondition.ValueNotation);
+            ImGui::PopID();
+            if (i + 1 < odeDescriptor.InitialConditions.size()) ImGui::SameLine();
+        }
+    } else {
+        ImGui::TextDisabled("Initial state: none");
     }
 
     if (!odeDescriptor.Diagnostics.empty()) {

@@ -48,6 +48,16 @@ TEST_CASE("Model V2 harmonic oscillator seed is well-formed", "[ModelV2]") {
     CHECK(model.BaseVocabulary.ActivePresetId == "classical_mechanics");
     CHECK(model.Definitions.size() >= 7);
     CHECK(model.Relations.size() >= 5);
+    REQUIRE(model.InitialConditions.has_value());
+    REQUIRE(model.InitialConditions->TimeExpression != nullptr);
+    CHECK(RenderDialectExpressionV2(model.InitialConditions->TimeExpression, &model) == "0");
+    CHECK(model.InitialConditions->Assignments.size() == 2);
+    CHECK(std::any_of(model.InitialConditions->Assignments.begin(), model.InitialConditions->Assignments.end(), [](const auto &assignment) {
+        return assignment.StateDefinitionId == "state.x";
+    }));
+    CHECK(std::any_of(model.InitialConditions->Assignments.begin(), model.InitialConditions->Assignments.end(), [](const auto &assignment) {
+        return assignment.StateDefinitionId == "state.p";
+    }));
 
     const auto *time = FindDefinitionByIdV2(model, "coord.t");
     REQUIRE(time != nullptr);
@@ -1035,6 +1045,8 @@ TEST_CASE("Model V2 ODE realization descriptor extracts harmonic oscillator", "[
 
     REQUIRE(descriptor.TimeCoordinate.has_value());
     CHECK(descriptor.TimeCoordinate->DefinitionId == "coord.t");
+    REQUIRE(descriptor.InitialTimeNotation.has_value());
+    CHECK(*descriptor.InitialTimeNotation == "0");
 
     REQUIRE(descriptor.StateVariables.size() == 2);
     CHECK(descriptor.StateVariables[0].DefinitionId == "state.x");
@@ -1055,6 +1067,12 @@ TEST_CASE("Model V2 ODE realization descriptor extracts harmonic oscillator", "[
     CHECK(descriptor.SelectedRelations[0].StateDefinitionId == "state.x");
     CHECK(descriptor.SelectedRelations[1].RelationId == "relation.oscillator.first_order_p");
     CHECK(descriptor.SelectedRelations[1].StateDefinitionId == "state.p");
+
+    REQUIRE(descriptor.InitialConditions.size() == 2);
+    CHECK(descriptor.InitialConditions[0].StateDefinitionId == "state.x");
+    CHECK(descriptor.InitialConditions[0].ValueNotation == "x_0");
+    CHECK(descriptor.InitialConditions[1].StateDefinitionId == "state.p");
+    CHECK(descriptor.InitialConditions[1].ValueNotation == "p_0");
 
     CHECK(HasRealizationDiagnosticContaining(
         descriptor.Diagnostics,
@@ -1097,6 +1115,43 @@ TEST_CASE("Model V2 ODE realization requires a first-order equation per state", 
         descriptor.Diagnostics,
         "missing_explicit_first_order_relation",
         "canonical state"));
+}
+
+TEST_CASE("Model V2 ODE realization requires initial conditions per state", "[ModelV2][Realization][ODE]") {
+    using namespace Slab::Core::Model::V2;
+
+    auto model = BuildHarmonicOscillatorModelV2();
+    REQUIRE(model.InitialConditions.has_value());
+    model.InitialConditions->Assignments.erase(
+        std::remove_if(
+            model.InitialConditions->Assignments.begin(),
+            model.InitialConditions->Assignments.end(),
+            [](const auto &assignment) {
+                return assignment.StateDefinitionId == "state.p";
+            }),
+        model.InitialConditions->Assignments.end());
+
+    const auto descriptor = BuildODERealizationDescriptorV2(model);
+
+    REQUIRE_FALSE(descriptor.IsReady());
+    CHECK(HasRealizationDiagnosticContaining(
+        descriptor.Diagnostics,
+        "missing_initial_condition_assignment",
+        "canonical state"));
+}
+
+TEST_CASE("Model V2 validates initial-condition targets", "[ModelV2][Validation][InitialConditions]") {
+    using namespace Slab::Core::Model::V2;
+
+    auto model = BuildHarmonicOscillatorModelV2();
+    REQUIRE(model.InitialConditions.has_value());
+    REQUIRE_FALSE(model.InitialConditions->Assignments.empty());
+    model.InitialConditions->Assignments.front().StateDefinitionId = "param.m";
+
+    const auto validation = ValidateModelV2(model);
+
+    REQUIRE_FALSE(validation.IsOk());
+    CHECK(HasErrorContaining(validation, "must target a state variable"));
 }
 
 TEST_CASE("Model V2 vocabulary overview reports ambient usage and local specialization links", "[ModelV2][Navigation][Override]") {

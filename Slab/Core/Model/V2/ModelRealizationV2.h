@@ -44,6 +44,12 @@ namespace Slab::Core::Model::V2 {
         Str ExplicitExpressionNotation;
     };
 
+    struct FODERealizationInitialConditionV2 {
+        Str StateDefinitionId;
+        Str StateDisplayLabel;
+        Str ValueNotation;
+    };
+
     struct FODERealizationDescriptorV2 {
         Str ModelId;
         Str ModelName;
@@ -55,10 +61,12 @@ namespace Slab::Core::Model::V2 {
         EODERealizationReadinessV2 Readiness = EODERealizationReadinessV2::Blocked;
         EODERealizationStrategyV2 Strategy = EODERealizationStrategyV2::None;
         TOptional<FODERealizationSymbolV2> TimeCoordinate;
+        TOptional<Str> InitialTimeNotation;
         Vector<FODERealizationSymbolV2> StateVariables;
         Vector<FODERealizationSymbolV2> Parameters;
         Vector<FODERealizationSymbolV2> Observables;
         Vector<FODERealizationSelectedRelationV2> SelectedRelations;
+        Vector<FODERealizationInitialConditionV2> InitialConditions;
         Vector<FODERealizationDiagnosticV2> Diagnostics;
 
         [[nodiscard]] auto IsReady() const -> bool {
@@ -250,6 +258,31 @@ namespace Slab::Core::Model::V2 {
             }
 
             return relation;
+        }
+
+        inline auto BuildInitialConditionFromAssignmentV2(const FModelV2 &model,
+                                                          const FModelSemanticOverviewV2 &overview,
+                                                          const FModelInitialConditionAssignmentV2 &assignment)
+            -> FODERealizationInitialConditionV2 {
+            FODERealizationInitialConditionV2 initialCondition;
+            initialCondition.StateDefinitionId = assignment.StateDefinitionId;
+            initialCondition.StateDisplayLabel = assignment.StateDefinitionId;
+            initialCondition.ValueNotation = RenderDialectExpressionV2(assignment.ValueExpression, &model);
+
+            if (const auto *definition = FindDefinitionByIdV2(model, assignment.StateDefinitionId); definition != nullptr) {
+                if (!definition->DisplayName.empty()) {
+                    initialCondition.StateDisplayLabel = definition->DisplayName;
+                } else if (!definition->PreferredNotation.empty()) {
+                    initialCondition.StateDisplayLabel = definition->PreferredNotation;
+                }
+            }
+
+            if (const auto *object = overview.FindObject(MakeDefinitionObjectRefV2(assignment.StateDefinitionId));
+                object != nullptr && !object->DisplayLabel.empty()) {
+                initialCondition.StateDisplayLabel = object->DisplayLabel;
+            }
+
+            return initialCondition;
         }
 
         inline auto IsODELikeRelationClassV2(const ERelationSemanticClassV2 relationClass) -> bool {
@@ -483,9 +516,87 @@ namespace Slab::Core::Model::V2 {
                 });
         }
 
+        if (!model.InitialConditions.has_value()) {
+            RealizationDetail::AppendRealizationDiagnosticUniqueV2(
+                descriptor.Diagnostics,
+                FODERealizationDiagnosticV2{
+                    .Severity = EValidationSeverityV2::Error,
+                    .Code = "missing_initial_conditions",
+                    .Source = std::nullopt,
+                    .Message = "ODE realization requires one explicit model-level initial-condition set."
+                });
+        } else {
+            const auto &initialConditions = *model.InitialConditions;
+            if (initialConditions.TimeExpression == nullptr) {
+                RealizationDetail::AppendRealizationDiagnosticUniqueV2(
+                    descriptor.Diagnostics,
+                    FODERealizationDiagnosticV2{
+                        .Severity = EValidationSeverityV2::Error,
+                        .Code = "missing_initial_condition_time",
+                        .Source = std::nullopt,
+                        .Message = "ODE realization requires one explicit initial-condition time expression."
+                    });
+            } else {
+                descriptor.InitialTimeNotation = RenderDialectExpressionV2(initialConditions.TimeExpression, &model);
+            }
+
+            std::map<Str, Vector<const FModelInitialConditionAssignmentV2 *>> assignmentsByStateId;
+            for (const auto &assignment : initialConditions.Assignments) {
+                assignmentsByStateId[assignment.StateDefinitionId].push_back(&assignment);
+                if (assignment.StateDefinitionId.empty() || canonicalStateIds.contains(assignment.StateDefinitionId)) continue;
+
+                const auto source = MakeDefinitionObjectRefV2(assignment.StateDefinitionId);
+                RealizationDetail::AppendRealizationDiagnosticUniqueV2(
+                    descriptor.Diagnostics,
+                    FODERealizationDiagnosticV2{
+                        .Severity = EValidationSeverityV2::Warning,
+                        .Code = "ignored_noncanonical_initial_condition",
+                        .Source = source,
+                        .Message = "Initial-condition assignment for '" + assignment.StateDefinitionId +
+                            "' is ignored by the first ODE realization slice because it is not a canonical state variable."
+                    });
+            }
+
+            for (const auto &state : descriptor.StateVariables) {
+                const auto source = MakeDefinitionObjectRefV2(state.DefinitionId);
+                const auto it = assignmentsByStateId.find(state.DefinitionId);
+                if (it == assignmentsByStateId.end() || it->second.empty()) {
+                    RealizationDetail::AppendRealizationDiagnosticUniqueV2(
+                        descriptor.Diagnostics,
+                        FODERealizationDiagnosticV2{
+                            .Severity = EValidationSeverityV2::Error,
+                            .Code = "missing_initial_condition_assignment",
+                            .Source = source,
+                            .Message = "No explicit initial condition was found for canonical state '" +
+                                state.DisplayLabel + "'."
+                        });
+                    continue;
+                }
+
+                if (it->second.size() > 1) {
+                    RealizationDetail::AppendRealizationDiagnosticUniqueV2(
+                        descriptor.Diagnostics,
+                        FODERealizationDiagnosticV2{
+                            .Severity = EValidationSeverityV2::Error,
+                            .Code = "ambiguous_initial_condition_assignment",
+                            .Source = source,
+                            .Message = "Multiple explicit initial conditions were found for canonical state '" +
+                                state.DisplayLabel + "'."
+                        });
+                    continue;
+                }
+
+                descriptor.InitialConditions.push_back(
+                    RealizationDetail::BuildInitialConditionFromAssignmentV2(model, overview, *it->second.front()));
+            }
+        }
+
         const bool bReady = std::none_of(descriptor.Diagnostics.begin(), descriptor.Diagnostics.end(), [](const auto &diagnostic) {
             return diagnostic.Severity == EValidationSeverityV2::Error;
-        }) && descriptor.SelectedRelations.size() == descriptor.StateVariables.size();
+        }) &&
+            descriptor.SelectedRelations.size() == descriptor.StateVariables.size() &&
+            descriptor.InitialConditions.size() == descriptor.StateVariables.size() &&
+            descriptor.InitialTimeNotation.has_value();
 
         if (bReady) {
             descriptor.Readiness = EODERealizationReadinessV2::Ready;

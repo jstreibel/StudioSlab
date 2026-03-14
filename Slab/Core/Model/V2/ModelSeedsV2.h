@@ -31,6 +31,17 @@ namespace Slab::Core::Model::V2 {
             return *parsed.Value;
         }
 
+        inline auto RequireParsedExpressionV2(const Str &source, const FNotationContextV2 *context = nullptr)
+            -> FExpressionPtrV2 {
+            const auto parsed = ParseExpressionNotationV2(source, context);
+            if (!parsed.IsOk()) {
+                throw Exception(
+                    "Failed to parse model expression notation '" + source +
+                    "' at " + ToStr(parsed.Error.Position) + ": " + parsed.Error.Message);
+            }
+            return *parsed.Value;
+        }
+
     } // namespace Detail
 
     inline auto BuildHarmonicOscillatorModelV2() -> FModelV2 {
@@ -88,6 +99,30 @@ namespace Slab::Core::Model::V2 {
                 "Angular Frequency",
                 "Symbolic angular frequency.");
             definition.Tags = {"parameter"};
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            auto parsed = Detail::RequireParsedDefinitionV2("x_0 \\in \\mathbb{R}");
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "param.x0",
+                EDefinitionKindV2::ScalarParameter,
+                parsed,
+                "Initial Displacement",
+                "Symbolic initial displacement parameter.");
+            definition.Tags = {"parameter", "initial-condition"};
+            model.Definitions.push_back(std::move(definition));
+        }
+
+        {
+            auto parsed = Detail::RequireParsedDefinitionV2("p_0 \\in \\mathbb{R}");
+            auto definition = MakeDefinitionFromParsedNotationV2(
+                "param.p0",
+                EDefinitionKindV2::ScalarParameter,
+                parsed,
+                "Initial Momentum",
+                "Symbolic initial momentum parameter.");
+            definition.Tags = {"parameter", "initial-condition"};
             model.Definitions.push_back(std::move(definition));
         }
 
@@ -197,6 +232,24 @@ namespace Slab::Core::Model::V2 {
             relation.Description = "Symbolic energy observable over the trajectory.";
             relation.Tags = {"observable", "identity"};
             model.Relations.push_back(std::move(relation));
+        }
+
+        {
+            const auto context = FNotationContextV2::FromModel(model);
+            FModelInitialConditionSetV2 initialConditions;
+            initialConditions.TimeExpression = Detail::RequireParsedExpressionV2("0", &context);
+            initialConditions.Description = "Canonical initial state for the oscillator ODE slice.";
+            initialConditions.Assignments.push_back(FModelInitialConditionAssignmentV2{
+                .StateDefinitionId = "state.x",
+                .ValueExpression = Detail::RequireParsedExpressionV2("x_0", &context),
+                .Description = "Initial displacement."
+            });
+            initialConditions.Assignments.push_back(FModelInitialConditionAssignmentV2{
+                .StateDefinitionId = "state.p",
+                .ValueExpression = Detail::RequireParsedExpressionV2("p_0", &context),
+                .Description = "Initial momentum."
+            });
+            model.InitialConditions = std::move(initialConditions);
         }
 
         return model;

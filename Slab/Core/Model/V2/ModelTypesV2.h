@@ -259,6 +259,20 @@ namespace Slab::Core::Model::V2 {
         Str LocalDefinitionId;
     };
 
+    struct FModelInitialConditionAssignmentV2 {
+        Str StateDefinitionId;
+        FExpressionPtrV2 ValueExpression = nullptr;
+        Str Description;
+        std::map<Str, Str> Metadata;
+    };
+
+    struct FModelInitialConditionSetV2 {
+        FExpressionPtrV2 TimeExpression = nullptr;
+        Vector<FModelInitialConditionAssignmentV2> Assignments;
+        Str Description;
+        std::map<Str, Str> Metadata;
+    };
+
     struct FModelV2 {
         Str ModelId;
         Str Name;
@@ -266,6 +280,7 @@ namespace Slab::Core::Model::V2 {
         FModelBaseVocabularyV2 BaseVocabulary;
         Vector<FDefinitionV2> Definitions;
         Vector<FRelationV2> Relations;
+        TOptional<FModelInitialConditionSetV2> InitialConditions;
         Vector<FAssumptionStateV2> AssumptionStates;
         Vector<FModelChangeRecordV2> ChangeLog;
         StrVector Tags;
@@ -1785,6 +1800,92 @@ namespace Slab::Core::Model::V2 {
                     "Relation",
                     "relation sides have incompatible types '" +
                     RenderTypeExprV2(*leftType) + "' and '" + RenderTypeExprV2(*rightType) + "'");
+            }
+        }
+
+        if (model.InitialConditions.has_value()) {
+            const auto &initialConditions = *model.InitialConditions;
+            const auto addInitialConditionError = [&](const Str &entityId,
+                                                     const Str &context,
+                                                     const Str &message) {
+                result.Add(EValidationSeverityV2::Error, entityId, context, message);
+            };
+
+            if (initialConditions.TimeExpression == nullptr) {
+                addInitialConditionError("initial_conditions", "InitialConditions", "initial-condition time expression is missing");
+            } else {
+                Str timeTypeError;
+                const auto timeType = InferExpressionTypeV2(model, initialConditions.TimeExpression, &timeTypeError);
+                if (!timeType.has_value()) {
+                    addInitialConditionError(
+                        "initial_conditions",
+                        "InitialConditions.Time",
+                        "initial-condition time expression is invalid: " + timeTypeError);
+                } else if (!IsScalarTypeV2(*timeType)) {
+                    addInitialConditionError(
+                        "initial_conditions",
+                        "InitialConditions.Time",
+                        "initial-condition time expression must be scalar");
+                }
+            }
+
+            std::set<Str> assignedStateIds;
+            for (const auto &assignment : initialConditions.Assignments) {
+                const auto entityId = assignment.StateDefinitionId.empty()
+                    ? Str("initial_conditions")
+                    : assignment.StateDefinitionId;
+
+                if (assignment.StateDefinitionId.empty()) {
+                    addInitialConditionError(entityId, "InitialConditions.Assignment", "initial-condition assignment target is empty");
+                } else if (!assignedStateIds.insert(assignment.StateDefinitionId).second) {
+                    addInitialConditionError(
+                        entityId,
+                        "InitialConditions.Assignment",
+                        "duplicate initial-condition assignment for state '" + assignment.StateDefinitionId + "'");
+                }
+
+                const auto *stateDefinition = assignment.StateDefinitionId.empty()
+                    ? nullptr
+                    : FindDefinitionByIdV2(model, assignment.StateDefinitionId);
+                if (stateDefinition == nullptr && !assignment.StateDefinitionId.empty()) {
+                    addInitialConditionError(
+                        entityId,
+                        "InitialConditions.Assignment",
+                        "initial-condition assignment references undefined definition '" + assignment.StateDefinitionId + "'");
+                } else if (stateDefinition != nullptr && stateDefinition->Kind != EDefinitionKindV2::StateVariable) {
+                    addInitialConditionError(
+                        entityId,
+                        "InitialConditions.Assignment",
+                        "initial-condition assignment must target a state variable");
+                }
+
+                if (assignment.ValueExpression == nullptr) {
+                    addInitialConditionError(entityId, "InitialConditions.Value", "initial-condition value expression is missing");
+                    continue;
+                }
+
+                Str valueTypeError;
+                const auto valueType = InferExpressionTypeV2(model, assignment.ValueExpression, &valueTypeError);
+                if (!valueType.has_value()) {
+                    addInitialConditionError(
+                        entityId,
+                        "InitialConditions.Value",
+                        "initial-condition value expression is invalid: " + valueTypeError);
+                    continue;
+                }
+
+                if (stateDefinition != nullptr &&
+                    stateDefinition->DeclaredType.has_value() &&
+                    stateDefinition->DeclaredType->Kind == ETypeExprKindV2::Function &&
+                    stateDefinition->DeclaredType->Codomain != nullptr &&
+                    !AreTypesEquivalentV2(*stateDefinition->DeclaredType->Codomain, *valueType)) {
+                    addInitialConditionError(
+                        entityId,
+                        "InitialConditions.Value",
+                        "initial-condition value type '" + RenderTypeExprV2(*valueType) +
+                            "' does not match state codomain '" +
+                            RenderTypeExprV2(*stateDefinition->DeclaredType->Codomain) + "'");
+                }
             }
         }
 
