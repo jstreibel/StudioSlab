@@ -140,6 +140,8 @@ Summary and graph surfaces:
 - `Model Layer` shows semantic health/classification, the `Semantic Graph -> Open in Plots` action, and the current ODE realization summary
 - `Model Semantic Graph` is rendered on `Plot V2` as a read-only knowledge-graph-like surface
 - graph selection feeds back into the shared Model workspace selection state
+- `Model Layer` can export the current selected-object-centered semantic graph neighborhood to JSON for offline analysis/sharing
+- semantic-graph JSON export currently writes under `Build/bin/model-semantic-graphs/` and includes projected nodes/edges plus per-node semantic metadata/navigation links
 
 Inspector/rendering rules:
 - symbol-like entries render directly as LaTeX

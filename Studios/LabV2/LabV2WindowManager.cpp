@@ -44,6 +44,7 @@
 #include <filesystem>
 #include <functional>
 #include <limits>
+#include <set>
 #include <sstream>
 #include <utility>
 
@@ -729,6 +730,114 @@ namespace {
         return minDistance;
     }
 
+    [[nodiscard]] auto SanitizeFilenameFragment(const Slab::Str &value) -> Slab::Str {
+        Slab::Str sanitized;
+        sanitized.reserve(value.size());
+        for (const auto ch : value) {
+            if (std::isalnum(static_cast<unsigned char>(ch)) != 0) {
+                sanitized.push_back(static_cast<char>(std::tolower(static_cast<unsigned char>(ch))));
+                continue;
+            }
+
+            switch (ch) {
+                case '.':
+                case '-':
+                case '_':
+                    sanitized.push_back('_');
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if (sanitized.empty()) return "unnamed";
+        return sanitized;
+    }
+
+    [[nodiscard]] auto SemanticGraphEdgeKindToString(
+        const Slab::Graphics::Plot2D::V2::FModelSemanticGraphArtistV2::EEdgeKind kind) -> const char * {
+        using EEdgeKind = Slab::Graphics::Plot2D::V2::FModelSemanticGraphArtistV2::EEdgeKind;
+        switch (kind) {
+            case EEdgeKind::Dependency: return "Dependency";
+            case EEdgeKind::AmbientDependency: return "AmbientDependency";
+            case EEdgeKind::SourceLink: return "SourceLink";
+            case EEdgeKind::TargetLink: return "TargetLink";
+            case EEdgeKind::Assumption: return "Assumption";
+            case EEdgeKind::Override: return "Override";
+        }
+
+        return "Dependency";
+    }
+
+    auto JsonWriteSemanticObjectRefV2(const ModelV2::FSemanticObjectRefV2 &ref) -> json::value {
+        json::value refValue(json::object{});
+        refValue["kind"] = ModelV2::ToString(ref.Kind);
+        refValue["object_id"] = ref.ObjectId;
+        return refValue;
+    }
+
+    auto JsonWriteSemanticNavigationLinkV2(const ModelV2::FSemanticNavigationLinkV2 &link,
+                                           const std::set<Slab::Str> &includedNodeIds) -> json::value {
+        json::value linkValue(json::object{});
+        linkValue["target"] = JsonWriteSemanticObjectRefV2(link.Target);
+        linkValue["target_key"] = ModelV2::MakeSemanticObjectKeyV2(link.Target);
+        linkValue["label"] = link.Label;
+        linkValue["detail"] = link.Detail;
+        linkValue["ambient"] = link.bAmbient;
+        linkValue["readonly"] = link.bReadonly;
+        linkValue["conflict"] = link.bConflict;
+        linkValue["override"] = link.bOverride;
+        linkValue["included_in_export"] =
+            includedNodeIds.contains(ModelV2::MakeSemanticObjectKeyV2(link.Target));
+        return linkValue;
+    }
+
+    auto JsonWriteSemanticNavigationLinksV2(const Slab::Vector<ModelV2::FSemanticNavigationLinkV2> &links,
+                                            const std::set<Slab::Str> &includedNodeIds) -> json::value {
+        json::array linkValues;
+        linkValues.reserve(links.size());
+        for (const auto &link : links) {
+            linkValues.push_back(JsonWriteSemanticNavigationLinkV2(link, includedNodeIds));
+        }
+        return json::value(std::move(linkValues));
+    }
+
+    auto JsonWriteSemanticDiagnosticNavigationV2(const ModelV2::FSemanticDiagnosticNavigationV2 &navigation) -> json::value {
+        json::value navigationValue(json::object{});
+        navigationValue["severity"] = ModelV2::ToString(navigation.Diagnostic.Severity);
+        navigationValue["code"] = navigation.Diagnostic.Code;
+        navigationValue["entity_id"] = navigation.Diagnostic.EntityId;
+        navigationValue["context"] = navigation.Diagnostic.Context;
+        navigationValue["message"] = navigation.Diagnostic.Message;
+        navigationValue["navigate_to"] = navigation.NavigateTo.has_value()
+            ? JsonWriteSemanticObjectRefV2(*navigation.NavigateTo)
+            : json::value();
+        return navigationValue;
+    }
+
+    auto JsonWriteSemanticDiagnosticNavigationsV2(
+        const Slab::Vector<ModelV2::FSemanticDiagnosticNavigationV2> &diagnostics) -> json::value {
+        json::array diagnosticValues;
+        diagnosticValues.reserve(diagnostics.size());
+        for (const auto &diagnostic : diagnostics) {
+            diagnosticValues.push_back(JsonWriteSemanticDiagnosticNavigationV2(diagnostic));
+        }
+        return json::value(std::move(diagnosticValues));
+    }
+
+    auto JsonWriteSemanticSummaryLinksV2(const Slab::Vector<ModelV2::FSemanticNavigationLinkV2> &links) -> json::value {
+        json::array linkValues;
+        linkValues.reserve(links.size());
+        for (const auto &link : links) {
+            json::value linkValue(json::object{});
+            linkValue["target"] = JsonWriteSemanticObjectRefV2(link.Target);
+            linkValue["label"] = link.Label;
+            linkValue["detail"] = link.Detail;
+            linkValues.push_back(std::move(linkValue));
+        }
+        return json::value(std::move(linkValues));
+    }
+
 } // namespace
 
 FLabV2WindowManager::FLabV2WindowManager()
@@ -921,6 +1030,212 @@ auto FLabV2WindowManager::SyncModelSemanticGraphWindow(const Slab::Core::Model::
 
     const auto titleSuffix = bUsesDraftPreview ? " [Draft]" : "";
     ModelSemanticGraphWindowV2->SetTitle("Model Semantic Graph - " + model.Name + titleSuffix);
+}
+
+auto FLabV2WindowManager::ExportModelSemanticGraphToFile(const Slab::Core::Model::V2::FModelV2 &model,
+                                                         const Slab::Core::Model::V2::FModelSemanticOverviewV2 &overview,
+                                                         const bool bUsesDraftPreview,
+                                                         const int hops) -> bool {
+    using namespace Slab::Graphics::Plot2D::V2;
+
+    const auto clampedHops = std::clamp(hops, 1, 4);
+    ModelSemanticGraphExportHops = clampedHops;
+
+    auto exportArtist = Slab::New<FModelSemanticGraphArtistV2>();
+    exportArtist->SetNeighborhoodHops(clampedHops);
+    exportArtist->SetSemanticOverview(overview, SelectedModelSemanticObject);
+
+    const auto &nodes = exportArtist->GetNodes();
+    const auto &edges = exportArtist->GetEdges();
+
+    Slab::Core::Model::V2::FSemanticObjectRefV2 centeredObject;
+    if (!nodes.empty()) {
+        centeredObject = nodes.front().Ref;
+    } else if (SelectedModelSemanticObject.IsValid() && overview.FindObject(SelectedModelSemanticObject) != nullptr) {
+        centeredObject = SelectedModelSemanticObject;
+    }
+
+    const auto centeredKind = centeredObject.IsValid()
+        ? Slab::Str(Slab::Core::Model::V2::ToString(centeredObject.Kind))
+        : Slab::Str("none");
+    const auto centeredObjectId = centeredObject.IsValid() ? centeredObject.ObjectId : Slab::Str("root");
+
+    const auto outputPath = std::filesystem::path("Build/bin/model-semantic-graphs") /
+        (SanitizeFilenameFragment(model.ModelId) + "__" +
+         SanitizeFilenameFragment(centeredKind) + "__" +
+         SanitizeFilenameFragment(centeredObjectId) + "__" +
+         (bUsesDraftPreview ? Slab::Str("draft") : Slab::Str("canonical")) + "__h" +
+         std::to_string(clampedHops) + ".json");
+
+    namespace json = crude_json;
+    json::value root(json::object{});
+    root["schema_version"] = 1.0;
+    root["workspace"] = "Model";
+    root["surface"] = "SemanticGraph";
+    root["generated_by"] = "StudioSlab/LabV2";
+
+    json::value modelValue(json::object{});
+    modelValue["model_id"] = model.ModelId;
+    modelValue["name"] = model.Name;
+    modelValue["description"] = model.Description;
+    modelValue["base_vocabulary_id"] = overview.Status.ActiveBaseVocabularyId;
+    modelValue["base_vocabulary_name"] = overview.Status.ActiveBaseVocabularyName;
+    modelValue["definition_count"] = static_cast<double>(model.Definitions.size());
+    modelValue["relation_count"] = static_cast<double>(model.Relations.size());
+    modelValue["initial_condition_count"] = static_cast<double>(
+        model.InitialConditions.has_value() ? model.InitialConditions->Assignments.size() : 0);
+    root["model"] = std::move(modelValue);
+
+    json::value selectionValue(json::object{});
+    selectionValue["selected_object"] = JsonWriteSemanticObjectRefV2(SelectedModelSemanticObject);
+    selectionValue["centered_object"] = JsonWriteSemanticObjectRefV2(centeredObject);
+    selectionValue["uses_draft_preview"] = bUsesDraftPreview;
+    root["selection"] = std::move(selectionValue);
+
+    json::value projectionValue(json::object{});
+    projectionValue["neighborhood_hops"] = static_cast<double>(clampedHops);
+    projectionValue["node_count"] = static_cast<double>(nodes.size());
+    projectionValue["edge_count"] = static_cast<double>(edges.size());
+    projectionValue["export_path"] = outputPath.string();
+    root["projection"] = std::move(projectionValue);
+
+    json::value statusValue(json::object{});
+    statusValue["parse_health"] = Slab::Core::Model::V2::ToString(overview.Status.ParseHealth);
+    statusValue["semantic_health"] = Slab::Core::Model::V2::ToString(overview.Status.SemanticHealth);
+    statusValue["validation_error_count"] = static_cast<double>(overview.Status.ValidationErrorCount);
+    statusValue["validation_warning_count"] = static_cast<double>(overview.Status.ValidationWarningCount);
+    statusValue["unresolved_symbol_count"] = static_cast<double>(overview.Status.UnresolvedSymbolCount);
+    statusValue["pending_assumption_count"] = static_cast<double>(overview.Status.PendingAssumptionCount);
+    statusValue["accepted_assumption_count"] = static_cast<double>(overview.Status.AcceptedAssumptionCount);
+    statusValue["dismissed_assumption_count"] = static_cast<double>(overview.Status.DismissedAssumptionCount);
+    statusValue["override_count"] = static_cast<double>(overview.Status.OverrideCount);
+    statusValue["specialization_count"] = static_cast<double>(overview.Status.SpecializationCount);
+    statusValue["deferred_count"] = static_cast<double>(overview.Status.DeferredCount);
+    statusValue["classification_model_class"] = overview.Status.Classification.ModelClass;
+    statusValue["classification_character"] = overview.Status.Classification.Character;
+    json::array classificationTraits;
+    classificationTraits.reserve(overview.Status.Classification.Traits.size());
+    for (const auto &trait : overview.Status.Classification.Traits) {
+        if (trait.empty()) continue;
+        classificationTraits.emplace_back(trait);
+    }
+    statusValue["classification_traits"] = json::value(std::move(classificationTraits));
+    root["status"] = std::move(statusValue);
+
+    json::value summaryValue(json::object{});
+    summaryValue["state_variables"] = JsonWriteSemanticSummaryLinksV2(overview.Status.CanonicalStateVariables);
+    summaryValue["parameters"] = JsonWriteSemanticSummaryLinksV2(overview.Status.Parameters);
+    summaryValue["fields"] = JsonWriteSemanticSummaryLinksV2(overview.Status.Fields);
+    summaryValue["operators"] = JsonWriteSemanticSummaryLinksV2(overview.Status.Operators);
+    summaryValue["observables"] = JsonWriteSemanticSummaryLinksV2(overview.Status.Observables);
+    root["summary"] = std::move(summaryValue);
+
+    std::set<Slab::Str> includedNodeIds;
+    for (const auto &node : nodes) {
+        includedNodeIds.insert(node.NodeId);
+    }
+
+    json::array nodeValues;
+    nodeValues.reserve(nodes.size());
+    for (const auto &node : nodes) {
+        json::value nodeValue(json::object{});
+        nodeValue["node_id"] = node.NodeId;
+        nodeValue["ref"] = JsonWriteSemanticObjectRefV2(node.Ref);
+        nodeValue["label"] = node.Label;
+        nodeValue["full_label"] = node.FullLabel;
+        nodeValue["subtitle"] = node.Subtitle;
+        nodeValue["kind_label"] = node.KindLabel;
+        nodeValue["canonical_notation"] = node.CanonicalNotation;
+        nodeValue["description"] = node.Description;
+        nodeValue["readonly"] = node.bReadonly;
+        nodeValue["ambient"] = node.bAmbient;
+        nodeValue["conflict"] = node.bConflict;
+        nodeValue["local_override"] = node.bLocalOverride;
+        nodeValue["hop_distance"] = static_cast<double>(node.HopDistance);
+        nodeValue["base_point_size"] = static_cast<double>(node.BasePointSize);
+        nodeValue["position"] = JsonWriteVec2(ImVec2(
+            static_cast<float>(node.Position.x),
+            static_cast<float>(node.Position.y)));
+
+        if (const auto *object = overview.FindObject(node.Ref); object != nullptr) {
+            nodeValue["display_label"] = object->DisplayLabel;
+            nodeValue["kind"] = Slab::Core::Model::V2::ToString(object->Ref.Kind);
+            nodeValue["category_label"] = object->CategoryLabel;
+            nodeValue["origin_label"] = object->OriginLabel;
+            nodeValue["origin_detail"] = object->OriginDetail;
+            nodeValue["status_label"] = object->StatusLabel;
+            nodeValue["declared_kind"] = object->DeclaredKind.has_value()
+                ? json::value(Slab::Core::Model::V2::ToString(*object->DeclaredKind))
+                : json::value();
+            nodeValue["inferred_kind"] = object->InferredKind.has_value()
+                ? json::value(Slab::Core::Model::V2::ToString(*object->InferredKind))
+                : json::value();
+            nodeValue["inferred_relation_class"] = object->InferredRelationClass.has_value()
+                ? json::value(Slab::Core::Model::V2::ToString(*object->InferredRelationClass))
+                : json::value();
+            nodeValue["assumption_status"] = object->AssumptionStatus.has_value()
+                ? json::value(Slab::Core::Model::V2::ToString(*object->AssumptionStatus))
+                : json::value();
+
+            json::value navigationValue(json::object{});
+            navigationValue["source_links"] = JsonWriteSemanticNavigationLinksV2(object->SourceLinks, includedNodeIds);
+            navigationValue["target_links"] = JsonWriteSemanticNavigationLinksV2(object->TargetLinks, includedNodeIds);
+            navigationValue["depends_on"] = JsonWriteSemanticNavigationLinksV2(object->DependsOn, includedNodeIds);
+            navigationValue["ambient_dependencies"] =
+                JsonWriteSemanticNavigationLinksV2(object->AmbientDependencies, includedNodeIds);
+            navigationValue["used_by"] = JsonWriteSemanticNavigationLinksV2(object->UsedBy, includedNodeIds);
+            navigationValue["related_assumptions"] =
+                JsonWriteSemanticNavigationLinksV2(object->RelatedAssumptions, includedNodeIds);
+            navigationValue["local_overrides"] =
+                JsonWriteSemanticNavigationLinksV2(object->LocalOverrides, includedNodeIds);
+            nodeValue["navigation"] = std::move(navigationValue);
+            nodeValue["diagnostics"] = JsonWriteSemanticDiagnosticNavigationsV2(object->Diagnostics);
+        }
+
+        nodeValues.push_back(std::move(nodeValue));
+    }
+    root["nodes"] = json::value(std::move(nodeValues));
+
+    json::array edgeValues;
+    edgeValues.reserve(edges.size());
+    for (const auto &edge : edges) {
+        json::value edgeValue(json::object{});
+        edgeValue["edge_id"] = edge.EdgeId;
+        edgeValue["source_node_id"] = edge.SourceNodeId;
+        edgeValue["target_node_id"] = edge.TargetNodeId;
+        edgeValue["kind"] = SemanticGraphEdgeKindToString(edge.Kind);
+        edgeValue["label"] = edge.Label;
+        edgeValue["detail"] = edge.Detail;
+        edgeValue["ambient"] = edge.bAmbient;
+        edgeValue["conflict"] = edge.bConflict;
+        edgeValue["readonly"] = edge.bReadonly;
+        edgeValue["override"] = edge.bOverride;
+        edgeValues.push_back(std::move(edgeValue));
+    }
+    root["edges"] = json::value(std::move(edgeValues));
+
+    try {
+        if (const auto parentPath = outputPath.parent_path(); !parentPath.empty()) {
+            std::filesystem::create_directories(parentPath);
+        }
+    } catch (const std::exception &exception) {
+        ModelSemanticGraphLastExportPath = outputPath.string();
+        ModelSemanticGraphExportStatus =
+            "[Error] Could not create folder for semantic graph export: " + Slab::Str(exception.what());
+        return false;
+    }
+
+    if (!root.save(outputPath.string(), 2, ' ')) {
+        ModelSemanticGraphLastExportPath = outputPath.string();
+        ModelSemanticGraphExportStatus =
+            "[Error] Failed to export semantic graph JSON to '" + outputPath.string() + "'.";
+        return false;
+    }
+
+    ModelSemanticGraphLastExportPath = outputPath.string();
+    ModelSemanticGraphExportStatus =
+        "[Ok] Exported semantic graph JSON to '" + ModelSemanticGraphLastExportPath + "'.";
+    return true;
 }
 
 auto FLabV2WindowManager::FocusModelSemanticGraphWindow() -> void {

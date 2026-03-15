@@ -147,6 +147,9 @@ private:
     Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr ModelSemanticGraphWindowV2;
     Slab::Graphics::Plot2D::V2::FPlotArtistV2_ptr ModelSemanticGraphArtistV2;
     Slab::Str ModelSemanticGraphWindowId = "model_semantic_graph";
+    int ModelSemanticGraphExportHops = 4;
+    Slab::Str ModelSemanticGraphExportStatus;
+    Slab::Str ModelSemanticGraphLastExportPath;
     bool bPendingFocusModelSemanticGraphWindow = false;
     std::size_t BlueprintPlotWindowCreateCount = 0;
     std::size_t BlueprintPlotArtistCreateCount = 0;
@@ -391,6 +394,10 @@ private:
     auto SyncModelSemanticGraphWindow(const Slab::Core::Model::V2::FModelV2 &model,
                                       const Slab::Core::Model::V2::FModelSemanticOverviewV2 &overview,
                                       bool bUsesDraftPreview) -> void;
+    auto ExportModelSemanticGraphToFile(const Slab::Core::Model::V2::FModelV2 &model,
+                                        const Slab::Core::Model::V2::FModelSemanticOverviewV2 &overview,
+                                        bool bUsesDraftPreview,
+                                        int hops) -> bool;
     auto FocusModelSemanticGraphWindow() -> void;
     auto SyncPlotWorkspaceWindows() -> void;
     auto PruneClosedSlabWindows() -> bool;

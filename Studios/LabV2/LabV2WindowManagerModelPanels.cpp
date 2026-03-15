@@ -1432,9 +1432,38 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         "Open the read-only semantic knowledge graph as a Plot2D V2 surface. "
         "Click nodes to reuse the current model selection; use [ and ] to change neighborhood radius, "
         "L to toggle labels, and F to fit the graph.");
+    ImGui::SameLine();
+    ImGui::TextDisabled("JSON hops");
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(ImGui::GetFontSize() * 3.5f);
+    ImGui::InputInt("##ModelSemanticGraphExportHops", &ModelSemanticGraphExportHops, 1, 1);
+    ModelSemanticGraphExportHops = std::clamp(ModelSemanticGraphExportHops, 1, 4);
+    AddTooltipForLastItem(
+        "Neighborhood depth for the semantic-graph JSON export. "
+        "The exported slice matches the selected object-centered graph projection.");
+    ImGui::SameLine();
+    if (ImGui::Button("Export JSON")) {
+        ExportModelSemanticGraphToFile(
+            model,
+            *selectionOverview,
+            bSelectedModelSemanticObjectUsesDraftPreview,
+            ModelSemanticGraphExportHops);
+    }
+    AddTooltipForLastItem(
+        "Export the current semantic graph slice to JSON under Build/bin/model-semantic-graphs/. "
+        "Includes projected nodes/edges plus per-node semantic metadata and navigation links.");
     if (SelectedModelSemanticObject.IsValid()) {
         ImGui::SameLine();
         ImGui::TextDisabled("Centered on: %s", SelectedModelSemanticObject.ObjectId.c_str());
+    }
+    if (!ModelSemanticGraphExportStatus.empty()) {
+        const auto tint = ModelSemanticGraphExportStatus.starts_with("[Ok]")
+            ? ImVec4(0.3f, 0.8f, 0.4f, 1.0f)
+            : ImVec4(0.9f, 0.3f, 0.3f, 1.0f);
+        ImGui::TextColored(tint, "%s", ModelSemanticGraphExportStatus.c_str());
+        if (!ModelSemanticGraphLastExportPath.empty()) {
+            AddTooltipForLastItem(ModelSemanticGraphLastExportPath);
+        }
     }
 
     const auto odeDescriptor = BuildODERealizationDescriptorV2(model, &overview);
