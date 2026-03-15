@@ -960,9 +960,10 @@ auto FLabV2WindowManager::AddSlabWindowInWorkspace(
     if (window == nullptr) return;
     AddResponder(window);
     SlabWindows.emplace_back(window);
-    SlabWindowWorkspaceByUniqueName[window->GetUniqueName()] = workspace;
+    const auto windowKey = GetWindowKey(window);
+    SlabWindowWorkspaceByUniqueName[windowKey] = workspace;
     if (SelectedViewUniqueName.empty()) {
-        SelectedViewUniqueName = window->GetUniqueName();
+        SelectedViewUniqueName = windowKey;
     }
     RequestViewRetile();
     NotifySystemWindowReshape(WidthSysWin, HeightSysWin);
@@ -1241,6 +1242,13 @@ auto FLabV2WindowManager::ExportModelSemanticGraphToFile(const Slab::Core::Model
 auto FLabV2WindowManager::FocusModelSemanticGraphWindow() -> void {
     EnsureModelSemanticGraphWindow();
 
+    const auto state = PrepareModelWorkspaceViewState();
+    if (state.bAvailable && state.Model != nullptr && state.SelectionOverview != nullptr) {
+        const bool bUsesDraftPreview =
+            state.ActiveDraftOverview != nullptr && state.SelectionOverview == state.ActiveDraftOverview;
+        SyncModelSemanticGraphWindow(*state.Model, *state.SelectionOverview, bUsesDraftPreview);
+    }
+
     SelectedPlotInterfaceId = PlotWindowInterfaceIdPrefix + ModelSemanticGraphWindowId;
     bShowWindowPlotInspector = true;
     bPendingFocusModelSemanticGraphWindow = true;
@@ -1248,6 +1256,10 @@ auto FLabV2WindowManager::FocusModelSemanticGraphWindow() -> void {
 
     if (const auto it = PlotWindowHostsByWindowId.find(ModelSemanticGraphWindowId);
         it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
+        if (const auto host = Slab::DynamicPointerCast<Slab::Graphics::Plot2D::V2::FPlot2DWindowHostV2>(it->second);
+            host != nullptr) {
+            host->RequestFitToArtists();
+        }
         FocusWindow(it->second);
         bPendingFocusModelSemanticGraphWindow = false;
     }
@@ -1286,7 +1298,7 @@ auto FLabV2WindowManager::PruneClosedSlabWindows() -> bool {
 
         if (window != nullptr) {
             RemoveResponder(window);
-            SlabWindowWorkspaceByUniqueName.erase(window->GetUniqueName());
+            SlabWindowWorkspaceByUniqueName.erase(GetWindowKey(window));
             for (auto hostIt = PlotWindowHostsByWindowId.begin(); hostIt != PlotWindowHostsByWindowId.end();) {
                 if (hostIt->second == window) {
                     hostIt = PlotWindowHostsByWindowId.erase(hostIt);
@@ -1300,20 +1312,25 @@ auto FLabV2WindowManager::PruneClosedSlabWindows() -> bool {
     }
 
     if (bRemovedAny) {
-        if (const auto selected = FindWindowByUniqueName(SelectedViewUniqueName); selected == nullptr) {
-            SelectedViewUniqueName = SlabWindows.empty() ? Slab::Str{} : SlabWindows.front()->GetUniqueName();
+        if (const auto selected = FindWindowByKey(SelectedViewUniqueName); selected == nullptr) {
+            SelectedViewUniqueName = SlabWindows.empty() ? Slab::Str{} : GetWindowKey(SlabWindows.front());
         }
     }
 
     return bRemovedAny;
 }
 
-auto FLabV2WindowManager::FindWindowByUniqueName(const Slab::Str &uniqueName) const
+auto FLabV2WindowManager::GetWindowKey(const FSlabWindowPtr &window) const -> Slab::Str {
+    if (window == nullptr) return {};
+    return window->GetStableWindowKey();
+}
+
+auto FLabV2WindowManager::FindWindowByKey(const Slab::Str &windowKey) const
     -> Slab::TPointer<Slab::Graphics::FSlabWindow> {
-    if (uniqueName.empty()) return nullptr;
+    if (windowKey.empty()) return nullptr;
 
     const auto it = std::find_if(SlabWindows.begin(), SlabWindows.end(), [&](const FSlabWindowPtr &window) {
-        return window != nullptr && window->GetUniqueName() == uniqueName;
+        return window != nullptr && GetWindowKey(window) == windowKey;
     });
 
     if (it == SlabWindows.end()) return nullptr;
@@ -1323,7 +1340,7 @@ auto FLabV2WindowManager::FindWindowByUniqueName(const Slab::Str &uniqueName) co
 auto FLabV2WindowManager::GetWorkspaceForWindow(const FSlabWindowPtr &window) const -> EWorkspaceTab {
     if (window == nullptr) return EWorkspaceTab::Simulations;
 
-    const auto it = SlabWindowWorkspaceByUniqueName.find(window->GetUniqueName());
+    const auto it = SlabWindowWorkspaceByUniqueName.find(GetWindowKey(window));
     if (it == SlabWindowWorkspaceByUniqueName.end()) return EWorkspaceTab::Simulations;
     return it->second;
 }
@@ -1360,7 +1377,7 @@ auto FLabV2WindowManager::FocusWindow(const Slab::TPointer<Slab::Graphics::FSlab
         SlabWindows.emplace_back(std::move(moved));
     }
 
-    SelectedViewUniqueName = window->GetUniqueName();
+    SelectedViewUniqueName = GetWindowKey(window);
 }
 
 auto FLabV2WindowManager::RequestViewRetile(const int stabilizationFrames) -> void {
@@ -1393,7 +1410,7 @@ auto FLabV2WindowManager::FindTopWindowAtPoint(const int x, const int y) const
 auto FLabV2WindowManager::FindKeyboardTargetWindow() const -> Slab::TPointer<Slab::Graphics::FSlabWindow> {
     if (!ShouldRenderSlabWindowsInWorkspace()) return nullptr;
 
-    if (const auto selected = FindWindowByUniqueName(SelectedViewUniqueName); selected != nullptr) {
+    if (const auto selected = FindWindowByKey(SelectedViewUniqueName); selected != nullptr) {
         if (GetWorkspaceForWindow(selected) == ActiveWorkspace) {
             return selected;
         }
@@ -1429,13 +1446,13 @@ auto FLabV2WindowManager::DrawViewManagerPanel() -> void {
         return;
     }
 
-    auto selected = FindWindowByUniqueName(SelectedViewUniqueName);
+    auto selected = FindWindowByKey(SelectedViewUniqueName);
     if (selected != nullptr && GetWorkspaceForWindow(selected) != EWorkspaceTab::Simulations) {
         selected = nullptr;
     }
     if (selected == nullptr) {
         selected = simulationWindows.front();
-        SelectedViewUniqueName = selected->GetUniqueName();
+        SelectedViewUniqueName = GetWindowKey(selected);
     }
 
     if (selected != nullptr) {
@@ -1469,14 +1486,15 @@ auto FLabV2WindowManager::DrawViewManagerPanel() -> void {
             if (window == nullptr) continue;
 
             const auto uniqueName = window->GetUniqueName();
-            const bool bSelected = SelectedViewUniqueName == uniqueName;
+            const auto windowKey = GetWindowKey(window);
+            const bool bSelected = SelectedViewUniqueName == windowKey;
 
             ImGui::TableNextRow();
 
             ImGui::TableSetColumnIndex(0);
-            ImGui::PushID(uniqueName.c_str());
+            ImGui::PushID(windowKey.c_str());
             if (ImGui::Selectable("##view", bSelected, ImGuiSelectableFlags_SpanAllColumns)) {
-                SelectedViewUniqueName = uniqueName;
+                SelectedViewUniqueName = windowKey;
             }
             ImGui::SameLine();
             ImGui::TextUnformatted(window->GetTitle().c_str());
@@ -1583,6 +1601,10 @@ auto FLabV2WindowManager::SyncPlotWorkspaceWindows() -> void {
     if (bPendingFocusModelSemanticGraphWindow) {
         if (const auto it = PlotWindowHostsByWindowId.find(ModelSemanticGraphWindowId);
             it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
+            if (const auto host = Slab::DynamicPointerCast<Slab::Graphics::Plot2D::V2::FPlot2DWindowHostV2>(it->second);
+                host != nullptr) {
+                host->RequestFitToArtists();
+            }
             FocusWindow(it->second);
             bPendingFocusModelSemanticGraphWindow = false;
         }

@@ -46,6 +46,10 @@ namespace Slab::Graphics {
         return AddUniqueIdToString(GetTitle());
     }
 
+    auto FSlabWindow::GetStableWindowKey() const -> Str {
+        return GetIdString();
+    }
+
     auto FSlabWindow::GetConfig() -> FSlabWindowConfig& {
         return Config;
     }

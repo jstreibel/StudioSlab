@@ -24,6 +24,7 @@ namespace Slab::Graphics::Plot2D::V2 {
         bool bLeftDragCommitted = false;
         bool bRightDragCommitted = false;
         bool bLeftPressStartedOnInteractiveTarget = false;
+        bool bPendingFitToArtists = false;
         bool bShowInterface = false;
         bool bPendingContextPopup = false;
 
@@ -63,6 +64,8 @@ namespace Slab::Graphics::Plot2D::V2 {
 
     public:
         FPlot2DWindowHostV2(Str plotWindowId, Str title);
+
+        auto RequestFitToArtists() -> void;
 
         auto NotifyMouseButton(Slab::Graphics::EMouseButton button,
                                Slab::Graphics::EKeyState state,

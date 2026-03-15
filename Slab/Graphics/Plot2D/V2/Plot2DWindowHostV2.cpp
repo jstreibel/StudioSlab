@@ -870,6 +870,10 @@ namespace Slab::Graphics::Plot2D::V2 {
         Slab::Core::LoadModule("RealTimeAnimation");
     }
 
+    auto FPlot2DWindowHostV2::RequestFitToArtists() -> void {
+        bPendingFitToArtists = true;
+    }
+
     auto FPlot2DWindowHostV2::NotifyMouseButton(const Slab::Graphics::EMouseButton button,
                                                 const Slab::Graphics::EKeyState state,
                                                 const Slab::Graphics::EModKeys keys) -> bool {
@@ -1141,6 +1145,14 @@ namespace Slab::Graphics::Plot2D::V2 {
         }
 
         SyncAnimationStateFromWindow(*window);
+        if (bPendingFitToArtists) {
+            Slab::Graphics::RectR fittedRegion{};
+            if (TryBuildFittedRegion(*window, fittedRegion)) {
+                SetRegionImmediate(*window, fittedRegion);
+            }
+            bPendingFitToArtists = false;
+        }
+
         const bool bAutoFitRanges = window->GetAutoFitRanges();
         if (bAutoFitRanges) {
             Slab::Graphics::RectR fittedRegion{};

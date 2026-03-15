@@ -7,6 +7,7 @@
 #include <Math/Formalism/Categories.h>
 
 #include "Core/Controller/CommandLine/CommandLineHelpers.h"
+#include "Graphics/Window/SlabWindow.h"
 #include "Utils/StringFormatting.h"
 
 using RealT = double;    // if DevFloat is an alias (e.g., double)
@@ -85,6 +86,18 @@ TEST_CASE("Real2D explicit constructor initializes x and y correctly", "[Real2D]
     REQUIRE(p.y == Catch::Approx(-2.5));
 }
 
+TEST_CASE("SlabWindow stable key does not change when title changes", "[Window]") {
+    Slab::Graphics::FSlabWindow window(Slab::Graphics::FSlabWindowConfig{"Initial"});
+
+    const auto stableKey = window.GetStableWindowKey();
+    const auto uniqueName = window.GetUniqueName();
+
+    window.GetConfig().Title = "Retitled";
+
+    REQUIRE(window.GetStableWindowKey() == stableKey);
+    REQUIRE(window.GetUniqueName() != uniqueName);
+}
+
 TEST_CASE("Addition operator (+)", "[Real2D]") {
     Real2D a(1.0, 2.0);
     Real2D b(3.0, 4.0);
@@ -133,5 +146,4 @@ TEST_CASE("Chained operations: (p+q)*s - t", "[Real2D]") {
     REQUIRE(result.x == Catch::Approx(5.0));
     REQUIRE(result.y == Catch::Approx(7.0));
 }
-
 

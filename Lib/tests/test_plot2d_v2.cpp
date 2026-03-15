@@ -47,6 +47,17 @@ namespace {
         return count;
     }
 
+    auto CountPointSetCommands(const FPlotDrawListV2 &drawList) -> int {
+        int count = 0;
+        for (const auto &command : drawList.GetCommands()) {
+            if (std::holds_alternative<FPointSetCommandV2>(command)) {
+                ++count;
+            }
+        }
+
+        return count;
+    }
+
     auto CountRectangleCommands(const FPlotDrawListV2 &drawList) -> int {
         int count = 0;
         for (const auto &command : drawList.GetCommands()) {
@@ -545,6 +556,29 @@ TEST_CASE("Plot2D V2 dispatches semantic graph keyboard controls to artists", "[
         .State = Slab::Graphics::Press
     }));
     CHECK(artist->GetNeighborhoodHops() == 2);
+}
+
+TEST_CASE("Plot2D V2 semantic graph stays drawable when switching seeded model overviews", "[Plot2DV2][ModelGraph]") {
+    auto artist = New<FModelSemanticGraphArtistV2>();
+
+    const auto oscillatorOverview = ModelV2::BuildModelSemanticOverviewV2(ModelV2::BuildHarmonicOscillatorModelV2());
+    artist->SetSemanticOverview(oscillatorOverview, ModelV2::MakeDefinitionObjectRefV2("state.x"));
+    REQUIRE_FALSE(artist->GetNodes().empty());
+    REQUIRE_FALSE(artist->GetEdges().empty());
+
+    const auto kleinGordonOverview = ModelV2::BuildModelSemanticOverviewV2(ModelV2::BuildKleinGordonModelV2());
+    artist->SetSemanticOverview(kleinGordonOverview, ModelV2::MakeDefinitionObjectRefV2("field.phi"));
+    REQUIRE_FALSE(artist->GetNodes().empty());
+    REQUIRE_FALSE(artist->GetEdges().empty());
+
+    FPlot2DWindowV2 window("Semantic Graph Model Switch Test", {-12.0, 12.0, -10.0, 10.0}, {0, 800, 0, 600});
+    window.AddArtist(artist);
+    REQUIRE(window.FitRegionToArtists(0.05));
+
+    const auto drawList = window.BuildDrawList();
+    CHECK(CountPolylineCommands(drawList) >= 1);
+    CHECK(CountPointSetCommands(drawList) >= 2);
+    CHECK(CountTextCommands(drawList) >= 2);
 }
 
 TEST_CASE("Plot2D V2 semantic graph emits screen-space HUD for hovered edges", "[Plot2DV2][ModelGraph]") {

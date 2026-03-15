@@ -490,7 +490,8 @@ private:
     [[nodiscard]] auto FindTopWindowAtPoint(int x, int y) const -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
     [[nodiscard]] auto FindKeyboardTargetWindow() const -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
     auto SyncMousePositionFromImGui() -> void;
-    [[nodiscard]] auto FindWindowByUniqueName(const Slab::Str &uniqueName) const
+    [[nodiscard]] auto GetWindowKey(const FSlabWindowPtr &window) const -> Slab::Str;
+    [[nodiscard]] auto FindWindowByKey(const Slab::Str &windowKey) const
         -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
 };
 

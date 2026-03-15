@@ -48,6 +48,7 @@ namespace Slab::Graphics {
         ~FSlabWindow() override;
 
         [[nodiscard]] auto GetUniqueName() const -> Str;
+        [[nodiscard]] auto GetStableWindowKey() const -> Str;
 
         auto GetConfig() -> FSlabWindowConfig&;
 
