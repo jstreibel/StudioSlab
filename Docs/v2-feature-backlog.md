@@ -242,6 +242,12 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - status: active
   - extracted the V2 plot host out of `LabV2WindowManager.cpp`
   - port remaining legacy plot artists (`Labels`, `XHair`, `History`, `R2toR`) into V2-native paths
+- `P2` `LAB-17` — Plot V2 node graph / artist patchbay planning track
+  - plan reference: `Docs/plot-v2-node-graph-plan.md`
+  - runtime-first `Plots Graph`: live plot windows as nodes, artists as child nodes
+  - right-click artist creation should come from a registry, not ad hoc UI branching
+  - first typed connection target should be `Function -> FRtoRFunctionArtistV2`
+  - `FModelSemanticGraphArtistV2` remains add/config-only until a stable reflected semantic-overview input exists
 
 ### Model -> Realization Descent
 - `P1` `RZ-00` — ODE realization contract freeze — done

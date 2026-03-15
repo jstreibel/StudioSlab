@@ -22,6 +22,7 @@
 5. Active planning context:
    - `Docs/v2-feature-backlog.md`
    - `Docs/graph-first-user-story-checklist.md`
+   - `Docs/plot-v2-node-graph-plan.md`
 6. For Schemes/graph-surface semantics and mode boundaries:
    - `Docs/graph-onthology.md`
 
@@ -51,6 +52,7 @@
   - `Slab/Graphics/Plot2D/V2/Artists/ModelSemanticGraphArtistV2.h`
   - `Docs/Plot2D-V2-Scheme.md`
   - `Docs/plot2d-v2-migration-plan.md`
+  - `Docs/plot-v2-node-graph-plan.md`
 - Plot reflection catalog bridge surfaces:
   - `Slab/Core/Reflection/V2/ReflectionCatalogRegistryV2.h`
   - `Slab/Core/Reflection/V2/GraphSubstrateV2.h`

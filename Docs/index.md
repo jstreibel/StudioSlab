@@ -39,6 +39,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 - Planning index: `Docs/index-roadmap.md`
 - Active handoffs: `Docs/index-handoffs.md`
 - Compact backlog: `Docs/v2-feature-backlog.md`
+- Plot node-graph planning: `Docs/plot-v2-node-graph-plan.md`
 - Coverage planning: `Docs/v2-model-coverage-matrix.md`
 - Technical debt TODO backlog: `Docs/technical-debt.md`
 
