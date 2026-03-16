@@ -1450,7 +1450,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
             ModelSemanticGraphExportHops);
     }
     AddTooltipForLastItem(
-        "Export the current semantic graph slice to JSON under Build/bin/model-semantic-graphs/. "
+        "Export the current semantic graph slice to JSON in the current working directory (pwd). "
         "Includes projected nodes/edges plus per-node semantic metadata and navigation links.");
     if (SelectedModelSemanticObject.IsValid()) {
         ImGui::SameLine();

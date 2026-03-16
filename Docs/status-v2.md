@@ -192,7 +192,7 @@
   - graph selection feeds back into shared Model workspace selection
   - hover HUD and edge inspection are available
   - graph interaction currently includes pan/zoom, click selection, neighborhood hops, label toggle, and fit-to-graph
-  - Model workspace can now export the selected-object-centered semantic graph neighborhood to JSON (`Build/bin/model-semantic-graphs/`) for offline inspection/sharing
+  - Model workspace can now export the selected-object-centered semantic graph neighborhood to JSON in the process current working directory (`pwd`) for offline inspection/sharing
   - export payload includes plotted nodes/edges plus per-node semantic metadata, diagnostics, and navigation-link groups
 - Plot V2 interaction baseline extended:
   - artists can now participate in pointer hit-testing and keyboard event handling

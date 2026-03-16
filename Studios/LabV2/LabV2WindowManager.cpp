@@ -1061,12 +1061,13 @@ auto FLabV2WindowManager::ExportModelSemanticGraphToFile(const Slab::Core::Model
         : Slab::Str("none");
     const auto centeredObjectId = centeredObject.IsValid() ? centeredObject.ObjectId : Slab::Str("root");
 
-    const auto outputPath = std::filesystem::path("Build/bin/model-semantic-graphs") /
-        (SanitizeFilenameFragment(model.ModelId) + "__" +
-         SanitizeFilenameFragment(centeredKind) + "__" +
-         SanitizeFilenameFragment(centeredObjectId) + "__" +
-         (bUsesDraftPreview ? Slab::Str("draft") : Slab::Str("canonical")) + "__h" +
-         std::to_string(clampedHops) + ".json");
+    const auto outputFilename =
+        SanitizeFilenameFragment(model.ModelId) + "__" +
+        SanitizeFilenameFragment(centeredKind) + "__" +
+        SanitizeFilenameFragment(centeredObjectId) + "__" +
+        (bUsesDraftPreview ? Slab::Str("draft") : Slab::Str("canonical")) + "__h" +
+        std::to_string(clampedHops) + ".json";
+    const auto outputPath = std::filesystem::current_path() / outputFilename;
 
     namespace json = crude_json;
     json::value root(json::object{});
