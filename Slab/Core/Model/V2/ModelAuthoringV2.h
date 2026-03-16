@@ -875,6 +875,50 @@ namespace Slab::Core::Model::V2 {
             return EDefinitionSemanticRoleV2::Unknown;
         }
 
+        inline auto RefineInferredRoleWithResolvedDefinitionV2(const FModelV2 &model,
+                                                               const FSymbolEvidenceV2 &evidence,
+                                                               const EDefinitionSemanticRoleV2 inferredRole)
+            -> EDefinitionSemanticRoleV2 {
+            if (!evidence.bResolved || evidence.ReferenceId.empty()) return inferredRole;
+
+            const auto resolved = ResolveSemanticEntryV2(model, MakeReferenceV2(evidence.ReferenceId, evidence.SymbolText));
+            if (resolved.Definition == nullptr) return inferredRole;
+
+            switch (resolved.Definition->Kind) {
+                case EDefinitionKindV2::Coordinate:
+                    if (inferredRole == EDefinitionSemanticRoleV2::ScalarParameterLike) {
+                        return EDefinitionSemanticRoleV2::CoordinateLike;
+                    }
+                    break;
+
+                case EDefinitionKindV2::StateVariable:
+                    if (inferredRole == EDefinitionSemanticRoleV2::ScalarParameterLike) {
+                        return EDefinitionSemanticRoleV2::StateLike;
+                    }
+                    break;
+
+                case EDefinitionKindV2::Field:
+                    if (inferredRole == EDefinitionSemanticRoleV2::ScalarParameterLike ||
+                        inferredRole == EDefinitionSemanticRoleV2::StateLike) {
+                        return EDefinitionSemanticRoleV2::FieldLike;
+                    }
+                    break;
+
+                case EDefinitionKindV2::ObservableSymbol:
+                    if (inferredRole == EDefinitionSemanticRoleV2::ScalarParameterLike ||
+                        inferredRole == EDefinitionSemanticRoleV2::StateLike) {
+                        return EDefinitionSemanticRoleV2::ObservableLike;
+                    }
+                    break;
+
+                case EDefinitionKindV2::ScalarParameter:
+                case EDefinitionKindV2::OperatorSymbol:
+                    break;
+            }
+
+            return inferredRole;
+        }
+
         inline auto MakeDiagnosticCodeFromValidationMessageV2(const FValidationMessageV2 &message) -> Str {
             if (message.Message.find("unresolved") != Str::npos) return "unresolved_symbol";
             if (message.Message.find("non-function") != Str::npos ||
@@ -1065,7 +1109,8 @@ namespace Slab::Core::Model::V2 {
                 evidence.InferredArgumentDefinitionIds.begin(),
                 evidence.InferredArgumentDefinitionIds.end());
 
-            const auto inferredRole = ChooseInferredRoleV2(evidence);
+            const auto inferredRole =
+                RefineInferredRoleWithResolvedDefinitionV2(model, evidence, ChooseInferredRoleV2(evidence));
             symbol.InferredKind = SemanticRoleToDefinitionKindV2(inferredRole);
             if (evidence.bResolved) {
                 const auto resolved = ResolveSemanticEntryV2(model, MakeReferenceV2(evidence.ReferenceId, evidence.SymbolText));
@@ -1298,7 +1343,8 @@ namespace Slab::Core::Model::V2 {
 
             const auto evidenceKey = NormalizeSemanticSymbolKeyV2(MakeReferenceV2(definition.DefinitionId, RenderDefinitionLabelV2(definition)));
             if (const auto evidenceIt = globalEvidenceByKey.find(evidenceKey); evidenceIt != globalEvidenceByKey.end()) {
-                const auto inferredRole = ChooseInferredRoleV2(evidenceIt->second);
+                const auto inferredRole =
+                    Detail::RefineInferredRoleWithResolvedDefinitionV2(model, evidenceIt->second, ChooseInferredRoleV2(evidenceIt->second));
                 report.InferredKind = SemanticRoleToDefinitionKindV2(inferredRole);
                 report.InferredArgumentDefinitionIds.assign(
                     evidenceIt->second.InferredArgumentDefinitionIds.begin(),

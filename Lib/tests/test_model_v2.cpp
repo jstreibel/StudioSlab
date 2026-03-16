@@ -896,6 +896,54 @@ TEST_CASE("Model V2 semantic report compares declared and inferred roles", "[Mod
     CHECK(HasSemanticDiagnosticContaining(reportIt->Diagnostics, "declared_inferred_mismatch", "disagrees"));
 }
 
+TEST_CASE("Model V2 harmonic oscillator energy relation preserves state and observable roles", "[ModelV2][Inference][Ontology]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto model = BuildHarmonicOscillatorModelV2();
+    const auto report = BuildModelSemanticReportV2(model);
+
+    const auto definitionIt = std::find_if(report.Definitions.begin(), report.Definitions.end(), [&](const auto &definitionReport) {
+        return definitionReport.DefinitionId == "obs.energy";
+    });
+    REQUIRE(definitionIt != report.Definitions.end());
+    REQUIRE(definitionIt->InferredKind.has_value());
+    CHECK(*definitionIt->InferredKind == EDefinitionKindV2::ObservableSymbol);
+    CHECK_FALSE(definitionIt->bRoleMismatchesDeclared);
+
+    const auto relationIt = std::find_if(report.Relations.begin(), report.Relations.end(), [&](const auto &relationReport) {
+        return relationReport.RelationId == "relation.oscillator.energy";
+    });
+    REQUIRE(relationIt != report.Relations.end());
+
+    const auto requireSymbolKind = [&](const Str &referenceId, const EDefinitionKindV2 expectedKind) {
+        const auto it = std::find_if(relationIt->ReferencedSymbols.begin(), relationIt->ReferencedSymbols.end(), [&](const auto &symbol) {
+            return symbol.ReferenceId == referenceId;
+        });
+        REQUIRE(it != relationIt->ReferencedSymbols.end());
+        REQUIRE(it->InferredKind.has_value());
+        CHECK(*it->InferredKind == expectedKind);
+    };
+
+    requireSymbolKind("obs.energy", EDefinitionKindV2::ObservableSymbol);
+    requireSymbolKind("state.x", EDefinitionKindV2::StateVariable);
+    requireSymbolKind("state.p", EDefinitionKindV2::StateVariable);
+    requireSymbolKind("param.m", EDefinitionKindV2::ScalarParameter);
+    requireSymbolKind("param.k", EDefinitionKindV2::ScalarParameter);
+
+    CHECK_FALSE(HasSemanticDiagnosticContaining(
+        relationIt->Diagnostics,
+        "declared_inferred_mismatch",
+        "for 'E'"));
+    CHECK_FALSE(HasSemanticDiagnosticContaining(
+        relationIt->Diagnostics,
+        "declared_inferred_mismatch",
+        "for 'x'"));
+    CHECK_FALSE(HasSemanticDiagnosticContaining(
+        relationIt->Diagnostics,
+        "declared_inferred_mismatch",
+        "for 'p'"));
+}
+
 TEST_CASE("Model V2 harmonic oscillator report shows ambient classical mechanics vocabulary", "[ModelV2][Vocabulary][Inference]") {
     using namespace Slab::Core::Model::V2;
 
