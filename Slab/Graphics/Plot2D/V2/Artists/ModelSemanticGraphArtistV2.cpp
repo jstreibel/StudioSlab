@@ -4,6 +4,7 @@
 #include "Graphics/Utils.h"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <limits>
 #include <queue>
@@ -20,6 +21,9 @@ namespace Slab::Graphics::Plot2D::V2 {
         constexpr DevFloat CLayoutOuterMargin = 2.3;
         constexpr DevFloat CPi = 3.14159265358979323846;
         constexpr DevFloat CEdgeHitTolerancePixels = 8.5;
+        constexpr DevFloat CEdgeArrowLengthPixels = 13.0;
+        constexpr DevFloat CEdgeArrowHalfWidthPixels = 4.8;
+        constexpr DevFloat CEdgeNodeGapPixels = 2.5;
         constexpr DevFloat CHudMinPaddingX = 14.0;
         constexpr DevFloat CHudMinPaddingY = 12.0;
         constexpr DevFloat CHudMinSectionGap = 9.0;
@@ -33,6 +37,12 @@ namespace Slab::Graphics::Plot2D::V2 {
             DevFloat LineAdvance = 0.0;
             DevFloat SectionGap = 0.0;
             DevFloat CardGap = 0.0;
+        };
+
+        struct FDirectedEdgeGeometryV2 {
+            FPoint2D LineStart{};
+            FPoint2D LineEnd{};
+            std::optional<std::array<FPoint2D, 3>> ArrowPoints{};
         };
 
         [[nodiscard]] auto KindRank(const ModelV2::ESemanticObjectKindV2 kind) -> int {
@@ -176,6 +186,84 @@ namespace Slab::Graphics::Plot2D::V2 {
             const auto color = EdgeColorForKind(edge).WithAlpha(alpha);
             auto style = PlotStyle(color, LineStrip, false, Nil, thickness);
             return style;
+        }
+
+        [[nodiscard]] auto IsDirectedEdge(const FModelSemanticGraphArtistV2::FGraphEdgeV2 &edge) -> bool {
+            switch (edge.Kind) {
+                case FModelSemanticGraphArtistV2::EEdgeKind::Dependency:
+                case FModelSemanticGraphArtistV2::EEdgeKind::AmbientDependency:
+                case FModelSemanticGraphArtistV2::EEdgeKind::SourceLink:
+                case FModelSemanticGraphArtistV2::EEdgeKind::TargetLink:
+                case FModelSemanticGraphArtistV2::EEdgeKind::Assumption:
+                case FModelSemanticGraphArtistV2::EEdgeKind::Override:
+                    return true;
+            }
+
+            return false;
+        }
+
+        [[nodiscard]] auto PixelVectorToPlotDelta(const FPoint2D &pixelVector,
+                                                  const FPoint2D &pixelSize) -> FPoint2D {
+            return {
+                pixelVector.x * pixelSize.x,
+                pixelVector.y * pixelSize.y
+            };
+        }
+
+        [[nodiscard]] auto NodeEdgeInsetPixels(const FModelSemanticGraphArtistV2::FGraphNodeV2 &node) -> DevFloat {
+            return std::max<DevFloat>(4.5, (0.55 * node.BasePointSize) + CEdgeNodeGapPixels);
+        }
+
+        [[nodiscard]] auto BuildDirectedEdgeGeometry(const FModelSemanticGraphArtistV2::FGraphNodeV2 &source,
+                                                     const FModelSemanticGraphArtistV2::FGraphNodeV2 &target,
+                                                     const FPoint2D &pixelSize,
+                                                     const bool bDirected) -> FDirectedEdgeGeometryV2 {
+            FDirectedEdgeGeometryV2 geometry{
+                .LineStart = source.Position,
+                .LineEnd = target.Position
+            };
+
+            if (pixelSize.x <= 0.0 || pixelSize.y <= 0.0) return geometry;
+
+            const FPoint2D directionPixels{
+                (target.Position.x - source.Position.x) / pixelSize.x,
+                (target.Position.y - source.Position.y) / pixelSize.y
+            };
+            const auto lengthPixels = directionPixels.Length();
+            if (lengthPixels <= 1.0e-6) return geometry;
+
+            const auto unitPixels = (1.0 / lengthPixels) * directionPixels;
+            const FPoint2D perpendicularPixels{-unitPixels.y, unitPixels.x};
+
+            const auto sourceInsetPixels = NodeEdgeInsetPixels(source);
+            const auto targetInsetPixels = NodeEdgeInsetPixels(target);
+            geometry.LineStart = source.Position + PixelVectorToPlotDelta(sourceInsetPixels * unitPixels, pixelSize);
+
+            const auto usableLengthPixels = lengthPixels - sourceInsetPixels - targetInsetPixels;
+            if (usableLengthPixels <= 1.0) {
+                geometry.LineEnd = geometry.LineStart;
+                return geometry;
+            }
+
+            if (!bDirected) {
+                geometry.LineEnd = target.Position - PixelVectorToPlotDelta(targetInsetPixels * unitPixels, pixelSize);
+                return geometry;
+            }
+
+            const auto arrowLengthPixels = std::clamp<DevFloat>(0.45 * usableLengthPixels, 6.0, CEdgeArrowLengthPixels);
+            const auto arrowHalfWidthPixels =
+                std::clamp<DevFloat>(0.42 * arrowLengthPixels, 2.8, CEdgeArrowHalfWidthPixels);
+
+            const auto tip = target.Position - PixelVectorToPlotDelta(targetInsetPixels * unitPixels, pixelSize);
+            const auto arrowBaseCenter = tip - PixelVectorToPlotDelta(arrowLengthPixels * unitPixels, pixelSize);
+            geometry.LineEnd = arrowBaseCenter;
+            geometry.ArrowPoints = std::array<FPoint2D, 3>{
+                arrowBaseCenter + PixelVectorToPlotDelta(arrowHalfWidthPixels * perpendicularPixels, pixelSize),
+                tip,
+                arrowBaseCenter - PixelVectorToPlotDelta(arrowHalfWidthPixels * perpendicularPixels, pixelSize)
+            };
+
+            return geometry;
         }
 
         [[nodiscard]] auto SemanticGraphLayerLine(const ModelV2::ESemanticGraphLayerRoleV2 layerRole,
@@ -724,8 +812,21 @@ namespace Slab::Graphics::Plot2D::V2 {
                 highlightStyle.lineColor = EdgeColorForKind(edge).WithAlpha(bHovered ? 1.0f : 0.96f);
                 command.Style = highlightStyle;
             }
-            command.Points = {source->Position, target->Position};
+            const auto edgeGeometry = BuildDirectedEdgeGeometry(*source, *target, pixelSize, IsDirectedEdge(edge));
+            const auto edgeStyle = command.Style;
+            command.Points = {edgeGeometry.LineStart, edgeGeometry.LineEnd};
             drawList.AddPolyline(std::move(command));
+
+            if (edgeGeometry.ArrowPoints.has_value()) {
+                FPolylineCommandV2 arrowCommand;
+                arrowCommand.Style = edgeStyle;
+                arrowCommand.Points = {
+                    (*edgeGeometry.ArrowPoints)[0],
+                    (*edgeGeometry.ArrowPoints)[1],
+                    (*edgeGeometry.ArrowPoints)[2]
+                };
+                drawList.AddPolyline(std::move(arrowCommand));
+            }
 
             if (bHovered) {
                 FTextCommandV2 edgeLabel;

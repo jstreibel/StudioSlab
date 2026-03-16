@@ -624,7 +624,7 @@ TEST_CASE("Plot2D V2 semantic graph stays drawable when switching seeded model o
     REQUIRE(window.FitRegionToArtists(0.05));
 
     const auto drawList = window.BuildDrawList();
-    CHECK(CountPolylineCommands(drawList) >= 1);
+    CHECK(CountPolylineCommands(drawList) >= static_cast<int>(2 * artist->GetEdges().size()));
     CHECK(CountPointSetCommands(drawList) >= 2);
     CHECK(CountTextCommands(drawList) >= 2);
 }
