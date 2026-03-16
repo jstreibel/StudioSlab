@@ -239,6 +239,14 @@ Two valid approaches:
 - render graph pipelines as LaTeX expressions
 - make domain knowledge explicit and reusable
 
+Near-term `Model V2` bridge:
+- the current Model semantic graph should distinguish:
+  - canonical ontology
+  - overlays/provenance/debug structure
+  - projections such as plots, JSON exports, and realization extractors
+- this lets the user-facing graph carry useful non-ontological information without polluting the canonical semantic topology
+- see `Docs/model-semantic-graph-layering.md`
+
 **Note:** Not all theory edges must be executable. Executability depends on bindings.
 
 ---

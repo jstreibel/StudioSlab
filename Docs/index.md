@@ -22,6 +22,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 
 - Docs taxonomy / what kind of doc to update: `Docs/index-docs-structure.md`
 - Resume an in-progress slice quickly: `Docs/index-handoffs.md`
+- Model semantic graph / ontology / realization boundary: `Docs/index-model-semantic-graph.md`
 - Runtime/data/control implementation: `Docs/index-v2-runtime.md`
 - Reflection/interfaces/operations migration: `Docs/index-reflection-v2.md`
 - Reflection catalog registry specifics: `Docs/index-reflection-catalog-registry-v2.md`
@@ -49,14 +50,14 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 - V2 planning/slices: `Docs/v2-feature-backlog.md`, `Docs/v2-model-coverage-matrix.md`, `Docs/live-control-v2-spec.md`, `Docs/live-parameters-v2-slice-scope.md`, `Docs/kg-r2tor-v2-slice-scope.md`, `Docs/md-v2-slice-scope.md`, `Docs/functional-minimization-v2-slice-scope.md`
 - Model -> realization descent: `Docs/ode-realization-descent-plan.md`
 - Reflection: `Docs/index-reflection-v2.md`, `Docs/reflection-v2-decision-log.md`, `Docs/reflection-v2-contract.md`, `Docs/reflection-v2-migration-plan.md`, `Docs/reflection-v2-implementation.md`
-- Graph semantics and ontology direction: `Docs/graph-onthology.md`
+- Graph semantics and ontology direction: `Docs/index-model-semantic-graph.md`, `Docs/model-semantic-graph-layering.md`, `Docs/graph-onthology.md`
 - Reflection catalog registry deep-dive: `Docs/index-reflection-catalog-registry-v2.md`, `Docs/reflection-catalog-registry-v2-overview.md`, `Docs/reflection-catalog-registry-v2-routing.md`, `Docs/reflection-catalog-registry-v2-source-wiring.md`
 - Plot2D reflection quick path: `Docs/plot2d-reflection-v2-quick.md`
 - Plot2D V2 scheme + migration plan: `Docs/Plot2D-V2-Scheme.md`, `Docs/plot2d-v2-migration-plan.md`
 - Platform feasibility: `Docs/platform-wasm-feasibility.md`
 - Runtime/UI contracts: `Docs/graphics-composition-contract.md`, `Docs/plot-window-ux-contract.md`, `Docs/slab-root-migration-policy.md`
 - Typesetting/UI math bridge: `Docs/typesetting-bridge.md`
-- Model-tab semantic environment: `Docs/model-v2-semantic-environment.md`
+- Model-tab semantic environment: `Docs/model-v2-semantic-environment.md`, `Docs/model-semantic-graph-layering.md`
 - Monitoring architecture (LiveView vs listeners): `Docs/monitoring-liveview-vs-listeners.md`
 - Validation logs: `Docs/validation/imgui-blueprints-smoke.md`, `Docs/validation/imgui-upstream-parity-log.md`
 

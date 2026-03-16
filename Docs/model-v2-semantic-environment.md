@@ -10,6 +10,7 @@ Use this when changing:
 - semantic origin reporting
 - Model-tab inspector/catalog behavior
 - model semantic graph visibility and ODE realization readiness surfaces
+- model semantic graph canonical-versus-overlay boundaries
 
 ## Code Map
 
@@ -57,6 +58,17 @@ Current realization-facing rule:
 - ODE readiness is derived from canonical semantic overview data plus explicit model-level initial conditions.
 - It is a projection from model semantics, not a separate authored runtime model.
 - the first runtime bridge consumes that projection plus an explicit numeric scalar-binding map and builds one narrow `FSimulationRecipeV2` path for oscillator-family systems
+
+## Graph Layering Contract
+
+Use `Docs/model-semantic-graph-layering.md` when deciding what belongs in the canonical Model graph versus overlays/provenance/debug structure.
+
+Current rule:
+- the plotted/exported semantic graph may include both canonical model semantics and overlay data
+- assumptions, provenance links, and draft/debug links are overlays, not part of the canonical ontology
+- Plot V2 and JSON exports are projections of model semantics; they are not the realization contract
+- realization consumes canonical semantic data, not arbitrary plotted neighborhood topology
+- current Plot V2 rendering and JSON export both consume the same layered Model-side semantic graph projection
 
 ## BaseVocabulary Contract
 
@@ -142,6 +154,7 @@ Summary and graph surfaces:
 - graph selection feeds back into the shared Model workspace selection state
 - `Model Layer` can export the current selected-object-centered semantic graph neighborhood to JSON for offline analysis/sharing
 - semantic-graph JSON export currently writes to the process current working directory (`pwd`) and includes projected nodes/edges plus per-node semantic metadata/navigation links
+- plotted/exported neighborhoods may include overlay data and should be read using the layering rules in `Docs/model-semantic-graph-layering.md`
 
 Inspector/rendering rules:
 - symbol-like entries render directly as LaTeX

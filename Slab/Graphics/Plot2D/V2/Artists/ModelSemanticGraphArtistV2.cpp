@@ -86,26 +86,8 @@ namespace Slab::Graphics::Plot2D::V2 {
             return static_cast<DevFloat>(text.size()) * ResolveHudCharacterAdvance(frame);
         }
 
-        [[nodiscard]] auto DisplayLabelForObject(const ModelV2::FSemanticObjectOverviewV2 &object) -> Str {
-            if (!object.DisplayLabel.empty()) return CompactLabel(object.DisplayLabel);
-            if (!object.CanonicalNotation.empty()) return CompactLabel(object.CanonicalNotation);
-            return CompactLabel(object.Ref.ObjectId);
-        }
-
-        [[nodiscard]] auto FullDisplayLabelForObject(const ModelV2::FSemanticObjectOverviewV2 &object) -> Str {
-            if (!object.DisplayLabel.empty()) return object.DisplayLabel;
-            if (!object.CanonicalNotation.empty()) return object.CanonicalNotation;
-            return object.Ref.ObjectId;
-        }
-
-        [[nodiscard]] auto SubtitleForObject(const ModelV2::FSemanticObjectOverviewV2 &object) -> Str {
-            if (!object.StatusLabel.empty()) return object.StatusLabel;
-            if (!object.CategoryLabel.empty()) return object.CategoryLabel;
-            return object.KindLabel;
-        }
-
-        [[nodiscard]] auto BasePointSizeForObject(const ModelV2::FSemanticObjectOverviewV2 &object) -> DevFloat {
-            switch (object.Ref.Kind) {
+        [[nodiscard]] auto BasePointSizeForKind(const ModelV2::ESemanticObjectKindV2 kind) -> DevFloat {
+            switch (kind) {
                 case ModelV2::ESemanticObjectKindV2::Definition: return 12.0;
                 case ModelV2::ESemanticObjectKindV2::Relation: return 13.5;
                 case ModelV2::ESemanticObjectKindV2::Assumption: return 11.5;
@@ -116,24 +98,36 @@ namespace Slab::Graphics::Plot2D::V2 {
         }
 
         [[nodiscard]] auto BaseColorForNode(const FModelSemanticGraphArtistV2::FGraphNodeV2 &node) -> FColor {
+            FColor color = LightGrey;
             switch (node.Kind) {
                 case ModelV2::ESemanticObjectKindV2::Definition:
-                    return FColor::FromHex("#E2A33B");
+                    color = FColor::FromHex("#E2A33B");
+                    break;
                 case ModelV2::ESemanticObjectKindV2::Relation:
-                    return FColor::FromHex("#4FA7A2");
+                    color = FColor::FromHex("#4FA7A2");
+                    break;
                 case ModelV2::ESemanticObjectKindV2::Assumption:
-                    return FColor::FromHex("#D56A4E");
+                    color = FColor::FromHex("#D56A4E");
+                    break;
                 case ModelV2::ESemanticObjectKindV2::VocabularyEntry:
-                    return FColor::FromHex("#5C8BCB");
+                    color = FColor::FromHex("#5C8BCB");
+                    break;
             }
 
-            return LightGrey;
+            if (node.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Overlay) {
+                return color.WithAlpha(0.84f);
+            }
+
+            return color;
         }
 
         [[nodiscard]] auto LabelColorForNode(const FModelSemanticGraphArtistV2::FGraphNodeV2 &node) -> FColor {
             auto color = node.bAmbient ? LightGrey : White;
             if (node.bConflict) color = FColor::FromHex("#F08473");
             if (node.bLocalOverride) color = FColor::FromHex("#F5D37A");
+            if (node.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Overlay) {
+                color = color.WithAlpha(0.8f);
+            }
             return color;
         }
 
@@ -144,6 +138,9 @@ namespace Slab::Graphics::Plot2D::V2 {
             if (bHovered) return FColor::FromHex("#A8E6FF").WithAlpha(0.26f);
             if (node.bConflict) return FColor::FromHex("#F08473").WithAlpha(0.24f);
             if (node.bAmbient) return FColor::FromHex("#9DB7DA").WithAlpha(0.16f);
+            if (node.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Overlay) {
+                return BaseColorForNode(node).WithAlpha(0.1f);
+            }
             return BaseColorForNode(node).WithAlpha(0.14f);
         }
 
@@ -170,22 +167,25 @@ namespace Slab::Graphics::Plot2D::V2 {
         }
 
         [[nodiscard]] auto EdgeStyleForKind(const FModelSemanticGraphArtistV2::FGraphEdgeV2 &edge) -> PlotStyle {
-            const auto color = EdgeColorForKind(edge).WithAlpha(edge.bAmbient ? 0.72f : 0.84f);
-            auto style = PlotStyle(color, LineStrip, false, Nil, edge.bAmbient ? 1.0f : 1.35f);
+            const auto alpha = edge.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Overlay
+                ? (edge.bAmbient ? 0.56f : 0.66f)
+                : (edge.bAmbient ? 0.72f : 0.84f);
+            const auto thickness = edge.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Overlay
+                ? (edge.bAmbient ? 0.9f : 1.05f)
+                : (edge.bAmbient ? 1.0f : 1.35f);
+            const auto color = EdgeColorForKind(edge).WithAlpha(alpha);
+            auto style = PlotStyle(color, LineStrip, false, Nil, thickness);
             return style;
         }
 
-        [[nodiscard]] auto EdgeKindLabel(const FModelSemanticGraphArtistV2::EEdgeKind kind) -> Str {
-            switch (kind) {
-                case FModelSemanticGraphArtistV2::EEdgeKind::Dependency: return "Depends On";
-                case FModelSemanticGraphArtistV2::EEdgeKind::AmbientDependency: return "Ambient Dependency";
-                case FModelSemanticGraphArtistV2::EEdgeKind::SourceLink: return "Source Link";
-                case FModelSemanticGraphArtistV2::EEdgeKind::TargetLink: return "Target Link";
-                case FModelSemanticGraphArtistV2::EEdgeKind::Assumption: return "Assumption";
-                case FModelSemanticGraphArtistV2::EEdgeKind::Override: return "Override";
+        [[nodiscard]] auto SemanticGraphLayerLine(const ModelV2::ESemanticGraphLayerRoleV2 layerRole,
+                                                  const ModelV2::ESemanticGraphOverlayKindV2 overlayKind) -> Str {
+            auto line = Str("Layer: ") + ModelV2::ToString(layerRole);
+            if (overlayKind != ModelV2::ESemanticGraphOverlayKindV2::None) {
+                line += " / ";
+                line += ModelV2::ToString(overlayKind);
             }
-
-            return "Link";
+            return line;
         }
 
         [[nodiscard]] auto DistanceToSegmentSquaredPixels(const FPoint2D &plotPosition,
@@ -209,7 +209,10 @@ namespace Slab::Graphics::Plot2D::V2 {
                 return (apx * apx) + (apy * apy);
             }
 
-            const auto t = std::clamp(((apx * abx) + (apy * aby)) / abLengthSquared, static_cast<DevFloat>(0.0), static_cast<DevFloat>(1.0));
+            const auto t = std::clamp(
+                ((apx * abx) + (apy * aby)) / abLengthSquared,
+                static_cast<DevFloat>(0.0),
+                static_cast<DevFloat>(1.0));
             const auto closestX = scaledAx + (t * abx);
             const auto closestY = scaledAy + (t * aby);
             const auto dx = scaledPx - closestX;
@@ -217,7 +220,9 @@ namespace Slab::Graphics::Plot2D::V2 {
             return (dx * dx) + (dy * dy);
         }
 
-        auto MeasureHudCard(const FPlotFrameContextV2 &frame, const Str &title, const Vector<Str> &lines) -> FHudCardMetricsV2 {
+        auto MeasureHudCard(const FPlotFrameContextV2 &frame,
+                            const Str &title,
+                            const Vector<Str> &lines) -> FHudCardMetricsV2 {
             const auto paddingX = ResolveHudPaddingX(frame);
             const auto paddingY = ResolveHudPaddingY(frame);
             const auto lineAdvance = ResolveHudLineAdvance(frame);
@@ -335,41 +340,13 @@ namespace Slab::Graphics::Plot2D::V2 {
             return rect.yMax + metrics.CardGap;
         }
 
-        [[nodiscard]] auto AppendTraversalTargets(const ModelV2::FSemanticObjectOverviewV2 &object)
-            -> Vector<ModelV2::FSemanticObjectRefV2> {
-            Vector<ModelV2::FSemanticObjectRefV2> refs;
-            refs.reserve(
-                object.DependsOn.size() +
-                object.AmbientDependencies.size() +
-                object.UsedBy.size() +
-                object.RelatedAssumptions.size() +
-                object.SourceLinks.size() +
-                object.TargetLinks.size() +
-                object.LocalOverrides.size());
-
-            const auto appendLinks = [&refs](const auto &links) {
-                for (const auto &link : links) refs.push_back(link.Target);
-            };
-
-            appendLinks(object.DependsOn);
-            appendLinks(object.AmbientDependencies);
-            appendLinks(object.UsedBy);
-            appendLinks(object.RelatedAssumptions);
-            appendLinks(object.SourceLinks);
-            appendLinks(object.TargetLinks);
-            appendLinks(object.LocalOverrides);
-            return refs;
-        }
-
     } // namespace
 
     FModelSemanticGraphArtistV2::FModelSemanticGraphArtistV2()
     : FPlotArtistV2("model_semantic_graph", "Model Semantic Graph") {
     }
 
-    auto FModelSemanticGraphArtistV2::SetSemanticOverview(const ModelV2::FModelSemanticOverviewV2 &overview,
-                                                          const ModelV2::FSemanticObjectRefV2 &selectedObject) -> void {
-        LastOverview = overview;
+    auto FModelSemanticGraphArtistV2::ApplyVisibilityFilters() -> void {
         Nodes.clear();
         Edges.clear();
         NodeIndexById.clear();
@@ -377,140 +354,97 @@ namespace Slab::Graphics::Plot2D::V2 {
         HoveredEdgeId.clear();
         PressedNodeId.clear();
 
-        if (overview.ObjectsByKey.empty()) {
-            SelectedObject = {};
+        if (!LastProjection.has_value()) return;
+
+        const auto &projection = *LastProjection;
+        if (projection.Nodes.empty()) {
+            if (!projection.CenteredObject.IsValid()) {
+                SelectedObject = {};
+            }
             return;
         }
 
-        auto centerRef = selectedObject;
-        if (!centerRef.IsValid() || overview.FindObject(centerRef) == nullptr) {
-            centerRef = overview.ObjectsByKey.begin()->second.Ref;
-        }
-        SelectedObject = centerRef;
-
-        std::map<Str, int> hopByKey;
-        std::queue<ModelV2::FSemanticObjectRefV2> pending;
-        const auto centerKey = ModelV2::MakeSemanticObjectKeyV2(centerRef);
-        hopByKey[centerKey] = 0;
-        pending.push(centerRef);
-
-        while (!pending.empty()) {
-            const auto currentRef = pending.front();
-            pending.pop();
-
-            const auto currentKey = ModelV2::MakeSemanticObjectKeyV2(currentRef);
-            const auto hopIt = hopByKey.find(currentKey);
-            if (hopIt == hopByKey.end()) continue;
-            if (hopIt->second >= NeighborhoodHops) continue;
-
-            const auto *object = overview.FindObject(currentRef);
-            if (object == nullptr) continue;
-
-            for (const auto &targetRef : AppendTraversalTargets(*object)) {
-                const auto *targetObject = overview.FindObject(targetRef);
-                if (targetObject == nullptr) continue;
-
-                const auto targetKey = ModelV2::MakeSemanticObjectKeyV2(targetRef);
-                if (hopByKey.contains(targetKey)) continue;
-
-                hopByKey[targetKey] = hopIt->second + 1;
-                pending.push(targetRef);
-            }
+        if (!SelectedObject.IsValid()) {
+            SelectedObject = projection.CenteredObject.IsValid() ? projection.CenteredObject : projection.Nodes.front().Ref;
         }
 
-        Vector<Str> orderedKeys;
-        orderedKeys.reserve(hopByKey.size());
-        for (const auto &[key, hop] : hopByKey) {
-            (void) hop;
-            orderedKeys.push_back(key);
-        }
-
-        std::sort(orderedKeys.begin(), orderedKeys.end(), [&](const Str &lhs, const Str &rhs) {
-            const auto lhsHop = hopByKey.at(lhs);
-            const auto rhsHop = hopByKey.at(rhs);
-            if (lhsHop != rhsHop) return lhsHop < rhsHop;
-
-            const auto *lhsObject = &overview.ObjectsByKey.at(lhs);
-            const auto *rhsObject = &overview.ObjectsByKey.at(rhs);
-            const auto lhsRank = KindRank(lhsObject->Ref.Kind);
-            const auto rhsRank = KindRank(rhsObject->Ref.Kind);
-            if (lhsRank != rhsRank) return lhsRank < rhsRank;
-            if (lhsObject->DisplayLabel != rhsObject->DisplayLabel) {
-                return lhsObject->DisplayLabel < rhsObject->DisplayLabel;
+        const auto isLayerVisible = [this](const auto layerRole) {
+            switch (layerRole) {
+                case ModelV2::ESemanticGraphLayerRoleV2::Canonical: return bShowCanonicalLayer;
+                case ModelV2::ESemanticGraphLayerRoleV2::Overlay: return bShowOverlayLayer;
             }
 
-            return lhs < rhs;
-        });
+            return true;
+        };
 
-        Nodes.reserve(orderedKeys.size());
-        for (const auto &key : orderedKeys) {
-            const auto &object = overview.ObjectsByKey.at(key);
+        std::set<Str> visibleNodeIds;
+        for (const auto &graphNode : projection.Nodes) {
+            if (!isLayerVisible(graphNode.LayerRole)) continue;
+            visibleNodeIds.insert(graphNode.NodeId);
+        }
+
+        Nodes.reserve(visibleNodeIds.size());
+        for (const auto &graphNode : projection.Nodes) {
+            if (!visibleNodeIds.contains(graphNode.NodeId)) continue;
 
             FGraphNodeV2 node;
-            node.Ref = object.Ref;
-            node.NodeId = key;
-            node.Label = DisplayLabelForObject(object);
-            node.FullLabel = FullDisplayLabelForObject(object);
-            node.Subtitle = CompactLabel(SubtitleForObject(object), 22);
-            node.KindLabel = object.KindLabel;
-            node.CanonicalNotation = object.CanonicalNotation;
-            node.Description = object.Description;
-            node.Kind = object.Ref.Kind;
-            node.bReadonly = object.bReadonly;
-            node.bAmbient = object.bAmbient;
-            node.bConflict = object.bConflict;
-            node.bLocalOverride = object.bLocalOverride;
-            node.HopDistance = hopByKey.at(key);
-            node.BasePointSize = BasePointSizeForObject(object);
+            node.Ref = graphNode.Ref;
+            node.NodeId = graphNode.NodeId;
+            node.Label = graphNode.Label;
+            node.FullLabel = graphNode.FullLabel;
+            node.Subtitle = graphNode.Subtitle;
+            node.KindLabel = graphNode.KindLabel;
+            node.CanonicalNotation = graphNode.CanonicalNotation;
+            node.Description = graphNode.Description;
+            node.Kind = graphNode.Kind;
+            node.LayerRole = graphNode.LayerRole;
+            node.OverlayKind = graphNode.OverlayKind;
+            node.bReadonly = graphNode.bReadonly;
+            node.bAmbient = graphNode.bAmbient;
+            node.bConflict = graphNode.bConflict;
+            node.bLocalOverride = graphNode.bLocalOverride;
+            node.HopDistance = graphNode.HopDistance;
+            node.BasePointSize = BasePointSizeForKind(graphNode.Kind);
 
             NodeIndexById[node.NodeId] = Nodes.size();
             Nodes.push_back(std::move(node));
         }
 
-        const auto addEdges = [&](const ModelV2::FSemanticObjectOverviewV2 &object,
-                                  const auto &links,
-                                  const EEdgeKind kind,
-                                  std::set<Str> &edgeKeys) {
-            const auto sourceKey = ModelV2::MakeSemanticObjectKeyV2(object.Ref);
-            if (!NodeIndexById.contains(sourceKey)) return;
+        Edges.reserve(projection.Edges.size());
+        for (const auto &graphEdge : projection.Edges) {
+            if (!isLayerVisible(graphEdge.LayerRole)) continue;
+            if (!visibleNodeIds.contains(graphEdge.SourceNodeId) || !visibleNodeIds.contains(graphEdge.TargetNodeId)) continue;
 
-            for (const auto &link : links) {
-                const auto targetKey = ModelV2::MakeSemanticObjectKeyV2(link.Target);
-                if (!NodeIndexById.contains(targetKey)) continue;
-
-                const auto dedupeKey =
-                    sourceKey + "::" + targetKey + "::" + ToStr(static_cast<int>(kind)) + "::" + link.Label + "::" + link.Detail;
-                if (!edgeKeys.insert(dedupeKey).second) continue;
-
-                FGraphEdgeV2 edge;
-                edge.EdgeId = dedupeKey;
-                edge.SourceNodeId = sourceKey;
-                edge.TargetNodeId = targetKey;
-                edge.Kind = kind;
-                edge.Label = EdgeKindLabel(kind);
-                edge.Detail = link.Detail.empty() ? link.Label : link.Detail;
-                edge.bAmbient = link.bAmbient;
-                edge.bConflict = link.bConflict;
-                edge.bReadonly = link.bReadonly;
-                edge.bOverride = link.bOverride;
-                Edges.push_back(std::move(edge));
-            }
-        };
-
-        std::set<Str> edgeKeys;
-        for (const auto &node : Nodes) {
-            const auto *object = overview.FindObject(node.Ref);
-            if (object == nullptr) continue;
-
-            addEdges(*object, object->DependsOn, EEdgeKind::Dependency, edgeKeys);
-            addEdges(*object, object->AmbientDependencies, EEdgeKind::AmbientDependency, edgeKeys);
-            addEdges(*object, object->SourceLinks, EEdgeKind::SourceLink, edgeKeys);
-            addEdges(*object, object->TargetLinks, EEdgeKind::TargetLink, edgeKeys);
-            addEdges(*object, object->RelatedAssumptions, EEdgeKind::Assumption, edgeKeys);
-            addEdges(*object, object->LocalOverrides, EEdgeKind::Override, edgeKeys);
+            FGraphEdgeV2 edge;
+            edge.EdgeId = graphEdge.EdgeId;
+            edge.SourceNodeId = graphEdge.SourceNodeId;
+            edge.TargetNodeId = graphEdge.TargetNodeId;
+            edge.Kind = graphEdge.Kind;
+            edge.LayerRole = graphEdge.LayerRole;
+            edge.OverlayKind = graphEdge.OverlayKind;
+            edge.Label = graphEdge.Label;
+            edge.Detail = graphEdge.Detail;
+            edge.bAmbient = graphEdge.bAmbient;
+            edge.bConflict = graphEdge.bConflict;
+            edge.bReadonly = graphEdge.bReadonly;
+            edge.bOverride = graphEdge.bOverride;
+            Edges.push_back(std::move(edge));
         }
 
         RebuildLayout();
+    }
+
+    auto FModelSemanticGraphArtistV2::SetSemanticGraphProjection(
+        const ModelV2::FModelSemanticGraphProjectionV2 &projection) -> void {
+        LastProjection = projection;
+        SelectedObject = projection.CenteredObject;
+        ApplyVisibilityFilters();
+    }
+
+    auto FModelSemanticGraphArtistV2::SetSemanticOverview(const ModelV2::FModelSemanticOverviewV2 &overview,
+                                                          const ModelV2::FSemanticObjectRefV2 &selectedObject) -> void {
+        LastOverview = overview;
+        SetSemanticGraphProjection(ModelV2::BuildModelSemanticGraphProjectionV2(overview, selectedObject, NeighborhoodHops));
     }
 
     auto FModelSemanticGraphArtistV2::RebuildLayout() -> void {
@@ -671,6 +605,48 @@ namespace Slab::Graphics::Plot2D::V2 {
         };
         bindings.push_back(std::move(labelsBinding));
 
+        FPlotReflectionParameterBindingV2 canonicalLayerBinding;
+        canonicalLayerBinding.Schema.ParameterId = "show_canonical_layer";
+        canonicalLayerBinding.Schema.DisplayName = "Show Canonical";
+        canonicalLayerBinding.Schema.Description = "Whether canonical model-semantic nodes and edges are visible.";
+        canonicalLayerBinding.Schema.TypeId = ReflectionV2::CTypeIdScalarBool;
+        canonicalLayerBinding.Schema.Mutability = ReflectionV2::EParameterMutability::RuntimeMutable;
+        canonicalLayerBinding.Schema.Exposure = ReflectionV2::EParameterExposure::WritableExposed;
+        canonicalLayerBinding.ReadCurrent = [this] { return ReflectionV2::MakeBoolValue(bShowCanonicalLayer); };
+        canonicalLayerBinding.WriteLiveValue = [this](const ReflectionV2::FReflectionValueV2 &value) {
+            bool parsed = false;
+            if (!ReflectionV2::ParseBoolValue(value.Encoded, parsed)) {
+                return ReflectionV2::FOperationResultV2::Error(
+                    "plot2d_v2.parameter.parse_bool",
+                    "Could not parse bool for parameter 'show_canonical_layer'.");
+            }
+
+            SetShowCanonicalLayer(parsed);
+            return ReflectionV2::FOperationResultV2::Ok();
+        };
+        bindings.push_back(std::move(canonicalLayerBinding));
+
+        FPlotReflectionParameterBindingV2 overlayLayerBinding;
+        overlayLayerBinding.Schema.ParameterId = "show_overlay_layer";
+        overlayLayerBinding.Schema.DisplayName = "Show Overlay";
+        overlayLayerBinding.Schema.Description = "Whether overlay, provenance, and debug semantic nodes and edges are visible.";
+        overlayLayerBinding.Schema.TypeId = ReflectionV2::CTypeIdScalarBool;
+        overlayLayerBinding.Schema.Mutability = ReflectionV2::EParameterMutability::RuntimeMutable;
+        overlayLayerBinding.Schema.Exposure = ReflectionV2::EParameterExposure::WritableExposed;
+        overlayLayerBinding.ReadCurrent = [this] { return ReflectionV2::MakeBoolValue(bShowOverlayLayer); };
+        overlayLayerBinding.WriteLiveValue = [this](const ReflectionV2::FReflectionValueV2 &value) {
+            bool parsed = false;
+            if (!ReflectionV2::ParseBoolValue(value.Encoded, parsed)) {
+                return ReflectionV2::FOperationResultV2::Error(
+                    "plot2d_v2.parameter.parse_bool",
+                    "Could not parse bool for parameter 'show_overlay_layer'.");
+            }
+
+            SetShowOverlayLayer(parsed);
+            return ReflectionV2::FOperationResultV2::Ok();
+        };
+        bindings.push_back(std::move(overlayLayerBinding));
+
         return bindings;
     }
 
@@ -691,6 +667,24 @@ namespace Slab::Graphics::Plot2D::V2 {
 
     auto FModelSemanticGraphArtistV2::GetShowLabels() const -> bool {
         return bShowLabels;
+    }
+
+    auto FModelSemanticGraphArtistV2::SetShowCanonicalLayer(const bool showLayer) -> void {
+        bShowCanonicalLayer = showLayer;
+        ApplyVisibilityFilters();
+    }
+
+    auto FModelSemanticGraphArtistV2::GetShowCanonicalLayer() const -> bool {
+        return bShowCanonicalLayer;
+    }
+
+    auto FModelSemanticGraphArtistV2::SetShowOverlayLayer(const bool showLayer) -> void {
+        bShowOverlayLayer = showLayer;
+        ApplyVisibilityFilters();
+    }
+
+    auto FModelSemanticGraphArtistV2::GetShowOverlayLayer() const -> bool {
+        return bShowOverlayLayer;
     }
 
     auto FModelSemanticGraphArtistV2::SetOnSemanticObjectActivated(
@@ -794,7 +788,6 @@ namespace Slab::Graphics::Plot2D::V2 {
 
         if (!Nodes.empty()) {
             DevFloat bottomY = frame.HudLayout.BottomLeft.y;
-            DevFloat topRightY = frame.HudLayout.TopRight.y;
 
             const auto *selectedNode = [&]() -> const FGraphNodeV2 * {
                 for (const auto &node : Nodes) {
@@ -806,6 +799,7 @@ namespace Slab::Graphics::Plot2D::V2 {
             if (selectedNode != nullptr) {
                 Vector<Str> lines;
                 lines.push_back(selectedNode->FullLabel + " [" + selectedNode->KindLabel + "]");
+                lines.push_back(SemanticGraphLayerLine(selectedNode->LayerRole, selectedNode->OverlayKind));
                 if (!selectedNode->CanonicalNotation.empty()) lines.push_back(selectedNode->CanonicalNotation);
                 else if (!selectedNode->Description.empty()) lines.push_back(selectedNode->Description);
                 lines.push_back("Neighborhood hops: " + ToStr(NeighborhoodHops));
@@ -823,6 +817,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                 if (const auto *hoveredNode = FindNodeById(HoveredNodeId); hoveredNode != nullptr) {
                     Vector<Str> lines;
                     lines.push_back(hoveredNode->FullLabel + " [" + hoveredNode->KindLabel + "]");
+                    lines.push_back(SemanticGraphLayerLine(hoveredNode->LayerRole, hoveredNode->OverlayKind));
                     if (!hoveredNode->CanonicalNotation.empty()) lines.push_back(hoveredNode->CanonicalNotation);
                     else if (!hoveredNode->Description.empty()) lines.push_back(hoveredNode->Description);
                     if (!hoveredNode->Subtitle.empty()) lines.push_back(hoveredNode->Subtitle);
@@ -844,6 +839,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                     if (source != nullptr && target != nullptr) {
                         lines.push_back(source->FullLabel + " -> " + target->FullLabel);
                     }
+                    lines.push_back(SemanticGraphLayerLine(hoveredEdge->LayerRole, hoveredEdge->OverlayKind));
                     if (!hoveredEdge->Detail.empty()) lines.push_back(hoveredEdge->Detail);
                     bottomY = AddHudCardFromBottomLeft(
                         drawList,
@@ -855,10 +851,34 @@ namespace Slab::Graphics::Plot2D::V2 {
                         EdgeColorForKind(*hoveredEdge));
                 }
             }
+        }
 
+        if (!Nodes.empty() || LastProjection.has_value()) {
+            DevFloat topRightY = frame.HudLayout.TopRight.y;
             Vector<Str> statusLines;
-            statusLines.push_back("Nodes: " + ToStr(Nodes.size()) + " | Edges: " + ToStr(Edges.size()));
-            statusLines.push_back("Keys: [ ] radius, L labels, F fit");
+            const auto canonicalNodeCount = static_cast<std::size_t>(std::count_if(Nodes.begin(), Nodes.end(), [](const auto &node) {
+                return node.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Canonical;
+            }));
+            const auto overlayNodeCount = Nodes.size() - canonicalNodeCount;
+            const auto canonicalEdgeCount = static_cast<std::size_t>(std::count_if(Edges.begin(), Edges.end(), [](const auto &edge) {
+                return edge.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Canonical;
+            }));
+            const auto overlayEdgeCount = Edges.size() - canonicalEdgeCount;
+            statusLines.push_back(
+                "Nodes: " + ToStr(Nodes.size()) +
+                " (C " + ToStr(canonicalNodeCount) +
+                " / O " + ToStr(overlayNodeCount) + ")");
+            statusLines.push_back(
+                "Edges: " + ToStr(Edges.size()) +
+                " (C " + ToStr(canonicalEdgeCount) +
+                " / O " + ToStr(overlayEdgeCount) + ")");
+            statusLines.push_back(
+                Str("Layers: C ") + (bShowCanonicalLayer ? "on" : "off") +
+                " / O " + (bShowOverlayLayer ? "on" : "off"));
+            if (Nodes.empty() && LastProjection.has_value() && !LastProjection->Nodes.empty()) {
+                statusLines.push_back("No visible nodes for current layer filter.");
+            }
+            statusLines.push_back("Keys: [ ] radius, L labels, C canonical, O overlay, F fit");
             (void) AddHudCardFromTopRight(
                 drawList,
                 frame,
@@ -999,6 +1019,16 @@ namespace Slab::Graphics::Plot2D::V2 {
             case Key_L:
             case Key_l:
                 SetShowLabels(!bShowLabels);
+                return true;
+
+            case Key_C:
+            case Key_c:
+                SetShowCanonicalLayer(!bShowCanonicalLayer);
+                return true;
+
+            case Key_O:
+            case Key_o:
+                SetShowOverlayLayer(!bShowOverlayLayer);
                 return true;
 
             default:

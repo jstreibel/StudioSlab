@@ -18,6 +18,7 @@
    - `Docs/plot2d-v2-migration-plan.md`
    - `Docs/typesetting-bridge.md`
 4. For Model-tab semantic-environment work:
+   - `Docs/index-model-semantic-graph.md`
    - `Docs/model-v2-semantic-environment.md`
 5. Active planning context:
    - `Docs/v2-feature-backlog.md`

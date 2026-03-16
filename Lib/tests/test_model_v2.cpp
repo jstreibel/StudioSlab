@@ -1011,6 +1011,52 @@ TEST_CASE("Model V2 relation overview exposes ambient and local dependencies", "
     }));
 }
 
+TEST_CASE("Model V2 semantic graph projection separates canonical and overlay structure", "[ModelV2][Graph]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto overview = BuildModelSemanticOverviewV2(BuildKleinGordonModelV2());
+    const auto projection = BuildModelSemanticGraphProjectionV2(
+        overview,
+        MakeRelationObjectRefV2("relation.klein_gordon.equation"),
+        2);
+
+    REQUIRE(AreSemanticObjectRefsEqualV2(
+        projection.CenteredObject,
+        MakeRelationObjectRefV2("relation.klein_gordon.equation")));
+    REQUIRE_FALSE(projection.Nodes.empty());
+    REQUIRE_FALSE(projection.Edges.empty());
+
+    const auto relationNodeIt = std::find_if(projection.Nodes.begin(), projection.Nodes.end(), [](const auto &node) {
+        return node.Ref.ObjectId == "relation.klein_gordon.equation";
+    });
+    REQUIRE(relationNodeIt != projection.Nodes.end());
+    CHECK(relationNodeIt->LayerRole == ESemanticGraphLayerRoleV2::Canonical);
+    CHECK(relationNodeIt->OverlayKind == ESemanticGraphOverlayKindV2::None);
+
+    const auto assumptionNodeIt = std::find_if(projection.Nodes.begin(), projection.Nodes.end(), [](const auto &node) {
+        return node.Ref.Kind == ESemanticObjectKindV2::Assumption;
+    });
+    REQUIRE(assumptionNodeIt != projection.Nodes.end());
+    CHECK(assumptionNodeIt->LayerRole == ESemanticGraphLayerRoleV2::Overlay);
+    CHECK(assumptionNodeIt->OverlayKind == ESemanticGraphOverlayKindV2::Assumption);
+
+    CHECK(std::any_of(projection.Edges.begin(), projection.Edges.end(), [](const auto &edge) {
+        return edge.Kind == ESemanticGraphEdgeKindV2::Dependency &&
+            edge.LayerRole == ESemanticGraphLayerRoleV2::Canonical &&
+            edge.OverlayKind == ESemanticGraphOverlayKindV2::None;
+    }));
+    CHECK(std::any_of(projection.Edges.begin(), projection.Edges.end(), [](const auto &edge) {
+        return edge.Kind == ESemanticGraphEdgeKindV2::Assumption &&
+            edge.LayerRole == ESemanticGraphLayerRoleV2::Overlay &&
+            edge.OverlayKind == ESemanticGraphOverlayKindV2::Assumption;
+    }));
+    CHECK(std::any_of(projection.Edges.begin(), projection.Edges.end(), [](const auto &edge) {
+        return edge.Kind == ESemanticGraphEdgeKindV2::SourceLink &&
+            edge.LayerRole == ESemanticGraphLayerRoleV2::Overlay &&
+            edge.OverlayKind == ESemanticGraphOverlayKindV2::Provenance;
+    }));
+}
+
 TEST_CASE("Model V2 status summary classifies oscillator and Klein-Gordon", "[ModelV2][Status][Classification]") {
     using namespace Slab::Core::Model::V2;
 

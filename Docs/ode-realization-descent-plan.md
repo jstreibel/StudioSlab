@@ -109,6 +109,12 @@ Required canonical inputs:
 - observable symbols
 - canonical local relations
 
+Realization boundary rule:
+- realization reads the canonical, typed model subgraph, not an arbitrary plotted/exported neighborhood
+- provenance/debug/view-only edges are outside the contract
+- pending assumptions must be resolved or canonized before they can contribute to realization
+- use `Docs/model-semantic-graph-layering.md` when changing this boundary
+
 Required gate:
 - no blocking semantic errors
 - no unresolved symbols

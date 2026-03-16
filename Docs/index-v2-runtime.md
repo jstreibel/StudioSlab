@@ -16,6 +16,7 @@
   - `Docs/index-handoffs.md`
   - `Docs/handoff-ode-realization-rz03.md`
 4. One focused spec:
+  - model semantic graph layering / canonical boundary: `Docs/index-model-semantic-graph.md`
   - ODE model->realization descent: `Docs/ode-realization-descent-plan.md`
   - control/input: `Docs/live-control-v2-spec.md`
   - live runtime params: `Docs/live-parameters-v2-slice-scope.md`

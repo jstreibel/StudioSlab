@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <iomanip>
 #include <limits>
+#include <queue>
 #include <set>
 
 namespace Slab::Core::Model::V2 {
@@ -230,6 +231,68 @@ namespace Slab::Core::Model::V2 {
         }
     };
 
+    enum class ESemanticGraphLayerRoleV2 : unsigned char {
+        Canonical,
+        Overlay
+    };
+
+    enum class ESemanticGraphOverlayKindV2 : unsigned char {
+        None,
+        Assumption,
+        Provenance,
+        Override
+    };
+
+    enum class ESemanticGraphEdgeKindV2 : unsigned char {
+        Dependency,
+        AmbientDependency,
+        SourceLink,
+        TargetLink,
+        Assumption,
+        Override
+    };
+
+    struct FSemanticGraphNodeV2 {
+        FSemanticObjectRefV2 Ref;
+        Str NodeId;
+        Str Label;
+        Str FullLabel;
+        Str Subtitle;
+        Str KindLabel;
+        Str CanonicalNotation;
+        Str Description;
+        ESemanticObjectKindV2 Kind = ESemanticObjectKindV2::Definition;
+        ESemanticGraphLayerRoleV2 LayerRole = ESemanticGraphLayerRoleV2::Canonical;
+        ESemanticGraphOverlayKindV2 OverlayKind = ESemanticGraphOverlayKindV2::None;
+        bool bReadonly = false;
+        bool bAmbient = false;
+        bool bConflict = false;
+        bool bLocalOverride = false;
+        int HopDistance = 0;
+    };
+
+    struct FSemanticGraphEdgeV2 {
+        Str EdgeId;
+        Str SourceNodeId;
+        Str TargetNodeId;
+        ESemanticGraphEdgeKindV2 Kind = ESemanticGraphEdgeKindV2::Dependency;
+        ESemanticGraphLayerRoleV2 LayerRole = ESemanticGraphLayerRoleV2::Canonical;
+        ESemanticGraphOverlayKindV2 OverlayKind = ESemanticGraphOverlayKindV2::None;
+        Str Label;
+        Str Detail;
+        bool bAmbient = false;
+        bool bConflict = false;
+        bool bReadonly = false;
+        bool bOverride = false;
+    };
+
+    struct FModelSemanticGraphProjectionV2 {
+        FSemanticObjectRefV2 CenteredObject;
+        int NeighborhoodHops = 0;
+        Vector<FSemanticGraphNodeV2> Nodes;
+        Vector<FSemanticGraphEdgeV2> Edges;
+    };
+
     struct FSemanticSelectionContextV2 {
         FSemanticObjectRefV2 Selected;
         std::set<Str> DependencyKeys;
@@ -445,6 +508,39 @@ namespace Slab::Core::Model::V2 {
         }
 
         return "Unknown";
+    }
+
+    inline auto ToString(const ESemanticGraphLayerRoleV2 value) -> const char * {
+        switch (value) {
+            case ESemanticGraphLayerRoleV2::Canonical: return "Canonical";
+            case ESemanticGraphLayerRoleV2::Overlay: return "Overlay";
+        }
+
+        return "Canonical";
+    }
+
+    inline auto ToString(const ESemanticGraphOverlayKindV2 value) -> const char * {
+        switch (value) {
+            case ESemanticGraphOverlayKindV2::None: return "None";
+            case ESemanticGraphOverlayKindV2::Assumption: return "Assumption";
+            case ESemanticGraphOverlayKindV2::Provenance: return "Provenance";
+            case ESemanticGraphOverlayKindV2::Override: return "Override";
+        }
+
+        return "None";
+    }
+
+    inline auto ToString(const ESemanticGraphEdgeKindV2 value) -> const char * {
+        switch (value) {
+            case ESemanticGraphEdgeKindV2::Dependency: return "Dependency";
+            case ESemanticGraphEdgeKindV2::AmbientDependency: return "AmbientDependency";
+            case ESemanticGraphEdgeKindV2::SourceLink: return "SourceLink";
+            case ESemanticGraphEdgeKindV2::TargetLink: return "TargetLink";
+            case ESemanticGraphEdgeKindV2::Assumption: return "Assumption";
+            case ESemanticGraphEdgeKindV2::Override: return "Override";
+        }
+
+        return "Dependency";
     }
 
     inline auto ToString(const ESemanticHealthV2 value) -> const char * {
@@ -1741,6 +1837,133 @@ namespace Slab::Core::Model::V2 {
             return classification;
         }
 
+        [[nodiscard]] inline auto SemanticGraphKindRankV2(const ESemanticObjectKindV2 kind) -> int {
+            switch (kind) {
+                case ESemanticObjectKindV2::Definition: return 0;
+                case ESemanticObjectKindV2::Relation: return 1;
+                case ESemanticObjectKindV2::Assumption: return 2;
+                case ESemanticObjectKindV2::VocabularyEntry: return 3;
+            }
+
+            return 0;
+        }
+
+        [[nodiscard]] inline auto CompactSemanticGraphLabelV2(const Str &label,
+                                                              const std::size_t maxChars = 26) -> Str {
+            if (label.size() <= maxChars) return label;
+            if (maxChars <= 3) return label.substr(0, maxChars);
+            return label.substr(0, maxChars - 3) + "...";
+        }
+
+        [[nodiscard]] inline auto BuildSemanticGraphNodeLabelV2(const FSemanticObjectOverviewV2 &object) -> Str {
+            if (!object.DisplayLabel.empty()) return CompactSemanticGraphLabelV2(object.DisplayLabel);
+            if (!object.CanonicalNotation.empty()) return CompactSemanticGraphLabelV2(object.CanonicalNotation);
+            return CompactSemanticGraphLabelV2(object.Ref.ObjectId);
+        }
+
+        [[nodiscard]] inline auto BuildSemanticGraphNodeFullLabelV2(const FSemanticObjectOverviewV2 &object) -> Str {
+            if (!object.DisplayLabel.empty()) return object.DisplayLabel;
+            if (!object.CanonicalNotation.empty()) return object.CanonicalNotation;
+            return object.Ref.ObjectId;
+        }
+
+        [[nodiscard]] inline auto BuildSemanticGraphNodeSubtitleV2(const FSemanticObjectOverviewV2 &object) -> Str {
+            if (!object.StatusLabel.empty()) return CompactSemanticGraphLabelV2(object.StatusLabel, 22);
+            if (!object.CategoryLabel.empty()) return CompactSemanticGraphLabelV2(object.CategoryLabel, 22);
+            return CompactSemanticGraphLabelV2(object.KindLabel, 22);
+        }
+
+        [[nodiscard]] inline auto CollectSemanticGraphTraversalTargetsV2(const FSemanticObjectOverviewV2 &object)
+            -> Vector<FSemanticObjectRefV2> {
+            Vector<FSemanticObjectRefV2> refs;
+            refs.reserve(
+                object.DependsOn.size() +
+                object.AmbientDependencies.size() +
+                object.UsedBy.size() +
+                object.RelatedAssumptions.size() +
+                object.SourceLinks.size() +
+                object.TargetLinks.size() +
+                object.LocalOverrides.size());
+
+            const auto appendLinks = [&refs](const auto &links) {
+                for (const auto &link : links) refs.push_back(link.Target);
+            };
+
+            appendLinks(object.DependsOn);
+            appendLinks(object.AmbientDependencies);
+            appendLinks(object.UsedBy);
+            appendLinks(object.RelatedAssumptions);
+            appendLinks(object.SourceLinks);
+            appendLinks(object.TargetLinks);
+            appendLinks(object.LocalOverrides);
+            return refs;
+        }
+
+        [[nodiscard]] inline auto SemanticGraphNodeLayerRoleV2(const FSemanticObjectOverviewV2 &object)
+            -> ESemanticGraphLayerRoleV2 {
+            return object.Ref.Kind == ESemanticObjectKindV2::Assumption
+                ? ESemanticGraphLayerRoleV2::Overlay
+                : ESemanticGraphLayerRoleV2::Canonical;
+        }
+
+        [[nodiscard]] inline auto SemanticGraphNodeOverlayKindV2(const FSemanticObjectOverviewV2 &object)
+            -> ESemanticGraphOverlayKindV2 {
+            return object.Ref.Kind == ESemanticObjectKindV2::Assumption
+                ? ESemanticGraphOverlayKindV2::Assumption
+                : ESemanticGraphOverlayKindV2::None;
+        }
+
+        [[nodiscard]] inline auto SemanticGraphEdgeLayerRoleV2(const ESemanticGraphEdgeKindV2 kind)
+            -> ESemanticGraphLayerRoleV2 {
+            switch (kind) {
+                case ESemanticGraphEdgeKindV2::Dependency:
+                case ESemanticGraphEdgeKindV2::AmbientDependency:
+                    return ESemanticGraphLayerRoleV2::Canonical;
+
+                case ESemanticGraphEdgeKindV2::SourceLink:
+                case ESemanticGraphEdgeKindV2::TargetLink:
+                case ESemanticGraphEdgeKindV2::Assumption:
+                case ESemanticGraphEdgeKindV2::Override:
+                    return ESemanticGraphLayerRoleV2::Overlay;
+            }
+
+            return ESemanticGraphLayerRoleV2::Canonical;
+        }
+
+        [[nodiscard]] inline auto SemanticGraphEdgeOverlayKindV2(const ESemanticGraphEdgeKindV2 kind)
+            -> ESemanticGraphOverlayKindV2 {
+            switch (kind) {
+                case ESemanticGraphEdgeKindV2::Dependency:
+                case ESemanticGraphEdgeKindV2::AmbientDependency:
+                    return ESemanticGraphOverlayKindV2::None;
+
+                case ESemanticGraphEdgeKindV2::SourceLink:
+                case ESemanticGraphEdgeKindV2::TargetLink:
+                    return ESemanticGraphOverlayKindV2::Provenance;
+
+                case ESemanticGraphEdgeKindV2::Assumption:
+                    return ESemanticGraphOverlayKindV2::Assumption;
+
+                case ESemanticGraphEdgeKindV2::Override:
+                    return ESemanticGraphOverlayKindV2::Override;
+            }
+
+            return ESemanticGraphOverlayKindV2::None;
+        }
+
+        [[nodiscard]] inline auto SemanticGraphEdgeLabelV2(const ESemanticGraphEdgeKindV2 kind) -> Str {
+            switch (kind) {
+                case ESemanticGraphEdgeKindV2::Dependency: return "Depends On";
+                case ESemanticGraphEdgeKindV2::AmbientDependency: return "Ambient Dependency";
+                case ESemanticGraphEdgeKindV2::SourceLink: return "Source Link";
+                case ESemanticGraphEdgeKindV2::TargetLink: return "Target Link";
+                case ESemanticGraphEdgeKindV2::Assumption: return "Assumption";
+                case ESemanticGraphEdgeKindV2::Override: return "Override";
+            }
+
+            return "Link";
+        }
+
     } // namespace Detail
 
     inline auto BuildModelSemanticOverviewV2(const FModelV2 &model) -> FModelSemanticOverviewV2 {
@@ -2151,6 +2374,152 @@ namespace Slab::Core::Model::V2 {
         }
 
         return overview;
+    }
+
+    inline auto BuildModelSemanticGraphProjectionV2(const FModelSemanticOverviewV2 &overview,
+                                                    const FSemanticObjectRefV2 &selectedObject,
+                                                    const int neighborhoodHops = 2)
+        -> FModelSemanticGraphProjectionV2 {
+        FModelSemanticGraphProjectionV2 projection;
+        projection.NeighborhoodHops = std::clamp(neighborhoodHops, 1, 4);
+
+        if (overview.ObjectsByKey.empty()) return projection;
+
+        auto centerRef = selectedObject;
+        if (!centerRef.IsValid() || overview.FindObject(centerRef) == nullptr) {
+            centerRef = overview.ObjectsByKey.begin()->second.Ref;
+        }
+        projection.CenteredObject = centerRef;
+
+        std::map<Str, int> hopByKey;
+        std::queue<FSemanticObjectRefV2> pending;
+        const auto centerKey = MakeSemanticObjectKeyV2(centerRef);
+        hopByKey[centerKey] = 0;
+        pending.push(centerRef);
+
+        while (!pending.empty()) {
+            const auto currentRef = pending.front();
+            pending.pop();
+
+            const auto currentKey = MakeSemanticObjectKeyV2(currentRef);
+            const auto hopIt = hopByKey.find(currentKey);
+            if (hopIt == hopByKey.end()) continue;
+            if (hopIt->second >= projection.NeighborhoodHops) continue;
+
+            const auto *object = overview.FindObject(currentRef);
+            if (object == nullptr) continue;
+
+            for (const auto &targetRef : Detail::CollectSemanticGraphTraversalTargetsV2(*object)) {
+                const auto *targetObject = overview.FindObject(targetRef);
+                if (targetObject == nullptr) continue;
+
+                const auto targetKey = MakeSemanticObjectKeyV2(targetRef);
+                if (hopByKey.contains(targetKey)) continue;
+
+                hopByKey[targetKey] = hopIt->second + 1;
+                pending.push(targetRef);
+            }
+        }
+
+        Vector<Str> orderedKeys;
+        orderedKeys.reserve(hopByKey.size());
+        for (const auto &[key, hop] : hopByKey) {
+            (void) hop;
+            orderedKeys.push_back(key);
+        }
+
+        std::sort(orderedKeys.begin(), orderedKeys.end(), [&](const Str &lhs, const Str &rhs) {
+            const auto lhsHop = hopByKey.at(lhs);
+            const auto rhsHop = hopByKey.at(rhs);
+            if (lhsHop != rhsHop) return lhsHop < rhsHop;
+
+            const auto *lhsObject = &overview.ObjectsByKey.at(lhs);
+            const auto *rhsObject = &overview.ObjectsByKey.at(rhs);
+            const auto lhsRank = Detail::SemanticGraphKindRankV2(lhsObject->Ref.Kind);
+            const auto rhsRank = Detail::SemanticGraphKindRankV2(rhsObject->Ref.Kind);
+            if (lhsRank != rhsRank) return lhsRank < rhsRank;
+            if (lhsObject->DisplayLabel != rhsObject->DisplayLabel) {
+                return lhsObject->DisplayLabel < rhsObject->DisplayLabel;
+            }
+
+            return lhs < rhs;
+        });
+
+        projection.Nodes.reserve(orderedKeys.size());
+        for (const auto &key : orderedKeys) {
+            const auto &object = overview.ObjectsByKey.at(key);
+
+            FSemanticGraphNodeV2 node;
+            node.Ref = object.Ref;
+            node.NodeId = key;
+            node.Label = Detail::BuildSemanticGraphNodeLabelV2(object);
+            node.FullLabel = Detail::BuildSemanticGraphNodeFullLabelV2(object);
+            node.Subtitle = Detail::BuildSemanticGraphNodeSubtitleV2(object);
+            node.KindLabel = object.KindLabel;
+            node.CanonicalNotation = object.CanonicalNotation;
+            node.Description = object.Description;
+            node.Kind = object.Ref.Kind;
+            node.LayerRole = Detail::SemanticGraphNodeLayerRoleV2(object);
+            node.OverlayKind = Detail::SemanticGraphNodeOverlayKindV2(object);
+            node.bReadonly = object.bReadonly;
+            node.bAmbient = object.bAmbient;
+            node.bConflict = object.bConflict;
+            node.bLocalOverride = object.bLocalOverride;
+            node.HopDistance = hopByKey.at(key);
+            projection.Nodes.push_back(std::move(node));
+        }
+
+        std::set<Str> includedNodeIds;
+        for (const auto &node : projection.Nodes) {
+            includedNodeIds.insert(node.NodeId);
+        }
+
+        const auto addEdges = [&](const FSemanticObjectOverviewV2 &object,
+                                  const auto &links,
+                                  const ESemanticGraphEdgeKindV2 kind,
+                                  std::set<Str> &edgeKeys) {
+            const auto sourceKey = MakeSemanticObjectKeyV2(object.Ref);
+            if (!includedNodeIds.contains(sourceKey)) return;
+
+            for (const auto &link : links) {
+                const auto targetKey = MakeSemanticObjectKeyV2(link.Target);
+                if (!includedNodeIds.contains(targetKey)) continue;
+
+                const auto dedupeKey =
+                    sourceKey + "::" + targetKey + "::" + ToStr(static_cast<int>(kind)) + "::" + link.Label + "::" + link.Detail;
+                if (!edgeKeys.insert(dedupeKey).second) continue;
+
+                FSemanticGraphEdgeV2 edge;
+                edge.EdgeId = dedupeKey;
+                edge.SourceNodeId = sourceKey;
+                edge.TargetNodeId = targetKey;
+                edge.Kind = kind;
+                edge.LayerRole = Detail::SemanticGraphEdgeLayerRoleV2(kind);
+                edge.OverlayKind = Detail::SemanticGraphEdgeOverlayKindV2(kind);
+                edge.Label = Detail::SemanticGraphEdgeLabelV2(kind);
+                edge.Detail = link.Detail.empty() ? link.Label : link.Detail;
+                edge.bAmbient = link.bAmbient;
+                edge.bConflict = link.bConflict;
+                edge.bReadonly = link.bReadonly;
+                edge.bOverride = link.bOverride;
+                projection.Edges.push_back(std::move(edge));
+            }
+        };
+
+        std::set<Str> edgeKeys;
+        for (const auto &node : projection.Nodes) {
+            const auto *object = overview.FindObject(node.Ref);
+            if (object == nullptr) continue;
+
+            addEdges(*object, object->DependsOn, ESemanticGraphEdgeKindV2::Dependency, edgeKeys);
+            addEdges(*object, object->AmbientDependencies, ESemanticGraphEdgeKindV2::AmbientDependency, edgeKeys);
+            addEdges(*object, object->SourceLinks, ESemanticGraphEdgeKindV2::SourceLink, edgeKeys);
+            addEdges(*object, object->TargetLinks, ESemanticGraphEdgeKindV2::TargetLink, edgeKeys);
+            addEdges(*object, object->RelatedAssumptions, ESemanticGraphEdgeKindV2::Assumption, edgeKeys);
+            addEdges(*object, object->LocalOverrides, ESemanticGraphEdgeKindV2::Override, edgeKeys);
+        }
+
+        return projection;
     }
 
     namespace Detail {

@@ -754,19 +754,8 @@ namespace {
         return sanitized;
     }
 
-    [[nodiscard]] auto SemanticGraphEdgeKindToString(
-        const Slab::Graphics::Plot2D::V2::FModelSemanticGraphArtistV2::EEdgeKind kind) -> const char * {
-        using EEdgeKind = Slab::Graphics::Plot2D::V2::FModelSemanticGraphArtistV2::EEdgeKind;
-        switch (kind) {
-            case EEdgeKind::Dependency: return "Dependency";
-            case EEdgeKind::AmbientDependency: return "AmbientDependency";
-            case EEdgeKind::SourceLink: return "SourceLink";
-            case EEdgeKind::TargetLink: return "TargetLink";
-            case EEdgeKind::Assumption: return "Assumption";
-            case EEdgeKind::Override: return "Override";
-        }
-
-        return "Dependency";
+    [[nodiscard]] auto SemanticGraphEdgeKindToString(const ModelV2::ESemanticGraphEdgeKindV2 kind) -> const char * {
+        return ModelV2::ToString(kind);
     }
 
     auto JsonWriteSemanticObjectRefV2(const ModelV2::FSemanticObjectRefV2 &ref) -> json::value {
@@ -1042,19 +1031,15 @@ auto FLabV2WindowManager::ExportModelSemanticGraphToFile(const Slab::Core::Model
     const auto clampedHops = std::clamp(hops, 1, 4);
     ModelSemanticGraphExportHops = clampedHops;
 
+    const auto projection =
+        Slab::Core::Model::V2::BuildModelSemanticGraphProjectionV2(overview, SelectedModelSemanticObject, clampedHops);
+
     auto exportArtist = Slab::New<FModelSemanticGraphArtistV2>();
-    exportArtist->SetNeighborhoodHops(clampedHops);
-    exportArtist->SetSemanticOverview(overview, SelectedModelSemanticObject);
+    exportArtist->SetSemanticGraphProjection(projection);
 
     const auto &nodes = exportArtist->GetNodes();
-    const auto &edges = exportArtist->GetEdges();
-
-    Slab::Core::Model::V2::FSemanticObjectRefV2 centeredObject;
-    if (!nodes.empty()) {
-        centeredObject = nodes.front().Ref;
-    } else if (SelectedModelSemanticObject.IsValid() && overview.FindObject(SelectedModelSemanticObject) != nullptr) {
-        centeredObject = SelectedModelSemanticObject;
-    }
+    const auto &edges = projection.Edges;
+    const auto centeredObject = projection.CenteredObject;
 
     const auto centeredKind = centeredObject.IsValid()
         ? Slab::Str(Slab::Core::Model::V2::ToString(centeredObject.Kind))
@@ -1071,7 +1056,7 @@ auto FLabV2WindowManager::ExportModelSemanticGraphToFile(const Slab::Core::Model
 
     namespace json = crude_json;
     json::value root(json::object{});
-    root["schema_version"] = 1.0;
+    root["schema_version"] = 2.0;
     root["workspace"] = "Model";
     root["surface"] = "SemanticGraph";
     root["generated_by"] = "StudioSlab/LabV2";
@@ -1094,10 +1079,35 @@ auto FLabV2WindowManager::ExportModelSemanticGraphToFile(const Slab::Core::Model
     selectionValue["uses_draft_preview"] = bUsesDraftPreview;
     root["selection"] = std::move(selectionValue);
 
+    const auto canonicalNodeCount = static_cast<std::size_t>(std::count_if(
+        projection.Nodes.begin(),
+        projection.Nodes.end(),
+        [](const auto &node) {
+            return node.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Canonical;
+        }));
+    const auto overlayNodeCount = projection.Nodes.size() - canonicalNodeCount;
+    const auto canonicalEdgeCount = static_cast<std::size_t>(std::count_if(
+        projection.Edges.begin(),
+        projection.Edges.end(),
+        [](const auto &edge) {
+            return edge.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Canonical;
+        }));
+    const auto overlayEdgeCount = projection.Edges.size() - canonicalEdgeCount;
+
+    json::value graphSchemeValue(json::object{});
+    graphSchemeValue["source"] = "ModelSemanticGraphProjectionV2";
+    graphSchemeValue["projection_kind"] = "SelectedObjectNeighborhood";
+    graphSchemeValue["layered"] = true;
+    graphSchemeValue["canonical_node_count"] = static_cast<double>(canonicalNodeCount);
+    graphSchemeValue["overlay_node_count"] = static_cast<double>(overlayNodeCount);
+    graphSchemeValue["canonical_edge_count"] = static_cast<double>(canonicalEdgeCount);
+    graphSchemeValue["overlay_edge_count"] = static_cast<double>(overlayEdgeCount);
+    root["graph_scheme"] = std::move(graphSchemeValue);
+
     json::value projectionValue(json::object{});
     projectionValue["neighborhood_hops"] = static_cast<double>(clampedHops);
-    projectionValue["node_count"] = static_cast<double>(nodes.size());
-    projectionValue["edge_count"] = static_cast<double>(edges.size());
+    projectionValue["node_count"] = static_cast<double>(projection.Nodes.size());
+    projectionValue["edge_count"] = static_cast<double>(projection.Edges.size());
     projectionValue["export_path"] = outputPath.string();
     root["projection"] = std::move(projectionValue);
 
@@ -1133,7 +1143,7 @@ auto FLabV2WindowManager::ExportModelSemanticGraphToFile(const Slab::Core::Model
     root["summary"] = std::move(summaryValue);
 
     std::set<Slab::Str> includedNodeIds;
-    for (const auto &node : nodes) {
+    for (const auto &node : projection.Nodes) {
         includedNodeIds.insert(node.NodeId);
     }
 
@@ -1149,6 +1159,8 @@ auto FLabV2WindowManager::ExportModelSemanticGraphToFile(const Slab::Core::Model
         nodeValue["kind_label"] = node.KindLabel;
         nodeValue["canonical_notation"] = node.CanonicalNotation;
         nodeValue["description"] = node.Description;
+        nodeValue["layer_role"] = ModelV2::ToString(node.LayerRole);
+        nodeValue["overlay_kind"] = ModelV2::ToString(node.OverlayKind);
         nodeValue["readonly"] = node.bReadonly;
         nodeValue["ambient"] = node.bAmbient;
         nodeValue["conflict"] = node.bConflict;
@@ -1208,6 +1220,8 @@ auto FLabV2WindowManager::ExportModelSemanticGraphToFile(const Slab::Core::Model
         edgeValue["kind"] = SemanticGraphEdgeKindToString(edge.Kind);
         edgeValue["label"] = edge.Label;
         edgeValue["detail"] = edge.Detail;
+        edgeValue["layer_role"] = ModelV2::ToString(edge.LayerRole);
+        edgeValue["overlay_kind"] = ModelV2::ToString(edge.OverlayKind);
         edgeValue["ambient"] = edge.bAmbient;
         edgeValue["conflict"] = edge.bConflict;
         edgeValue["readonly"] = edge.bReadonly;

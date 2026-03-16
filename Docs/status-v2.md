@@ -3,8 +3,8 @@
 ## Snapshot Metadata
 
 - Snapshot date: `2026-03-14`
-- Last implementation update: `2026-03-14` (Model semantic graph + Plot V2 shared host extraction + ODE realization `RZ-00..03`)
-- Last architecture-doc update: `2026-03-14` (plot migration docs + `RZ-03` handoff retained)
+- Last implementation update: `2026-03-15` (Model semantic graph layering shared by plot + JSON export)
+- Last architecture-doc update: `2026-03-15` (model semantic graph layering/index docs)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
 - Build-target sanity check date: `2026-03-14` (`StudioSlab` and `testsuite` build pass in `cmake-build-debug`)
 
@@ -226,6 +226,17 @@
   - harmonic oscillator extracts cleanly
   - damped harmonic oscillator extracts cleanly
   - Klein-Gordon remains a blocked negative case for the ODE-first descent
+
+## Recent Updates (`2026-03-15`, implementation)
+
+- Model semantic graph layering baseline landed in code:
+  - shared `Model V2` semantic graph projection now distinguishes canonical versus overlay nodes/edges
+  - Plot V2 semantic graph artist now renders that shared projection instead of rebuilding graph semantics locally
+  - Model semantic graph JSON export now serializes the same layered projection, including per-node/per-edge layer metadata
+- Layering contract is now aligned across implementation docs:
+  - `Docs/index-model-semantic-graph.md`
+  - `Docs/model-semantic-graph-layering.md`
+  - `Docs/model-v2-semantic-environment.md`
 
 ## Reflection Working-Memory Caveats (Current)
 

@@ -552,10 +552,58 @@ TEST_CASE("Plot2D V2 dispatches semantic graph keyboard controls to artists", "[
     CHECK_FALSE(artist->GetShowLabels());
 
     REQUIRE(window.DispatchKeyboardEvent(FPlotKeyboardEventV2{
+        .Key = Slab::Graphics::Key_c,
+        .State = Slab::Graphics::Press
+    }));
+    CHECK_FALSE(artist->GetShowCanonicalLayer());
+
+    REQUIRE(window.DispatchKeyboardEvent(FPlotKeyboardEventV2{
+        .Key = Slab::Graphics::Key_o,
+        .State = Slab::Graphics::Press
+    }));
+    CHECK_FALSE(artist->GetShowOverlayLayer());
+
+    REQUIRE(window.DispatchKeyboardEvent(FPlotKeyboardEventV2{
         .Key = Slab::Graphics::Key_MINUS,
         .State = Slab::Graphics::Press
     }));
     CHECK(artist->GetNeighborhoodHops() == 2);
+}
+
+TEST_CASE("Plot2D V2 semantic graph preserves layered model projection roles", "[Plot2DV2][ModelGraph]") {
+    const auto overview = ModelV2::BuildModelSemanticOverviewV2(ModelV2::BuildKleinGordonModelV2());
+    auto artist = New<FModelSemanticGraphArtistV2>();
+    artist->SetSemanticOverview(overview, ModelV2::MakeRelationObjectRefV2("relation.klein_gordon.equation"));
+
+    REQUIRE_FALSE(artist->GetNodes().empty());
+    REQUIRE_FALSE(artist->GetEdges().empty());
+
+    CHECK(std::any_of(artist->GetNodes().begin(), artist->GetNodes().end(), [](const auto &node) {
+        return node.Ref.Kind == ModelV2::ESemanticObjectKindV2::Assumption &&
+            node.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Overlay &&
+            node.OverlayKind == ModelV2::ESemanticGraphOverlayKindV2::Assumption;
+    }));
+    CHECK(std::any_of(artist->GetEdges().begin(), artist->GetEdges().end(), [](const auto &edge) {
+        return edge.Kind == ModelV2::ESemanticGraphEdgeKindV2::Dependency &&
+            edge.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Canonical;
+    }));
+    CHECK(std::any_of(artist->GetEdges().begin(), artist->GetEdges().end(), [](const auto &edge) {
+        return edge.Kind == ModelV2::ESemanticGraphEdgeKindV2::SourceLink &&
+            edge.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Overlay &&
+            edge.OverlayKind == ModelV2::ESemanticGraphOverlayKindV2::Provenance;
+    }));
+
+    artist->SetShowOverlayLayer(false);
+    CHECK(std::none_of(artist->GetNodes().begin(), artist->GetNodes().end(), [](const auto &node) {
+        return node.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Overlay;
+    }));
+    CHECK(std::none_of(artist->GetEdges().begin(), artist->GetEdges().end(), [](const auto &edge) {
+        return edge.LayerRole == ModelV2::ESemanticGraphLayerRoleV2::Overlay;
+    }));
+
+    artist->SetShowCanonicalLayer(false);
+    CHECK(artist->GetNodes().empty());
+    CHECK(artist->GetEdges().empty());
 }
 
 TEST_CASE("Plot2D V2 semantic graph stays drawable when switching seeded model overviews", "[Plot2DV2][ModelGraph]") {
