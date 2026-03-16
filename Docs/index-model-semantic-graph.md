@@ -13,18 +13,20 @@
 1. `Docs/status-v2.md`
 2. `Docs/model-v2-semantic-environment.md`
 3. `Docs/model-semantic-graph-layering.md`
-4. one boundary doc:
+4. `Docs/model-semantic-levels.md`
+5. one boundary doc:
    - `Docs/graph-onthology.md`
    - `Docs/ode-realization-descent-plan.md`
-5. if touching LabV2 UI:
+6. if touching LabV2 UI:
    - `Docs/index-labv2.md`
-6. if touching runtime/realization:
+7. if touching runtime/realization:
    - `Docs/index-v2-runtime.md`
 
 ## Core Rules
 
 - treat the plotted/exported graph as a projection, not as the contract
 - keep canonical ontology separate from overlays, provenance, and debug structure
+- keep `kind`, `carrier/level`, and `representation` distinct when reviewing semantic mismatches
 - realization consumes only the canonical typed subgraph
 - keep context small: read one ontology doc and one realization doc, not the full docs tree
 
@@ -32,6 +34,7 @@
 
 - `Docs/model-v2-semantic-environment.md`
 - `Docs/model-semantic-graph-layering.md`
+- `Docs/model-semantic-levels.md`
 - `Docs/graph-onthology.md`
 - `Docs/ode-realization-descent-plan.md`
 

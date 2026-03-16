@@ -16,8 +16,9 @@ Use this when:
 1. `Docs/status-v2.md`
 2. `Docs/model-v2-semantic-environment.md`
 3. this file
-4. `Docs/graph-onthology.md`
-5. `Docs/ode-realization-descent-plan.md`
+4. `Docs/model-semantic-levels.md`
+5. `Docs/graph-onthology.md`
+6. `Docs/ode-realization-descent-plan.md`
 
 ## Working Decision
 
@@ -63,6 +64,7 @@ Current minimal edge seed:
 Invariants:
 - every canonical node and edge must have explicit semantic meaning
 - canonical identity must be stable across plot, JSON, and realization projections
+- canonical typing should keep `Kind`, `Carrier/Level`, and `Representation` distinct; see `Docs/model-semantic-levels.md`
 - hop limits, layout, selection, and rendering choices are not part of the canonical graph
 - the canonical graph should be assumption-closed before realization consumes it
 

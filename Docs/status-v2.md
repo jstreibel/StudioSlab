@@ -238,6 +238,16 @@
   - `Docs/model-semantic-graph-layering.md`
   - `Docs/model-v2-semantic-environment.md`
 
+## Recent Updates (`2026-03-16`, implementation)
+
+- Harmonic-oscillator energy-role mismatch was narrowed to the intended ontology boundary:
+  - resolved declared `Coordinate`, `StateVariable`, `Field`, and `ObservableSymbol` meanings are now preserved when local algebraic syntax alone would have flattened them to scalar-like roles
+  - this clears the false `obs.energy` mismatch in the harmonic-oscillator semantic reports used by the Model graph/JSON path
+- Semantic-level guidance is now documented in a minimal indexed form:
+  - `Docs/index-model-semantic-graph.md`
+  - `Docs/model-semantic-graph-layering.md`
+  - `Docs/model-semantic-levels.md`
+
 ## Reflection Working-Memory Caveats (Current)
 
 - Schemes `Blueprint Graph` is a visualization/navigation surface, not yet a full graph-execution editor.

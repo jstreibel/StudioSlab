@@ -66,6 +66,7 @@ Use `Docs/model-semantic-graph-layering.md` when deciding what belongs in the ca
 Current rule:
 - the plotted/exported semantic graph may include both canonical model semantics and overlay data
 - assumptions, provenance links, and draft/debug links are overlays, not part of the canonical ontology
+- declared semantic kind and carrier/level are not the same axis; use `Docs/model-semantic-levels.md` before changing inference or seeds to fix a mismatch
 - Plot V2 and JSON exports are projections of model semantics; they are not the realization contract
 - realization consumes canonical semantic data, not arbitrary plotted neighborhood topology
 - current Plot V2 rendering and JSON export both consume the same layered Model-side semantic graph projection
