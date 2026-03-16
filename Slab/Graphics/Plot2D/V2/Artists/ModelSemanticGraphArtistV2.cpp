@@ -276,6 +276,37 @@ namespace Slab::Graphics::Plot2D::V2 {
             return line;
         }
 
+        auto AppendDiagnosticSummaryLines(const Vector<ModelV2::FSemanticDiagnosticV2> &diagnostics,
+                                          Vector<Str> &lines,
+                                          const std::size_t maxMessages = 3) -> void {
+            if (diagnostics.empty()) return;
+
+            std::size_t errorCount = 0;
+            std::size_t warningCount = 0;
+            for (const auto &diagnostic : diagnostics) {
+                if (diagnostic.Severity == ModelV2::EValidationSeverityV2::Error) ++errorCount;
+                if (diagnostic.Severity == ModelV2::EValidationSeverityV2::Warning) ++warningCount;
+            }
+
+            if (errorCount > 0 && warningCount > 0) {
+                lines.push_back("Diagnostics: " + ToStr(errorCount) + " errors, " + ToStr(warningCount) + " warnings");
+            } else if (errorCount > 0) {
+                lines.push_back("Errors: " + ToStr(errorCount));
+            } else {
+                lines.push_back("Warnings: " + ToStr(warningCount));
+            }
+
+            const auto visibleCount = std::min(maxMessages, diagnostics.size());
+            for (std::size_t i = 0; i < visibleCount; ++i) {
+                const auto &diagnostic = diagnostics[i];
+                lines.push_back(Str(ModelV2::ToString(diagnostic.Severity)) + ": " + diagnostic.Message);
+            }
+
+            if (diagnostics.size() > visibleCount) {
+                lines.push_back("+" + ToStr(diagnostics.size() - visibleCount) + " more diagnostics");
+            }
+        }
+
         [[nodiscard]] auto DistanceToSegmentSquaredPixels(const FPoint2D &plotPosition,
                                                           const FPoint2D &a,
                                                           const FPoint2D &b,
@@ -492,6 +523,7 @@ namespace Slab::Graphics::Plot2D::V2 {
             node.bConflict = graphNode.bConflict;
             node.bLocalOverride = graphNode.bLocalOverride;
             node.HopDistance = graphNode.HopDistance;
+            node.Diagnostics = graphNode.Diagnostics;
             node.BasePointSize = BasePointSizeForKind(graphNode.Kind);
 
             NodeIndexById[node.NodeId] = Nodes.size();
@@ -904,6 +936,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                 if (!selectedNode->CanonicalNotation.empty()) lines.push_back(selectedNode->CanonicalNotation);
                 else if (!selectedNode->Description.empty()) lines.push_back(selectedNode->Description);
                 lines.push_back("Neighborhood hops: " + ToStr(NeighborhoodHops));
+                AppendDiagnosticSummaryLines(selectedNode->Diagnostics, lines);
                 bottomY = AddHudCardFromBottomLeft(
                     drawList,
                     frame,
@@ -922,6 +955,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                     if (!hoveredNode->CanonicalNotation.empty()) lines.push_back(hoveredNode->CanonicalNotation);
                     else if (!hoveredNode->Description.empty()) lines.push_back(hoveredNode->Description);
                     if (!hoveredNode->Subtitle.empty()) lines.push_back(hoveredNode->Subtitle);
+                    AppendDiagnosticSummaryLines(hoveredNode->Diagnostics, lines);
                     bottomY = AddHudCardFromBottomLeft(
                         drawList,
                         frame,

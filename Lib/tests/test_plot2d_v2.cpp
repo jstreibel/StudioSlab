@@ -80,6 +80,16 @@ namespace {
         return count;
     }
 
+    auto HasTextContaining(const FPlotDrawListV2 &drawList, const Str &needle) -> bool {
+        for (const auto &command : drawList.GetCommands()) {
+            const auto *text = std::get_if<FTextCommandV2>(&command);
+            if (text == nullptr) continue;
+            if (text->Text.find(needle) != Str::npos) return true;
+        }
+
+        return false;
+    }
+
 } // namespace
 
 TEST_CASE("Plot2D V2 emits draw commands through backend abstraction", "[Plot2DV2]") {
@@ -687,4 +697,18 @@ TEST_CASE("Plot2D V2 semantic graph emits screen-space HUD for hovered edges", "
 
     CHECK(maxHudWidth >= 300.0);
     CHECK(maxHudHeight >= 80.0);
+}
+
+TEST_CASE("Plot2D V2 semantic graph surfaces node diagnostics in HUD cards", "[Plot2DV2][ModelGraph]") {
+    const auto overview = ModelV2::BuildModelSemanticOverviewV2(ModelV2::BuildHarmonicOscillatorModelV2());
+    auto artist = New<FModelSemanticGraphArtistV2>();
+    artist->SetSemanticOverview(overview, ModelV2::MakeDefinitionObjectRefV2("obs.energy"));
+
+    FPlot2DWindowV2 window("Semantic Graph Diagnostic HUD Test", {-12.0, 12.0, -10.0, 10.0}, {0, 800, 0, 600});
+    window.AddArtist(artist);
+    REQUIRE(window.FitRegionToArtists(0.05));
+
+    const auto drawList = window.BuildDrawList();
+    CHECK(HasTextContaining(drawList, "Warnings: 1"));
+    CHECK(HasTextContaining(drawList, "ObservableSymbol"));
 }

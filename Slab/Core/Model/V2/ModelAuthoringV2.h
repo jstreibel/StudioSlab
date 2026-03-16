@@ -269,6 +269,7 @@ namespace Slab::Core::Model::V2 {
         bool bConflict = false;
         bool bLocalOverride = false;
         int HopDistance = 0;
+        Vector<FSemanticDiagnosticV2> Diagnostics;
     };
 
     struct FSemanticGraphEdgeV2 {
@@ -2466,6 +2467,10 @@ namespace Slab::Core::Model::V2 {
             node.bConflict = object.bConflict;
             node.bLocalOverride = object.bLocalOverride;
             node.HopDistance = hopByKey.at(key);
+            node.Diagnostics.reserve(object.Diagnostics.size());
+            for (const auto &diagnosticNavigation : object.Diagnostics) {
+                node.Diagnostics.push_back(diagnosticNavigation.Diagnostic);
+            }
             projection.Nodes.push_back(std::move(node));
         }
 

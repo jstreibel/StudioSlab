@@ -34,6 +34,7 @@ namespace Slab::Graphics::Plot2D::V2 {
             bool bConflict = false;
             bool bLocalOverride = false;
             int HopDistance = 0;
+            Vector<Slab::Core::Model::V2::FSemanticDiagnosticV2> Diagnostics;
             FPoint2D Position{};
             DevFloat BasePointSize = 11.0;
         };
