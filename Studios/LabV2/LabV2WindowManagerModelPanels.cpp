@@ -1,13 +1,18 @@
 #include "LabV2WindowManager.h"
 
 #include "Core/Model/V2/ModelRealizationV2.h"
+#include "Core/Model/V2/ModelRealizationRuntimeV2.h"
 #include "Core/Model/V2/ModelSeedsV2.h"
 #include "Graphics/Typesetting/ImGuiTypesetting.h"
+#include "SimulationManagerV2.h"
 #include "imgui.h"
 
 #include <algorithm>
+#include <cerrno>
 #include <cfloat>
+#include <cmath>
 #include <cstdio>
+#include <cstdlib>
 
 namespace {
 
@@ -58,6 +63,102 @@ namespace {
                                const ImGuiHoveredFlags flags = ImGuiHoveredFlags_DelayShort) -> void {
         if (tooltip.empty()) return;
         AddTooltipForLastItem(tooltip.c_str(), flags);
+    }
+
+    auto DragUIntBig(const char *label,
+                     Slab::UIntBig &value,
+                     const Slab::UIntBig minVal,
+                     const Slab::UIntBig maxVal,
+                     const float speed = 1.0f,
+                     const char *tooltip = nullptr) -> bool {
+        auto tmp = static_cast<unsigned long long>(value);
+        const bool changed = ImGui::DragScalar(label, ImGuiDataType_U64, &tmp, speed, nullptr, nullptr);
+        AddTooltipForLastItem(tooltip);
+        if (changed) {
+            value = std::clamp<Slab::UIntBig>(
+                static_cast<Slab::UIntBig>(tmp),
+                minVal,
+                maxVal);
+        }
+        return changed;
+    }
+
+    auto DragDevFloat(const char *label,
+                      Slab::DevFloat &value,
+                      const double speed,
+                      const double minVal,
+                      const double maxVal,
+                      const char *format = "%.6g",
+                      const char *tooltip = nullptr) -> bool {
+        const bool changed = ImGui::DragScalar(label, ImGuiDataType_Double, &value, speed, &minVal, &maxVal, format);
+        AddTooltipForLastItem(tooltip);
+        return changed;
+    }
+
+    struct FScalarBindingDraftParseResultV2 {
+        bool bProvided = false;
+        bool bValid = false;
+        Slab::DevFloat Value = 0.0;
+        Slab::Str Message;
+    };
+
+    auto ParseScalarBindingDraftV2(const Slab::Str &draft) -> FScalarBindingDraftParseResultV2 {
+        FScalarBindingDraftParseResultV2 result;
+        const auto trimmed = ModelV2::TrimAsciiCopyV2(draft);
+        result.bProvided = !trimmed.empty();
+        if (!result.bProvided) {
+            result.Message = "missing";
+            return result;
+        }
+
+        errno = 0;
+        char *end = nullptr;
+        const auto parsedValue = std::strtod(trimmed.c_str(), &end);
+        if (end == trimmed.c_str() || end == nullptr || *end != '\0' || errno == ERANGE || !std::isfinite(parsedValue)) {
+            result.Message = "invalid scalar literal";
+            return result;
+        }
+
+        result.bValid = true;
+        result.Value = static_cast<Slab::DevFloat>(parsedValue);
+        result.Message = "ready";
+        return result;
+    }
+
+    auto IsOscillatorFamilyModelV2(const ModelV2::FModelV2 &model) -> bool {
+        return model.ModelId == "model.harmonic_oscillator" ||
+            model.ModelId == "model.damped_harmonic_oscillator";
+    }
+
+    auto GetDefaultModelODERuntimeBindingDraftV2(const ModelV2::FModelV2 &model,
+                                                 const Slab::Str &definitionId) -> Slab::Str {
+        if (!IsOscillatorFamilyModelV2(model)) return {};
+        if (definitionId == "param.m") return "1";
+        if (definitionId == "param.k") return "1";
+        if (definitionId == "param.x0") return "1";
+        if (definitionId == "param.p0") return "0";
+        if (definitionId == "param.gamma") return "0.15";
+        return {};
+    }
+
+    auto FormatRuntimeScalarValueV2(const Slab::DevFloat value) -> Slab::Str {
+        char buffer[64];
+        std::snprintf(buffer, sizeof(buffer), "%.6g", value);
+        return buffer;
+    }
+
+    auto BuildRuntimeInitialStateSummaryV2(const ModelV2::FODEExplicitFirstOrderRuntimeSystemV2 &system) -> Slab::Str {
+        const auto &labels = system.GetStateDisplayLabels();
+        const auto &values = system.GetInitialStateValues();
+        if (labels.empty() || labels.size() != values.size()) return {};
+
+        Slab::Str summary;
+        for (std::size_t i = 0; i < labels.size(); ++i) {
+            if (!summary.empty()) summary += " | ";
+            summary += (labels[i].empty() ? system.GetStateDefinitionIds()[i] : labels[i]) + " = " +
+                FormatRuntimeScalarValueV2(values[i]);
+        }
+        return summary;
     }
 
     auto MakeMathRequest(const Slab::Str &latex, const float fontPixels) -> Typesetting::FTypesetRequest {
@@ -1425,11 +1526,11 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
     DrawSummaryLinkStrip("Observables", overview.Status.Observables, navigateToSemanticObject);
 
     ImGui::SeparatorText("Semantic Graph");
-    if (ImGui::Button("Open in Plots")) {
+    if (ImGui::Button("Open Graph")) {
         FocusModelSemanticGraphWindow();
     }
     AddTooltipForLastItem(
-        "Open the read-only semantic knowledge graph as a Plot2D V2 surface. "
+        "Open the read-only semantic knowledge graph as a Model workspace plot surface. "
         "Click nodes to reuse the current model selection; use [ and ] to change neighborhood radius, "
         "L to toggle labels, and F to fit the graph.");
     ImGui::SameLine();
@@ -1467,6 +1568,39 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
     }
 
     const auto odeDescriptor = BuildODERealizationDescriptorV2(model, &overview);
+    auto &odeRuntimeDraftState = ModelODERuntimeDraftStateByModelId[model.ModelId];
+    const auto runtimeRequiredBindings = CollectODEExplicitFirstOrderRequiredScalarBindingsV2(model, odeDescriptor);
+    for (const auto &binding : runtimeRequiredBindings) {
+        const auto [it, bInserted] =
+            odeRuntimeDraftState.ScalarBindingDraftByDefinitionId.try_emplace(binding.DefinitionId);
+        if (bInserted) {
+            it->second = GetDefaultModelODERuntimeBindingDraftV2(model, binding.DefinitionId);
+        }
+    }
+
+    std::map<Slab::Str, FScalarBindingDraftParseResultV2> runtimeBindingParseResults;
+    std::map<Slab::Str, Slab::DevFloat> parsedRuntimeBindingsByDefinitionId;
+    for (const auto &binding : runtimeRequiredBindings) {
+        const auto draftIt = odeRuntimeDraftState.ScalarBindingDraftByDefinitionId.find(binding.DefinitionId);
+        const auto parseResult = ParseScalarBindingDraftV2(
+            draftIt != odeRuntimeDraftState.ScalarBindingDraftByDefinitionId.end() ? draftIt->second : Slab::Str{});
+        runtimeBindingParseResults[binding.DefinitionId] = parseResult;
+        if (parseResult.bValid) {
+            parsedRuntimeBindingsByDefinitionId[binding.DefinitionId] = parseResult.Value;
+        }
+    }
+
+    ModelV2::FODEExplicitFirstOrderRuntimeBuildResultV2 odeRuntimePreview;
+    bool bHasODERuntimePreview = false;
+    if (odeDescriptor.IsReady()) {
+        ModelV2::FODEExplicitFirstOrderRuntimeConfigV2 runtimeConfig;
+        runtimeConfig.TimeStep = odeRuntimeDraftState.TimeStep;
+        runtimeConfig.MaxSteps = odeRuntimeDraftState.bOpenEnded ? std::nullopt : std::make_optional(odeRuntimeDraftState.MaxSteps);
+        runtimeConfig.ScalarBindingsByDefinitionId = parsedRuntimeBindingsByDefinitionId;
+        odeRuntimePreview = BuildODEExplicitFirstOrderRuntimeV2(model, odeDescriptor, runtimeConfig);
+        bHasODERuntimePreview = true;
+    }
+
     const auto realizationBadgeTint = odeDescriptor.IsReady()
         ? ImVec4(0.33f, 0.67f, 0.45f, 1.0f)
         : ImVec4(0.82f, 0.28f, 0.28f, 1.0f);
@@ -1556,6 +1690,148 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                 }
             }
             ImGui::PopID();
+        }
+    }
+
+    if (odeDescriptor.IsReady()) {
+        ImGui::SeparatorText("Numeric Runtime");
+        ImGui::TextDisabled(
+            "Lab-local scalar bindings for the descriptor-driven ODE runtime bridge. "
+            "These values are not written back into the symbolic model.");
+        AddTooltipForLastItem(
+            "Only scalar symbols referenced by the realized first-order equations and model-level initial state appear here. "
+            "The first launch path is headless and intentionally limited to oscillator-family seeds.");
+
+        DragDevFloat(
+            "dT##ModelODERuntime",
+            odeRuntimeDraftState.TimeStep,
+            0.0005,
+            1e-6,
+            10.0,
+            "%.6g",
+            "Integrator time step used by the explicit first-order runtime bridge.");
+        if (!odeRuntimeDraftState.bOpenEnded) {
+            DragUIntBig(
+                "Steps##ModelODERuntime",
+                odeRuntimeDraftState.MaxSteps,
+                Slab::UIntBig(1),
+                Slab::UIntBig(1ull << 40),
+                1.0f,
+                "Finite step budget for the launched numeric task.");
+        }
+        if (ImGui::Checkbox("Open-ended##ModelODERuntime", &odeRuntimeDraftState.bOpenEnded)) {
+            if (odeRuntimeDraftState.MaxSteps == 0) odeRuntimeDraftState.MaxSteps = 1024;
+        }
+        AddTooltipForLastItem("Run without a finite step limit until the task is aborted.");
+
+        if (runtimeRequiredBindings.empty()) {
+            ImGui::TextDisabled("Required scalar bindings: none");
+        } else {
+            ImGui::TextDisabled("Required scalar bindings:");
+            for (const auto &binding : runtimeRequiredBindings) {
+                auto &draft = odeRuntimeDraftState.ScalarBindingDraftByDefinitionId[binding.DefinitionId];
+                const auto parseResultIt = runtimeBindingParseResults.find(binding.DefinitionId);
+                const auto parseResult =
+                    parseResultIt != runtimeBindingParseResults.end()
+                        ? parseResultIt->second
+                        : FScalarBindingDraftParseResultV2{};
+
+                ImGui::PushID(binding.DefinitionId.c_str());
+                if (ImGui::SmallButton(binding.DisplayLabel.c_str())) {
+                    navigateToSemanticObject(MakeDefinitionObjectRefV2(binding.DefinitionId));
+                }
+                AddTooltipForLastItem(binding.CanonicalNotation);
+                ImGui::SameLine();
+                ImGui::TextDisabled("%s", binding.DefinitionId.c_str());
+                ImGui::SameLine();
+                ImGui::SetNextItemWidth(ImGui::GetFontSize() * 10.0f);
+                char bindingBuffer[128];
+                SetTextBufferFromString(draft, bindingBuffer, sizeof(bindingBuffer));
+                if (ImGui::InputTextWithHint("##ModelODERuntimeBinding", "numeric value", bindingBuffer, sizeof(bindingBuffer))) {
+                    draft = bindingBuffer;
+                }
+                ImGui::SameLine();
+                if (parseResult.bValid) {
+                    ImGui::TextDisabled("= %s", FormatRuntimeScalarValueV2(parseResult.Value).c_str());
+                } else {
+                    const auto tint = parseResult.bProvided
+                        ? ImVec4(0.86f, 0.55f, 0.22f, 1.0f)
+                        : ImVec4(0.82f, 0.28f, 0.28f, 1.0f);
+                    ImGui::TextColored(tint, "%s", parseResult.Message.c_str());
+                }
+                ImGui::PopID();
+            }
+        }
+
+        if (bHasODERuntimePreview && odeRuntimePreview.IsReady() && odeRuntimePreview.System != nullptr) {
+            ImGui::TextDisabled(
+                "Initial time: %s",
+                FormatRuntimeScalarValueV2(odeRuntimePreview.System->GetInitialTime()).c_str());
+            const auto initialStateSummary = BuildRuntimeInitialStateSummaryV2(*odeRuntimePreview.System);
+            if (!initialStateSummary.empty()) {
+                ImGui::TextDisabled("Initial state: %s", initialStateSummary.c_str());
+            }
+        }
+
+        const bool bOscillatorLaunchSupported = IsOscillatorFamilyModelV2(model);
+        if (!bOscillatorLaunchSupported) {
+            ImGui::TextDisabled("Run path: the first LabV2 launch path is currently limited to oscillator-family models.");
+        } else {
+            ImGui::TextDisabled("Run path: headless numeric task only (no dedicated monitor for this slice yet).");
+        }
+
+        const bool bCanLaunchODERuntime =
+            bOscillatorLaunchSupported &&
+            bHasODERuntimePreview &&
+            odeRuntimePreview.IsReady() &&
+            SimulationManager != nullptr;
+        ImGui::BeginDisabled(!bCanLaunchODERuntime);
+        if (ImGui::Button("Run (Headless)##ModelODERuntime")) {
+            try {
+                SimulationManager->LaunchRecipe(
+                    odeRuntimePreview.Recipe,
+                    "Model ODE - " + model.Name);
+                odeRuntimeDraftState.Status =
+                    "[Ok] Launched headless runtime task for '" + model.Name +
+                    "'. See Simulations -> Tasks for task state.";
+            } catch (const std::exception &e) {
+                odeRuntimeDraftState.Status =
+                    "[Error] Could not launch '" + model.Name + "': " + e.what();
+            }
+        }
+        ImGui::EndDisabled();
+        AddTooltipForLastItem(
+            "Launch the canonical model through the existing explicit first-order ODE runtime bridge. "
+            "This first path intentionally skips monitor/LiveData wiring.");
+
+        if (bHasODERuntimePreview && !odeRuntimePreview.Diagnostics.empty()) {
+            ImGui::TextDisabled("Runtime diagnostics:");
+            for (std::size_t i = 0; i < odeRuntimePreview.Diagnostics.size(); ++i) {
+                const auto &diagnostic = odeRuntimePreview.Diagnostics[i];
+                ImGui::PushID(static_cast<int>(i + 5000));
+                ImGui::PushStyleColor(
+                    ImGuiCol_Text,
+                    diagnostic.Severity == EValidationSeverityV2::Error
+                        ? ImVec4(0.82f, 0.28f, 0.28f, 1.0f)
+                        : ImVec4(0.86f, 0.55f, 0.22f, 1.0f));
+                ImGui::BulletText("%s", diagnostic.Message.c_str());
+                ImGui::PopStyleColor();
+
+                if (diagnostic.Source.has_value()) {
+                    ImGui::SameLine();
+                    if (ImGui::SmallButton("Jump##ModelODERuntimeDiagnostic")) {
+                        navigateToSemanticObject(*diagnostic.Source);
+                    }
+                }
+                ImGui::PopID();
+            }
+        }
+
+        if (!odeRuntimeDraftState.Status.empty()) {
+            const auto tint = odeRuntimeDraftState.Status.starts_with("[Ok]")
+                ? ImVec4(0.30f, 0.80f, 0.40f, 1.0f)
+                : ImVec4(0.90f, 0.30f, 0.30f, 1.0f);
+            ImGui::TextColored(tint, "%s", odeRuntimeDraftState.Status.c_str());
         }
     }
 

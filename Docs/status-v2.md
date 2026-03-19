@@ -2,11 +2,11 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-03-14`
-- Last implementation update: `2026-03-15` (Model semantic graph layering shared by plot + JSON export)
-- Last architecture-doc update: `2026-03-15` (model semantic graph layering/index docs)
+- Snapshot date: `2026-03-18`
+- Last implementation update: `2026-03-18` (Ontology workspace graph viewer and zoom-aware graph text pass)
+- Last architecture-doc update: `2026-03-18` (indexed ontology viewer docs)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
-- Build-target sanity check date: `2026-03-14` (`StudioSlab` and `testsuite` build pass in `cmake-build-debug`)
+- Build-target sanity check date: `2026-03-18` (`StudioSlab`, `testsuite`, `[ModelV2]`, and `[OntologyGraphV2]` pass in `cmake-build-debug`)
 
 ## Implemented Baseline
 
@@ -187,11 +187,13 @@
 ## Recent Updates (`2026-03-14`, implementation)
 
 - Model semantic graph surface landed:
-  - `LabV2` now opens a dedicated `Model Semantic Graph` plot window from the Model workspace summary surface
+  - `LabV2` now opens a dedicated `Model Semantic Graph` `Plot V2` surface from the Model workspace summary surface
+  - that graph surface now lives in the `Models` workspace, is visible by default, and docks directly below `Model Notation Editor`
   - the graph is projected from `FModelSemanticOverviewV2`
   - graph selection feeds back into shared Model workspace selection
   - hover HUD and edge inspection are available
   - graph interaction currently includes pan/zoom, click selection, neighborhood hops, label toggle, and fit-to-graph
+  - the `Plots` workspace no longer owns this semantic-graph surface
   - Model workspace can now export the selected-object-centered semantic graph neighborhood to JSON in the process current working directory (`pwd`) for offline inspection/sharing
   - export payload includes plotted nodes/edges plus per-node semantic metadata, diagnostics, and navigation-link groups
 - Plot V2 interaction baseline extended:
@@ -248,6 +250,49 @@
   - `Docs/model-semantic-graph-layering.md`
   - `Docs/model-semantic-levels.md`
 
+## Recent Updates (`2026-03-16`, implementation, ODE follow-up)
+
+- Model workspace ODE runtime follow-up landed:
+  - `Model Layer` now exposes a minimal lab-local numeric-binding surface for the scalar symbols required by the descriptor-driven ODE runtime bridge
+  - required binding order is now shared/tested through `CollectODEExplicitFirstOrderRequiredScalarBindingsV2(...)`
+  - binding defaults are seeded only for the current oscillator-family launch slice; values remain outside canonical `Model V2` semantics
+- First LabV2 launch path from `Model` into the runtime bridge landed:
+  - `SimulationManagerV2` now accepts an already-built `FSimulationRecipeV2` for last-mile task launch
+  - `Model Layer` can launch oscillator-family ODE-ready models through the existing `RZ-03` bridge as headless numeric tasks
+  - the new path is intentionally narrow: no dedicated monitor/live-data visualization path yet, and no PDE/field broadening
+
+## Recent Updates (`2026-03-18`, implementation, ontology graph viewer)
+
+- Split-file ontology graph inspection landed in StudioSlab:
+  - ontology resources are loaded from `Resources/Ontologies`
+  - supported document set:
+    - `studioslab-ontology.schema.json`
+    - `global-descent.ontology.json`
+    - one or more `*.study.json`
+  - loader/projection path lives in `Slab/Core/Ontology/V2/OntologyGraphV2.h`
+  - read-only Plot V2 rendering lives in `Slab/Graphics/Plot2D/V2/Artists/OntologyGraphArtistV2.*`
+- LabV2 now exposes a dedicated `Ontology` workspace:
+  - `Ontology Graph`
+  - `Ontology Layer`
+  - `Ontology Inspector`
+  - the ontology surface no longer rides inside the `Model` workspace
+- First ontology graph slice includes:
+  - bundle construction over schema/global/study documents
+  - soft validation and diagnostics
+  - deterministic layered layout
+  - selected-study projection over the persistent global ontology
+  - filters for scope, active region, blocked requirements, and realization/recipe/artifact path
+  - click/hover selection with provenance/raw-payload inspector data
+- Coverage and examples:
+  - harmonic oscillator readable ODE -> RK4 -> artifact path
+  - Klein-Gordon blocked requirements and reachable PDE realization path
+  - dedicated tests added in `Lib/tests/test_ontology_graph_v2.cpp`
+- Ontology graph text sizing/zoom follow-up landed:
+  - Plot V2 now honors `FTextCommandV2::FontScale` in the OpenGL backend
+  - ontology plot-space labels and badges scale with graph zoom
+  - ontology node measurement uses the same zoom-derived scale so boxes and labels stay coherent
+  - current implementation uses transformed glyph geometry; SDF/freetype-gl extension remains a later quality path if wider zoom ranges require it
+
 ## Reflection Working-Memory Caveats (Current)
 
 - Schemes `Blueprint Graph` is a visualization/navigation surface, not yet a full graph-execution editor.
@@ -286,9 +331,9 @@
   - `Docs/ode-realization-descent-plan.md`
 - original `RZ-00`..`RZ-03` ladder is now implemented
 - current recommendation:
-  - add one minimal launch path from an ODE-ready model into the new runtime bridge
-  - define the smallest authoring/config story for numeric scalar bindings required by the bridge
-  - keep the first launch path to oscillator-family ODEs
+  - keep the current model-driven launch path narrow and stable
+  - decide whether numeric bindings should remain lab-local or gain a model-owned authoring story
+  - add a dedicated monitor/live-data presentation only when there is a concrete ODE-runtime visualization target
   - keep PDE/field realization out of follow-up work
 
 ## Known Missing Pieces
@@ -301,8 +346,10 @@
 - User-authored base-vocabulary editing and richer semantic-environment provenance are not implemented
 - exact notation-span navigation from diagnostics/selection is not implemented
 - dedicated initial-condition authoring/persistence flow is not implemented
-- ODE-ready model launch path in `LabV2` is not implemented
 - model-owned numeric scalar binding/parameter authoring for the runtime bridge is not implemented
+- dedicated monitor/live-data visualization for model-driven ODE runtime runs is not implemented
+- ontology graph editing / JSON write-back is not implemented
+- multi-study ontology comparison is not implemented
 
 ## Conflict Rule
 

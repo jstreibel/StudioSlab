@@ -1,0 +1,271 @@
+{
+  "meta": {
+    "format": "studioslab-ontology-graph",
+    "version": "0.1.0",
+    "doc_kind": "study",
+    "title": "Klein-Gordon Study",
+    "description": "Combined model+study document for a scalar field / PDE example."
+  },
+  "ontology_ref": {
+    "path": "global-descent.ontology.json",
+    "version": "0.1.0"
+  },
+  "study": {
+    "id": "study:kg",
+    "title": "Klein-Gordon field",
+    "description": "Field/PDE example with regular-grid and finite-difference paths visible but blocked by missing commitments.",
+    "base_vocabulary": "relativistic_field_theory",
+    "notation_context": {
+      "preferred_source": "latex-like",
+      "field_symbol": "\\phi",
+      "operator_symbol": "\\Box"
+    }
+  },
+  "nodes": [
+    {
+      "id": "study:kg",
+      "kind": "Study",
+      "title": "Klein-Gordon field",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "description": "Worked example of field/PDE descent"
+      }
+    },
+    {
+      "id": "study:kg:spacetime",
+      "kind": "StudyObject",
+      "title": "Spacetime domain",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "provenance": "declared",
+        "typing_facet": "domain",
+        "role_facet": "spacetime"
+      }
+    },
+    {
+      "id": "study:kg:phi",
+      "kind": "StudyObject",
+      "title": "phi",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "latex": "\\phi",
+        "provenance": "declared",
+        "typing_facet": "field",
+        "domain": [
+          "study:kg:spacetime"
+        ],
+        "codomain": "ambient:RealNumbers",
+        "role_facet": "field"
+      }
+    },
+    {
+      "id": "study:kg:m",
+      "kind": "StudyObject",
+      "title": "m",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "latex": "m",
+        "provenance": "declared",
+        "typing_facet": "ambient:RealNumbers",
+        "role_facet": "scalar_parameter",
+        "semantic_facet": "mass"
+      }
+    },
+    {
+      "id": "study:kg:eq_motion",
+      "kind": "StudyObject",
+      "title": "Klein-Gordon equation",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "expression_latex": "\\Box \\phi + m^2 \\phi = 0",
+        "provenance": "declared",
+        "relation_kind": "equation"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e201",
+      "type": "declares",
+      "from": "study:kg",
+      "to": "study:kg:spacetime",
+      "properties": {}
+    },
+    {
+      "id": "e202",
+      "type": "declares",
+      "from": "study:kg",
+      "to": "study:kg:phi",
+      "properties": {}
+    },
+    {
+      "id": "e203",
+      "type": "declares",
+      "from": "study:kg",
+      "to": "study:kg:m",
+      "properties": {}
+    },
+    {
+      "id": "e204",
+      "type": "classifies_as",
+      "from": "study:kg:phi",
+      "to": "semantic:Field",
+      "properties": {
+        "confidence": 1.0,
+        "provenance": "declared"
+      }
+    },
+    {
+      "id": "e205",
+      "type": "classifies_as",
+      "from": "study:kg:m",
+      "to": "semantic:ScalarParameter",
+      "properties": {
+        "confidence": 1.0,
+        "provenance": "declared"
+      }
+    },
+    {
+      "id": "e206",
+      "type": "declares",
+      "from": "study:kg",
+      "to": "study:kg:eq_motion",
+      "properties": {}
+    },
+    {
+      "id": "e207",
+      "type": "constrains",
+      "from": "study:kg:eq_motion",
+      "to": "study:kg:phi",
+      "properties": {}
+    },
+    {
+      "id": "e208",
+      "type": "depends_on",
+      "from": "study:kg:eq_motion",
+      "to": "study:kg:m",
+      "properties": {}
+    },
+    {
+      "id": "e209",
+      "type": "acts_on",
+      "from": "ambient:DAlembertOperator",
+      "to": "study:kg:phi",
+      "properties": {}
+    },
+    {
+      "id": "e210",
+      "type": "classifies_as",
+      "from": "study:kg:eq_motion",
+      "to": "descent:FieldEquation",
+      "properties": {
+        "confidence": 0.98,
+        "provenance": "inferred_ontological"
+      }
+    },
+    {
+      "id": "e211",
+      "type": "activates",
+      "from": "study:kg",
+      "to": "descent:PDEFieldSystem",
+      "properties": {
+        "status": "active"
+      }
+    },
+    {
+      "id": "e212",
+      "type": "satisfies",
+      "from": "study:kg:spacetime",
+      "to": "requirement:SpatialDomain",
+      "properties": {
+        "status": "partial"
+      }
+    },
+    {
+      "id": "e213",
+      "type": "blocks",
+      "from": "study:kg",
+      "to": "requirement:BoundaryConditions",
+      "properties": {
+        "status": "blocked",
+        "reason": "not yet declared"
+      }
+    },
+    {
+      "id": "e214",
+      "type": "blocks",
+      "from": "study:kg",
+      "to": "requirement:MetricOrCoordinateSpecialization",
+      "properties": {
+        "status": "blocked",
+        "reason": "not yet specialized"
+      }
+    },
+    {
+      "id": "e215",
+      "type": "activates",
+      "from": "study:kg",
+      "to": "realization:RegularGrid",
+      "properties": {
+        "status": "reachable",
+        "condition": "after required commitments are satisfied"
+      }
+    },
+    {
+      "id": "e216",
+      "type": "activates",
+      "from": "study:kg",
+      "to": "realization:FiniteDifferenceDiscretization",
+      "properties": {
+        "status": "reachable",
+        "condition": "after grid path is selected"
+      }
+    },
+    {
+      "id": "e217",
+      "type": "activates",
+      "from": "study:kg",
+      "to": "artifact:FieldSnapshotSeries",
+      "properties": {
+        "status": "reachable",
+        "condition": "after realization and recipe are selected"
+      }
+    }
+  ],
+  "activation_summary": {
+    "active": [
+      "descent:PDEFieldSystem",
+      "descent:FieldEquation"
+    ],
+    "reachable": [
+      "realization:RegularGrid",
+      "realization:FiniteDifferenceDiscretization",
+      "artifact:FieldSnapshotSeries"
+    ],
+    "satisfied": [
+      "requirement:SpatialDomain"
+    ],
+    "blocked": [
+      "requirement:BoundaryConditions",
+      "requirement:MetricOrCoordinateSpecialization"
+    ],
+    "unresolved": []
+  },
+  "realization_frontier": {
+    "status": "blocked",
+    "next_targets": [
+      "realization:RegularGrid",
+      "realization:FiniteDifferenceDiscretization"
+    ],
+    "blocking_requirements": [
+      "requirement:BoundaryConditions",
+      "requirement:MetricOrCoordinateSpecialization"
+    ],
+    "notes": "The study reaches the PDE realization region but does not yet satisfy all commitments needed to select a concrete path."
+  }
+}

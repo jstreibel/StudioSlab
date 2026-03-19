@@ -1,9 +1,12 @@
 # Handoff: ODE Realization `RZ-03`
 
-## Status Note (`2026-03-14`)
+## Status Note (`2026-03-16`)
 
-- The core `RZ-03` runtime bridge is now implemented.
-- What remains is follow-up integration: numeric-binding authoring/configuration and one LabV2 launch path.
+- The core `RZ-03` runtime bridge is implemented.
+- The first follow-up integration slice is also implemented:
+  - minimal lab-local numeric-binding authoring in the Model workspace
+  - one headless LabV2 launch path from oscillator-family ODE-ready models into the runtime bridge
+- Remaining work is now beyond that first launch/config slice.
 
 ## Use This When
 
@@ -19,6 +22,8 @@ Already implemented:
 - `RZ-02`: explicit model-level initial conditions in `Slab/Core/Model/V2/ModelTypesV2.h`
 - `RZ-03`: descriptor-driven runtime bridge in `Slab/Core/Model/V2/ModelRealizationRuntimeV2.h`
 - LabV2 summary surface for ODE readiness and initial-state visibility
+- LabV2 Model workspace numeric-binding config surface for required scalar symbols
+- LabV2 headless `Run` path for oscillator-family ODE-ready models
 - plot-based semantic graph for model navigation in `LabV2`
 
 Validated examples:
@@ -36,7 +41,7 @@ Validated examples:
 
 ## Current Follow-Up Goal
 
-Keep the bridge narrow, but make it usable without hand-written test-only config.
+Keep the bridge narrow while moving beyond the first headless oscillator launch path.
 
 ## Runtime Landing Zone
 
@@ -59,9 +64,9 @@ Reference recipe pattern:
 ## Recommended Follow-Up Slice
 
 1. Keep the bridge descriptor-driven. Do not re-infer state/parameter roles in runtime code.
-2. Add the smallest authoring/config surface for numeric scalar bindings required by the bridge.
-3. Add one LabV2 launch path from an ODE-ready model into the new runtime builder.
-4. Keep the first launch path to oscillator-family models only.
+2. Keep numeric bindings lab-local until there is a clear model-owned numeric-parameter story.
+3. Add monitoring / live-data only if there is a concrete visualization target for the model-driven runtime.
+4. Broaden beyond oscillator-family models only after the current headless path is stable.
 
 ## Constraints
 
@@ -81,16 +86,17 @@ Do not:
 
 - `Model V2` still does not own concrete numeric parameter values.
 - The runtime bridge currently relies on an explicit scalar-binding map supplied at build time.
-- There is no LabV2 launch/config surface for those bindings yet.
+- The current LabV2 launch path is headless and oscillator-family only.
+- There is no dedicated monitor/live-data visualization path for model-driven ODE runs yet.
 
 ## Suggested Validation
 
 - keep `ModelV2` runtime tests for harmonic and damped oscillator passing
-- add one launch-path test or smoke path once LabV2 can invoke the bridge
+- keep the required-binding ordering stable and testable
 - keep Klein-Gordon blocked before launch
 
 ## Likely UI Follow-Up
 
 The next useful user-facing slice is:
-- one numeric-binding config story for the required scalar symbols
-- one minimal `Run` or `Open in Runtime` path from an ODE-ready model in LabV2
+- a clearer handoff from `Run (Headless)` into monitor/task inspection
+- a monitored visualization path once there is a concrete state/plot presentation for model-driven ODE runs

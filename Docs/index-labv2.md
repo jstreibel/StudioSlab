@@ -20,11 +20,14 @@
 4. For Model-tab semantic-environment work:
    - `Docs/index-model-semantic-graph.md`
    - `Docs/model-v2-semantic-environment.md`
-5. Active planning context:
+5. For split ontology workspace work:
+   - `Docs/index-ontology-v2.md`
+   - `Docs/ontology-graph-viewer-v2.md`
+6. Active planning context:
    - `Docs/v2-feature-backlog.md`
    - `Docs/graph-first-user-story-checklist.md`
    - `Docs/plot-v2-node-graph-plan.md`
-6. For Schemes/graph-surface semantics and mode boundaries:
+7. For Schemes/graph-surface semantics and mode boundaries:
    - `Docs/graph-onthology.md`
 
 ## Core Code Map
@@ -39,6 +42,7 @@
   - `Studios/LabV2/LabV2WindowManager.h`
   - `Studios/LabV2/LabV2WindowManager.cpp`
   - `Studios/LabV2/LabV2WindowManagerModelPanels.cpp`
+  - `Studios/LabV2/LabV2WindowManagerOntologyPanels.cpp`
   - `Studios/LabV2/LabV2WindowManagerSchemesPanels.cpp`
   - `Studios/LabV2/LabV2WindowManagerGraphPlayground.cpp`
   - `Studios/LabV2/LabV2WindowManagerGraphPlaygroundSerialization.cpp`
@@ -51,6 +55,7 @@
   - `Slab/Graphics/Plot2D/V2/Plot2DWindowHostV2.h`
   - `Slab/Graphics/Plot2D/V2/Artists/R2SectionArtistV2.h`
   - `Slab/Graphics/Plot2D/V2/Artists/ModelSemanticGraphArtistV2.h`
+  - `Slab/Graphics/Plot2D/V2/Artists/OntologyGraphArtistV2.h`
   - `Docs/Plot2D-V2-Scheme.md`
   - `Docs/plot2d-v2-migration-plan.md`
   - `Docs/plot-v2-node-graph-plan.md`
@@ -81,6 +86,13 @@
   - `Slab/Core/Model/V2/ModelRealizationV2.h`
   - `Slab/Core/Model/V2/ModelSeedsV2.h`
   - `Lib/tests/test_model_v2.cpp`
+- Split ontology viewer:
+  - `Docs/index-ontology-v2.md`
+  - `Docs/ontology-graph-viewer-v2.md`
+  - `Slab/Core/Ontology/V2/OntologyGraphV2.h`
+  - `Studios/LabV2/LabV2WindowManagerOntologyPanels.cpp`
+  - `Resources/Ontologies/*.json`
+  - `Lib/tests/test_ontology_graph_v2.cpp`
 
 ## Change Patterns
 
@@ -106,19 +118,27 @@
 - Simulation launcher labels should avoid `V2` prefixing and model-specific clutter where a generic control label is sufficient.
 - In the Model workspace, semantic concerns are split into dockable windows instead of one monolithic panel.
 - The Model workspace visibility toggle labeled `Summary` maps to the panel titled `Model Layer`.
-- `Model Layer` owns the high-level semantic summary, the `Semantic Graph -> Open in Plots` entry point, and the ODE realization readiness summary.
+- `Model Layer` owns the high-level semantic summary, the `Semantic Graph -> Open Graph` entry point, and the ODE realization readiness summary.
 - The Model window order should remain conceptually stable:
   - `Vocabulary`
   - `Definitions`
   - `Relations`
-  - `Notation Editor`
+  - `Notation Editor` (top-middle by default)
+  - `Semantic Graph` (visible by default, directly below the editor)
   - `Assumptions`
   - `Inspector`
 - In the Model workspace, `Base Vocabulary` is ambient/readonly and full object details belong in `Model Inspector`, not repeated in catalog panes.
-- The `Model Semantic Graph` plot window is a read-only navigation surface tied to shared model selection.
+- The `Model Semantic Graph` `Plot V2` surface lives in the `Models` workspace, is visible by default, docks directly below `Model Notation Editor`, and remains a read-only navigation surface tied to shared model selection.
+- The `Ontology` workspace is separate from `Model` and owns:
+  - `Ontology Graph`
+  - `Ontology Layer`
+  - `Ontology Inspector`
+- The ontology workspace is read-only and is driven from `Resources/Ontologies`, not from ad hoc graph edits.
+- In the ontology workspace, global ontology structure and study-local authored/state nodes must remain visually distinguishable.
 - Plot V2 controls stay viewport-attached in the host layer; the scene layer should not absorb ImGui toolbar/detail logic.
 - Plot V2 artists that draw screen-space HUDs should anchor through `FPlotFrameContextV2::HudLayout`, not hardcode viewport corners.
 - Plot V2 screen-space HUDs should size from `FPlotFrameContextV2::TextMetrics`, not from artist-local pixel constants.
+- Plot-space graph labels may scale with zoom when the artist opts in; screen-space HUD text must remain stable.
 - Artist visibility/z-order edits should work from V2 plot host controls without re-coupling artists to the renderer.
 - New model content creation is transactional:
   - preview first
@@ -132,6 +152,7 @@
 - Runtime smoke:
   - `./Build/bin/StudioSlab`
   - `./Build/bin/testsuite "[ModelV2]"`
+  - `./Build/bin/testsuite "[OntologyGraphV2]"`
   - `./Build/bin/testsuite "[Plot2DV2]"`
 - If changing ImGui/layout behavior:
   - `Scripts/imgui-runtime-smoke.sh`

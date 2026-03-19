@@ -20,6 +20,7 @@
 ### Routers / Entry Points
 
 - `Docs/index.md`
+- `Docs/index-ontology-v2.md`
 - `Docs/index-model-semantic-graph.md`
 - `Docs/index-v2-runtime.md`
 - `Docs/index-labv2.md`

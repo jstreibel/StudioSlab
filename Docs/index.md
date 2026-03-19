@@ -22,6 +22,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 
 - Docs taxonomy / what kind of doc to update: `Docs/index-docs-structure.md`
 - Resume an in-progress slice quickly: `Docs/index-handoffs.md`
+- Split-file ontology graph viewer / `Resources/Ontologies`: `Docs/index-ontology-v2.md`
 - Model semantic graph / ontology / realization boundary: `Docs/index-model-semantic-graph.md`
 - Runtime/data/control implementation: `Docs/index-v2-runtime.md`
 - Reflection/interfaces/operations migration: `Docs/index-reflection-v2.md`
@@ -50,6 +51,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 - V2 planning/slices: `Docs/v2-feature-backlog.md`, `Docs/v2-model-coverage-matrix.md`, `Docs/live-control-v2-spec.md`, `Docs/live-parameters-v2-slice-scope.md`, `Docs/kg-r2tor-v2-slice-scope.md`, `Docs/md-v2-slice-scope.md`, `Docs/functional-minimization-v2-slice-scope.md`
 - Model -> realization descent: `Docs/ode-realization-descent-plan.md`
 - Reflection: `Docs/index-reflection-v2.md`, `Docs/reflection-v2-decision-log.md`, `Docs/reflection-v2-contract.md`, `Docs/reflection-v2-migration-plan.md`, `Docs/reflection-v2-implementation.md`
+- Split ontology inspection: `Docs/index-ontology-v2.md`, `Docs/ontology-graph-viewer-v2.md`
 - Graph semantics and ontology direction: `Docs/index-model-semantic-graph.md`, `Docs/model-semantic-graph-layering.md`, `Docs/model-semantic-levels.md`, `Docs/graph-onthology.md`
 - Reflection catalog registry deep-dive: `Docs/index-reflection-catalog-registry-v2.md`, `Docs/reflection-catalog-registry-v2-overview.md`, `Docs/reflection-catalog-registry-v2-routing.md`, `Docs/reflection-catalog-registry-v2-source-wiring.md`
 - Plot2D reflection quick path: `Docs/plot2d-reflection-v2-quick.md`

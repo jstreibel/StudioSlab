@@ -35,10 +35,12 @@ Implemented already:
 - LabV2 visibility for readiness, selected relations, and initial state
 - descriptor-driven runtime bridge from the ODE descriptor into `FSimulationRecipeV2` + `FStepperSessionV2`
 - explicit numeric scalar bindings for parameters/initial symbols at runtime-build time
+- LabV2 Model workspace numeric-binding config surface for the bridge-required scalar symbols
+- first LabV2 launch path from oscillator-family ODE-ready models into the runtime bridge (headless task path)
 
 Still missing:
 - model-owned numeric scalar binding authoring/configuration
-- LabV2 launch path from an ODE-ready model into the runtime bridge
+- dedicated monitor/live-data path for the model-driven ODE runtime bridge
 
 Use `Docs/handoff-ode-realization-rz03.md` for the post-`RZ-03` follow-up.
 

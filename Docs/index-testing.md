@@ -25,6 +25,7 @@
 - `./Build/bin/SlabTests xy-monitor-smoke --seconds 5`
 - `./Build/bin/SlabTests ising-monitor-smoke --seconds 5`
 - `./Build/bin/testsuite "[ModelV2]"`
+- `./Build/bin/testsuite "[OntologyGraphV2]"`
 - `./Build/bin/testsuite "[Plot2DV2]"`
 
 ## WASM Smoke (Independent Sandbox)

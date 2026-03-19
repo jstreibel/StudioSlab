@@ -274,6 +274,12 @@ auto FSimulationManagerV2::DrawLauncherContents() -> void {
     DrawMetropolisSection();
 }
 
+auto FSimulationManagerV2::LaunchRecipe(
+    const Slab::TPointer<Slab::Math::Numerics::V2::FSimulationRecipeV2> &recipe,
+    const Slab::Str &taskNameHint) -> void {
+    LaunchNumericTask(recipe, CommonBatch, taskNameHint);
+}
+
 auto FSimulationManagerV2::DrawSPISection() -> void {
     if (!ImGui::CollapsingHeader("Stochastic Path Integral")) return;
 

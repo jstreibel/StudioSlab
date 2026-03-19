@@ -7,6 +7,7 @@ add_executable(testsuite
         test_model_v2.cpp
         test_numerics_characterization.cpp
         test_numerics_v2.cpp
+        test_ontology_graph_v2.cpp
         test_plot2d_v2.cpp
         test_plot2d_legacy_reflection_bridge.cpp
         test_reflection_semantics_v1.cpp

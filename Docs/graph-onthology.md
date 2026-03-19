@@ -1,6 +1,6 @@
 # StudioSlab Graph Ontology and Semantic Layer
 
-**Status:** Design direction with partial implementation baseline (`2026-03-06`)  
+**Status:** Design direction with partial implementation baseline (`2026-03-18`)  
 **Audience:** StudioSlab core devs (reflection/runtime/graph tooling)  
 **Motivation:** Build a coherent graph system that supports:
 - instantiable, reusable simulation setups (Template graphs),
@@ -24,6 +24,16 @@ Current LabV2 usage:
 - Schemes `Blueprint Graph` now builds node/edge/canvas view state from substrate documents.
 - Graph Playground `Semantic`, `Template`, `Runtime`, and `Routing` modes use substrate documents as source-of-truth.
 - Graph Playground mode canvases share substrate canvas behavior (pan/grid state) and a common substrate-based renderer path.
+
+Current ontology-inspection baseline:
+- split-file ontology viewer is implemented under `Resources/Ontologies`
+- loader/projection path lives in `Slab/Core/Ontology/V2/OntologyGraphV2.h`
+- LabV2 exposes a dedicated read-only `Ontology` workspace with:
+  - `Ontology Graph`
+  - `Ontology Layer`
+  - `Ontology Inspector`
+- current projection merges one selected study with the persistent global ontology
+- current layout is deterministic and read-only; it is not yet an ontology editor
 
 Not yet implemented from this ontology:
 - semantic operator execution compilation (`Template -> Runtime`)

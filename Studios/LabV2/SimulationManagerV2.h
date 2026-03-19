@@ -5,6 +5,7 @@
 #include "Graphics/Window/SlabWindow.h"
 #include "Math/Data/V2/LiveDataHubV2.h"
 #include "Math/Data/V2/LiveControlHubV2.h"
+#include "Math/Numerics/V2/Runtime/SimulationRecipeV2.h"
 
 #include "Studios/Common/Simulations/V2/SPISliceV2.h"
 #include "Studios/Common/Simulations/V2/KGR2toRBaselineSliceV2.h"
@@ -30,6 +31,8 @@ public:
 
     auto AddMenus(const Slab::Graphics::FPlatformWindow &platformWindow) -> void;
     auto DrawLauncherContents() -> void;
+    auto LaunchRecipe(const Slab::TPointer<Slab::Math::Numerics::V2::FSimulationRecipeV2> &recipe,
+                      const Slab::Str &taskNameHint) -> void;
 
 private:
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;

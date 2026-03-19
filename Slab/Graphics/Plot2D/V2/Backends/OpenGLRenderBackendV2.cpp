@@ -156,6 +156,13 @@ namespace Slab::Graphics::Plot2D::V2 {
 
             writer->Reshape(screenViewport.GetWidth(), screenViewport.GetHeight());
             writer->ResetTransforms();
+            const auto fontScale = std::clamp(command.FontScale, static_cast<DevFloat>(0.1), static_cast<DevFloat>(8.0));
+            if (std::abs(fontScale - static_cast<DevFloat>(1.0)) > 1.0e-3) {
+                // Scale around the anchor so plot-space labels can zoom with the view.
+                writer->Translate(static_cast<float>(pen.x), static_cast<float>(pen.y));
+                writer->Scale(static_cast<float>(fontScale), static_cast<float>(fontScale));
+                writer->Translate(static_cast<float>(-pen.x), static_cast<float>(-pen.y));
+            }
             writer->Write(command.Text, pen, command.Color, command.bVertical);
 
             // Ensure texture/shader state is returned to legacy defaults.

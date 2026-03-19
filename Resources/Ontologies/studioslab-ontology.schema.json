@@ -1,0 +1,319 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://studioslab.local/schema/studioslab-ontology.schema.json",
+  "title": "StudioSlab Ontology / Study Graph",
+  "description": "Schema for global ontology documents and combined model+study documents.",
+  "type": "object",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/ontologyDocument"
+    },
+    {
+      "$ref": "#/$defs/studyDocument"
+    }
+  ],
+  "$defs": {
+    "idString": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_.:-]+$"
+    },
+    "meta": {
+      "type": "object",
+      "required": [
+        "format",
+        "version",
+        "doc_kind"
+      ],
+      "properties": {
+        "format": {
+          "const": "studioslab-ontology-graph"
+        },
+        "version": {
+          "type": "string"
+        },
+        "doc_kind": {
+          "enum": [
+            "ontology",
+            "study"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "node": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind",
+        "title",
+        "layer",
+        "abstract",
+        "properties"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/idString"
+        },
+        "kind": {
+          "enum": [
+            "SemanticClass",
+            "SemanticObject",
+            "DescentClass",
+            "RealizationClass",
+            "RecipeClass",
+            "SolverClass",
+            "ArtifactClass",
+            "Requirement",
+            "Study",
+            "StudyObject"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "layer": {
+          "enum": [
+            "ambient",
+            "semantic",
+            "descent",
+            "realization",
+            "recipe",
+            "artifact",
+            "study"
+          ]
+        },
+        "abstract": {
+          "type": "boolean"
+        },
+        "properties": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "edge": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "from",
+        "to",
+        "properties"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/idString"
+        },
+        "type": {
+          "enum": [
+            "declares",
+            "defines",
+            "constrains",
+            "depends_on",
+            "acts_on",
+            "classifies_as",
+            "instance_of",
+            "specializes",
+            "can_descend_to",
+            "requires",
+            "requires_for_descent",
+            "admits_realization",
+            "admits_solver",
+            "represented_as",
+            "discretized_by",
+            "stepped_by",
+            "produces",
+            "activates",
+            "satisfies",
+            "blocks",
+            "binds"
+          ]
+        },
+        "from": {
+          "$ref": "#/$defs/idString"
+        },
+        "to": {
+          "$ref": "#/$defs/idString"
+        },
+        "properties": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ontologyRef": {
+      "type": "object",
+      "required": [
+        "path",
+        "version"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "schemaInfo": {
+      "type": "object",
+      "required": [
+        "node_kinds",
+        "edge_kinds",
+        "layers",
+        "provenance_kinds"
+      ],
+      "properties": {
+        "node_kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "edge_kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "layers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "provenance_kinds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "ontologyDocument": {
+      "type": "object",
+      "required": [
+        "meta",
+        "schema_info",
+        "nodes",
+        "edges"
+      ],
+      "properties": {
+        "meta": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/meta"
+            },
+            {
+              "properties": {
+                "doc_kind": {
+                  "const": "ontology"
+                }
+              }
+            }
+          ]
+        },
+        "schema_info": {
+          "$ref": "#/$defs/schemaInfo"
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/edge"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "studyDocument": {
+      "type": "object",
+      "required": [
+        "meta",
+        "ontology_ref",
+        "study",
+        "nodes",
+        "edges"
+      ],
+      "properties": {
+        "meta": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/meta"
+            },
+            {
+              "properties": {
+                "doc_kind": {
+                  "const": "study"
+                }
+              }
+            }
+          ]
+        },
+        "ontology_ref": {
+          "$ref": "#/$defs/ontologyRef"
+        },
+        "study": {
+          "type": "object",
+          "required": [
+            "id",
+            "title",
+            "description"
+          ],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/idString"
+            },
+            "title": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "base_vocabulary": {
+              "type": "string"
+            },
+            "notation_context": {
+              "type": "object"
+            }
+          },
+          "additionalProperties": true
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/node"
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/edge"
+          }
+        },
+        "activation_summary": {
+          "type": "object"
+        },
+        "realization_frontier": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

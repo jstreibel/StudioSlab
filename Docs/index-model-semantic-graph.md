@@ -7,6 +7,7 @@
 - extending model ontology for new math or physics
 - connecting Model semantics to Realization
 - reviewing graph JSON structure
+- not for the split-file ontology workspace under `Resources/Ontologies`
 
 ## Read Order (Smallest Useful Set)
 
@@ -21,6 +22,8 @@
    - `Docs/index-labv2.md`
 7. if touching runtime/realization:
    - `Docs/index-v2-runtime.md`
+8. if touching the separate ontology viewer instead of model semantics:
+   - `Docs/index-ontology-v2.md`
 
 ## Core Rules
 
@@ -29,6 +32,9 @@
 - keep `kind`, `carrier/level`, and `representation` distinct when reviewing semantic mismatches
 - realization consumes only the canonical typed subgraph
 - keep context small: read one ontology doc and one realization doc, not the full docs tree
+- do not conflate the Model semantic graph with the split-file ontology viewer:
+  - Model graph is derived from `FModelSemanticOverviewV2`
+  - ontology workspace is derived from `Resources/Ontologies/*.json`
 
 ## Core Docs
 

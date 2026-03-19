@@ -12,6 +12,7 @@
 #include "Core/Reflection/V2/SemanticTypesV1.h"
 #include "Core/Model/V2/ModelTypesV2.h"
 #include "Core/Model/V2/ModelAuthoringV2.h"
+#include "Core/Ontology/V2/OntologyGraphV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionCatalogV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
 #include "imgui.h"
@@ -19,6 +20,7 @@
 #include <functional>
 #include <array>
 #include <deque>
+#include <filesystem>
 #include <map>
 #include <memory>
 #include <vector>
@@ -83,6 +85,7 @@ private:
         Simulations = 0,
         Schemes,
         Models,
+        Ontology,
         GraphPlayground,
         Plots
     };
@@ -111,13 +114,17 @@ private:
         bool bShowWindowModelDefinitions = false;
         bool bShowWindowModelRelations = false;
         bool bShowWindowModelEditor = false;
+        bool bShowWindowModelSemanticGraph = false;
         bool bShowWindowModelAssumptions = false;
         bool bShowWindowModelDetails = false;
+        bool bShowWindowOntologyLayer = false;
+        bool bShowWindowOntologyDetails = false;
+        bool bShowWindowOntologyGraph = false;
         bool bShowWindowGraphPlayground = false;
         bool bShowWindowPlotInspector = false;
     };
 
-    static constexpr std::size_t WorkspaceCount = 5;
+    static constexpr std::size_t WorkspaceCount = 6;
     using FSlabWindowPtr = Slab::TPointer<Slab::Graphics::FSlabWindow>;
     using FSlabWindowVec = Slab::Vector<FSlabWindowPtr>;
     struct FPendingSlabWindow {
@@ -151,6 +158,10 @@ private:
     Slab::Str ModelSemanticGraphExportStatus;
     Slab::Str ModelSemanticGraphLastExportPath;
     bool bPendingFocusModelSemanticGraphWindow = false;
+    Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr OntologyGraphWindowV2;
+    Slab::Graphics::Plot2D::V2::FPlotArtistV2_ptr OntologyGraphArtistV2;
+    Slab::Str OntologyGraphWindowId = "ontology_graph";
+    bool bPendingFocusOntologyGraphWindow = false;
     std::size_t BlueprintPlotWindowCreateCount = 0;
     std::size_t BlueprintPlotArtistCreateCount = 0;
 
@@ -202,8 +213,12 @@ private:
     bool bShowWindowModelDefinitions = true;
     bool bShowWindowModelRelations = true;
     bool bShowWindowModelEditor = true;
+    bool bShowWindowModelSemanticGraph = true;
     bool bShowWindowModelAssumptions = true;
     bool bShowWindowModelDetails = true;
+    bool bShowWindowOntologyLayer = true;
+    bool bShowWindowOntologyDetails = true;
+    bool bShowWindowOntologyGraph = true;
     bool bShowModelNewDefinitionComposer = false;
     Slab::Str ModelNewDefinitionId = "param.new_symbol";
     Slab::Str ModelNewDefinitionDisplayName;
@@ -224,6 +239,14 @@ private:
         Slab::Core::Model::V2::ERelationKindV2::Equation;
     Slab::TOptional<Slab::Core::Model::V2::FRelationDraftPreviewV2> ModelNewRelationPreview;
     Slab::Str ModelNewRelationStatus;
+    struct FModelODERuntimeDraftState {
+        Slab::DevFloat TimeStep = 0.05;
+        Slab::UIntBig MaxSteps = 1024;
+        bool bOpenEnded = false;
+        std::map<Slab::Str, Slab::Str> ScalarBindingDraftByDefinitionId;
+        Slab::Str Status;
+    };
+    std::map<Slab::Str, FModelODERuntimeDraftState> ModelODERuntimeDraftStateByModelId;
 
     struct FModelWorkspaceViewState {
         bool bAvailable = false;
@@ -240,6 +263,23 @@ private:
     FModelWorkspaceViewState CachedModelWorkspaceViewState;
     int CachedModelWorkspaceFrame = -1;
     bool bModelWorkspaceViewStateDirty = true;
+
+    struct FOntologyWorkspaceState {
+        std::filesystem::path ResourceDirectory;
+        std::filesystem::path SchemaPath;
+        std::filesystem::path GlobalPath;
+        Slab::Vector<std::filesystem::path> StudyPaths;
+        Slab::Core::Ontology::V2::FOntologyGraphBundle Bundle;
+        Slab::Core::Ontology::V2::FOntologyGraphProjection Projection;
+        Slab::Core::Ontology::V2::FOntologyGraphFilterStateV2 Filters;
+        Slab::Core::Ontology::V2::FOntologyGraphSelectionV2 Selection;
+        Slab::Str SelectedStudyId;
+        Slab::Str Status;
+        int SelectedStudyIndex = 0;
+        bool bLoaded = false;
+        bool bDirty = true;
+    };
+    FOntologyWorkspaceState OntologyWorkspaceState;
 
     struct FSchemeOperationTraceEntry {
         std::size_t SequenceId = 0;
@@ -355,13 +395,14 @@ private:
     unsigned int DockspaceId = 0;
     EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Simulations;
     bool bWorkspaceLayoutsBootstrapped = false;
-    std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false, false, false};
+    std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false, false, false, false};
     std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true}
+        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, false, false, false, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, false, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false},
+        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true}
     };
     float WorkspaceTabsHeight = 0.0f;
     float WorkspaceStripHeight = 0.0f;
@@ -399,10 +440,15 @@ private:
                                         bool bUsesDraftPreview,
                                         int hops) -> bool;
     auto FocusModelSemanticGraphWindow() -> void;
+    auto EnsureOntologyWorkspaceData() -> void;
+    auto EnsureOntologyGraphWindow() -> void;
+    auto SyncOntologyGraphWindow() -> void;
+    auto FocusOntologyGraphWindow() -> void;
     auto SyncPlotWorkspaceWindows() -> void;
     auto PruneClosedSlabWindows() -> bool;
     [[nodiscard]] auto GetWorkspaceForWindow(const FSlabWindowPtr &window) const -> EWorkspaceTab;
     [[nodiscard]] auto GetWorkspaceWindows(EWorkspaceTab workspace) const -> FSlabWindowVec;
+    [[nodiscard]] auto IsWorkspaceWindowVisible(const FSlabWindowPtr &window, EWorkspaceTab workspace) const -> bool;
     auto ArrangeTopLevelSlabWindows() -> bool;
     auto DrawWorkspaceLauncher() -> void;
     auto DrawWorkspaceTabs() -> void;
@@ -435,6 +481,8 @@ private:
     auto DrawModelEditorPanel() -> void;
     auto DrawModelAssumptionsPanel() -> void;
     auto DrawModelDetailsPanel() -> void;
+    auto DrawOntologyLayerPanel() -> void;
+    auto DrawOntologyDetailsPanel() -> void;
     auto DrawGraphPlaygroundPanel() -> void;
     auto MarkGraphPlaygroundDirty() -> void;
     auto SaveGraphPlaygroundStateToFile() -> bool;
@@ -481,6 +529,7 @@ private:
     auto SaveWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
     auto LoadWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
     auto SetActiveWorkspace(EWorkspaceTab workspace) -> void;
+    [[nodiscard]] auto WorkspaceUsesSlabWindows(EWorkspaceTab workspace) const -> bool;
     [[nodiscard]] auto IsDockingEnabled() const -> bool;
     [[nodiscard]] auto ShouldRenderSlabWindowsInWorkspace() const -> bool;
     auto HideSlabWindowsOffscreen() -> void;

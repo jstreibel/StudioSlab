@@ -150,8 +150,8 @@ Current Model workspace layout:
 
 Summary and graph surfaces:
 - the visibility toggle labeled `Summary` opens the panel titled `Model Layer`
-- `Model Layer` shows semantic health/classification, the `Semantic Graph -> Open in Plots` action, and the current ODE realization summary
-- `Model Semantic Graph` is rendered on `Plot V2` as a read-only knowledge-graph-like surface
+- `Model Layer` shows semantic health/classification, the `Semantic Graph -> Open Graph` action, and the current ODE realization summary
+- `Model Semantic Graph` is rendered on `Plot V2` as a read-only knowledge-graph-like surface inside the `Models` workspace, visible by default, and docked directly below `Model Notation Editor`
 - graph selection feeds back into the shared Model workspace selection state
 - `Model Layer` can export the current selected-object-centered semantic graph neighborhood to JSON for offline analysis/sharing
 - semantic-graph JSON export currently writes to the process current working directory (`pwd`) and includes projected nodes/edges plus per-node semantic metadata/navigation links

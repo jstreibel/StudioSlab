@@ -116,7 +116,8 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 ## Progress Notes (2026-03-14)
 
 - `LAB-14` done: Model semantic graph plot surface and interaction pass:
-  - `Model Layer` now exposes `Semantic Graph -> Open in Plots`
+  - `Model Layer` now exposes `Semantic Graph -> Open Graph`
+  - the graph surface now lives in the `Models` workspace instead of the `Plots` workspace
   - graph projection comes from `FModelSemanticOverviewV2`
   - graph is read-only, selection-linked, and rendered on `Plot V2`
   - hover HUD, edge inspection, click activation, neighborhood-hop controls, label toggle, and fit-to-graph are in place
@@ -144,6 +145,16 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
 - post-`RZ-03` follow-up is now:
   - minimal numeric-binding authoring/configuration story
   - minimal LabV2 launch path from an ODE-ready model
+
+## Progress Notes (2026-03-18)
+
+- `ONT-00` done: split-file ontology graph viewer first slice:
+  - schema/global/study JSON contract loads from `Resources/Ontologies`
+  - LabV2 now has a dedicated `Ontology` workspace instead of hosting the surface under `Model`
+  - the graph is read-only, selection-linked, filterable, and rendered directly on `Plot V2`
+  - bundle/projection pipeline preserves stable ids, ownership scope, provenance, and diagnostics
+  - deterministic layout plus harmonic-oscillator / Klein-Gordon coverage are in place
+  - ontology plot-space text and node sizing now scale coherently with graph zoom
 
 ### `P0` `RV2-00` — Reflection V2 contract freeze — done
 - Define `Interface`/`Parameter`/`Operation` schema contracts.
@@ -248,6 +259,11 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - right-click artist creation should come from a registry, not ad hoc UI branching
   - first typed connection target should be `Function -> FRtoRFunctionArtistV2`
   - `FModelSemanticGraphArtistV2` remains add/config-only until a stable reflected semantic-overview input exists
+- `P1` `ONT-00` — Split-file ontology graph viewer — done
+  - read one schema, one global ontology, and one or more study documents from `Resources/Ontologies`
+  - keep JSON canonical and the graph read-only
+  - render global and study-local ontology state in a dedicated `Ontology` workspace
+  - preserve stable ids, provenance, diagnostics, and deterministic layout
 
 ### Model -> Realization Descent
 - `P1` `RZ-00` — ODE realization contract freeze — done

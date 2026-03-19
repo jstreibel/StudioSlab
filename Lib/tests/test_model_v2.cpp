@@ -915,7 +915,7 @@ TEST_CASE("Model V2 harmonic oscillator energy relation preserves state and obse
     });
     REQUIRE(relationIt != report.Relations.end());
 
-    const auto requireSymbolKind = [&](const Str &referenceId, const EDefinitionKindV2 expectedKind) {
+    const auto requireSymbolKind = [&](const Slab::Str &referenceId, const EDefinitionKindV2 expectedKind) {
         const auto it = std::find_if(relationIt->ReferencedSymbols.begin(), relationIt->ReferencedSymbols.end(), [&](const auto &symbol) {
             return symbol.ReferenceId == referenceId;
         });
@@ -1264,6 +1264,36 @@ TEST_CASE("Model V2 ODE realization requires initial conditions per state", "[Mo
         descriptor.Diagnostics,
         "missing_initial_condition_assignment",
         "canonical state"));
+}
+
+TEST_CASE("Model V2 ODE runtime binding requirements stay narrow for oscillator family", "[ModelV2][Realization][Runtime]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto collectIds = [](const auto &bindings) {
+        Slab::Vector<Slab::Str> ids;
+        ids.reserve(bindings.size());
+        for (const auto &binding : bindings) {
+            ids.push_back(binding.DefinitionId);
+        }
+        return ids;
+    };
+
+    const auto harmonicModel = BuildHarmonicOscillatorModelV2();
+    const auto harmonicDescriptor = BuildODERealizationDescriptorV2(harmonicModel);
+    REQUIRE(harmonicDescriptor.IsReady());
+
+    const auto harmonicBindings = CollectODEExplicitFirstOrderRequiredScalarBindingsV2(harmonicModel, harmonicDescriptor);
+    CHECK(collectIds(harmonicBindings) == Slab::Vector<Slab::Str>{"param.m", "param.k", "param.x0", "param.p0"});
+    CHECK(std::none_of(harmonicBindings.begin(), harmonicBindings.end(), [](const auto &binding) {
+        return binding.DefinitionId == "param.omega";
+    }));
+
+    const auto dampedModel = BuildDampedHarmonicOscillatorModelV2();
+    const auto dampedDescriptor = BuildODERealizationDescriptorV2(dampedModel);
+    REQUIRE(dampedDescriptor.IsReady());
+
+    const auto dampedBindings = CollectODEExplicitFirstOrderRequiredScalarBindingsV2(dampedModel, dampedDescriptor);
+    CHECK(collectIds(dampedBindings) == Slab::Vector<Slab::Str>{"param.m", "param.k", "param.gamma", "param.x0", "param.p0"});
 }
 
 TEST_CASE("Model V2 ODE runtime bridge builds explicit oscillator runtime", "[ModelV2][Realization][Runtime]") {

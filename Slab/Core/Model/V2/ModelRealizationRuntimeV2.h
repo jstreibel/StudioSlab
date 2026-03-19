@@ -609,6 +609,112 @@ namespace Slab::Core::Model::V2 {
         return runtimeState->GetValues();
     }
 
+    inline auto CollectODEExplicitFirstOrderRequiredScalarBindingsV2(const FModelV2 &model,
+                                                                     const FODERealizationDescriptorV2 &descriptor)
+        -> Vector<FODERealizationSymbolV2> {
+        Vector<FODERealizationSymbolV2> requiredBindings;
+        if (!descriptor.IsReady()) return requiredBindings;
+        if (descriptor.Strategy != EODERealizationStrategyV2::ExplicitFirstOrderSystem) return requiredBindings;
+        if (!descriptor.TimeCoordinate.has_value()) return requiredBindings;
+
+        const auto timeCoordinateDefinitionId = descriptor.TimeCoordinate->DefinitionId;
+        const auto stateDefinitionIds = [&]() {
+            std::set<Str> ids;
+            for (const auto &state : descriptor.StateVariables) {
+                ids.insert(state.DefinitionId);
+            }
+            return ids;
+        }();
+
+        std::set<Str> appendedDefinitionIds;
+        const auto appendBinding = [&](const Str &definitionId) -> void {
+            if (definitionId.empty()) return;
+            if (definitionId == timeCoordinateDefinitionId) return;
+            if (stateDefinitionIds.contains(definitionId)) return;
+            if (!appendedDefinitionIds.insert(definitionId).second) return;
+
+            FODERealizationSymbolV2 symbol;
+            symbol.DefinitionId = definitionId;
+
+            if (const auto parameterIt = std::find_if(
+                    descriptor.Parameters.begin(),
+                    descriptor.Parameters.end(),
+                    [&](const auto &parameter) {
+                        return parameter.DefinitionId == definitionId;
+                    });
+                parameterIt != descriptor.Parameters.end()) {
+                symbol = *parameterIt;
+            } else if (const auto *definition = FindDefinitionByIdV2(model, definitionId); definition != nullptr) {
+                symbol.DisplayLabel = !definition->DisplayName.empty()
+                    ? definition->DisplayName
+                    : (!definition->PreferredNotation.empty() ? definition->PreferredNotation : definitionId);
+                symbol.CanonicalNotation = MakeCanonicalDefinitionNotationV2(*definition, &model);
+            } else {
+                symbol.DisplayLabel = definitionId;
+                symbol.CanonicalNotation = definitionId;
+            }
+
+            if (symbol.DisplayLabel.empty()) symbol.DisplayLabel = definitionId;
+            if (symbol.CanonicalNotation.empty()) symbol.CanonicalNotation = definitionId;
+            requiredBindings.push_back(std::move(symbol));
+        };
+
+        const auto collectExpressionBindings = [&](const FExpressionPtrV2 &expression,
+                                                  std::set<Str> &bindingIds) -> void {
+            VisitExpressionDepthFirstV2(expression, [&](const FExpressionV2 &node) {
+                if (node.Kind != EExpressionKindV2::Symbol) return;
+                if (!node.Reference.IsBound()) return;
+                const auto &referenceId = node.Reference.ReferenceId;
+                if (referenceId.empty()) return;
+                if (referenceId == timeCoordinateDefinitionId) return;
+                if (stateDefinitionIds.contains(referenceId)) return;
+                bindingIds.insert(referenceId);
+            });
+        };
+
+        std::set<Str> relationBindingIds;
+        for (const auto &selectedRelation : descriptor.SelectedRelations) {
+            const auto *relation = FindRelationByIdV2(model, selectedRelation.RelationId);
+            if (relation == nullptr) continue;
+
+            const auto explicitExpression = selectedRelation.DerivativeSide == EODEExplicitRelationSideV2::Left
+                ? relation->Right
+                : relation->Left;
+            collectExpressionBindings(explicitExpression, relationBindingIds);
+        }
+
+        std::set<Str> initialBindingIds;
+        if (model.InitialConditions.has_value()) {
+            collectExpressionBindings(model.InitialConditions->TimeExpression, initialBindingIds);
+            for (const auto &state : descriptor.StateVariables) {
+                const auto assignmentIt = std::find_if(
+                    model.InitialConditions->Assignments.begin(),
+                    model.InitialConditions->Assignments.end(),
+                    [&](const auto &assignment) {
+                        return assignment.StateDefinitionId == state.DefinitionId;
+                    });
+                if (assignmentIt == model.InitialConditions->Assignments.end()) continue;
+                collectExpressionBindings(assignmentIt->ValueExpression, initialBindingIds);
+            }
+        }
+
+        const auto appendBindingsInModelDefinitionOrder = [&](const std::set<Str> &bindingIds) -> void {
+            for (const auto &definition : model.Definitions) {
+                if (!bindingIds.contains(definition.DefinitionId)) continue;
+                appendBinding(definition.DefinitionId);
+            }
+
+            for (const auto &definitionId : bindingIds) {
+                appendBinding(definitionId);
+            }
+        };
+
+        appendBindingsInModelDefinitionOrder(relationBindingIds);
+        appendBindingsInModelDefinitionOrder(initialBindingIds);
+
+        return requiredBindings;
+    }
+
     inline auto BuildODEExplicitFirstOrderRuntimeV2(const FModelV2 &model,
                                                     const FODERealizationDescriptorV2 &descriptor,
                                                     const FODEExplicitFirstOrderRuntimeConfigV2 &config)
