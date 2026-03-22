@@ -86,8 +86,12 @@ Diagnostics must not crash rendering. Unknown extra fields are tolerated and pre
 
 ### 4.2 Panels
 
-- `Ontology Graph`
-  - Plot V2 host + ontology artist
+- `Ontology Overview`
+  - full selected-study ontology map
+  - compact glyph-style node rendering
+- `Ontology Focus`
+  - neighborhood projection derived from the shared selection
+  - readable card rendering for navigation/detail
 - `Ontology Layer`
   - study selection + filters + status
 - `Ontology Inspector`
@@ -113,10 +117,11 @@ Diagnostics must not crash rendering. Unknown extra fields are tolerated and pre
 ### 5.2 Current Interaction
 
 - click node/edge to select
+- overview and focus plots share the same selection
 - hover summary cards
 - incident highlight
 - inspector synchronization
-- edge labels remain toggleable but default to off in the dense overview path
+- focus view follows the current selection as a neighborhood navigator
 - host-level pan/zoom/fit controls
 
 ## 6. Layout and Text Scaling
@@ -125,9 +130,9 @@ Diagnostics must not crash rendering. Unknown extra fields are tolerated and pre
 
 - deterministic layered layout
 - global ontology stays in stable layer columns
-- study-local nodes occupy sidecar space near the owning study root
-- dense layer columns now reserve explicit badge/card breathing room rather than assuming short one-line labels
-- LabV2 requests a fit-to-graph pass when the selected study or filters rebuild the projection so the first framed view matches the current content
+- selected-study local nodes occupy sidecar space near the owning study root
+- non-selected studies' local nodes are excluded from the selected-study projection entirely
+- LabV2 requests fit-to-graph passes when the selected study, filters, or focus neighborhood rebuild
 - edge routing is simple and deterministic
 
 ### 6.2 Text and Node Size
@@ -135,12 +140,8 @@ Diagnostics must not crash rendering. Unknown extra fields are tolerated and pre
 - node sizing uses font metrics plus estimated rendered string width
 - plot-space ontology text now scales with graph zoom
 - node rectangles and badge reservations use the same zoom-derived scale so text and boxes stay coherent
-- long ontology titles now wrap into at most two compact lines to trade horizontal sprawl for predictable card height
-- the fitted overview deliberately suppresses footer/detail rows until hover, selection, highlight, or zoom-in so the graph stays readable at full-study scale
-- after layout, the projected x positions are compacted horizontally so the overview does not keep the earlier wide lane spacing once cards shrink
-- layers reserve study-local sidecar width only when the selected study actually contributes local nodes there
-- overview card measurement now follows the same fitted text scale as the rendered labels, preventing small overview text from sitting inside full-size cards
-- node cards expose friendly category labels (`semantic`, `study`, `requirement`, `solver`, etc.) instead of raw schema kinds
+- overview mode now uses one-line compact labels and no in-node category/footer text
+- focus mode keeps the richer card treatment and friendly category labels (`semantic`, `study`, `requirement`, `solver`, etc.)
 - study and requirement nodes use distinct silhouettes on top of category color so the category remains visible at a glance
 
 ### 6.3 Current Writer Constraint
@@ -169,9 +170,11 @@ Diagnostics must not crash rendering. Unknown extra fields are tolerated and pre
 
 - bundle load and validation path
 - deterministic projection path
+- neighborhood projection path
 - dense-column spacing baseline
 - harmonic oscillator reachable ODE -> RK4 -> artifact path
 - Klein-Gordon blocked requirements and realization path filters
+- overview-vs-focus render-density behavior
 - artist render + click selection
 - ontology text zoom scaling behavior
 

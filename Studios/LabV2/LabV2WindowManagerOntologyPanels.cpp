@@ -12,7 +12,8 @@ namespace {
 
     namespace OntologyV2 = Slab::Core::Ontology::V2;
 
-    constexpr auto WindowTitleOntologyGraph = "Ontology Graph";
+    constexpr auto WindowTitleOntologyOverview = "Ontology Overview";
+    constexpr auto WindowTitleOntologyFocus = "Ontology Focus";
 
     [[nodiscard]] auto FindOntologyResourcesDirectoryV2() -> std::filesystem::path {
         const auto suffix = std::filesystem::path("Resources") / "Ontologies";
@@ -51,9 +52,17 @@ namespace {
         return -1;
     }
 
+    auto RebuildOntologyFocusProjectionV2(auto &state) -> void {
+        state.FocusProjection = OntologyV2::BuildOntologyGraphNeighborhoodProjectionV2(
+            state.OverviewProjection,
+            state.Selection,
+            state.FocusHopCount);
+    }
+
     auto RebuildOntologyProjectionV2(auto &state) -> void {
         if (!state.bLoaded) {
-            state.Projection = {};
+            state.OverviewProjection = {};
+            state.FocusProjection = {};
             return;
         }
 
@@ -62,19 +71,20 @@ namespace {
             state.SelectedStudyIndex = 0;
         }
 
-        state.Projection = OntologyV2::BuildOntologyGraphProjectionV2(
+        state.OverviewProjection = OntologyV2::BuildOntologyGraphProjectionV2(
             state.Bundle,
             state.SelectedStudyId,
             state.Filters);
-        state.bPendingGraphFit = true;
+        state.bPendingOverviewGraphFit = true;
+        state.bPendingFocusGraphFit = true;
 
         const auto selectionVisible = [&]() {
             if (!state.Selection.IsValid()) return false;
             if (state.Selection.Kind == OntologyV2::EOntologyElementKindV2::Node) {
-                return state.Projection.FindNode(state.Selection.ElementId) != nullptr;
+                return state.OverviewProjection.FindNode(state.Selection.ElementId) != nullptr;
             }
             if (state.Selection.Kind == OntologyV2::EOntologyElementKindV2::Edge) {
-                return state.Projection.FindEdge(state.Selection.ElementId) != nullptr;
+                return state.OverviewProjection.FindEdge(state.Selection.ElementId) != nullptr;
             }
             return false;
         }();
@@ -82,6 +92,8 @@ namespace {
         if (!selectionVisible) {
             state.Selection = {};
         }
+
+        RebuildOntologyFocusProjectionV2(state);
     }
 
     auto DrawJsonPayloadBlockV2(const char *label, const crude_json::value &value, const float height = 180.0f) -> void {
@@ -102,11 +114,13 @@ auto FLabV2WindowManager::EnsureOntologyWorkspaceData() -> void {
     const auto preservedFilters = state.Filters;
     const auto preservedSelection = state.Selection;
     const auto preservedStudyId = state.SelectedStudyId;
+    const auto preservedFocusHopCount = state.FocusHopCount;
 
     state = {};
     state.Filters = preservedFilters;
     state.Selection = preservedSelection;
     state.SelectedStudyId = preservedStudyId;
+    state.FocusHopCount = preservedFocusHopCount;
 
     state.ResourceDirectory = FindOntologyResourcesDirectoryV2();
     if (state.ResourceDirectory.empty()) {
@@ -137,72 +151,121 @@ auto FLabV2WindowManager::EnsureOntologyWorkspaceData() -> void {
     state.bDirty = false;
 }
 
-auto FLabV2WindowManager::EnsureOntologyGraphWindow() -> void {
+auto FLabV2WindowManager::EnsureOntologyGraphWindows() -> void {
     using namespace Slab::Graphics::Plot2D::V2;
 
-    if (OntologyGraphWindowV2 != nullptr && OntologyGraphArtistV2 != nullptr) return;
+    if (OntologyOverviewWindowV2 != nullptr && OntologyOverviewArtistV2 != nullptr &&
+        OntologyFocusWindowV2 != nullptr && OntologyFocusArtistV2 != nullptr) {
+        return;
+    }
 
-    auto window = Slab::New<FPlot2DWindowV2>(
-        WindowTitleOntologyGraph,
-        Slab::Graphics::RectR{-12.0, 54.0, -24.0, 8.0},
-        Slab::Graphics::RectI{0, 1320, 0, 920});
-    window->SetWindowId(OntologyGraphWindowId);
-    window->SetAutoFitRanges(false);
+    auto makeGraphWindow = [&](const char *title,
+                               const Slab::Str &windowId,
+                               const EOntologyGraphDisplayModeV2 displayMode) {
+        auto window = Slab::New<FPlot2DWindowV2>(
+            title,
+            Slab::Graphics::RectR{-12.0, 54.0, -24.0, 8.0},
+            Slab::Graphics::RectI{0, 1320, 0, 920});
+        window->SetWindowId(windowId);
+        window->SetAutoFitRanges(false);
 
-    auto background = Slab::New<FBackgroundArtistV2>(Slab::Graphics::FColor::FromHex("#0A111B"));
-    background->SetUseThemeColor(false);
-    background->SetAffectGraphRanges(false);
+        auto background = Slab::New<FBackgroundArtistV2>(Slab::Graphics::FColor::FromHex("#0A111B"));
+        background->SetUseThemeColor(false);
+        background->SetAffectGraphRanges(false);
 
-    auto graphArtist = Slab::New<FOntologyGraphArtistV2>();
-    graphArtist->SetOnSelectionChanged([this](const OntologyV2::FOntologyGraphSelectionV2 &selection) {
-        OntologyWorkspaceState.Selection = selection;
-    });
+        auto graphArtist = Slab::New<FOntologyGraphArtistV2>();
+        graphArtist->SetDisplayMode(displayMode);
+        graphArtist->SetOnSelectionChanged([this](const OntologyV2::FOntologyGraphSelectionV2 &selection) {
+            OntologyWorkspaceState.Selection = selection;
+            OntologyWorkspaceState.bPendingFocusGraphFit = true;
+        });
 
-    window->AddArtist(background, -100);
-    window->AddArtist(graphArtist, 0);
+        window->AddArtist(background, -100);
+        window->AddArtist(graphArtist, 0);
+        PlotWindowsV2.push_back(window);
+        return std::pair{window, graphArtist};
+    };
 
-    OntologyGraphWindowV2 = window;
-    OntologyGraphArtistV2 = graphArtist;
-    PlotWindowsV2.push_back(window);
+    if (OntologyOverviewWindowV2 == nullptr || OntologyOverviewArtistV2 == nullptr) {
+        auto [window, artist] = makeGraphWindow(
+            WindowTitleOntologyOverview,
+            OntologyOverviewWindowId,
+            EOntologyGraphDisplayModeV2::Overview);
+        OntologyOverviewWindowV2 = window;
+        OntologyOverviewArtistV2 = artist;
+    }
+
+    if (OntologyFocusWindowV2 == nullptr || OntologyFocusArtistV2 == nullptr) {
+        auto [window, artist] = makeGraphWindow(
+            WindowTitleOntologyFocus,
+            OntologyFocusWindowId,
+            EOntologyGraphDisplayModeV2::Focus);
+        OntologyFocusWindowV2 = window;
+        OntologyFocusArtistV2 = artist;
+    }
 }
 
-auto FLabV2WindowManager::SyncOntologyGraphWindow() -> void {
+auto FLabV2WindowManager::SyncOntologyGraphWindows() -> void {
     using namespace Slab::Graphics::Plot2D::V2;
 
     EnsureOntologyWorkspaceData();
     auto &state = OntologyWorkspaceState;
-    EnsureOntologyGraphWindow();
-    if (OntologyGraphWindowV2 == nullptr || OntologyGraphArtistV2 == nullptr) return;
+    RebuildOntologyFocusProjectionV2(state);
+    EnsureOntologyGraphWindows();
 
-    const auto graphArtist = Slab::DynamicPointerCast<FOntologyGraphArtistV2>(OntologyGraphArtistV2);
-    if (graphArtist == nullptr) return;
+    if (OntologyOverviewWindowV2 != nullptr && OntologyOverviewArtistV2 != nullptr) {
+        const auto overviewArtist = Slab::DynamicPointerCast<FOntologyGraphArtistV2>(OntologyOverviewArtistV2);
+        if (overviewArtist != nullptr) {
+            overviewArtist->SetProjection(state.OverviewProjection);
+            overviewArtist->SetSelection(state.Selection);
+            overviewArtist->SetShowEdgeLabels(false);
+            OntologyOverviewWindowV2->SetTitle(WindowTitleOntologyOverview);
+        }
 
-    graphArtist->SetProjection(state.Projection);
-    graphArtist->SetSelection(state.Selection);
-    graphArtist->SetShowEdgeLabels(state.Filters.bShowEdgeLabels);
-    OntologyGraphWindowV2->SetTitle(WindowTitleOntologyGraph);
+        if (state.bPendingOverviewGraphFit) {
+            if (const auto it = PlotWindowHostsByWindowId.find(OntologyOverviewWindowId);
+                it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
+                if (const auto host = Slab::DynamicPointerCast<FPlot2DWindowHostV2>(it->second);
+                    host != nullptr) {
+                    host->RequestFitToArtists();
+                    state.bPendingOverviewGraphFit = false;
+                }
+            }
+        }
+    }
 
-    if (state.bPendingGraphFit) {
-        if (const auto it = PlotWindowHostsByWindowId.find(OntologyGraphWindowId);
-            it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
-            if (const auto host = Slab::DynamicPointerCast<FPlot2DWindowHostV2>(it->second);
-                host != nullptr) {
-                host->RequestFitToArtists();
-                state.bPendingGraphFit = false;
+    if (OntologyFocusWindowV2 != nullptr && OntologyFocusArtistV2 != nullptr) {
+        const auto focusArtist = Slab::DynamicPointerCast<FOntologyGraphArtistV2>(OntologyFocusArtistV2);
+        if (focusArtist != nullptr) {
+            focusArtist->SetProjection(state.FocusProjection);
+            focusArtist->SetSelection(state.Selection);
+            focusArtist->SetShowEdgeLabels(true);
+            OntologyFocusWindowV2->SetTitle(WindowTitleOntologyFocus);
+        }
+
+        if (state.bPendingFocusGraphFit) {
+            if (const auto it = PlotWindowHostsByWindowId.find(OntologyFocusWindowId);
+                it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
+                if (const auto host = Slab::DynamicPointerCast<FPlot2DWindowHostV2>(it->second);
+                    host != nullptr) {
+                    host->RequestFitToArtists();
+                    state.bPendingFocusGraphFit = false;
+                }
             }
         }
     }
 }
 
-auto FLabV2WindowManager::FocusOntologyGraphWindow() -> void {
+auto FLabV2WindowManager::FocusOntologyOverviewWindow() -> void {
     EnsureOntologyWorkspaceData();
-    EnsureOntologyGraphWindow();
+    EnsureOntologyGraphWindows();
     SetActiveWorkspace(EWorkspaceTab::Ontology);
-    bShowWindowOntologyGraph = true;
-    SyncOntologyGraphWindow();
-    bPendingFocusOntologyGraphWindow = true;
+    bShowWindowOntologyOverview = true;
+    bShowWindowOntologyFocus = true;
+    SyncOntologyGraphWindows();
+    bPendingFocusOntologyOverviewWindow = true;
 
-    if (const auto it = PlotWindowHostsByWindowId.find(OntologyGraphWindowId);
+    if (const auto it = PlotWindowHostsByWindowId.find(OntologyOverviewWindowId);
         it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
         FocusWindow(it->second);
     }
@@ -234,8 +297,8 @@ auto FLabV2WindowManager::DrawOntologyLayerPanel() -> void {
         bNeedsRebuild = true;
     }
     ImGui::SameLine();
-    if (ImGui::Button("Open Graph")) {
-        FocusOntologyGraphWindow();
+    if (ImGui::Button("Open Overview")) {
+        FocusOntologyOverviewWindow();
     }
     ImGui::SameLine();
     if (ImGui::Button("Reset Filters")) {
@@ -290,17 +353,28 @@ auto FLabV2WindowManager::DrawOntologyLayerPanel() -> void {
     bNeedsRebuild |= ImGui::Checkbox("Show only active/reachable region", &state.Filters.bFocusActiveReachableRegion);
     bNeedsRebuild |= ImGui::Checkbox("Show blocked requirements only", &state.Filters.bShowBlockedRequirementsOnly);
     bNeedsRebuild |= ImGui::Checkbox("Show realization/recipe/artifact path only", &state.Filters.bShowRealizationRecipeArtifactPathOnly);
-    bNeedsRebuild |= ImGui::Checkbox("Show edge labels", &state.Filters.bShowEdgeLabels);
+    ImGui::SeparatorText("Focus");
+    ImGui::SetNextItemWidth(120.0f);
+    if (ImGui::SliderInt("Focus hops", &state.FocusHopCount, 1, 3)) {
+        state.bPendingFocusGraphFit = true;
+        RebuildOntologyFocusProjectionV2(state);
+    }
+    ImGui::TextDisabled("Overview stays dense and compact; Focus shows the selected neighborhood.");
 
     if (bNeedsRebuild) {
         RebuildOntologyProjectionV2(state);
-        SyncOntologyGraphWindow();
+        SyncOntologyGraphWindows();
+    } else {
+        SyncOntologyGraphWindows();
     }
 
     ImGui::SeparatorText("Projection");
-    ImGui::Text("Visible nodes: %zu", state.Projection.Nodes.size());
+    ImGui::Text("Overview nodes: %zu", state.OverviewProjection.Nodes.size());
     ImGui::SameLine();
-    ImGui::TextDisabled("| visible edges: %zu", state.Projection.Edges.size());
+    ImGui::TextDisabled("| overview edges: %zu", state.OverviewProjection.Edges.size());
+    ImGui::Text("Focus nodes: %zu", state.FocusProjection.Nodes.size());
+    ImGui::SameLine();
+    ImGui::TextDisabled("| focus edges: %zu", state.FocusProjection.Edges.size());
 
     if (ImGui::CollapsingHeader("Diagnostics", ImGuiTreeNodeFlags_DefaultOpen)) {
         if (state.Bundle.Diagnostics.Messages.empty()) {
@@ -329,22 +403,24 @@ auto FLabV2WindowManager::DrawOntologyDetailsPanel() -> void {
     auto &state = OntologyWorkspaceState;
 
     if (!state.Selection.IsValid()) {
-        ImGui::TextDisabled("Select a node or edge in Ontology Graph.");
+        ImGui::TextDisabled("Select a node or edge in Ontology Overview or Ontology Focus.");
         return;
     }
 
     const auto selectNode = [&](const Slab::Str &nodeId) {
         state.Selection = {OntologyV2::EOntologyElementKindV2::Node, nodeId};
-        SyncOntologyGraphWindow();
+        state.bPendingFocusGraphFit = true;
+        SyncOntologyGraphWindows();
     };
     const auto selectEdge = [&](const Slab::Str &edgeId) {
         state.Selection = {OntologyV2::EOntologyElementKindV2::Edge, edgeId};
-        SyncOntologyGraphWindow();
+        state.bPendingFocusGraphFit = true;
+        SyncOntologyGraphWindows();
     };
 
     if (state.Selection.Kind == OntologyV2::EOntologyElementKindV2::Node) {
         const auto *node = state.Bundle.FindNode(state.Selection.ElementId);
-        const auto *projectedNode = state.Projection.FindNode(state.Selection.ElementId);
+        const auto *projectedNode = state.OverviewProjection.FindNode(state.Selection.ElementId);
         if (node == nullptr) {
             ImGui::TextDisabled("Selected node is no longer available.");
             return;
@@ -418,7 +494,7 @@ auto FLabV2WindowManager::DrawOntologyDetailsPanel() -> void {
         }
     } else if (state.Selection.Kind == OntologyV2::EOntologyElementKindV2::Edge) {
         const auto *edge = state.Bundle.FindEdge(state.Selection.ElementId);
-        const auto *projectedEdge = state.Projection.FindEdge(state.Selection.ElementId);
+        const auto *projectedEdge = state.OverviewProjection.FindEdge(state.Selection.ElementId);
         if (edge == nullptr) {
             ImGui::TextDisabled("Selected edge is no longer available.");
             return;

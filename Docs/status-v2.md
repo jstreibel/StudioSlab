@@ -2,11 +2,30 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-03-21`
-- Last implementation update: `2026-03-21` (Ontology graph compact-overview pass)
-- Last architecture-doc update: `2026-03-21` (ontology overview/detail notes)
+- Snapshot date: `2026-03-22`
+- Last implementation update: `2026-03-22` (Ontology workspace overview/focus navigator split)
+- Last architecture-doc update: `2026-03-22` (ontology navigator docs refreshed)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
-- Build-target sanity check date: `2026-03-21` (`StudioSlab`, `testsuite`, and `[OntologyGraphV2]` pass in `cmake-build-debug`)
+- Build-target sanity check date: `2026-03-22` (`StudioSlab`, `testsuite`, and `[OntologyGraphV2]` pass in `cmake-build-debug`)
+
+## Recent Updates (`2026-03-22`, implementation)
+
+- Ontology workspace navigation was reworked from one overloaded graph into two coordinated plot surfaces:
+  - `Ontology Overview`
+  - `Ontology Focus`
+  - plus the existing `Ontology Layer` and `Ontology Inspector`
+- The overview graph now renders as a compact ontology map:
+  - one-line node labels
+  - no category/footer text in-node
+  - quieter unlabeled edges by default
+  - selection highlight without forcing the full graph into inspector-card mode
+- The focus graph now derives a neighborhood projection from the shared selection:
+  - defaults to the selected study root when nothing is explicitly selected
+  - shows a first-hop neighborhood by default
+  - uses the richer readable card treatment and edge labels
+- Projection correctness fix:
+  - non-selected study-local nodes are no longer admitted into the selected-study projection with default `(0, 0)` positions
+  - this removes a major hidden source of ontology node pile-ups/overlap in the previous screenshots
 
 ## Implemented Baseline
 

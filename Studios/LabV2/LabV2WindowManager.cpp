@@ -122,7 +122,8 @@ namespace {
     constexpr auto WindowTitleModelAssumptions = "Model Assumptions";
     constexpr auto WindowTitleModelDetails = "Model Inspector";
     constexpr auto WindowTitleOntologyLayer = "Ontology Layer";
-    constexpr auto WindowTitleOntologyGraph = "Ontology Graph";
+    constexpr auto WindowTitleOntologyOverview = "Ontology Overview";
+    constexpr auto WindowTitleOntologyFocus = "Ontology Focus";
     constexpr auto WindowTitleOntologyDetails = "Ontology Inspector";
     constexpr auto WindowTitleGraphPlayground = "Graph Playground";
     constexpr auto WindowTitlePlotInspector = "Plot Inspector";
@@ -1393,9 +1394,13 @@ auto FLabV2WindowManager::IsWorkspaceWindowVisible(const FSlabWindowPtr &window,
     }
 
     if (workspace == EWorkspaceTab::Ontology) {
-        if (const auto it = PlotWindowHostsByWindowId.find(OntologyGraphWindowId);
+        if (const auto it = PlotWindowHostsByWindowId.find(OntologyOverviewWindowId);
             it != PlotWindowHostsByWindowId.end() && it->second == window) {
-            return bShowWindowOntologyGraph;
+            return bShowWindowOntologyOverview;
+        }
+        if (const auto it = PlotWindowHostsByWindowId.find(OntologyFocusWindowId);
+            it != PlotWindowHostsByWindowId.end() && it->second == window) {
+            return bShowWindowOntologyFocus;
         }
     }
 
@@ -1638,7 +1643,7 @@ auto FLabV2WindowManager::SyncPlotWorkspaceWindows() -> void {
         auto workspace = EWorkspaceTab::Plots;
         if (windowId == ModelSemanticGraphWindowId) {
             workspace = EWorkspaceTab::Models;
-        } else if (windowId == OntologyGraphWindowId) {
+        } else if (windowId == OntologyOverviewWindowId || windowId == OntologyFocusWindowId) {
             workspace = EWorkspaceTab::Ontology;
         }
         if (const auto existingIt = PlotWindowHostsByWindowId.find(windowId);
@@ -1666,15 +1671,27 @@ auto FLabV2WindowManager::SyncPlotWorkspaceWindows() -> void {
         }
     }
 
-    if (bPendingFocusOntologyGraphWindow) {
-        if (const auto it = PlotWindowHostsByWindowId.find(OntologyGraphWindowId);
+    if (bPendingFocusOntologyOverviewWindow) {
+        if (const auto it = PlotWindowHostsByWindowId.find(OntologyOverviewWindowId);
             it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
             if (const auto host = Slab::DynamicPointerCast<Slab::Graphics::Plot2D::V2::FPlot2DWindowHostV2>(it->second);
                 host != nullptr) {
                 host->RequestFitToArtists();
             }
             FocusWindow(it->second);
-            bPendingFocusOntologyGraphWindow = false;
+            bPendingFocusOntologyOverviewWindow = false;
+        }
+    }
+
+    if (bPendingFocusOntologyFocusWindow) {
+        if (const auto it = PlotWindowHostsByWindowId.find(OntologyFocusWindowId);
+            it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
+            if (const auto host = Slab::DynamicPointerCast<Slab::Graphics::Plot2D::V2::FPlot2DWindowHostV2>(it->second);
+                host != nullptr) {
+                host->RequestFitToArtists();
+            }
+            FocusWindow(it->second);
+            bPendingFocusOntologyFocusWindow = false;
         }
     }
 }
@@ -2109,7 +2126,8 @@ auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab works
         bShowWindowModelDetails,
         bShowWindowOntologyLayer,
         bShowWindowOntologyDetails,
-        bShowWindowOntologyGraph,
+        bShowWindowOntologyOverview,
+        bShowWindowOntologyFocus,
         bShowWindowGraphPlayground,
         bShowWindowPlotInspector
     };
@@ -2137,7 +2155,8 @@ auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab works
     bShowWindowModelDetails = cfg.bShowWindowModelDetails;
     bShowWindowOntologyLayer = cfg.bShowWindowOntologyLayer;
     bShowWindowOntologyDetails = cfg.bShowWindowOntologyDetails;
-    bShowWindowOntologyGraph = cfg.bShowWindowOntologyGraph;
+    bShowWindowOntologyOverview = cfg.bShowWindowOntologyOverview;
+    bShowWindowOntologyFocus = cfg.bShowWindowOntologyFocus;
     bShowWindowGraphPlayground = cfg.bShowWindowGraphPlayground;
     bShowWindowPlotInspector = cfg.bShowWindowPlotInspector;
 }
@@ -2373,7 +2392,8 @@ auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
             drawToggle("Inspector", &bShowWindowModelDetails);
         } else if (ActiveWorkspace == EWorkspaceTab::Ontology) {
             drawToggle("Ontology Layer", &bShowWindowOntologyLayer);
-            drawToggle("Ontology Graph", &bShowWindowOntologyGraph);
+            drawToggle("Overview", &bShowWindowOntologyOverview);
+            drawToggle("Focus", &bShowWindowOntologyFocus);
             drawToggle("Ontology Inspector", &bShowWindowOntologyDetails);
         } else if (ActiveWorkspace == EWorkspaceTab::GraphPlayground) {
             drawToggle("Graph Playground", &bShowWindowGraphPlayground);
@@ -2458,8 +2478,10 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
     } else if (workspace == EWorkspaceTab::Ontology) {
         const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.26f, nullptr, &dockMain);
         const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.27f, nullptr, &dockMain);
+        const auto dockMainBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.42f, nullptr, &dockMain);
 
-        ImGui::DockBuilderDockWindow(WindowTitleOntologyGraph, dockMain);
+        ImGui::DockBuilderDockWindow(WindowTitleOntologyOverview, dockMain);
+        ImGui::DockBuilderDockWindow(WindowTitleOntologyFocus, dockMainBottom);
         ImGui::DockBuilderDockWindow(WindowTitleOntologyLayer, dockBottom);
         ImGui::DockBuilderDockWindow(WindowTitleOntologyDetails, dockRight);
     } else if (workspace == EWorkspaceTab::GraphPlayground) {
@@ -2622,7 +2644,8 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
                 ImGui::Checkbox("Model Inspector", &bShowWindowModelDetails);
             } else if (ActiveWorkspace == EWorkspaceTab::Ontology) {
                 ImGui::Checkbox("Ontology Layer", &bShowWindowOntologyLayer);
-                ImGui::Checkbox("Ontology Graph", &bShowWindowOntologyGraph);
+                ImGui::Checkbox("Ontology Overview", &bShowWindowOntologyOverview);
+                ImGui::Checkbox("Ontology Focus", &bShowWindowOntologyFocus);
                 ImGui::Checkbox("Ontology Inspector", &bShowWindowOntologyDetails);
             } else if (ActiveWorkspace == EWorkspaceTab::GraphPlayground) {
                 ImGui::Checkbox("Graph Playground", &bShowWindowGraphPlayground);
@@ -2926,7 +2949,8 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
         ImGui::Checkbox("Model Assumptions", &bShowWindowModelAssumptions);
         ImGui::Checkbox("Model Inspector", &bShowWindowModelDetails);
         ImGui::Checkbox("Ontology Layer", &bShowWindowOntologyLayer);
-        ImGui::Checkbox("Ontology Graph", &bShowWindowOntologyGraph);
+        ImGui::Checkbox("Ontology Overview", &bShowWindowOntologyOverview);
+        ImGui::Checkbox("Ontology Focus", &bShowWindowOntologyFocus);
         ImGui::Checkbox("Ontology Inspector", &bShowWindowOntologyDetails);
 
         if (bShowWindowTasks) {
@@ -3030,8 +3054,9 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
         }
     }
 
-    if (ActiveWorkspace == EWorkspaceTab::Ontology && bShowWindowOntologyGraph) {
-        SyncOntologyGraphWindow();
+    if (ActiveWorkspace == EWorkspaceTab::Ontology &&
+        (bShowWindowOntologyOverview || bShowWindowOntologyFocus)) {
+        SyncOntologyGraphWindows();
     }
 
     SyncPlotWorkspaceWindows();

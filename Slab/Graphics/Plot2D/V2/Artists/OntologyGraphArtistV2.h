@@ -9,6 +9,11 @@
 
 namespace Slab::Graphics::Plot2D::V2 {
 
+    enum class EOntologyGraphDisplayModeV2 : unsigned char {
+        Overview,
+        Focus
+    };
+
     class FOntologyGraphArtistV2 final : public FPlotArtistV2 {
         Slab::Core::Ontology::V2::FOntologyGraphProjection Projection;
         std::map<Str, std::size_t> NodeIndexById;
@@ -16,6 +21,7 @@ namespace Slab::Graphics::Plot2D::V2 {
         Slab::Core::Ontology::V2::FOntologyGraphSelectionV2 SelectedSelection;
         Slab::Core::Ontology::V2::FOntologyGraphSelectionV2 HoveredSelection;
         Slab::Core::Ontology::V2::FOntologyGraphSelectionV2 PressedSelection;
+        EOntologyGraphDisplayModeV2 DisplayMode = EOntologyGraphDisplayModeV2::Focus;
         bool bShowEdgeLabels = true;
         std::function<void(const Slab::Core::Ontology::V2::FOntologyGraphSelectionV2 &)> OnSelectionChanged;
 
@@ -38,6 +44,9 @@ namespace Slab::Graphics::Plot2D::V2 {
 
         auto SetSelection(const Slab::Core::Ontology::V2::FOntologyGraphSelectionV2 &selection) -> void;
         [[nodiscard]] auto GetSelection() const -> const Slab::Core::Ontology::V2::FOntologyGraphSelectionV2 &;
+
+        auto SetDisplayMode(EOntologyGraphDisplayModeV2 displayMode) -> void;
+        [[nodiscard]] auto GetDisplayMode() const -> EOntologyGraphDisplayModeV2;
 
         auto SetShowEdgeLabels(bool showEdgeLabels) -> void;
         [[nodiscard]] auto GetShowEdgeLabels() const -> bool;

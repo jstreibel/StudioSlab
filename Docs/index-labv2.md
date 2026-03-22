@@ -130,7 +130,8 @@
 - In the Model workspace, `Base Vocabulary` is ambient/readonly and full object details belong in `Model Inspector`, not repeated in catalog panes.
 - The `Model Semantic Graph` `Plot V2` surface lives in the `Models` workspace, is visible by default, docks directly below `Model Notation Editor`, and remains a read-only navigation surface tied to shared model selection.
 - The `Ontology` workspace is separate from `Model` and owns:
-  - `Ontology Graph`
+  - `Ontology Overview`
+  - `Ontology Focus`
   - `Ontology Layer`
   - `Ontology Inspector`
 - The ontology workspace is read-only and is driven from `Resources/Ontologies`, not from ad hoc graph edits.

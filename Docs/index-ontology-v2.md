@@ -59,30 +59,29 @@
 - Top-level workspace tab:
   - `Ontology`
 - Default docked windows:
-  - `Ontology Graph`
+  - `Ontology Overview`
+  - `Ontology Focus`
   - `Ontology Layer`
   - `Ontology Inspector`
 - Current interactions:
-  - click node/edge selection
+  - click node/edge selection from either ontology plot
+  - overview-to-focus synchronized navigation
   - hover summary
   - incident highlight
   - selected-study switching
   - scope/filter toggles
-  - edge labels default off in the dense overview but remain toggleable
+  - focus-hop control for the neighborhood surface
   - fit/zoom/pan through Plot V2 host controls
 
 ## Current Render Notes
 
-- Node geometry and plot-space text are now measured from font metrics and a view-derived zoom scale.
-- The current implementation scales text through the existing writer transform path.
-- Dense ontology titles are wrapped into compact two-line cards, and the deterministic layout now reserves wider layer/sidecar columns so card bodies stop collapsing into each other.
-- The fitted overview is now intentionally compact: footer metadata is suppressed until hover/selection/highlight or real zoom-in, so the graph reads as an overview first and an inspector second.
-- The deterministic projection now also applies an explicit horizontal compaction pass so the graph uses less width once those overview cards are in their compact mode.
-- Study-local sidecars are only reserved on layers the active study actually uses, so the overview no longer burns width on empty local placeholders.
-- Compact overview text now drives compact overview card geometry too; boxes and badge padding shrink with the fitted text scale instead of staying at full-size.
-- Node cards now show friendly category labels such as `semantic`, `study`, `requirement`, and `solver`; raw ontology kinds remain available in the inspector instead of on every card.
-- Requirement and study nodes now get distinct silhouettes in addition to category color, so type information survives even when the graph is read at overview scale.
-- In LabV2, ontology projection rebuilds request a host fit-to-graph pass so the graph opens framed to content instead of inheriting a stale zoom region.
+- The ontology navigator now uses two explicit render modes:
+  - overview: compact map glyphs
+  - focus: readable neighborhood cards
+- The fitted overview intentionally suppresses category/footer text inside nodes; color, silhouette, and corner tags carry most of the type/scope/status signal.
+- The focus surface derives a filtered neighborhood projection from the shared selection instead of trying to make the full graph readable at once.
+- In LabV2, ontology projection rebuilds request host fit-to-graph passes for both overview and focus surfaces.
+- Selected-study projection now excludes other studies' local nodes entirely instead of leaving them visible with unset positions.
 - Plot V2 must reset any shared-writer pen transform before drawing ontology text, because the ontology backend already converts plot coordinates into screen-space pen positions.
 - If future zoom ranges demand sharper large-scale text, the next step is an SDF-backed freetype-gl path rather than unbounded bitmap scaling.
 

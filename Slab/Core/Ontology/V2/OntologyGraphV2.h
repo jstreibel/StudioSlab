@@ -1072,9 +1072,10 @@ namespace Slab::Core::Ontology::V2 {
                                                     const bool bStudyRoot = false) -> DevFloat {
             const auto titleChars = std::clamp<std::size_t>(node.Title.size(), 8, 60);
             const auto titleLineCount = static_cast<DevFloat>(std::clamp<std::size_t>((titleChars + 19) / 20, 1, 3));
-            auto height = static_cast<DevFloat>(6.6) + ((titleLineCount - 1.0) * 1.6);
+            // Keep projection row spacing aligned with the compact card bounds used by the renderer.
+            auto height = static_cast<DevFloat>(9.8) + ((titleLineCount - 1.0) * 1.9);
             if (bStudyRoot) {
-                height += 0.5;
+                height += 0.7;
             }
             return height;
         }
@@ -1983,6 +1984,10 @@ namespace Slab::Core::Ontology::V2 {
         };
 
         for (const auto &[nodeId, node] : bundle.NodeTable) {
+            if (node.OwnershipScope == EOntologyOwnershipScopeV2::StudyLocal &&
+                !studyLocalNodeIds.contains(nodeId)) {
+                continue;
+            }
             if (!passesBaseScope(node)) continue;
             if (!passesFocusFilters(node)) continue;
             visibleNodeIds.insert(nodeId);
@@ -2078,6 +2083,89 @@ namespace Slab::Core::Ontology::V2 {
         for (auto &[nodeId, edgeIds] : projection.IncomingEdgesByNodeId) {
             (void) nodeId;
             std::sort(edgeIds.begin(), edgeIds.end());
+        }
+
+        return projection;
+    }
+
+    inline auto BuildOntologyGraphNeighborhoodProjectionV2(const FOntologyGraphProjection &source,
+                                                           const FOntologyGraphSelectionV2 &selection,
+                                                           int hopCount = 1)
+        -> FOntologyGraphProjection {
+        FOntologyGraphProjection projection;
+        projection.SelectedStudyId = source.SelectedStudyId;
+        projection.SelectedStudyDocument = source.SelectedStudyDocument;
+        projection.Filters = source.Filters;
+        projection.Diagnostics = source.Diagnostics;
+
+        if (source.Nodes.empty()) {
+            return projection;
+        }
+
+        std::set<Str> visibleNodeIds;
+        std::set<Str> visibleEdgeIds;
+
+        auto seedNodeIds = std::set<Str>{};
+        if (selection.Kind == EOntologyElementKindV2::Node) {
+            if (source.FindNode(selection.ElementId) != nullptr) {
+                seedNodeIds.insert(selection.ElementId);
+            }
+        } else if (selection.Kind == EOntologyElementKindV2::Edge) {
+            if (const auto *edge = source.FindEdge(selection.ElementId); edge != nullptr) {
+                if (!edge->FromNodeId.empty()) seedNodeIds.insert(edge->FromNodeId);
+                if (!edge->ToNodeId.empty()) seedNodeIds.insert(edge->ToNodeId);
+                visibleEdgeIds.insert(edge->EdgeId);
+            }
+        }
+
+        if (seedNodeIds.empty()) {
+            if (!source.SelectedStudyId.empty() && source.FindNode(source.SelectedStudyId) != nullptr) {
+                seedNodeIds.insert(source.SelectedStudyId);
+            } else {
+                seedNodeIds.insert(source.Nodes.front().NodeId);
+            }
+        }
+
+        visibleNodeIds = seedNodeIds;
+        auto frontierNodeIds = seedNodeIds;
+        const auto clampedHopCount = std::clamp(hopCount, 0, 3);
+        for (int hop = 0; hop < clampedHopCount; ++hop) {
+            std::set<Str> nextFrontier;
+            for (const auto &nodeId : frontierNodeIds) {
+                const auto gatherIncidentEdges = [&](const auto &edgeIndex, const bool bOutgoing) {
+                    const auto it = edgeIndex.find(nodeId);
+                    if (it == edgeIndex.end()) return;
+                    for (const auto &edgeId : it->second) {
+                        const auto *edge = source.FindEdge(edgeId);
+                        if (edge == nullptr) continue;
+                        visibleEdgeIds.insert(edgeId);
+                        const auto &otherNodeId = bOutgoing ? edge->ToNodeId : edge->FromNodeId;
+                        if (otherNodeId.empty()) continue;
+                        if (visibleNodeIds.insert(otherNodeId).second) {
+                            nextFrontier.insert(otherNodeId);
+                        }
+                    }
+                };
+
+                gatherIncidentEdges(source.OutgoingEdgesByNodeId, true);
+                gatherIncidentEdges(source.IncomingEdgesByNodeId, false);
+            }
+
+            frontierNodeIds = std::move(nextFrontier);
+            if (frontierNodeIds.empty()) break;
+        }
+
+        for (const auto &node : source.Nodes) {
+            if (!visibleNodeIds.contains(node.NodeId)) continue;
+            projection.Nodes.push_back(node);
+        }
+
+        for (const auto &edge : source.Edges) {
+            if (!visibleEdgeIds.contains(edge.EdgeId)) continue;
+            if (!visibleNodeIds.contains(edge.FromNodeId) || !visibleNodeIds.contains(edge.ToNodeId)) continue;
+            projection.Edges.push_back(edge);
+            projection.OutgoingEdgesByNodeId[edge.FromNodeId].push_back(edge.EdgeId);
+            projection.IncomingEdgesByNodeId[edge.ToNodeId].push_back(edge.EdgeId);
         }
 
         return projection;

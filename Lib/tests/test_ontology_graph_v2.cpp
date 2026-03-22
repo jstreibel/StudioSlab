@@ -3,6 +3,7 @@
 #include "Core/Ontology/V2/OntologyGraphV2.h"
 #include "Graphics/Plot2D/V2/Plot2DV2.h"
 
+#include <algorithm>
 #include <filesystem>
 #include <limits>
 #include <map>
@@ -79,6 +80,20 @@ namespace {
         }
 
         return nullptr;
+    }
+
+    [[nodiscard]] auto EstimateCompactNodeHalfHeightForTest(const FOntologyProjectedNodeV2 &node) -> DevFloat {
+        const auto titleChars = std::max<std::size_t>(node.Title.size(), std::size_t{1});
+        const auto titleLineCount = static_cast<DevFloat>(std::clamp<std::size_t>(
+            (titleChars + 20 - 1) / 20,
+            std::size_t{1},
+            std::size_t{3}));
+
+        auto halfHeight = static_cast<DevFloat>(4.9) + ((titleLineCount - 1.0) * 0.95);
+        if (node.bStudyRoot) {
+            halfHeight += 0.35;
+        }
+        return halfHeight;
     }
 
 } // namespace
@@ -171,6 +186,30 @@ TEST_CASE("Ontology projection preserves deterministic reachable and blocked reg
     REQUIRE(artifactNode->ActivationStatus == EOntologyActivationStatusV2::Reachable);
 }
 
+TEST_CASE("Ontology neighborhood projection isolates first-hop focus region", "[OntologyGraphV2]") {
+    const auto ontologyDirectory = FindOntologyResourcesDirectoryV2();
+    REQUIRE_FALSE(ontologyDirectory.empty());
+
+    const auto bundle = LoadOntologyGraphBundleV2(
+        ontologyDirectory / "studioslab-ontology.schema.json",
+        ontologyDirectory / "global-descent.ontology.json",
+        DiscoverOntologyStudyDocumentsV2(ontologyDirectory));
+    REQUIRE(bundle.Diagnostics.ErrorCount() == 0);
+
+    const auto overviewProjection = BuildOntologyGraphProjectionV2(bundle, "study:ho", {});
+    const auto focusProjection = BuildOntologyGraphNeighborhoodProjectionV2(
+        overviewProjection,
+        {EOntologyElementKindV2::Node, "solver:RK4"},
+        1);
+
+    REQUIRE(focusProjection.FindNode("solver:RK4") != nullptr);
+    REQUIRE(focusProjection.FindNode("descent:FirstOrderExplicitODE") != nullptr);
+    REQUIRE(focusProjection.FindNode("artifact:TrajectorySeries") != nullptr);
+    REQUIRE(focusProjection.FindNode("study:ho:x") == nullptr);
+    REQUIRE(focusProjection.FindNode("study:ho:k") == nullptr);
+    REQUIRE(focusProjection.Edges.size() >= 2);
+}
+
 TEST_CASE("Ontology projection keeps dense study layout breathable", "[OntologyGraphV2]") {
     const auto ontologyDirectory = FindOntologyResourcesDirectoryV2();
     REQUIRE_FALSE(ontologyDirectory.empty());
@@ -208,6 +247,68 @@ TEST_CASE("Ontology projection keeps dense study layout breathable", "[OntologyG
     INFO("Total ontology column span: " << totalSpan);
     REQUIRE(minColumnGap > 8.5);
     REQUIRE(totalSpan < 160.0);
+
+    for (auto &[columnX, nodes] : nodesByColumnX) {
+        (void) columnX;
+        std::sort(nodes.begin(), nodes.end(), [](const auto *lhs, const auto *rhs) {
+            if (lhs->Position.y != rhs->Position.y) return lhs->Position.y > rhs->Position.y;
+            return lhs->NodeId < rhs->NodeId;
+        });
+
+        for (std::size_t index = 1; index < nodes.size(); ++index) {
+            const auto *upper = nodes[index - 1];
+            const auto *lower = nodes[index];
+            const auto centerDistance = upper->Position.y - lower->Position.y;
+            const auto minNonOverlapDistance =
+                EstimateCompactNodeHalfHeightForTest(*upper) +
+                EstimateCompactNodeHalfHeightForTest(*lower);
+            INFO("Column x: " << columnX);
+            INFO("Upper node: " << upper->NodeId << " at y=" << upper->Position.y);
+            INFO("Lower node: " << lower->NodeId << " at y=" << lower->Position.y);
+            INFO("Center distance: " << centerDistance);
+            INFO("Required non-overlap distance: " << minNonOverlapDistance);
+            REQUIRE(centerDistance > minNonOverlapDistance);
+        }
+    }
+}
+
+TEST_CASE("Ontology graph overview mode is materially leaner than focus mode", "[OntologyGraphV2][Plot2DV2]") {
+    const auto ontologyDirectory = FindOntologyResourcesDirectoryV2();
+    REQUIRE_FALSE(ontologyDirectory.empty());
+
+    const auto bundle = LoadOntologyGraphBundleV2(
+        ontologyDirectory / "studioslab-ontology.schema.json",
+        ontologyDirectory / "global-descent.ontology.json",
+        DiscoverOntologyStudyDocumentsV2(ontologyDirectory));
+    REQUIRE(bundle.Diagnostics.ErrorCount() == 0);
+
+    const auto projection = BuildOntologyGraphProjectionV2(bundle, "study:ho", {});
+
+    auto overviewArtist = New<FOntologyGraphArtistV2>();
+    overviewArtist->SetProjection(projection);
+    overviewArtist->SetDisplayMode(EOntologyGraphDisplayModeV2::Overview);
+
+    FPlot2DWindowV2 overviewWindow("Ontology Overview Test", {-12.0, 96.0, -38.0, 12.0}, {0, 900, 0, 640});
+    overviewWindow.AddArtist(overviewArtist, 0);
+
+    FRecordingRenderBackendV2 backend;
+    REQUIRE(overviewWindow.Render(backend));
+    const auto &overviewDrawList = backend.GetLastDrawList();
+    const auto overviewTextCount = CountTextCommands(overviewDrawList);
+    REQUIRE_FALSE(HasTextContaining(overviewDrawList, "solver"));
+
+    auto focusArtist = New<FOntologyGraphArtistV2>();
+    focusArtist->SetProjection(projection);
+    focusArtist->SetDisplayMode(EOntologyGraphDisplayModeV2::Focus);
+
+    FPlot2DWindowV2 focusWindow("Ontology Focus Test", {-12.0, 96.0, -38.0, 12.0}, {0, 900, 0, 640});
+    focusWindow.AddArtist(focusArtist, 0);
+
+    REQUIRE(focusWindow.Render(backend));
+    const auto &focusDrawList = backend.GetLastDrawList();
+    const auto focusTextCount = CountTextCommands(focusDrawList);
+    REQUIRE(HasTextContaining(focusDrawList, "solver"));
+    REQUIRE(overviewTextCount < focusTextCount);
 }
 
 TEST_CASE("Ontology graph artist renders and supports click selection", "[OntologyGraphV2][Plot2DV2]") {
@@ -265,6 +366,36 @@ TEST_CASE("Ontology graph artist renders and supports click selection", "[Ontolo
     REQUIRE(artist->HandlePointerEvent(frame, releaseEvent));
     REQUIRE(artist->GetSelection().Kind == EOntologyElementKindV2::Node);
     REQUIRE(artist->GetSelection().ElementId == "study:ho");
+}
+
+TEST_CASE("Ontology graph selection fades non-neighborhood nodes", "[OntologyGraphV2][Plot2DV2]") {
+    const auto ontologyDirectory = FindOntologyResourcesDirectoryV2();
+    REQUIRE_FALSE(ontologyDirectory.empty());
+
+    const auto bundle = LoadOntologyGraphBundleV2(
+        ontologyDirectory / "studioslab-ontology.schema.json",
+        ontologyDirectory / "global-descent.ontology.json",
+        DiscoverOntologyStudyDocumentsV2(ontologyDirectory));
+    REQUIRE(bundle.Diagnostics.ErrorCount() == 0);
+
+    const auto projection = BuildOntologyGraphProjectionV2(bundle, "study:ho", {});
+
+    auto artist = New<FOntologyGraphArtistV2>();
+    artist->SetProjection(projection);
+
+    FPlot2DWindowV2 window("Ontology Graph Focus Test", {-12.0, 96.0, -38.0, 12.0}, {0, 900, 0, 640});
+    window.AddArtist(artist, 0);
+
+    FRecordingRenderBackendV2 backend;
+    REQUIRE(window.Render(backend));
+
+    const auto &drawList = backend.GetLastDrawList();
+    const auto *selectedTitle = FindTextCommandContaining(drawList, "Harmonic oscillator");
+    const auto *fadedTitle = FindTextCommandContaining(drawList, "Field equation");
+    REQUIRE(selectedTitle != nullptr);
+    REQUIRE(fadedTitle != nullptr);
+    REQUIRE(fadedTitle->Color.a < selectedTitle->Color.a);
+    REQUIRE(fadedTitle->Color.a < 0.5f);
 }
 
 TEST_CASE("Ontology graph plot text scales with zoom", "[OntologyGraphV2][Plot2DV2]") {

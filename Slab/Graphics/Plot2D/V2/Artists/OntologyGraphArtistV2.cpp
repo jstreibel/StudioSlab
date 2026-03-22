@@ -222,7 +222,129 @@ namespace Slab::Graphics::Plot2D::V2 {
             return std::max<DevFloat>(CNodeMinOwnershipBadgeHeightPixels, 0.88 * ResolveNodeLineAdvance(frame, fontScale));
         }
 
-        [[nodiscard]] auto EstimateNodeBoundsHalfWidth(const OntologyV2::FOntologyProjectedNodeV2 &node) -> DevFloat {
+        [[nodiscard]] auto BuildNodeTitleLines(const Str &title,
+                                               const EOntologyGraphDisplayModeV2 displayMode) -> Vector<Str> {
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                const auto trimmed = TrimWhitespace(title);
+                return {trimmed.empty() ? Str{"Untitled"} : CompactLabel(trimmed, 18)};
+            }
+
+            return BuildWrappedTitleLines(title);
+        }
+
+        [[nodiscard]] auto ResolveNodePaddingXForMode(const FPlotFrameContextV2 &frame,
+                                                      const DevFloat fontScale,
+                                                      const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            const auto base = ResolveNodePaddingX(frame, fontScale);
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                return std::max<DevFloat>(5.0, 0.68 * base);
+            }
+            return base;
+        }
+
+        [[nodiscard]] auto ResolveNodePaddingYForMode(const FPlotFrameContextV2 &frame,
+                                                      const DevFloat fontScale,
+                                                      const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            const auto base = ResolveNodePaddingY(frame, fontScale);
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                return std::max<DevFloat>(4.0, 0.66 * base);
+            }
+            return base;
+        }
+
+        [[nodiscard]] auto ResolveNodeLineAdvanceForMode(const FPlotFrameContextV2 &frame,
+                                                         const DevFloat fontScale,
+                                                         const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            const auto base = ResolveNodeLineAdvance(frame, fontScale);
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                return std::max<DevFloat>(11.0, 0.88 * base);
+            }
+            return base;
+        }
+
+        [[nodiscard]] auto ResolveNodeSecondaryGapForMode(const FPlotFrameContextV2 &frame,
+                                                          const DevFloat fontScale,
+                                                          const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            const auto base = ResolveNodeSecondaryGap(frame, fontScale);
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                return std::max<DevFloat>(2.0, 0.55 * base);
+            }
+            return base;
+        }
+
+        [[nodiscard]] auto ResolveStudyBadgeWidthForMode(const FPlotFrameContextV2 &frame,
+                                                         const DevFloat fontScale,
+                                                         const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            const auto base = ResolveStudyBadgeWidth(frame, fontScale);
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                return std::max<DevFloat>(32.0, 0.82 * base);
+            }
+            return base;
+        }
+
+        [[nodiscard]] auto ResolveStudyBadgeHeightForMode(const FPlotFrameContextV2 &frame,
+                                                          const DevFloat fontScale,
+                                                          const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            const auto base = ResolveStudyBadgeHeight(frame, fontScale);
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                return std::max<DevFloat>(14.0, 0.84 * base);
+            }
+            return base;
+        }
+
+        [[nodiscard]] auto ResolveOwnershipBadgeWidthForMode(const FPlotFrameContextV2 &frame,
+                                                             const Str &label,
+                                                             const DevFloat fontScale,
+                                                             const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            const auto base = ResolveOwnershipBadgeWidth(frame, label, fontScale);
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                return std::max<DevFloat>(34.0, 0.82 * base);
+            }
+            return base;
+        }
+
+        [[nodiscard]] auto ResolveOwnershipBadgeHeightForMode(const FPlotFrameContextV2 &frame,
+                                                              const DevFloat fontScale,
+                                                              const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            const auto base = ResolveOwnershipBadgeHeight(frame, fontScale);
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                return std::max<DevFloat>(14.0, 0.84 * base);
+            }
+            return base;
+        }
+
+        [[nodiscard]] auto ResolveStatusBadgeWidthForMode(const FPlotFrameContextV2 &frame,
+                                                          const Str &label,
+                                                          const DevFloat fontScale,
+                                                          const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            const auto base = ResolveStatusBadgeWidth(frame, label, fontScale);
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                return std::max<DevFloat>(46.0, 0.78 * base);
+            }
+            return base;
+        }
+
+        [[nodiscard]] auto ResolveStatusBadgeHeightForMode(const FPlotFrameContextV2 &frame,
+                                                           const DevFloat fontScale,
+                                                           const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            const auto base = ResolveStatusBadgeHeight(frame, fontScale);
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                return std::max<DevFloat>(14.0, 0.84 * base);
+            }
+            return base;
+        }
+
+        [[nodiscard]] auto EstimateNodeBoundsHalfWidth(const OntologyV2::FOntologyProjectedNodeV2 &node,
+                                                       const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                const auto titleChars = static_cast<DevFloat>(std::clamp<std::size_t>(node.Title.size(), 6, 18));
+                const auto badgeAllowance = node.ActivationStatus != OntologyV2::EOntologyActivationStatusV2::None ? 2.7 : 1.9;
+                return std::clamp(
+                    static_cast<DevFloat>(4.8) + (0.14 * titleChars) + badgeAllowance,
+                    static_cast<DevFloat>(4.8),
+                    static_cast<DevFloat>(9.4));
+            }
+
             const auto categoryText = OntologyV2::FriendlyNodeCategoryLabelV2(node.Kind, node.Layer);
             const auto titleLineCount = std::clamp<std::size_t>(
                 (std::max<std::size_t>(node.Title.size(), std::size_t{1}) + CNodeTitleMaxCharsPerLine - 1) /
@@ -244,7 +366,12 @@ namespace Slab::Graphics::Plot2D::V2 {
                 12.7);
         }
 
-        [[nodiscard]] auto EstimateNodeBoundsHalfHeight(const OntologyV2::FOntologyProjectedNodeV2 &node) -> DevFloat {
+        [[nodiscard]] auto EstimateNodeBoundsHalfHeight(const OntologyV2::FOntologyProjectedNodeV2 &node,
+                                                        const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                return node.bStudyRoot ? static_cast<DevFloat>(2.8) : static_cast<DevFloat>(2.5);
+            }
+
             const auto titleLineCount = static_cast<DevFloat>(std::clamp<std::size_t>(
                 (std::max<std::size_t>(node.Title.size(), std::size_t{1}) + CNodeTitleMaxCharsPerLine - 1) /
                     CNodeTitleMaxCharsPerLine,
@@ -257,7 +384,8 @@ namespace Slab::Graphics::Plot2D::V2 {
             return halfHeight;
         }
 
-        [[nodiscard]] auto ComputeProjectionBounds(const OntologyV2::FOntologyGraphProjection &projection)
+        [[nodiscard]] auto ComputeProjectionBounds(const OntologyV2::FOntologyGraphProjection &projection,
+                                                   const EOntologyGraphDisplayModeV2 displayMode)
             -> std::optional<RectR> {
             if (projection.Nodes.empty()) return std::nullopt;
 
@@ -269,8 +397,8 @@ namespace Slab::Graphics::Plot2D::V2 {
             };
 
             for (const auto &node : projection.Nodes) {
-                const auto halfWidth = EstimateNodeBoundsHalfWidth(node);
-                const auto halfHeight = EstimateNodeBoundsHalfHeight(node);
+                const auto halfWidth = EstimateNodeBoundsHalfWidth(node, displayMode);
+                const auto halfHeight = EstimateNodeBoundsHalfHeight(node, displayMode);
                 bounds.xMin = std::min(bounds.xMin, node.Position.x - halfWidth);
                 bounds.xMax = std::max(bounds.xMax, node.Position.x + halfWidth);
                 bounds.yMin = std::min(bounds.yMin, node.Position.y - halfHeight);
@@ -285,8 +413,9 @@ namespace Slab::Graphics::Plot2D::V2 {
         }
 
         [[nodiscard]] auto ResolveOntologyTextScale(const FPlotFrameContextV2 &frame,
-                                                    const OntologyV2::FOntologyGraphProjection &projection) -> DevFloat {
-            const auto referenceBounds = ComputeProjectionBounds(projection);
+                                                    const OntologyV2::FOntologyGraphProjection &projection,
+                                                    const EOntologyGraphDisplayModeV2 displayMode) -> DevFloat {
+            const auto referenceBounds = ComputeProjectionBounds(projection, displayMode);
             if (!referenceBounds.has_value()) return 1.0;
 
             auto fittedBounds = *referenceBounds;
@@ -304,14 +433,22 @@ namespace Slab::Graphics::Plot2D::V2 {
             const auto scale = std::max(scaleX, scaleY);
 
             if (!std::isfinite(scale)) return 1.0;
-            return std::clamp(0.88 * scale, CNodeMinFontScale, CNodeMaxFontScale);
+            const auto baseFactor = displayMode == EOntologyGraphDisplayModeV2::Overview
+                ? static_cast<DevFloat>(0.76)
+                : static_cast<DevFloat>(0.88);
+            return std::clamp(baseFactor * scale, CNodeMinFontScale, CNodeMaxFontScale);
         }
 
-        [[nodiscard]] auto ShouldShowNodeFooterDetails(const DevFloat fontScale,
+        [[nodiscard]] auto ShouldShowNodeFooterDetails(const EOntologyGraphDisplayModeV2 displayMode,
+                                                       const DevFloat fontScale,
                                                        const bool bSelected,
                                                        const bool bHovered,
                                                        const bool bHighlighted) -> bool {
-            return bSelected || bHovered || bHighlighted || fontScale >= 1.18;
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                return false;
+            }
+            (void) bHighlighted;
+            return bSelected || bHovered || fontScale >= 1.18;
         }
 
         [[nodiscard]] auto ResolveHudPaddingX(const FPlotFrameContextV2 &frame) -> DevFloat {
@@ -457,6 +594,10 @@ namespace Slab::Graphics::Plot2D::V2 {
             };
         }
 
+        [[nodiscard]] auto ApplyAlphaFactor(const FColor &color, const DevFloat factor) -> FColor {
+            return color.WithAlpha(static_cast<float>(std::clamp(factor, static_cast<DevFloat>(0.0), static_cast<DevFloat>(1.0)) * color.a));
+        }
+
         [[nodiscard]] auto LayerColor(const Str &layer) -> FColor {
             if (layer == "ambient") return FColor::FromHex("#6C7483");
             if (layer == "semantic") return FColor::FromHex("#4A92C2");
@@ -561,13 +702,14 @@ namespace Slab::Graphics::Plot2D::V2 {
         [[nodiscard]] auto MeasureNodeRect(const FPlotFrameContextV2 &frame,
                                            const OntologyV2::FOntologyProjectedNodeV2 &node,
                                            const DevFloat fontScale,
-                                           const bool bShowFooterDetails) -> RectR {
+                                           const bool bShowFooterDetails,
+                                           const EOntologyGraphDisplayModeV2 displayMode) -> RectR {
             const auto pixelSize = PixelSizeInSpace(frame.PlotRegion, frame.Viewport);
-            const auto paddingX = ResolveNodePaddingX(frame, fontScale);
-            const auto paddingY = ResolveNodePaddingY(frame, fontScale);
-            const auto lineAdvance = ResolveNodeLineAdvance(frame, fontScale);
-            const auto secondaryGap = ResolveNodeSecondaryGap(frame, fontScale);
-            const auto titleLines = BuildWrappedTitleLines(node.Title);
+            const auto paddingX = ResolveNodePaddingXForMode(frame, fontScale, displayMode);
+            const auto paddingY = ResolveNodePaddingYForMode(frame, fontScale, displayMode);
+            const auto lineAdvance = ResolveNodeLineAdvanceForMode(frame, fontScale, displayMode);
+            const auto secondaryGap = ResolveNodeSecondaryGapForMode(frame, fontScale, displayMode);
+            const auto titleLines = BuildNodeTitleLines(node.Title, displayMode);
             const auto titleLineCount = std::max<std::size_t>(std::size_t{1}, titleLines.size());
 
             const auto secondaryText = node.SecondarySummary.empty() ? node.CompactId : node.SecondarySummary;
@@ -579,37 +721,65 @@ namespace Slab::Graphics::Plot2D::V2 {
                     titleWidthPixels,
                     ApproximateNodeTextWidth(frame, titleLine, CNodeTitleMaxCharsPerLine, fontScale));
             }
-            const auto categoryWidthPixels = ApproximateNodeTextWidth(frame, categoryText, 16, fontScale);
-            const auto detailWidthPixels = bShowFooterDetails
+            const auto categoryWidthPixels = displayMode == EOntologyGraphDisplayModeV2::Focus
+                ? ApproximateNodeTextWidth(frame, categoryText, 16, fontScale)
+                : 0.0;
+            const auto detailWidthPixels = bShowFooterDetails && displayMode == EOntologyGraphDisplayModeV2::Focus
                 ? ApproximateNodeTextWidth(frame, secondaryText, 34, fontScale)
                 : 0.0;
             const auto leadingBadgeReservePixels = node.bStudyRoot
-                ? ResolveStudyBadgeWidth(frame, fontScale) + (0.55 * paddingX)
-                : ResolveOwnershipBadgeWidth(frame, OwnershipBadgeLabel(node), fontScale) + (0.55 * paddingX);
+                ? ResolveStudyBadgeWidthForMode(frame, fontScale, displayMode) + (0.55 * paddingX)
+                : ResolveOwnershipBadgeWidthForMode(frame, OwnershipBadgeLabel(node), fontScale, displayMode) + (0.55 * paddingX);
             const auto statusBadgeReservePixels = node.ActivationStatus != OntologyV2::EOntologyActivationStatusV2::None
-                ? ResolveStatusBadgeWidth(frame, statusText, fontScale)
+                ? ResolveStatusBadgeWidthForMode(frame, statusText, fontScale, displayMode)
                 : std::max<DevFloat>(18.0, 1.15 * ResolveNodeFontHeight(frame, fontScale));
             const auto topBadgeRowWidthPixels = leadingBadgeReservePixels + statusBadgeReservePixels + (1.15 * paddingX);
-            const auto widthPixels = std::clamp(
-                std::max(
-                    std::max(titleWidthPixels + statusBadgeReservePixels, topBadgeRowWidthPixels),
-                    std::max(categoryWidthPixels, detailWidthPixels) + (2.0 * paddingX)) +
-                    (2.0 * paddingX) +
-                    (0.25 * paddingX),
-                ResolveNodeMinWidth(frame, fontScale),
-                ResolveNodeMaxWidth(frame, fontScale));
-            const auto detailLineCount =
-                bShowFooterDetails && !secondaryText.empty() ? static_cast<DevFloat>(1.0) : static_cast<DevFloat>(0.0);
-            const auto footerLineCount = static_cast<DevFloat>(1.0) + detailLineCount;
-            auto heightPixels = std::max<DevFloat>(
-                CNodeMinHeightPixels,
-                (2.0 * paddingY) +
-                    (static_cast<DevFloat>(titleLineCount) * lineAdvance) +
-                    secondaryGap +
-                    (footerLineCount * lineAdvance) +
-                    (0.24 * ResolveNodeFontHeight(frame, fontScale)));
-            if (node.bStudyRoot) {
-                heightPixels = std::max<DevFloat>(heightPixels, CNodeMinHeightPixels + (0.22 * lineAdvance));
+
+            DevFloat widthPixels = 0.0;
+            DevFloat heightPixels = 0.0;
+            if (displayMode == EOntologyGraphDisplayModeV2::Overview) {
+                const auto topBadgeHeightPixels = std::max(
+                    node.bStudyRoot
+                        ? ResolveStudyBadgeHeightForMode(frame, fontScale, displayMode)
+                        : ResolveOwnershipBadgeHeightForMode(frame, fontScale, displayMode),
+                    node.ActivationStatus != OntologyV2::EOntologyActivationStatusV2::None
+                        ? ResolveStatusBadgeHeightForMode(frame, fontScale, displayMode)
+                        : 0.0);
+                widthPixels = std::clamp(
+                    std::max(topBadgeRowWidthPixels, titleWidthPixels + (2.0 * paddingX)) + (1.45 * paddingX),
+                    static_cast<DevFloat>(72.0),
+                    static_cast<DevFloat>(162.0));
+                heightPixels = std::max<DevFloat>(
+                    36.0,
+                    (2.0 * paddingY) +
+                        topBadgeHeightPixels +
+                        lineAdvance +
+                        (0.30 * paddingY));
+                if (node.bStudyRoot) {
+                    heightPixels = std::max<DevFloat>(heightPixels, 40.0);
+                }
+            } else {
+                widthPixels = std::clamp(
+                    std::max(
+                        std::max(titleWidthPixels + statusBadgeReservePixels, topBadgeRowWidthPixels),
+                        std::max(categoryWidthPixels, detailWidthPixels) + (2.0 * paddingX)) +
+                        (2.0 * paddingX) +
+                        (0.25 * paddingX),
+                    ResolveNodeMinWidth(frame, fontScale),
+                    ResolveNodeMaxWidth(frame, fontScale));
+                const auto detailLineCount =
+                    bShowFooterDetails && !secondaryText.empty() ? static_cast<DevFloat>(1.0) : static_cast<DevFloat>(0.0);
+                const auto footerLineCount = static_cast<DevFloat>(1.0) + detailLineCount;
+                heightPixels = std::max<DevFloat>(
+                    CNodeMinHeightPixels,
+                    (2.0 * paddingY) +
+                        (static_cast<DevFloat>(titleLineCount) * lineAdvance) +
+                        secondaryGap +
+                        (footerLineCount * lineAdvance) +
+                        (0.24 * ResolveNodeFontHeight(frame, fontScale)));
+                if (node.bStudyRoot) {
+                    heightPixels = std::max<DevFloat>(heightPixels, CNodeMinHeightPixels + (0.22 * lineAdvance));
+                }
             }
 
             const auto halfWidth = 0.5 * widthPixels * pixelSize.x;
@@ -900,6 +1070,14 @@ namespace Slab::Graphics::Plot2D::V2 {
         return SelectedSelection;
     }
 
+    auto FOntologyGraphArtistV2::SetDisplayMode(const EOntologyGraphDisplayModeV2 displayMode) -> void {
+        DisplayMode = displayMode;
+    }
+
+    auto FOntologyGraphArtistV2::GetDisplayMode() const -> EOntologyGraphDisplayModeV2 {
+        return DisplayMode;
+    }
+
     auto FOntologyGraphArtistV2::SetShowEdgeLabels(const bool showEdgeLabels) -> void {
         bShowEdgeLabels = showEdgeLabels;
     }
@@ -918,12 +1096,16 @@ namespace Slab::Graphics::Plot2D::V2 {
         std::set<Str> highlightedNodeIds;
         std::set<Str> highlightedEdgeIds;
         BuildHighlightSets(Projection, SelectedSelection, highlightedNodeIds, highlightedEdgeIds);
+        const bool bNeighborhoodFocusActive =
+            DisplayMode == EOntologyGraphDisplayModeV2::Focus &&
+            SelectedSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
+            !SelectedSelection.ElementId.empty();
 
-        const auto graphTextScale = ResolveOntologyTextScale(frame, Projection);
+        const auto graphTextScale = ResolveOntologyTextScale(frame, Projection, DisplayMode);
         const auto pixelSize = PixelSizeInSpace(frame.PlotRegion, frame.Viewport);
-        const auto paddingX = ResolveNodePaddingX(frame, graphTextScale);
-        const auto paddingY = ResolveNodePaddingY(frame, graphTextScale);
-        const auto lineAdvance = ResolveNodeLineAdvance(frame, graphTextScale);
+        const auto paddingX = ResolveNodePaddingXForMode(frame, graphTextScale, DisplayMode);
+        const auto paddingY = ResolveNodePaddingYForMode(frame, graphTextScale, DisplayMode);
+        const auto lineAdvance = ResolveNodeLineAdvanceForMode(frame, graphTextScale, DisplayMode);
         const auto lineAdvancePlot = PixelVectorToPlotDelta({0.0, lineAdvance}, pixelSize).y;
         const auto edgeLabelOffset = PixelVectorToPlotDelta({0.65 * paddingX, 0.45 * lineAdvance}, pixelSize);
         const auto textPad = PixelVectorToPlotDelta({paddingX, paddingY}, pixelSize);
@@ -950,12 +1132,14 @@ namespace Slab::Graphics::Plot2D::V2 {
                 frame,
                 *source,
                 graphTextScale,
-                ShouldShowNodeFooterDetails(graphTextScale, bSourceSelected, bSourceHovered, bSourceHighlighted));
+                ShouldShowNodeFooterDetails(DisplayMode, graphTextScale, bSourceSelected, bSourceHovered, bSourceHighlighted),
+                DisplayMode);
             const auto targetRect = MeasureNodeRect(
                 frame,
                 *target,
                 graphTextScale,
-                ShouldShowNodeFooterDetails(graphTextScale, bTargetSelected, bTargetHovered, bTargetHighlighted));
+                ShouldShowNodeFooterDetails(DisplayMode, graphTextScale, bTargetSelected, bTargetHovered, bTargetHighlighted),
+                DisplayMode);
             const auto route = BuildEdgeRoute(sourceRect, targetRect, pixelSize);
 
             auto edgeColor = edge.ActivationStatus != OntologyV2::EOntologyActivationStatusV2::None
@@ -970,9 +1154,17 @@ namespace Slab::Graphics::Plot2D::V2 {
             const bool bHovered = HoveredSelection.Kind == OntologyV2::EOntologyElementKindV2::Edge &&
                 HoveredSelection.ElementId == edge.EdgeId;
             const bool bHighlighted = highlightedEdgeIds.contains(edge.EdgeId);
+            auto edgeAlphaFactor = (!bNeighborhoodFocusActive || bHighlighted)
+                ? static_cast<DevFloat>(1.0)
+                : static_cast<DevFloat>(0.24);
+            if (DisplayMode == EOntologyGraphDisplayModeV2::Overview && !bSelected && !bHovered && !bHighlighted) {
+                edgeAlphaFactor *= static_cast<DevFloat>(0.52);
+            }
 
             auto style = PlotStyle(
-                edgeColor.WithAlpha(bSelected || bHovered ? 1.0f : (edge.bStudyOwned ? 0.92f : 0.72f)),
+                ApplyAlphaFactor(
+                    edgeColor.WithAlpha(bSelected || bHovered ? 1.0f : (edge.bStudyOwned ? 0.92f : 0.72f)),
+                    edgeAlphaFactor),
                 LineStrip,
                 false,
                 Nil,
@@ -985,7 +1177,8 @@ namespace Slab::Graphics::Plot2D::V2 {
                 .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
             });
 
-            if (route.ArrowPoints.has_value()) {
+            if (route.ArrowPoints.has_value() &&
+                (DisplayMode == EOntologyGraphDisplayModeV2::Focus || bSelected || bHovered || bHighlighted)) {
                 drawList.AddPolyline(FPolylineCommandV2{
                     .Points = {
                         (*route.ArrowPoints)[0],
@@ -998,11 +1191,13 @@ namespace Slab::Graphics::Plot2D::V2 {
                 });
             }
 
-            if (bShowEdgeLabels || bSelected || bHovered) {
+            if (DisplayMode == EOntologyGraphDisplayModeV2::Focus && (bShowEdgeLabels || bSelected || bHovered)) {
                 drawList.AddText(FTextCommandV2{
                     .Text = CompactLabel(EdgeBadgeLabel(edge.Type), 18),
                     .Location = route.LabelPoint.WithTranslation(edgeLabelOffset.x, edgeLabelOffset.y),
-                    .Color = edgeColor.WithAlpha(bSelected || bHovered ? 0.98f : 0.82f),
+                    .Color = ApplyAlphaFactor(
+                        edgeColor.WithAlpha(bSelected || bHovered ? 0.98f : 0.82f),
+                        edgeAlphaFactor),
                     .FontScale = graphTextScale,
                     .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
                 });
@@ -1030,9 +1225,12 @@ namespace Slab::Graphics::Plot2D::V2 {
             const bool bHovered = HoveredSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
                 HoveredSelection.ElementId == node.NodeId;
             const bool bHighlighted = highlightedNodeIds.contains(node.NodeId);
+            const auto nodeAlphaFactor = (!bNeighborhoodFocusActive || bHighlighted)
+                ? static_cast<DevFloat>(1.0)
+                : static_cast<DevFloat>(0.28);
             const bool bShowFooterDetails =
-                ShouldShowNodeFooterDetails(graphTextScale, bSelected, bHovered, bHighlighted);
-            const auto rect = MeasureNodeRect(frame, node, graphTextScale, bShowFooterDetails);
+                ShouldShowNodeFooterDetails(DisplayMode, graphTextScale, bSelected, bHovered, bHighlighted);
+            const auto rect = MeasureNodeRect(frame, node, graphTextScale, bShowFooterDetails, DisplayMode);
 
             if (bSelected) {
                 borderColor = MixColor(borderColor, White, 0.20f);
@@ -1043,7 +1241,7 @@ namespace Slab::Graphics::Plot2D::V2 {
 
             drawList.AddRectangle(FRectangleCommandV2{
                 .Rectangle = rect,
-                .Color = fillColor,
+                .Color = ApplyAlphaFactor(fillColor, nodeAlphaFactor),
                 .bFilled = true,
                 .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
             });
@@ -1052,7 +1250,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                 const auto accentWidth = PixelVectorToPlotDelta({4.0, 0.0}, pixelSize).x;
                 drawList.AddRectangle(FRectangleCommandV2{
                     .Rectangle = {rect.xMin, rect.xMin + accentWidth, rect.yMin, rect.yMax},
-                    .Color = categoryColor.WithAlpha(0.28f),
+                    .Color = ApplyAlphaFactor(categoryColor.WithAlpha(0.28f), nodeAlphaFactor),
                     .bFilled = true,
                     .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
                 });
@@ -1060,7 +1258,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                 const auto accentHeight = PixelVectorToPlotDelta({0.0, 3.0}, pixelSize).y;
                 drawList.AddRectangle(FRectangleCommandV2{
                     .Rectangle = {rect.xMin, rect.xMax, rect.yMax - accentHeight, rect.yMax},
-                    .Color = categoryColor.WithAlpha(0.26f),
+                    .Color = ApplyAlphaFactor(categoryColor.WithAlpha(0.26f), nodeAlphaFactor),
                     .bFilled = true,
                     .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
                 });
@@ -1069,7 +1267,7 @@ namespace Slab::Graphics::Plot2D::V2 {
             drawList.AddPolyline(FPolylineCommandV2{
                 .Points = BuildNodeOutlinePoints(node, rect, pixelSize),
                 .Style = PlotStyle(
-                    borderColor.WithAlpha(bSelected ? 1.0f : 0.94f),
+                    ApplyAlphaFactor(borderColor.WithAlpha(bSelected ? 1.0f : 0.94f), nodeAlphaFactor),
                     LineStrip,
                     false,
                     Nil,
@@ -1079,8 +1277,12 @@ namespace Slab::Graphics::Plot2D::V2 {
             });
 
             if (node.bStudyRoot) {
-                const auto studyBadgeWidth = PixelVectorToPlotDelta({ResolveStudyBadgeWidth(frame, graphTextScale), 0.0}, pixelSize).x;
-                const auto studyBadgeHeight = PixelVectorToPlotDelta({0.0, ResolveStudyBadgeHeight(frame, graphTextScale)}, pixelSize).y;
+                const auto studyBadgeWidth = PixelVectorToPlotDelta({
+                    ResolveStudyBadgeWidthForMode(frame, graphTextScale, DisplayMode),
+                    0.0}, pixelSize).x;
+                const auto studyBadgeHeight = PixelVectorToPlotDelta({
+                    0.0,
+                    ResolveStudyBadgeHeightForMode(frame, graphTextScale, DisplayMode)}, pixelSize).y;
                 const RectR studyBadgeRect{
                     rect.xMin,
                     rect.xMin + studyBadgeWidth,
@@ -1089,25 +1291,25 @@ namespace Slab::Graphics::Plot2D::V2 {
                 };
                 drawList.AddRectangle(FRectangleCommandV2{
                     .Rectangle = studyBadgeRect,
-                    .Color = FColor::FromHex("#D8D06A").WithAlpha(0.92f),
+                    .Color = ApplyAlphaFactor(FColor::FromHex("#D8D06A").WithAlpha(0.92f), nodeAlphaFactor),
                     .bFilled = true,
                     .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
                 });
                 drawList.AddText(FTextCommandV2{
                     .Text = "study",
                     .Location = {studyBadgeRect.xMin + badgeTextPad.x, studyBadgeRect.yMin + badgeTextPad.y},
-                    .Color = Black.WithAlpha(0.96f),
+                    .Color = ApplyAlphaFactor(Black.WithAlpha(0.96f), nodeAlphaFactor),
                     .FontScale = graphTextScale,
                     .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
                 });
             } else {
                 const auto badgeLabel = OwnershipBadgeLabel(node);
                 const auto badgeWidth = PixelVectorToPlotDelta({
-                    ResolveOwnershipBadgeWidth(frame, badgeLabel, graphTextScale),
+                    ResolveOwnershipBadgeWidthForMode(frame, badgeLabel, graphTextScale, DisplayMode),
                     0.0}, pixelSize).x;
                 const auto badgeHeight = PixelVectorToPlotDelta({
                     0.0,
-                    ResolveOwnershipBadgeHeight(frame, graphTextScale)}, pixelSize).y;
+                    ResolveOwnershipBadgeHeightForMode(frame, graphTextScale, DisplayMode)}, pixelSize).y;
                 const auto badgeFill = node.OwnershipScope == OntologyV2::EOntologyOwnershipScopeV2::Global
                     ? FColor::FromHex("#495969").WithAlpha(0.84f)
                     : FColor::FromHex("#D7C96E").WithAlpha(0.92f);
@@ -1122,14 +1324,14 @@ namespace Slab::Graphics::Plot2D::V2 {
                 };
                 drawList.AddRectangle(FRectangleCommandV2{
                     .Rectangle = ownershipBadgeRect,
-                    .Color = badgeFill,
+                    .Color = ApplyAlphaFactor(badgeFill, nodeAlphaFactor),
                     .bFilled = true,
                     .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
                 });
                 drawList.AddText(FTextCommandV2{
                     .Text = badgeLabel,
                     .Location = {ownershipBadgeRect.xMin + badgeTextPad.x, ownershipBadgeRect.yMin + badgeTextPad.y},
-                    .Color = badgeTextColor,
+                    .Color = ApplyAlphaFactor(badgeTextColor, nodeAlphaFactor),
                     .FontScale = graphTextScale,
                     .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
                 });
@@ -1138,11 +1340,11 @@ namespace Slab::Graphics::Plot2D::V2 {
             if (node.ActivationStatus != OntologyV2::EOntologyActivationStatusV2::None) {
                 const auto badgeLabel = CompactLabel(OntologyV2::ToString(node.ActivationStatus), 14);
                 const auto badgeWidth = PixelVectorToPlotDelta({
-                    ResolveStatusBadgeWidth(frame, badgeLabel, graphTextScale),
+                    ResolveStatusBadgeWidthForMode(frame, badgeLabel, graphTextScale, DisplayMode),
                     0.0}, pixelSize).x;
                 const auto badgeHeight = PixelVectorToPlotDelta({
                     0.0,
-                    ResolveStatusBadgeHeight(frame, graphTextScale)}, pixelSize).y;
+                    ResolveStatusBadgeHeightForMode(frame, graphTextScale, DisplayMode)}, pixelSize).y;
                 const RectR badgeRect{
                     rect.xMax - badgeWidth,
                     rect.xMax,
@@ -1152,30 +1354,30 @@ namespace Slab::Graphics::Plot2D::V2 {
                 const auto badgeColor = StatusAccentColor(node.ActivationStatus);
                 drawList.AddRectangle(FRectangleCommandV2{
                     .Rectangle = badgeRect,
-                    .Color = badgeColor.WithAlpha(0.94f),
+                    .Color = ApplyAlphaFactor(badgeColor.WithAlpha(0.94f), nodeAlphaFactor),
                     .bFilled = true,
                     .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
                 });
                 drawList.AddText(FTextCommandV2{
                     .Text = badgeLabel,
                     .Location = {badgeRect.xMin + badgeTextPad.x, badgeRect.yMin + badgeTextPad.y},
-                    .Color = Black.WithAlpha(0.98f),
+                    .Color = ApplyAlphaFactor(Black.WithAlpha(0.98f), nodeAlphaFactor),
                     .FontScale = graphTextScale,
                     .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
                 });
             }
 
-            const auto titleLines = BuildWrappedTitleLines(node.Title);
+            const auto titleLines = BuildNodeTitleLines(node.Title, DisplayMode);
             const auto secondaryText = CompactLabel(node.SecondarySummary.empty() ? node.CompactId : node.SecondarySummary, 34);
             const auto categoryText = CompactLabel(FriendlyNodeCategoryLabel(node), 16);
             const auto categoryBaselineY = rect.yMin + textPad.y + baselinePad.y;
             const auto detailBaselineY = categoryBaselineY + lineAdvancePlot;
             const auto topBadgeHeightPixels = std::max(
                 node.bStudyRoot
-                    ? ResolveStudyBadgeHeight(frame, graphTextScale)
-                    : ResolveOwnershipBadgeHeight(frame, graphTextScale),
+                    ? ResolveStudyBadgeHeightForMode(frame, graphTextScale, DisplayMode)
+                    : ResolveOwnershipBadgeHeightForMode(frame, graphTextScale, DisplayMode),
                 node.ActivationStatus != OntologyV2::EOntologyActivationStatusV2::None
-                    ? ResolveStatusBadgeHeight(frame, graphTextScale)
+                    ? ResolveStatusBadgeHeightForMode(frame, graphTextScale, DisplayMode)
                     : 0.0);
             const auto topBadgeHeightPlot = PixelVectorToPlotDelta({0.0, topBadgeHeightPixels}, pixelSize).y;
             const auto titleBaselineY =
@@ -1187,39 +1389,42 @@ namespace Slab::Graphics::Plot2D::V2 {
                     .Location = {
                         rect.xMin + textPad.x,
                         titleBaselineY - (static_cast<DevFloat>(lineIndex) * lineAdvancePlot)},
-                    .Color = White.WithAlpha(
-                        node.OwnershipScope == OntologyV2::EOntologyOwnershipScopeV2::StudyLocal ? 1.0f : 0.92f),
+                    .Color = ApplyAlphaFactor(
+                        White.WithAlpha(node.OwnershipScope == OntologyV2::EOntologyOwnershipScopeV2::StudyLocal ? 1.0f : 0.92f),
+                        nodeAlphaFactor),
                     .FontScale = graphTextScale,
                     .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
                 });
             }
 
-            if (bShowFooterDetails && !secondaryText.empty()) {
+            if (DisplayMode == EOntologyGraphDisplayModeV2::Focus && bShowFooterDetails && !secondaryText.empty()) {
                 drawList.AddText(FTextCommandV2{
                     .Text = secondaryText,
                     .Location = {rect.xMin + textPad.x, detailBaselineY},
-                    .Color = LightGrey.WithAlpha(0.78f),
+                    .Color = ApplyAlphaFactor(LightGrey.WithAlpha(0.78f), nodeAlphaFactor),
                     .FontScale = graphTextScale,
                     .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
                 });
             }
 
-            drawList.AddText(FTextCommandV2{
-                .Text = categoryText,
-                .Location = {rect.xMin + textPad.x, categoryBaselineY},
-                .Color = categoryColor.WithAlpha(0.92f),
-                .FontScale = graphTextScale,
-                .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
-            });
+            if (DisplayMode == EOntologyGraphDisplayModeV2::Focus) {
+                drawList.AddText(FTextCommandV2{
+                    .Text = categoryText,
+                    .Location = {rect.xMin + textPad.x, categoryBaselineY},
+                    .Color = ApplyAlphaFactor(categoryColor.WithAlpha(0.92f), nodeAlphaFactor),
+                    .FontScale = graphTextScale,
+                    .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
+                });
+            }
 
-            if (bShowFooterDetails) {
+            if (DisplayMode == EOntologyGraphDisplayModeV2::Focus && bShowFooterDetails) {
                 drawList.AddPolyline(FPolylineCommandV2{
                     .Points = {
                         {rect.xMin + textPad.x, categoryBaselineY + (0.78 * lineAdvancePlot)},
                         {rect.xMax - textPad.x, categoryBaselineY + (0.78 * lineAdvancePlot)}
                     },
                     .Style = PlotStyle(
-                        categoryColor.WithAlpha(0.20f),
+                        ApplyAlphaFactor(categoryColor.WithAlpha(0.20f), nodeAlphaFactor),
                         LineStrip,
                         false,
                         Nil,
@@ -1343,7 +1548,7 @@ namespace Slab::Graphics::Plot2D::V2 {
     }
 
     auto FOntologyGraphArtistV2::ComputePlotBounds() const -> std::optional<RectR> {
-        return ComputeProjectionBounds(Projection);
+        return ComputeProjectionBounds(Projection, DisplayMode);
     }
 
     auto FOntologyGraphArtistV2::HitTest(const FPlotFrameContextV2 &frame,
@@ -1352,7 +1557,7 @@ namespace Slab::Graphics::Plot2D::V2 {
         -> std::optional<FPlotHitTargetV2> {
         (void) viewportPosition;
 
-        const auto graphTextScale = ResolveOntologyTextScale(frame, Projection);
+        const auto graphTextScale = ResolveOntologyTextScale(frame, Projection, DisplayMode);
 
         for (const auto &node : Projection.Nodes) {
             const bool bSelected = SelectedSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
@@ -1363,7 +1568,8 @@ namespace Slab::Graphics::Plot2D::V2 {
                 frame,
                 node,
                 graphTextScale,
-                ShouldShowNodeFooterDetails(graphTextScale, bSelected, bHovered, false));
+                ShouldShowNodeFooterDetails(DisplayMode, graphTextScale, bSelected, bHovered, false),
+                DisplayMode);
             if (plotPosition.x < rect.xMin || plotPosition.x > rect.xMax ||
                 plotPosition.y < rect.yMin || plotPosition.y > rect.yMax) {
                 continue;
@@ -1399,12 +1605,14 @@ namespace Slab::Graphics::Plot2D::V2 {
                     frame,
                     *source,
                     graphTextScale,
-                    ShouldShowNodeFooterDetails(graphTextScale, bSourceSelected, bSourceHovered, false)),
+                    ShouldShowNodeFooterDetails(DisplayMode, graphTextScale, bSourceSelected, bSourceHovered, false),
+                    DisplayMode),
                 MeasureNodeRect(
                     frame,
                     *target,
                     graphTextScale,
-                    ShouldShowNodeFooterDetails(graphTextScale, bTargetSelected, bTargetHovered, false)),
+                    ShouldShowNodeFooterDetails(DisplayMode, graphTextScale, bTargetSelected, bTargetHovered, false),
+                    DisplayMode),
                 pixelSize);
             for (std::size_t index = 1; index < route.Points.size(); ++index) {
                 const auto distance = DistanceToSegmentSquaredPixels(
