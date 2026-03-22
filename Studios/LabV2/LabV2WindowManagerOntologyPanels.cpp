@@ -2,6 +2,7 @@
 
 #include "Graphics/Plot2D/V2/Artists/BackgroundArtistV2.h"
 #include "Graphics/Plot2D/V2/Artists/OntologyGraphArtistV2.h"
+#include "Graphics/Plot2D/V2/Plot2DWindowHostV2.h"
 #include "imgui.h"
 
 #include <algorithm>
@@ -65,6 +66,7 @@ namespace {
             state.Bundle,
             state.SelectedStudyId,
             state.Filters);
+        state.bPendingGraphFit = true;
 
         const auto selectionVisible = [&]() {
             if (!state.Selection.IsValid()) return false;
@@ -168,16 +170,28 @@ auto FLabV2WindowManager::SyncOntologyGraphWindow() -> void {
     using namespace Slab::Graphics::Plot2D::V2;
 
     EnsureOntologyWorkspaceData();
+    auto &state = OntologyWorkspaceState;
     EnsureOntologyGraphWindow();
     if (OntologyGraphWindowV2 == nullptr || OntologyGraphArtistV2 == nullptr) return;
 
     const auto graphArtist = Slab::DynamicPointerCast<FOntologyGraphArtistV2>(OntologyGraphArtistV2);
     if (graphArtist == nullptr) return;
 
-    graphArtist->SetProjection(OntologyWorkspaceState.Projection);
-    graphArtist->SetSelection(OntologyWorkspaceState.Selection);
-    graphArtist->SetShowEdgeLabels(OntologyWorkspaceState.Filters.bShowEdgeLabels);
+    graphArtist->SetProjection(state.Projection);
+    graphArtist->SetSelection(state.Selection);
+    graphArtist->SetShowEdgeLabels(state.Filters.bShowEdgeLabels);
     OntologyGraphWindowV2->SetTitle(WindowTitleOntologyGraph);
+
+    if (state.bPendingGraphFit) {
+        if (const auto it = PlotWindowHostsByWindowId.find(OntologyGraphWindowId);
+            it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
+            if (const auto host = Slab::DynamicPointerCast<FPlot2DWindowHostV2>(it->second);
+                host != nullptr) {
+                host->RequestFitToArtists();
+                state.bPendingGraphFit = false;
+            }
+        }
+    }
 }
 
 auto FLabV2WindowManager::FocusOntologyGraphWindow() -> void {
@@ -341,7 +355,10 @@ auto FLabV2WindowManager::DrawOntologyDetailsPanel() -> void {
         ImGui::Text("Ownership: %s", OntologyV2::ToString(node->OwnershipScope));
         ImGui::SameLine();
         ImGui::TextDisabled("| source: %s", node->SourceDocument.c_str());
-        ImGui::Text("Kind: %s", node->Kind.c_str());
+        const auto friendlyCategory = OntologyV2::FriendlyNodeCategoryLabelV2(node->Kind, node->Layer);
+        ImGui::Text("Category: %s", friendlyCategory.c_str());
+        ImGui::SameLine();
+        ImGui::TextDisabled("| kind: %s", node->Kind.c_str());
         ImGui::SameLine();
         ImGui::TextDisabled("| layer: %s", node->Layer.c_str());
         ImGui::SameLine();

@@ -258,5 +258,9 @@ namespace Slab::Graphics::OpenGL {
         m_PenTransform = PenTranform;
     }
 
+    void FWriterOpenGL::ResetPenPositionTransform() {
+        m_PenTransform = [](const FPoint2D &p) { return p; };
+    }
+
 
 } // Slab::Graphics::OpenGL

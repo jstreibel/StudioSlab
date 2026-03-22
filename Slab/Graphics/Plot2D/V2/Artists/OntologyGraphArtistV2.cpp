@@ -16,23 +16,23 @@ namespace Slab::Graphics::Plot2D::V2 {
 
     namespace {
 
-        constexpr DevFloat CNodeMinWidthPixels = 144.0;
-        constexpr DevFloat CNodeMinHeightPixels = 72.0;
-        constexpr DevFloat CNodeMinPaddingXPixels = 14.0;
-        constexpr DevFloat CNodeMinPaddingYPixels = 11.0;
-        constexpr DevFloat CNodeMinSecondaryGapPixels = 8.0;
-        constexpr DevFloat CNodeMinStatusBadgeWidthPixels = 72.0;
-        constexpr DevFloat CNodeMinStatusBadgeHeightPixels = 20.0;
-        constexpr DevFloat CNodeMinStudyBadgeWidthPixels = 44.0;
-        constexpr DevFloat CNodeMinStudyBadgeHeightPixels = 18.0;
-        constexpr DevFloat CNodeMinOwnershipBadgeWidthPixels = 46.0;
-        constexpr DevFloat CNodeMinOwnershipBadgeHeightPixels = 18.0;
-        constexpr DevFloat CNodeBoundsMinHalfWidth = 6.4;
-        constexpr DevFloat CNodeBoundsMinHalfHeight = 4.2;
-        constexpr DevFloat CBoundsPadding = 4.2;
-        constexpr DevFloat CFitPaddingFraction = 0.08;
+        constexpr DevFloat CNodeMinWidthPixels = 90.0;
+        constexpr DevFloat CNodeMinHeightPixels = 54.0;
+        constexpr DevFloat CNodeMinPaddingXPixels = 8.0;
+        constexpr DevFloat CNodeMinPaddingYPixels = 6.0;
+        constexpr DevFloat CNodeMinSecondaryGapPixels = 4.0;
+        constexpr DevFloat CNodeMinStatusBadgeWidthPixels = 58.0;
+        constexpr DevFloat CNodeMinStatusBadgeHeightPixels = 18.0;
+        constexpr DevFloat CNodeMinStudyBadgeWidthPixels = 40.0;
+        constexpr DevFloat CNodeMinStudyBadgeHeightPixels = 16.0;
+        constexpr DevFloat CNodeMinOwnershipBadgeWidthPixels = 42.0;
+        constexpr DevFloat CNodeMinOwnershipBadgeHeightPixels = 16.0;
+        constexpr DevFloat CNodeBoundsMinHalfWidth = 5.8;
+        constexpr DevFloat CNodeBoundsMinHalfHeight = 3.9;
+        constexpr DevFloat CBoundsPadding = 3.0;
+        constexpr DevFloat CFitPaddingFraction = 0.05;
         constexpr DevFloat CNodeMinFontScale = 0.60;
-        constexpr DevFloat CNodeMaxFontScale = 2.80;
+        constexpr DevFloat CNodeMaxFontScale = 2.40;
         constexpr DevFloat CEdgeHitTolerancePixels = 8.0;
         constexpr DevFloat CEdgeArrowLengthPixels = 12.0;
         constexpr DevFloat CEdgeArrowHalfWidthPixels = 4.5;
@@ -40,6 +40,8 @@ namespace Slab::Graphics::Plot2D::V2 {
         constexpr DevFloat CHudMinPaddingY = 12.0;
         constexpr DevFloat CHudMinSectionGap = 9.0;
         constexpr DevFloat CHudMinCardGap = 12.0;
+        constexpr std::size_t CNodeTitleMaxCharsPerLine = 20;
+        constexpr std::size_t CNodeTitleMaxLines = 3;
 
         struct FHudCardMetricsV2 {
             DevFloat Width = 0.0;
@@ -63,6 +65,50 @@ namespace Slab::Graphics::Plot2D::V2 {
             return label.substr(0, maxChars - 3) + "...";
         }
 
+        [[nodiscard]] auto TrimWhitespace(const Str &text) -> Str {
+            const auto begin = std::find_if_not(text.begin(), text.end(), [](const unsigned char ch) {
+                return std::isspace(ch) != 0;
+            });
+            if (begin == text.end()) return {};
+
+            const auto end = std::find_if_not(text.rbegin(), text.rend(), [](const unsigned char ch) {
+                return std::isspace(ch) != 0;
+            }).base();
+            return Str(begin, end);
+        }
+
+        [[nodiscard]] auto BuildWrappedTitleLines(const Str &title) -> Vector<Str> {
+            auto remaining = TrimWhitespace(title);
+            if (remaining.empty()) return {Str{"Untitled"}};
+
+            Vector<Str> lines;
+            lines.reserve(CNodeTitleMaxLines);
+            for (std::size_t lineIndex = 0; lineIndex < CNodeTitleMaxLines && !remaining.empty(); ++lineIndex) {
+                if (remaining.size() <= CNodeTitleMaxCharsPerLine) {
+                    lines.push_back(remaining);
+                    break;
+                }
+
+                if (lineIndex + 1 == CNodeTitleMaxLines) {
+                    lines.push_back(CompactLabel(remaining, CNodeTitleMaxCharsPerLine));
+                    break;
+                }
+
+                auto breakPos = remaining.rfind(' ', CNodeTitleMaxCharsPerLine);
+                if (breakPos == Str::npos || breakPos < (CNodeTitleMaxCharsPerLine / 2)) {
+                    breakPos = CNodeTitleMaxCharsPerLine;
+                }
+
+                lines.push_back(TrimWhitespace(remaining.substr(0, breakPos)));
+                remaining = TrimWhitespace(remaining.substr(breakPos));
+            }
+
+            if (lines.empty()) {
+                lines.push_back(CompactLabel(title, CNodeTitleMaxCharsPerLine));
+            }
+            return lines;
+        }
+
         [[nodiscard]] auto ResolveHudFontHeight(const FPlotFrameContextV2 &frame) -> DevFloat {
             return std::max<DevFloat>(frame.TextMetrics.FontHeightPixels, 12.0);
         }
@@ -77,24 +123,28 @@ namespace Slab::Graphics::Plot2D::V2 {
             return std::max<DevFloat>(frame.TextMetrics.ApproxCharacterAdvancePixels, 0.52 * fontHeight);
         }
 
+        [[nodiscard]] auto ResolveNodeScale(const DevFloat fontScale) -> DevFloat {
+            return std::clamp(fontScale, CNodeMinFontScale, CNodeMaxFontScale);
+        }
+
         [[nodiscard]] auto ResolveNodeFontHeight(const FPlotFrameContextV2 &frame,
                                                  const DevFloat fontScale = 1.0) -> DevFloat {
             const auto baseFontHeight = std::max<DevFloat>(frame.TextMetrics.FontHeightPixels, 12.0);
-            return std::max<DevFloat>(1.0, fontScale) * baseFontHeight;
+            return ResolveNodeScale(fontScale) * baseFontHeight;
         }
 
         [[nodiscard]] auto ResolveNodeLineAdvance(const FPlotFrameContextV2 &frame,
                                                   const DevFloat fontScale = 1.0) -> DevFloat {
             const auto baseFontHeight = std::max<DevFloat>(frame.TextMetrics.FontHeightPixels, 12.0);
             const auto baseLineAdvance = std::max<DevFloat>(frame.TextMetrics.LineAdvancePixels, 1.18 * baseFontHeight);
-            return std::max<DevFloat>(1.0, fontScale) * baseLineAdvance;
+            return ResolveNodeScale(fontScale) * baseLineAdvance;
         }
 
         [[nodiscard]] auto ResolveNodeCharacterAdvance(const FPlotFrameContextV2 &frame,
                                                        const DevFloat fontScale = 1.0) -> DevFloat {
             const auto baseFontHeight = std::max<DevFloat>(frame.TextMetrics.FontHeightPixels, 12.0);
             const auto baseAdvance = std::max<DevFloat>(frame.TextMetrics.ApproxCharacterAdvancePixels, 0.56 * baseFontHeight);
-            return std::max<DevFloat>(1.0, fontScale) * baseAdvance;
+            return ResolveNodeScale(fontScale) * baseAdvance;
         }
 
         [[nodiscard]] auto ResolveNodePaddingX(const FPlotFrameContextV2 &frame,
@@ -114,12 +164,12 @@ namespace Slab::Graphics::Plot2D::V2 {
 
         [[nodiscard]] auto ResolveNodeMinWidth(const FPlotFrameContextV2 &frame,
                                                const DevFloat fontScale = 1.0) -> DevFloat {
-            return std::max<DevFloat>(CNodeMinWidthPixels, 9.0 * ResolveNodeFontHeight(frame, fontScale));
+            return std::max<DevFloat>(CNodeMinWidthPixels, 5.8 * ResolveNodeFontHeight(frame, fontScale));
         }
 
         [[nodiscard]] auto ResolveNodeMaxWidth(const FPlotFrameContextV2 &frame,
                                                const DevFloat fontScale = 1.0) -> DevFloat {
-            return std::max<DevFloat>(340.0, 23.0 * ResolveNodeFontHeight(frame, fontScale));
+            return std::max<DevFloat>(212.0, 12.8 * ResolveNodeFontHeight(frame, fontScale));
         }
 
         [[nodiscard]] auto ApproximateNodeTextWidth(const FPlotFrameContextV2 &frame,
@@ -173,24 +223,36 @@ namespace Slab::Graphics::Plot2D::V2 {
         }
 
         [[nodiscard]] auto EstimateNodeBoundsHalfWidth(const OntologyV2::FOntologyProjectedNodeV2 &node) -> DevFloat {
-            const auto footerText = node.SecondarySummary.empty() ? node.CompactId : node.SecondarySummary;
-            const auto dominantChars = static_cast<DevFloat>(std::max(
-                std::clamp<std::size_t>(node.Title.size(), 8, 40),
-                std::clamp<std::size_t>(footerText.size(), 6, 44)));
-            const auto badgeAllowance = node.bStudyRoot ? 1.15 : 0.95;
+            const auto categoryText = OntologyV2::FriendlyNodeCategoryLabelV2(node.Kind, node.Layer);
+            const auto titleLineCount = std::clamp<std::size_t>(
+                (std::max<std::size_t>(node.Title.size(), std::size_t{1}) + CNodeTitleMaxCharsPerLine - 1) /
+                    CNodeTitleMaxCharsPerLine,
+                std::size_t{1},
+                CNodeTitleMaxLines);
+            const auto wrappedTitleChars = static_cast<DevFloat>(std::clamp<std::size_t>(
+                (std::max<std::size_t>(node.Title.size(), std::size_t{1}) + titleLineCount - 1) / titleLineCount,
+                8,
+                20));
+            const auto categoryChars = static_cast<DevFloat>(std::clamp<std::size_t>(categoryText.size(), 6, 14));
+            const auto dominantChars = std::max(wrappedTitleChars, categoryChars + static_cast<DevFloat>(2.0));
+            const auto badgeAllowance = node.bStudyRoot ? 1.45 : 1.18;
+            const auto statusAllowance =
+                node.ActivationStatus != OntologyV2::EOntologyActivationStatusV2::None ? 1.70 : 0.95;
             return std::clamp(
-                CNodeBoundsMinHalfWidth + (0.19 * dominantChars) + badgeAllowance,
-                CNodeBoundsMinHalfWidth,
-                15.8);
+                CNodeBoundsMinHalfWidth + (0.15 * dominantChars) + badgeAllowance + statusAllowance,
+                5.9,
+                12.7);
         }
 
         [[nodiscard]] auto EstimateNodeBoundsHalfHeight(const OntologyV2::FOntologyProjectedNodeV2 &node) -> DevFloat {
-            auto halfHeight = CNodeBoundsMinHalfHeight;
-            if (!node.SecondarySummary.empty() || !node.CompactId.empty()) {
-                halfHeight += 1.2;
-            }
+            const auto titleLineCount = static_cast<DevFloat>(std::clamp<std::size_t>(
+                (std::max<std::size_t>(node.Title.size(), std::size_t{1}) + CNodeTitleMaxCharsPerLine - 1) /
+                    CNodeTitleMaxCharsPerLine,
+                std::size_t{1},
+                CNodeTitleMaxLines));
+            auto halfHeight = CNodeBoundsMinHalfHeight + ((titleLineCount - 1.0) * 0.95) + 1.0;
             if (node.bStudyRoot) {
-                halfHeight += 0.45;
+                halfHeight += 0.35;
             }
             return halfHeight;
         }
@@ -242,7 +304,14 @@ namespace Slab::Graphics::Plot2D::V2 {
             const auto scale = std::max(scaleX, scaleY);
 
             if (!std::isfinite(scale)) return 1.0;
-            return std::clamp(scale, CNodeMinFontScale, CNodeMaxFontScale);
+            return std::clamp(0.88 * scale, CNodeMinFontScale, CNodeMaxFontScale);
+        }
+
+        [[nodiscard]] auto ShouldShowNodeFooterDetails(const DevFloat fontScale,
+                                                       const bool bSelected,
+                                                       const bool bHovered,
+                                                       const bool bHighlighted) -> bool {
+            return bSelected || bHovered || bHighlighted || fontScale >= 1.18;
         }
 
         [[nodiscard]] auto ResolveHudPaddingX(const FPlotFrameContextV2 &frame) -> DevFloat {
@@ -424,6 +493,23 @@ namespace Slab::Graphics::Plot2D::V2 {
             return LightGrey;
         }
 
+        [[nodiscard]] auto FriendlyNodeCategoryLabel(const OntologyV2::FOntologyProjectedNodeV2 &node) -> Str {
+            return OntologyV2::FriendlyNodeCategoryLabelV2(node.Kind, node.Layer);
+        }
+
+        [[nodiscard]] auto NodeCategoryColor(const OntologyV2::FOntologyProjectedNodeV2 &node) -> FColor {
+            if (node.Kind == "Requirement") return FColor::FromHex("#C8A35B");
+            if (node.Kind == "Study" || node.Kind == "StudyObject" || node.Layer == "study") return FColor::FromHex("#C9C36D");
+            if (node.Kind == "SolverClass") return FColor::FromHex("#76B46A");
+            if (node.Kind == "RecipeClass" || node.Layer == "recipe") return FColor::FromHex("#63A86A");
+            if (node.Kind == "ArtifactClass" || node.Layer == "artifact") return FColor::FromHex("#B36F5A");
+            if (node.Kind == "RealizationClass" || node.Layer == "realization") return FColor::FromHex("#3E9D95");
+            if (node.Kind == "DescentClass" || node.Layer == "descent") return FColor::FromHex("#D59A3B");
+            if (node.Layer == "ambient") return FColor::FromHex("#7A8393");
+            if (node.Kind == "SemanticClass" || node.Layer == "semantic") return FColor::FromHex("#4A92C2");
+            return LayerColor(node.Layer);
+        }
+
         [[nodiscard]] auto SelectionEquals(const OntologyV2::FOntologyGraphSelectionV2 &lhs,
                                            const OntologyV2::FOntologyGraphSelectionV2 &rhs) -> bool {
             return lhs.Kind == rhs.Kind && lhs.ElementId == rhs.ElementId;
@@ -434,45 +520,96 @@ namespace Slab::Graphics::Plot2D::V2 {
             return {pixelVector.x * pixelSize.x, pixelVector.y * pixelSize.y};
         }
 
+        [[nodiscard]] auto BuildNodeOutlinePoints(const OntologyV2::FOntologyProjectedNodeV2 &node,
+                                                  const RectR &rect,
+                                                  const FPoint2D &pixelSize) -> Vector<FPoint2D> {
+            if (node.Kind == "Requirement") {
+                const auto inset = PixelVectorToPlotDelta({10.0, 9.0}, pixelSize);
+                return {
+                    {rect.xMin + inset.x, rect.yMin},
+                    {rect.xMin, rect.yMin + inset.y},
+                    {rect.xMin, rect.yMax - inset.y},
+                    {rect.xMin + inset.x, rect.yMax},
+                    {rect.xMax - inset.x, rect.yMax},
+                    {rect.xMax, rect.yMax - inset.y},
+                    {rect.xMax, rect.yMin + inset.y},
+                    {rect.xMax - inset.x, rect.yMin}
+                };
+            }
+
+            if (node.Kind == "Study" || node.Kind == "StudyObject" || node.Layer == "study") {
+                const auto tabWidth = PixelVectorToPlotDelta({30.0, 0.0}, pixelSize).x;
+                const auto tabLift = PixelVectorToPlotDelta({0.0, 10.0}, pixelSize).y;
+                return {
+                    {rect.xMin, rect.yMin},
+                    {rect.xMin, rect.yMax - tabLift},
+                    {rect.xMin + tabWidth, rect.yMax - tabLift},
+                    {rect.xMin + tabWidth + (0.35 * tabWidth), rect.yMax},
+                    {rect.xMax, rect.yMax},
+                    {rect.xMax, rect.yMin}
+                };
+            }
+
+            return {
+                {rect.xMin, rect.yMin},
+                {rect.xMin, rect.yMax},
+                {rect.xMax, rect.yMax},
+                {rect.xMax, rect.yMin}
+            };
+        }
+
         [[nodiscard]] auto MeasureNodeRect(const FPlotFrameContextV2 &frame,
                                            const OntologyV2::FOntologyProjectedNodeV2 &node,
-                                           const DevFloat fontScale) -> RectR {
+                                           const DevFloat fontScale,
+                                           const bool bShowFooterDetails) -> RectR {
             const auto pixelSize = PixelSizeInSpace(frame.PlotRegion, frame.Viewport);
             const auto paddingX = ResolveNodePaddingX(frame, fontScale);
             const auto paddingY = ResolveNodePaddingY(frame, fontScale);
             const auto lineAdvance = ResolveNodeLineAdvance(frame, fontScale);
             const auto secondaryGap = ResolveNodeSecondaryGap(frame, fontScale);
+            const auto titleLines = BuildWrappedTitleLines(node.Title);
+            const auto titleLineCount = std::max<std::size_t>(std::size_t{1}, titleLines.size());
 
             const auto secondaryText = node.SecondarySummary.empty() ? node.CompactId : node.SecondarySummary;
-            const auto kindText = CompactLabel(node.Kind, 18);
+            const auto categoryText = CompactLabel(FriendlyNodeCategoryLabel(node), 16);
             const auto statusText = CompactLabel(OntologyV2::ToString(node.ActivationStatus), 14);
-            const auto titleWidthPixels = ApproximateNodeTextWidth(frame, node.Title, 38, fontScale);
-            const auto footerLeftWidthPixels = ApproximateNodeTextWidth(frame, secondaryText, 40, fontScale);
-            const auto footerRightWidthPixels = ApproximateNodeTextWidth(frame, kindText, 18, fontScale);
+            DevFloat titleWidthPixels = 0.0;
+            for (const auto &titleLine : titleLines) {
+                titleWidthPixels = std::max(
+                    titleWidthPixels,
+                    ApproximateNodeTextWidth(frame, titleLine, CNodeTitleMaxCharsPerLine, fontScale));
+            }
+            const auto categoryWidthPixels = ApproximateNodeTextWidth(frame, categoryText, 16, fontScale);
+            const auto detailWidthPixels = bShowFooterDetails
+                ? ApproximateNodeTextWidth(frame, secondaryText, 34, fontScale)
+                : 0.0;
             const auto leadingBadgeReservePixels = node.bStudyRoot
                 ? ResolveStudyBadgeWidth(frame, fontScale) + (0.55 * paddingX)
                 : ResolveOwnershipBadgeWidth(frame, OwnershipBadgeLabel(node), fontScale) + (0.55 * paddingX);
             const auto statusBadgeReservePixels = node.ActivationStatus != OntologyV2::EOntologyActivationStatusV2::None
                 ? ResolveStatusBadgeWidth(frame, statusText, fontScale)
-                : std::max<DevFloat>(24.0, 1.45 * ResolveNodeFontHeight(frame, fontScale));
+                : std::max<DevFloat>(18.0, 1.15 * ResolveNodeFontHeight(frame, fontScale));
+            const auto topBadgeRowWidthPixels = leadingBadgeReservePixels + statusBadgeReservePixels + (1.15 * paddingX);
             const auto widthPixels = std::clamp(
                 std::max(
-                    titleWidthPixels + leadingBadgeReservePixels,
-                    footerLeftWidthPixels + footerRightWidthPixels + (1.25 * paddingX)) +
+                    std::max(titleWidthPixels + statusBadgeReservePixels, topBadgeRowWidthPixels),
+                    std::max(categoryWidthPixels, detailWidthPixels) + (2.0 * paddingX)) +
                     (2.0 * paddingX) +
-                    statusBadgeReservePixels,
+                    (0.25 * paddingX),
                 ResolveNodeMinWidth(frame, fontScale),
                 ResolveNodeMaxWidth(frame, fontScale));
+            const auto detailLineCount =
+                bShowFooterDetails && !secondaryText.empty() ? static_cast<DevFloat>(1.0) : static_cast<DevFloat>(0.0);
+            const auto footerLineCount = static_cast<DevFloat>(1.0) + detailLineCount;
             auto heightPixels = std::max<DevFloat>(
                 CNodeMinHeightPixels,
-                (2.0 * paddingY) + (2.0 * lineAdvance) + secondaryGap + (0.55 * ResolveNodeFontHeight(frame, fontScale)));
-            if (!node.SecondarySummary.empty() || !node.CompactId.empty()) {
-                heightPixels = std::max<DevFloat>(
-                    heightPixels,
-                    (2.0 * paddingY) + (2.0 * lineAdvance) + secondaryGap + (0.8 * ResolveNodeFontHeight(frame, fontScale)));
-            }
+                (2.0 * paddingY) +
+                    (static_cast<DevFloat>(titleLineCount) * lineAdvance) +
+                    secondaryGap +
+                    (footerLineCount * lineAdvance) +
+                    (0.24 * ResolveNodeFontHeight(frame, fontScale)));
             if (node.bStudyRoot) {
-                heightPixels = std::max<DevFloat>(heightPixels, CNodeMinHeightPixels + (0.45 * lineAdvance));
+                heightPixels = std::max<DevFloat>(heightPixels, CNodeMinHeightPixels + (0.22 * lineAdvance));
             }
 
             const auto halfWidth = 0.5 * widthPixels * pixelSize.x;
@@ -787,6 +924,7 @@ namespace Slab::Graphics::Plot2D::V2 {
         const auto paddingX = ResolveNodePaddingX(frame, graphTextScale);
         const auto paddingY = ResolveNodePaddingY(frame, graphTextScale);
         const auto lineAdvance = ResolveNodeLineAdvance(frame, graphTextScale);
+        const auto lineAdvancePlot = PixelVectorToPlotDelta({0.0, lineAdvance}, pixelSize).y;
         const auto edgeLabelOffset = PixelVectorToPlotDelta({0.65 * paddingX, 0.45 * lineAdvance}, pixelSize);
         const auto textPad = PixelVectorToPlotDelta({paddingX, paddingY}, pixelSize);
         const auto baselinePad = PixelVectorToPlotDelta({0.0, 0.18 * lineAdvance}, pixelSize);
@@ -797,8 +935,27 @@ namespace Slab::Graphics::Plot2D::V2 {
             const auto *target = FindNode(edge.ToNodeId);
             if (source == nullptr || target == nullptr) continue;
 
-            const auto sourceRect = MeasureNodeRect(frame, *source, graphTextScale);
-            const auto targetRect = MeasureNodeRect(frame, *target, graphTextScale);
+            const bool bSourceSelected = SelectedSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
+                SelectedSelection.ElementId == source->NodeId;
+            const bool bSourceHovered = HoveredSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
+                HoveredSelection.ElementId == source->NodeId;
+            const bool bSourceHighlighted = highlightedNodeIds.contains(source->NodeId);
+            const bool bTargetSelected = SelectedSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
+                SelectedSelection.ElementId == target->NodeId;
+            const bool bTargetHovered = HoveredSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
+                HoveredSelection.ElementId == target->NodeId;
+            const bool bTargetHighlighted = highlightedNodeIds.contains(target->NodeId);
+
+            const auto sourceRect = MeasureNodeRect(
+                frame,
+                *source,
+                graphTextScale,
+                ShouldShowNodeFooterDetails(graphTextScale, bSourceSelected, bSourceHovered, bSourceHighlighted));
+            const auto targetRect = MeasureNodeRect(
+                frame,
+                *target,
+                graphTextScale,
+                ShouldShowNodeFooterDetails(graphTextScale, bTargetSelected, bTargetHovered, bTargetHighlighted));
             const auto route = BuildEdgeRoute(sourceRect, targetRect, pixelSize);
 
             auto edgeColor = edge.ActivationStatus != OntologyV2::EOntologyActivationStatusV2::None
@@ -853,13 +1010,12 @@ namespace Slab::Graphics::Plot2D::V2 {
         }
 
         for (const auto &node : Projection.Nodes) {
-            const auto rect = MeasureNodeRect(frame, node, graphTextScale);
-
-            auto fillColor = LayerColor(node.Layer);
+            const auto categoryColor = NodeCategoryColor(node);
+            auto fillColor = categoryColor;
             if (node.OwnershipScope == OntologyV2::EOntologyOwnershipScopeV2::Global) {
-                fillColor = MixColor(fillColor, FColor::FromHex("#141C29"), 0.56).WithAlpha(0.84f);
+                fillColor = MixColor(fillColor, FColor::FromHex("#141C29"), 0.64).WithAlpha(0.78f);
             } else {
-                fillColor = MixColor(fillColor, FColor::FromHex("#28361A"), 0.18).WithAlpha(0.96f);
+                fillColor = MixColor(fillColor, FColor::FromHex("#28361A"), 0.22).WithAlpha(0.90f);
             }
             if (node.bAbstract) {
                 fillColor = MixColor(fillColor, FColor::FromHex("#4B5260"), 0.28);
@@ -867,13 +1023,16 @@ namespace Slab::Graphics::Plot2D::V2 {
 
             auto borderColor = node.ActivationStatus != OntologyV2::EOntologyActivationStatusV2::None
                 ? StatusAccentColor(node.ActivationStatus)
-                : LayerColor(node.Layer);
+                : categoryColor;
 
             const bool bSelected = SelectedSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
                 SelectedSelection.ElementId == node.NodeId;
             const bool bHovered = HoveredSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
                 HoveredSelection.ElementId == node.NodeId;
             const bool bHighlighted = highlightedNodeIds.contains(node.NodeId);
+            const bool bShowFooterDetails =
+                ShouldShowNodeFooterDetails(graphTextScale, bSelected, bHovered, bHighlighted);
+            const auto rect = MeasureNodeRect(frame, node, graphTextScale, bShowFooterDetails);
 
             if (bSelected) {
                 borderColor = MixColor(borderColor, White, 0.20f);
@@ -889,8 +1048,26 @@ namespace Slab::Graphics::Plot2D::V2 {
                 .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
             });
 
+            if (node.Kind == "Requirement") {
+                const auto accentWidth = PixelVectorToPlotDelta({4.0, 0.0}, pixelSize).x;
+                drawList.AddRectangle(FRectangleCommandV2{
+                    .Rectangle = {rect.xMin, rect.xMin + accentWidth, rect.yMin, rect.yMax},
+                    .Color = categoryColor.WithAlpha(0.28f),
+                    .bFilled = true,
+                    .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
+                });
+            } else if (node.Kind == "Study" || node.Kind == "StudyObject" || node.Layer == "study") {
+                const auto accentHeight = PixelVectorToPlotDelta({0.0, 3.0}, pixelSize).y;
+                drawList.AddRectangle(FRectangleCommandV2{
+                    .Rectangle = {rect.xMin, rect.xMax, rect.yMax - accentHeight, rect.yMax},
+                    .Color = categoryColor.WithAlpha(0.26f),
+                    .bFilled = true,
+                    .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
+                });
+            }
+
             drawList.AddPolyline(FPolylineCommandV2{
-                .Points = BuildRectOutlinePoints(rect),
+                .Points = BuildNodeOutlinePoints(node, rect, pixelSize),
                 .Style = PlotStyle(
                     borderColor.WithAlpha(bSelected ? 1.0f : 0.94f),
                     LineStrip,
@@ -988,41 +1165,69 @@ namespace Slab::Graphics::Plot2D::V2 {
                 });
             }
 
-            const auto leadingBadgeReserve = node.bStudyRoot
-                ? PixelVectorToPlotDelta({ResolveStudyBadgeWidth(frame, graphTextScale) + (0.55 * paddingX), 0.0}, pixelSize).x
-                : PixelVectorToPlotDelta({
-                    ResolveOwnershipBadgeWidth(frame, OwnershipBadgeLabel(node), graphTextScale) + (0.55 * paddingX),
-                    0.0}, pixelSize).x;
-            const auto footerBaselineY = rect.yMin + textPad.y + baselinePad.y;
-            const auto titleBaselineY = rect.yMax - textPad.y - baselinePad.y;
-            const auto footerRightText = CompactLabel(node.Kind, 18);
-            const auto footerRightWidth = PixelVectorToPlotDelta({
-                ApproximateNodeTextWidth(frame, footerRightText, 18, graphTextScale) + (0.15 * paddingX),
-                0.0}, pixelSize).x;
+            const auto titleLines = BuildWrappedTitleLines(node.Title);
+            const auto secondaryText = CompactLabel(node.SecondarySummary.empty() ? node.CompactId : node.SecondarySummary, 34);
+            const auto categoryText = CompactLabel(FriendlyNodeCategoryLabel(node), 16);
+            const auto categoryBaselineY = rect.yMin + textPad.y + baselinePad.y;
+            const auto detailBaselineY = categoryBaselineY + lineAdvancePlot;
+            const auto topBadgeHeightPixels = std::max(
+                node.bStudyRoot
+                    ? ResolveStudyBadgeHeight(frame, graphTextScale)
+                    : ResolveOwnershipBadgeHeight(frame, graphTextScale),
+                node.ActivationStatus != OntologyV2::EOntologyActivationStatusV2::None
+                    ? ResolveStatusBadgeHeight(frame, graphTextScale)
+                    : 0.0);
+            const auto topBadgeHeightPlot = PixelVectorToPlotDelta({0.0, topBadgeHeightPixels}, pixelSize).y;
+            const auto titleBaselineY =
+                rect.yMax - topBadgeHeightPlot - (0.60 * textPad.y) - baselinePad.y;
+
+            for (std::size_t lineIndex = 0; lineIndex < titleLines.size(); ++lineIndex) {
+                drawList.AddText(FTextCommandV2{
+                    .Text = titleLines[lineIndex],
+                    .Location = {
+                        rect.xMin + textPad.x,
+                        titleBaselineY - (static_cast<DevFloat>(lineIndex) * lineAdvancePlot)},
+                    .Color = White.WithAlpha(
+                        node.OwnershipScope == OntologyV2::EOntologyOwnershipScopeV2::StudyLocal ? 1.0f : 0.92f),
+                    .FontScale = graphTextScale,
+                    .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
+                });
+            }
+
+            if (bShowFooterDetails && !secondaryText.empty()) {
+                drawList.AddText(FTextCommandV2{
+                    .Text = secondaryText,
+                    .Location = {rect.xMin + textPad.x, detailBaselineY},
+                    .Color = LightGrey.WithAlpha(0.78f),
+                    .FontScale = graphTextScale,
+                    .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
+                });
+            }
 
             drawList.AddText(FTextCommandV2{
-                .Text = CompactLabel(node.Title, 38),
-                .Location = {rect.xMin + textPad.x + leadingBadgeReserve, titleBaselineY},
-                .Color = White.WithAlpha(node.OwnershipScope == OntologyV2::EOntologyOwnershipScopeV2::StudyLocal ? 1.0f : 0.92f),
+                .Text = categoryText,
+                .Location = {rect.xMin + textPad.x, categoryBaselineY},
+                .Color = categoryColor.WithAlpha(0.92f),
                 .FontScale = graphTextScale,
                 .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
             });
 
-            drawList.AddText(FTextCommandV2{
-                .Text = CompactLabel(node.SecondarySummary.empty() ? node.CompactId : node.SecondarySummary, 36),
-                .Location = {rect.xMin + textPad.x, footerBaselineY},
-                .Color = LightGrey.WithAlpha(0.88f),
-                .FontScale = graphTextScale,
-                .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
-            });
-
-            drawList.AddText(FTextCommandV2{
-                .Text = footerRightText,
-                .Location = {rect.xMax - textPad.x - footerRightWidth, footerBaselineY},
-                .Color = borderColor.WithAlpha(0.92f),
-                .FontScale = graphTextScale,
-                .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
-            });
+            if (bShowFooterDetails) {
+                drawList.AddPolyline(FPolylineCommandV2{
+                    .Points = {
+                        {rect.xMin + textPad.x, categoryBaselineY + (0.78 * lineAdvancePlot)},
+                        {rect.xMax - textPad.x, categoryBaselineY + (0.78 * lineAdvancePlot)}
+                    },
+                    .Style = PlotStyle(
+                        categoryColor.WithAlpha(0.20f),
+                        LineStrip,
+                        false,
+                        Nil,
+                        1.0f),
+                    .bClosed = false,
+                    .CoordinateSpace = EPlotCoordinateSpaceV2::Plot
+                });
+            }
         }
 
         DevFloat hudBottom = frame.HudLayout.BottomLeft.y;
@@ -1150,7 +1355,15 @@ namespace Slab::Graphics::Plot2D::V2 {
         const auto graphTextScale = ResolveOntologyTextScale(frame, Projection);
 
         for (const auto &node : Projection.Nodes) {
-            const auto rect = MeasureNodeRect(frame, node, graphTextScale);
+            const bool bSelected = SelectedSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
+                SelectedSelection.ElementId == node.NodeId;
+            const bool bHovered = HoveredSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
+                HoveredSelection.ElementId == node.NodeId;
+            const auto rect = MeasureNodeRect(
+                frame,
+                node,
+                graphTextScale,
+                ShouldShowNodeFooterDetails(graphTextScale, bSelected, bHovered, false));
             if (plotPosition.x < rect.xMin || plotPosition.x > rect.xMax ||
                 plotPosition.y < rect.yMin || plotPosition.y > rect.yMax) {
                 continue;
@@ -1172,9 +1385,26 @@ namespace Slab::Graphics::Plot2D::V2 {
             const auto *target = FindNode(edge.ToNodeId);
             if (source == nullptr || target == nullptr) continue;
 
+            const bool bSourceSelected = SelectedSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
+                SelectedSelection.ElementId == source->NodeId;
+            const bool bSourceHovered = HoveredSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
+                HoveredSelection.ElementId == source->NodeId;
+            const bool bTargetSelected = SelectedSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
+                SelectedSelection.ElementId == target->NodeId;
+            const bool bTargetHovered = HoveredSelection.Kind == OntologyV2::EOntologyElementKindV2::Node &&
+                HoveredSelection.ElementId == target->NodeId;
+
             const auto route = BuildEdgeRoute(
-                MeasureNodeRect(frame, *source, graphTextScale),
-                MeasureNodeRect(frame, *target, graphTextScale),
+                MeasureNodeRect(
+                    frame,
+                    *source,
+                    graphTextScale,
+                    ShouldShowNodeFooterDetails(graphTextScale, bSourceSelected, bSourceHovered, false)),
+                MeasureNodeRect(
+                    frame,
+                    *target,
+                    graphTextScale,
+                    ShouldShowNodeFooterDetails(graphTextScale, bTargetSelected, bTargetHovered, false)),
                 pixelSize);
             for (std::size_t index = 1; index < route.Points.size(); ++index) {
                 const auto distance = DistanceToSegmentSquaredPixels(

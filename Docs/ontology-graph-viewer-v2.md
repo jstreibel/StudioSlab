@@ -116,6 +116,7 @@ Diagnostics must not crash rendering. Unknown extra fields are tolerated and pre
 - hover summary cards
 - incident highlight
 - inspector synchronization
+- edge labels remain toggleable but default to off in the dense overview path
 - host-level pan/zoom/fit controls
 
 ## 6. Layout and Text Scaling
@@ -125,6 +126,8 @@ Diagnostics must not crash rendering. Unknown extra fields are tolerated and pre
 - deterministic layered layout
 - global ontology stays in stable layer columns
 - study-local nodes occupy sidecar space near the owning study root
+- dense layer columns now reserve explicit badge/card breathing room rather than assuming short one-line labels
+- LabV2 requests a fit-to-graph pass when the selected study or filters rebuild the projection so the first framed view matches the current content
 - edge routing is simple and deterministic
 
 ### 6.2 Text and Node Size
@@ -132,6 +135,13 @@ Diagnostics must not crash rendering. Unknown extra fields are tolerated and pre
 - node sizing uses font metrics plus estimated rendered string width
 - plot-space ontology text now scales with graph zoom
 - node rectangles and badge reservations use the same zoom-derived scale so text and boxes stay coherent
+- long ontology titles now wrap into at most two compact lines to trade horizontal sprawl for predictable card height
+- the fitted overview deliberately suppresses footer/detail rows until hover, selection, highlight, or zoom-in so the graph stays readable at full-study scale
+- after layout, the projected x positions are compacted horizontally so the overview does not keep the earlier wide lane spacing once cards shrink
+- layers reserve study-local sidecar width only when the selected study actually contributes local nodes there
+- overview card measurement now follows the same fitted text scale as the rendered labels, preventing small overview text from sitting inside full-size cards
+- node cards expose friendly category labels (`semantic`, `study`, `requirement`, `solver`, etc.) instead of raw schema kinds
+- study and requirement nodes use distinct silhouettes on top of category color so the category remains visible at a glance
 
 ### 6.3 Current Writer Constraint
 
@@ -139,6 +149,13 @@ Diagnostics must not crash rendering. Unknown extra fields are tolerated and pre
 - `FTextCommandV2::FontScale` is now honored by the Plot V2 OpenGL backend
 - this is the narrow first implementation
 - if higher zoom ranges require sharper text, the next extension should use freetype-gl SDF render modes instead of pushing bitmap glyph scaling further
+
+### 6.4 Writer-State Invariant
+
+- Plot V2 ontology text is emitted in screen-space after plot-to-viewport conversion.
+- The shared theme writer can also be used by other backends that install a pen-position transform.
+- Before drawing ontology text, the Plot V2 OpenGL backend must reset that pen-position transform to identity.
+- Without that reset, node boxes and labels can diverge under zoom because geometry and glyphs are no longer evaluated in the same coordinate space.
 
 ## 7. Tests and Example Coverage
 
@@ -152,6 +169,7 @@ Diagnostics must not crash rendering. Unknown extra fields are tolerated and pre
 
 - bundle load and validation path
 - deterministic projection path
+- dense-column spacing baseline
 - harmonic oscillator reachable ODE -> RK4 -> artifact path
 - Klein-Gordon blocked requirements and realization path filters
 - artist render + click selection

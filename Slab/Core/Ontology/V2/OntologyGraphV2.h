@@ -225,7 +225,7 @@ namespace Slab::Core::Ontology::V2 {
         bool bFocusActiveReachableRegion = false;
         bool bShowBlockedRequirementsOnly = false;
         bool bShowRealizationRecipeArtifactPathOnly = false;
-        bool bShowEdgeLabels = true;
+        bool bShowEdgeLabels = false;
     };
 
     struct FOntologyProjectedNodeV2 {
@@ -358,6 +358,19 @@ namespace Slab::Core::Ontology::V2 {
         }
 
         return "none";
+    }
+
+    inline auto FriendlyNodeCategoryLabelV2(const Str &kind, const Str &layer) -> Str {
+        if (kind == "Requirement") return "requirement";
+        if (kind == "Study" || kind == "StudyObject" || layer == "study") return "study";
+        if (kind == "ArtifactClass" || layer == "artifact") return "artifact";
+        if (kind == "SolverClass") return "solver";
+        if (kind == "RecipeClass" || layer == "recipe") return "recipe";
+        if (kind == "RealizationClass" || layer == "realization") return "realization";
+        if (kind == "DescentClass" || layer == "descent") return "descent";
+        if (layer == "ambient") return "ambient";
+        if (kind == "SemanticClass" || layer == "semantic") return "semantic";
+        return layer.empty() ? kind : layer;
     }
 
     namespace Detail {
@@ -1032,23 +1045,36 @@ namespace Slab::Core::Ontology::V2 {
             return preview;
         }
 
-        inline auto EstimateNodeLayoutWidthUnitsV2(const FOntologyNodeRecordV2 &node) -> DevFloat {
-            const auto preview = LayoutPreviewTextV2(node);
-            const auto titleChars = static_cast<DevFloat>(std::clamp<std::size_t>(node.Title.size(), 8, 40));
-            const auto previewChars = static_cast<DevFloat>(std::clamp<std::size_t>(preview.size(), 6, 44));
-            const auto dominantChars = std::max(titleChars, previewChars);
-            const auto scopeAllowance = node.OwnershipScope == EOntologyOwnershipScopeV2::StudyLocal ? 1.9 : 1.5;
-            return std::clamp(8.8 + (0.33 * dominantChars) + scopeAllowance, 11.5, 26.0);
+        inline auto EstimateNodeLayoutWidthUnitsV2(const FOntologyNodeRecordV2 &node,
+                                                  const bool bStudyRoot = false) -> DevFloat {
+            const auto titleChars = std::clamp<std::size_t>(node.Title.size(), 8, 60);
+            const auto titleLineCount = std::clamp<std::size_t>((titleChars + 19) / 20, 1, 3);
+            const auto wrappedTitleChars = static_cast<DevFloat>(std::clamp<std::size_t>(
+                (titleChars + titleLineCount - 1) / titleLineCount,
+                10,
+                24));
+            const auto categoryChars = static_cast<DevFloat>(std::clamp<std::size_t>(
+                FriendlyNodeCategoryLabelV2(node.Kind, node.Layer).size(),
+                6,
+                14));
+            const auto badgeReserve = bStudyRoot
+                ? static_cast<DevFloat>(4.6)
+                : (node.OwnershipScope == EOntologyOwnershipScopeV2::StudyLocal ? 4.0 : 3.7);
+            const auto statusReserve = static_cast<DevFloat>(4.9);
+            const auto dominantChars = std::max(wrappedTitleChars, categoryChars + static_cast<DevFloat>(2.0));
+            return std::clamp(
+                7.2 + (0.30 * dominantChars) + badgeReserve + statusReserve,
+                12.0,
+                22.0);
         }
 
         inline auto EstimateNodeLayoutHeightUnitsV2(const FOntologyNodeRecordV2 &node,
                                                     const bool bStudyRoot = false) -> DevFloat {
-            auto height = static_cast<DevFloat>(5.6);
-            if (!LayoutPreviewTextV2(node).empty()) {
-                height += 1.85;
-            }
+            const auto titleChars = std::clamp<std::size_t>(node.Title.size(), 8, 60);
+            const auto titleLineCount = static_cast<DevFloat>(std::clamp<std::size_t>((titleChars + 19) / 20, 1, 3));
+            auto height = static_cast<DevFloat>(6.6) + ((titleLineCount - 1.0) * 1.6);
             if (bStudyRoot) {
-                height += 0.85;
+                height += 0.5;
             }
             return height;
         }
@@ -1073,11 +1099,12 @@ namespace Slab::Core::Ontology::V2 {
         inline auto ComputeGlobalNodePositionsV2(const FOntologyGraphBundle &bundle,
                                                  const FStudyOntologyDocument *selectedStudy)
             -> std::map<Str, Slab::Graphics::FPoint2D> {
-            constexpr DevFloat LayerGap = 6.5;
-            constexpr DevFloat RowGap = 1.5;
+            constexpr DevFloat HorizontalCompression = 0.76;
+            constexpr DevFloat LayerGap = 4.8;
+            constexpr DevFloat RowGap = 1.9;
             constexpr DevFloat GroupGap = 2.2;
-            constexpr DevFloat StudySidecarGap = 4.2;
-            constexpr DevFloat MinLayerWidth = 12.0;
+            constexpr DevFloat StudySidecarGap = 2.8;
+            constexpr DevFloat ColumnOuterPadding = 0.7;
 
             std::map<Str, Slab::Graphics::FPoint2D> positions;
             std::map<Str, int> nodeKindOrder;
@@ -1090,9 +1117,10 @@ namespace Slab::Core::Ontology::V2 {
             std::map<Str, DevFloat> reservedStudyWidthByLayer;
             for (const auto &study : bundle.StudyDocuments) {
                 for (const auto &studyNode : study.Nodes) {
+                    const bool bStudyRoot = studyNode.Id == study.Study.Id;
                     reservedStudyWidthByLayer[studyNode.Layer] = std::max(
                         reservedStudyWidthByLayer[studyNode.Layer],
-                        EstimateNodeLayoutWidthUnitsV2(studyNode));
+                        EstimateNodeLayoutWidthUnitsV2(studyNode, bStudyRoot) + (2.0 * ColumnOuterPadding));
                 }
             }
 
@@ -1149,28 +1177,36 @@ namespace Slab::Core::Ontology::V2 {
             });
 
             std::map<Str, DevFloat> globalCenterByLayer;
-            std::map<Str, DevFloat> globalWidthByLayer;
+            std::map<Str, DevFloat> studyCenterByLayer;
             DevFloat cursorX = 0.0;
             for (const auto &layer : orderedLayers) {
                 const auto &globalNodes = globalByLayer[layer];
+                const auto &studyNodes = studyByLayer[layer];
                 DevFloat globalWidth = 0.0;
                 for (const auto *node : globalNodes) {
-                    globalWidth = std::max(globalWidth, EstimateNodeLayoutWidthUnitsV2(*node));
+                    globalWidth = std::max(
+                        globalWidth,
+                        EstimateNodeLayoutWidthUnitsV2(*node, false) + (2.0 * ColumnOuterPadding));
                 }
 
-                const auto reservedStudyWidth = reservedStudyWidthByLayer[layer];
+                const auto reservedStudyWidth = !studyNodes.empty()
+                    ? reservedStudyWidthByLayer[layer]
+                    : static_cast<DevFloat>(0.0);
                 const bool bHasGlobalNodes = !globalNodes.empty();
-                const auto baseLayerWidth = std::max(
-                    bHasGlobalNodes ? globalWidth : reservedStudyWidth,
-                    MinLayerWidth);
+                const bool bHasStudyNodes = !studyNodes.empty();
 
-                globalCenterByLayer[layer] = cursorX + (0.5 * baseLayerWidth);
-                globalWidthByLayer[layer] = baseLayerWidth;
-
-                cursorX += baseLayerWidth;
-                if (bHasGlobalNodes && reservedStudyWidth > 0.0) {
-                    cursorX += StudySidecarGap + reservedStudyWidth;
+                if (bHasGlobalNodes) {
+                    globalCenterByLayer[layer] = cursorX + (0.5 * globalWidth);
+                    cursorX += globalWidth;
+                    if (bHasStudyNodes && reservedStudyWidth > 0.0) {
+                        studyCenterByLayer[layer] = cursorX + StudySidecarGap + (0.5 * reservedStudyWidth);
+                        cursorX += StudySidecarGap + reservedStudyWidth;
+                    }
+                } else if (bHasStudyNodes && reservedStudyWidth > 0.0) {
+                    studyCenterByLayer[layer] = cursorX + (0.5 * reservedStudyWidth);
+                    cursorX += reservedStudyWidth;
                 }
+
                 cursorX += LayerGap;
             }
 
@@ -1213,20 +1249,20 @@ namespace Slab::Core::Ontology::V2 {
                 sortNodes(globalNodes, false);
                 sortNodes(studyNodes, true);
 
-                const auto baseX = globalCenterByLayer[layer];
-                assignColumn(globalNodes, baseX);
-
-                if (!studyNodes.empty()) {
-                    DevFloat studyWidth = 0.0;
-                    for (const auto *node : studyNodes) {
-                        studyWidth = std::max(studyWidth, EstimateNodeLayoutWidthUnitsV2(*node));
-                    }
-
-                    const auto sidecarX = globalNodes.empty()
-                        ? baseX
-                        : baseX + (0.5 * globalWidthByLayer[layer]) + StudySidecarGap + (0.5 * studyWidth);
-                    assignColumn(studyNodes, sidecarX);
+                const auto globalCenterIt = globalCenterByLayer.find(layer);
+                if (globalCenterIt != globalCenterByLayer.end()) {
+                    assignColumn(globalNodes, globalCenterIt->second);
                 }
+
+                const auto studyCenterIt = studyCenterByLayer.find(layer);
+                if (studyCenterIt != studyCenterByLayer.end()) {
+                    assignColumn(studyNodes, studyCenterIt->second);
+                }
+            }
+
+            for (auto &[nodeId, position] : positions) {
+                (void) nodeId;
+                position.x *= HorizontalCompression;
             }
 
             return positions;
@@ -1234,7 +1270,7 @@ namespace Slab::Core::Ontology::V2 {
 
         inline auto BuildNodeSummaryV2(const FOntologyNodeRecordV2 &node,
                                        const EOntologyActivationStatusV2 status) -> std::pair<Str, Str> {
-            auto summary = node.Kind + " / " + node.Layer;
+            auto summary = FriendlyNodeCategoryLabelV2(node.Kind, node.Layer);
             if (status != EOntologyActivationStatusV2::None) {
                 summary += " / ";
                 summary += ToString(status);

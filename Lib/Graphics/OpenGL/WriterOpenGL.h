@@ -17,7 +17,7 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    using FPenTransformFunction = std::function<FPoint2D(const FPoint2D&)>;
+    using FPenTransformFunction = Graphics::FPenTransformFunction;
 
     class FWriterOpenGL final : public FWriter {
         ftgl::texture_font_t *Font = nullptr;
@@ -51,7 +51,8 @@ namespace Slab::Graphics::OpenGL {
         void Translate(float dx, float dy) override;
         void ResetTransforms() override;
 
-        void SetPenPositionTransform(const FPenTransformFunction&);
+        void SetPenPositionTransform(const FPenTransformFunction&) override;
+        void ResetPenPositionTransform() override;
     };
 
 } // Slab::Graphics::OpenGL

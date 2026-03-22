@@ -2456,8 +2456,8 @@ auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
         ImGui::DockBuilderDockWindow(WindowTitleModelDetails, dockRight);
         ImGui::DockBuilderDockWindow(WindowTitleModelAssumptions, dockRightBottom);
     } else if (workspace == EWorkspaceTab::Ontology) {
-        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.30f, nullptr, &dockMain);
-        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.32f, nullptr, &dockMain);
+        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.26f, nullptr, &dockMain);
+        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.27f, nullptr, &dockMain);
 
         ImGui::DockBuilderDockWindow(WindowTitleOntologyGraph, dockMain);
         ImGui::DockBuilderDockWindow(WindowTitleOntologyLayer, dockBottom);

@@ -10,7 +10,11 @@
 #include "Graphics/Styles/Colors.h"
 #include "Utils/EncodingUtils.h"
 
+#include <functional>
+
 namespace Slab::Graphics {
+
+    using FPenTransformFunction = std::function<FPoint2D(const FPoint2D&)>;
 
     class FWriter {
     public:
@@ -28,6 +32,8 @@ namespace Slab::Graphics {
         virtual void Scale(float sx, float sy) {};
         virtual void Translate(float dx, float dy) {};
         virtual void ResetTransforms() {};
+        virtual void SetPenPositionTransform(const FPenTransformFunction&) {}
+        virtual void ResetPenPositionTransform() {}
     };
 
 }

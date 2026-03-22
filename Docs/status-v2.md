@@ -2,11 +2,11 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-03-18`
-- Last implementation update: `2026-03-18` (Ontology workspace graph viewer and zoom-aware graph text pass)
-- Last architecture-doc update: `2026-03-18` (indexed ontology viewer docs)
+- Snapshot date: `2026-03-21`
+- Last implementation update: `2026-03-21` (Ontology graph compact-overview pass)
+- Last architecture-doc update: `2026-03-21` (ontology overview/detail notes)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
-- Build-target sanity check date: `2026-03-18` (`StudioSlab`, `testsuite`, `[ModelV2]`, and `[OntologyGraphV2]` pass in `cmake-build-debug`)
+- Build-target sanity check date: `2026-03-21` (`StudioSlab`, `testsuite`, and `[OntologyGraphV2]` pass in `cmake-build-debug`)
 
 ## Implemented Baseline
 
@@ -292,6 +292,33 @@
   - ontology plot-space labels and badges scale with graph zoom
   - ontology node measurement uses the same zoom-derived scale so boxes and labels stay coherent
   - current implementation uses transformed glyph geometry; SDF/freetype-gl extension remains a later quality path if wider zoom ranges require it
+
+## Recent Updates (`2026-03-20`, implementation, ontology graph layout polish)
+
+- Ontology workspace graph readability pass landed:
+  - deterministic layout now reserves materially wider columns and study sidecars for long ontology cards and badge rows
+  - dense titles are wrapped into compact two-line cards instead of stretching the graph horizontally
+  - ontology edge labels now default to off for the dense overview path and remain available through the existing toggle/hover flow
+- LabV2 ontology framing is now projection-aware:
+  - when studies or filters rebuild the ontology projection, the Plot V2 host requests a fit-to-graph pass instead of leaving the window on a stale zoom region
+  - the ontology workspace dock split now gives the graph more horizontal and vertical room by default
+- Coverage follow-up:
+  - `Lib/tests/test_ontology_graph_v2.cpp` now also guards the denser column-spacing baseline used by the ontology layout pass
+
+## Recent Updates (`2026-03-21`, implementation, ontology graph compact overview)
+
+- Ontology graph overview density was reduced further:
+  - fitted/overview zoom now renders ontology cards at a compact text scale instead of treating the overview like an inspector view
+  - node cards collapse to title-first summaries in the dense overview and reveal footer metadata on hover, selection, highlight, or zoom-in
+  - minimum ontology card geometry was reduced so the overview reads as a graph again instead of a wall of equal-sized panels
+- The ontology surface keeps the previous deterministic layout and fit-on-projection-change path:
+  - this pass is intentionally a render-density pass, not a new force/layout algorithm
+  - deterministic layer columns were then compacted horizontally so the overview stops burning width on conservative lane spacing that no longer matches the smaller cards
+  - study-local sidecars are now reserved only on layers the selected study actually occupies, eliminating empty placeholder lanes in the fitted overview
+  - overview node geometry now follows the same sub-`1.0` text scale as the rendered labels, so cards stop keeping full-size padding after the text has shrunk
+  - ontology cards now render friendly public categories such as `semantic`, `study`, `requirement`, and `solver` instead of raw schema kinds like `SemanticClass` or `SolverClass`
+  - category meaning is pushed further into presentation: requirement cards use a chamfered silhouette, study cards use a tabbed silhouette, and category colors distinguish requirement vs descent and solver vs recipe
+  - targeted ontology coverage still passes after the overview/detail split
 
 ## Reflection Working-Memory Caveats (Current)
 

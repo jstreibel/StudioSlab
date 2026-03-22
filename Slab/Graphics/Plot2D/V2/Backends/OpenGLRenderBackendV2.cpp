@@ -149,6 +149,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                              const TPointer<FWriter> &writer) -> void {
             if (writer == nullptr || command.Text.empty()) return;
 
+            writer->ResetPenPositionTransform();
             auto pen = command.Location;
             if (command.CoordinateSpace == EPlotCoordinateSpaceV2::Plot) {
                 pen = FromSpaceToViewportCoord(pen, frame.PlotRegion, screenViewport);
@@ -158,10 +159,12 @@ namespace Slab::Graphics::Plot2D::V2 {
             writer->ResetTransforms();
             const auto fontScale = std::clamp(command.FontScale, static_cast<DevFloat>(0.1), static_cast<DevFloat>(8.0));
             if (std::abs(fontScale - static_cast<DevFloat>(1.0)) > 1.0e-3) {
-                // Scale around the anchor so plot-space labels can zoom with the view.
-                writer->Translate(static_cast<float>(pen.x), static_cast<float>(pen.y));
-                writer->Scale(static_cast<float>(fontScale), static_cast<float>(fontScale));
+                // WriterOpenGL uses freetype-gl matrix helpers, whose storage/order means the
+                // anchor-preserving translation pair is the reverse of the usual column-vector
+                // notation one might write on paper.
                 writer->Translate(static_cast<float>(-pen.x), static_cast<float>(-pen.y));
+                writer->Scale(static_cast<float>(fontScale), static_cast<float>(fontScale));
+                writer->Translate(static_cast<float>(pen.x), static_cast<float>(pen.y));
             }
             writer->Write(command.Text, pen, command.Color, command.bVertical);
 
@@ -176,6 +179,7 @@ namespace Slab::Graphics::Plot2D::V2 {
                                const FColor &plotBackgroundColor) -> void {
             if (entries.empty() || writer == nullptr) return;
 
+            writer->ResetPenPositionTransform();
             const auto fontHeight = std::max<DevFloat>(10.0, writer->GetFontHeightInPixels());
             const auto rowHeight = std::max<DevFloat>(14.0, fontHeight + 2.0);
             const DevFloat padding = 10.0;

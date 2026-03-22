@@ -4,6 +4,8 @@
 #include "Graphics/Plot2D/V2/Plot2DV2.h"
 
 #include <filesystem>
+#include <limits>
+#include <map>
 
 namespace {
 
@@ -169,6 +171,45 @@ TEST_CASE("Ontology projection preserves deterministic reachable and blocked reg
     REQUIRE(artifactNode->ActivationStatus == EOntologyActivationStatusV2::Reachable);
 }
 
+TEST_CASE("Ontology projection keeps dense study layout breathable", "[OntologyGraphV2]") {
+    const auto ontologyDirectory = FindOntologyResourcesDirectoryV2();
+    REQUIRE_FALSE(ontologyDirectory.empty());
+
+    const auto bundle = LoadOntologyGraphBundleV2(
+        ontologyDirectory / "studioslab-ontology.schema.json",
+        ontologyDirectory / "global-descent.ontology.json",
+        DiscoverOntologyStudyDocumentsV2(ontologyDirectory));
+    REQUIRE(bundle.Diagnostics.ErrorCount() == 0);
+
+    const auto projection = BuildOntologyGraphProjectionV2(bundle, "study:ho", {});
+    REQUIRE(projection.Nodes.size() > 12);
+
+    std::map<DevFloat, Vector<const FOntologyProjectedNodeV2 *>> nodesByColumnX;
+    for (const auto &node : projection.Nodes) {
+        nodesByColumnX[node.Position.x].push_back(&node);
+    }
+
+    Vector<DevFloat> columnXs;
+    columnXs.reserve(nodesByColumnX.size());
+    for (const auto &[columnX, nodes] : nodesByColumnX) {
+        (void) nodes;
+        columnXs.push_back(columnX);
+    }
+    std::sort(columnXs.begin(), columnXs.end());
+    REQUIRE(columnXs.size() >= 5);
+
+    auto minColumnGap = std::numeric_limits<DevFloat>::max();
+    for (std::size_t index = 1; index < columnXs.size(); ++index) {
+        minColumnGap = std::min(minColumnGap, columnXs[index] - columnXs[index - 1]);
+    }
+
+    const auto totalSpan = columnXs.back() - columnXs.front();
+    INFO("Minimum ontology column gap: " << minColumnGap);
+    INFO("Total ontology column span: " << totalSpan);
+    REQUIRE(minColumnGap > 8.5);
+    REQUIRE(totalSpan < 160.0);
+}
+
 TEST_CASE("Ontology graph artist renders and supports click selection", "[OntologyGraphV2][Plot2DV2]") {
     const auto ontologyDirectory = FindOntologyResourcesDirectoryV2();
     REQUIRE_FALSE(ontologyDirectory.empty());
@@ -197,6 +238,9 @@ TEST_CASE("Ontology graph artist renders and supports click selection", "[Ontolo
     REQUIRE(CountTextCommands(drawList) > 0);
     REQUIRE(HasTextContaining(drawList, "Harmonic oscillator"));
     REQUIRE(HasTextContaining(drawList, "Runge-Kutta 4"));
+    REQUIRE(HasTextContaining(drawList, "solver"));
+    REQUIRE_FALSE(HasTextContaining(drawList, "SolverClass"));
+    REQUIRE_FALSE(HasTextContaining(drawList, "DescentClass"));
 
     const auto *studyRoot = projection.FindNode("study:ho");
     REQUIRE(studyRoot != nullptr);
@@ -247,7 +291,7 @@ TEST_CASE("Ontology graph plot text scales with zoom", "[OntologyGraphV2][Plot2D
 
     const auto *fittedTitle = FindTextCommandContaining(backend.GetLastDrawList(), "Harmonic oscillator");
     REQUIRE(fittedTitle != nullptr);
-    REQUIRE(fittedTitle->FontScale == Catch::Approx(1.0).margin(0.08));
+    REQUIRE(fittedTitle->FontScale == Catch::Approx(0.88).margin(0.08));
     const auto fittedFontScale = fittedTitle->FontScale;
 
     const auto fittedRegion = window.GetRegion();
@@ -264,5 +308,5 @@ TEST_CASE("Ontology graph plot text scales with zoom", "[OntologyGraphV2][Plot2D
     const auto *zoomedTitle = FindTextCommandContaining(backend.GetLastDrawList(), "Harmonic oscillator");
     REQUIRE(zoomedTitle != nullptr);
     REQUIRE(zoomedTitle->FontScale > fittedFontScale);
-    REQUIRE(zoomedTitle->FontScale >= Catch::Approx(1.45));
+    REQUIRE(zoomedTitle->FontScale >= Catch::Approx(1.38).margin(0.05));
 }

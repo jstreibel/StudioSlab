@@ -278,6 +278,7 @@ private:
         int SelectedStudyIndex = 0;
         bool bLoaded = false;
         bool bDirty = true;
+        bool bPendingGraphFit = true;
     };
     FOntologyWorkspaceState OntologyWorkspaceState;
 
