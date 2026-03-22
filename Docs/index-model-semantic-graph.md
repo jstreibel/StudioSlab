@@ -15,7 +15,7 @@
 2. `Docs/model-v2-semantic-environment.md`
 3. `Docs/model-semantic-graph-layering.md`
 4. `Docs/model-semantic-levels.md`
-5. one boundary doc:
+5. one boundary/spine doc:
    - `Docs/graph-onthology.md`
    - `Docs/ode-realization-descent-plan.md`
 6. if touching LabV2 UI:
@@ -32,6 +32,7 @@
 - keep `kind`, `carrier/level`, and `representation` distinct when reviewing semantic mismatches
 - realization consumes only the canonical typed subgraph
 - keep context small: read one ontology doc and one realization doc, not the full docs tree
+- if you need the end-to-end semantic spine, start with `Docs/graph-onthology.md`
 - do not conflate the Model semantic graph with the split-file ontology viewer:
   - Model graph is derived from `FModelSemanticOverviewV2`
   - ontology workspace is derived from `Resources/Ontologies/*.json`

@@ -29,7 +29,8 @@ Current ontology-inspection baseline:
 - split-file ontology viewer is implemented under `Resources/Ontologies`
 - loader/projection path lives in `Slab/Core/Ontology/V2/OntologyGraphV2.h`
 - LabV2 exposes a dedicated read-only `Ontology` workspace with:
-  - `Ontology Graph`
+  - `Ontology Overview`
+  - `Ontology Focus`
   - `Ontology Layer`
   - `Ontology Inspector`
 - current projection merges one selected study with the persistent global ontology
@@ -53,6 +54,22 @@ StudioSlab should not force one universal “graph” to mean everything. Instea
 - **Semantic/Theory Graph**: category-like objects & morphisms (spaces/operators/relations).
 
 This prevents long-term ontology debt while still offering a unified user experience.
+
+### 1.1 Current Semantic Spine
+
+Keep the end-to-end ontology story this small:
+
+1. `Model` owns authored canonical mathematical meaning.
+   - This is the semantic source for classification, readiness, and descent.
+2. `Realization` consumes only canonical semantic structure.
+   - Descent is a projection from model meaning, not a second semantic model.
+3. `Resources/Ontologies` holds the persistent global/study ontology layer.
+   - It carries semantic classes, requirements, solver/recipe/artifact relations, and study-local activation state.
+4. The `Ontology` workspace is the read-only navigator over that persistent semantic layer.
+   - `Overview` is the compact map.
+   - `Focus` is the readable neighborhood navigator.
+5. Runtime sessions, datasets, and numerical artefacts are instance/projection surfaces, not canonical ontology.
+   - They may realize or satisfy ontology structure, but they are not the semantic source of truth.
 
 ---
 

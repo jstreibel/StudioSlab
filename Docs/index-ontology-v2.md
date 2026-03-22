@@ -80,6 +80,8 @@
   - focus: readable neighborhood cards
 - The fitted overview intentionally suppresses category/footer text inside nodes; color, silhouette, and corner tags carry most of the type/scope/status signal.
 - The focus surface derives a filtered neighborhood projection from the shared selection instead of trying to make the full graph readable at once.
+- Focus falls back to the selected study root when nothing is selected.
+- Focus defaults to a first-hop neighborhood; the `Ontology Layer` panel can widen it.
 - In LabV2, ontology projection rebuilds request host fit-to-graph passes for both overview and focus surfaces.
 - Selected-study projection now excludes other studies' local nodes entirely instead of leaving them visible with unset positions.
 - Plot V2 must reset any shared-writer pen transform before drawing ontology text, because the ontology backend already converts plot coordinates into screen-space pen positions.

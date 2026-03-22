@@ -92,6 +92,8 @@ Diagnostics must not crash rendering. Unknown extra fields are tolerated and pre
 - `Ontology Focus`
   - neighborhood projection derived from the shared selection
   - readable card rendering for navigation/detail
+  - falls back to the selected study root when nothing is selected
+  - defaults to a first-hop neighborhood
 - `Ontology Layer`
   - study selection + filters + status
 - `Ontology Inspector`
@@ -122,6 +124,8 @@ Diagnostics must not crash rendering. Unknown extra fields are tolerated and pre
 - incident highlight
 - inspector synchronization
 - focus view follows the current selection as a neighborhood navigator
+- when nothing is selected, focus anchors on the selected study root
+- focus depth stays intentionally small by default and widens explicitly through the layer controls
 - host-level pan/zoom/fit controls
 
 ## 6. Layout and Text Scaling

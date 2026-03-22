@@ -52,7 +52,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 - Model -> realization descent: `Docs/ode-realization-descent-plan.md`
 - Reflection: `Docs/index-reflection-v2.md`, `Docs/reflection-v2-decision-log.md`, `Docs/reflection-v2-contract.md`, `Docs/reflection-v2-migration-plan.md`, `Docs/reflection-v2-implementation.md`
 - Split ontology inspection: `Docs/index-ontology-v2.md`, `Docs/ontology-graph-viewer-v2.md`
-- Graph semantics and ontology direction: `Docs/index-model-semantic-graph.md`, `Docs/model-semantic-graph-layering.md`, `Docs/model-semantic-levels.md`, `Docs/graph-onthology.md`
+- Graph semantics and ontology direction: `Docs/graph-onthology.md`, `Docs/index-model-semantic-graph.md`, `Docs/model-semantic-graph-layering.md`, `Docs/model-semantic-levels.md`
 - Reflection catalog registry deep-dive: `Docs/index-reflection-catalog-registry-v2.md`, `Docs/reflection-catalog-registry-v2-overview.md`, `Docs/reflection-catalog-registry-v2-routing.md`, `Docs/reflection-catalog-registry-v2-source-wiring.md`
 - Plot2D reflection quick path: `Docs/plot2d-reflection-v2-quick.md`
 - Plot2D V2 scheme + migration plan: `Docs/Plot2D-V2-Scheme.md`, `Docs/plot2d-v2-migration-plan.md`
