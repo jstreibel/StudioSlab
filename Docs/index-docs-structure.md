@@ -47,6 +47,7 @@ Use these to decide what should happen next, not as proof that it already happen
 
 ### Reference / Design Intent
 
+- `Docs/repo-architecture-overview.md`
 - `Docs/product-direction.md`
 - `Docs/product-vocabulary.md`
 - `Docs/domain-model-ux-surfaces-spec.md`

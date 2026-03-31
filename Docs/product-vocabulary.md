@@ -37,6 +37,21 @@ Can refer to:
 - repository folder of executables/examples (`Studios/`)
 - conceptual “studies” ecosystem
 
+## Repository / Build Disambiguation
+
+- `Study`
+  - authored scientific artifact
+- `Studios/`
+  - repository folder containing executable targets
+- `Studio app`
+  - one executable target under `Studios/`
+- `StudioSlab`
+  - the overall product/codebase, and today also the desktop `LabV2` executable name
+- `Slab`
+  - the platform concept, the root migration folder, and the aggregate static library target name
+- `LabV2`
+  - the current workbench implementation under `Studios/LabV2/`
+
 ### `Study`
 The primary authored user artifact (scientific experience/project deliverable).
 

@@ -2,11 +2,20 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-03-22`
-- Last implementation update: `2026-03-22` (Ontology workspace overview/focus navigator split)
-- Last architecture-doc update: `2026-03-22` (ontology navigator docs refreshed)
+- Snapshot date: `2026-03-29`
+- Last implementation update: `2026-03-29` (WASM helper + Plot2D render-backend injection)
+- Last architecture-doc update: `2026-03-29` (repo architecture + wasm docs refreshed)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
-- Build-target sanity check date: `2026-03-22` (`StudioSlab`, `testsuite`, and `[OntologyGraphV2]` pass in `cmake-build-debug`)
+- Build-target sanity check date: `2026-03-29` (`StudioSlab` and `testsuite` build in `cmake-build-debug`; local `emcmake`/`em++` unavailable; `[Plot2DV2]` still fails on an existing HUD-text assertion)
+
+## Recent Updates (`2026-03-29`, platform/tooling)
+
+- Added reusable Emscripten browser-target glue at `cmake/StudioSlabWasm.cmake`.
+- `Studios/WebGL-WASM/` now carries two bounded browser targets:
+  - `WebGLWasmSandbox`
+  - `WasmImGuiSandbox`
+- `FPlot2DWindowHostV2` no longer hardcodes one concrete render backend instance and now accepts injected `IPlotRenderBackendV2` implementations while defaulting to the current OpenGL backend.
+- This is still not a `LabV2` browser port; desktop graphics/dependency partitioning remains the main blocker.
 
 ## Recent Updates (`2026-03-22`, implementation)
 

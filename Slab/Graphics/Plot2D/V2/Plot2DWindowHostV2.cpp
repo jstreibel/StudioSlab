@@ -3,6 +3,7 @@
 #include "3rdParty/ImGui.h"
 #include "Core/Reflection/V2/ReflectionCodecsV2.h"
 #include "Core/SlabCore.h"
+#include "Graphics/Plot2D/V2/Backends/OpenGLRenderBackendV2.h"
 #include "Graphics/Modules/Animator/Animator.h"
 #include "Graphics/OpenGL/Utils.h"
 
@@ -864,9 +865,14 @@ namespace Slab::Graphics::Plot2D::V2 {
         ImGui::End();
     }
 
-    FPlot2DWindowHostV2::FPlot2DWindowHostV2(Str plotWindowId, Str title)
+    FPlot2DWindowHostV2::FPlot2DWindowHostV2(Str plotWindowId,
+                                             Str title,
+                                             Slab::TPointer<IPlotRenderBackendV2> renderBackend)
     : FSlabWindow(Slab::Graphics::FSlabWindowConfig(std::move(title)))
-    , PlotWindowId(std::move(plotWindowId)) {
+    , PlotWindowId(std::move(plotWindowId))
+    , RenderBackend(renderBackend != nullptr
+        ? std::move(renderBackend)
+        : Slab::New<FOpenGLRenderBackendV2>()) {
         Slab::Core::LoadModule("RealTimeAnimation");
     }
 
@@ -1162,8 +1168,9 @@ namespace Slab::Graphics::Plot2D::V2 {
         }
         window->SetRegion(BuildAnimatedRegion());
         if (bAutoFitRanges) window->SetAutoFitRanges(false);
+        if (RenderBackend == nullptr) return;
         const auto frame = window->BuildFrameContext(BuildHudLayout(window->GetViewport()));
-        (void) window->Render(RenderBackend, frame);
+        (void) window->Render(*RenderBackend, frame);
         if (bAutoFitRanges) window->SetAutoFitRanges(true);
     }
 

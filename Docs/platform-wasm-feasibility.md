@@ -2,10 +2,13 @@
 
 ## Snapshot
 
-- Date: `2026-03-01`
+- Date: `2026-03-29`
 - Scope assessed: adding wasm targets for the current `StudioSlab` / `LabV2` codebase
 - Result: **high complexity** for full `Slab`/`LabV2` wasm port (`not simple`)
-- Independent bootstrap status: standalone WebGL2 sandbox target added at `Studios/WebGL-WASM/` (not coupled to `Slab` runtime/graphics)
+- Independent bootstrap status:
+  - reusable Emscripten target helper added at `cmake/StudioSlabWasm.cmake`
+  - standalone WebGL2 and ImGui sandboxes live under `Studios/WebGL-WASM/`
+  - browser targets remain intentionally decoupled from the current desktop `Lib/Graphics` stack
 
 ## Why It Is High Complexity
 
@@ -37,6 +40,28 @@ Minimum viable path would require:
 - dependency partitioning to exclude desktop-only libs from wasm builds,
 - a thread policy for wasm (`single-thread` first or `pthreads` with deployment constraints).
 
+## Current Architecture Decision
+
+Use `ImGui` for the first browser GUI path.
+
+Why:
+- `LabV2` is already ImGui-centric
+- the repo vendors ImGui Emscripten examples
+- current Nuklear/NanoGUI integration is incomplete compared with ImGui
+
+Near-term implementation shape:
+- keep browser targets as standalone studios under `Studios/WebGL-WASM/`
+- keep reusable browser build glue in `cmake/StudioSlabWasm.cmake`
+- do not force current desktop `Lib/Graphics` to compile under Emscripten yet
+
+Mid-term direction:
+- add a browser backend analogous to `GLFW`, but only after desktop-only dependencies are partitioned out of the current graphics stack
+- keep shared browser backend code in shared platform layers, not inside one studio target
+
+V2 render seam:
+- `FPlot2DWindowHostV2` should depend on `IPlotRenderBackendV2`, not one concrete renderer
+- browser-safe Plot2D work should land as another `IPlotRenderBackendV2` implementation rather than as a `GLFW` hack
+
 ## Recommended Next Step
 
 Use backlog item `PLAT-00` for a bounded feasibility spike:
@@ -46,16 +71,26 @@ Use backlog item `PLAT-00` for a bounded feasibility spike:
 
 ## Independent Bootstrap (Now Available)
 
-An isolated wasm/WebGL2 target now exists:
-- target: `WebGLWasmSandbox`
-- path: `Studios/WebGL-WASM/`
-- intent: validate emscripten + browser rendering path independently from legacy desktop graphics stack.
-- standalone configure/build:
-  - `emcmake cmake -S Studios/WebGL-WASM -B cmake-build-webgl-wasm`
-  - `cmake --build cmake-build-webgl-wasm --target WebGLWasmSandbox -j8`
-  - `emrun --no_browser cmake-build-webgl-wasm/Build/bin/webgl-wasm-sandbox.html`
+Isolated wasm/browser targets now exist:
+- `WebGLWasmSandbox`
+- `WasmImGuiSandbox`
 
-This does **not** reduce the previously assessed complexity of porting `Slab`/`LabV2`; it only de-risks toolchain and browser deployment basics.
+Path:
+- `Studios/WebGL-WASM/`
+
+Intent:
+- validate Emscripten + browser rendering basics
+- validate a minimal GUI path (`ImGui`) without coupling to the current desktop graphics stack
+- establish reusable target glue for future browser sandboxes
+
+Standalone configure/build:
+- `emcmake cmake -S Studios/WebGL-WASM -B cmake-build-webgl-wasm`
+- `cmake --build cmake-build-webgl-wasm --target WebGLWasmSandbox WasmImGuiSandbox -j8`
+- `emrun --no_browser cmake-build-webgl-wasm/Build/bin/webgl-wasm-sandbox.html`
+- `emrun --no_browser cmake-build-webgl-wasm/Build/bin/imgui-wasm-sandbox.html`
+
+This still does **not** imply that `Slab`/`LabV2` are close to a full browser port.
+It only de-risks toolchain, packaging, and one bounded GUI path.
 
 ## Smallest Target Candidates
 

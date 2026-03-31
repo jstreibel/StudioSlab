@@ -296,6 +296,10 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - plan reference: `Docs/platform-wasm-feasibility.md`
   - define minimal headless/plot-only target surface
   - document required backend and dependency split from desktop-native build graph
+  - progress:
+    - reusable Emscripten target helper landed
+    - standalone WebGL2 + ImGui wasm sandboxes landed
+    - shared desktop/browser backend split is still pending
 
 ## Working Rule (Entropy Control)
 

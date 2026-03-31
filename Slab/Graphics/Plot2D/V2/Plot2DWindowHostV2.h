@@ -2,7 +2,7 @@
 #define STUDIOSLAB_PLOT2D_WINDOW_HOST_V2_H
 
 #include "Graphics/Window/SlabWindow.h"
-#include "Graphics/Plot2D/V2/Backends/OpenGLRenderBackendV2.h"
+#include "Graphics/Plot2D/V2/Plot2DRenderBackendV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionSchemaV2.h"
 
@@ -10,7 +10,7 @@ namespace Slab::Graphics::Plot2D::V2 {
 
     class FPlot2DWindowHostV2 final : public Slab::Graphics::FSlabWindow {
         Str PlotWindowId;
-        FOpenGLRenderBackendV2 RenderBackend;
+        Slab::TPointer<IPlotRenderBackendV2> RenderBackend = nullptr;
         double AnimatedXMin = -1.0;
         double AnimatedXMax = 1.0;
         double AnimatedYMin = -1.0;
@@ -63,7 +63,9 @@ namespace Slab::Graphics::Plot2D::V2 {
         auto DrawOverlay(FPlot2DWindowV2 &window) -> void;
 
     public:
-        FPlot2DWindowHostV2(Str plotWindowId, Str title);
+        FPlot2DWindowHostV2(Str plotWindowId,
+                            Str title,
+                            Slab::TPointer<IPlotRenderBackendV2> renderBackend = nullptr);
 
         auto RequestFitToArtists() -> void;
 

@@ -1,91 +1,67 @@
-# Studios Slab
-## A.K.A. "the anything bagel"
-### Intro
+# StudioSlab
 
-This is a well-organized collection of physics code and general use libraries.
+StudioSlab is a CMake-based C++23 workspace for physics simulations, numerical experiments, visualization, and a scientific creation platform in progress.
 
-It contains discrete time-advancement of (classic) Klein-Gordon-like field theories (with non-differentiable potentials) and also path integrals of their quantum counterparts in a stochastic formalism. Also, as studies, montecarlo of magnetic models and Langevin dynamics of soft matter.
+## Repository Roles
 
-It also contains random coding projects of all sorts.
+- `Lib/`
+  - shared reusable libraries, legacy/core code, and many domain/model implementations
+- `Slab/`
+  - shared V2 platform/editor/runtime landing zone
+- `Studios/`
+  - executable targets, standalone studies, CLI tools, legacy apps, and sandboxes
+- `StudioSlab`
+  - the current desktop workbench binary built from `Studios/LabV2/`
 
-### Installation
-There are two ways to install this repo: via Git or via Docker.
+The repo intentionally serves both:
+- a broad reusable toolbox for experiments and standalone targets
+- a main platform/workbench path centered on `StudioSlab` / `LabV2`
 
-#### Manually (for development), via Git
+For the placement rules and naming disambiguation, read `Docs/repo-architecture-overview.md`.
 
-Assuming you're using Ubuntu, you'll need git to pull this repo:
+## Current Direction
 
-`sudo apt-get update && sudo apt-get install git`
+- `LabV2` is the main editor/workbench path.
+- shared V2 platform/editor/runtime code should live in `Slab/` when it is reused across targets
+- reusable model/domain code still often belongs in `Lib/`
+- browser/wasm work is currently a bounded platform spike, not a full `LabV2` port
 
-Choose a suitable location (_e.g._ `~/Dev/`), then 
+## Getting Started
 
-`git clone https://github.com/jstreibel/StudioSlab.git`
+Read these first:
+- `Docs/index.md`
+- `Docs/status-v2.md`
+- `Docs/repo-architecture-overview.md`
+- `SPEC.md`
 
-Install dependencies. On most Linux systems, you can do this by running (notice this script has only been tested on Ubuntu):
+Install dependencies on Ubuntu:
 
-`chmod +x StudioSlab/Scripts/install-deps.sh`
+```bash
+./Scripts/install-deps.sh
+```
 
-`./StudioSlab/Scripts/install-deps.sh`
+Configure and build:
 
-If your Linux system is not contemplated here, or you're on Windows, you'll need to install the dependencies manually.
+```bash
+cmake -S . -B cmake-build-debug -DSTUDIOSLAB_CUDA_SUPPORT=ON
+cmake --build cmake-build-debug --target Slab StudioSlab testsuite -j8
+```
 
-Here's a comprehensive list of what you need (remember to choose the development versions):
+Useful targets:
+- `Slab`: aggregate static library
+- `StudioSlab`: current `LabV2` desktop workbench
+- `testsuite`: Catch2-based tests
+- `Studios/WebGL-WASM`: standalone browser/wasm sandboxes
 
-cmake \
-SFML \
-FreeType \
-GLEW \
-Fontconfig \
-Cairomm \
-Pangomm \
-FreeGLUT \
-GLFW \
-cxxopts \
-FFTW3 \
-TinyXML2 \
-GLM \
-FreeImage \
-OpenGL and EGL \
-Boost::Locale \
-Boost::Random \
-Boost::Timer
+## Browser / WASM
 
-Then, build the project:
+Minimal browser targets live under `Studios/WebGL-WASM/`.
 
-`cd StudioSlab/ && mkdir build && cd build && cmake .. && make`
+Example:
 
-#### Via Docker
+```bash
+emcmake cmake -S Studios/WebGL-WASM -B cmake-build-webgl-wasm
+cmake --build cmake-build-webgl-wasm --target WebGLWasmSandbox WasmImGuiSandbox -j8
+```
 
-Install Docker, and NVidia Container Toolkit, then run, on project root, run:
-
-`docker build -t studioslab:latest.`
-
-If all goes well, you should be able to run the container's entrypoint (Fields-RtoR) with:
-
-`docker run -it --gpus all studioslab:latest`
-
-As a primer, you can run the container's entrypoint with:
-
-`docker run -it --gpus studioslab:latest -og`
-
-### Usage
-
-... to be written.
-
-### Screenshots
-
-#### Two-point function (low-left) of quantum 1+1 dimensional signum-Gordon field, plus some of its Fourier space data:
-
-![Two-point function analysis](https://github.com/user-attachments/assets/4cb6300c-596c-4fe0-a8cd-d747d061831c)
-
-#### Field momentum: 
-
-![Momentum](https://github.com/user-attachments/assets/a770e7e7-1305-4c8c-8a57-6e00715ae4c2)
-
-#### Histograms:
-
-![Histograms](https://github.com/user-attachments/assets/c9aff204-0976-4819-bdc0-6f19eb51f0fa)
-
-### History
-
-This repo is where I've amalgamated most of my physics PhD code.
+This is intentionally separate from the current desktop `Lib/Graphics` stack.

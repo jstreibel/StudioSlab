@@ -21,6 +21,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 ## Task Router
 
 - Docs taxonomy / what kind of doc to update: `Docs/index-docs-structure.md`
+- Repo architecture / placement rules / naming: `Docs/repo-architecture-overview.md`
 - Resume an in-progress slice quickly: `Docs/index-handoffs.md`
 - Split-file ontology graph viewer / `Resources/Ontologies`: `Docs/index-ontology-v2.md`
 - Model semantic graph / ontology / realization boundary: `Docs/index-model-semantic-graph.md`
@@ -47,6 +48,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 
 ## Reference / Design Intent (Read Only If Needed)
 
+- Repo shape / naming / placement: `Docs/repo-architecture-overview.md`
 - Product/domain: `Docs/product-direction.md`, `Docs/product-vocabulary.md`, `Docs/domain-model-ux-surfaces-spec.md`, `Docs/study-model-spec.md`, `Docs/sequence-control-spec.md`
 - V2 planning/slices: `Docs/v2-feature-backlog.md`, `Docs/v2-model-coverage-matrix.md`, `Docs/live-control-v2-spec.md`, `Docs/live-parameters-v2-slice-scope.md`, `Docs/kg-r2tor-v2-slice-scope.md`, `Docs/md-v2-slice-scope.md`, `Docs/functional-minimization-v2-slice-scope.md`
 - Model -> realization descent: `Docs/ode-realization-descent-plan.md`

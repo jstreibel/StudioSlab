@@ -1,33 +1,25 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(WebGLWasmSandbox LANGUAGES C CXX)
+project(StudioSlabWasmSandboxes LANGUAGES C CXX)
+
+get_filename_component(STUDIOSLAB_REPO_ROOT "${CMAKE_CURRENT_LIST_DIR}/../.." ABSOLUTE)
+list(APPEND CMAKE_MODULE_PATH "${STUDIOSLAB_REPO_ROOT}/cmake")
+include(StudioSlabWasm)
 
 if (NOT EMSCRIPTEN)
-    message(STATUS "Skipping WebGLWasmSandbox target (requires Emscripten toolchain).")
+    message(STATUS "Skipping StudioSlab wasm sandboxes (requires the Emscripten toolchain).")
     return()
 endif()
 
 add_executable(WebGLWasmSandbox
     main.cpp
 )
+studioslab_configure_wasm_target(WebGLWasmSandbox
+    OUTPUT_NAME "webgl-wasm-sandbox")
 
-set_target_properties(WebGLWasmSandbox PROPERTIES
-    OUTPUT_NAME "webgl-wasm-sandbox"
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/Build/bin"
-    SUFFIX ".html"
-)
+studioslab_add_imgui_wasm_app(WasmImGuiSandbox
+    OUTPUT_NAME "imgui-wasm-sandbox"
+    SOURCES
+        imgui_main.cpp)
 
-target_compile_features(WebGLWasmSandbox PRIVATE cxx_std_20)
-
-target_link_options(WebGLWasmSandbox PRIVATE
-    "-sWASM=1"
-    "-sUSE_WEBGL2=1"
-    "-sMIN_WEBGL_VERSION=2"
-    "-sMAX_WEBGL_VERSION=2"
-    "-sALLOW_MEMORY_GROWTH=1"
-    "-sASSERTIONS=1"
-    "-sNO_EXIT_RUNTIME=1"
-    "-sENVIRONMENT=web"
-)
-
-message(NOTICE "Added executable WebGLWasmSandbox (Emscripten/WebGL2)")
+message(NOTICE "Added wasm sandboxes: WebGLWasmSandbox, WasmImGuiSandbox")

@@ -18,6 +18,8 @@ Main repository areas:
 - `Studios/`: applications / executables / experiments
 - `Docs/`: design notes and local contracts
 
+For placement rules and naming disambiguation across those areas, see `Docs/repo-architecture-overview.md`.
+
 Primary library product:
 - `Slab` (static library), consumed by studio executables.
 
@@ -45,6 +47,7 @@ Product direction is data-centric:
 
 Start with:
 - `Docs/index.md` (AI/router entrypoint)
+- `Docs/repo-architecture-overview.md` (repo roles / placement / naming)
 - `Docs/index-docs-structure.md` (doc roles and update rules)
 - `Docs/index-v2-runtime.md` (runtime/data/control work)
 - `Docs/index-labv2.md` (LabV2 shell/UI work)
