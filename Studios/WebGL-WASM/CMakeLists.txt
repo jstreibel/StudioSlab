@@ -22,4 +22,14 @@ studioslab_add_imgui_wasm_app(WasmImGuiSandbox
     SOURCES
         imgui_main.cpp)
 
-message(NOTICE "Added wasm sandboxes: WebGLWasmSandbox, WasmImGuiSandbox")
+studioslab_add_imgui_wasm_app(WasmWorkspaceSandbox
+    OUTPUT_NAME "workspace-wasm-sandbox"
+    SOURCES
+        workspace_main.cpp
+        "${STUDIOSLAB_REPO_ROOT}/Slab/Graphics/Window/V2/WorkspaceLayoutV2.cpp"
+        "${STUDIOSLAB_REPO_ROOT}/Slab/Graphics/Window/V2/WorkspaceShellV2.cpp"
+    INCLUDE_DIRECTORIES
+        "${STUDIOSLAB_REPO_ROOT}/Lib"
+        "${STUDIOSLAB_REPO_ROOT}/Slab")
+
+message(NOTICE "Added wasm sandboxes: WebGLWasmSandbox, WasmImGuiSandbox, WasmWorkspaceSandbox")

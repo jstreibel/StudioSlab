@@ -34,6 +34,7 @@
 #include "Graphics/Plot2D/V2/PlotReflectionSchemaV2.h"
 #include "Graphics/Typesetting/TypesettingService.h"
 #include "Graphics/Window/WindowStyles.h"
+#include "Graphics/Window/V2/WorkspaceLayoutV2.h"
 #include "Math/Data/V2/SessionLiveViewV2.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
@@ -53,6 +54,7 @@ namespace {
 
     namespace ModelV2 = Slab::Core::Model::V2;
     namespace Typesetting = Slab::Graphics::Typesetting;
+    namespace WindowingV2 = Slab::Graphics::Windowing::V2;
 
     constexpr bool CEnableBlueprintGraphTuningUi = false;
 
@@ -129,12 +131,6 @@ namespace {
     constexpr auto WindowTitlePlotInspector = "Plot Inspector";
     constexpr auto PopupBlueprintGraphContext = "SchemesBlueprintGraphContext";
     constexpr auto DockspaceHostName = "##LabDockspaceHost";
-    constexpr auto DockspaceNameSimulations = "##LabDockspace-Simulations";
-    constexpr auto DockspaceNameSchemes = "##LabDockspace-Schemes";
-    constexpr auto DockspaceNameModels = "##LabDockspace-Models";
-    constexpr auto DockspaceNameOntology = "##LabDockspace-Ontology";
-    constexpr auto DockspaceNameGraphPlayground = "##LabDockspace-GraphPlayground";
-    constexpr auto DockspaceNamePlots = "##LabDockspace-Plots";
     constexpr auto WorkspaceTabSimulations = "Simulations";
     constexpr auto WorkspaceTabSchemes = "Schemes";
     constexpr auto WorkspaceTabModels = "Model";
@@ -837,6 +833,113 @@ namespace {
 
 } // namespace
 
+auto FLabV2WindowManager::GetWorkspaceDefinitions()
+    -> const std::array<WindowingV2::FWorkspaceDefinitionV2, WorkspaceCount> & {
+    static const std::array<WindowingV2::FWorkspaceDefinitionV2, WorkspaceCount> Definitions = {{
+        {"simulations", WorkspaceTabSimulations, true},
+        {"schemes", WorkspaceTabSchemes, false},
+        {"models", WorkspaceTabModels, true},
+        {"ontology", WorkspaceTabOntology, true},
+        {"graph_playground", WorkspaceTabGraphPlayground, false},
+        {"plots", WorkspaceTabPlots, true}
+    }};
+
+    return Definitions;
+}
+
+auto FLabV2WindowManager::GetWorkspaceDefinition(const EWorkspaceTab workspace)
+    -> const WindowingV2::FWorkspaceDefinitionV2 & {
+    return GetWorkspaceDefinitions()[static_cast<std::size_t>(workspace)];
+}
+
+auto FLabV2WindowManager::BuildDefaultWorkspaceDockLayout(const EWorkspaceTab workspace)
+    -> WindowingV2::FWorkspaceDockLayoutV2 {
+    using WindowingV2::EDockSplitDirectionV2;
+    using WindowingV2::FDockNodeSplitV2;
+    using WindowingV2::FDockWindowPlacementV2;
+    using WindowingV2::FWorkspaceDockLayoutV2;
+
+    FWorkspaceDockLayoutV2 layout;
+
+    if (workspace == EWorkspaceTab::Simulations) {
+        layout.Splits = {
+            FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.24f},
+            FDockNodeSplitV2{"main", "dock_right", "main", EDockSplitDirectionV2::Right, 0.28f},
+            FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.30f}
+        };
+        layout.Placements = {
+            FDockWindowPlacementV2{WindowTitleViews, "dock_left"},
+            FDockWindowPlacementV2{WindowTitleSimulationLauncher, "dock_left"},
+            FDockWindowPlacementV2{WindowTitleLiveInteraction, "dock_right"},
+            FDockWindowPlacementV2{WindowTitleTasks, "dock_bottom"},
+            FDockWindowPlacementV2{WindowTitleLiveData, "dock_bottom"},
+            FDockWindowPlacementV2{WindowTitleLiveControl, "dock_bottom"}
+        };
+        return layout;
+    }
+
+    if (workspace == EWorkspaceTab::Schemes) {
+        layout.Splits = {
+            FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.35f}
+        };
+        layout.Placements = {
+            FDockWindowPlacementV2{WindowTitleSchemesInspector, "dock_left"},
+            FDockWindowPlacementV2{WindowTitleBlueprintGraph, "main"}
+        };
+        return layout;
+    }
+
+    if (workspace == EWorkspaceTab::Models) {
+        layout.Splits = {
+            FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.26f},
+            FDockNodeSplitV2{"main", "dock_right", "main", EDockSplitDirectionV2::Right, 0.28f},
+            FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.34f},
+            FDockNodeSplitV2{"main", "dock_center_top", "main", EDockSplitDirectionV2::Up, 0.24f},
+            FDockNodeSplitV2{"dock_left", "dock_left_bottom", "dock_left", EDockSplitDirectionV2::Down, 0.38f},
+            FDockNodeSplitV2{"dock_left", "dock_left_middle", "dock_left", EDockSplitDirectionV2::Down, 0.44f},
+            FDockNodeSplitV2{"dock_right", "dock_right_bottom", "dock_right", EDockSplitDirectionV2::Down, 0.42f}
+        };
+        layout.Placements = {
+            FDockWindowPlacementV2{WindowTitleModelVocabulary, "dock_left"},
+            FDockWindowPlacementV2{WindowTitleModelDefinitions, "dock_left_middle"},
+            FDockWindowPlacementV2{WindowTitleModelRelations, "dock_left_bottom"},
+            FDockWindowPlacementV2{WindowTitleModelEditor, "dock_center_top"},
+            FDockWindowPlacementV2{WindowTitleModelSemanticGraph, "main"},
+            FDockWindowPlacementV2{WindowTitleModelInspector, "dock_bottom"},
+            FDockWindowPlacementV2{WindowTitleModelDetails, "dock_right"},
+            FDockWindowPlacementV2{WindowTitleModelAssumptions, "dock_right_bottom"}
+        };
+        return layout;
+    }
+
+    if (workspace == EWorkspaceTab::Ontology) {
+        layout.Splits = {
+            FDockNodeSplitV2{"main", "dock_right", "main", EDockSplitDirectionV2::Right, 0.26f},
+            FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.27f},
+            FDockNodeSplitV2{"main", "dock_main_bottom", "main", EDockSplitDirectionV2::Down, 0.42f}
+        };
+        layout.Placements = {
+            FDockWindowPlacementV2{WindowTitleOntologyOverview, "main"},
+            FDockWindowPlacementV2{WindowTitleOntologyFocus, "dock_main_bottom"},
+            FDockWindowPlacementV2{WindowTitleOntologyLayer, "dock_bottom"},
+            FDockWindowPlacementV2{WindowTitleOntologyDetails, "dock_right"}
+        };
+        return layout;
+    }
+
+    if (workspace == EWorkspaceTab::GraphPlayground) {
+        layout.Placements = {
+            FDockWindowPlacementV2{WindowTitleGraphPlayground, "main"}
+        };
+        return layout;
+    }
+
+    layout.Placements = {
+        FDockWindowPlacementV2{WindowTitlePlotInspector, "main"}
+    };
+    return layout;
+}
+
 FLabV2WindowManager::FLabV2WindowManager()
 : SidePaneWidth(FStudioConfigV2::SidePaneWidth) {
     ModelDemoCatalog = Slab::Core::Model::V2::BuildDemoModelsV2();
@@ -1277,13 +1380,9 @@ auto FLabV2WindowManager::FocusModelSemanticGraphWindow() -> void {
     bPendingFocusModelSemanticGraphWindow = true;
     SetActiveWorkspace(EWorkspaceTab::Models);
 
-    if (const auto it = PlotWindowHostsByWindowId.find(ModelSemanticGraphWindowId);
-        it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
-        if (const auto host = Slab::DynamicPointerCast<Slab::Graphics::Plot2D::V2::FPlot2DWindowHostV2>(it->second);
-            host != nullptr) {
-            host->RequestFitToArtists();
-        }
-        FocusWindow(it->second);
+    if (const auto surface = FindPlotHostedSurface(ModelSemanticGraphWindowId);
+        surface != nullptr) {
+        FocusHostedSurface(surface);
         bPendingFocusModelSemanticGraphWindow = false;
     }
 }
@@ -1297,6 +1396,23 @@ auto FLabV2WindowManager::QueueSlabWindowInWorkspace(
     const EWorkspaceTab workspace) -> void {
     if (window == nullptr) return;
     PendingSlabWindows.push_back(FPendingSlabWindow{window, workspace});
+}
+
+auto FLabV2WindowManager::QueueHostedSurface(const FHostedSurfacePtr &surface) -> void {
+    const auto window = GetSlabWindowForHostedSurface(surface);
+    if (surface == nullptr || window == nullptr) return;
+
+    const auto &workspaceId = surface->GetPreferredWorkspaceId();
+    const auto workspace = [&workspaceId]() {
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Schemes).WorkspaceId) return EWorkspaceTab::Schemes;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Models).WorkspaceId) return EWorkspaceTab::Models;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Ontology).WorkspaceId) return EWorkspaceTab::Ontology;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::GraphPlayground).WorkspaceId) return EWorkspaceTab::GraphPlayground;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Plots).WorkspaceId) return EWorkspaceTab::Plots;
+        return EWorkspaceTab::Simulations;
+    }();
+
+    QueueSlabWindowInWorkspace(window, workspace);
 }
 
 auto FLabV2WindowManager::FlushPendingSlabWindows() -> void {
@@ -1322,9 +1438,9 @@ auto FLabV2WindowManager::PruneClosedSlabWindows() -> bool {
         if (window != nullptr) {
             RemoveResponder(window);
             SlabWindowWorkspaceByUniqueName.erase(GetWindowKey(window));
-            for (auto hostIt = PlotWindowHostsByWindowId.begin(); hostIt != PlotWindowHostsByWindowId.end();) {
-                if (hostIt->second == window) {
-                    hostIt = PlotWindowHostsByWindowId.erase(hostIt);
+            for (auto hostIt = PlotHostedSurfacesByWindowId.begin(); hostIt != PlotHostedSurfacesByWindowId.end();) {
+                if (hostIt->second == nullptr || GetSlabWindowForHostedSurface(hostIt->second) == window) {
+                    hostIt = PlotHostedSurfacesByWindowId.erase(hostIt);
                 } else {
                     ++hostIt;
                 }
@@ -1341,6 +1457,32 @@ auto FLabV2WindowManager::PruneClosedSlabWindows() -> bool {
     }
 
     return bRemovedAny;
+}
+
+auto FLabV2WindowManager::FindPlotHostedSurface(const Slab::Str &surfaceId) const -> FHostedSurfacePtr {
+    if (surfaceId.empty()) return nullptr;
+
+    const auto it = PlotHostedSurfacesByWindowId.find(surfaceId);
+    if (it == PlotHostedSurfacesByWindowId.end()) return nullptr;
+    return it->second;
+}
+
+auto FLabV2WindowManager::FindHostedSurfaceByWindow(const FSlabWindowPtr &window) const -> FHostedSurfacePtr {
+    if (window == nullptr) return nullptr;
+
+    const auto it = std::find_if(
+        PlotHostedSurfacesByWindowId.begin(),
+        PlotHostedSurfacesByWindowId.end(),
+        [&](const auto &entry) {
+            return GetSlabWindowForHostedSurface(entry.second) == window;
+        });
+    if (it == PlotHostedSurfacesByWindowId.end()) return nullptr;
+    return it->second;
+}
+
+auto FLabV2WindowManager::GetSlabWindowForHostedSurface(const FHostedSurfacePtr &surface) -> FSlabWindowPtr {
+    if (surface == nullptr) return nullptr;
+    return surface->GetBackingWindow();
 }
 
 auto FLabV2WindowManager::GetWindowKey(const FSlabWindowPtr &window) const -> Slab::Str {
@@ -1362,6 +1504,16 @@ auto FLabV2WindowManager::FindWindowByKey(const Slab::Str &windowKey) const
 
 auto FLabV2WindowManager::GetWorkspaceForWindow(const FSlabWindowPtr &window) const -> EWorkspaceTab {
     if (window == nullptr) return EWorkspaceTab::Simulations;
+
+    if (const auto surface = FindHostedSurfaceByWindow(window); surface != nullptr) {
+        const auto &workspaceId = surface->GetPreferredWorkspaceId();
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Schemes).WorkspaceId) return EWorkspaceTab::Schemes;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Models).WorkspaceId) return EWorkspaceTab::Models;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Ontology).WorkspaceId) return EWorkspaceTab::Ontology;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::GraphPlayground).WorkspaceId) return EWorkspaceTab::GraphPlayground;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Plots).WorkspaceId) return EWorkspaceTab::Plots;
+        return EWorkspaceTab::Simulations;
+    }
 
     const auto it = SlabWindowWorkspaceByUniqueName.find(GetWindowKey(window));
     if (it == SlabWindowWorkspaceByUniqueName.end()) return EWorkspaceTab::Simulations;
@@ -1386,22 +1538,8 @@ auto FLabV2WindowManager::IsWorkspaceWindowVisible(const FSlabWindowPtr &window,
     if (window == nullptr) return false;
     if (GetWorkspaceForWindow(window) != workspace) return false;
 
-    if (workspace == EWorkspaceTab::Models) {
-        if (const auto it = PlotWindowHostsByWindowId.find(ModelSemanticGraphWindowId);
-            it != PlotWindowHostsByWindowId.end() && it->second == window) {
-            return bShowWindowModelSemanticGraph;
-        }
-    }
-
-    if (workspace == EWorkspaceTab::Ontology) {
-        if (const auto it = PlotWindowHostsByWindowId.find(OntologyOverviewWindowId);
-            it != PlotWindowHostsByWindowId.end() && it->second == window) {
-            return bShowWindowOntologyOverview;
-        }
-        if (const auto it = PlotWindowHostsByWindowId.find(OntologyFocusWindowId);
-            it != PlotWindowHostsByWindowId.end() && it->second == window) {
-            return bShowWindowOntologyFocus;
-        }
+    if (const auto surface = FindHostedSurfaceByWindow(window); surface != nullptr) {
+        return surface->IsVisibleRequested();
     }
 
     return true;
@@ -1427,6 +1565,15 @@ auto FLabV2WindowManager::FocusWindow(const Slab::TPointer<Slab::Graphics::FSlab
     }
 
     SelectedViewUniqueName = GetWindowKey(window);
+}
+
+auto FLabV2WindowManager::FocusHostedSurface(const FHostedSurfacePtr &surface) -> void {
+    if (surface == nullptr) return;
+
+    surface->PrepareToFocus();
+    if (const auto window = GetSlabWindowForHostedSurface(surface); window != nullptr) {
+        FocusWindow(window);
+    }
 }
 
 auto FLabV2WindowManager::RequestViewRetile(const int stabilizationFrames) -> void {
@@ -1623,20 +1770,21 @@ auto FLabV2WindowManager::SyncPlotWorkspaceWindows() -> void {
             interfaceSchema.DisplayName.empty() ? windowId : interfaceSchema.DisplayName;
     }
 
-    for (auto it = PlotWindowHostsByWindowId.begin(); it != PlotWindowHostsByWindowId.end();) {
+    for (auto it = PlotHostedSurfacesByWindowId.begin(); it != PlotHostedSurfacesByWindowId.end();) {
         const auto &windowId = it->first;
-        const auto &host = it->second;
+        const auto &surface = it->second;
         const bool bMissing = !discoveredV2Windows.contains(windowId);
-        const bool bHostClosed = host == nullptr || host->WantsClose();
+        const auto window = GetSlabWindowForHostedSurface(surface);
+        const bool bHostClosed = surface == nullptr || window == nullptr || window->WantsClose();
         if (!bMissing && !bHostClosed) {
             ++it;
             continue;
         }
 
-        if (host != nullptr) {
-            host->Close();
+        if (window != nullptr) {
+            window->Close();
         }
-        it = PlotWindowHostsByWindowId.erase(it);
+        it = PlotHostedSurfacesByWindowId.erase(it);
     }
 
     for (const auto &[windowId, displayName] : discoveredV2Windows) {
@@ -1646,51 +1794,67 @@ auto FLabV2WindowManager::SyncPlotWorkspaceWindows() -> void {
         } else if (windowId == OntologyOverviewWindowId || windowId == OntologyFocusWindowId) {
             workspace = EWorkspaceTab::Ontology;
         }
-        if (const auto existingIt = PlotWindowHostsByWindowId.find(windowId);
-            existingIt != PlotWindowHostsByWindowId.end()) {
+        if (const auto existingIt = PlotHostedSurfacesByWindowId.find(windowId);
+            existingIt != PlotHostedSurfacesByWindowId.end()) {
             if (existingIt->second != nullptr) {
-                SlabWindowWorkspaceByUniqueName[GetWindowKey(existingIt->second)] = workspace;
+                existingIt->second->SetPreferredWorkspaceId(GetWorkspaceDefinition(workspace).WorkspaceId);
             }
             continue;
         }
 
         auto host = Slab::New<Slab::Graphics::Plot2D::V2::FPlot2DWindowHostV2>(windowId, displayName);
-        PlotWindowHostsByWindowId[windowId] = host;
-        QueueSlabWindowInWorkspace(host, workspace);
+        WindowingV2::FHostedSurfaceVisibilityHookV2 visibilityHook;
+        if (windowId == ModelSemanticGraphWindowId) {
+            visibilityHook = [this]() {
+                return bShowWindowModelSemanticGraph;
+            };
+        } else if (windowId == OntologyOverviewWindowId) {
+            visibilityHook = [this]() {
+                return bShowWindowOntologyOverview;
+            };
+        } else if (windowId == OntologyFocusWindowId) {
+            visibilityHook = [this]() {
+                return bShowWindowOntologyFocus;
+            };
+        }
+
+        auto hostedSurface = Slab::New<WindowingV2::FSlabHostedSurfaceV2>(
+            WindowingV2::FHostedSurfaceDescriptorV2{
+                windowId,
+                displayName,
+                GetWorkspaceDefinition(workspace).WorkspaceId
+            },
+            host,
+            std::move(visibilityHook),
+            [host]() {
+                if (host != nullptr) {
+                    host->RequestFitToArtists();
+                }
+            });
+        PlotHostedSurfacesByWindowId[windowId] = hostedSurface;
+        QueueHostedSurface(hostedSurface);
     }
 
     if (bPendingFocusModelSemanticGraphWindow) {
-        if (const auto it = PlotWindowHostsByWindowId.find(ModelSemanticGraphWindowId);
-            it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
-            if (const auto host = Slab::DynamicPointerCast<Slab::Graphics::Plot2D::V2::FPlot2DWindowHostV2>(it->second);
-                host != nullptr) {
-                host->RequestFitToArtists();
-            }
-            FocusWindow(it->second);
+        if (const auto surface = FindPlotHostedSurface(ModelSemanticGraphWindowId);
+            surface != nullptr) {
+            FocusHostedSurface(surface);
             bPendingFocusModelSemanticGraphWindow = false;
         }
     }
 
     if (bPendingFocusOntologyOverviewWindow) {
-        if (const auto it = PlotWindowHostsByWindowId.find(OntologyOverviewWindowId);
-            it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
-            if (const auto host = Slab::DynamicPointerCast<Slab::Graphics::Plot2D::V2::FPlot2DWindowHostV2>(it->second);
-                host != nullptr) {
-                host->RequestFitToArtists();
-            }
-            FocusWindow(it->second);
+        if (const auto surface = FindPlotHostedSurface(OntologyOverviewWindowId);
+            surface != nullptr) {
+            FocusHostedSurface(surface);
             bPendingFocusOntologyOverviewWindow = false;
         }
     }
 
     if (bPendingFocusOntologyFocusWindow) {
-        if (const auto it = PlotWindowHostsByWindowId.find(OntologyFocusWindowId);
-            it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
-            if (const auto host = Slab::DynamicPointerCast<Slab::Graphics::Plot2D::V2::FPlot2DWindowHostV2>(it->second);
-                host != nullptr) {
-                host->RequestFitToArtists();
-            }
-            FocusWindow(it->second);
+        if (const auto surface = FindPlotHostedSurface(OntologyFocusWindowId);
+            surface != nullptr) {
+            FocusHostedSurface(surface);
             bPendingFocusOntologyFocusWindow = false;
         }
     }
@@ -1992,8 +2156,8 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> bool {
         return true;
     }
     const int sidePaneInset = bDockingMode ? 0 : SidePaneWidth;
-    const int tabsHeight = bDockingMode ? static_cast<int>(std::ceil(WorkspaceTabsHeight)) : 0;
-    const int stripHeight = bDockingMode ? static_cast<int>(std::ceil(WorkspaceStripHeight)) : 0;
+    const int tabsHeight = bDockingMode ? static_cast<int>(std::ceil(WorkspaceShellState.WorkspaceTabsHeight)) : 0;
+    const int stripHeight = bDockingMode ? static_cast<int>(std::ceil(WorkspaceShellState.WorkspaceStripHeight)) : 0;
 
     int xWorkspace = sidePaneInset + gap;
     int yWorkspace = menuHeight + tabsHeight + stripHeight + gap;
@@ -2001,8 +2165,9 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> bool {
     int hWorkspace = std::max(0, HeightSysWin - yWorkspace - gap);
 
 #ifdef IMGUI_HAS_DOCK
-    if (bDockingMode && DockspaceId != 0) {
-        if (const auto *centralNode = ImGui::DockBuilderGetCentralNode(static_cast<ImGuiID>(DockspaceId));
+    if (bDockingMode && WorkspaceShellState.ActiveDockspaceId != 0) {
+        if (const auto *centralNode =
+                ImGui::DockBuilderGetCentralNode(static_cast<ImGuiID>(WorkspaceShellState.ActiveDockspaceId));
             centralNode != nullptr) {
             if (centralNode->Size.x <= 1.0f || centralNode->Size.y <= 1.0f) {
                 return false;
@@ -2082,7 +2247,7 @@ auto FLabV2WindowManager::ArrangeTopLevelSlabWindows() -> bool {
 }
 
 auto FLabV2WindowManager::IsDockingEnabled() const -> bool {
-    if (!bUseDockspaceLayout) return false;
+    if (!WorkspaceShellState.bUseDockspaceLayout) return false;
     if (ImGui::GetCurrentContext() == nullptr) return false;
     const auto &io = ImGui::GetIO();
     return (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) != 0;
@@ -2104,61 +2269,65 @@ auto FLabV2WindowManager::HideSlabWindowsOffscreen() -> void {
     CapturedMouseWindow.reset();
 }
 
-auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab workspace) -> void {
-    const auto index = static_cast<std::size_t>(workspace);
-    WorkspacePanels[index] = FWorkspacePanelVisibility{
-        bShowWindowLab,
-        bShowWindowSimulationLauncher,
-        bShowWindowTasks,
-        bShowWindowLiveData,
-        bShowWindowLiveControl,
-        bShowWindowLiveInteraction,
-        bShowWindowViews,
-        bShowWindowSchemeInspector,
-        bShowWindowBlueprintGraph,
-        bShowWindowModelInspector,
-        bShowWindowModelVocabulary,
-        bShowWindowModelDefinitions,
-        bShowWindowModelRelations,
-        bShowWindowModelEditor,
-        bShowWindowModelSemanticGraph,
-        bShowWindowModelAssumptions,
-        bShowWindowModelDetails,
-        bShowWindowOntologyLayer,
-        bShowWindowOntologyDetails,
-        bShowWindowOntologyOverview,
-        bShowWindowOntologyFocus,
-        bShowWindowGraphPlayground,
-        bShowWindowPlotInspector
+auto FLabV2WindowManager::BuildWorkspaceVisibilityItems() -> std::vector<FWorkspaceVisibilityItem> {
+    std::vector<FWorkspaceVisibilityItem> items;
+    items.reserve(23);
+
+    const auto addItem = [&](const char *itemId,
+                             const EWorkspaceTab workspace,
+                             const char *label,
+                             bool *bVisible,
+                             const bool bDefaultVisible) {
+        items.push_back(FWorkspaceVisibilityItem{
+            itemId,
+            GetWorkspaceDefinition(workspace).WorkspaceId,
+            label,
+            bVisible,
+            bDefaultVisible
+        });
     };
+
+    addItem("lab", EWorkspaceTab::Simulations, "", &bShowWindowLab, false);
+    addItem("simulation_launcher", EWorkspaceTab::Simulations, "Launcher", &bShowWindowSimulationLauncher, true);
+    addItem("views", EWorkspaceTab::Simulations, "Views", &bShowWindowViews, true);
+    addItem("tasks", EWorkspaceTab::Simulations, "Tasks", &bShowWindowTasks, true);
+    addItem("live_data", EWorkspaceTab::Simulations, "Live Data", &bShowWindowLiveData, true);
+    addItem("live_control", EWorkspaceTab::Simulations, "Live Control", &bShowWindowLiveControl, true);
+    addItem("live_interaction", EWorkspaceTab::Simulations, "Live Interaction", &bShowWindowLiveInteraction, true);
+    addItem("scheme_inspector", EWorkspaceTab::Schemes, "Inspector", &bShowWindowSchemeInspector, true);
+    addItem("blueprint_graph", EWorkspaceTab::Schemes, "Blueprint Graph", &bShowWindowBlueprintGraph, true);
+    addItem("model_inspector", EWorkspaceTab::Models, "Summary", &bShowWindowModelInspector, false);
+    addItem("model_vocabulary", EWorkspaceTab::Models, "Vocabulary", &bShowWindowModelVocabulary, true);
+    addItem("model_definitions", EWorkspaceTab::Models, "Definitions", &bShowWindowModelDefinitions, true);
+    addItem("model_relations", EWorkspaceTab::Models, "Relations", &bShowWindowModelRelations, true);
+    addItem("model_editor", EWorkspaceTab::Models, "Editor", &bShowWindowModelEditor, true);
+    addItem("model_semantic_graph", EWorkspaceTab::Models, "Semantic Graph", &bShowWindowModelSemanticGraph, true);
+    addItem("model_assumptions", EWorkspaceTab::Models, "Assumptions", &bShowWindowModelAssumptions, true);
+    addItem("model_details", EWorkspaceTab::Models, "Inspector", &bShowWindowModelDetails, true);
+    addItem("ontology_layer", EWorkspaceTab::Ontology, "Ontology Layer", &bShowWindowOntologyLayer, true);
+    addItem("ontology_overview", EWorkspaceTab::Ontology, "Overview", &bShowWindowOntologyOverview, true);
+    addItem("ontology_focus", EWorkspaceTab::Ontology, "Focus", &bShowWindowOntologyFocus, true);
+    addItem("ontology_details", EWorkspaceTab::Ontology, "Ontology Inspector", &bShowWindowOntologyDetails, true);
+    addItem("graph_playground", EWorkspaceTab::GraphPlayground, "Graph Playground", &bShowWindowGraphPlayground, true);
+    addItem("plot_inspector", EWorkspaceTab::Plots, "Plot Inspector", &bShowWindowPlotInspector, true);
+
+    return items;
+}
+
+auto FLabV2WindowManager::SaveWorkspacePanelVisibility(const EWorkspaceTab workspace) -> void {
+    const auto items = BuildWorkspaceVisibilityItems();
+    WindowingV2::SaveWorkspaceVisibilityState(
+        WorkspaceShellState,
+        items,
+        GetWorkspaceDefinition(workspace).WorkspaceId);
 }
 
 auto FLabV2WindowManager::LoadWorkspacePanelVisibility(const EWorkspaceTab workspace) -> void {
-    const auto index = static_cast<std::size_t>(workspace);
-    const auto &cfg = WorkspacePanels[index];
-    bShowWindowLab = cfg.bShowWindowLab;
-    bShowWindowSimulationLauncher = cfg.bShowWindowSimulationLauncher;
-    bShowWindowTasks = cfg.bShowWindowTasks;
-    bShowWindowLiveData = cfg.bShowWindowLiveData;
-    bShowWindowLiveControl = cfg.bShowWindowLiveControl;
-    bShowWindowLiveInteraction = cfg.bShowWindowLiveInteraction;
-    bShowWindowViews = cfg.bShowWindowViews;
-    bShowWindowSchemeInspector = cfg.bShowWindowSchemeInspector;
-    bShowWindowBlueprintGraph = cfg.bShowWindowBlueprintGraph;
-    bShowWindowModelInspector = cfg.bShowWindowModelInspector;
-    bShowWindowModelVocabulary = cfg.bShowWindowModelVocabulary;
-    bShowWindowModelDefinitions = cfg.bShowWindowModelDefinitions;
-    bShowWindowModelRelations = cfg.bShowWindowModelRelations;
-    bShowWindowModelEditor = cfg.bShowWindowModelEditor;
-    bShowWindowModelSemanticGraph = cfg.bShowWindowModelSemanticGraph;
-    bShowWindowModelAssumptions = cfg.bShowWindowModelAssumptions;
-    bShowWindowModelDetails = cfg.bShowWindowModelDetails;
-    bShowWindowOntologyLayer = cfg.bShowWindowOntologyLayer;
-    bShowWindowOntologyDetails = cfg.bShowWindowOntologyDetails;
-    bShowWindowOntologyOverview = cfg.bShowWindowOntologyOverview;
-    bShowWindowOntologyFocus = cfg.bShowWindowOntologyFocus;
-    bShowWindowGraphPlayground = cfg.bShowWindowGraphPlayground;
-    bShowWindowPlotInspector = cfg.bShowWindowPlotInspector;
+    const auto items = BuildWorkspaceVisibilityItems();
+    WindowingV2::LoadWorkspaceVisibilityState(
+        WorkspaceShellState,
+        items,
+        GetWorkspaceDefinition(workspace).WorkspaceId);
 }
 
 auto FLabV2WindowManager::RequestSimulationLauncherVisible() -> void {
@@ -2188,10 +2357,7 @@ auto FLabV2WindowManager::SetActiveWorkspace(const EWorkspaceTab workspace) -> v
 }
 
 auto FLabV2WindowManager::WorkspaceUsesSlabWindows(const EWorkspaceTab workspace) const -> bool {
-    return workspace == EWorkspaceTab::Simulations ||
-        workspace == EWorkspaceTab::Models ||
-        workspace == EWorkspaceTab::Ontology ||
-        workspace == EWorkspaceTab::Plots;
+    return GetWorkspaceDefinition(workspace).bUsesSlabWindows;
 }
 
 auto FLabV2WindowManager::GetTopMenuInset() const -> float {
@@ -2210,416 +2376,110 @@ auto FLabV2WindowManager::GetTopMenuInset() const -> float {
 
 auto FLabV2WindowManager::DrawWorkspaceLauncher() -> void {
     if (!IsDockingEnabled()) return;
-    if (ImGuiContext == nullptr) return;
-
-    const auto *viewport = ImGui::GetMainViewport();
-    if (viewport == nullptr) return;
-
-    const auto menuHeight = GetTopMenuInset();
-    const auto tabsHeight = ImGui::GetFrameHeight() + 8.0f;
-    const auto stripHeight = ImGui::GetFrameHeight() + 8.0f;
-    const auto totalHeight = tabsHeight + stripHeight;
-    const auto desiredWidth = std::max(44.0f, totalHeight);
-
-    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x, viewport->Pos.y + menuHeight), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(desiredWidth, totalHeight), ImGuiCond_Always);
-    ImGui::SetNextWindowViewport(viewport->ID);
-
-    constexpr auto flags =
-        ImGuiWindowFlags_NoDocking |
-        ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoScrollbar |
-        ImGuiWindowFlags_NoSavedSettings |
-        ImGuiWindowFlags_NoNavFocus;
-
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4.0f, 4.0f));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0.0f, 0.0f));
-
-    const auto previousWidth = WorkspaceLauncherWidth;
-    if (ImGui::Begin("##LabWorkspaceLauncher", nullptr, flags)) {
-        const auto buttonSize = ImVec2(
-            std::max(16.0f, ImGui::GetContentRegionAvail().x),
-            std::max(16.0f, ImGui::GetContentRegionAvail().y));
-        (void) ImGuiContext->DrawMainMenuLauncher("LabMainMenuLauncher", buttonSize);
-        WorkspaceLauncherWidth = std::max(0.0f, ImGui::GetWindowWidth());
-    }
-    ImGui::End();
-
-    ImGui::PopStyleVar(4);
-
-    if (std::abs(previousWidth - WorkspaceLauncherWidth) > 0.5f) {
-        RequestViewRetile();
-    }
+    WindowingV2::DrawWorkspaceLauncher(
+        WorkspaceShellState,
+        GetTopMenuInset(),
+        [this](const ImVec2 &buttonSize) {
+            if (ImGuiContext == nullptr) return;
+            (void) ImGuiContext->DrawMainMenuLauncher("LabMainMenuLauncher", buttonSize);
+        },
+        [this]() {
+            RequestViewRetile();
+        },
+        "##LabWorkspaceLauncher");
 }
 
 auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
     if (!IsDockingEnabled()) return;
-
-    const auto *viewport = ImGui::GetMainViewport();
-    if (viewport == nullptr) return;
-
-    const auto menuHeight = GetTopMenuInset();
-    const float estimatedHeight = ImGui::GetFrameHeight() + 8.0f;
-    const auto leftInset = std::max(0.0f, WorkspaceLauncherWidth);
-
-    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x + leftInset, viewport->Pos.y + menuHeight), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(std::max(0.0f, viewport->Size.x - leftInset), estimatedHeight), ImGuiCond_Always);
-    ImGui::SetNextWindowViewport(viewport->ID);
-
-    constexpr auto flags =
-        ImGuiWindowFlags_NoDocking |
-        ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoScrollbar |
-        ImGuiWindowFlags_NoScrollWithMouse |
-        ImGuiWindowFlags_NoSavedSettings |
-        ImGuiWindowFlags_NoNavFocus;
-
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 3.0f));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0.0f, 0.0f));
-
-    const auto previousHeight = WorkspaceTabsHeight;
-    WorkspaceTabsHeight = estimatedHeight;
-    if (ImGui::Begin("##LabWorkspaceTabs", nullptr, flags)) {
-        auto selected = ActiveWorkspace;
-        if (ImGui::BeginTabBar("##WorkspaceTabBar",
-            ImGuiTabBarFlags_FittingPolicyResizeDown | ImGuiTabBarFlags_NoCloseWithMiddleMouseButton)) {
-
-            const auto drawTab = [&selected](const EWorkspaceTab workspace, const char *label) {
-                if (ImGui::BeginTabItem(label)) {
-                    selected = workspace;
-                    ImGui::EndTabItem();
-                }
-            };
-
-            drawTab(EWorkspaceTab::Simulations, WorkspaceTabSimulations);
-            drawTab(EWorkspaceTab::Schemes, WorkspaceTabSchemes);
-            drawTab(EWorkspaceTab::Models, WorkspaceTabModels);
-            drawTab(EWorkspaceTab::Ontology, WorkspaceTabOntology);
-            drawTab(EWorkspaceTab::GraphPlayground, WorkspaceTabGraphPlayground);
-            drawTab(EWorkspaceTab::Plots, WorkspaceTabPlots);
-
-            ImGui::EndTabBar();
-        }
-
-        if (selected != ActiveWorkspace) SetActiveWorkspace(selected);
-    }
-    ImGui::End();
-    ImGui::PopStyleVar(4);
-
-    if (std::abs(previousHeight - WorkspaceTabsHeight) > 0.5f) {
-        RequestViewRetile();
-    }
+    const auto &workspaces = GetWorkspaceDefinitions();
+    WindowingV2::DrawWorkspaceTabs(
+        WorkspaceShellState,
+        workspaces,
+        GetWorkspaceDefinition(ActiveWorkspace).WorkspaceId,
+        GetTopMenuInset(),
+        [this](const Slab::Str &workspaceId) {
+            SetActiveWorkspace([&workspaceId]() {
+                if (workspaceId == "schemes") return EWorkspaceTab::Schemes;
+                if (workspaceId == "models") return EWorkspaceTab::Models;
+                if (workspaceId == "ontology") return EWorkspaceTab::Ontology;
+                if (workspaceId == "graph_playground") return EWorkspaceTab::GraphPlayground;
+                if (workspaceId == "plots") return EWorkspaceTab::Plots;
+                return EWorkspaceTab::Simulations;
+            }());
+        },
+        [this]() {
+            RequestViewRetile();
+        },
+        "##LabWorkspaceTabs");
 }
 
 auto FLabV2WindowManager::DrawWorkspaceStrip() -> void {
     if (!IsDockingEnabled()) return;
-
-    const auto *viewport = ImGui::GetMainViewport();
-    if (viewport == nullptr) return;
-
-    const auto menuHeight = GetTopMenuInset();
-    const float estimatedHeight = ImGui::GetFrameHeight() + 8.0f;
-    const auto yOffset = menuHeight + WorkspaceTabsHeight;
-    const auto leftInset = std::max(0.0f, WorkspaceLauncherWidth);
-
-    ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x + leftInset, viewport->Pos.y + yOffset), ImGuiCond_Always);
-    ImGui::SetNextWindowSize(ImVec2(std::max(0.0f, viewport->Size.x - leftInset), estimatedHeight), ImGuiCond_Always);
-    ImGui::SetNextWindowViewport(viewport->ID);
-
-    constexpr auto flags =
-        ImGuiWindowFlags_NoDocking |
-        ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoScrollbar |
-        ImGuiWindowFlags_NoSavedSettings |
-        ImGuiWindowFlags_NoNavFocus;
-
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(8.0f, 2.0f));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(0.0f, 0.0f));
-
-    const auto previousHeight = WorkspaceStripHeight;
-    WorkspaceStripHeight = estimatedHeight;
-    if (ImGui::Begin("##LabWorkspaceStrip", nullptr, flags)) {
-        const char *workspaceLabel = WorkspaceTabSimulations;
-        if (ActiveWorkspace == EWorkspaceTab::Schemes) workspaceLabel = WorkspaceTabSchemes;
-        if (ActiveWorkspace == EWorkspaceTab::Models) workspaceLabel = WorkspaceTabModels;
-        if (ActiveWorkspace == EWorkspaceTab::Ontology) workspaceLabel = WorkspaceTabOntology;
-        if (ActiveWorkspace == EWorkspaceTab::GraphPlayground) workspaceLabel = WorkspaceTabGraphPlayground;
-        if (ActiveWorkspace == EWorkspaceTab::Plots) workspaceLabel = WorkspaceTabPlots;
-
-        ImGui::TextDisabled("%s", workspaceLabel);
-        ImGui::SameLine();
-        ImGui::TextDisabled("|");
-        ImGui::SameLine();
-
-        const auto drawToggle = [](const char *label, bool *value) {
-            ImGui::Checkbox(label, value);
-            ImGui::SameLine();
-        };
-
-        if (ActiveWorkspace == EWorkspaceTab::Simulations) {
-            drawToggle("Launcher", &bShowWindowSimulationLauncher);
-            drawToggle("Views", &bShowWindowViews);
-            drawToggle("Tasks", &bShowWindowTasks);
-            drawToggle("Live Data", &bShowWindowLiveData);
-            drawToggle("Live Control", &bShowWindowLiveControl);
-            drawToggle("Live Interaction", &bShowWindowLiveInteraction);
-        } else if (ActiveWorkspace == EWorkspaceTab::Schemes) {
-            drawToggle("Inspector", &bShowWindowSchemeInspector);
-            drawToggle("Blueprint Graph", &bShowWindowBlueprintGraph);
-        } else if (ActiveWorkspace == EWorkspaceTab::Models) {
-            drawToggle("Summary", &bShowWindowModelInspector);
-            drawToggle("Vocabulary", &bShowWindowModelVocabulary);
-            drawToggle("Definitions", &bShowWindowModelDefinitions);
-            drawToggle("Relations", &bShowWindowModelRelations);
-            drawToggle("Editor", &bShowWindowModelEditor);
-            drawToggle("Semantic Graph", &bShowWindowModelSemanticGraph);
-            drawToggle("Assumptions", &bShowWindowModelAssumptions);
-            drawToggle("Inspector", &bShowWindowModelDetails);
-        } else if (ActiveWorkspace == EWorkspaceTab::Ontology) {
-            drawToggle("Ontology Layer", &bShowWindowOntologyLayer);
-            drawToggle("Overview", &bShowWindowOntologyOverview);
-            drawToggle("Focus", &bShowWindowOntologyFocus);
-            drawToggle("Ontology Inspector", &bShowWindowOntologyDetails);
-        } else if (ActiveWorkspace == EWorkspaceTab::GraphPlayground) {
-            drawToggle("Graph Playground", &bShowWindowGraphPlayground);
-        } else {
-            drawToggle("Plot Inspector", &bShowWindowPlotInspector);
-        }
-
-        if (ImGui::Button("Reset Layout")) {
-            bResetDockLayoutRequested = true;
-        }
-    }
-    ImGui::End();
-
-    ImGui::PopStyleVar(4);
-
-    if (std::abs(previousHeight - WorkspaceStripHeight) > 0.5f) {
-        RequestViewRetile();
-    }
-}
-
-auto FLabV2WindowManager::BuildDefaultDockLayout(const unsigned int dockspaceId,
-                                                 const EWorkspaceTab workspace) -> void {
-#ifdef IMGUI_HAS_DOCK
-    const auto dockId = static_cast<ImGuiID>(dockspaceId);
-    if (dockId == 0) return;
-
-    const auto *viewport = ImGui::GetMainViewport();
-    if (viewport == nullptr) return;
-
-    const auto menuHeight = GetTopMenuInset();
-    const auto topChromeHeight = menuHeight + WorkspaceTabsHeight + WorkspaceStripHeight;
-    const auto dockSize = ImVec2(
-        viewport->Size.x,
-        std::max(0.0f, viewport->Size.y - topChromeHeight));
-
-    ImGui::DockBuilderRemoveNode(dockId);
-    ImGui::DockBuilderAddNode(
-        dockId,
-        static_cast<ImGuiDockNodeFlags>(
-            static_cast<int>(ImGuiDockNodeFlags_DockSpace) |
-            static_cast<int>(ImGuiDockNodeFlags_PassthruCentralNode) |
-            static_cast<int>(ImGuiDockNodeFlags_AutoHideTabBar)));
-    ImGui::DockBuilderSetNodeSize(dockId, dockSize);
-
-    ImGuiID dockMain = dockId;
-    if (workspace == EWorkspaceTab::Simulations) {
-        const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.24f, nullptr, &dockMain);
-        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.28f, nullptr, &dockMain);
-        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.30f, nullptr, &dockMain);
-
-        LauncherInitialDockId = static_cast<unsigned int>(dockLeft);
-        bRequestLauncherInitialDock = LauncherInitialDockId != 0;
-
-        ImGui::DockBuilderDockWindow(WindowTitleViews, dockLeft);
-        ImGui::DockBuilderDockWindow(WindowTitleSimulationLauncher, dockLeft);
-        ImGui::DockBuilderDockWindow(WindowTitleLiveInteraction, dockRight);
-        ImGui::DockBuilderDockWindow(WindowTitleTasks, dockBottom);
-        ImGui::DockBuilderDockWindow(WindowTitleLiveData, dockBottom);
-        ImGui::DockBuilderDockWindow(WindowTitleLiveControl, dockBottom);
-    } else if (workspace == EWorkspaceTab::Schemes) {
-        const auto dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.35f, nullptr, &dockMain);
-        ImGui::DockBuilderDockWindow(WindowTitleSchemesInspector, dockLeft);
-        ImGui::DockBuilderDockWindow(WindowTitleBlueprintGraph, dockMain);
-    } else if (workspace == EWorkspaceTab::Models) {
-        ImGuiID dockLeft = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Left, 0.26f, nullptr, &dockMain);
-        ImGuiID dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.28f, nullptr, &dockMain);
-        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.34f, nullptr, &dockMain);
-        const auto dockCenterTop = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Up, 0.24f, nullptr, &dockMain);
-
-        const auto dockLeftBottom = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.38f, nullptr, &dockLeft);
-        const auto dockLeftMiddle = ImGui::DockBuilderSplitNode(dockLeft, ImGuiDir_Down, 0.44f, nullptr, &dockLeft);
-        const auto dockRightBottom = ImGui::DockBuilderSplitNode(dockRight, ImGuiDir_Down, 0.42f, nullptr, &dockRight);
-
-        ImGui::DockBuilderDockWindow(WindowTitleModelVocabulary, dockLeft);
-        ImGui::DockBuilderDockWindow(WindowTitleModelDefinitions, dockLeftMiddle);
-        ImGui::DockBuilderDockWindow(WindowTitleModelRelations, dockLeftBottom);
-        ImGui::DockBuilderDockWindow(WindowTitleModelEditor, dockCenterTop);
-        ImGui::DockBuilderDockWindow(WindowTitleModelSemanticGraph, dockMain);
-        ImGui::DockBuilderDockWindow(WindowTitleModelInspector, dockBottom);
-        ImGui::DockBuilderDockWindow(WindowTitleModelDetails, dockRight);
-        ImGui::DockBuilderDockWindow(WindowTitleModelAssumptions, dockRightBottom);
-    } else if (workspace == EWorkspaceTab::Ontology) {
-        const auto dockRight = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Right, 0.26f, nullptr, &dockMain);
-        const auto dockBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.27f, nullptr, &dockMain);
-        const auto dockMainBottom = ImGui::DockBuilderSplitNode(dockMain, ImGuiDir_Down, 0.42f, nullptr, &dockMain);
-
-        ImGui::DockBuilderDockWindow(WindowTitleOntologyOverview, dockMain);
-        ImGui::DockBuilderDockWindow(WindowTitleOntologyFocus, dockMainBottom);
-        ImGui::DockBuilderDockWindow(WindowTitleOntologyLayer, dockBottom);
-        ImGui::DockBuilderDockWindow(WindowTitleOntologyDetails, dockRight);
-    } else if (workspace == EWorkspaceTab::GraphPlayground) {
-        ImGui::DockBuilderDockWindow(WindowTitleGraphPlayground, dockMain);
-    } else {
-        ImGui::DockBuilderDockWindow(WindowTitlePlotInspector, dockMain);
-    }
-
-    ImGui::DockBuilderFinish(dockId);
-#else
-    (void) dockspaceId;
-    (void) workspace;
-#endif
+    const auto visibilityItems = BuildWorkspaceVisibilityItems();
+    WindowingV2::DrawWorkspaceStrip(
+        WorkspaceShellState,
+        GetWorkspaceDefinition(ActiveWorkspace),
+        visibilityItems,
+        GetTopMenuInset(),
+        [this]() {
+            RequestViewRetile();
+        },
+        "##LabWorkspaceStrip");
 }
 
 auto FLabV2WindowManager::DrawDockspaceHost() -> void {
     if (!IsDockingEnabled()) return;
-
-    const auto menuHeight = GetTopMenuInset();
-    const auto topChromeHeight = menuHeight + WorkspaceTabsHeight + WorkspaceStripHeight;
-    const auto *viewport = ImGui::GetMainViewport();
-    if (viewport == nullptr) return;
-
-    ImGui::SetNextWindowPos(
-        ImVec2(viewport->Pos.x, viewport->Pos.y + topChromeHeight),
-        ImGuiCond_Always);
-    ImGui::SetNextWindowSize(
-        ImVec2(viewport->Size.x, std::max(0.0f, viewport->Size.y - topChromeHeight)),
-        ImGuiCond_Always);
-    ImGui::SetNextWindowViewport(viewport->ID);
-
-    constexpr auto hostFlags =
-        ImGuiWindowFlags_NoDocking |
-        ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoBringToFrontOnFocus |
-        ImGuiWindowFlags_NoNavFocus |
-        ImGuiWindowFlags_NoBackground;
-
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
-    if (ImGui::Begin(DockspaceHostName, nullptr, hostFlags)) {
-        const auto dockspaceIdSimulations =
-            static_cast<unsigned int>(ImGui::GetID(DockspaceNameSimulations));
-        const auto dockspaceIdSchemes =
-            static_cast<unsigned int>(ImGui::GetID(DockspaceNameSchemes));
-        const auto dockspaceIdModels =
-            static_cast<unsigned int>(ImGui::GetID(DockspaceNameModels));
-        const auto dockspaceIdOntology =
-            static_cast<unsigned int>(ImGui::GetID(DockspaceNameOntology));
-        const auto dockspaceIdGraphPlayground =
-            static_cast<unsigned int>(ImGui::GetID(DockspaceNameGraphPlayground));
-        const auto dockspaceIdPlots =
-            static_cast<unsigned int>(ImGui::GetID(DockspaceNamePlots));
-
-        if (!bWorkspaceLayoutsBootstrapped) {
-            BuildDefaultDockLayout(dockspaceIdSimulations, EWorkspaceTab::Simulations);
-            BuildDefaultDockLayout(dockspaceIdSchemes, EWorkspaceTab::Schemes);
-            BuildDefaultDockLayout(dockspaceIdModels, EWorkspaceTab::Models);
-            BuildDefaultDockLayout(dockspaceIdOntology, EWorkspaceTab::Ontology);
-            BuildDefaultDockLayout(dockspaceIdGraphPlayground, EWorkspaceTab::GraphPlayground);
-            BuildDefaultDockLayout(dockspaceIdPlots, EWorkspaceTab::Plots);
-            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Simulations)] = true;
-            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Schemes)] = true;
-            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Models)] = true;
-            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Ontology)] = true;
-            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::GraphPlayground)] = true;
-            WorkspaceLayoutInitialized[static_cast<std::size_t>(EWorkspaceTab::Plots)] = true;
-            bWorkspaceLayoutsBootstrapped = true;
+    const auto &workspaces = GetWorkspaceDefinitions();
+    WindowingV2::DrawDockspaceHost(
+        WorkspaceShellState,
+        workspaces,
+        GetWorkspaceDefinition(ActiveWorkspace).WorkspaceId,
+        GetTopMenuInset(),
+        [this](const Slab::Str &workspaceId) {
+            const auto workspace = [&workspaceId]() {
+                if (workspaceId == "schemes") return EWorkspaceTab::Schemes;
+                if (workspaceId == "models") return EWorkspaceTab::Models;
+                if (workspaceId == "ontology") return EWorkspaceTab::Ontology;
+                if (workspaceId == "graph_playground") return EWorkspaceTab::GraphPlayground;
+                if (workspaceId == "plots") return EWorkspaceTab::Plots;
+                return EWorkspaceTab::Simulations;
+            }();
+            return BuildDefaultWorkspaceDockLayout(workspace);
+        },
+        [this](const Slab::Str &workspaceId, const std::map<Slab::Str, ImGuiID> &dockNodes) {
+            if (workspaceId != GetWorkspaceDefinition(EWorkspaceTab::Simulations).WorkspaceId) return;
+            const auto leftIt = dockNodes.find("dock_left");
+            LauncherInitialDockId = leftIt != dockNodes.end()
+                ? static_cast<unsigned int>(leftIt->second)
+                : 0;
+            bRequestLauncherInitialDock = LauncherInitialDockId != 0;
+        },
+        [this]() {
             RequestViewRetile();
-        }
-
-        const auto dockspaceIdFor = [dockspaceIdSimulations, dockspaceIdSchemes, dockspaceIdModels, dockspaceIdOntology, dockspaceIdGraphPlayground, dockspaceIdPlots]
-            (const EWorkspaceTab workspace) -> unsigned int {
-                if (workspace == EWorkspaceTab::Schemes) return dockspaceIdSchemes;
-                if (workspace == EWorkspaceTab::Models) return dockspaceIdModels;
-                if (workspace == EWorkspaceTab::Ontology) return dockspaceIdOntology;
-                if (workspace == EWorkspaceTab::GraphPlayground) return dockspaceIdGraphPlayground;
-                if (workspace == EWorkspaceTab::Plots) return dockspaceIdPlots;
-                return dockspaceIdSimulations;
-            };
-
-        DockspaceId = dockspaceIdFor(ActiveWorkspace);
-        const auto workspaceIndex = static_cast<std::size_t>(ActiveWorkspace);
-        if (bResetDockLayoutRequested) {
-            BuildDefaultDockLayout(DockspaceId, ActiveWorkspace);
-            WorkspaceLayoutInitialized[workspaceIndex] = true;
-            bResetDockLayoutRequested = false;
-            RequestViewRetile();
-        }
-#ifdef IMGUI_HAS_DOCK
-        const auto drawWorkspaceDockspace = [this](const unsigned int id, const EWorkspaceTab workspace) {
-            ImGuiDockNodeFlags dockFlags = static_cast<ImGuiDockNodeFlags>(
-                static_cast<int>(ImGuiDockNodeFlags_PassthruCentralNode) |
-                static_cast<int>(ImGuiDockNodeFlags_AutoHideTabBar));
-            if (workspace != ActiveWorkspace) {
-                // Keep inactive workspaces alive so docked windows don't detach on tab switch.
-                dockFlags = static_cast<ImGuiDockNodeFlags>(
-                    static_cast<int>(ImGuiDockNodeFlags_KeepAliveOnly) |
-                    static_cast<int>(ImGuiDockNodeFlags_AutoHideTabBar));
-            }
-
-            ImGui::DockSpace(static_cast<ImGuiID>(id), ImVec2(0.0f, 0.0f), dockFlags);
-        };
-
-        drawWorkspaceDockspace(dockspaceIdSimulations, EWorkspaceTab::Simulations);
-        drawWorkspaceDockspace(dockspaceIdSchemes, EWorkspaceTab::Schemes);
-        drawWorkspaceDockspace(dockspaceIdModels, EWorkspaceTab::Models);
-        drawWorkspaceDockspace(dockspaceIdOntology, EWorkspaceTab::Ontology);
-        drawWorkspaceDockspace(dockspaceIdGraphPlayground, EWorkspaceTab::GraphPlayground);
-        drawWorkspaceDockspace(dockspaceIdPlots, EWorkspaceTab::Plots);
-#endif
-    }
-    ImGui::End();
-
-    ImGui::PopStyleVar(3);
+        },
+        DockspaceHostName,
+        "##LabDockspace-");
 }
 
 auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfaceRegistration> {
     std::vector<FPanelSurfaceRegistration> registry;
-    registry.reserve(19);
+    registry.reserve(20);
 
     registry.push_back(FPanelSurfaceRegistration{
+        "lab",
         WindowTitleLab,
-        EWorkspaceTab::Simulations,
+        GetWorkspaceDefinition(EWorkspaceTab::Simulations).WorkspaceId,
         &bShowWindowLab,
         false,
         true,
         [this]() {
             ImGui::TextDisabled("Observability + launcher shell");
             ImGui::SeparatorText("Workspace");
-            ImGui::Checkbox("Enable dockspace layout", &bUseDockspaceLayout);
+            if (ImGui::Checkbox("Enable dockspace layout", &WorkspaceShellState.bUseDockspaceLayout)) {
+                RequestViewRetile();
+            }
             if (ImGui::Button("Reset Dock Layout")) {
-                bResetDockLayoutRequested = true;
+                WorkspaceShellState.bResetDockLayoutRequested = true;
             }
             ImGui::SeparatorText("Panels");
             if (ActiveWorkspace == EWorkspaceTab::Simulations) {
@@ -2656,8 +2516,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "simulation_launcher",
         WindowTitleSimulationLauncher,
-        EWorkspaceTab::Simulations,
+        GetWorkspaceDefinition(EWorkspaceTab::Simulations).WorkspaceId,
         &bShowWindowSimulationLauncher,
         false,
         false,
@@ -2669,8 +2530,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "views",
         WindowTitleViews,
-        EWorkspaceTab::Simulations,
+        GetWorkspaceDefinition(EWorkspaceTab::Simulations).WorkspaceId,
         &bShowWindowViews,
         false,
         true,
@@ -2680,8 +2542,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "tasks",
         WindowTitleTasks,
-        EWorkspaceTab::Simulations,
+        GetWorkspaceDefinition(EWorkspaceTab::Simulations).WorkspaceId,
         &bShowWindowTasks,
         false,
         false,
@@ -2691,8 +2554,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "live_data",
         WindowTitleLiveData,
-        EWorkspaceTab::Simulations,
+        GetWorkspaceDefinition(EWorkspaceTab::Simulations).WorkspaceId,
         &bShowWindowLiveData,
         false,
         true,
@@ -2702,8 +2566,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "live_control",
         WindowTitleLiveControl,
-        EWorkspaceTab::Simulations,
+        GetWorkspaceDefinition(EWorkspaceTab::Simulations).WorkspaceId,
         &bShowWindowLiveControl,
         false,
         true,
@@ -2717,8 +2582,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "live_interaction",
         WindowTitleLiveInteraction,
-        EWorkspaceTab::Simulations,
+        GetWorkspaceDefinition(EWorkspaceTab::Simulations).WorkspaceId,
         &bShowWindowLiveInteraction,
         false,
         true,
@@ -2730,8 +2596,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "scheme_inspector",
         WindowTitleSchemesInspector,
-        EWorkspaceTab::Schemes,
+        GetWorkspaceDefinition(EWorkspaceTab::Schemes).WorkspaceId,
         &bShowWindowSchemeInspector,
         false,
         false,
@@ -2741,8 +2608,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "blueprint_graph",
         WindowTitleBlueprintGraph,
-        EWorkspaceTab::Schemes,
+        GetWorkspaceDefinition(EWorkspaceTab::Schemes).WorkspaceId,
         &bShowWindowBlueprintGraph,
         false,
         false,
@@ -2752,8 +2620,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "model_inspector",
         WindowTitleModelInspector,
-        EWorkspaceTab::Models,
+        GetWorkspaceDefinition(EWorkspaceTab::Models).WorkspaceId,
         &bShowWindowModelInspector,
         false,
         false,
@@ -2763,8 +2632,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "model_vocabulary",
         WindowTitleModelVocabulary,
-        EWorkspaceTab::Models,
+        GetWorkspaceDefinition(EWorkspaceTab::Models).WorkspaceId,
         &bShowWindowModelVocabulary,
         false,
         false,
@@ -2774,8 +2644,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "model_definitions",
         WindowTitleModelDefinitions,
-        EWorkspaceTab::Models,
+        GetWorkspaceDefinition(EWorkspaceTab::Models).WorkspaceId,
         &bShowWindowModelDefinitions,
         false,
         false,
@@ -2785,8 +2656,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "model_relations",
         WindowTitleModelRelations,
-        EWorkspaceTab::Models,
+        GetWorkspaceDefinition(EWorkspaceTab::Models).WorkspaceId,
         &bShowWindowModelRelations,
         false,
         false,
@@ -2796,8 +2668,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "model_editor",
         WindowTitleModelEditor,
-        EWorkspaceTab::Models,
+        GetWorkspaceDefinition(EWorkspaceTab::Models).WorkspaceId,
         &bShowWindowModelEditor,
         false,
         false,
@@ -2807,8 +2680,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "model_assumptions",
         WindowTitleModelAssumptions,
-        EWorkspaceTab::Models,
+        GetWorkspaceDefinition(EWorkspaceTab::Models).WorkspaceId,
         &bShowWindowModelAssumptions,
         false,
         false,
@@ -2818,8 +2692,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "model_details",
         WindowTitleModelDetails,
-        EWorkspaceTab::Models,
+        GetWorkspaceDefinition(EWorkspaceTab::Models).WorkspaceId,
         &bShowWindowModelDetails,
         false,
         false,
@@ -2829,8 +2704,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "ontology_layer",
         WindowTitleOntologyLayer,
-        EWorkspaceTab::Ontology,
+        GetWorkspaceDefinition(EWorkspaceTab::Ontology).WorkspaceId,
         &bShowWindowOntologyLayer,
         false,
         false,
@@ -2840,8 +2716,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "ontology_details",
         WindowTitleOntologyDetails,
-        EWorkspaceTab::Ontology,
+        GetWorkspaceDefinition(EWorkspaceTab::Ontology).WorkspaceId,
         &bShowWindowOntologyDetails,
         false,
         false,
@@ -2851,8 +2728,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "graph_playground",
         WindowTitleGraphPlayground,
-        EWorkspaceTab::GraphPlayground,
+        GetWorkspaceDefinition(EWorkspaceTab::GraphPlayground).WorkspaceId,
         &bShowWindowGraphPlayground,
         false,
         false,
@@ -2862,8 +2740,9 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
     });
 
     registry.push_back(FPanelSurfaceRegistration{
+        "plot_inspector",
         WindowTitlePlotInspector,
-        EWorkspaceTab::Plots,
+        GetWorkspaceDefinition(EWorkspaceTab::Plots).WorkspaceId,
         &bShowWindowPlotInspector,
         false,
         false,
@@ -2876,48 +2755,60 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
 }
 
 auto FLabV2WindowManager::DrawPanelSurface(const FPanelSurfaceRegistration &registration) -> void {
-    if (registration.Workspace != ActiveWorkspace) return;
-
-    const bool bVisible = registration.bForceVisibleInWorkspace ||
-        (registration.bVisible != nullptr && *registration.bVisible);
-    if (!bVisible) return;
-
-    if (std::strcmp(registration.WindowTitle, WindowTitleSimulationLauncher) == 0) {
+    WindowingV2::DrawPanelSurface(
+        registration,
+        GetWorkspaceDefinition(ActiveWorkspace).WorkspaceId,
+        IsDockingEnabled(),
+        WindowingV2::FPanelSurfaceHooksV2{
+            .BeforeBegin = [this](const FPanelSurfaceRegistration &surface) {
+                if (surface.PanelId != "simulation_launcher") return;
 #ifdef IMGUI_HAS_DOCK
-        if (bRequestLauncherInitialDock && LauncherInitialDockId != 0) {
-            ImGui::SetNextWindowDockID(static_cast<ImGuiID>(LauncherInitialDockId), ImGuiCond_Always);
-            ImGui::SetNextWindowFocus();
-        }
+                if (bRequestLauncherInitialDock && LauncherInitialDockId != 0) {
+                    ImGui::SetNextWindowDockID(static_cast<ImGuiID>(LauncherInitialDockId), ImGuiCond_Always);
+                    ImGui::SetNextWindowFocus();
+                }
 #endif
-    }
-
-    const auto openPtr = registration.bForceVisibleInWorkspace ? nullptr : registration.bVisible;
-    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse;
-    if (IsDockingEnabled() && registration.bHideTitleBarWhenDocked) {
-        windowFlags |= ImGuiWindowFlags_NoTitleBar;
-    }
-
-    if (ImGui::Begin(registration.WindowTitle, openPtr, windowFlags)) {
-        if (registration.DrawContents) registration.DrawContents();
-
-        if (std::strcmp(registration.WindowTitle, WindowTitleSimulationLauncher) == 0) {
+            },
+            .AfterDraw = [this](const FPanelSurfaceRegistration &surface) {
+                if (surface.PanelId != "simulation_launcher") return;
 #ifdef IMGUI_HAS_DOCK
-            if (bRequestLauncherInitialDock && ImGui::IsWindowDocked()) {
-                bRequestLauncherInitialDock = false;
-            }
+                if (bRequestLauncherInitialDock && ImGui::IsWindowDocked()) {
+                    bRequestLauncherInitialDock = false;
+                }
 #else
-            bRequestLauncherInitialDock = false;
+                bRequestLauncherInitialDock = false;
 #endif
-        }
-    }
-    ImGui::End();
+            }
+        });
 }
 
 auto FLabV2WindowManager::DrawDockedToolWindows() -> void {
     const auto registry = BuildPanelSurfaceRegistry();
-    for (const auto &registration : registry) {
-        DrawPanelSurface(registration);
-    }
+    WindowingV2::DrawDockedToolWindows(
+        registry,
+        GetWorkspaceDefinition(ActiveWorkspace).WorkspaceId,
+        IsDockingEnabled(),
+        WindowingV2::FPanelSurfaceHooksV2{
+            .BeforeBegin = [this](const FPanelSurfaceRegistration &surface) {
+                if (surface.PanelId != "simulation_launcher") return;
+#ifdef IMGUI_HAS_DOCK
+                if (bRequestLauncherInitialDock && LauncherInitialDockId != 0) {
+                    ImGui::SetNextWindowDockID(static_cast<ImGuiID>(LauncherInitialDockId), ImGuiCond_Always);
+                    ImGui::SetNextWindowFocus();
+                }
+#endif
+            },
+            .AfterDraw = [this](const FPanelSurfaceRegistration &surface) {
+                if (surface.PanelId != "simulation_launcher") return;
+#ifdef IMGUI_HAS_DOCK
+                if (bRequestLauncherInitialDock && ImGui::IsWindowDocked()) {
+                    bRequestLauncherInitialDock = false;
+                }
+#else
+                bRequestLauncherInitialDock = false;
+#endif
+            }
+        });
     SaveWorkspacePanelVisibility(ActiveWorkspace);
 }
 
@@ -3012,9 +2903,10 @@ bool FLabV2WindowManager::NotifyRender(const Slab::Graphics::FPlatformWindow &pl
         DrawDockspaceHost();
         DrawDockedToolWindows();
     } else {
-        WorkspaceTabsHeight = 0.0f;
-        WorkspaceStripHeight = 0.0f;
-        WorkspaceLauncherWidth = 52.0f;
+        WorkspaceShellState.WorkspaceTabsHeight = 0.0f;
+        WorkspaceShellState.WorkspaceStripHeight = 0.0f;
+        WorkspaceShellState.WorkspaceLauncherWidth = 52.0f;
+        WorkspaceShellState.ActiveDockspaceId = 0;
         DrawLegacySidePane();
         if (bShowWindowSimulationLauncher) {
             ImGui::SetNextWindowPos(

@@ -2,13 +2,14 @@
 
 ## Snapshot
 
-- Date: `2026-03-29`
+- Date: `2026-04-03`
 - Scope assessed: adding wasm targets for the current `StudioSlab` / `LabV2` codebase
 - Result: **high complexity** for full `Slab`/`LabV2` wasm port (`not simple`)
 - Independent bootstrap status:
   - reusable Emscripten target helper added at `cmake/StudioSlabWasm.cmake`
-  - standalone WebGL2 and ImGui sandboxes live under `Studios/WebGL-WASM/`
-  - browser targets remain intentionally decoupled from the current desktop `Lib/Graphics` stack
+  - standalone WebGL2, ImGui, and shared-workspace-shell sandboxes live under `Studios/WebGL-WASM/`
+  - browser targets remain intentionally decoupled from the current desktop `Lib/Graphics` stack while reusing the shared `Slab/Graphics/Window/V2` shell/layout layer
+  - locally revalidated on `2026-04-03` with `Emscripten 3.1.6` (`emcmake` configure, all three targets build; prior `emrun --no_browser` serving validation remains from `2026-04-01`)
 
 ## Why It Is High Complexity
 
@@ -74,6 +75,7 @@ Use backlog item `PLAT-00` for a bounded feasibility spike:
 Isolated wasm/browser targets now exist:
 - `WebGLWasmSandbox`
 - `WasmImGuiSandbox`
+- `WasmWorkspaceSandbox`
 
 Path:
 - `Studios/WebGL-WASM/`
@@ -81,13 +83,17 @@ Path:
 Intent:
 - validate Emscripten + browser rendering basics
 - validate a minimal GUI path (`ImGui`) without coupling to the current desktop graphics stack
+- validate that the extracted V2 workspace shell/layout contract can be reused in a browser-hosted sample without bringing over desktop slab-window/render backends
 - establish reusable target glue for future browser sandboxes
 
 Standalone configure/build:
 - `emcmake cmake -S Studios/WebGL-WASM -B cmake-build-webgl-wasm`
-- `cmake --build cmake-build-webgl-wasm --target WebGLWasmSandbox WasmImGuiSandbox -j8`
+- `cmake --build cmake-build-webgl-wasm --target WebGLWasmSandbox WasmImGuiSandbox WasmWorkspaceSandbox -j8`
 - `emrun --no_browser cmake-build-webgl-wasm/Build/bin/webgl-wasm-sandbox.html`
 - `emrun --no_browser cmake-build-webgl-wasm/Build/bin/imgui-wasm-sandbox.html`
+- `emrun --no_browser cmake-build-webgl-wasm/Build/bin/workspace-wasm-sandbox.html`
+
+If both sandboxes are served concurrently, launch them with distinct `emrun --port` values to avoid the default-port collision.
 
 This still does **not** imply that `Slab`/`LabV2` are close to a full browser port.
 It only de-risks toolchain, packaging, and one bounded GUI path.

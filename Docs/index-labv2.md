@@ -16,6 +16,7 @@
    - `Docs/plot-window-ux-contract.md`
    - `Docs/Plot2D-V2-Scheme.md`
    - `Docs/plot2d-v2-migration-plan.md`
+   - `Docs/labv2-default-windowing-migration-plan.md`
    - `Docs/typesetting-bridge.md`
 4. For Model-tab semantic-environment work:
    - `Docs/index-model-semantic-graph.md`
@@ -53,12 +54,16 @@
   - `Slab/Graphics/Plot2D/V2/PlotArtistV2.h`
   - `Slab/Graphics/Plot2D/V2/Plot2DWindowV2.h`
   - `Slab/Graphics/Plot2D/V2/Plot2DWindowHostV2.h`
+  - `Slab/Graphics/Window/V2/HostedSurfaceV2.h`
+  - `Slab/Graphics/Window/V2/WorkspaceLayoutV2.h`
+  - `Slab/Graphics/Window/V2/WorkspaceShellV2.h`
   - `Slab/Graphics/Plot2D/V2/Artists/R2SectionArtistV2.h`
   - `Slab/Graphics/Plot2D/V2/Artists/ModelSemanticGraphArtistV2.h`
   - `Slab/Graphics/Plot2D/V2/Artists/OntologyGraphArtistV2.h`
   - `Docs/Plot2D-V2-Scheme.md`
   - `Docs/plot2d-v2-migration-plan.md`
   - `Docs/plot-v2-node-graph-plan.md`
+  - `Docs/labv2-default-windowing-migration-plan.md`
 - Plot reflection catalog bridge surfaces:
   - `Slab/Core/Reflection/V2/ReflectionCatalogRegistryV2.h`
   - `Slab/Core/Reflection/V2/GraphSubstrateV2.h`

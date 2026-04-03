@@ -274,8 +274,14 @@ add_library(${LIB_GRAPHICS} STATIC
         Plot2D/Util/FieldTextureKontraption.cpp
         Plot2D/Util/PlotStyleGUI.cpp
         Plot2D/Util/PlotStyleGUI.h
-        Window/WindowProxy.cpp
+		Window/WindowProxy.cpp
         Window/WindowProxy.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Window/V2/WorkspaceLayoutV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Window/V2/WorkspaceLayoutV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Window/V2/HostedSurfaceV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Window/V2/HostedSurfaceV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Window/V2/WorkspaceShellV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Window/V2/WorkspaceShellV2.h
         Plot2D/Artists/Painters/Painter.cpp
         Plot2D/Artists/Painters/Painter.h
         Plot2D/Artists/Painters/Colormap1DPainter.cpp

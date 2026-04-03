@@ -223,9 +223,10 @@ auto FLabV2WindowManager::SyncOntologyGraphWindows() -> void {
         }
 
         if (state.bPendingOverviewGraphFit) {
-            if (const auto it = PlotWindowHostsByWindowId.find(OntologyOverviewWindowId);
-                it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
-                if (const auto host = Slab::DynamicPointerCast<FPlot2DWindowHostV2>(it->second);
+            if (const auto surface = FindPlotHostedSurface(OntologyOverviewWindowId);
+                surface != nullptr) {
+                if (const auto host = Slab::DynamicPointerCast<FPlot2DWindowHostV2>(
+                        GetSlabWindowForHostedSurface(surface));
                     host != nullptr) {
                     host->RequestFitToArtists();
                     state.bPendingOverviewGraphFit = false;
@@ -244,9 +245,10 @@ auto FLabV2WindowManager::SyncOntologyGraphWindows() -> void {
         }
 
         if (state.bPendingFocusGraphFit) {
-            if (const auto it = PlotWindowHostsByWindowId.find(OntologyFocusWindowId);
-                it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
-                if (const auto host = Slab::DynamicPointerCast<FPlot2DWindowHostV2>(it->second);
+            if (const auto surface = FindPlotHostedSurface(OntologyFocusWindowId);
+                surface != nullptr) {
+                if (const auto host = Slab::DynamicPointerCast<FPlot2DWindowHostV2>(
+                        GetSlabWindowForHostedSurface(surface));
                     host != nullptr) {
                     host->RequestFitToArtists();
                     state.bPendingFocusGraphFit = false;
@@ -265,9 +267,9 @@ auto FLabV2WindowManager::FocusOntologyOverviewWindow() -> void {
     SyncOntologyGraphWindows();
     bPendingFocusOntologyOverviewWindow = true;
 
-    if (const auto it = PlotWindowHostsByWindowId.find(OntologyOverviewWindowId);
-        it != PlotWindowHostsByWindowId.end() && it->second != nullptr) {
-        FocusWindow(it->second);
+    if (const auto surface = FindPlotHostedSurface(OntologyOverviewWindowId);
+        surface != nullptr) {
+        FocusHostedSurface(surface);
     }
 }
 

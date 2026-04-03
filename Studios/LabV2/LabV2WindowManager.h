@@ -15,6 +15,9 @@
 #include "Core/Ontology/V2/OntologyGraphV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionCatalogV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
+#include "Graphics/Window/V2/HostedSurfaceV2.h"
+#include "Graphics/Window/V2/WorkspaceLayoutV2.h"
+#include "Graphics/Window/V2/WorkspaceShellV2.h"
 #include "imgui.h"
 
 #include <functional>
@@ -90,44 +93,12 @@ private:
         Plots
     };
 
-    struct FPanelSurfaceRegistration {
-        const char *WindowTitle = nullptr;
-        EWorkspaceTab Workspace = EWorkspaceTab::Simulations;
-        bool *bVisible = nullptr;
-        bool bForceVisibleInWorkspace = false;
-        bool bHideTitleBarWhenDocked = false;
-        std::function<void()> DrawContents;
-    };
-
-    struct FWorkspacePanelVisibility {
-        bool bShowWindowLab = false;
-        bool bShowWindowSimulationLauncher = true;
-        bool bShowWindowTasks = true;
-        bool bShowWindowLiveData = true;
-        bool bShowWindowLiveControl = true;
-        bool bShowWindowLiveInteraction = true;
-        bool bShowWindowViews = true;
-        bool bShowWindowSchemeInspector = false;
-        bool bShowWindowBlueprintGraph = false;
-        bool bShowWindowModelInspector = false;
-        bool bShowWindowModelVocabulary = false;
-        bool bShowWindowModelDefinitions = false;
-        bool bShowWindowModelRelations = false;
-        bool bShowWindowModelEditor = false;
-        bool bShowWindowModelSemanticGraph = false;
-        bool bShowWindowModelAssumptions = false;
-        bool bShowWindowModelDetails = false;
-        bool bShowWindowOntologyLayer = false;
-        bool bShowWindowOntologyDetails = false;
-        bool bShowWindowOntologyOverview = false;
-        bool bShowWindowOntologyFocus = false;
-        bool bShowWindowGraphPlayground = false;
-        bool bShowWindowPlotInspector = false;
-    };
-
     static constexpr std::size_t WorkspaceCount = 6;
     using FSlabWindowPtr = Slab::TPointer<Slab::Graphics::FSlabWindow>;
     using FSlabWindowVec = Slab::Vector<FSlabWindowPtr>;
+    using FHostedSurfacePtr = Slab::Graphics::Windowing::V2::FHostedSurfaceV2_ptr;
+    using FPanelSurfaceRegistration = Slab::Graphics::Windowing::V2::FPanelSurfaceRegistrationV2;
+    using FWorkspaceVisibilityItem = Slab::Graphics::Windowing::V2::FWorkspaceVisibilityItemV2;
     struct FPendingSlabWindow {
         FSlabWindowPtr Window = nullptr;
         EWorkspaceTab Workspace = EWorkspaceTab::Simulations;
@@ -151,7 +122,7 @@ private:
     Slab::Str LegacyCatalogSourceId;
     Slab::Str PlotCatalogSourceId;
     Slab::Vector<Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr> PlotWindowsV2;
-    std::map<Slab::Str, FSlabWindowPtr> PlotWindowHostsByWindowId;
+    std::map<Slab::Str, FHostedSurfacePtr> PlotHostedSurfacesByWindowId;
     Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr ModelSemanticGraphWindowV2;
     Slab::Graphics::Plot2D::V2::FPlotArtistV2_ptr ModelSemanticGraphArtistV2;
     Slab::Str ModelSemanticGraphWindowId = "model_semantic_graph";
@@ -396,27 +367,12 @@ private:
     double PlaygroundLastAutosaveTimestampSeconds = 0.0;
     double PlaygroundAutosaveIntervalSeconds = 1.25;
 
-    bool bUseDockspaceLayout = true;
-    bool bResetDockLayoutRequested = false;
+    Slab::Graphics::Windowing::V2::FWorkspaceShellStateV2 WorkspaceShellState;
     bool bPendingViewRetile = true;
     int RetileStabilizationFramesRemaining = 0;
     bool bRequestLauncherInitialDock = false;
     unsigned int LauncherInitialDockId = 0;
-    unsigned int DockspaceId = 0;
     EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Simulations;
-    bool bWorkspaceLayoutsBootstrapped = false;
-    std::array<bool, WorkspaceCount> WorkspaceLayoutInitialized = {false, false, false, false, false, false};
-    std::array<FWorkspacePanelVisibility, WorkspaceCount> WorkspacePanels = {
-        FWorkspacePanelVisibility{false, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, true, true, true, true, true, true, true, false, false, false, false, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, true, true, true, false, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true, false},
-        FWorkspacePanelVisibility{false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true}
-    };
-    float WorkspaceTabsHeight = 0.0f;
-    float WorkspaceStripHeight = 0.0f;
-    float WorkspaceLauncherWidth = 52.0f;
     bool bShowWindowLab = true;
     bool bShowWindowSimulationLauncher = true;
     bool bShowWindowTasks = true;
@@ -438,6 +394,7 @@ private:
     auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
     auto QueueSlabWindowInWorkspace(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window,
                                     EWorkspaceTab workspace) -> void;
+    auto QueueHostedSurface(const FHostedSurfacePtr &surface) -> void;
     auto AddSlabWindowInWorkspace(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window,
                                   EWorkspaceTab workspace,
                                   bool hidden = false) -> void;
@@ -456,6 +413,9 @@ private:
     auto FocusOntologyOverviewWindow() -> void;
     auto SyncPlotWorkspaceWindows() -> void;
     auto PruneClosedSlabWindows() -> bool;
+    [[nodiscard]] auto FindPlotHostedSurface(const Slab::Str &surfaceId) const -> FHostedSurfacePtr;
+    [[nodiscard]] auto FindHostedSurfaceByWindow(const FSlabWindowPtr &window) const -> FHostedSurfacePtr;
+    [[nodiscard]] static auto GetSlabWindowForHostedSurface(const FHostedSurfacePtr &surface) -> FSlabWindowPtr;
     [[nodiscard]] auto GetWorkspaceForWindow(const FSlabWindowPtr &window) const -> EWorkspaceTab;
     [[nodiscard]] auto GetWorkspaceWindows(EWorkspaceTab workspace) const -> FSlabWindowVec;
     [[nodiscard]] auto IsWorkspaceWindowVisible(const FSlabWindowPtr &window, EWorkspaceTab workspace) const -> bool;
@@ -465,6 +425,7 @@ private:
     auto DrawWorkspaceStrip() -> void;
     auto DrawDockspaceHost() -> void;
     auto DrawDockedToolWindows() -> void;
+    [[nodiscard]] auto BuildWorkspaceVisibilityItems() -> std::vector<FWorkspaceVisibilityItem>;
     auto BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfaceRegistration>;
     auto DrawPanelSurface(const FPanelSurfaceRegistration &registration) -> void;
     auto DrawSchemesInspectorPanel() -> void;
@@ -503,7 +464,12 @@ private:
     auto LoadGraphPlaygroundStateFromFileImpl() -> bool;
     auto DrawPlotsInspectorPanel() -> void;
     auto DrawLegacySidePane() -> void;
-    auto BuildDefaultDockLayout(unsigned int dockspaceId, EWorkspaceTab workspace) -> void;
+    [[nodiscard]] static auto GetWorkspaceDefinitions()
+        -> const std::array<Slab::Graphics::Windowing::V2::FWorkspaceDefinitionV2, WorkspaceCount> &;
+    [[nodiscard]] static auto GetWorkspaceDefinition(EWorkspaceTab workspace)
+        -> const Slab::Graphics::Windowing::V2::FWorkspaceDefinitionV2 &;
+    [[nodiscard]] static auto BuildDefaultWorkspaceDockLayout(EWorkspaceTab workspace)
+        -> Slab::Graphics::Windowing::V2::FWorkspaceDockLayoutV2;
     [[nodiscard]] auto BuildReflectionInvocationContext() const -> Slab::Core::Reflection::V2::FInvocationContextV2;
     [[nodiscard]] auto BuildSchemeParameterDraftKey(const Slab::Str &interfaceId, const Slab::Str &parameterId) const -> Slab::Str;
     [[nodiscard]] auto BuildPlotParameterDraftKey(const Slab::Str &interfaceId, const Slab::Str &parameterId) const -> Slab::Str;
@@ -545,6 +511,7 @@ private:
     auto HideSlabWindowsOffscreen() -> void;
     auto DrawViewManagerPanel() -> void;
     auto FocusWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
+    auto FocusHostedSurface(const FHostedSurfacePtr &surface) -> void;
     auto RequestViewRetile(int stabilizationFrames = 3) -> void;
     [[nodiscard]] auto FindTopWindowAtPoint(int x, int y) const -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
     [[nodiscard]] auto FindKeyboardTargetWindow() const -> Slab::TPointer<Slab::Graphics::FSlabWindow>;

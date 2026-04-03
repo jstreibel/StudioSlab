@@ -156,6 +156,23 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - deterministic layout plus harmonic-oscillator / Klein-Gordon coverage are in place
   - ontology plot-space text and node sizing now scale coherently with graph zoom
 
+## Progress Notes (2026-04-03)
+
+- `LAB-18` progressed: shared default windowing extraction first slice:
+  - added `Docs/labv2-default-windowing-migration-plan.md`
+  - moved shared workspace definitions + dock-layout recipe vocabulary into `Slab/Graphics/Window/V2/WorkspaceLayoutV2.*`
+  - `LabV2` now consumes the shared dock-layout application helper instead of hardcoding every default dock split inline in one method
+  - follow-up work remained the shared workspace shell, panel registry extraction, and hosted-surface boundary (`FHostedSurfaceV2` / plot-host adapters)
+- `LAB-18` progressed again: shared workspace shell extraction second slice:
+  - added `Slab/Graphics/Window/V2/WorkspaceShellV2.*`
+  - moved shared shell state, workspace launcher/tabs/visibility strip, dockspace host, and panel draw helpers into `Slab`
+  - `LabV2` now contributes workspace declarations, visibility items, panel registrations, and launcher-dock hooks instead of owning the full shell implementation inline
+- `LAB-19` started: hosted-surface boundary first slice:
+  - added `Slab/Graphics/Window/V2/HostedSurfaceV2.*`
+  - locked the public hosted-surface direction to `FHostedSurfaceV2`
+  - `LabV2` plot-host routing now tracks hosted surfaces instead of raw plot-host windows for sync, visibility, and focus-preparation flow
+  - next work is widening hosted-surface coverage beyond plot hosts, then WebGL2 renderer parity
+
 ### `P0` `RV2-00` — Reflection V2 contract freeze — done
 - Define `Interface`/`Parameter`/`Operation` schema contracts.
 - Define operation invocation result shape and policy enums.
@@ -253,6 +270,16 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - status: active
   - extracted the V2 plot host out of `LabV2WindowManager.cpp`
   - port remaining legacy plot artists (`Labels`, `XHair`, `History`, `R2toR`) into V2-native paths
+- `P1` `LAB-18` — Shared default windowing layout extraction
+  - plan reference: `Docs/labv2-default-windowing-migration-plan.md`
+  - status: active
+  - shared workspace definitions, dock-layout recipes, and workspace shell helpers now live in `Slab/Graphics/Window/V2/`
+  - keep panel contents, workspace-specific labels, and domain state in `Studios/LabV2/`
+  - remaining work is default adoption cleanup plus the hosted-surface boundary handoff into `LAB-19`
+- `P1` `LAB-19` — Hosted surface boundary (`FHostedSurfaceV2` / `FSlabHostedSurfaceV2`)
+  - plan reference: `Docs/labv2-default-windowing-migration-plan.md`
+  - wrap the current slab-window / plot-host lifecycle in a reusable hosted-surface contract
+  - formalize focus, visibility, workspace routing, and plot-host registration outside `FLabV2WindowManager`
 - `P2` `LAB-17` — Plot V2 node graph / artist patchbay planning track
   - plan reference: `Docs/plot-v2-node-graph-plan.md`
   - runtime-first `Plots Graph`: live plot windows as nodes, artists as child nodes
@@ -300,6 +327,10 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
     - reusable Emscripten target helper landed
     - standalone WebGL2 + ImGui wasm sandboxes landed
     - shared desktop/browser backend split is still pending
+- `P2` `PLAT-01` — WebGL2 Plot V2 backend
+  - plan reference: `Docs/labv2-default-windowing-migration-plan.md`
+  - add `FWebGL2RenderBackendV2` over `IPlotRenderBackendV2` for one bounded browser-safe plot surface
+  - keep the first slice geometry-first and allow temporary text/HUD degradation while the browser text path is defined
 
 ## Working Rule (Entropy Control)
 

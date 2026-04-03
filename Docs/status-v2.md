@@ -2,11 +2,21 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-03-29`
-- Last implementation update: `2026-03-29` (WASM helper + Plot2D render-backend injection)
-- Last architecture-doc update: `2026-03-29` (repo architecture + wasm docs refreshed)
+- Snapshot date: `2026-04-03`
+- Last implementation update: `2026-04-03` (`FHostedSurfaceV2` extraction + LabV2 plot-host routing migration)
+- Last architecture-doc update: `2026-04-03` (windowing migration plan/status refresh)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
-- Build-target sanity check date: `2026-03-29` (`StudioSlab` and `testsuite` build in `cmake-build-debug`; local `emcmake`/`em++` unavailable; `[Plot2DV2]` still fails on an existing HUD-text assertion)
+- Build-target sanity check date: `2026-04-03` (`StudioSlab` builds in `cmake-build-debug` after the shared workspace shell extraction; `emcmake` configure plus `WebGLWasmSandbox` / `WasmImGuiSandbox` / `WasmWorkspaceSandbox` build locally in `cmake-build-webgl-wasm` with `Emscripten 3.1.6`; `[Plot2DV2]` still fails on an existing HUD-text assertion)
+
+## Recent Validation (`2026-04-03`, wasm)
+
+- Verified `emcmake cmake -S Studios/WebGL-WASM -B cmake-build-webgl-wasm` succeeds locally.
+- Verified all bounded browser targets build locally:
+  - `WebGLWasmSandbox`
+  - `WasmImGuiSandbox`
+  - `WasmWorkspaceSandbox`
+- Expected `.html`, `.js`, and `.wasm` artifacts are emitted under `cmake-build-webgl-wasm/Build/bin/`.
+- Prior `emrun --no_browser` serving validation remains in place for the first two sandboxes; concurrent sandbox launches still need distinct `--port` values to avoid default-port collisions.
 
 ## Recent Updates (`2026-03-29`, platform/tooling)
 
@@ -16,6 +26,54 @@
   - `WasmImGuiSandbox`
 - `FPlot2DWindowHostV2` no longer hardcodes one concrete render backend instance and now accepts injected `IPlotRenderBackendV2` implementations while defaulting to the current OpenGL backend.
 - This is still not a `LabV2` browser port; desktop graphics/dependency partitioning remains the main blocker.
+
+## Recent Updates (`2026-04-02`, shared windowing extraction)
+
+- Default editor-style windowing migration plan added:
+  - `Docs/labv2-default-windowing-migration-plan.md`
+- First shared shell/layout slice landed under `Slab`:
+  - `Slab/Graphics/Window/V2/WorkspaceLayoutV2.*`
+  - shared workspace definitions + dock-layout recipe vocabulary
+  - shared ImGui dock-layout application helper
+- `LabV2` now consumes the shared workspace/dock recipe layer for its default docked layout instead of hardcoding all dock splits directly inside one window-manager method.
+- `FHostedSurfaceV2` is now the public hosted-surface direction for editor-style windowing.
+- desktop plot/editor surfaces still render through the existing `FSlabWindow` / `FPlot2DWindowHostV2` path, now wrapped by the hosted-surface contract instead of replacing it.
+
+## Recent Updates (`2026-04-03`, shared workspace shell extraction)
+
+- `LAB-18` advanced through the WN-01 shell layer:
+  - added `Slab/Graphics/Window/V2/WorkspaceShellV2.*`
+  - shared workspace launcher, tab strip, workspace visibility strip, dockspace host, and panel-surface draw helpers now live under `Slab`
+  - shared per-workspace visibility persistence moved out of `FLabV2WindowManager`
+- `LabV2` now consumes the shared shell contract by supplying:
+  - workspace definitions
+  - workspace visibility items
+  - panel registrations
+  - the simulation-launcher initial-dock hook
+- slab-window routing still remains partially local to `LabV2`; the next boundary is widening hosted-surface coverage beyond plot hosts and then converging more of the remaining raw `FSlabWindow` glue.
+
+## Recent Updates (`2026-04-03`, hosted surface extraction)
+
+- `LAB-19` started with the public hosted-surface direction now locked to `FHostedSurfaceV2`:
+  - added `Slab/Graphics/Window/V2/HostedSurfaceV2.*`
+  - added `FSlabHostedSurfaceV2` as the shared adapter over the current `FSlabWindow` lifecycle
+- `LabV2` plot-host routing now uses hosted surfaces for:
+  - plot-host discovery/sync
+  - per-surface visibility checks
+  - focus preparation before bringing hosted slab windows forward
+- this is still an extraction, not a pipeline rewrite:
+  - hosted plot surfaces continue rendering through `FPlot2DWindowHostV2`
+  - generic non-plot slab windows still remain on the raw `FSlabWindow` path
+
+## Recent Updates (`2026-04-03`, wasm workspace sample)
+
+- Added `WasmWorkspaceSandbox` under `Studios/WebGL-WASM/`:
+  - browser-hosted sample that reuses `WorkspaceLayoutV2` + `WorkspaceShellV2`
+  - demonstrates top launcher, top tabs, workspace visibility strip, docked panels, and browser-safe preview surfaces
+- The shared windowing shell now has one bounded wasm proof point without depending on the desktop `FSlabWindow` stack.
+- This is still a shell sample, not a browser plot renderer:
+  - preview surfaces are immediate-mode ImGui draw-list placeholders
+  - `IPlotRenderBackendV2` / WebGL2 plot-backend migration remains future work
 
 ## Recent Updates (`2026-03-22`, implementation)
 
