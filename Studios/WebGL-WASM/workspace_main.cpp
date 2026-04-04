@@ -86,6 +86,7 @@ namespace {
         unsigned int RejectedLastSweep = 0;
         int HoveredI = -1;
         int HoveredJ = -1;
+        int HistoryPointBudget = 240;
         std::vector<float> MagnetizationHistory;
         std::vector<float> EnergyHistory;
         std::vector<float> AcceptanceHistory;
@@ -447,12 +448,33 @@ namespace {
     }
 
 #if defined(STUDIOSLAB_WASM_ISING_WORKSPACE)
-    auto PushIsingHistorySample(std::vector<float> &history, const float value) -> void {
-        constexpr std::size_t MaxHistorySamples = 240;
-        history.push_back(value);
-        if (history.size() > MaxHistorySamples) {
-            history.erase(history.begin(), history.begin() + 1);
+    [[nodiscard]] auto ClampIsingHistoryPointBudget(const int value) -> int {
+        return std::clamp(value, 32, 960);
+    }
+
+    auto TrimIsingHistorySample(std::vector<float> &history, const std::size_t maxHistorySamples) -> void {
+        if (history.size() > maxHistorySamples) {
+            history.erase(
+                history.begin(),
+                history.begin() + static_cast<std::vector<float>::difference_type>(history.size() - maxHistorySamples));
         }
+    }
+
+    auto TrimAllIsingHistories(FIsingMetropolisStateWasm &ising) -> void {
+        const auto maxHistorySamples = static_cast<std::size_t>(ClampIsingHistoryPointBudget(ising.HistoryPointBudget));
+        ising.HistoryPointBudget = static_cast<int>(maxHistorySamples);
+        TrimIsingHistorySample(ising.MagnetizationHistory, maxHistorySamples);
+        TrimIsingHistorySample(ising.EnergyHistory, maxHistorySamples);
+        TrimIsingHistorySample(ising.AcceptanceHistory, maxHistorySamples);
+        TrimIsingHistorySample(ising.ExternalFieldHistory, maxHistorySamples);
+        TrimIsingHistorySample(ising.MagnetizationFieldHistory, maxHistorySamples);
+    }
+
+    auto PushIsingHistorySample(std::vector<float> &history,
+                                const float value,
+                                const std::size_t maxHistorySamples) -> void {
+        history.push_back(value);
+        TrimIsingHistorySample(history, maxHistorySamples);
     }
 
     [[nodiscard]] auto ClampIsingLatticeSize(const int value) -> int {
@@ -511,11 +533,14 @@ namespace {
         ising.AcceptedLastSweep = accepted;
         ising.RejectedLastSweep = rejected;
 
-        PushIsingHistorySample(ising.MagnetizationHistory, static_cast<float>(ising.Magnetization));
-        PushIsingHistorySample(ising.EnergyHistory, static_cast<float>(ising.EnergyDensity));
-        PushIsingHistorySample(ising.AcceptanceHistory, static_cast<float>(ising.AcceptanceRatio));
-        PushIsingHistorySample(ising.ExternalFieldHistory, static_cast<float>(ising.ExternalField));
-        PushIsingHistorySample(ising.MagnetizationFieldHistory, static_cast<float>(ising.Magnetization));
+        const auto maxHistorySamples = static_cast<std::size_t>(ClampIsingHistoryPointBudget(ising.HistoryPointBudget));
+        ising.HistoryPointBudget = static_cast<int>(maxHistorySamples);
+
+        PushIsingHistorySample(ising.MagnetizationHistory, static_cast<float>(ising.Magnetization), maxHistorySamples);
+        PushIsingHistorySample(ising.EnergyHistory, static_cast<float>(ising.EnergyDensity), maxHistorySamples);
+        PushIsingHistorySample(ising.AcceptanceHistory, static_cast<float>(ising.AcceptanceRatio), maxHistorySamples);
+        PushIsingHistorySample(ising.ExternalFieldHistory, static_cast<float>(ising.ExternalField), maxHistorySamples);
+        PushIsingHistorySample(ising.MagnetizationFieldHistory, static_cast<float>(ising.Magnetization), maxHistorySamples);
     }
 
     auto ResetIsingState(FWorkspaceSandboxApp &app, const bool logEvent = true) -> void {
@@ -889,7 +914,7 @@ namespace {
                 FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.24f},
                 FDockNodeSplitV2{"main", "dock_right", "main", EDockSplitDirectionV2::Right, 0.28f},
                 FDockNodeSplitV2{"dock_right", "dock_right_bottom", "dock_right", EDockSplitDirectionV2::Down, 0.50f},
-                FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.36f}
+                FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.44f}
             };
             layout.Placements = {
                 FDockWindowPlacementV2{WindowTitleIsingControls, "dock_left"},
@@ -1123,6 +1148,15 @@ namespace {
                     ++ising.Seed;
                     ising.bPendingReset = true;
                 }
+
+                ImGui::Separator();
+
+                int historyPointBudget = ising.HistoryPointBudget;
+                if (ImGui::SliderInt("History points", &historyPointBudget, 32, 960)) {
+                    ising.HistoryPointBudget = historyPointBudget;
+                    TrimAllIsingHistories(ising);
+                }
+                ImGui::TextDisabled("Applies to Observable History and the h x m loop trace.");
 
                 ImGui::Spacing();
                 ImGui::TextDisabled("Critical temperature Tc ~= 2.269185");

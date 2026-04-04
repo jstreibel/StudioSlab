@@ -121,7 +121,7 @@
 - Slab monitor windows are rendered/interactive only in the `Monitor` workspace.
 - `Simulations` and `Schemes` workspaces should not show monitor slab-window leftovers.
 - Simulation launcher labels should avoid `V2` prefixing and model-specific clutter where a generic control label is sufficient.
-- In `WasmIsingWorkspaceSandbox`, `Observable History` belongs to the `Simulation` workspace, is the default selected tab in the bottom dock stack, and shares that taller stack with `Run Inspector` and `Event Console`; the `Observables` workspace keeps `Sampling Controls` plus `Sweep Statistics`.
+- In `WasmIsingWorkspaceSandbox`, `Observable History` belongs to the `Simulation` workspace, is the default selected tab in the bottom dock stack, and shares that taller stack with `Run Inspector` and `Event Console`; the `Observables` workspace keeps `Sampling Controls` plus `Sweep Statistics`, and `History points` in `Ising Controls` drives both the observable plots and the `h x m` loop trace.
 - In the Model workspace, semantic concerns are split into dockable windows instead of one monolithic panel.
 - The Model workspace visibility toggle labeled `Summary` maps to the panel titled `Model Layer`.
 - `Model Layer` owns the high-level semantic summary, the `Semantic Graph -> Open Graph` entry point, and the ODE realization readiness summary.

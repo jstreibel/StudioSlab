@@ -27,6 +27,7 @@
   - `Observable History`
   - `Event Console`
 - `Observable History` is the default selected tab in that stack and the stack height was increased to give the history plots more room.
+- A shared `History points` control now lives in `Browser-local Metropolis kernel` and caps both `Observable History` plots and the `External field x magnetization` trace with the same retained sample count.
 - The `Observables` workspace now keeps the lighter two-panel arrangement:
   - `Sampling Controls`
   - `Sweep Statistics`
