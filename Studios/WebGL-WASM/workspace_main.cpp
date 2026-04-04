@@ -929,7 +929,7 @@ namespace {
                 FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.24f},
                 FDockNodeSplitV2{"main", "dock_right_outer", "main", EDockSplitDirectionV2::Right, 0.28f},
                 FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.44f},
-                FDockNodeSplitV2{"main", "dock_right_inner", "main", EDockSplitDirectionV2::Right, 0.36f}
+                FDockNodeSplitV2{"main", "dock_right_inner", "main", EDockSplitDirectionV2::Right, 0.50f}
             };
             layout.Placements = {
                 FDockWindowPlacementV2{WindowTitleIsingControls, "dock_left"},

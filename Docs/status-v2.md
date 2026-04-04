@@ -3,7 +3,7 @@
 ## Snapshot Metadata
 
 - Snapshot date: `2026-04-04`
-- Last implementation update: `2026-04-04` (`WasmIsingWorkspaceSandbox` panel routing update for `Observable History`)
+- Last implementation update: `2026-04-04` (`WasmIsingWorkspaceSandbox` equal-width `Spin Lattice` / `Hysteresis Trace` docking tune`)
 - Last architecture-doc update: `2026-04-03` (windowing migration plan/status refresh)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
 - Build-target sanity check date: `2026-04-03` (`StudioSlab` builds in `cmake-build-debug` after the shared workspace shell extraction; `emcmake` configure plus `WebGLWasmSandbox` / `WasmImGuiSandbox` / `WasmWorkspaceSandbox` / `WasmIsingWorkspaceSandbox` build locally in `cmake-build-webgl-wasm` with `Emscripten 3.1.6`; `[Plot2DV2]` still fails on an existing HUD-text assertion)
@@ -29,7 +29,7 @@
 - `Observable History` is the default selected tab in that stack and the stack height was increased to give the history plots more room.
 - A shared `History points` control now lives in `Browser-local Metropolis kernel` and caps both `Observable History` plots and the `External field x magnetization` trace with the same retained sample count.
 - `Browser-local Metropolis kernel` now keeps `L`, `T`, `h`, and `Seed` in the top block, moves the remaining run/history controls below the first separator, and mirrors the preset actions below a second separator.
-- The default `Simulation` top row now docks `Hysteresis Trace` immediately to the right of `Spin Lattice`, while `Phase Snapshot` remains on the far-right rail and the bottom history stack stays beneath the center trace area.
+- The default `Simulation` top row now docks `Hysteresis Trace` immediately to the right of `Spin Lattice` with an equal-width split, while `Phase Snapshot` remains on the far-right rail and the bottom history stack stays beneath the center trace area.
 - The `Observables` workspace now keeps the lighter two-panel arrangement:
   - `Sampling Controls`
   - `Sweep Statistics`
