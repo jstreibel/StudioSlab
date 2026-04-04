@@ -14,21 +14,42 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
+#include <random>
+#include <string>
 #include <vector>
 
 namespace {
 
     namespace WindowingV2 = Slab::Graphics::Windowing::V2;
 
-    constexpr auto WorkspaceIdExplore = "explore";
-    constexpr auto WorkspaceIdPlots = "plots";
-    constexpr auto WorkspaceIdAssets = "assets";
-
     constexpr auto ThemeIdStudioSlab = "studio_slab";
     constexpr auto ThemeIdScientificPaper = "scientific_paper";
     constexpr auto ThemeIdScientificSlate = "scientific_slate";
     constexpr auto ThemeIdBlueprintNight = "blueprint_night";
+
+#if defined(STUDIOSLAB_WASM_ISING_WORKSPACE)
+    constexpr auto WorkspaceIdSimulation = "simulation";
+    constexpr auto WorkspaceIdObservables = "observables";
+    constexpr auto WorkspaceIdStudy = "study";
+
+    constexpr auto WindowTitleIsingControls = "Ising Controls";
+    constexpr auto WindowTitleSpinLattice = "Spin Lattice";
+    constexpr auto WindowTitleRunInspector = "Run Inspector";
+    constexpr auto WindowTitleEventConsole = "Event Console";
+
+    constexpr auto WindowTitleSamplingControls = "Sampling Controls";
+    constexpr auto WindowTitleObservableHistory = "Observable History";
+    constexpr auto WindowTitleSweepStatistics = "Sweep Statistics";
+
+    constexpr auto WindowTitlePresetBrowser = "Preset Browser";
+    constexpr auto WindowTitlePhaseSnapshot = "Phase Snapshot";
+    constexpr auto WindowTitleModelNotes = "Model Notes";
+#else
+    constexpr auto WorkspaceIdExplore = "explore";
+    constexpr auto WorkspaceIdPlots = "plots";
+    constexpr auto WorkspaceIdAssets = "assets";
 
     constexpr auto WindowTitleSceneOutline = "Scene Outline";
     constexpr auto WindowTitleViewportPreview = "Viewport Preview";
@@ -42,13 +63,57 @@ namespace {
     constexpr auto WindowTitleAssetBrowser = "Asset Browser";
     constexpr auto WindowTitlePreviewBoard = "Preview Board";
     constexpr auto WindowTitleDetails = "Details";
+#endif
+
+#if defined(STUDIOSLAB_WASM_ISING_WORKSPACE)
+    struct FIsingMetropolisStateWasm {
+        int L = 64;
+        double Temperature = 2.269185314;
+        double ExternalField = 0.0;
+        bool bFerromagneticInitial = false;
+        bool bRunning = true;
+        bool bPendingReset = true;
+        int SweepsPerFrame = 1;
+        unsigned int Seed = 1337u;
+        std::mt19937 Rng = std::mt19937(Seed);
+        std::vector<std::int8_t> Spins;
+        std::uint64_t SweepCount = 0;
+        double EnergyDensity = 0.0;
+        double Magnetization = 0.0;
+        double AcceptanceRatio = 0.0;
+        unsigned int AcceptedLastSweep = 0;
+        unsigned int RejectedLastSweep = 0;
+        int HoveredI = -1;
+        int HoveredJ = -1;
+        std::vector<float> MagnetizationHistory;
+        std::vector<float> EnergyHistory;
+        std::vector<float> AcceptanceHistory;
+    };
+#endif
 
     struct FWorkspaceSandboxApp {
         GLFWwindow *Window = nullptr;
         ImVec4 ClearColor = ImVec4(0.06f, 0.08f, 0.11f, 1.0f);
         WindowingV2::FWorkspaceShellStateV2 WorkspaceShellState;
-        Slab::Str ActiveWorkspaceId = WorkspaceIdExplore;
         Slab::Str ActiveThemeId = ThemeIdStudioSlab;
+#if defined(STUDIOSLAB_WASM_ISING_WORKSPACE)
+        Slab::Str ActiveWorkspaceId = WorkspaceIdSimulation;
+        FIsingMetropolisStateWasm Ising;
+
+        bool bShowIsingControls = true;
+        bool bShowSpinLattice = true;
+        bool bShowRunInspector = true;
+        bool bShowEventConsole = true;
+
+        bool bShowSamplingControls = true;
+        bool bShowObservableHistory = true;
+        bool bShowSweepStatistics = true;
+
+        bool bShowPresetBrowser = true;
+        bool bShowPhaseSnapshot = true;
+        bool bShowModelNotes = true;
+#else
+        Slab::Str ActiveWorkspaceId = WorkspaceIdExplore;
 
         bool bShowSceneOutline = true;
         bool bShowViewportPreview = true;
@@ -62,6 +127,7 @@ namespace {
         bool bShowAssetBrowser = true;
         bool bShowPreviewBoard = true;
         bool bShowDetails = true;
+#endif
 
         bool bAnimatePreview = true;
         bool bShowGrid = true;
@@ -343,11 +409,19 @@ namespace {
     }
 
     auto GetWorkspaceDefinitions() -> const std::array<WindowingV2::FWorkspaceDefinitionV2, 3> & {
+#if defined(STUDIOSLAB_WASM_ISING_WORKSPACE)
+        static const std::array<WindowingV2::FWorkspaceDefinitionV2, 3> Workspaces = {{
+            {WorkspaceIdSimulation, "Simulation", false},
+            {WorkspaceIdObservables, "Observables", false},
+            {WorkspaceIdStudy, "Study", false}
+        }};
+#else
         static const std::array<WindowingV2::FWorkspaceDefinitionV2, 3> Workspaces = {{
             {WorkspaceIdExplore, "Explore", false},
             {WorkspaceIdPlots, "Plots", false},
             {WorkspaceIdAssets, "Assets", false}
         }};
+#endif
         return Workspaces;
     }
 
@@ -367,6 +441,286 @@ namespace {
             app.EventLog.erase(app.EventLog.begin(), app.EventLog.begin() + 1);
         }
     }
+
+#if defined(STUDIOSLAB_WASM_ISING_WORKSPACE)
+    auto PushIsingHistorySample(std::vector<float> &history, const float value) -> void {
+        constexpr std::size_t MaxHistorySamples = 240;
+        history.push_back(value);
+        if (history.size() > MaxHistorySamples) {
+            history.erase(history.begin(), history.begin() + 1);
+        }
+    }
+
+    [[nodiscard]] auto ClampIsingLatticeSize(const int value) -> int {
+        // Keep the browser sandbox below the reported failure threshold until the
+        // larger-lattice issue is traced in the wasm runtime path.
+        return std::clamp(value, 8, 127);
+    }
+
+    [[nodiscard]] auto IsingCellIndex(const FIsingMetropolisStateWasm &ising, const int i, const int j) -> std::size_t {
+        return static_cast<std::size_t>(j) * static_cast<std::size_t>(ising.L) + static_cast<std::size_t>(i);
+    }
+
+    [[nodiscard]] auto IsingSpinAt(const FIsingMetropolisStateWasm &ising, int i, int j) -> int {
+        if (ising.L <= 0 || ising.Spins.empty()) return 0;
+        i = (i % ising.L + ising.L) % ising.L;
+        j = (j % ising.L + ising.L) % ising.L;
+        return static_cast<int>(ising.Spins[IsingCellIndex(ising, i, j)]);
+    }
+
+    [[nodiscard]] auto ComputeIsingNeighborSum(const FIsingMetropolisStateWasm &ising, const int i, const int j) -> int {
+        return IsingSpinAt(ising, i, j - 1)
+             + IsingSpinAt(ising, i, j + 1)
+             + IsingSpinAt(ising, i + 1, j)
+             + IsingSpinAt(ising, i - 1, j);
+    }
+
+    auto MeasureIsingState(FIsingMetropolisStateWasm &ising,
+                           const unsigned int accepted,
+                           const unsigned int rejected) -> void {
+        const auto latticeSize = static_cast<double>(ising.L) * static_cast<double>(ising.L);
+        if (latticeSize <= 0.0 || ising.Spins.empty()) {
+            ising.EnergyDensity = 0.0;
+            ising.Magnetization = 0.0;
+            ising.AcceptanceRatio = 0.0;
+            ising.AcceptedLastSweep = accepted;
+            ising.RejectedLastSweep = rejected;
+            return;
+        }
+
+        double energy = 0.0;
+        double magnetization = 0.0;
+        for (int j = 0; j < ising.L; ++j) {
+            for (int i = 0; i < ising.L; ++i) {
+                const auto s = static_cast<double>(IsingSpinAt(ising, i, j));
+                const auto east = static_cast<double>(IsingSpinAt(ising, i + 1, j));
+                const auto south = static_cast<double>(IsingSpinAt(ising, i, j + 1));
+                energy -= s * (east + south);
+                energy -= ising.ExternalField * s;
+                magnetization += s;
+            }
+        }
+
+        ising.EnergyDensity = energy / latticeSize;
+        ising.Magnetization = magnetization / latticeSize;
+        ising.AcceptanceRatio = static_cast<double>(accepted) / latticeSize;
+        ising.AcceptedLastSweep = accepted;
+        ising.RejectedLastSweep = rejected;
+
+        PushIsingHistorySample(ising.MagnetizationHistory, static_cast<float>(ising.Magnetization));
+        PushIsingHistorySample(ising.EnergyHistory, static_cast<float>(ising.EnergyDensity));
+        PushIsingHistorySample(ising.AcceptanceHistory, static_cast<float>(ising.AcceptanceRatio));
+    }
+
+    auto ResetIsingState(FWorkspaceSandboxApp &app, const bool logEvent = true) -> void {
+        auto &ising = app.Ising;
+        ising.L = ClampIsingLatticeSize(ising.L);
+        ising.SweepsPerFrame = std::clamp(ising.SweepsPerFrame, 1, 32);
+        ising.Rng.seed(ising.Seed);
+        ising.Spins.assign(static_cast<std::size_t>(ising.L) * static_cast<std::size_t>(ising.L), 1);
+
+        std::bernoulli_distribution spinPick(0.5);
+        if (!ising.bFerromagneticInitial) {
+            for (auto &spin : ising.Spins) {
+                spin = spinPick(ising.Rng) ? std::int8_t(1) : std::int8_t(-1);
+            }
+        }
+
+        ising.SweepCount = 0;
+        ising.HoveredI = -1;
+        ising.HoveredJ = -1;
+        ising.MagnetizationHistory.clear();
+        ising.EnergyHistory.clear();
+        ising.AcceptanceHistory.clear();
+        ising.bPendingReset = false;
+        MeasureIsingState(ising, 0, 0);
+
+        if (logEvent) {
+            AppendEvent(
+                app,
+                Slab::Str("Reset Ising lattice to ")
+                    + std::to_string(ising.L) + "x" + std::to_string(ising.L)
+                    + (ising.bFerromagneticInitial ? " ferromagnetic" : " random"));
+        }
+    }
+
+    auto RunIsingSweep(FIsingMetropolisStateWasm &ising) -> void {
+        if (ising.Spins.empty() || ising.L < 2) return;
+
+        std::uniform_int_distribution<int> pickCell(0, ising.L - 1);
+        std::uniform_real_distribution<double> pickUnit(0.0, 1.0);
+
+        unsigned int accepted = 0;
+        unsigned int rejected = 0;
+        const auto attempts = ising.L * ising.L;
+
+        for (int trial = 0; trial < attempts; ++trial) {
+            const auto i = pickCell(ising.Rng);
+            const auto j = pickCell(ising.Rng);
+            const auto s = static_cast<double>(IsingSpinAt(ising, i, j));
+            const auto neighborSum = static_cast<double>(ComputeIsingNeighborSum(ising, i, j));
+            const auto deltaEnergy = 2.0 * s * (neighborSum + ising.ExternalField);
+
+            bool accept = deltaEnergy <= 0.0;
+            if (!accept && ising.Temperature > 0.0) {
+                const auto boltzmann = std::exp(-deltaEnergy / ising.Temperature);
+                accept = pickUnit(ising.Rng) < std::min(1.0, boltzmann);
+            }
+
+            if (accept) {
+                auto &spin = ising.Spins[IsingCellIndex(ising, i, j)];
+                spin = static_cast<std::int8_t>(-spin);
+                ++accepted;
+            } else {
+                ++rejected;
+            }
+        }
+
+        ++ising.SweepCount;
+        MeasureIsingState(ising, accepted, rejected);
+    }
+
+    auto TickIsingSimulation(FWorkspaceSandboxApp &app) -> void {
+        if (app.Ising.Spins.empty()) {
+            ResetIsingState(app, false);
+        }
+
+        if (!app.Ising.bRunning || app.Ising.bPendingReset) return;
+        for (int sweep = 0; sweep < app.Ising.SweepsPerFrame; ++sweep) {
+            RunIsingSweep(app.Ising);
+        }
+    }
+
+    auto ApplyIsingPreset(FWorkspaceSandboxApp &app,
+                          const int latticeSize,
+                          const double temperature,
+                          const double externalField,
+                          const bool bFerromagneticInitial,
+                          const int sweepsPerFrame,
+                          const char *label) -> void {
+        app.Ising.L = ClampIsingLatticeSize(latticeSize);
+        app.Ising.Temperature = temperature;
+        app.Ising.ExternalField = externalField;
+        app.Ising.bFerromagneticInitial = bFerromagneticInitial;
+        app.Ising.SweepsPerFrame = std::clamp(sweepsPerFrame, 1, 32);
+        app.Ising.bPendingReset = true;
+        ResetIsingState(app, false);
+        AppendEvent(app, Slab::Str("Applied Ising preset ") + label);
+    }
+
+    auto DrawIsingLatticeSurface(FWorkspaceSandboxApp &app,
+                                 const char *canvasId,
+                                 const char *caption) -> void {
+        ImGui::TextDisabled("%s", caption);
+        ImGui::Separator();
+
+        ImVec2 size = ImGui::GetContentRegionAvail();
+        const float side = std::max(220.0f, std::min(size.x, size.y > 32.0f ? size.y - 28.0f : size.x));
+        size = ImVec2(side, side);
+
+        const auto cursor = ImGui::GetCursorScreenPos();
+        const auto min = cursor;
+        const auto max = ImVec2(cursor.x + size.x, cursor.y + size.y);
+        auto *drawList = ImGui::GetWindowDrawList();
+
+        drawList->AddRectFilled(min, max, ImGui::GetColorU32(ImGuiCol_FrameBg), 8.0f);
+        drawList->AddRect(min, max, ImGui::GetColorU32(ImGuiCol_Border), 8.0f, 0, 1.0f);
+
+        auto &ising = app.Ising;
+        if (!ising.Spins.empty() && ising.L > 0) {
+            const float cellSize = size.x / static_cast<float>(ising.L);
+            const auto spinUpColor = IM_COL32(243, 191, 92, 255);
+            const auto spinDownColor = IM_COL32(89, 155, 228, 255);
+
+            for (int j = 0; j < ising.L; ++j) {
+                for (int i = 0; i < ising.L; ++i) {
+                    const auto x0 = min.x + static_cast<float>(i) * cellSize;
+                    const auto y0 = min.y + static_cast<float>(j) * cellSize;
+                    const auto x1 = min.x + static_cast<float>(i + 1) * cellSize;
+                    const auto y1 = min.y + static_cast<float>(j + 1) * cellSize;
+                    const auto color = IsingSpinAt(ising, i, j) > 0 ? spinUpColor : spinDownColor;
+                    drawList->AddRectFilled(ImVec2(x0, y0), ImVec2(x1, y1), color);
+                }
+            }
+
+            if (ising.L <= 40) {
+                const auto gridColor = IM_COL32(16, 18, 24, 48);
+                for (int index = 1; index < ising.L; ++index) {
+                    const auto offset = static_cast<float>(index) * cellSize;
+                    drawList->AddLine(ImVec2(min.x + offset, min.y), ImVec2(min.x + offset, max.y), gridColor, 1.0f);
+                    drawList->AddLine(ImVec2(min.x, min.y + offset), ImVec2(max.x, min.y + offset), gridColor, 1.0f);
+                }
+            }
+        } else {
+            drawList->AddText(
+                ImVec2(min.x + 14.0f, min.y + 12.0f),
+                ImGui::GetColorU32(ImGuiCol_TextDisabled),
+                "Reset the lattice to initialize the browser Ising state.");
+        }
+
+        ImGui::InvisibleButton(canvasId, size);
+        if (ImGui::IsItemHovered() && !ising.Spins.empty() && ising.L > 0) {
+            const auto mouse = ImGui::GetIO().MousePos;
+            const float localX = std::clamp(mouse.x - min.x, 0.0f, size.x - 0.001f);
+            const float localY = std::clamp(mouse.y - min.y, 0.0f, size.y - 0.001f);
+            ising.HoveredI = std::clamp(static_cast<int>(localX / (size.x / static_cast<float>(ising.L))), 0, ising.L - 1);
+            ising.HoveredJ = std::clamp(static_cast<int>(localY / (size.y / static_cast<float>(ising.L))), 0, ising.L - 1);
+        } else if (!ImGui::IsItemHovered()) {
+            ising.HoveredI = -1;
+            ising.HoveredJ = -1;
+        }
+
+        ImGui::TextDisabled(
+            "sweeps: %llu  |  acceptance: %.3f  |  magnetization: %.3f",
+            static_cast<unsigned long long>(ising.SweepCount),
+            ising.AcceptanceRatio,
+            ising.Magnetization);
+    }
+
+    auto DrawPhaseSnapshotSurface(FWorkspaceSandboxApp &app,
+                                  const char *canvasId,
+                                  const char *caption) -> void {
+        ImGui::TextDisabled("%s", caption);
+        ImGui::Separator();
+
+        ImVec2 size = ImGui::GetContentRegionAvail();
+        size.x = std::max(size.x, 240.0f);
+        size.y = std::max(size.y, 240.0f);
+
+        const auto cursor = ImGui::GetCursorScreenPos();
+        const auto min = cursor;
+        const auto max = ImVec2(cursor.x + size.x, cursor.y + size.y);
+        auto *drawList = ImGui::GetWindowDrawList();
+
+        drawList->AddRectFilled(min, max, ImGui::GetColorU32(ImGuiCol_FrameBg), 8.0f);
+        drawList->AddRect(min, max, ImGui::GetColorU32(ImGuiCol_Border), 8.0f, 0, 1.0f);
+
+        const ImVec2 pad(42.0f, 26.0f);
+        const ImVec2 plotMin(min.x + pad.x, min.y + pad.y);
+        const ImVec2 plotMax(max.x - 22.0f, max.y - 34.0f);
+        drawList->AddRect(plotMin, plotMax, ImGui::GetColorU32(ImGuiCol_Border), 0.0f, 0, 1.0f);
+
+        const float criticalTemperature = 2.269185314f;
+        const float xCritical = plotMin.x + (criticalTemperature / 5.0f) * (plotMax.x - plotMin.x);
+        drawList->AddLine(
+            ImVec2(xCritical, plotMin.y),
+            ImVec2(xCritical, plotMax.y),
+            IM_COL32(196, 112, 86, 180),
+            1.0f);
+
+        const auto pointX = plotMin.x + static_cast<float>(std::clamp(app.Ising.Temperature / 5.0, 0.0, 1.0)) * (plotMax.x - plotMin.x);
+        const auto pointY = plotMin.y + static_cast<float>((1.0 - std::clamp((app.Ising.Magnetization + 1.0) * 0.5, 0.0, 1.0))) * (plotMax.y - plotMin.y);
+        drawList->AddCircleFilled(ImVec2(pointX, pointY), 5.5f, IM_COL32(245, 201, 96, 255));
+
+        drawList->AddText(ImVec2(plotMin.x, min.y + 4.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "M = +1");
+        drawList->AddText(ImVec2(plotMin.x, plotMax.y + 8.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "M = -1");
+        drawList->AddText(ImVec2(plotMax.x - 46.0f, plotMax.y + 8.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "T = 5");
+        drawList->AddText(ImVec2(xCritical + 4.0f, plotMin.y + 4.0f), IM_COL32(216, 144, 116, 220), "Tc");
+
+        ImGui::InvisibleButton(canvasId, size);
+        ImGui::TextDisabled("Current point: T = %.3f, m = %.3f", app.Ising.Temperature, app.Ising.Magnetization);
+    }
+#endif
 
     auto ApplyTheme(FWorkspaceSandboxApp &app, const Slab::Str &themeId, const bool logEvent = true) -> void {
         const auto &theme = FindThemeDescriptor(themeId);
@@ -401,6 +755,20 @@ namespace {
             });
         };
 
+#if defined(STUDIOSLAB_WASM_ISING_WORKSPACE)
+        addItem("ising_controls", WorkspaceIdSimulation, "Controls", &app.bShowIsingControls);
+        addItem("spin_lattice", WorkspaceIdSimulation, "Lattice", &app.bShowSpinLattice);
+        addItem("run_inspector", WorkspaceIdSimulation, "Inspector", &app.bShowRunInspector);
+        addItem("event_console", WorkspaceIdSimulation, "Console", &app.bShowEventConsole);
+
+        addItem("sampling_controls", WorkspaceIdObservables, "Controls", &app.bShowSamplingControls);
+        addItem("observable_history", WorkspaceIdObservables, "History", &app.bShowObservableHistory);
+        addItem("sweep_statistics", WorkspaceIdObservables, "Stats", &app.bShowSweepStatistics);
+
+        addItem("preset_browser", WorkspaceIdStudy, "Presets", &app.bShowPresetBrowser);
+        addItem("phase_snapshot", WorkspaceIdStudy, "Phase", &app.bShowPhaseSnapshot);
+        addItem("model_notes", WorkspaceIdStudy, "Notes", &app.bShowModelNotes);
+#else
         addItem("scene_outline", WorkspaceIdExplore, "Outline", &app.bShowSceneOutline);
         addItem("viewport_preview", WorkspaceIdExplore, "Preview", &app.bShowViewportPreview);
         addItem("inspector", WorkspaceIdExplore, "Inspector", &app.bShowInspector);
@@ -413,6 +781,7 @@ namespace {
         addItem("asset_browser", WorkspaceIdAssets, "Browser", &app.bShowAssetBrowser);
         addItem("preview_board", WorkspaceIdAssets, "Board", &app.bShowPreviewBoard);
         addItem("details", WorkspaceIdAssets, "Details", &app.bShowDetails);
+#endif
 
         return items;
     }
@@ -443,6 +812,46 @@ namespace {
 
         WindowingV2::FWorkspaceDockLayoutV2 layout;
 
+#if defined(STUDIOSLAB_WASM_ISING_WORKSPACE)
+        if (workspaceId == WorkspaceIdSimulation) {
+            layout.Splits = {
+                FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.24f},
+                FDockNodeSplitV2{"main", "dock_right", "main", EDockSplitDirectionV2::Right, 0.28f},
+                FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.28f}
+            };
+            layout.Placements = {
+                FDockWindowPlacementV2{WindowTitleIsingControls, "dock_left"},
+                FDockWindowPlacementV2{WindowTitleSpinLattice, "main"},
+                FDockWindowPlacementV2{WindowTitleRunInspector, "dock_right"},
+                FDockWindowPlacementV2{WindowTitleEventConsole, "dock_bottom"}
+            };
+            return layout;
+        }
+
+        if (workspaceId == WorkspaceIdObservables) {
+            layout.Splits = {
+                FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.24f},
+                FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.30f}
+            };
+            layout.Placements = {
+                FDockWindowPlacementV2{WindowTitleSamplingControls, "dock_left"},
+                FDockWindowPlacementV2{WindowTitleObservableHistory, "main"},
+                FDockWindowPlacementV2{WindowTitleSweepStatistics, "dock_bottom"}
+            };
+            return layout;
+        }
+
+        layout.Splits = {
+            FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.22f},
+            FDockNodeSplitV2{"main", "dock_right", "main", EDockSplitDirectionV2::Right, 0.28f}
+        };
+        layout.Placements = {
+            FDockWindowPlacementV2{WindowTitlePresetBrowser, "dock_left"},
+            FDockWindowPlacementV2{WindowTitlePhaseSnapshot, "main"},
+            FDockWindowPlacementV2{WindowTitleModelNotes, "dock_right"}
+        };
+        return layout;
+#else
         if (workspaceId == WorkspaceIdExplore) {
             layout.Splits = {
                 FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.22f},
@@ -481,6 +890,7 @@ namespace {
             FDockWindowPlacementV2{WindowTitleDetails, "dock_right"}
         };
         return layout;
+#endif
     }
 
     auto DrawPreviewSurface(FWorkspaceSandboxApp &app,
@@ -564,6 +974,339 @@ namespace {
         std::vector<WindowingV2::FPanelSurfaceRegistrationV2> panels;
         panels.reserve(10);
 
+#if defined(STUDIOSLAB_WASM_ISING_WORKSPACE)
+        panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
+            "ising_controls",
+            WindowTitleIsingControls,
+            WorkspaceIdSimulation,
+            &app.bShowIsingControls,
+            false,
+            false,
+            [&app]() {
+                auto &ising = app.Ising;
+                ImGui::TextDisabled("Browser-local Metropolis kernel");
+                ImGui::Separator();
+
+                int latticeSize = ising.L;
+                if (ImGui::SliderInt("Lattice L", &latticeSize, 16, 127)) {
+                    if (latticeSize != ising.L) {
+                        ising.L = latticeSize;
+                        ising.bPendingReset = true;
+                    }
+                }
+
+                float temperature = static_cast<float>(ising.Temperature);
+                if (ImGui::SliderFloat("Temperature", &temperature, 0.10f, 5.00f, "%.3f")) {
+                    ising.Temperature = temperature;
+                }
+
+                float externalField = static_cast<float>(ising.ExternalField);
+                if (ImGui::SliderFloat("h field", &externalField, -1.00f, 1.00f, "%.3f")) {
+                    ising.ExternalField = externalField;
+                }
+
+                int sweepsPerFrame = ising.SweepsPerFrame;
+                if (ImGui::SliderInt("Sweeps / frame", &sweepsPerFrame, 1, 16)) {
+                    ising.SweepsPerFrame = sweepsPerFrame;
+                }
+
+                bool bFerromagneticInitial = ising.bFerromagneticInitial;
+                if (ImGui::Checkbox("Ferromagnetic init", &bFerromagneticInitial)) {
+                    ising.bFerromagneticInitial = bFerromagneticInitial;
+                    ising.bPendingReset = true;
+                }
+
+                int seedValue = static_cast<int>(ising.Seed);
+                if (ImGui::InputInt("Seed", &seedValue)) {
+                    ising.Seed = static_cast<unsigned int>(std::max(seedValue, 1));
+                    ising.bPendingReset = true;
+                }
+
+                if (ising.bPendingReset) {
+                    ImGui::TextColored(ImVec4(0.93f, 0.72f, 0.35f, 1.0f), "Reset required to apply lattice changes.");
+                } else {
+                    ImGui::TextDisabled("Periodic boundaries, J = 1, one sweep = L^2 proposals.");
+                }
+
+                if (ImGui::Button(ising.bRunning ? "Pause" : "Run")) {
+                    ising.bRunning = !ising.bRunning;
+                    AppendEvent(app, ising.bRunning ? "Resumed browser Ising run" : "Paused browser Ising run");
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Reset lattice")) {
+                    ResetIsingState(app);
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Single sweep")) {
+                    if (ising.Spins.empty() || ising.bPendingReset) ResetIsingState(app, false);
+                    RunIsingSweep(ising);
+                }
+
+                if (ImGui::Button("Advance 50 sweeps")) {
+                    if (ising.Spins.empty() || ising.bPendingReset) ResetIsingState(app, false);
+                    for (int i = 0; i < 50; ++i) RunIsingSweep(ising);
+                    AppendEvent(app, "Advanced Ising run by 50 sweeps");
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Jitter seed")) {
+                    ++ising.Seed;
+                    ising.bPendingReset = true;
+                }
+
+                ImGui::Spacing();
+                ImGui::TextDisabled("Critical temperature Tc ~= 2.269185");
+            }
+        });
+
+        panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
+            "spin_lattice",
+            WindowTitleSpinLattice,
+            WorkspaceIdSimulation,
+            &app.bShowSpinLattice,
+            false,
+            false,
+            [&app]() {
+                DrawIsingLatticeSurface(app, "##IsingSpinLattice", "Ising spin field");
+            }
+        });
+
+        panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
+            "run_inspector",
+            WindowTitleRunInspector,
+            WorkspaceIdSimulation,
+            &app.bShowRunInspector,
+            false,
+            false,
+            [&app]() {
+                const auto &ising = app.Ising;
+                if (ImGui::BeginTable("##IsingRunInspector", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
+                    const auto addRow = [](const char *label, const Slab::Str &value) {
+                        ImGui::TableNextRow();
+                        ImGui::TableSetColumnIndex(0);
+                        ImGui::TextUnformatted(label);
+                        ImGui::TableSetColumnIndex(1);
+                        ImGui::TextUnformatted(value.c_str());
+                    };
+
+                    addRow("Run state", ising.bRunning ? "running" : "paused");
+                    addRow("Sweeps", std::to_string(ising.SweepCount));
+                    addRow("Energy / spin", std::to_string(ising.EnergyDensity));
+                    addRow("Magnetization", std::to_string(ising.Magnetization));
+                    addRow("Acceptance", std::to_string(ising.AcceptanceRatio));
+                    ImGui::EndTable();
+                }
+
+                ImGui::Spacing();
+                ImGui::ProgressBar(
+                    static_cast<float>(std::clamp((ising.Magnetization + 1.0) * 0.5, 0.0, 1.0)),
+                    ImVec2(-1.0f, 0.0f),
+                    "spin-up fraction");
+                ImGui::ProgressBar(
+                    static_cast<float>(std::clamp(ising.AcceptanceRatio, 0.0, 1.0)),
+                    ImVec2(-1.0f, 0.0f),
+                    "acceptance");
+
+                ImGui::Spacing();
+                if (ising.HoveredI >= 0 && ising.HoveredJ >= 0) {
+                    const auto spin = IsingSpinAt(ising, ising.HoveredI, ising.HoveredJ);
+                    const auto neighborSum = ComputeIsingNeighborSum(ising, ising.HoveredI, ising.HoveredJ);
+                    const auto deltaEnergy = 2.0 * static_cast<double>(spin) * (static_cast<double>(neighborSum) + ising.ExternalField);
+                    ImGui::Text("Hovered cell");
+                    ImGui::Separator();
+                    ImGui::Text("i, j: %d, %d", ising.HoveredI, ising.HoveredJ);
+                    ImGui::Text("spin: %s", spin > 0 ? "+1" : "-1");
+                    ImGui::Text("neighbor sum: %d", neighborSum);
+                    ImGui::Text("delta E: %.3f", deltaEnergy);
+                } else {
+                    ImGui::TextDisabled("Hover the lattice to inspect a spin proposal.");
+                }
+            }
+        });
+
+        panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
+            "event_console",
+            WindowTitleEventConsole,
+            WorkspaceIdSimulation,
+            &app.bShowEventConsole,
+            false,
+            false,
+            [&app]() {
+                if (ImGui::Button("Clear log")) {
+                    app.EventLog.clear();
+                    AppendEvent(app, "Cleared event log");
+                }
+                ImGui::Separator();
+                if (ImGui::BeginChild("##IsingEventLog")) {
+                    for (const auto &line : app.EventLog) {
+                        ImGui::TextUnformatted(line.c_str());
+                    }
+                }
+                ImGui::EndChild();
+            }
+        });
+
+        panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
+            "sampling_controls",
+            WindowTitleSamplingControls,
+            WorkspaceIdObservables,
+            &app.bShowSamplingControls,
+            false,
+            false,
+            [&app]() {
+                auto &ising = app.Ising;
+                ImGui::TextDisabled("History sample count: %zu", ising.MagnetizationHistory.size());
+                ImGui::Separator();
+                if (ImGui::Button("Advance 200 sweeps")) {
+                    if (ising.Spins.empty() || ising.bPendingReset) ResetIsingState(app, false);
+                    for (int i = 0; i < 200; ++i) RunIsingSweep(ising);
+                    AppendEvent(app, "Advanced Ising run by 200 sweeps");
+                }
+                if (ImGui::Button("Clear histories")) {
+                    ising.MagnetizationHistory.clear();
+                    ising.EnergyHistory.clear();
+                    ising.AcceptanceHistory.clear();
+                    MeasureIsingState(ising, ising.AcceptedLastSweep, ising.RejectedLastSweep);
+                }
+                ImGui::Spacing();
+                ImGui::Checkbox("Animate preview grid", &app.bShowGrid);
+                ImGui::TextDisabled("Live parameters update immediately. Lattice topology changes on reset.");
+            }
+        });
+
+        panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
+            "observable_history",
+            WindowTitleObservableHistory,
+            WorkspaceIdObservables,
+            &app.bShowObservableHistory,
+            false,
+            false,
+            [&app]() {
+                const auto &ising = app.Ising;
+                if (ising.MagnetizationHistory.empty()) {
+                    ImGui::TextDisabled("Run the simulation to populate observable history.");
+                    return;
+                }
+
+                ImGui::TextDisabled("Magnetization");
+                ImGui::PlotLines(
+                    "##MagnetizationHistory",
+                    ising.MagnetizationHistory.data(),
+                    static_cast<int>(ising.MagnetizationHistory.size()),
+                    0,
+                    nullptr,
+                    -1.05f,
+                    1.05f,
+                    ImVec2(-1.0f, 90.0f));
+
+                ImGui::TextDisabled("Energy density");
+                ImGui::PlotLines(
+                    "##EnergyHistory",
+                    ising.EnergyHistory.data(),
+                    static_cast<int>(ising.EnergyHistory.size()),
+                    0,
+                    nullptr,
+                    -2.5f,
+                    0.5f,
+                    ImVec2(-1.0f, 90.0f));
+
+                ImGui::TextDisabled("Acceptance ratio");
+                ImGui::PlotLines(
+                    "##AcceptanceHistory",
+                    ising.AcceptanceHistory.data(),
+                    static_cast<int>(ising.AcceptanceHistory.size()),
+                    0,
+                    nullptr,
+                    0.0f,
+                    1.0f,
+                    ImVec2(-1.0f, 90.0f));
+            }
+        });
+
+        panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
+            "sweep_statistics",
+            WindowTitleSweepStatistics,
+            WorkspaceIdObservables,
+            &app.bShowSweepStatistics,
+            false,
+            false,
+            [&app]() {
+                const auto &ising = app.Ising;
+                if (ImGui::BeginTable("##IsingSweepStats", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg)) {
+                    const auto addRow = [](const char *label, const Slab::Str &value) {
+                        ImGui::TableNextRow();
+                        ImGui::TableSetColumnIndex(0);
+                        ImGui::TextUnformatted(label);
+                        ImGui::TableSetColumnIndex(1);
+                        ImGui::TextUnformatted(value.c_str());
+                    };
+
+                    addRow("Accepted last sweep", std::to_string(ising.AcceptedLastSweep));
+                    addRow("Rejected last sweep", std::to_string(ising.RejectedLastSweep));
+                    addRow("Sweeps / frame", std::to_string(ising.SweepsPerFrame));
+                    addRow("Temperature", std::to_string(ising.Temperature));
+                    addRow("External field", std::to_string(ising.ExternalField));
+                    addRow("Seed", std::to_string(ising.Seed));
+                    ImGui::EndTable();
+                }
+            }
+        });
+
+        panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
+            "preset_browser",
+            WindowTitlePresetBrowser,
+            WorkspaceIdStudy,
+            &app.bShowPresetBrowser,
+            false,
+            false,
+            [&app]() {
+                ImGui::TextDisabled("Browser presets");
+                ImGui::Separator();
+                if (ImGui::Selectable("Ordered cold phase")) {
+                    ApplyIsingPreset(app, 64, 1.20, 0.00, true, 1, "Ordered cold phase");
+                }
+                if (ImGui::Selectable("Critical drift")) {
+                    ApplyIsingPreset(app, 96, 2.269185314, 0.00, false, 1, "Critical drift");
+                }
+                if (ImGui::Selectable("Hot disorder")) {
+                    ApplyIsingPreset(app, 64, 3.60, 0.00, false, 2, "Hot disorder");
+                }
+                if (ImGui::Selectable("Field biased")) {
+                    ApplyIsingPreset(app, 64, 2.00, 0.35, false, 1, "Field biased");
+                }
+            }
+        });
+
+        panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
+            "phase_snapshot",
+            WindowTitlePhaseSnapshot,
+            WorkspaceIdStudy,
+            &app.bShowPhaseSnapshot,
+            false,
+            false,
+            [&app]() {
+                DrawPhaseSnapshotSurface(app, "##IsingPhaseSnapshot", "Temperature / magnetization phase point");
+            }
+        });
+
+        panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
+            "model_notes",
+            WindowTitleModelNotes,
+            WorkspaceIdStudy,
+            &app.bShowModelNotes,
+            false,
+            false,
+            [&app]() {
+                ImGui::Text("Ising Metropolis");
+                ImGui::Separator();
+                ImGui::BulletText("2D square lattice with periodic boundaries.");
+                ImGui::BulletText("One sweep attempts L^2 random spin flips.");
+                ImGui::BulletText("Acceptance uses exp(-deltaE / T) when deltaE > 0.");
+                ImGui::BulletText("This wasm target keeps the model local to the browser sandbox.");
+                ImGui::Spacing();
+                ImGui::TextDisabled("Theme: %s", FindThemeDescriptor(app.ActiveThemeId).DisplayName);
+            }
+        });
+#else
         panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
             "scene_outline",
             WindowTitleSceneOutline,
@@ -762,6 +1505,7 @@ namespace {
                 ImGui::BulletText("Shared shell code reused directly");
             }
         });
+#endif
 
         return panels;
     }
@@ -775,6 +1519,10 @@ namespace {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+#if defined(STUDIOSLAB_WASM_ISING_WORKSPACE)
+        TickIsingSimulation(*app);
+#endif
 
         if (app->bShowImGuiDemo) {
             ImGui::ShowDemoWindow(&app->bShowImGuiDemo);
@@ -886,7 +1634,11 @@ auto main() -> int {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
 
     FWorkspaceSandboxApp app{};
+#if defined(STUDIOSLAB_WASM_ISING_WORKSPACE)
+    app.Window = glfwCreateWindow(1440, 900, "StudioSlab WASM Ising Workspace", nullptr, nullptr);
+#else
     app.Window = glfwCreateWindow(1440, 900, "StudioSlab WASM Workspace Sandbox", nullptr, nullptr);
+#endif
     if (app.Window == nullptr) {
         std::fprintf(stderr, "Failed to create GLFW window.\n");
         glfwTerminate();

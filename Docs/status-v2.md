@@ -6,7 +6,7 @@
 - Last implementation update: `2026-04-03` (`FHostedSurfaceV2` extraction + LabV2 plot-host routing migration)
 - Last architecture-doc update: `2026-04-03` (windowing migration plan/status refresh)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
-- Build-target sanity check date: `2026-04-03` (`StudioSlab` builds in `cmake-build-debug` after the shared workspace shell extraction; `emcmake` configure plus `WebGLWasmSandbox` / `WasmImGuiSandbox` / `WasmWorkspaceSandbox` build locally in `cmake-build-webgl-wasm` with `Emscripten 3.1.6`; `[Plot2DV2]` still fails on an existing HUD-text assertion)
+- Build-target sanity check date: `2026-04-03` (`StudioSlab` builds in `cmake-build-debug` after the shared workspace shell extraction; `emcmake` configure plus `WebGLWasmSandbox` / `WasmImGuiSandbox` / `WasmWorkspaceSandbox` / `WasmIsingWorkspaceSandbox` build locally in `cmake-build-webgl-wasm` with `Emscripten 3.1.6`; `[Plot2DV2]` still fails on an existing HUD-text assertion)
 
 ## Recent Validation (`2026-04-03`, wasm)
 
@@ -15,6 +15,7 @@
   - `WebGLWasmSandbox`
   - `WasmImGuiSandbox`
   - `WasmWorkspaceSandbox`
+  - `WasmIsingWorkspaceSandbox`
 - Expected `.html`, `.js`, and `.wasm` artifacts are emitted under `cmake-build-webgl-wasm/Build/bin/`.
 - Prior `emrun --no_browser` serving validation remains in place for the first two sandboxes; concurrent sandbox launches still need distinct `--port` values to avoid default-port collisions.
 
@@ -74,6 +75,15 @@
 - This is still a shell sample, not a browser plot renderer:
   - preview surfaces are immediate-mode ImGui draw-list placeholders
   - `IPlotRenderBackendV2` / WebGL2 plot-backend migration remains future work
+
+## Recent Updates (`2026-04-03`, wasm Ising workspace sample)
+
+- Added `WasmIsingWorkspaceSandbox` under `Studios/WebGL-WASM/`:
+  - reuses the shared V2 workspace shell and theme launcher
+  - hosts a browser-local 2D Ising Metropolis workspace with docked controls, lattice view, observables, presets, and phase snapshot panels
+- This remains a bounded browser sample:
+  - Ising stepping is local to the wasm target instead of reusing the full desktop V2 runtime/session stack
+  - desktop live-data monitors and browser Plot2D/WebGL2 backend migration are still future work
 
 ## Recent Updates (`2026-03-22`, implementation)
 

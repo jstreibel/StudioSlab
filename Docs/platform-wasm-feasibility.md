@@ -7,7 +7,7 @@
 - Result: **high complexity** for full `Slab`/`LabV2` wasm port (`not simple`)
 - Independent bootstrap status:
   - reusable Emscripten target helper added at `cmake/StudioSlabWasm.cmake`
-  - standalone WebGL2, ImGui, and shared-workspace-shell sandboxes live under `Studios/WebGL-WASM/`
+  - standalone WebGL2, ImGui, shared-workspace-shell, and browser-local Ising sandboxes live under `Studios/WebGL-WASM/`
   - browser targets remain intentionally decoupled from the current desktop `Lib/Graphics` stack while reusing the shared `Slab/Graphics/Window/V2` shell/layout layer
   - locally revalidated on `2026-04-03` with `Emscripten 3.1.6` (`emcmake` configure, all three targets build; prior `emrun --no_browser` serving validation remains from `2026-04-01`)
 
@@ -76,6 +76,7 @@ Isolated wasm/browser targets now exist:
 - `WebGLWasmSandbox`
 - `WasmImGuiSandbox`
 - `WasmWorkspaceSandbox`
+- `WasmIsingWorkspaceSandbox`
 
 Path:
 - `Studios/WebGL-WASM/`
@@ -84,14 +85,16 @@ Intent:
 - validate Emscripten + browser rendering basics
 - validate a minimal GUI path (`ImGui`) without coupling to the current desktop graphics stack
 - validate that the extracted V2 workspace shell/layout contract can be reused in a browser-hosted sample without bringing over desktop slab-window/render backends
+- validate one bounded browser-local model workspace (`Ising Metropolis`) without requiring the full desktop simulation/runtime shell
 - establish reusable target glue for future browser sandboxes
 
 Standalone configure/build:
 - `emcmake cmake -S Studios/WebGL-WASM -B cmake-build-webgl-wasm`
-- `cmake --build cmake-build-webgl-wasm --target WebGLWasmSandbox WasmImGuiSandbox WasmWorkspaceSandbox -j8`
+- `cmake --build cmake-build-webgl-wasm --target WebGLWasmSandbox WasmImGuiSandbox WasmWorkspaceSandbox WasmIsingWorkspaceSandbox -j8`
 - `emrun --no_browser cmake-build-webgl-wasm/Build/bin/webgl-wasm-sandbox.html`
 - `emrun --no_browser cmake-build-webgl-wasm/Build/bin/imgui-wasm-sandbox.html`
 - `emrun --no_browser cmake-build-webgl-wasm/Build/bin/workspace-wasm-sandbox.html`
+- `emrun --no_browser cmake-build-webgl-wasm/Build/bin/ising-workspace-wasm-sandbox.html`
 
 If both sandboxes are served concurrently, launch them with distinct `emrun --port` values to avoid the default-port collision.
 
