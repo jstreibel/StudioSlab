@@ -927,15 +927,15 @@ namespace {
         if (workspaceId == WorkspaceIdSimulation) {
             layout.Splits = {
                 FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.24f},
-                FDockNodeSplitV2{"main", "dock_right", "main", EDockSplitDirectionV2::Right, 0.28f},
-                FDockNodeSplitV2{"dock_right", "dock_right_bottom", "dock_right", EDockSplitDirectionV2::Down, 0.50f},
-                FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.44f}
+                FDockNodeSplitV2{"main", "dock_right_outer", "main", EDockSplitDirectionV2::Right, 0.28f},
+                FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.44f},
+                FDockNodeSplitV2{"main", "dock_right_inner", "main", EDockSplitDirectionV2::Right, 0.36f}
             };
             layout.Placements = {
                 FDockWindowPlacementV2{WindowTitleIsingControls, "dock_left"},
                 FDockWindowPlacementV2{WindowTitleSpinLattice, "main"},
-                FDockWindowPlacementV2{WindowTitlePhaseSnapshot, "dock_right"},
-                FDockWindowPlacementV2{WindowTitleHysteresisTrace, "dock_right_bottom"},
+                FDockWindowPlacementV2{WindowTitleHysteresisTrace, "dock_right_inner"},
+                FDockWindowPlacementV2{WindowTitlePhaseSnapshot, "dock_right_outer"},
                 FDockWindowPlacementV2{WindowTitleRunInspector, "dock_bottom"},
                 FDockWindowPlacementV2{WindowTitleObservableHistory, "dock_bottom", true},
                 FDockWindowPlacementV2{WindowTitleEventConsole, "dock_bottom"}
