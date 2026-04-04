@@ -45,6 +45,7 @@ namespace {
 
     constexpr auto WindowTitlePresetBrowser = "Preset Browser";
     constexpr auto WindowTitlePhaseSnapshot = "Phase Snapshot";
+    constexpr auto WindowTitleHysteresisTrace = "Hysteresis Trace";
     constexpr auto WindowTitleModelNotes = "Model Notes";
 #else
     constexpr auto WorkspaceIdExplore = "explore";
@@ -88,6 +89,8 @@ namespace {
         std::vector<float> MagnetizationHistory;
         std::vector<float> EnergyHistory;
         std::vector<float> AcceptanceHistory;
+        std::vector<float> ExternalFieldHistory;
+        std::vector<float> MagnetizationFieldHistory;
     };
 #endif
 
@@ -111,6 +114,7 @@ namespace {
 
         bool bShowPresetBrowser = true;
         bool bShowPhaseSnapshot = true;
+        bool bShowHysteresisTrace = true;
         bool bShowModelNotes = true;
 #else
         Slab::Str ActiveWorkspaceId = WorkspaceIdExplore;
@@ -510,6 +514,8 @@ namespace {
         PushIsingHistorySample(ising.MagnetizationHistory, static_cast<float>(ising.Magnetization));
         PushIsingHistorySample(ising.EnergyHistory, static_cast<float>(ising.EnergyDensity));
         PushIsingHistorySample(ising.AcceptanceHistory, static_cast<float>(ising.AcceptanceRatio));
+        PushIsingHistorySample(ising.ExternalFieldHistory, static_cast<float>(ising.ExternalField));
+        PushIsingHistorySample(ising.MagnetizationFieldHistory, static_cast<float>(ising.Magnetization));
     }
 
     auto ResetIsingState(FWorkspaceSandboxApp &app, const bool logEvent = true) -> void {
@@ -532,6 +538,8 @@ namespace {
         ising.MagnetizationHistory.clear();
         ising.EnergyHistory.clear();
         ising.AcceptanceHistory.clear();
+        ising.ExternalFieldHistory.clear();
+        ising.MagnetizationFieldHistory.clear();
         ising.bPendingReset = false;
         MeasureIsingState(ising, 0, 0);
 
@@ -685,7 +693,51 @@ namespace {
 
         ImVec2 size = ImGui::GetContentRegionAvail();
         size.x = std::max(size.x, 240.0f);
-        size.y = std::max(size.y, 240.0f);
+        size.y = std::max(size.y, 220.0f);
+
+        const auto cursor = ImGui::GetCursorScreenPos();
+        const auto min = cursor;
+        const auto max = ImVec2(cursor.x + size.x, cursor.y + size.y);
+        auto *drawList = ImGui::GetWindowDrawList();
+
+        drawList->AddRectFilled(min, max, ImGui::GetColorU32(ImGuiCol_FrameBg), 8.0f);
+        drawList->AddRect(min, max, ImGui::GetColorU32(ImGuiCol_Border), 8.0f, 0, 1.0f);
+
+        const ImVec2 pad(42.0f, 26.0f);
+        const ImVec2 phaseMin(min.x + pad.x, min.y + pad.y);
+        const ImVec2 phaseMax(max.x - 22.0f, max.y - 34.0f);
+        drawList->AddRect(phaseMin, phaseMax, ImGui::GetColorU32(ImGuiCol_Border), 0.0f, 0, 1.0f);
+
+        const float criticalTemperature = 2.269185314f;
+        const float xCritical = phaseMin.x + (criticalTemperature / 5.0f) * (phaseMax.x - phaseMin.x);
+        drawList->AddLine(
+            ImVec2(xCritical, phaseMin.y),
+            ImVec2(xCritical, phaseMax.y),
+            IM_COL32(196, 112, 86, 180),
+            1.0f);
+
+        const auto pointX = phaseMin.x + static_cast<float>(std::clamp(app.Ising.Temperature / 5.0, 0.0, 1.0)) * (phaseMax.x - phaseMin.x);
+        const auto pointY = phaseMin.y + static_cast<float>((1.0 - std::clamp((app.Ising.Magnetization + 1.0) * 0.5, 0.0, 1.0))) * (phaseMax.y - phaseMin.y);
+        drawList->AddCircleFilled(ImVec2(pointX, pointY), 5.5f, IM_COL32(245, 201, 96, 255));
+
+        drawList->AddText(ImVec2(phaseMin.x, min.y + 4.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "M = +1");
+        drawList->AddText(ImVec2(phaseMin.x, phaseMax.y + 8.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "M = -1");
+        drawList->AddText(ImVec2(phaseMax.x - 46.0f, phaseMax.y + 8.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "T = 5");
+        drawList->AddText(ImVec2(xCritical + 4.0f, phaseMin.y + 4.0f), IM_COL32(216, 144, 116, 220), "Tc");
+
+        ImGui::InvisibleButton(canvasId, size);
+        ImGui::TextDisabled("Current point: T = %.3f, m = %.3f", app.Ising.Temperature, app.Ising.Magnetization);
+    }
+
+    auto DrawHysteresisTraceSurface(FWorkspaceSandboxApp &app,
+                                    const char *canvasId,
+                                    const char *caption) -> void {
+        ImGui::TextDisabled("%s", caption);
+        ImGui::Separator();
+
+        ImVec2 size = ImGui::GetContentRegionAvail();
+        size.x = std::max(size.x, 240.0f);
+        size.y = std::max(size.y, 220.0f);
 
         const auto cursor = ImGui::GetCursorScreenPos();
         const auto min = cursor;
@@ -697,28 +749,46 @@ namespace {
 
         const ImVec2 pad(42.0f, 26.0f);
         const ImVec2 plotMin(min.x + pad.x, min.y + pad.y);
-        const ImVec2 plotMax(max.x - 22.0f, max.y - 34.0f);
+        const ImVec2 plotMax(max.x - 22.0f, max.y - 30.0f);
         drawList->AddRect(plotMin, plotMax, ImGui::GetColorU32(ImGuiCol_Border), 0.0f, 0, 1.0f);
 
-        const float criticalTemperature = 2.269185314f;
-        const float xCritical = plotMin.x + (criticalTemperature / 5.0f) * (plotMax.x - plotMin.x);
-        drawList->AddLine(
-            ImVec2(xCritical, plotMin.y),
-            ImVec2(xCritical, plotMax.y),
-            IM_COL32(196, 112, 86, 180),
-            1.0f);
+        const float yMid = plotMin.y + (plotMax.y - plotMin.y) * 0.5f;
+        const float xMid = plotMin.x + (plotMax.x - plotMin.x) * 0.5f;
+        drawList->AddLine(ImVec2(plotMin.x, yMid), ImVec2(plotMax.x, yMid), IM_COL32(120, 128, 136, 80), 1.0f);
+        drawList->AddLine(ImVec2(xMid, plotMin.y), ImVec2(xMid, plotMax.y), IM_COL32(120, 128, 136, 80), 1.0f);
 
-        const auto pointX = plotMin.x + static_cast<float>(std::clamp(app.Ising.Temperature / 5.0, 0.0, 1.0)) * (plotMax.x - plotMin.x);
-        const auto pointY = plotMin.y + static_cast<float>((1.0 - std::clamp((app.Ising.Magnetization + 1.0) * 0.5, 0.0, 1.0))) * (plotMax.y - plotMin.y);
-        drawList->AddCircleFilled(ImVec2(pointX, pointY), 5.5f, IM_COL32(245, 201, 96, 255));
+        if (app.Ising.ExternalFieldHistory.size() > 1 && app.Ising.MagnetizationFieldHistory.size() == app.Ising.ExternalFieldHistory.size()) {
+            std::vector<ImVec2> hysteresisPoints;
+            hysteresisPoints.reserve(app.Ising.ExternalFieldHistory.size());
+            for (std::size_t i = 0; i < app.Ising.ExternalFieldHistory.size(); ++i) {
+                const float hNorm = std::clamp((app.Ising.ExternalFieldHistory[i] + 1.0f) * 0.5f, 0.0f, 1.0f);
+                const float mNorm = std::clamp((app.Ising.MagnetizationFieldHistory[i] + 1.0f) * 0.5f, 0.0f, 1.0f);
+                const float x = plotMin.x + hNorm * (plotMax.x - plotMin.x);
+                const float y = plotMax.y - mNorm * (plotMax.y - plotMin.y);
+                hysteresisPoints.emplace_back(x, y);
+            }
 
-        drawList->AddText(ImVec2(plotMin.x, min.y + 4.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "M = +1");
-        drawList->AddText(ImVec2(plotMin.x, plotMax.y + 8.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "M = -1");
-        drawList->AddText(ImVec2(plotMax.x - 46.0f, plotMax.y + 8.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "T = 5");
-        drawList->AddText(ImVec2(xCritical + 4.0f, plotMin.y + 4.0f), IM_COL32(216, 144, 116, 220), "Tc");
+            drawList->AddPolyline(
+                hysteresisPoints.data(),
+                static_cast<int>(hysteresisPoints.size()),
+                IM_COL32(120, 212, 255, 230),
+                ImDrawFlags_None,
+                2.0f);
+            drawList->AddCircleFilled(hysteresisPoints.back(), 4.0f, IM_COL32(245, 201, 96, 255));
+        } else {
+            drawList->AddText(
+                ImVec2(plotMin.x + 10.0f, plotMin.y + 12.0f),
+                ImGui::GetColorU32(ImGuiCol_TextDisabled),
+                "Run with varying external field to accumulate a loop.");
+        }
+
+        drawList->AddText(ImVec2(plotMin.x, plotMax.y + 6.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "h = -1");
+        drawList->AddText(ImVec2(plotMax.x - 34.0f, plotMax.y + 6.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "h = +1");
+        drawList->AddText(ImVec2(plotMin.x, plotMin.y - 2.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "m = +1");
+        drawList->AddText(ImVec2(plotMin.x, plotMax.y - 14.0f), ImGui::GetColorU32(ImGuiCol_TextDisabled), "m = -1");
 
         ImGui::InvisibleButton(canvasId, size);
-        ImGui::TextDisabled("Current point: T = %.3f, m = %.3f", app.Ising.Temperature, app.Ising.Magnetization);
+        ImGui::TextDisabled("Current point: h = %.3f, m = %.3f", app.Ising.ExternalField, app.Ising.Magnetization);
     }
 #endif
 
@@ -760,6 +830,7 @@ namespace {
         addItem("spin_lattice", WorkspaceIdSimulation, "Lattice", &app.bShowSpinLattice);
         addItem("run_inspector", WorkspaceIdSimulation, "Inspector", &app.bShowRunInspector);
         addItem("phase_snapshot", WorkspaceIdSimulation, "Phase", &app.bShowPhaseSnapshot);
+        addItem("hysteresis_trace", WorkspaceIdSimulation, "Loop", &app.bShowHysteresisTrace);
         addItem("event_console", WorkspaceIdSimulation, "Console", &app.bShowEventConsole);
 
         addItem("sampling_controls", WorkspaceIdObservables, "Controls", &app.bShowSamplingControls);
@@ -817,12 +888,14 @@ namespace {
             layout.Splits = {
                 FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.24f},
                 FDockNodeSplitV2{"main", "dock_right", "main", EDockSplitDirectionV2::Right, 0.28f},
+                FDockNodeSplitV2{"dock_right", "dock_right_bottom", "dock_right", EDockSplitDirectionV2::Down, 0.50f},
                 FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.28f}
             };
             layout.Placements = {
                 FDockWindowPlacementV2{WindowTitleIsingControls, "dock_left"},
                 FDockWindowPlacementV2{WindowTitleSpinLattice, "main"},
                 FDockWindowPlacementV2{WindowTitlePhaseSnapshot, "dock_right"},
+                FDockWindowPlacementV2{WindowTitleHysteresisTrace, "dock_right_bottom"},
                 FDockWindowPlacementV2{WindowTitleRunInspector, "dock_bottom"},
                 FDockWindowPlacementV2{WindowTitleEventConsole, "dock_bottom"}
             };
@@ -1164,6 +1237,8 @@ namespace {
                     ising.MagnetizationHistory.clear();
                     ising.EnergyHistory.clear();
                     ising.AcceptanceHistory.clear();
+                    ising.ExternalFieldHistory.clear();
+                    ising.MagnetizationFieldHistory.clear();
                     MeasureIsingState(ising, ising.AcceptedLastSweep, ising.RejectedLastSweep);
                 }
                 ImGui::Spacing();
@@ -1284,6 +1359,18 @@ namespace {
             false,
             [&app]() {
                 DrawPhaseSnapshotSurface(app, "##IsingPhaseSnapshot", "Temperature / magnetization phase point");
+            }
+        });
+
+        panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
+            "hysteresis_trace",
+            WindowTitleHysteresisTrace,
+            WorkspaceIdSimulation,
+            &app.bShowHysteresisTrace,
+            false,
+            false,
+            [&app]() {
+                DrawHysteresisTraceSurface(app, "##IsingHysteresisTrace", "External field x magnetization");
             }
         });
 
