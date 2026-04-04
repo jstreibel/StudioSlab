@@ -641,6 +641,21 @@ namespace {
         AppendEvent(app, Slab::Str("Applied Ising preset ") + label);
     }
 
+    auto DrawIsingPresetControls(FWorkspaceSandboxApp &app) -> void {
+        if (ImGui::Selectable("Ordered cold phase")) {
+            ApplyIsingPreset(app, 64, 1.20, 0.00, true, 1, "Ordered cold phase");
+        }
+        if (ImGui::Selectable("Critical drift")) {
+            ApplyIsingPreset(app, 96, 2.269185314, 0.00, false, 1, "Critical drift");
+        }
+        if (ImGui::Selectable("Hot disorder")) {
+            ApplyIsingPreset(app, 64, 3.60, 0.00, false, 2, "Hot disorder");
+        }
+        if (ImGui::Selectable("Field biased")) {
+            ApplyIsingPreset(app, 64, 2.00, 0.35, false, 1, "Field biased");
+        }
+    }
+
     auto DrawIsingLatticeSurface(FWorkspaceSandboxApp &app,
                                  const char *canvasId,
                                  const char *caption) -> void {
@@ -1101,6 +1116,14 @@ namespace {
                     ising.ExternalField = externalField;
                 }
 
+                int seedValue = static_cast<int>(ising.Seed);
+                if (ImGui::InputInt("Seed", &seedValue)) {
+                    ising.Seed = static_cast<unsigned int>(std::max(seedValue, 1));
+                    ising.bPendingReset = true;
+                }
+
+                ImGui::Separator();
+
                 int sweepsPerFrame = ising.SweepsPerFrame;
                 if (ImGui::SliderInt("Sweeps / frame", &sweepsPerFrame, 1, 16)) {
                     ising.SweepsPerFrame = sweepsPerFrame;
@@ -1109,12 +1132,6 @@ namespace {
                 bool bFerromagneticInitial = ising.bFerromagneticInitial;
                 if (ImGui::Checkbox("Ferromagnetic init", &bFerromagneticInitial)) {
                     ising.bFerromagneticInitial = bFerromagneticInitial;
-                    ising.bPendingReset = true;
-                }
-
-                int seedValue = static_cast<int>(ising.Seed);
-                if (ImGui::InputInt("Seed", &seedValue)) {
-                    ising.Seed = static_cast<unsigned int>(std::max(seedValue, 1));
                     ising.bPendingReset = true;
                 }
 
@@ -1157,6 +1174,10 @@ namespace {
                     TrimAllIsingHistories(ising);
                 }
                 ImGui::TextDisabled("Applies to Observable History and the h x m loop trace.");
+
+                ImGui::Separator();
+                ImGui::TextDisabled("Browser presets");
+                DrawIsingPresetControls(app);
 
                 ImGui::Spacing();
                 ImGui::TextDisabled("Critical temperature Tc ~= 2.269185");
@@ -1368,18 +1389,7 @@ namespace {
             [&app]() {
                 ImGui::TextDisabled("Browser presets");
                 ImGui::Separator();
-                if (ImGui::Selectable("Ordered cold phase")) {
-                    ApplyIsingPreset(app, 64, 1.20, 0.00, true, 1, "Ordered cold phase");
-                }
-                if (ImGui::Selectable("Critical drift")) {
-                    ApplyIsingPreset(app, 96, 2.269185314, 0.00, false, 1, "Critical drift");
-                }
-                if (ImGui::Selectable("Hot disorder")) {
-                    ApplyIsingPreset(app, 64, 3.60, 0.00, false, 2, "Hot disorder");
-                }
-                if (ImGui::Selectable("Field biased")) {
-                    ApplyIsingPreset(app, 64, 2.00, 0.35, false, 1, "Field biased");
-                }
+                DrawIsingPresetControls(app);
             }
         });
 
