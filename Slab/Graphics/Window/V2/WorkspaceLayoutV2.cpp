@@ -26,6 +26,11 @@ namespace Slab::Graphics::Windowing::V2 {
             return ImGuiDir_Left;
         }
 
+        auto GetWindowTabId(const Str &windowTitle) -> ImGuiID {
+            const ImGuiID windowId = ImHashStr(windowTitle.c_str());
+            return ImHashStr("#TAB", 4, windowId);
+        }
+
     } // namespace
 
     auto ApplyDockLayoutToImGui(const ImGuiID dockspaceId,
@@ -84,6 +89,12 @@ namespace Slab::Graphics::Windowing::V2 {
             if (nodeIt == dockNodes.end()) return false;
 
             ImGui::DockBuilderDockWindow(placement.WindowTitle.c_str(), nodeIt->second);
+
+            if (placement.bSelectByDefault) {
+                if (ImGuiDockNode *node = ImGui::DockBuilderGetNode(nodeIt->second); node != nullptr) {
+                    node->SelectedTabId = GetWindowTabId(placement.WindowTitle);
+                }
+            }
         }
 
         ImGui::DockBuilderFinish(dockspaceId);

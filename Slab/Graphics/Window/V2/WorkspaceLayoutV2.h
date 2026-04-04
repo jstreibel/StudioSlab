@@ -32,6 +32,7 @@ namespace Slab::Graphics::Windowing::V2 {
     struct FDockWindowPlacementV2 {
         Str WindowTitle;
         Str NodeId = "main";
+        bool bSelectByDefault = false;
     };
 
     struct FWorkspaceDockLayoutV2 {

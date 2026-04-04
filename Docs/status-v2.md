@@ -2,8 +2,8 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-04-03`
-- Last implementation update: `2026-04-03` (`FHostedSurfaceV2` extraction + LabV2 plot-host routing migration)
+- Snapshot date: `2026-04-04`
+- Last implementation update: `2026-04-04` (`WasmIsingWorkspaceSandbox` panel routing update for `Observable History`)
 - Last architecture-doc update: `2026-04-03` (windowing migration plan/status refresh)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
 - Build-target sanity check date: `2026-04-03` (`StudioSlab` builds in `cmake-build-debug` after the shared workspace shell extraction; `emcmake` configure plus `WebGLWasmSandbox` / `WasmImGuiSandbox` / `WasmWorkspaceSandbox` / `WasmIsingWorkspaceSandbox` build locally in `cmake-build-webgl-wasm` with `Emscripten 3.1.6`; `[Plot2DV2]` still fails on an existing HUD-text assertion)
@@ -18,6 +18,18 @@
   - `WasmIsingWorkspaceSandbox`
 - Expected `.html`, `.js`, and `.wasm` artifacts are emitted under `cmake-build-webgl-wasm/Build/bin/`.
 - Prior `emrun --no_browser` serving validation remains in place for the first two sandboxes; concurrent sandbox launches still need distinct `--port` values to avoid default-port collisions.
+
+## Recent Updates (`2026-04-04`, wasm Ising workspace layout)
+
+- `WasmIsingWorkspaceSandbox` now routes `Observable History` into the `Simulation` workspace instead of the `Observables` workspace.
+- The default `Simulation` dock stack now groups:
+  - `Run Inspector`
+  - `Observable History`
+  - `Event Console`
+- `Observable History` is the default selected tab in that stack and the stack height was increased to give the history plots more room.
+- The `Observables` workspace now keeps the lighter two-panel arrangement:
+  - `Sampling Controls`
+  - `Sweep Statistics`
 
 ## Recent Updates (`2026-03-29`, platform/tooling)
 

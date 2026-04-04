@@ -834,7 +834,7 @@ namespace {
         addItem("event_console", WorkspaceIdSimulation, "Console", &app.bShowEventConsole);
 
         addItem("sampling_controls", WorkspaceIdObservables, "Controls", &app.bShowSamplingControls);
-        addItem("observable_history", WorkspaceIdObservables, "History", &app.bShowObservableHistory);
+        addItem("observable_history", WorkspaceIdSimulation, "History", &app.bShowObservableHistory);
         addItem("sweep_statistics", WorkspaceIdObservables, "Stats", &app.bShowSweepStatistics);
 
         addItem("preset_browser", WorkspaceIdStudy, "Presets", &app.bShowPresetBrowser);
@@ -889,7 +889,7 @@ namespace {
                 FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.24f},
                 FDockNodeSplitV2{"main", "dock_right", "main", EDockSplitDirectionV2::Right, 0.28f},
                 FDockNodeSplitV2{"dock_right", "dock_right_bottom", "dock_right", EDockSplitDirectionV2::Down, 0.50f},
-                FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.28f}
+                FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.36f}
             };
             layout.Placements = {
                 FDockWindowPlacementV2{WindowTitleIsingControls, "dock_left"},
@@ -897,6 +897,7 @@ namespace {
                 FDockWindowPlacementV2{WindowTitlePhaseSnapshot, "dock_right"},
                 FDockWindowPlacementV2{WindowTitleHysteresisTrace, "dock_right_bottom"},
                 FDockWindowPlacementV2{WindowTitleRunInspector, "dock_bottom"},
+                FDockWindowPlacementV2{WindowTitleObservableHistory, "dock_bottom", true},
                 FDockWindowPlacementV2{WindowTitleEventConsole, "dock_bottom"}
             };
             return layout;
@@ -904,13 +905,11 @@ namespace {
 
         if (workspaceId == WorkspaceIdObservables) {
             layout.Splits = {
-                FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.24f},
-                FDockNodeSplitV2{"main", "dock_bottom", "main", EDockSplitDirectionV2::Down, 0.30f}
+                FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.24f}
             };
             layout.Placements = {
                 FDockWindowPlacementV2{WindowTitleSamplingControls, "dock_left"},
-                FDockWindowPlacementV2{WindowTitleObservableHistory, "main"},
-                FDockWindowPlacementV2{WindowTitleSweepStatistics, "dock_bottom"}
+                FDockWindowPlacementV2{WindowTitleSweepStatistics, "main"}
             };
             return layout;
         }
@@ -1250,7 +1249,7 @@ namespace {
         panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
             "observable_history",
             WindowTitleObservableHistory,
-            WorkspaceIdObservables,
+            WorkspaceIdSimulation,
             &app.bShowObservableHistory,
             false,
             false,
