@@ -759,6 +759,7 @@ namespace {
         addItem("ising_controls", WorkspaceIdSimulation, "Controls", &app.bShowIsingControls);
         addItem("spin_lattice", WorkspaceIdSimulation, "Lattice", &app.bShowSpinLattice);
         addItem("run_inspector", WorkspaceIdSimulation, "Inspector", &app.bShowRunInspector);
+        addItem("phase_snapshot", WorkspaceIdSimulation, "Phase", &app.bShowPhaseSnapshot);
         addItem("event_console", WorkspaceIdSimulation, "Console", &app.bShowEventConsole);
 
         addItem("sampling_controls", WorkspaceIdObservables, "Controls", &app.bShowSamplingControls);
@@ -766,7 +767,6 @@ namespace {
         addItem("sweep_statistics", WorkspaceIdObservables, "Stats", &app.bShowSweepStatistics);
 
         addItem("preset_browser", WorkspaceIdStudy, "Presets", &app.bShowPresetBrowser);
-        addItem("phase_snapshot", WorkspaceIdStudy, "Phase", &app.bShowPhaseSnapshot);
         addItem("model_notes", WorkspaceIdStudy, "Notes", &app.bShowModelNotes);
 #else
         addItem("scene_outline", WorkspaceIdExplore, "Outline", &app.bShowSceneOutline);
@@ -822,7 +822,8 @@ namespace {
             layout.Placements = {
                 FDockWindowPlacementV2{WindowTitleIsingControls, "dock_left"},
                 FDockWindowPlacementV2{WindowTitleSpinLattice, "main"},
-                FDockWindowPlacementV2{WindowTitleRunInspector, "dock_right"},
+                FDockWindowPlacementV2{WindowTitlePhaseSnapshot, "dock_right"},
+                FDockWindowPlacementV2{WindowTitleRunInspector, "dock_bottom"},
                 FDockWindowPlacementV2{WindowTitleEventConsole, "dock_bottom"}
             };
             return layout;
@@ -842,13 +843,11 @@ namespace {
         }
 
         layout.Splits = {
-            FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.22f},
-            FDockNodeSplitV2{"main", "dock_right", "main", EDockSplitDirectionV2::Right, 0.28f}
+            FDockNodeSplitV2{"main", "dock_left", "main", EDockSplitDirectionV2::Left, 0.24f}
         };
         layout.Placements = {
             FDockWindowPlacementV2{WindowTitlePresetBrowser, "dock_left"},
-            FDockWindowPlacementV2{WindowTitlePhaseSnapshot, "main"},
-            FDockWindowPlacementV2{WindowTitleModelNotes, "dock_right"}
+            FDockWindowPlacementV2{WindowTitleModelNotes, "main"}
         };
         return layout;
 #else
@@ -1279,7 +1278,7 @@ namespace {
         panels.push_back(WindowingV2::FPanelSurfaceRegistrationV2{
             "phase_snapshot",
             WindowTitlePhaseSnapshot,
-            WorkspaceIdStudy,
+            WorkspaceIdSimulation,
             &app.bShowPhaseSnapshot,
             false,
             false,
