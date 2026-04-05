@@ -3,10 +3,26 @@
 ## Snapshot Metadata
 
 - Snapshot date: `2026-04-04`
-- Last implementation update: `2026-04-04` (`WasmIsingWorkspaceSandbox` equal-width `Spin Lattice` / `Hysteresis Trace` docking tune`)
+- Last implementation update: `2026-04-04` (`Studios/WebApp` local React frontend scaffold)
 - Last architecture-doc update: `2026-04-03` (windowing migration plan/status refresh)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
 - Build-target sanity check date: `2026-04-03` (`StudioSlab` builds in `cmake-build-debug` after the shared workspace shell extraction; `emcmake` configure plus `WebGLWasmSandbox` / `WasmImGuiSandbox` / `WasmWorkspaceSandbox` / `WasmIsingWorkspaceSandbox` build locally in `cmake-build-webgl-wasm` with `Emscripten 3.1.6`; `[Plot2DV2]` still fails on an existing HUD-text assertion)
+
+## Recent Updates (`2026-04-04`, web app scaffold)
+
+- Added `Studios/WebApp/` as a local React frontend workspace for StudioSlab:
+  - Vite 6 + React 19 + TypeScript
+  - Redux Toolkit state spine
+  - Tailwind CSS + local app CSS
+- The minimal landing page now includes launch cards for:
+  - `Ising Model`, which opens the existing wasm sandbox from the local web shell
+  - `GitHub`, which links out to the public repository page
+- `Studios/WebApp` now bridges the built `WasmIsingWorkspaceSandbox` artifacts into Vite dev/build output without introducing a root JS workspace.
+- The JS toolchain remains app-local:
+  - no root `package.json`
+  - no root JS workspace manager
+  - no CMake coupling
+- This is a generic StudioSlab web shell, not a `LabV2` browser port and not a replacement for the bounded wasm sandboxes.
 
 ## Recent Validation (`2026-04-03`, wasm)
 

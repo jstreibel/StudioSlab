@@ -65,3 +65,28 @@ cmake --build cmake-build-webgl-wasm --target WebGLWasmSandbox WasmImGuiSandbox 
 ```
 
 This is intentionally separate from the current desktop `Lib/Graphics` stack.
+
+## Web App
+
+A generic StudioSlab web frontend now lives under `Studios/WebApp/`.
+
+It is intentionally local to that directory:
+- local `package.json`
+- local `node_modules`
+- no root JS workspace
+- no CMake integration
+
+Run it with:
+
+```bash
+cd Studios/WebApp
+npm install
+npm run dev
+```
+
+Build it with:
+
+```bash
+cd Studios/WebApp
+npm run build
+```

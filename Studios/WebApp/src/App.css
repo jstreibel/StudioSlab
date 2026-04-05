@@ -1,0 +1,188 @@
+.landing {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  position: relative;
+}
+
+.landing::before,
+.landing::after {
+  content: '';
+  position: fixed;
+  inset: auto;
+  pointer-events: none;
+  border-radius: 999px;
+  filter: blur(32px);
+  opacity: 0.8;
+}
+
+.landing::before {
+  top: 8vh;
+  left: 7vw;
+  width: 18rem;
+  height: 18rem;
+  background: radial-gradient(circle, rgba(138, 216, 235, 0.16), transparent 70%);
+}
+
+.landing::after {
+  right: 9vw;
+  bottom: 10vh;
+  width: 16rem;
+  height: 16rem;
+  background: radial-gradient(circle, rgba(230, 171, 99, 0.16), transparent 70%);
+}
+
+.hero-card {
+  position: relative;
+  overflow: hidden;
+  width: min(100%, 72rem);
+  min-height: min(68vh, 38rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at 14% 18%, rgba(138, 216, 235, 0.16), transparent 24%),
+    radial-gradient(circle at 84% 24%, rgba(230, 171, 99, 0.1), transparent 22%),
+    linear-gradient(180deg, rgba(22, 38, 56, 0.94), rgba(11, 18, 28, 0.96));
+  box-shadow: var(--shadow-panel);
+}
+
+.hero-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent 32%),
+    linear-gradient(180deg, transparent 55%, rgba(8, 16, 25, 0.18));
+  pointer-events: none;
+}
+
+.hero-card::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  border-radius: 39px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.hero-card__inner {
+  position: relative;
+  width: min(100%, 54rem);
+  padding: clamp(2.75rem, 6vw, 5.5rem);
+  text-align: center;
+}
+
+.hero-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 9vw, 7.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.04em;
+  color: var(--color-slab-cream);
+  text-wrap: balance;
+}
+
+.hero-card__description {
+  margin: clamp(1.2rem, 2.5vw, 1.8rem) auto 0;
+  max-width: 34rem;
+  font-size: clamp(1.1rem, 2.2vw, 1.6rem);
+  line-height: 1.55;
+  color: rgba(247, 239, 227, 0.72);
+  text-wrap: balance;
+}
+
+.launch-stack {
+  width: min(100%, 72rem);
+  display: grid;
+  gap: 1rem;
+}
+
+.launch-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.35rem 1.55rem;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(135deg, rgba(138, 216, 235, 0.08), transparent 50%),
+    rgba(10, 19, 30, 0.82);
+  color: inherit;
+  text-decoration: none;
+  box-shadow: var(--shadow-panel);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.launch-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(230, 171, 99, 0.34);
+  background:
+    linear-gradient(135deg, rgba(230, 171, 99, 0.08), transparent 54%),
+    rgba(12, 22, 34, 0.88);
+}
+
+.launch-card__eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(138, 216, 235, 0.82);
+}
+
+.launch-card__title {
+  margin: 0.45rem 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2vw, 1.8rem);
+  color: var(--color-slab-cream);
+}
+
+.launch-card__description {
+  margin: 0.45rem 0 0;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: rgba(247, 239, 227, 0.68);
+}
+
+.launch-card__action {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(247, 239, 227, 0.74);
+}
+
+@media (max-width: 720px) {
+  .hero-card {
+    min-height: min(60vh, 28rem);
+    border-radius: 30px;
+  }
+
+  .hero-card::after {
+    border-radius: 29px;
+  }
+
+  .launch-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
