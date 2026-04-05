@@ -18,7 +18,7 @@ function App() {
           <div>
             <p className="launch-card__eyebrow">Study</p>
             <h2 className="launch-card__title">Ising Model</h2>
-            <p className="launch-card__description">Open the browser-hosted Ising workspace sandbox.</p>
+            <p className="launch-card__description">A playful study of spins, fields, and phase change.</p>
           </div>
           <span className="launch-card__action">Open</span>
         </a>
