@@ -20,6 +20,12 @@
   - `https://jstreibel.github.io/StudioSlab/`
   - `https://jstreibel.github.io/StudioSlab/wasm/ising-workspace-wasm-sandbox.html`
 
+## Recent Updates (`2026-04-05`, wasm page title)
+
+- `WasmIsingWorkspaceSandbox` now uses a target-local Emscripten shell template at `Studios/WebGL-WASM/ising_shell.html`.
+- The browser page title for the Ising wasm target is now `StudioSlab Ising study` instead of the default Dear ImGui Emscripten example title.
+- The Ising wasm sandbox now allows lattice sizes up to `L = 256` in `Ising Controls`.
+
 ## Recent Updates (`2026-04-04`, web app scaffold)
 
 - Added `Studios/WebApp/` as a local React frontend workspace for StudioSlab:
