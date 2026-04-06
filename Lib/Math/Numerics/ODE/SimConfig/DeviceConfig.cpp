@@ -14,7 +14,7 @@ namespace Slab::Math {
 
     FDeviceConfig::FDeviceConfig(bool doRegister) : FInterfaceOwner("Device options", 10, doRegister)
     {
-        Log::Info() << "Device integration type is " << sizeof(DevFloat)*8 << " bits." << Log::Flush;
+        FLog::Info() << "Device integration type is " << sizeof(DevFloat)*8 << " bits." << FLog::Flush;
 
         Interface->AddParameters(
         {
@@ -37,8 +37,8 @@ namespace Slab::Math {
             omp_set_num_threads(**nThreads);
             #endif
 
-            Log::Info() << "Running on CPU @ " << *nThreads << " thread"
-                        << (**nThreads > 1 ? "s." : ".") << Log::Flush;
+            FLog::Info() << "Running on CPU @ " << *nThreads << " thread"
+                        << (**nThreads > 1 ? "s." : ".") << FLog::Flush;
 
         } else if (Dev == Device::GPU) {
     #if USE_CUDA
@@ -57,17 +57,17 @@ namespace Slab::Math {
         int devCount;
         cudaError err;
 
-        Slab::CUDA::cew(cudaGetDeviceCount(&devCount));
+        Slab::CUDA::CheckCudaError(cudaGetDeviceCount(&devCount));
         cudaDeviceProp props{};
         cudaGetDeviceProperties(&props, (int)dev_n - 1);
 
-        Slab::CUDA::cew(  cudaSetDevice((int)dev_n - 1));
+        Slab::CUDA::CheckCudaError(cudaSetDevice((int)dev_n - 1));
         // Slab::CUDA::cew(cudaSetDevice(2));
 
-        Log::Info() << "Running on GPU " << dev_n << "/" << devCount << ", " << Str(props.name) << Log::Flush;
+        FLog::Info() << "Running on GPU " << dev_n << "/" << devCount << ", " << Str(props.name) << FLog::Flush;
 
         if (**nThreads > 1) {
-            Log::Attention() << "Ignoring n_threads argument (using GPU)." << Log::Flush;
+            FLog::Attention() << "Ignoring n_threads argument (using GPU)." << FLog::Flush;
             *nThreads = 1;
         }
         #endif

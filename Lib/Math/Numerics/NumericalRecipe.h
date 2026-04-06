@@ -1,13 +1,16 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include "Stepper.h"
-#include "Math/Numerics/OutputChannel.h"
-
-#include "../../Core/Controller/Interface.h"
 #include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
 #include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
+#include "../../Core/Controller/Interface.h"
 #include "../../Core/Controller/InterfaceOwner.h"
+
+namespace Slab::Math {
+    class FNumericConfig;
+    class FStepper;
+    class FOutputChannel;
+}
 
 namespace Slab::Math::Base {
 

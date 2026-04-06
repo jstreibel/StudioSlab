@@ -9,10 +9,12 @@
 
 namespace Slab::Graphics {
 
-    class VTKBackend : public GraphicBackend {
+    class FVTKBackend : public FGraphicBackend {
     public:
         void Run() override;
     };
+
+    using VTKBackend [[deprecated("Use FVTKBackend")]] = FVTKBackend;
 
 }
 

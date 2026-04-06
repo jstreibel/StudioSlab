@@ -21,7 +21,7 @@ namespace Slab::Graphics {
         OpenGL::Legacy::PushScene();
         OpenGL::Legacy::SetupOrtho({0,1,0,1});
 
-        auto c = PlotThemeManager::GetCurrent()->graphBackground;
+        auto c = FPlotThemeManager::GetCurrent()->graphBackground;
 
         glColor4f(c.r, c.g, c.b, c.a);
         glBegin(GL_QUADS);

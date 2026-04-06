@@ -6,10 +6,13 @@ option( STUDIOSLAB_SFML2_SUPPORT "Enable SFML 2 support in StudioSlab" ON )
 option( STUDIOSLAB_VTK_SUPPORT "Enable VTK support in StudioSlab libraries" OFF )
 option( STUDIOSLAB_USE_SINGLE_PRECISION "Use single precision instead of doubles." OFF)
 option( STUDIOSLAB_FAST_COMPILE "Disable O3 etc." OFF)
+option( STUDIOSLAB_IMGUI_LAYOUT_USE_FORK "DEPRECATED: use legacy fork-native ImGui stack layout API when available." OFF )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(StudioSlab CXX C )
+
+include(CTest)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -27,6 +30,14 @@ endif()
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Build/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Build/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Build/bin)
+
+if (STUDIOSLAB_IMGUI_LAYOUT_USE_FORK)
+    add_compile_definitions(STUDIOSLAB_IMGUI_LAYOUT_USE_FORK=1)
+    message(STATUS "ImGui layout compat provider preference: legacy-fork (deprecated)")
+else()
+    add_compile_definitions(STUDIOSLAB_IMGUI_LAYOUT_USE_FORK=0)
+    message(STATUS "ImGui layout compat provider preference: compat-fallback")
+endif()
 
 
 set ( OpenGL_GL_PREFERENCE GLVND )

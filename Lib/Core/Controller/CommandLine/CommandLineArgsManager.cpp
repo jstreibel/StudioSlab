@@ -10,12 +10,12 @@
 
 namespace Slab::Core {
 
-    void CLArgsManager::ShowHelp() {
+    void FCLArgsManager::ShowHelp() {
         throw "Show help not implemented";
     }
 
-    void CLArgsManager::Parse(int argc, const char **argv) {
-        Log::Info() << "CLArgsManager parsing command line options." << Log::Flush;
+    void FCLArgsManager::Parse(int argc, const char **argv) {
+        FLog::Info() << "FCLArgsManager parsing command line options." << FLog::Flush;
 
         CLOptionsDescription allOptions("StudioSlab");
 
@@ -36,10 +36,10 @@ namespace Slab::Core {
             exit(0);
         }
 
-        Log::Info() << "CLArgsManager finished parsing command line options." << Log::Flush;
+        FLog::Info() << "FCLArgsManager finished parsing command line options." << FLog::Flush;
     }
 
-    auto CLArgsManager::BuildOptionsDescription(const FInterface &Interface, CLOptionsDescription &Opts) -> void {
+    auto FCLArgsManager::BuildOptionsDescription(const FInterface &Interface, CLOptionsDescription &Opts) -> void {
         fix Desc = Interface.GetGeneralDescription();
         fix Name = Interface.GetName() + (Desc != "" ? Str(" (") + Desc + ")" : "");
 
@@ -53,9 +53,9 @@ namespace Slab::Core {
             }
             catch (cxxopts::exceptions::option_already_exists &e) {
                 fix same = FInterfaceManager::GetInstance().GetParameter(Param->GetCommandLineArgumentName());
-                Log::Error() << "Couldn't add CLI option '" << Param->GetFullCommandLineName() << "' (" << Param->GetDescription()
+                FLog::Error() << "Couldn't add CLI option '" << Param->GetFullCommandLineName() << "' (" << Param->GetDescription()
                              << "): option already exists as '"
-                             << same->GetFullCommandLineName() << "' (" << same->GetDescription() << ")." << Log::Flush;
+                             << same->GetFullCommandLineName() << "' (" << same->GetDescription() << ")." << FLog::Flush;
                 throw e;
             }
     }

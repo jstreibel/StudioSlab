@@ -67,6 +67,16 @@ namespace Slab::Graphics {
 
         bool IsFocused = false;
         bool Hovered   = false;
+        bool bCanvasBoundsValid = false;
+        float CanvasMinX = 0.0f;
+        float CanvasMinY = 0.0f;
+        float CanvasMaxX = 0.0f;
+        float CanvasMaxY = 0.0f;
+        bool bHasLastMousePosition = false;
+        int LastMouseX = 0;
+        int LastMouseY = 0;
+
+        [[nodiscard]] auto IsPointInsideCanvas(int x, int y) const -> bool;
     };
 
 } // Slab::Graphics

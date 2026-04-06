@@ -8,7 +8,7 @@
 
 namespace Slab::Math {
 
-    class HistoryKeeper : public FOutputChannel {
+    class FHistoryKeeper : public FOutputChannel {
     private:
         /** Dump is called whenever memory needs purging. Child class should dispose of all info contained in history,
          * because history will be purged. */
@@ -17,7 +17,7 @@ namespace Slab::Math {
         void HandleOutput(const FOutputPacket &outInfo) final;
 
     protected:
-        SpaceFilterBase &spaceFilter;
+        FSpaceFilterBase &spaceFilter;
 
         Vector<DiscreteSpacePair> spaceDataHistory; // pair: phi and dphidt
         FRealVector stepHistory;
@@ -25,9 +25,9 @@ namespace Slab::Math {
         size_t countTotal;
 
     public:
-        HistoryKeeper(size_t nStepsInterval, SpaceFilterBase *filter);
+        FHistoryKeeper(size_t nStepsInterval, FSpaceFilterBase *filter);
 
-        ~HistoryKeeper() override;
+        ~FHistoryKeeper() override;
 
         [[nodiscard]] auto getUtilMemLoadBytes() const -> long long unsigned int;
 
@@ -37,6 +37,8 @@ namespace Slab::Math {
 
         auto renderMetaDataAsPythonDictionary() const -> Str;
     };
+
+    using HistoryKeeper [[deprecated("Use FHistoryKeeper")]] = FHistoryKeeper;
 
 
 }

@@ -5,16 +5,11 @@
 #include "ImGuiContext.h"
 
 #include <utility>
-#include <filesystem>
-
-#include "Utils/Exception.h"
-
-#include "3rdParty/imgui/imgui_internal.h"
 
 #include "Core/Tools/Log.h"
-#include "Core/Tools/Resources.h"
 
 #include "ImGuiModule.h"
+#include "ImGuiColorAndStyles.h"
 #include "StudioSlab.h"
 
 #include "Graphics/SlabGraphics.h"
@@ -23,67 +18,84 @@
 #include "Slab-ImGui-Interop.h"
 
 namespace Slab::Graphics {
-    // Touch
-    fix FONT_INDEX_FOR_IMGUI = 10; //6;
     #define FONT_SIZE_PIXELS Slab::Graphics::WindowStyle::font_size
 
     constexpr auto SHOW_DEAR_IMGUI_DEBUG_METRICS = false;
 
-    void BuildFonts()
-    {
-        static const ImWchar WideCharacterRanges[] =
-                {
-                        0x0020, 0x007F, // Basic Latin
-                        0x00B0, 0x00BF, // Superscript / subscript
-                        0x0391, 0x03C9, // Greek
-                        0x03D0, 0x03F6,
-                        0x2000, 0x2311, // Math stuff
-                        /*0x2070, 0x209F, // Superscript / subscript
-                        0x21A6, 0x21A6 + 1,
-                        ImWchar("ℑ"[0]), ImWchar("ℜ"[0]),
-                        ImWchar("ℱ"[0]), ImWchar("𝒵"[0]),
-                        ImWchar("𝔸"[0]), ImWchar("ℤ"[0]),
-                        0x2200, 0x22FF, // Mathematical operators
-                        0x2A00, 0x2AFF, // Supplemental mathematical operators */
-                        0x1D400, 0x1D7FF, // Mathematical alphanumeric symbols
-                        0,
-                };
-        ImFontGlyphRangesBuilder GlyphRangesBuilder;
-        GlyphRangesBuilder.AddRanges(WideCharacterRanges);
-        for (ImWchar c: {ImWchar(0x1D62) /* subscript 'i'*/,
-                         ImWchar(0x21A6),
-                /*ImWchar("⟨"[0]),
-                ImWchar("⟩"[0])*/}
-                ) GlyphRangesBuilder.AddChar(c);
-        static ImVector<ImWchar> vRanges;
-        GlyphRangesBuilder.BuildRanges(&vRanges);
+    struct FMenuNode {
+        Str Label;
+        Vector<FMenuNode> Children;
+        Vector<std::pair<MainMenuLeafEntry, MainMenuAction>> Entries;
+    };
 
-        auto &Log = Core::Log::Debug() << "ImGui loading glyph ranges: ";
-        int i = 0;
-        for (auto &v: vRanges) {
-            if (v == 0) break;
-            Log << std::hex << v << (++i % 2 ? "-" : " ");
+    auto FindOrAddChild(FMenuNode &parent, const Str &label) -> FMenuNode* {
+        for (auto &child : parent.Children) {
+            if (child.Label == label) {
+                return &child;
+            }
         }
-        Log << std::dec << Core::Log::Flush;
+        parent.Children.push_back(FMenuNode{label});
+        return &parent.Children.back();
+    }
 
-        ImGuiIO &io = ImGui::GetIO();
-        auto FontName = Core::Resources::GetIndexedFontFileName(FONT_INDEX_FOR_IMGUI);
+    auto BuildMenuTree(const Vector<MainMenuItem> &items) -> FMenuNode {
+        FMenuNode root{"__root__"};
+        for (const auto &item : items) {
+            if (item.Location.empty()) continue;
 
-        if (!std::filesystem::exists(FontName)) throw Exception(Str("Font ") + FontName + " does not exist.");
+            auto *node = &root;
+            for (const auto &locationLevel : item.Location) {
+                node = FindOrAddChild(*node, locationLevel);
+            }
 
-        ImFontConfig FontConfig;
-        FontConfig.OversampleH = 4;
-        FontConfig.OversampleV = 4;
-        FontConfig.PixelSnapH = false;
-        auto font = io.Fonts->AddFontFromFileTTF(FontName.c_str(), WindowStyle::font_size, &FontConfig, &vRanges[0]);
+            for (const auto &subItem : item.SubItems) {
+                node->Entries.emplace_back(subItem, item.Action);
+            }
+        }
+        return root;
+    }
 
-        io.FontDefault = font;
+    auto FindChildNode(const FMenuNode &parent, const Str &label) -> const FMenuNode* {
+        for (const auto &child : parent.Children) {
+            if (child.Label == label) {
+                return &child;
+            }
+        }
+        return nullptr;
+    }
 
-        io.Fonts->Build();
+    void DrawMenuNodeEntries(const FMenuNode &node) {
+        for (const auto &child : node.Children) {
+            if (!ImGui::BeginMenu(child.Label.c_str())) continue;
+            DrawMenuNodeEntries(child);
+            ImGui::EndMenu();
+        }
 
-        Core::Log::Info() << "ImGui using font '" << Core::Resources::ExportedFonts[FONT_INDEX_FOR_IMGUI] << "'." << Core::Log::Flush;
+        if (!node.Children.empty() && !node.Entries.empty()) {
+            ImGui::Separator();
+        }
 
-        // ImGui::PushFont(font);
+        for (const auto &[entry, action] : node.Entries) {
+            if (entry.Label == MainMenuSeparator) {
+                ImGui::Separator();
+                continue;
+            }
+            if (ImGui::MenuItem(
+                    entry.Label.c_str(),
+                    entry.shortcut.c_str(),
+                    entry.selected,
+                    entry.enabled)) {
+                action(entry.Label);
+            }
+        }
+    }
+
+    void DrawMenuNode(const FMenuNode &node) {
+        for (const auto &child : node.Children) {
+            if (!ImGui::BeginMenu(child.Label.c_str())) continue;
+            DrawMenuNodeEntries(child);
+            ImGui::EndMenu();
+        }
     }
 
     FImGuiContext::FImGuiContext(FImplementationCallSet calls)
@@ -94,15 +106,15 @@ namespace Slab::Graphics {
 
         ImGuiIO &io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable docking controls
 
         // ImGui::GetStyle().ScaleAllSizes(1.25);
         ImGui::GetIO().FontGlobalScale = 1;
 
         ImplementationCalls.Init(ImplementationCalls);
+        BuildImGuiThemeFontAtlas(WindowStyle::font_size);
 
-        BuildFonts();
-
-        Core::Log::Info() << "Created ImGui context." << Core::Log::Flush;
+        Core::FLog::Info() << "Created ImGui context." << Core::FLog::Flush;
     }
 
     // SlabImGuiContext::SlabImGuiContext() {
@@ -120,9 +132,13 @@ namespace Slab::Graphics {
 
         ImplementationCalls.NewFrame();
         ImGui::NewFrame();
+        PendingMainMenuItems.clear();
     }
 
     void FImGuiContext::Render() {
+        if (MainMenuPresentation == EMainMenuPresentation::MainMenuBar) {
+            DrawMainMenuBar();
+        }
         FlushDrawCalls();
 
         ImGui::Render();
@@ -249,39 +265,97 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void AddItem(const int CurrentDepth, const MainMenuItem& Item)
-    {
-        fix& Location = Item.Location;
-        fix MaxDepth = Location.size();
+    void FImGuiContext::AddMainMenuItem(MainMenuItem item) {
+        PendingMainMenuItems.emplace_back(std::move(item));
+    }
 
-        if (ImGui::BeginMenu(Location[CurrentDepth].c_str())) {
-            if (CurrentDepth < MaxDepth-1)
-                AddItem(CurrentDepth+1, Item);
-            else {
-                const auto Action = Item.Action;
-                for(const auto & [Label, Shortcut, Selected, Enabled] : Item.SubItems) {
-                    if (Label == MainMenuSeparator)
-                    {
-                        ImGui::Separator();
-                        continue;
+    void FImGuiContext::DrawMainMenuBar() {
+        if (PendingMainMenuItems.empty()) return;
+        if (!ImGui::BeginMainMenuBar()) return;
+
+        const auto menuRoot = BuildMenuTree(PendingMainMenuItems);
+        DrawMenuNode(menuRoot);
+
+        ImGui::EndMainMenuBar();
+    }
+
+    void FImGuiContext::SetMainMenuPresentation(const EMainMenuPresentation presentation) {
+        MainMenuPresentation = presentation;
+    }
+
+    auto FImGuiContext::GetMainMenuPresentation() const -> EMainMenuPresentation {
+        return MainMenuPresentation;
+    }
+
+    auto FImGuiContext::DrawMainMenuLauncher(const char *id, const ImVec2 &size) -> bool {
+        const auto launcherSize = ImVec2(
+            (size.x > 0.0f) ? size.x : (ImGui::GetFrameHeight() + 8.0f),
+            (size.y > 0.0f) ? size.y : ImGui::GetFrameHeight());
+
+        ImGui::PushID(id);
+        const bool clicked = ImGui::Button("##MainMenuLauncher", launcherSize);
+
+        const auto rectMin = ImGui::GetItemRectMin();
+        const auto rectMax = ImGui::GetItemRectMax();
+        const auto width = rectMax.x - rectMin.x;
+        const auto height = rectMax.y - rectMin.y;
+        const auto left = rectMin.x + 0.27f * width;
+        const auto right = rectMax.x - 0.27f * width;
+        const auto y0 = rectMin.y + 0.32f * height;
+        const auto y1 = rectMin.y + 0.50f * height;
+        const auto y2 = rectMin.y + 0.68f * height;
+        const auto color = ImGui::GetColorU32(ImGuiCol_Text);
+        const auto thickness = 2.0f;
+        auto *drawList = ImGui::GetWindowDrawList();
+        drawList->AddLine(ImVec2(left, y0), ImVec2(right, y0), color, thickness);
+        drawList->AddLine(ImVec2(left, y1), ImVec2(right, y1), color, thickness);
+        drawList->AddLine(ImVec2(left, y2), ImVec2(right, y2), color, thickness);
+
+        if (clicked) {
+            ImGui::OpenPopup("##MainMenuLauncherPopup");
+        }
+
+        if (ImGui::BeginPopup("##MainMenuLauncherPopup")) {
+            if (PendingMainMenuItems.empty()) {
+                ImGui::TextDisabled("No menu entries");
+            } else {
+                const auto menuRoot = BuildMenuTree(PendingMainMenuItems);
+                const auto *systemNode = FindChildNode(menuRoot, "System");
+                bool bDrawnAnyItem = false;
+
+                if (systemNode != nullptr) {
+                    if (const auto *themeNode = FindChildNode(*systemNode, "Theme");
+                        themeNode != nullptr) {
+                        if (ImGui::BeginMenu("Theme")) {
+                            DrawMenuNodeEntries(*themeNode);
+                            ImGui::EndMenu();
+                        }
+                        bDrawnAnyItem = true;
                     }
-                    if (ImGui::MenuItem(Label.c_str(), Shortcut.c_str(), Selected, Enabled))
-                        Action(Label);
+
+                    for (const auto &[entry, action] : systemNode->Entries) {
+                        if (entry.Label != "Exit") continue;
+
+                        if (ImGui::MenuItem(
+                                entry.Label.c_str(),
+                                entry.shortcut.c_str(),
+                                entry.selected,
+                                entry.enabled)) {
+                            action(entry.Label);
+                        }
+                        bDrawnAnyItem = true;
+                    }
+                }
+
+                if (!bDrawnAnyItem) {
+                    ImGui::TextDisabled("No menu entries");
                 }
             }
-
-            ImGui::EndMenu();
+            ImGui::EndPopup();
         }
-    };
 
-    void FImGuiContext::AddMainMenuItem(MainMenuItem item) {
-        AddDrawCall([item](){
-            if(ImGui::BeginMainMenuBar()) {
-                AddItem(0, item);
-
-                ImGui::EndMainMenuBar();
-            }
-        });
+        ImGui::PopID();
+        return clicked;
     }
 
     void *FImGuiContext::GetContextPointer() {

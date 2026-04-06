@@ -14,11 +14,11 @@ namespace Modes {
 
     using Log = Core::Log;
 
-    SnapshotFileLoader::SnapshotFileLoader(const Str &filename) {
+    FSnapshotFileLoader::FSnapshotFileLoader(const Str &filename) {
         snapshotData = Load(filename);
     }
 
-    auto SnapshotFileLoader::Load(const Str &filename) -> SnapshotData {
+    auto FSnapshotFileLoader::Load(const Str &filename) -> FSnapshotData {
         auto metaData = ReadPyDict(filename);
         auto data = ReadData(filename);
 
@@ -28,7 +28,7 @@ namespace Modes {
 
         TPointer<Math::RtoR::NumericFunction_CPU> snapshotField;
 
-        SnapshotData::SnapshotDataType snapshotDataType = SnapshotData::unknownSnapshot;
+        FSnapshotData::ESnapshotDataType snapshotDataType = FSnapshotData::unknownSnapshot;
 
         if(filename.ends_with("time.dft.simsnap")
         || filename.ends_with("time.dft.snapshot")) {
@@ -39,7 +39,7 @@ namespace Modes {
             fix Δω = static_cast<DevFloat>(n)*dω;
             Core::Log::Debug() << "Loaded time.dft.snapshot of Δω=" << Δω << Log::Flush;
             snapshotField = Math::DataAlloc<Math::RtoR::NumericFunction_CPU>("SnapshotField", dataArr, 0, Δω);
-            snapshotDataType = SnapshotData::TimeDFTSnapshot;
+            snapshotDataType = FSnapshotData::TimeDFTSnapshot;
         } else if(filename.ends_with(".dft.simsnap")
                || filename.ends_with(".dft.snapshot")) {
             fix L    = std::strtod(metaData["L"].first.c_str(), &endPtr);
@@ -56,7 +56,7 @@ namespace Modes {
 
 
             snapshotField = Math::DataAlloc<Math::RtoR::NumericFunction_CPU>("SnapshotField", dataArr, xMin, xMax);
-            snapshotDataType = SnapshotData::SpaceDFTSnapshot;
+            snapshotDataType = FSnapshotData::SpaceDFTSnapshot;
         } else if(filename.ends_with(".simsnap")
                || filename.ends_with(".snapshot")) {
             fix L    = std::strtod(metaData["L"].first.c_str(), &endPtr);
@@ -64,7 +64,7 @@ namespace Modes {
             auto xMax = xMin+L;
 
             snapshotField = Math::DataAlloc<Math::RtoR::NumericFunction_CPU>("SnapshotField", dataArr, xMin, xMax);
-            snapshotDataType = SnapshotData::SpaceSnapshot;
+            snapshotDataType = FSnapshotData::SpaceSnapshot;
         } else {
             Log::Error() << "Unknown format type " << filename << Log::Flush;
             throw Exception("Unknown file format");
@@ -73,7 +73,7 @@ namespace Modes {
         return {snapshotField, metaData, filename, snapshotDataType};
     }
 
-    auto SnapshotFileLoader::ReadPyDict(const Str& filePath) -> PythonUtils::PyDict {
+    auto FSnapshotFileLoader::ReadPyDict(const Str& filePath) -> PythonUtils::PyDict {
         std::ifstream inFile(filePath, std::ios::binary);
 
         if (!inFile) throw Exception(Str("Error opening file '") + filePath + "'");
@@ -87,7 +87,7 @@ namespace Modes {
         throw Exception("file \"" + filePath + "\" does not contain Python dictionary header");
     }
 
-    auto SnapshotFileLoader::ReadData(const Str& filePath) -> FRealVector {
+    auto FSnapshotFileLoader::ReadData(const Str& filePath) -> FRealVector {
         std::ifstream inFile(filePath, std::ios::binary);
 
         if (!inFile) throw Exception(Str("Error opening file '") + filePath + "'");

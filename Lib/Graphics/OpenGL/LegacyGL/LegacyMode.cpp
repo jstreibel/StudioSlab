@@ -13,7 +13,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
     {
         if (IsInLegacyMode()) return;
 
-        if(!Core::BackendManager::IsModuleLoaded("ModernOpenGL")) return; // Already in legacy mode
+        if(!Core::FBackendManager::IsModuleLoaded("ModernOpenGL")) return; // Already in legacy mode
 
         GLint CurrentProgram;;
         glGetIntegerv(GL_CURRENT_PROGRAM, &CurrentProgram);
@@ -28,7 +28,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
 
     FShaderGuard::~FShaderGuard()
     {
-        if(!Core::BackendManager::IsModuleLoaded("ModernOpenGL")) return;
+        if(!Core::FBackendManager::IsModuleLoaded("ModernOpenGL")) return;
 
         glUseProgram(LastProgramUsed);
 

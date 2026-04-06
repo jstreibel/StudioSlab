@@ -39,42 +39,42 @@
 
 using namespace Slab;
 
-class App : public Core::AppBase {
+class FApp : public Core::FAppBase {
     Core::StringParameter      filename = Core::StringParameter("", Core::FParameterDescription{'f', "filename", ".oscb file."});
 
 public:
-    App(int argc, const char **argv)
-            : AppBase(argc, argv, false)
+    FApp(int argc, const char **argv)
+            : FAppBase(argc, argv, false)
     {
         Interface->AddParameters({&filename});
         Core::RegisterCLInterface(Interface);
 
-        Core::BackendManager::Startup("GLFW");
+        Core::FBackendManager::Startup("GLFW");
 
-        Slab::Graphics::PlotThemeManager::GetInstance();
+        Slab::Graphics::FPlotThemeManager::GetInstance();
 
-        Core::CLArgsManager::Parse(argc, argv);
+        Core::FCLArgsManager::Parse(argc, argv);
     }
 
     auto run() -> int override {
-        auto function = Modes::HistoryFileLoader::Load(*filename);
+        auto function = Modes::FHistoryFileLoader::Load(*filename);
         auto ddt_function = DynamicPointerCast<Slab::Math::R2toR::FNumericFunction>(function->diff(1));
 
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
         guiBackend->GetMainSystemWindow()->SetSystemWindowTitle(*filename);
 
-        auto viewer = Slab::New<Slab::Models::KGRtoR::KGMainViewer>();
+        auto viewer = Slab::New<Slab::Models::KGRtoR::FKGMainViewer>();
 
         auto gui_window = viewer->getGUIWindow();
-        viewer->addViewer(Slab::New<Graphics::FourierViewer>(gui_window));
-        viewer->addViewer(Slab::New<Graphics::HistoryViewer>(gui_window));
-        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::TimeFTViewer>(gui_window));
-        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::HistoryViewer>(gui_window));
-        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::TwoPointCorrelationViewer_KG>(gui_window));
-        viewer->addViewer(Slab::New<Graphics::ModesHistoryViewer>(gui_window));
-        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::HistogramsViewer_KG>(gui_window));
-        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::EnergyViewer_KG>(gui_window));
-        viewer->addViewer(Slab::New<Slab::Graphics::Viewer3D>(gui_window));
+        viewer->addViewer(Slab::New<Graphics::FFourierViewer>(gui_window));
+        viewer->addViewer(Slab::New<Graphics::FHistoryViewer>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::FTimeFTViewer>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::FHistoryViewer_KG>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::FTwoPointCorrelationViewer_KG>(gui_window));
+        viewer->addViewer(Slab::New<Graphics::FModesHistoryViewer>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::FHistogramsViewer_KG>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::FEnergyViewer_KG>(gui_window));
+        viewer->addViewer(Slab::New<Slab::Graphics::FViewer3D>(gui_window));
 
         viewer->setFunction(function);
         viewer->setFunctionTimeDerivative(ddt_function);
@@ -90,7 +90,7 @@ public:
 };
 
 int run(int argc, const char** argv){
-    App app(argc, argv);
+    FApp app(argc, argv);
 
     return app.run();
 }
@@ -99,7 +99,7 @@ int main(int argc, const char* argv[]) {
     return Slab::SafetyNet::jump(
             [](int argc, const char **argv)
             {
-                App app(argc, argv);
+                FApp app(argc, argv);
                 return app.run();
             }, argc, argv);
 }

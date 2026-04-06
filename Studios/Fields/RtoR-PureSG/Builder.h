@@ -13,14 +13,16 @@ namespace Studios::PureSG {
     using namespace Slab::Math;
     using namespace Slab::Models::KGRtoR;
 
-    class Builder : public FKGRtoR_Recipe {
+    class FBuilder : public FKGRtoR_Recipe {
 
     public:
-        Builder(const Str &name, const Str &generalDescription, bool doRegister=false);
+        FBuilder(const Str &name, const Str &generalDescription, bool doRegister=false);
 
     protected:
         auto BuildOpenGLOutput() -> void * override;
     };
+
+    using Builder [[deprecated("Use FBuilder")]] = FBuilder;
 
 } // PureSG
 

@@ -10,11 +10,13 @@
 
 namespace Slab::Graphics {
 
-    class ImGuiModuleGLFW : public FImGuiModule
+    class FImGuiModuleGLFW : public FImGuiModule
     {
     public:
-        explicit ImGuiModuleGLFW(GLFWwindow*);
+        explicit FImGuiModuleGLFW(GLFWwindow*);
     };
+
+    using ImGuiModuleGLFW [[deprecated("Use FImGuiModuleGLFW")]] = FImGuiModuleGLFW;
 
 } // Slab::Graphics
 

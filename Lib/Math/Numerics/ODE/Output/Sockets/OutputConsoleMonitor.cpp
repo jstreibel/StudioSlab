@@ -4,13 +4,13 @@
 
 namespace Slab::Math {
 
-    OutputConsoleMonitor::OutputConsoleMonitor(const CountType total_steps, CountType steps_interval)
+    FOutputConsoleMonitor::FOutputConsoleMonitor(const CountType total_steps, CountType steps_interval)
     : FOutputChannel("Console monitor output", static_cast<int>(steps_interval))
     , total_steps(total_steps) {
 
     }
 
-    bool OutputConsoleMonitor::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
+    bool FOutputConsoleMonitor::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
         // Isso aqui eh para aparecer o 100% completo (se nao fica uns quebrados).
         FOutputPacket dummyInfo = FOutputPacket(nullptr, total_steps);
 
@@ -18,17 +18,17 @@ namespace Slab::Math {
         return true;
     }
 
-    void OutputConsoleMonitor::HandleOutput(const FOutputPacket &outputInfo) {
+    void FOutputConsoleMonitor::HandleOutput(const FOutputPacket &outputInfo) {
         static Vector<DevFloat> measures;
-        auto elTime = timer.GetElapsedTime_Seconds();
+        auto elTime = timer.GetElapsedTimeSeconds();
 
         auto n = total_steps;
         auto currn = outputInfo.GetSteps();
         static auto lastn = currn;
 
-        Core::Log::Info() << Core::Log::Flush;
-        Core::Log::Info() << (100 * static_cast<DevFloat>(currn) / total_steps) << "% done" << Core::Log::Flush;
-        Core::Log::Info() << "Step " << outputInfo.GetSteps() << "/" << n << Core::Log::Flush;
+        Core::FLog::Info() << Core::FLog::Flush;
+        Core::FLog::Info() << (100 * static_cast<DevFloat>(currn) / total_steps) << "% done" << Core::FLog::Flush;
+        Core::FLog::Info() << "Step " << outputInfo.GetSteps() << "/" << n << Core::FLog::Flush;
 
         auto expectedFinish = (DevFloat)NAN;
         if (lastn != currn) {
@@ -48,17 +48,17 @@ namespace Slab::Math {
 
             expectedFinish = (DevFloat)(n - currn) / stepsPerSec;
 
-            Core::Log::Info() << "Avg " << stepsPerSec << " steps/s in last " << total << " measures" << Core::Log::Flush;
-            Core::Log::Info() << "El time since last step: " << elTime << "s" << Core::Log::Flush;
-            Core::Log::Info() << "Expected finish in " << Core::Log::FGBlue << int(expectedFinish) / 60 << "m "
-                        << int(expectedFinish) % 60 << "s" << Core::Log::Flush;
+            Core::FLog::Info() << "Avg " << stepsPerSec << " steps/s in last " << total << " measures" << Core::FLog::Flush;
+            Core::FLog::Info() << "El time since last step: " << elTime << "s" << Core::FLog::Flush;
+            Core::FLog::Info() << "Expected finish in " << Core::FLog::FGBlue << int(expectedFinish) / 60 << "m "
+                        << int(expectedFinish) % 60 << "s" << Core::FLog::Flush;
 
             // this->setnSteps(stepsPerSec);
         }
 
         lastn = currn;
 
-        timer.reset();
+        timer.Reset();
     }
 
 

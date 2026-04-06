@@ -13,11 +13,11 @@
 
 namespace Slab::Graphics {
 
-    class SFMLBackend : public GraphicBackend {
+    class FSFMLBackend : public FGraphicBackend {
         sf::Mutex off_sync;
 
     public:
-        SFMLBackend();
+        FSFMLBackend();
 
         void Run() override;
 
@@ -28,8 +28,10 @@ namespace Slab::Graphics {
 
     public:
 
-        static SFMLBackend &GetInstance();
+        static FSFMLBackend& GetInstance();
     };
+
+    using SFMLBackend [[deprecated("Use FSFMLBackend")]] = FSFMLBackend;
 
 }
 

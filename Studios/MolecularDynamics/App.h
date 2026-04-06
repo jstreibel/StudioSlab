@@ -13,13 +13,15 @@
 
 namespace Studios::MolecularDynamics {
 
-    class App : public Slab::Core::AppBase {
+    class FApp : public Slab::Core::FAppBase {
         Slab::TPointer<Slab::Math::FNumericTask> NumericTask;
     public:
-        App(int argc, const char *argv[]);
+        FApp(int argc, const char *argv[]);
 
         int run() override;
     };
+
+    using App [[deprecated("Use FApp")]] = FApp;
 }
 
 

@@ -10,9 +10,9 @@
 
 namespace Slab::Math {
 
-    class CustomStringSeparatedSOF : public OutputFormatterBase {
+    class FCustomStringSeparatedSOF : public FOutputFormatterBase {
     public:
-        explicit CustomStringSeparatedSOF(std::string sep = " ");
+        explicit FCustomStringSeparatedSOF(std::string sep = " ");
 
         auto operator()(const DiscreteSpace &fOut) const -> ByteData override;
 
@@ -25,6 +25,8 @@ namespace Slab::Math {
     private:
         const std::string sep;
     };
+
+    using CustomStringSeparatedSOF [[deprecated("Use FCustomStringSeparatedSOF")]] = FCustomStringSeparatedSOF;
 
 
 }

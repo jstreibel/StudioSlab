@@ -11,7 +11,7 @@ namespace Slab::Core {
     }
 
     void FConsoleBackend::Run() {
-        auto TaskManager = dynamic_cast<MTaskManager*>(BackendManager::GetModule("TaskManager").get());
+        auto TaskManager = dynamic_cast<FTaskManager*>(FBackendManager::GetModule("TaskManager").get());
 
         while(TaskManager->HasRunningTasks());
     }
@@ -21,7 +21,7 @@ namespace Slab::Core {
     }
 
     FConsoleBackend::~FConsoleBackend() {
-        Core::Log::Info() << "Destroying ConsoleBackend." << Log::Flush;
+        Core::FLog::Info() << "Destroying ConsoleBackend." << FLog::Flush;
     }
 
 }

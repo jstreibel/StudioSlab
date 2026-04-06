@@ -1,7 +1,7 @@
 
 set( STUDIOSLAB_BASE_LIB_NAME Slab )
 
-include_directories(./ ./3rdParty/imgui /usr/include/freetype2/)
+include_directories(./ ../Slab ./3rdParty/imgui /usr/include/freetype2/)
 
 # in order of dependency:
 add_subdirectory(3rdParty)
@@ -11,7 +11,10 @@ add_subdirectory(Core)
 add_subdirectory(Math)
 add_subdirectory(Graphics)
 add_subdirectory(Models)
-add_subdirectory(tests)
+
+if (BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
 
 find_library(QUADMATH_LIB quadmath)
 

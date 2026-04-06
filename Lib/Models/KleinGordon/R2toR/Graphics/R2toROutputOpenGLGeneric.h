@@ -12,7 +12,7 @@
 
 namespace Slab::Models::KGR2toR {
 
-    class OutputOpenGL : public Graphics::BaseMonitor {
+    class FOutputOpenGL : public Graphics::FBaseMonitor {
 
     protected:
 
@@ -24,11 +24,13 @@ namespace Slab::Models::KGR2toR {
 
     public:
 
-        explicit OutputOpenGL(CountType max_steps);
+        explicit FOutputOpenGL(CountType max_steps);
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
     };
+
+    using OutputOpenGL [[deprecated("Use FOutputOpenGL")]] = FOutputOpenGL;
 
 }
 

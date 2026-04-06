@@ -16,7 +16,7 @@ auto main(int argc, const char **argv) -> int {
     try {
         auto &im = InterfaceSelector::getInstance();
 
-        /* sim 0 */im.registerOption(new RtoR::Signal::CLI);
+        /* sim 0 */im.registerOption(new RtoR::Signal::FCLI);
 
         im.preParse(argc, argv);
 

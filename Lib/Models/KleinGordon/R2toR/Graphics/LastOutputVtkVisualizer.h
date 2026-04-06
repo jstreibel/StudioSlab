@@ -9,18 +9,20 @@
 
 namespace Slab::Models::KGR2toR {
 
-    class LastOutputVTKVisualizer : public Math::Socket {
+    class FLastOutputVTKVisualizer : public Math::Socket {
         int outN;
     protected:
         auto HandleOutput(const Math::OutputPacket &packet) -> void override {};
 
     public:
-        explicit LastOutputVTKVisualizer(Count total_steps, int outN=256);
-        ~LastOutputVTKVisualizer() override;
+        explicit FLastOutputVTKVisualizer(Count total_steps, int outN = 256);
+        ~FLastOutputVTKVisualizer() override;
 
         auto notifyIntegrationHasFinished(const Math::OutputPacket &theVeryLastOutputInformation) -> bool override;
 
     };
+
+    using LastOutputVTKVisualizer [[deprecated("Use FLastOutputVTKVisualizer")]] = FLastOutputVTKVisualizer;
 } // R2toR
 
 

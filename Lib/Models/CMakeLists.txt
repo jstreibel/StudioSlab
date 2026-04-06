@@ -7,11 +7,19 @@ set ( KG_SOURCES
 		KleinGordon/KG-State.h
         KleinGordon/__archive__/KG-Langevin.h
         KleinGordon/RtoR-Montecarlo/Montecarlo-Lorentz-2ndOrder.h
+        KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.h
+        KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.cpp
+        KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h
+        KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.cpp
+        KleinGordon/RtoR-Montecarlo/V2/Metropolis-FieldStateV2.h
+        KleinGordon/RtoR-Montecarlo/V2/Metropolis-FieldStateV2.cpp
 
         KleinGordon/RtoR/LinearStepping/KG-RtoR-Recipe.cpp
         KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.cpp
         KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.cpp
         KleinGordon/RtoR/LinearStepping/KG-RtoRBoundaryCondition.cpp
+        KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PlaneWaves-RecipeV2.cpp
+        KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PlaneWaves-RecipeV2.h
         KleinGordon/RtoR/LinearStepping/Output/SimHistory.h KleinGordon/RtoR/LinearStepping/Output/SimHistory.cpp
         KleinGordon/RtoR/LinearStepping/Output/SimHistory_Fourier.h KleinGordon/RtoR/LinearStepping/Output/SimHistory_Fourier.cpp
         KleinGordon/RtoR/LinearStepping/Output/SnapshotOutput.h KleinGordon/RtoR/LinearStepping/Output/SnapshotOutput.cpp
@@ -35,6 +43,8 @@ set ( KG_SOURCES
 		KleinGordon/R2toR/R2toRBuilder.h
 		KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.cpp
         KleinGordon/R2toR/EquationState.cpp
+        KleinGordon/R2toR/V2/KG-R2toR-Baseline-RecipeV2.cpp
+        KleinGordon/R2toR/V2/KG-R2toR-Baseline-RecipeV2.h
 
 		KleinGordon/KG-LangevinSolver.h KleinGordon/KG-LangevinSolver.cpp
 
@@ -80,6 +90,14 @@ set ( XY_SOURCES
 	XY/ManyHistories/QuenchViewController.cpp
 	XY/ManyHistories/HistoryViewController.cpp
 
+    XY/V2/XY-Metropolis-RecipeV2.h
+    XY/V2/XY-Metropolis-RecipeV2.cpp
+
+)
+
+set ( ISING_SOURCES
+        Ising/V2/Ising-Metropolis-RecipeV2.h
+        Ising/V2/Ising-Metropolis-RecipeV2.cpp
 )
 
 set ( MOLDYN_SOURCES
@@ -98,6 +116,8 @@ set ( MOLDYN_SOURCES
 		MolecularDynamics/Hamiltonians/Hash/HashParams.h
 
         MolecularDynamics/MolecularDynamicsRecipe.h MolecularDynamics/MolecularDynamicsRecipe.cpp
+        MolecularDynamics/V2/MolecularDynamics-Baseline-RecipeV2.h
+        MolecularDynamics/V2/MolecularDynamics-Baseline-RecipeV2.cpp
 		MolecularDynamics/VerletStepper.h 		  MolecularDynamics/VerletStepper.cpp
 		MolecularDynamics/Hamiltonians/Particle.h MolecularDynamics/Hamiltonians/Particle.cpp
 		MolecularDynamics/Monitor.h 			  MolecularDynamics/Monitor.cpp
@@ -116,6 +136,7 @@ add_library( ${LIB_LOCAL_NAME} STATIC
 		${KG_SOURCES}
 		${KG_SOURCES_CUDA}
 		${XY_SOURCES}
+        ${ISING_SOURCES}
 		${MOLDYN_SOURCES}
 
 		${MODELS_VTK_SOURCES}
@@ -126,6 +147,8 @@ add_library( ${LIB_LOCAL_NAME} STATIC
 		KleinGordon/R2toR/Output/KG2DSnapshotOutput.h
 		Stochastic-Path-Integral/SPI-Recipe.cpp
 		Stochastic-Path-Integral/SPI-Recipe.h
+		Stochastic-Path-Integral/V2/SPI-RecipeV2.cpp
+		Stochastic-Path-Integral/V2/SPI-RecipeV2.h
 		Stochastic-Path-Integral/SPI-State.cpp
 		Stochastic-Path-Integral/SPI-State.h
 		Stochastic-Path-Integral/SPI-Solver.cpp

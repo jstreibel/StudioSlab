@@ -7,8 +7,8 @@
 
 namespace Slab::Math {
 
-    EqStateOutputInterface::Formats EqStateOutputInterface::format = SpaceSeparated;
-    EqStateOutputInterface::FieldDataOutputTypes EqStateOutputInterface::fDataOutType = Phi;
+    FEqStateOutputInterface::Formats FEqStateOutputInterface::format = SpaceSeparated;
+    FEqStateOutputInterface::FieldDataOutputTypes FEqStateOutputInterface::fDataOutType = Phi;
 
 
 }

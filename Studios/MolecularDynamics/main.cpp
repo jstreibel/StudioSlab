@@ -6,7 +6,7 @@
 #include "App.h"
 
 int run(int argc, const char *argv[]){
-    Studios::MolecularDynamics::App app(argc, argv);
+    Studios::MolecularDynamics::FApp app(argc, argv);
 
     return app.run();
 }

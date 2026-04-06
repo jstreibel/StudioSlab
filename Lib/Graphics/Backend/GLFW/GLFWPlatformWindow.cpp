@@ -5,9 +5,13 @@
 #include "glfw.h"
 
 #include "GLFWPlatformWindow.h"
+
+#include "Core/SlabCore.h"
 #include "Utils/ReferenceIterator.h"
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/Utils.h"
+#include "Graphics/OpenGL/LegacyGL/LegacyDrawBackend2D.h"
+#include "Graphics/OpenGL/ModernGL/ModernDrawBackend2D.h"
 #include "Graphics/OpenGL/WriterOpenGL.h"
 #include "Graphics/Window/WindowStyles.h"
 
@@ -80,14 +84,14 @@ namespace Slab::Graphics {
     void FGLFWPlatformWindow::drop_callback(GLFWwindow *window, int count, const char **paths) {
         StrVector pathsVec;
 
-        auto &log = Core::Log::Info() << "Dropped files: ";
+        auto &log = Core::FLog::Info() << "Dropped files: ";
         int i;
         for (i = 0; i < count; i++) {
             log << "\n\t\t" << paths[i];
             pathsVec.emplace_back(paths[i]);
         }
 
-        log << Core::Log::Flush;
+        log << Core::FLog::Flush;
 
         auto &Me = *static_cast<FGLFWPlatformWindow*>(glfwGetWindowUserPointer(window));
 
@@ -122,7 +126,7 @@ namespace Slab::Graphics {
         }
 
         if (!window) {
-            Log::Error() << "Failed creating GLFW window." << Log::Flush;
+            FLog::Error() << "Failed creating GLFW window." << FLog::Flush;
             throw Exception("GLFW error");
         }
 
@@ -131,10 +135,9 @@ namespace Slab::Graphics {
 
         glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
         glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
-        Log::Info() << "Mouse buttons and keyboard keys sticky mode " << Log::FGGreen << "ENABLED" << Log::Flush;
+        FLog::Info() << "Mouse buttons and keyboard keys sticky mode " << FLog::FGGreen << "ENABLED" << FLog::Flush;
 
-        fix RAW_MOUSE_MODE = false;
-        if (RAW_MOUSE_MODE && glfwRawMouseMotionSupported()) {
+        if constexpr (constexpr auto RawMouseMode = false; RawMouseMode && glfwRawMouseMotionSupported()) {
             // When the cursor is disabled, raw (unscaled and unaccelerated) mouse motion can be enabled if available.
             // If supported, raw mouse motion can be enabled or disabled per-window and at any time, but it will only be
             // provided when the cursor is disabled.
@@ -235,6 +238,19 @@ namespace Slab::Graphics {
     void FGLFWPlatformWindow::Flush()
     {
         glfwSwapBuffers(static_cast<GLFWwindow *>(r_Window));
+    }
+
+    TPointer<IDrawBackend2D> FGLFWPlatformWindow::GetRenderer() const {
+        static TPointer<IDrawBackend2D> Renderer = nullptr;
+        if (Renderer == nullptr)
+        try {
+            LoadModule("ModernOpenGL");
+            Renderer = New<OpenGL::Modern::FModernDrawBackend2D>();
+        } catch (...) {
+            Renderer = New<OpenGL::Legacy::FLegacyDrawBackend2D>();
+        }
+
+        return Renderer;
     }
 
     bool FGLFWPlatformWindow::ShouldClose() const {

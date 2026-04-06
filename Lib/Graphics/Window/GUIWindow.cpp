@@ -6,12 +6,12 @@
 
 #include <utility>
 
-#include "imgui_internal.h"
 #include "3rdParty/ImGui.h"
 #include "../../Core/Controller/InterfaceManager.h"
 #include "Core/Backend/BackendManager.h"
 
 #include "Math/SlabMath.h"
+#include "Graphics/Modules/ImGui/ImGuiFrameCompat.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "StudioSlab.h"
 
@@ -122,28 +122,36 @@ namespace Slab::Graphics {
     }
 
     void FGUIWindow::Begin() const {
-        if (GImGui == nullptr) return;
-        if (!GImGui->WithinFrameScope) return;
+        if (!FImGuiFrameCompat::CanIssueDrawCommands()) return;
 
         fix WinSize = ImVec2(static_cast<float>(this->GetWidth()), static_cast<float>(this->GetHeight()));
         fix WinPos  = ImVec2(static_cast<float>(this->Get_x()), static_cast<float>(this->Get_y()));
-        constexpr auto WinFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration;
+        const bool bDockingEnabled = (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_DockingEnable) != 0;
+        const auto WinFlags = bDockingEnabled
+            ? ImGuiWindowFlags_NoCollapse
+            : ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration;
 
-        ImGui::SetNextWindowSize(WinSize, ImGuiCond_Always);
-        ImGui::SetNextWindowPos(WinPos, ImGuiCond_Always);
+        const auto firstUseCond = bDockingEnabled ? ImGuiCond_FirstUseEver : ImGuiCond_Always;
+        ImGui::SetNextWindowSize(WinSize, firstUseCond);
+        ImGui::SetNextWindowPos(WinPos, firstUseCond);
         ImGui::Begin(WindowId.c_str(), nullptr, WinFlags);
 
-        auto Flags = ImGuiChildFlags_Border
-                   // | ImGuiChildFlags_FrameStyle
-                   | ImGuiChildFlags_AutoResizeX
-                   | ImGuiChildFlags_AutoResizeY;
-        ImGui::BeginChild("##LeftPane", ImVec2{this->GetWidth() - 40.0f,0}, Flags);
+        ImGuiChildFlags childFlags = ImGuiChildFlags_Border;
+        auto childSize = ImVec2{this->GetWidth() - 40.0f, 0.0f};
+        if (!bDockingEnabled) {
+            childFlags = static_cast<ImGuiChildFlags>(
+                childFlags |
+                ImGuiChildFlags_AutoResizeX |
+                ImGuiChildFlags_AutoResizeY);
+        } else {
+            childSize = ImVec2{0.0f, 0.0f};
+        }
+        ImGui::BeginChild("##LeftPane", childSize, childFlags);
     }
 
     void FGUIWindow::End() const
     {
-        if (GImGui == nullptr) return;
-        if (!GImGui->WithinFrameScope) return;
+        if (!FImGuiFrameCompat::CanIssueDrawCommands()) return;
 
         ImGui::EndChild();
         ImGui::End();
@@ -151,8 +159,7 @@ namespace Slab::Graphics {
 
     void FGUIWindow::AddExternalDraw(const FDrawCall& Draw) const
     {
-        if (GImGui == nullptr) return;
-        if (!GImGui->WithinFrameScope) return;
+        if (!FImGuiFrameCompat::CanIssueDrawCommands()) return;
 
         this->Begin();
         Draw();

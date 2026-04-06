@@ -15,35 +15,35 @@ namespace Slab::Math {
     const Str extension = ".osc";
 #define outputFilename std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))
 
-    OutputHistoryToFile::OutputHistoryToFile(UInt stepsInterval,
-                                             SpaceFilterBase *spaceFilter,
-                                             const Str &outputFileName,
-                                             OutputFormatterBase *outputFormatter)
-    : HistoryKeeper(stepsInterval, spaceFilter)
+    FOutputHistoryToFile::FOutputHistoryToFile(UInt stepsInterval,
+                                               FSpaceFilterBase *spaceFilter,
+                                               const Str &outputFileName,
+                                               FOutputFormatterBase *outputFormatter)
+    : FHistoryKeeper(stepsInterval, spaceFilter)
     , outFileName(outputFilename)
     , outputFormatter(*outputFormatter)
     {
         file.open(outFileName, std::ios::out);
 
-        using Core::Log;
+        using Core::FLog;
 
         if (!file) {
-            Log::Error() << "OutputHistoryToFile couldn't open file '" << outFileName << "'" << Log::Flush;
+            FLog::Error() << "OutputHistoryToFile couldn't open file '" << outFileName << "'" << FLog::Flush;
             throw Exception("OutputHistoryToFile couldn't open file.");
         }
 
-        Log::Info() << "Sim history data file is \'" << Common::GetPWD() << "/" << outFileName << "\'. " << Log::Flush;
+        FLog::Info() << "Sim history data file is \'" << Common::GetPWD() << "/" << outFileName << "\'. " << FLog::Flush;
         Str spaces(HEADER_SIZE_BYTES - 1, ' ');
 
         file << spaces << '\n';
     }
 
-    OutputHistoryToFile::~OutputHistoryToFile() {
+    FOutputHistoryToFile::~FOutputHistoryToFile() {
         auto *f = &outputFormatter;
         delete f;
     };
 
-    void OutputHistoryToFile::_dump(bool integrationIsFinished) {
+    void FOutputHistoryToFile::_dump(bool integrationIsFinished) {
         if (integrationIsFinished) {
             _printHeaderToFile({"phi"});
 
@@ -56,13 +56,13 @@ namespace Slab::Math {
 
         FTimer timer;
 
-        using Core::Log;
+        using Core::FLog;
 
         for (size_t Ti = 0; Ti < count; Ti++) {
-            if (timer.GetElapsedTime_Seconds() > 1) {
-                timer.reset();
-                Log::Info() << std::setprecision(3) << "Flushing " << (DevFloat) Ti / DevFloat(count) * 100.0 << "%    "
-                            << Log::Flush;
+            if (timer.GetElapsedTimeSeconds() > 1) {
+                timer.Reset();
+                FLog::Info() << std::setprecision(3) << "Flushing " << (DevFloat) Ti / DevFloat(count) * 100.0 << "%    "
+                            << FLog::Flush;
             }
 
             file << outputFormatter(stepHistory[int(Ti)]);
@@ -77,10 +77,10 @@ namespace Slab::Math {
 
         file.flush();
 
-        Log::Success() << "Flushed " << "100% " << Log::Flush;
+        FLog::Success() << "Flushed " << "100% " << FLog::Flush;
     }
 
-    void OutputHistoryToFile::_printHeaderToFile(Vector<std::string> channelNames) {
+    void FOutputHistoryToFile::_printHeaderToFile(Vector<std::string> channelNames) {
         std::ostringstream oss;
 
         oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal + count);

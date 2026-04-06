@@ -13,25 +13,30 @@
 
 namespace Slab::Math {
 
-    struct RandomSite{ UInt i; UInt j; };
-    using NewValue = DevFloat;
-    using R2toRMetropolis = MetropolisAlgorithm<RandomSite, NewValue>;
+    struct FRandomSite { UInt i; UInt j; };
+    using RandomSite [[deprecated("Use FRandomSite")]] = FRandomSite;
+    using FNewValue = DevFloat;
+    using FR2toRMetropolis = FMetropolisAlgorithm<FRandomSite, FNewValue>;
+    using NewValue [[deprecated("Use FNewValue")]] = FNewValue;
+    using R2toRMetropolis [[deprecated("Use FR2toRMetropolis")]] = FR2toRMetropolis;
 
-    class R2toRMetropolisRecipe : public Base::FNumericalRecipe {
+    class FR2toRMetropolisRecipe : public Base::FNumericalRecipe {
         TPointer<R2toR::NumericFunction_CPU> field_data;
 
         using Site = struct{UInt i; UInt j;};
-        using R2toRMetropolisSetup = R2toRMetropolis::Setup;
+        using FR2toRMetropolisSetup = FR2toRMetropolis::Setup;
 
     public:
         auto getField() -> TPointer<R2toR::NumericFunction_CPU>;
 
-        explicit R2toRMetropolisRecipe(UInt max_steps);
+        explicit FR2toRMetropolisRecipe(UInt max_steps);
 
         auto BuildOutputSockets() -> Vector<TPointer<FOutputChannel>> override;
 
         auto BuildStepper() -> TPointer<FStepper> override;
     };
+
+    using R2toRMetropolisRecipe [[deprecated("Use FR2toRMetropolisRecipe")]] = FR2toRMetropolisRecipe;
 
 } // Slab::Math
 

@@ -14,7 +14,7 @@ namespace Modes {
     using namespace Slab::Math;
 
 
-    class NumericalRecipe_Ak2 final : public Models::KGRtoR::FKGRtoR_Recipe {
+    class FNumericalRecipeAk2 final : public Models::KGRtoR::FKGRtoR_Recipe {
         IntegerParameter BCSelection = IntegerParameter(0, FParameterDescription{"BC", "Boundary conditions selection:"
                                                                                        "\n\t0: sine signal with 'omega' angular frequency in vacuum IC."
                                                                                        "\n\t1: IC sine wave with 'omega' angular frequency and 'wave_number' wave number."
@@ -30,14 +30,14 @@ namespace Modes {
         RealParameter mass             = RealParameter   (-1.0,  FParameterDescription{"mass", "Mass of for computing angular frequency. If negative, mass is set to 4k²/(πι)"});
         BoolParameter driving_force    = BoolParameter   (false, FParameterDescription{'F', "driving_force", "Compute with non-homogenous driving force."});
 
-        TPointer<Modes::SquareWave> squareWave;
+        TPointer<Modes::FSquareWave> squareWave;
     protected:
         auto BuildOpenGLOutput() -> void * override;
 
     public:
         [[nodiscard]] auto SuggestFileName() const -> Str override;
 
-        explicit NumericalRecipe_Ak2(bool doRegister=true);
+        explicit FNumericalRecipeAk2(bool doRegister=true);
 
         auto GetBoundary() -> Slab::Math::Base::BoundaryConditions_ptr override;
 
@@ -45,6 +45,8 @@ namespace Modes {
 
         auto NotifyInterfaceSetupIsFinished() -> void override;
     };
+
+    using NumericalRecipe_Ak2 [[deprecated("Use FNumericalRecipeAk2")]] = FNumericalRecipeAk2;
 
 } // Modes
 

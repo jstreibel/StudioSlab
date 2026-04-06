@@ -33,9 +33,9 @@ namespace Slab {
     }
 
     TPointer<Core::FBackend> CreatePlatform(Core::FBackendIdentifier platform) {
-        Core::BackendManager::Startup(platform);
+        Core::FBackendManager::Startup(platform);
 
-        return Core::BackendManager::GetBackend();
+        return Core::FBackendManager::GetBackend();
     }
 
     int Run(FApplication &Application) {

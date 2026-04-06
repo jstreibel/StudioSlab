@@ -25,21 +25,21 @@ namespace Modes::DatabaseViewer {
 
 #define z_order(z) (z)
 
-    DBViewerSequence::DBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam)
+    FDBViewerSequence::FDBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam)
     : FWindowRow()
     , guiWindow(Graphics::FSlabWindowConfig{"GUI"})
     , mashupDisplay("All data")
     , massesGraph("masses")
     {
         for(const auto &dbFilename : dbFilenames) {
-            auto parser = New<DBParser>(dbFilename, criticalParam, ".");
+            auto parser = New<FDBParser>(dbFilename, criticalParam, ".");
             dbParsers.emplace_back(parser);
         }
 
         this->AddWindow(Naked(guiWindow));
 
         {
-            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+            auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.filled = false;
             style.setPrimitive(Slab::Graphics::PlottingSolid);
             auto funky = Math::RtoR::NativeFunction([](DevFloat x) { return x; }).Clone();
@@ -48,7 +48,7 @@ namespace Modes::DatabaseViewer {
 
         // Setup masses Re and Im pointsets.
         {
-            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
+            auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[2];
             style.setPrimitive(Graphics::PlottingVerticalLinesWithCircles);
             style.filled = false;
             style.thickness = 1.5;
@@ -70,13 +70,13 @@ namespace Modes::DatabaseViewer {
         {
             mashupDisplay.GetAxisArtist().setVerticalUnit(Math::Constants::π);
             mashupDisplay.GetAxisArtist().setHorizontalUnit(Math::Constants::π);
-            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+            auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             style.thickness = 3;
             style.filled = false;
             KGRelation_artist = Graphics::FPlotter::AddPointSet(Naked(mashupDisplay), KGRelation, style,
                                                                "ω²-kₚₑₐₖ²-m²=0", false, z_order(1));
 
-            style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+            style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.setPrimitive(Graphics::Points);
             style.thickness = 8;
             Graphics::FPlotter::AddPointSet(Naked(mashupDisplay), Naked(maxValuesPointSet), style,
@@ -99,7 +99,7 @@ namespace Modes::DatabaseViewer {
         reloadData();
     }
 
-    void DBViewerSequence::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FDBViewerSequence::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if(currentMeshupArtist == nullptr) return;
 
         fix ω_XHair = mashupDisplay.GetLastXHairPosition().x;
@@ -154,7 +154,7 @@ namespace Modes::DatabaseViewer {
         FWindowRow::ImmediateDraw(PlatformWindow);
     }
 
-    void DBViewerSequence::updateKGDispersion(bool visible) {
+    void FDBViewerSequence::updateKGDispersion(bool visible) {
         const DevFloat mass = KG_mass;
 
         if(!visible) return;
@@ -171,10 +171,10 @@ namespace Modes::DatabaseViewer {
                                                                                           : Slab::Math::RtoR::k_AsFunctionOf_ω;
 
         KGRelation = Math::RtoR::FunctionRenderer::ToPointSet(
-                Math::RtoR::KGDispersionRelation(mass, dispersionMode),
+                Math::RtoR::FKGDispersionRelation(mass, dispersionMode),
                 0.0, xMax, 10000);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         style.thickness = 3;
         style.filled = false;
         KGRelation_artist->setStyle(style);
@@ -182,7 +182,7 @@ namespace Modes::DatabaseViewer {
         KGRelation_artist->SetLabel(Str("ω²-k²-1=0"));
     }
 
-    void DBViewerSequence::computeMasses() {
+    void FDBViewerSequence::computeMasses() {
         assert(dbParsers.size() == allMashups.size());
 
         maxValues.clear();
@@ -237,7 +237,7 @@ namespace Modes::DatabaseViewer {
         }
     }
 
-    void DBViewerSequence::drawTable(int specialIndex) const {
+    void FDBViewerSequence::drawTable(int specialIndex) const {
 
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY;
         // const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
@@ -282,7 +282,7 @@ namespace Modes::DatabaseViewer {
 
             ImGui::TableSetColumnIndex(3);
             auto type = entry.second.snapshotData.snapshotDataType;
-            fix signal = type==SnapshotData::SpaceDFTSnapshot ? 1 : type==SnapshotData::TimeDFTSnapshot?-1:0;
+            fix signal = type==FSnapshotData::SpaceDFTSnapshot ? 1 : type==FSnapshotData::TimeDFTSnapshot?-1:0;
             fix ω = entry.second.getScaledCriticalParameter();
 
             if(fix m2 = signal*(ω*ω - k*k); m2>=0)
@@ -303,7 +303,7 @@ namespace Modes::DatabaseViewer {
         ImGui::EndTable();
     }
 
-    auto DBViewerSequence::NotifyKeyboard(const Graphics::EKeyMap key, const Graphics::EKeyState state, const Graphics::EModKeys modKeys) -> bool {
+    auto FDBViewerSequence::NotifyKeyboard(const Graphics::EKeyMap key, const Graphics::EKeyState state, const Graphics::EModKeys modKeys) -> bool {
         if( key==Graphics::Key_F5 && state==Graphics::Press ){
             reloadData();
             return true;
@@ -312,7 +312,7 @@ namespace Modes::DatabaseViewer {
         return FWindowRow::NotifyKeyboard(key, state, modKeys);
     }
 
-    void DBViewerSequence::reloadData() {
+    void FDBViewerSequence::reloadData() {
         if(!allMashups.empty()) NOT_IMPLEMENTED
 
         for(auto &artie : mashupArtists)

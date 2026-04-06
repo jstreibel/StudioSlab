@@ -8,6 +8,7 @@
 #include "Utils/Files.h"
 
 #include "Core/Backend/BackendManager.h"
+#include "Graphics/SlabGraphics.h"
 
 #include "Math/Numerics/ODE/Output/Format/OutputFormatterBase.h"
 #include "Math/Numerics/ODE/Output/Format/BinarySOF.h"
@@ -33,10 +34,10 @@
 
 namespace Slab::Models::KGR2toR {
 
-    Builder::Builder(const Str& name, const Str& description, bool do_register)
+    FKGR2toRBuilder::FKGR2toRBuilder(const Str& name, const Str& description, bool do_register)
             : Models::KGRecipe(New<Models::FKGNumericConfig>(false), name, description, do_register) {    }
 
-    Vector<TPointer<FOutputChannel>> Builder::BuildOutputSockets() {
+    Vector<TPointer<FOutputChannel>> FKGR2toRBuilder::BuildOutputSockets() {
         Vector<TPointer<FOutputChannel>> sockets;
 
         ///********************************************************************************************/
@@ -46,10 +47,10 @@ namespace Slab::Models::KGR2toR {
 
             auto snapshotFilename = snapshotsFolder + SuggestFileName() + ".kg2d.snapshot.oscb";
 
-            sockets.emplace_back(Slab::New<KG2DSnapshotOutput>(snapshotFilename));
+            sockets.emplace_back(Slab::New<FKG2DSnapshotOutput>(snapshotFilename));
 
             #ifdef USE_VTK
-            sockets.emplace_back(New<LastOutputVTKVisualizer>(kg_numeric_config->getN()));
+            sockets.emplace_back(New<FLastOutputVTKVisualizer>(kg_numeric_config->getN()));
             #endif
         }
         ///********************************************************************************************/
@@ -76,9 +77,9 @@ namespace Slab::Models::KGR2toR {
 
             const UInt outputResolutionX = *OutputOptions.OutputResolution;
 
-            OutputFormatterBase *outputFilter = new BinarySOF;
+            FOutputFormatterBase *outputFilter = new FBinarySOF;
 
-            SpaceFilterBase *spaceFilter = new Slab::Math::R2toR::DimensionReductionFilter(
+            FSpaceFilterBase *spaceFilter = new Slab::Math::R2toR::FDimensionReductionFilter(
                     outputResolutionX, section, KGNumericConfig->GetL());
 
             const auto N = (DevFloat) KGNumericConfig->getN();
@@ -88,7 +89,7 @@ namespace Slab::Models::KGR2toR {
 
             auto outputFileName = this->SuggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
 
-            auto out = New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
+            auto out = New<FOutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
 
             sockets.emplace_back(out);
         }
@@ -97,7 +98,7 @@ namespace Slab::Models::KGR2toR {
 
         ///********************************************************************************************/
         if (*OutputOptions.VisualMonitor) {
-            auto Backend = Slab::Graphics::GetGraphicsBackend();
+            auto Backend = Graphics::GetGraphicsBackend();
 
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
 
@@ -108,13 +109,13 @@ namespace Slab::Models::KGR2toR {
 
             sockets.emplace_back(glOut);
         }
-        else sockets.emplace_back(New<OutputConsoleMonitor>(KGNumericConfig->Get_n()));
+        else sockets.emplace_back(New<FOutputConsoleMonitor>(KGNumericConfig->Get_n()));
 
         return sockets;
 
     }
 
-    R2toR::FNumericFunction_ptr Builder::newFunctionArbitrary() {
+    R2toR::FNumericFunction_ptr FKGR2toRBuilder::newFunctionArbitrary() {
         const size_t N = KGNumericConfig->getN();
         const floatt xLeft = KGNumericConfig->Get_xMin();
         fix h = KGNumericConfig->geth();
@@ -130,7 +131,7 @@ namespace Slab::Models::KGR2toR {
         throw Exception("Error while instantiating Field: device not recognized.");
     }
 
-    TPointer<Base::LinearStepSolver> Builder::buildSolver() {
+    TPointer<Base::LinearStepSolver> FKGR2toRBuilder::buildSolver() {
         auto thePotential = New<RtoR::AbsFunction>();
         auto dphi = getBoundary();
 
@@ -140,22 +141,22 @@ namespace Slab::Models::KGR2toR {
         return New<SolvySolver>(dphi, Laplacian, thePotential);
     }
 
-    auto Builder::buildOpenGLOutput() -> OutputOpenGL * {
+    auto FKGR2toRBuilder::buildOpenGLOutput() -> FOutputOpenGL * {
         // t_max, max_steps, x_min, x_max, y_min, y_max
         IN conf = *KGNumericConfig;
-        return new OutputOpenGL(conf.Get_n());
+        return new FOutputOpenGL(conf.Get_n());
     }
 
-    auto Builder::newFieldState() -> R2toR::EquationState_ptr {
+    auto FKGR2toRBuilder::newFieldState() -> R2toR::EquationState_ptr {
         auto u   = newFunctionArbitrary();
         auto du  = newFunctionArbitrary();
 
         return New<R2toR::EquationState>(u, du);
     }
 
-    R2toR::EquationState_ptr Builder::getInitialState() {
+    R2toR::EquationState_ptr FKGR2toRBuilder::getInitialState() {
         RtoR::NullFunction nullFunction;
-        R2toR::FunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
+        R2toR::FFunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
 
         auto u_0 = newFieldState();
 

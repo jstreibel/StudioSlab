@@ -10,17 +10,17 @@ namespace Slab::Math {
 
     const long long unsigned int ONE_GB = 1073741824;
 
-    HistoryKeeper::HistoryKeeper(size_t recordStepsInterval, SpaceFilterBase *filter)
+    FHistoryKeeper::FHistoryKeeper(size_t recordStepsInterval, FSpaceFilterBase *filter)
             : FOutputChannel("History output", static_cast<int>(recordStepsInterval)), spaceFilter(*filter),
               count(0), countTotal(0) {
         // TODO: assert(ModelBuilder::getInstance().getParams().getN()>=outputResolutionX);
     }
 
-    HistoryKeeper::~HistoryKeeper() {
+    FHistoryKeeper::~FHistoryKeeper() {
         delete &spaceFilter;
     }
 
-    auto HistoryKeeper::getUtilMemLoadBytes() const -> long long unsigned int {
+    auto FHistoryKeeper::getUtilMemLoadBytes() const -> long long unsigned int {
         // TODO fazer esse calculo baseado no tamanho de cada instante de tempo do campo, e contemplando o modelo de fato
         //  em que estamos trabalhando (1d, 2d, escalar, SU(2), etc.).
         //  Em outras palavras: o calculo abaixo esta errado.
@@ -33,7 +33,7 @@ namespace Slab::Math {
         return count * N * sizeof(DevFloat);
     }
 
-    auto HistoryKeeper::ShouldOutput(long unsigned timestep) -> bool {
+    auto FHistoryKeeper::ShouldOutput(long unsigned timestep) -> bool {
         // const bool should = (/*t >= tStart && */t <= tEnd) && Socket::shouldOutput(t, timestep);
 
         // return should;
@@ -41,14 +41,14 @@ namespace Slab::Math {
         return FOutputChannel::ShouldOutput(timestep);;
     }
 
-    void HistoryKeeper::HandleOutput(const FOutputPacket &packet) {
+    void FHistoryKeeper::HandleOutput(const FOutputPacket &packet) {
         if (getUtilMemLoadBytes() > 4 * ONE_GB) {
-            Core::Log::Critical() << "Dumping " << (getUtilMemLoadBytes() * 4e-6) << "GB of data." << Core::Log::Flush;
+            Core::FLog::Critical() << "Dumping " << (getUtilMemLoadBytes() * 4e-6) << "GB of data." << Core::FLog::Flush;
             this->_dump(false);
             countTotal += count;
             count = 0;
             spaceDataHistory.clear(); // TODO compute total liberated memory from this history
-            Core::Log::Success() << "Memory dump successful." << Core::Log::Flush;
+            Core::FLog::Success() << "Memory dump successful." << Core::FLog::Flush;
         }
 
         spaceDataHistory.emplace_back(spaceFilter(packet));
@@ -57,12 +57,12 @@ namespace Slab::Math {
         ++count;
     }
 
-    auto HistoryKeeper::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) -> bool {
+    auto FHistoryKeeper::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) -> bool {
         _dump(true);
         return true;
     }
 
-    auto HistoryKeeper::renderMetaDataAsPythonDictionary() const -> Str {
+    auto FHistoryKeeper::renderMetaDataAsPythonDictionary() const -> Str {
         std::ostringstream oss;
 
         oss << R"({, "outresT": " << (countTotal+count))";

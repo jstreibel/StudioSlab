@@ -121,7 +121,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void CorrelationsPanel::SetSimulationHistory(R2toR::FNumericFunction_constptr simulationHistory,

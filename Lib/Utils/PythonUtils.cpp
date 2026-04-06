@@ -11,7 +11,7 @@
 
 namespace Slab::PythonUtils {
 
-    Str PyTypeToString(PyType type){
+    Str PyTypeToString(EPyType type){
         switch (type) {
             case Integer:   return "Integer";
             case Float:     return "Float";
@@ -93,7 +93,7 @@ namespace Slab::PythonUtils {
                     key = temp;
                 else {
                     value = temp;
-                    resultMap[key] = {value, PyType::String};
+                    resultMap[key] = {value, EPyType::String};
                     isKey = true;
                 }
                 continue;
@@ -102,13 +102,13 @@ namespace Slab::PythonUtils {
                 std::getline(ss, temp, ',');
                 value = c + temp;
 
-                PyType type;
+                EPyType type;
                 if (value.find('.') != std::string::npos)
-                    type = PyType::Float;
+                    type = EPyType::Float;
                 else if(value=="True" || value=="False")
-                    type = PyType::Bool;
+                    type = EPyType::Bool;
                 else
-                    type = PyType::Integer;
+                    type = EPyType::Integer;
 
                 resultMap[key] = {value, type};
                 isKey = true;
@@ -118,7 +118,7 @@ namespace Slab::PythonUtils {
         return resultMap;
     }
 
-    PyDictException::PyDictException(const std::string &msg) : Exception(msg) {
+    FPyDictException::FPyDictException(const std::string &msg) : Exception(msg) {
 
     }
 }

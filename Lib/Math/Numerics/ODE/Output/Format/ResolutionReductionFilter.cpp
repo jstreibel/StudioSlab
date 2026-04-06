@@ -10,11 +10,11 @@
 
 namespace Slab::Math {
 
-    ResolutionReductionFilter::ResolutionReductionFilter(DimensionMetaData newDim) : newDim(std::move(newDim)) {
+    FResolutionReductionFilter::FResolutionReductionFilter(DimensionMetaData newDim) : newDim(std::move(newDim)) {
 
     }
 
-    auto ResolutionReductionFilter::operator()(const FOutputPacket &outputInfo) -> DiscreteSpacePair {
+    auto FResolutionReductionFilter::operator()(const FOutputPacket &outputInfo) -> DiscreteSpacePair {
         NOT_IMPLEMENTED
 
         /*
@@ -37,7 +37,7 @@ namespace Slab::Math {
          */
     }
 
-    auto ResolutionReductionFilter::getOutputDim() const -> DimensionMetaData {
+    auto FResolutionReductionFilter::getOutputDim() const -> DimensionMetaData {
         return newDim;
     }
 

@@ -16,11 +16,11 @@ namespace Slab::Core {
     void RegisterModules();
 
     void StartBackend(const FBackendIdentifier &name) {
-        BackendManager::Startup(name);
+        FBackendManager::Startup(name);
     }
 
     TPointer<FBackend> GetBackend() {
-        return BackendManager::GetBackend();
+        return FBackendManager::GetBackend();
     }
 
     void Startup() {
@@ -29,15 +29,15 @@ namespace Slab::Core {
     }
 
     void Finish() {
-        Core::BackendManager::UnloadAllModules();
+        Core::FBackendManager::UnloadAllModules();
     }
 
     void LoadModule(const FModuleIdentifier &name) {
         GetModule(name);
     }
-    TPointer<SlabModule> GetModule(const FModuleIdentifier &module) {
+    TPointer<FSlabModule> GetModule(const FModuleIdentifier &module) {
         if(!Slab::IsStarted()) Slab::Startup();
-        return BackendManager::GetModule(module);
+        return FBackendManager::GetModule(module);
     }
 
     void RegisterCLInterface(const TPointer<FInterface>& interface) {
@@ -45,17 +45,17 @@ namespace Slab::Core {
     }
 
     void ParseCLArgs(int argc, const char **argv) {
-        Core::CLArgsManager::Parse(argc, argv);
+        Core::FCLArgsManager::Parse(argc, argv);
     }
 
     void RegisterBackends(){
-        BackendManager::RegisterAvailableBackend("Headless", [](){
+        FBackendManager::RegisterAvailableBackend("Headless", [](){
             return std::make_unique<FConsoleBackend>();
         });
     }
 
     void RegisterModules(){
-        BackendManager::RegisterAvailableModule<MTaskManager>("TaskManager");
+        FBackendManager::RegisterAvailableModule<FTaskManager>("TaskManager");
     }
 
 }

@@ -13,10 +13,10 @@ FLittlePlaneDesignerApp::FLittlePlaneDesignerApp(int argc, const char* argv[]) :
 
 }
 
-Slab::TPointer<Slab::Graphics::GraphicBackend> FLittlePlaneDesignerApp::CreatePlatform()
+Slab::TPointer<Slab::Graphics::FGraphicBackend> FLittlePlaneDesignerApp::CreatePlatform()
 {
-    // return Slab::DynamicPointerCast<Slab::Graphics::GraphicBackend>(Slab::CreatePlatform("SFML"));
-    return Slab::DynamicPointerCast<Slab::Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
+    // return Slab::DynamicPointerCast<Slab::Graphics::FGraphicBackend>(Slab::CreatePlatform("SFML"));
+    return Slab::DynamicPointerCast<Slab::Graphics::FGraphicBackend>(Slab::CreatePlatform("GLFW"));
 }
 
 void FLittlePlaneDesignerApp::OnStart()
@@ -25,8 +25,7 @@ void FLittlePlaneDesignerApp::OnStart()
 
     Slab::Core::LoadModule("ModernOpenGL");
 
-    const auto WindowManager = Slab::New<StudioWindowManager>();
+    const auto WindowManager = Slab::New<FStudioWindowManager>();
     this->GetPlatform()->GetMainSystemWindow()->AddAndOwnEventListener(WindowManager);
 }
-
 

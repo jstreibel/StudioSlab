@@ -17,7 +17,7 @@ fix texDim = 4096;
 namespace Tests {
     using namespace Slab;
 
-    ModernGLTests::ModernGLTests()
+    FModernGLTests::FModernGLTests()
     : FWindowRow("Modern OpenGL test")
     , program(Core::Resources::ShadersFolder + "tests.vert", Core::Resources::ShadersFolder + "tests.frag")
     , buffer("vertex:2f,tex_coord:2f")
@@ -60,7 +60,7 @@ namespace Tests {
                                                0,0,1});
     }
 
-    void ModernGLTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FModernGLTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         FWindowRow::ImmediateDraw(PlatformWindow);
 
         {

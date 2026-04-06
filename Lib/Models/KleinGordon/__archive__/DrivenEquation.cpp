@@ -20,11 +20,11 @@ namespace Slab::Math::R2toR {
                                    builder.getNumericParams().geth())
         {
             if(drivingForce == nullptr) {
-                Log::Error() << "DrivenEquation solver's driving force must be != nullptr." << Log::Flush;
+                FLog::Error() << "DrivenEquation solver's driving force must be != nullptr." << FLog::Flush;
                 throw "Error allocating driven equation solver.";
             }
-            Log::Note() << "Driven equation solver allocated. Driving force '"
-                                    << drivingForce->myName() << "'." << Log::Flush;
+            FLog::Note() << "Driven equation solver allocated. Driving force '"
+                                    << drivingForce->myName() << "'." << FLog::Flush;
         }
 
         auto DrivenEquation::dtF(const EquationState &in, EquationState &out, DevFloat t, DevFloat δt) -> EquationState & {

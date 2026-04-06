@@ -14,12 +14,12 @@
 
 namespace Slab::Graphics {
 
-    Str HistoryViewer::GetName() const {
+    Str FHistoryViewer::GetName() const {
         return "History viewer";
     }
 
-    HistoryViewer::HistoryViewer(const TPointer<FGUIWindow> &gui_window, const TPointer<R2toR::FNumericFunction> &function)
-    : Viewer(gui_window, function)
+    FHistoryViewer::FHistoryViewer(const TPointer<FGUIWindow> &gui_window, const TPointer<R2toR::FNumericFunction> &function)
+    : FViewer(gui_window, function)
     {
         history_window = New<FPlot2DWindow>("Function");
         history_window->GetAxisArtist().setVerticalAxisLabel("");
@@ -46,8 +46,8 @@ namespace Slab::Graphics {
         xft_history_window->TieRegion_yMaxMin(*history_window);
     }
 
-    void HistoryViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
-        Viewer::SetFunction(function);
+    void FHistoryViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
+        FViewer::SetFunction(function);
 
         auto funky = getFunction();
         function_artist->setFunction(funky);
@@ -58,7 +58,7 @@ namespace Slab::Graphics {
             function_section = New<RtoR2::StraightLine>(Real2D{domain.xMin, domain.yMin},
                                                         Real2D{domain.xMax, domain.yMin},
                                                         domain.xMin, domain.xMax);
-            auto style = PlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
+            auto style = FPlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
             style->filled = false;
             section_artist->addSection(function_section, style, "");
 
@@ -77,13 +77,13 @@ namespace Slab::Graphics {
         if(this->isVisible()) computeTransform();
     }
 
-    void HistoryViewer::NotifyBecameVisible() {
-        Viewer::NotifyBecameVisible();
+    void FHistoryViewer::NotifyBecameVisible() {
+        FViewer::NotifyBecameVisible();
 
         if(xFourierTransform == nullptr) computeTransform();
     }
 
-    void HistoryViewer::computeTransform() {
+    void FHistoryViewer::computeTransform() {
         auto func = getFunction();
         if(func == nullptr) return;
 
@@ -102,7 +102,7 @@ namespace Slab::Graphics {
             dft_section = New<RtoR2::StraightLine>(Real2D{0, domain.yMin},
                                                    Real2D{domain.xMax, domain.yMin},
                                                    0, domain.xMax);
-            auto style = PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+            auto style = FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             dft_section_artist->addSection(dft_section, style.clone(), "dft section");
         } else {
             dft_section->getx0().x = domain.xMin;
@@ -113,7 +113,7 @@ namespace Slab::Graphics {
         dft_section_artist->setSamples(func->getN()*oversampling);
     }
 
-    void HistoryViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+    void FHistoryViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         if(getFunction()== nullptr) return;
 
         gui_window->AddExternalDraw([this]() {
@@ -134,7 +134,7 @@ namespace Slab::Graphics {
             }
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
 } // Slab::Graphics

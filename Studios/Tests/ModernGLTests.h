@@ -19,7 +19,7 @@ namespace Tests {
 
     using Writer = Slab::Graphics::OpenGL::FWriterOpenGL;
 
-    class ModernGLTests : public Graphics::FWindowRow {
+    class FModernGLTests : public Graphics::FWindowRow {
         Graphics::OpenGL::FShader program;
         Graphics::OpenGL::FVertexBuffer buffer;
         Graphics::OpenGL::FTexture2D_Color texture;
@@ -28,11 +28,13 @@ namespace Tests {
 
         ftgl::mat4 model{}, view{}, projection{};
     public:
-        ModernGLTests();
+        FModernGLTests();
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
     };
+
+    using ModernGLTests [[deprecated("Use FModernGLTests")]] = FModernGLTests;
 
 } // Tests
 

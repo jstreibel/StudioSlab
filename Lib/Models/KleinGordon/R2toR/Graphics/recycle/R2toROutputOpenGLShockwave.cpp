@@ -397,8 +397,8 @@ void R2toR::OutputOpenGLShockwave::_outputSnapshot() {
 
         file << "# x   phi_#    phi_a" << std::endl;
 
-        RtoR::AnalyticShockwave2DRadialSymmetry shockwave;
-        shockwave.sett(t0+t);
+        RtoR::FAnalyticShockwave2DRadialSymmetry shockwave;
+        shockwave.SetT(t0 + t);
 
         for (int i = 0; i < N; i++) {
             const auto x = xMin + i * dh;

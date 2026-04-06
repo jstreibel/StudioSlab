@@ -20,7 +20,7 @@ namespace Slab::Core {
 
     FBenchmarkData::FBenchmarkData(CountType reserveMemory) {
         Measures.reserve(reserveMemory);
-        Log::Status() << "BenchmarkData started." << Log::Flush;
+        FLog::Status() << "BenchmarkData started." << FLog::Flush;
     }
 
     FBenchmarkData::~FBenchmarkData() = default;

@@ -21,12 +21,7 @@ if(&NAME == nullptr) throw Exception("Bad cast.");
 
 #if USE_CUDA
 
-#include <driver_types.h>
-
-namespace Slab::CUDA {
-// cew stands for Cuda Error Wrapper
-void cew(cudaError err);
-}
+#include "CUDAUtils.h"
 
 #endif // USE_CUDA
 
@@ -46,7 +41,11 @@ namespace Slab::Common {
 
     const DevFloat infty = std::numeric_limits<DevFloat>::infinity();
 
-    double periodic_space(double x, double xMin, double xMax);
+    double PeriodicSpace(double x, double xMin, double xMax);
+    [[deprecated("Use PeriodicSpace")]]
+    inline double periodic_space(const double x, const double xMin, const double xMax) {
+        return PeriodicSpace(x, xMin, xMax);
+    }
 
     bool AreEqual(const DevFloat &lhs, const DevFloat &rhs, DevFloat eps = 1.e-5);
 
@@ -56,7 +55,7 @@ namespace Slab::Common {
     }
 
     template<class Class>
-    Str getClassName(Class *thisClass) {
+    Str GetClassName(Class *thisClass) {
         int status;
         char *demangled_name = abi::__cxa_demangle(typeid(*thisClass).name(), 0, 0, &status);
 
@@ -66,6 +65,12 @@ namespace Slab::Common {
             returnString = "<error demangling name>";
 
         return returnString;
+    }
+
+    template<class Class>
+    [[deprecated("Use GetClassName")]]
+    Str getClassName(Class *thisClass) {
+        return GetClassName(thisClass);
     }
 
     void PrintThere(int x, int y, const char *format, ...);

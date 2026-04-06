@@ -9,11 +9,13 @@
 
 namespace Slab::Graphics {
 
-    class SlabGraphicsModule : public GraphicsModule {
+    class FSlabGraphicsModule : public FGraphicsModule {
     public:
-        explicit SlabGraphicsModule();
+        explicit FSlabGraphicsModule();
 
     };
+
+    using SlabGraphicsModule [[deprecated("Use FSlabGraphicsModule")]] = FSlabGraphicsModule;
 
 } // Slab::Graphics
 

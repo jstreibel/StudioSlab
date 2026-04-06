@@ -2,11 +2,6 @@
 #define INTEGRATOR_H
 
 #include "OutputManager.h"
-
-#include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
-
-#include "Math/Numerics/ODE/Solver/BoundaryConditions.h"
-
 #include "Stepper.h"
 #include "NumericalRecipe.h"
 
@@ -36,7 +31,7 @@ namespace Slab::Math {
 
         auto Cycle(size_t nCycles) -> bool;
 
-        auto CycleUntilOutputOrFinish() -> bool;
+        auto ComputeCycleSize(size_t remainingSteps) -> size_t;
 
     protected:
         Core::ETaskStatus Run() override;

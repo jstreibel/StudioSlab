@@ -16,7 +16,7 @@ namespace Slab::Math::RtoR {
     typedef Math::FPointSet_ptr DFTModes;
     typedef CountType NumberOfModes;
 
-    struct DFTResult {
+    struct FDFTResult {
         DFTModes re;
         DFTModes im;
 
@@ -52,7 +52,7 @@ namespace Slab::Math::RtoR {
             return n;
         }
 
-        explicit DFTResult(bool functionIsReal=false, DFTModes re=Slab::New<Math::FPointSet>(), DFTModes im=Slab::New<Math::FPointSet>())
+        explicit FDFTResult(bool functionIsReal = false, DFTModes re = Slab::New<Math::FPointSet>(), DFTModes im = Slab::New<Math::FPointSet>())
         : re(std::move(re)), im(std::move(im)), inverseIsReal(functionIsReal)
         {
 
@@ -68,18 +68,21 @@ namespace Slab::Math::RtoR {
     /**
      * Discrete Fourier transform, the one and only
      */
-    class DFT {
+    class FDFT {
     public:
         static auto
         Compute(const RtoR::Function &in, NumberOfModes N, DevFloat xMin, DevFloat xMax)
-        -> DFTResult;
+        -> FDFTResult;
 
         static auto
         Compute(const RtoR::NumericFunction &in)
-        -> DFTResult;
+        -> FDFTResult;
 
-        static TPointer<RtoR::NumericFunction> Magnitudes(const DFTResult&);
+        static TPointer<RtoR::NumericFunction> Magnitudes(const FDFTResult&);
     };
+
+    using DFTResult [[deprecated("Use FDFTResult")]] = FDFTResult;
+    using DFT [[deprecated("Use FDFT")]] = FDFT;
 
 
 } // RtoR

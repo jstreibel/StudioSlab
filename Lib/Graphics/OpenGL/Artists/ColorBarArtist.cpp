@@ -51,7 +51,7 @@ namespace Slab::Graphics::OpenGL {
                      vpHeight - cbarTop_pixels,
                      vpHeight - cbarTop_pixels - cbarHeight_pixels});
 
-        auto style =  PlotThemeManager::GetCurrent();
+        auto style =  FPlotThemeManager::GetCurrent();
         auto &writer = style->LabelsWriter;
 
         {
@@ -81,8 +81,8 @@ namespace Slab::Graphics::OpenGL {
                 glPushMatrix();
                 glLoadIdentity();
 
-                fix bgColor = PlotThemeManager::GetCurrent()->graphBackground;
-                fix fgColor = PlotThemeManager::GetCurrent()->graphNumbersColor;
+                fix bgColor = FPlotThemeManager::GetCurrent()->graphBackground;
+                fix fgColor = FPlotThemeManager::GetCurrent()->graphNumbersColor;
 
                 glColor4fv(bgColor.asFloat4fv());
                 glBegin(GL_QUADS);

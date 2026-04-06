@@ -6,7 +6,7 @@
 
 
 
-Slab::Vector<float> Slab::Utils::resample(Vector<float> in, int output_size) {
+Slab::Vector<float> Slab::Utils::Resample(Vector<float> in, int output_size) {
     // auto fs_in = in.size();
     // const int fs_out = output_size;
     // auto factor = fs_out/(float)fs_in;

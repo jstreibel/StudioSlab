@@ -10,30 +10,37 @@
 
 namespace Slab::Math::RtoR {
 
-    class DFTInverse {
+    class FDFTInverse {
     public:
-        using DFTInverseFunction = RtoR::NumericFunction;
-        struct Filter {
+        using FDFTInverseFunction = RtoR::NumericFunction;
+        struct FFilter {
             DevFloat kMax = 0.0;
             virtual Complex operator()(const Complex &A, DevFloat k) { return A; };
         };
 
-        struct LowPass : public Filter {
+        struct FLowPass : public FFilter {
             DevFloat kThreshold;
-            explicit LowPass(int kThreshold);
+            explicit FLowPass(int kThreshold);
             Complex operator()(const Complex &A, DevFloat k) override;
         };
-        struct HighPass : public Filter {
+        struct FHighPass : public FFilter {
             DevFloat kThreshold;
-            explicit HighPass(int kThreshold);
+            explicit FHighPass(int kThreshold);
             Complex operator()(const Complex &A, DevFloat k) override;
         };
 
-        static TPointer<DFTInverseFunction> Compute(const DFTResult &dftResult,
-                                              DevFloat xMin,
-                                              DevFloat L,
-                                              Filter *filter=nullptr);
+        static TPointer<FDFTInverseFunction> Compute(const FDFTResult &dftResult,
+                                                     DevFloat xMin,
+                                                     DevFloat L,
+                                                     FFilter *filter = nullptr);
+
+        using DFTInverseFunction [[deprecated("Use FDFTInverseFunction")]] = FDFTInverseFunction;
+        using Filter [[deprecated("Use FFilter")]] = FFilter;
+        using LowPass [[deprecated("Use FLowPass")]] = FLowPass;
+        using HighPass [[deprecated("Use FHighPass")]] = FHighPass;
     };
+
+    using DFTInverse [[deprecated("Use FDFTInverse")]] = FDFTInverse;
 
 } // RtoR
 

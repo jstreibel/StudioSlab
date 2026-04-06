@@ -9,10 +9,12 @@
 
 namespace Slab::Math::GiNaC {
 
-    class GiNaCModule : public Core::SlabModule {
+    class FGiNaCModule : public Core::FSlabModule {
     public:
-        GiNaCModule();
+        FGiNaCModule();
     };
+
+    using GiNaCModule [[deprecated("Use FGiNaCModule")]] = FGiNaCModule;
 
 } // Slab::Math::GiNaC
 

@@ -14,37 +14,39 @@ namespace Modes {
     using namespace Slab::Models;
 
 
-    class FPlaneWaveBC final : public KGRtoR::BoundaryCondition {
+    class FPlaneWaveBC final : public KGRtoR::FBoundaryCondition {
         DevFloat Q, k;
     public:
-        explicit FPlaneWaveBC(const KGRtoR::EquationState_constptr& prototype, DevFloat Q, DevFloat k);
+        explicit FPlaneWaveBC(const KGRtoR::FEquationState_constptr& prototype, DevFloat Q, DevFloat k);
 
     protected:
-        void ApplyKG(KGRtoR::EquationState& KGState, DevFloat t) const override;
+        void ApplyKG(KGRtoR::FEquationState& KGState, DevFloat t) const override;
     };
 
 
-    class SignalBC final : public KGRtoR::BoundaryCondition {
+    class FSignalBC final : public KGRtoR::FBoundaryCondition {
     protected:
-        void ApplyKG(KGRtoR::EquationState &, DevFloat t) const override;
+        void ApplyKG(KGRtoR::FEquationState &, DevFloat t) const override;
 
     public:
         DevFloat A, ω;
 
-        SignalBC(const KGRtoR::EquationState_ptr &prototype, DevFloat A, DevFloat ω);
+        FSignalBC(const KGRtoR::FEquationState_ptr &prototype, DevFloat A, DevFloat ω);
     };
 
 
-    class DrivenBC final : public KGRtoR::BoundaryCondition {
-        Slab::TPointer<Modes::SquareWave> sqrWave;
+    class FDrivenBC final : public KGRtoR::FBoundaryCondition {
+        Slab::TPointer<Modes::FSquareWave> sqrWave;
 
     protected:
-        void ApplyKG(KGRtoR::EquationState &, DevFloat t) const override;
+        void ApplyKG(KGRtoR::FEquationState &, DevFloat t) const override;
 
     public:
-        DrivenBC(const KGRtoR::EquationState_ptr &prototype, Slab::TPointer<Modes::SquareWave> sqrWave);
+        FDrivenBC(const KGRtoR::FEquationState_ptr &prototype, Slab::TPointer<Modes::FSquareWave> sqrWave);
     };
 
+    using SignalBC [[deprecated("Use FSignalBC")]] = FSignalBC;
+    using DrivenBC [[deprecated("Use FDrivenBC")]] = FDrivenBC;
 
 } // Modes
 

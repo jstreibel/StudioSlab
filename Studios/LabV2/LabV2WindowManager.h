@@ -1,0 +1,524 @@
+#ifndef STUDIOSLAB_LAB_V2_WINDOW_MANAGER_H
+#define STUDIOSLAB_LAB_V2_WINDOW_MANAGER_H
+
+#include "Graphics/Modules/ImGui/ImGuiContext.h"
+#include "Graphics/Window/WindowManager.h"
+
+#include "Math/Data/V2/LiveDataHubV2.h"
+#include "Math/Data/V2/LiveControlHubV2.h"
+#include "Core/Reflection/V2/LegacyInterfaceAdapterV2.h"
+#include "Core/Reflection/V2/ReflectionCatalogRegistryV2.h"
+#include "Core/Reflection/V2/GraphSubstrateV2.h"
+#include "Core/Reflection/V2/SemanticTypesV1.h"
+#include "Core/Model/V2/ModelTypesV2.h"
+#include "Core/Model/V2/ModelAuthoringV2.h"
+#include "Core/Ontology/V2/OntologyGraphV2.h"
+#include "Graphics/Plot2D/V2/PlotReflectionCatalogV2.h"
+#include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
+#include "Graphics/Window/V2/HostedSurfaceV2.h"
+#include "Graphics/Window/V2/WorkspaceLayoutV2.h"
+#include "Graphics/Window/V2/WorkspaceShellV2.h"
+#include "imgui.h"
+
+#include <functional>
+#include <array>
+#include <deque>
+#include <filesystem>
+#include <map>
+#include <memory>
+#include <vector>
+
+class FLabV2GraphPlaygroundController;
+
+namespace Slab::Graphics::Typesetting {
+    class FTypesettingService;
+}
+
+struct FLabV2SubstrateGraphCanvasAction {
+    Slab::Str Label;
+    Slab::Str Hint;
+    bool bEnabled = true;
+    std::function<void()> Execute;
+};
+
+struct FLabV2SubstrateGraphVisualNode {
+    Slab::Core::Reflection::V2::FGraphNodeV2 *Node = nullptr;
+    Slab::Str Title;
+    Slab::Str Subtitle;
+    Slab::Vector<std::pair<Slab::Str, ImU32>> Badges;
+    int InputPins = 1;
+    int OutputPins = 1;
+    ImVec2 Size = ImVec2(320.0f, 132.0f);
+};
+
+struct FLabV2SubstrateGraphCanvasInteraction {
+    Slab::Str ClickedNodeId;
+    Slab::Str ClickedEdgeId;
+    bool bBackgroundClicked = false;
+};
+
+class FLabV2WindowManager final : public Slab::Graphics::FWindowManager {
+public:
+    explicit FLabV2WindowManager();
+    ~FLabV2WindowManager() override;
+
+    void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &) override;
+    void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &, bool hidden) override;
+
+    bool NotifyRender(const Slab::Graphics::FPlatformWindow &) override;
+    bool NotifySystemWindowReshape(int w, int h) override;
+    bool NotifyKeyboard(Slab::Graphics::EKeyMap key,
+                        Slab::Graphics::EKeyState state,
+                        Slab::Graphics::EModKeys modKeys) override;
+    bool NotifyCharacter(Slab::UInt codepoint) override;
+    bool NotifyMouseButton(Slab::Graphics::EMouseButton button,
+                           Slab::Graphics::EKeyState state,
+                           Slab::Graphics::EModKeys modKeys) override;
+    bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
+    bool NotifyMouseWheel(double dx, double dy) override;
+
+    [[nodiscard]] auto GetImGuiContext() const -> Slab::TPointer<Slab::Graphics::FImGuiContext>;
+    [[nodiscard]] auto GetLiveDataHub() const -> Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2>;
+    [[nodiscard]] auto GetLiveControlHub() const -> Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2>;
+
+private:
+    friend class FLabV2GraphPlaygroundController;
+
+    enum class EWorkspaceTab : unsigned char {
+        Simulations = 0,
+        Schemes,
+        Models,
+        Ontology,
+        GraphPlayground,
+        Plots
+    };
+
+    static constexpr std::size_t WorkspaceCount = 6;
+    using FSlabWindowPtr = Slab::TPointer<Slab::Graphics::FSlabWindow>;
+    using FSlabWindowVec = Slab::Vector<FSlabWindowPtr>;
+    using FHostedSurfacePtr = Slab::Graphics::Windowing::V2::FHostedSurfaceV2_ptr;
+    using FPanelSurfaceRegistration = Slab::Graphics::Windowing::V2::FPanelSurfaceRegistrationV2;
+    using FWorkspaceVisibilityItem = Slab::Graphics::Windowing::V2::FWorkspaceVisibilityItemV2;
+    struct FPendingSlabWindow {
+        FSlabWindowPtr Window = nullptr;
+        EWorkspaceTab Workspace = EWorkspaceTab::Simulations;
+    };
+
+    FSlabWindowVec SlabWindows;
+    Slab::Vector<FPendingSlabWindow> PendingSlabWindows;
+    std::map<Slab::Str, EWorkspaceTab> SlabWindowWorkspaceByUniqueName;
+
+    int WidthSysWin = 200;
+    int HeightSysWin = 200;
+    int SidePaneWidth = 0;
+
+    Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
+    Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> LiveDataHub;
+    Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> LiveControlHub;
+    Slab::TPointer<class FSimulationManagerV2> SimulationManager;
+    std::unique_ptr<FLabV2GraphPlaygroundController> GraphPlaygroundController;
+    Slab::Core::Reflection::V2::FLegacyReflectionCatalogAdapterV2 ReflectionAdapter;
+    Slab::Graphics::Plot2D::V2::FPlotReflectionCatalogV2 PlotReflectionAdapter;
+    Slab::Str LegacyCatalogSourceId;
+    Slab::Str PlotCatalogSourceId;
+    Slab::Vector<Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr> PlotWindowsV2;
+    std::map<Slab::Str, FHostedSurfacePtr> PlotHostedSurfacesByWindowId;
+    Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr ModelSemanticGraphWindowV2;
+    Slab::Graphics::Plot2D::V2::FPlotArtistV2_ptr ModelSemanticGraphArtistV2;
+    Slab::Str ModelSemanticGraphWindowId = "model_semantic_graph";
+    int ModelSemanticGraphExportHops = 4;
+    Slab::Str ModelSemanticGraphExportStatus;
+    Slab::Str ModelSemanticGraphLastExportPath;
+    bool bPendingFocusModelSemanticGraphWindow = false;
+    Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr OntologyOverviewWindowV2;
+    Slab::Graphics::Plot2D::V2::FPlotArtistV2_ptr OntologyOverviewArtistV2;
+    Slab::Str OntologyOverviewWindowId = "ontology_overview";
+    bool bPendingFocusOntologyOverviewWindow = false;
+    Slab::Graphics::Plot2D::V2::FPlot2DWindowV2_ptr OntologyFocusWindowV2;
+    Slab::Graphics::Plot2D::V2::FPlotArtistV2_ptr OntologyFocusArtistV2;
+    Slab::Str OntologyFocusWindowId = "ontology_focus";
+    bool bPendingFocusOntologyFocusWindow = false;
+    std::size_t BlueprintPlotWindowCreateCount = 0;
+    std::size_t BlueprintPlotArtistCreateCount = 0;
+
+    Slab::Str LiveDataTopicFilter;
+    bool bLiveDataOnlyBound = false;
+    Slab::Str SelectedLiveDataTopic;
+
+    Slab::Str LiveControlTopicFilter;
+    bool bLiveControlLevelsOnly = false;
+    Slab::Str SelectedLiveControlTopic;
+    Slab::Str LiveInteractionTopicFilter;
+
+    Slab::Str SelectedViewUniqueName;
+
+    Slab::Str TaskNameFilter;
+    bool bTaskOnlyRunning = false;
+    bool bTaskHideSuccess = false;
+    bool bTaskOnlyNumeric = false;
+    Slab::Str SelectedSchemeInterfaceId;
+    Slab::Str SelectedSchemeParameterId;
+    Slab::Str SelectedSchemeOperationId;
+    std::map<Slab::Str, Slab::Str> SchemeParameterDraftByKey;
+    Slab::Str SchemesLastOperationSummary;
+    Slab::Core::Reflection::V2::FValueMapV2 SchemesLastOperationOutput;
+    Slab::Str SelectedPlotInterfaceId;
+    Slab::Str SelectedPlotParameterId;
+    std::map<Slab::Str, Slab::Str> PlotParameterDraftByKey;
+    Slab::Str PlotsLastOperationSummary;
+    Slab::Core::Reflection::V2::FValueMapV2 PlotsLastOperationOutput;
+
+    Slab::Vector<Slab::Core::Model::V2::FModelV2> ModelDemoCatalog;
+    int SelectedModelIndex = 0;
+    Slab::Core::Model::V2::FSemanticObjectRefV2 SelectedModelSemanticObject;
+    bool bSelectedModelSemanticObjectUsesDraftPreview = false;
+    Slab::Core::Model::V2::FSemanticObjectRefV2 ModelPendingScrollTarget;
+    Slab::Str SelectedModelVocabularyEntryId;
+    Slab::Str SelectedModelDefinitionId;
+    Slab::Str SelectedModelRelationId;
+    bool bSelectedModelDetailIsRelation = false;
+    std::map<Slab::Str, Slab::Core::Model::V2::FModelEditorBufferV2> ModelEditorBuffersByKey;
+    Slab::Str SelectedModelAssumptionId;
+    Slab::Str ModelEditorStatus;
+    Slab::Core::Model::V2::FModelChangeRecordV2 ModelLastChangeRecord;
+    bool bModelHasLastChangeRecord = false;
+    float ModelCatalogVocabularyHeight = 132.0f;
+    float ModelCatalogDefinitionsHeight = 220.0f;
+    float ModelScratchpadHeight = 220.0f;
+    bool bShowWindowModelVocabulary = true;
+    bool bShowWindowModelDefinitions = true;
+    bool bShowWindowModelRelations = true;
+    bool bShowWindowModelEditor = true;
+    bool bShowWindowModelSemanticGraph = true;
+    bool bShowWindowModelAssumptions = true;
+    bool bShowWindowModelDetails = true;
+    bool bShowWindowOntologyLayer = true;
+    bool bShowWindowOntologyDetails = true;
+    bool bShowWindowOntologyOverview = true;
+    bool bShowWindowOntologyFocus = true;
+    bool bShowModelNewDefinitionComposer = false;
+    Slab::Str ModelNewDefinitionId = "param.new_symbol";
+    Slab::Str ModelNewDefinitionDisplayName;
+    Slab::Str ModelNewDefinitionNotation = "\\alpha \\in \\mathbb{R}";
+    Slab::Core::Model::V2::EDefinitionKindV2 ModelNewDefinitionKind =
+        Slab::Core::Model::V2::EDefinitionKindV2::ScalarParameter;
+    Slab::Core::Model::V2::ECoordinateRoleV2 ModelNewDefinitionCoordinateRole =
+        Slab::Core::Model::V2::ECoordinateRoleV2::Generic;
+    Slab::Core::Model::V2::EOperatorApplicationStyleV2 ModelNewDefinitionOperatorStyle =
+        Slab::Core::Model::V2::EOperatorApplicationStyleV2::Prefix;
+    Slab::TOptional<Slab::Core::Model::V2::FDefinitionDraftPreviewV2> ModelNewDefinitionPreview;
+    Slab::Str ModelNewDefinitionStatus;
+    bool bShowModelNewRelationComposer = false;
+    Slab::Str ModelNewRelationId = "relation.new_equation";
+    Slab::Str ModelNewRelationName;
+    Slab::Str ModelNewRelationNotation = "x = 0";
+    Slab::Core::Model::V2::ERelationKindV2 ModelNewRelationKind =
+        Slab::Core::Model::V2::ERelationKindV2::Equation;
+    Slab::TOptional<Slab::Core::Model::V2::FRelationDraftPreviewV2> ModelNewRelationPreview;
+    Slab::Str ModelNewRelationStatus;
+    struct FModelODERuntimeDraftState {
+        Slab::DevFloat TimeStep = 0.05;
+        Slab::UIntBig MaxSteps = 1024;
+        bool bOpenEnded = false;
+        std::map<Slab::Str, Slab::Str> ScalarBindingDraftByDefinitionId;
+        Slab::Str Status;
+    };
+    std::map<Slab::Str, FModelODERuntimeDraftState> ModelODERuntimeDraftStateByModelId;
+
+    struct FModelWorkspaceViewState {
+        bool bAvailable = false;
+        Slab::Core::Model::V2::FModelV2 *Model = nullptr;
+        const Slab::Core::Model::V2::FBaseVocabularyPresetV2 *ActiveVocabularyPreset = nullptr;
+        Slab::Core::Model::V2::FModelSemanticOverviewV2 Overview;
+        const Slab::Core::Model::V2::FModelSemanticOverviewV2 *SelectionOverview = nullptr;
+        const Slab::Core::Model::V2::FModelSemanticOverviewV2 *ActiveDraftOverview = nullptr;
+        Slab::Core::Model::V2::FSemanticSelectionContextV2 SelectionContext;
+        Slab::Core::Model::V2::FModelEditorBufferV2 *ActiveEditorBuffer = nullptr;
+        Slab::Vector<Slab::Core::Model::V2::FDefinitionV2> DraftPreviewDefinitions;
+        const Slab::Vector<Slab::Core::Model::V2::FSemanticAssumptionV2> *DraftPreviewAssumptions = nullptr;
+    };
+    FModelWorkspaceViewState CachedModelWorkspaceViewState;
+    int CachedModelWorkspaceFrame = -1;
+    bool bModelWorkspaceViewStateDirty = true;
+
+    struct FOntologyWorkspaceState {
+        std::filesystem::path ResourceDirectory;
+        std::filesystem::path SchemaPath;
+        std::filesystem::path GlobalPath;
+        Slab::Vector<std::filesystem::path> StudyPaths;
+        Slab::Core::Ontology::V2::FOntologyGraphBundle Bundle;
+        Slab::Core::Ontology::V2::FOntologyGraphProjection OverviewProjection;
+        Slab::Core::Ontology::V2::FOntologyGraphProjection FocusProjection;
+        Slab::Core::Ontology::V2::FOntologyGraphFilterStateV2 Filters;
+        Slab::Core::Ontology::V2::FOntologyGraphSelectionV2 Selection;
+        Slab::Str SelectedStudyId;
+        Slab::Str Status;
+        int SelectedStudyIndex = 0;
+        int FocusHopCount = 1;
+        bool bLoaded = false;
+        bool bDirty = true;
+        bool bPendingOverviewGraphFit = true;
+        bool bPendingFocusGraphFit = true;
+    };
+    FOntologyWorkspaceState OntologyWorkspaceState;
+
+    struct FSchemeOperationTraceEntry {
+        std::size_t SequenceId = 0;
+        Slab::Str InterfaceId;
+        Slab::Str OperationId;
+        Slab::Str Summary;
+        bool bOk = false;
+        Slab::Str LatencyLabel;
+    };
+    std::deque<FSchemeOperationTraceEntry> SchemesOperationTrace;
+    std::size_t SchemesOperationTraceSequence = 0;
+    std::unique_ptr<Slab::Graphics::Typesetting::FTypesettingService> UiTypesettingService;
+    Slab::Core::Reflection::V2::FGraphDocumentV2 SchemesBlueprintDocument;
+    std::map<Slab::Str, ImVec2> BlueprintNodePositionById;
+    bool bShowBlueprintLegend = true;
+    bool bShowBlueprintTuningWindow = false;
+    float BlueprintNodeHeaderScale = 1.55f;
+    float BlueprintNodeHeaderMinHeight = 36.0f;
+    float BlueprintNodeBodyTopPadding = 8.0f;
+    float BlueprintNodeBodyBottomPadding = 10.0f;
+    float BlueprintNodeBadgeRowGap = 4.0f;
+    float BlueprintNodeActionReserve = 14.0f;
+    float BlueprintNodeBadgeTopOffset = 42.0f;
+    float BlueprintNodeActionGap = 10.0f;
+    float BlueprintLegendPadding = 14.0f;
+    float BlueprintLegendRowGap = 6.0f;
+    float BlueprintLegendItemGap = 8.0f;
+    float BlueprintLegendChipExtraHeight = 12.0f;
+    float BlueprintLegendMarkerInset = 4.0f;
+    Slab::Str BlueprintPressedNodeKey;
+    ImVec2 BlueprintPressMousePos = ImVec2(0.0f, 0.0f);
+    ImVec2 BlueprintPressNodePos = ImVec2(0.0f, 0.0f);
+    bool bBlueprintNodeDragging = false;
+    Slab::Str BlueprintPressedActionNodeKey;
+    int BlueprintPressedActionIndex = -1;
+    Slab::Str BlueprintGraphFilterText;
+    bool bBlueprintGraphShowParameters = true;
+    bool bBlueprintGraphShowQueries = true;
+    bool bBlueprintGraphShowCommands = true;
+    int BlueprintGraphMutabilityFilter = 0;
+    float BlueprintGraphTraceHeight = 140.0f;
+
+    struct FTemplateGraphPendingCoercionSuggestion {
+        bool bActive = false;
+        Slab::Str FromNodeId;
+        Slab::Str FromPortId;
+        Slab::Str ToNodeId;
+        Slab::Str ToPortId;
+        Slab::StrVector SuggestedCoercionOperatorIds;
+        Slab::Str Summary;
+    };
+
+    Slab::Core::Reflection::V2::FGraphDocumentV2 PlaygroundSemanticDocument;
+    Slab::Vector<Slab::Str> PlaygroundSemanticVisibleNodeIds;
+    Slab::Str PlaygroundSemanticFilter;
+    float PlaygroundSemanticBottomPanelHeight = 220.0f;
+    Slab::Core::Reflection::V2::FGraphDocumentV2 PlaygroundTemplateDocument;
+    Slab::Vector<Slab::Str> PlaygroundTemplateSelectedNodeIds;
+    std::size_t PlaygroundTemplateNodeCounter = 0;
+    std::size_t PlaygroundTemplateEdgeCounter = 0;
+    std::size_t PlaygroundTemplateCoercionCounter = 0;
+    Slab::Str PlaygroundTemplateSelectedOperatorId;
+    Slab::Str PlaygroundTemplateSelectedNodeId;
+    Slab::Str PlaygroundTemplateSelectedEdgeId;
+    Slab::Str PlaygroundTemplateConnectingNodeId;
+    Slab::Str PlaygroundTemplateConnectingPortId;
+    bool bPlaygroundTemplateConnectingFromOutput = false;
+    Slab::Str PlaygroundTemplateStatus;
+    float PlaygroundTemplateBottomPanelHeight = 220.0f;
+    FTemplateGraphPendingCoercionSuggestion PlaygroundTemplatePendingCoercion;
+    bool bPlaygroundTemplateMarqueeSelecting = false;
+    ImVec2 PlaygroundTemplateMarqueeStart = ImVec2(0.0f, 0.0f);
+    ImVec2 PlaygroundTemplateMarqueeEnd = ImVec2(0.0f, 0.0f);
+
+    Slab::Core::Reflection::V2::FGraphDocumentV2 PlaygroundRoutingDocument;
+    std::size_t PlaygroundRoutingEdgeCounter = 0;
+    std::size_t PlaygroundRoutingEndpointCounter = 0;
+    Slab::Vector<Slab::Str> PlaygroundRoutingStandaloneEndpoints;
+    Slab::Str PlaygroundRoutingSourceEndpoint;
+    Slab::Str PlaygroundRoutingTargetEndpoint;
+    Slab::Core::Reflection::V2::EGraphEdgeKindV2 PlaygroundRoutingEdgeKind =
+        Slab::Core::Reflection::V2::EGraphEdgeKindV2::ValueFlow;
+    Slab::Str PlaygroundRoutingStatus;
+    Slab::Str PlaygroundRoutingLastOperationSummary;
+    Slab::StrVector PlaygroundRoutingLastOperationDiagnostics;
+    std::size_t PlaygroundRoutingConnectAttemptCount = 0;
+    std::size_t PlaygroundRoutingConnectSuccessCount = 0;
+    std::size_t PlaygroundRoutingConnectFailureCount = 0;
+    float PlaygroundRoutingBottomPanelHeight = 220.0f;
+    Slab::Core::Reflection::V2::FGraphDocumentV2 PlaygroundRuntimeDocument;
+    Slab::Core::Reflection::V2::FGraphDocumentV2 PlaygroundRuntimeInstanceDocument;
+    std::size_t PlaygroundRuntimeInstanceCounter = 0;
+    Slab::Str PlaygroundRuntimeInstanceId;
+    Slab::Str PlaygroundRuntimeInstanceStatus;
+    Slab::StrVector PlaygroundRuntimeInstanceDiagnostics;
+    bool bPlaygroundRuntimeUseInstantiatedGraph = false;
+    Slab::Str PlaygroundRuntimeFilter;
+    float PlaygroundRuntimeBottomPanelHeight = 220.0f;
+    Slab::Str PlaygroundPersistenceFilePath = "Build/bin/labv2_graph_playground.json";
+    Slab::Str PlaygroundPersistenceStatus;
+    bool bPlaygroundAutosave = true;
+    bool bPlaygroundStateLoaded = false;
+    bool bPlaygroundDirty = false;
+    double PlaygroundLastAutosaveTimestampSeconds = 0.0;
+    double PlaygroundAutosaveIntervalSeconds = 1.25;
+
+    Slab::Graphics::Windowing::V2::FWorkspaceShellStateV2 WorkspaceShellState;
+    bool bPendingViewRetile = true;
+    int RetileStabilizationFramesRemaining = 0;
+    bool bRequestLauncherInitialDock = false;
+    unsigned int LauncherInitialDockId = 0;
+    EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Simulations;
+    bool bShowWindowLab = true;
+    bool bShowWindowSimulationLauncher = true;
+    bool bShowWindowTasks = true;
+    bool bShowWindowLiveData = true;
+    bool bShowWindowLiveControl = true;
+    bool bShowWindowLiveInteraction = true;
+    bool bShowWindowViews = true;
+    bool bShowWindowSchemeInspector = true;
+    bool bShowWindowBlueprintGraph = true;
+    bool bShowWindowModelInspector = false;
+    bool bShowWindowGraphPlayground = true;
+    bool bShowWindowPlotInspector = true;
+    bool bHasLastMousePosition = false;
+    int LastMouseX = 0;
+    int LastMouseY = 0;
+    Slab::TVolatile<Slab::Graphics::FSlabWindow> CapturedMouseWindow;
+
+    auto FlushPendingSlabWindows() -> void;
+    auto QueueSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
+    auto QueueSlabWindowInWorkspace(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window,
+                                    EWorkspaceTab workspace) -> void;
+    auto QueueHostedSurface(const FHostedSurfacePtr &surface) -> void;
+    auto AddSlabWindowInWorkspace(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window,
+                                  EWorkspaceTab workspace,
+                                  bool hidden = false) -> void;
+    auto EnsureModelSemanticGraphWindow() -> void;
+    auto SyncModelSemanticGraphWindow(const Slab::Core::Model::V2::FModelV2 &model,
+                                      const Slab::Core::Model::V2::FModelSemanticOverviewV2 &overview,
+                                      bool bUsesDraftPreview) -> void;
+    auto ExportModelSemanticGraphToFile(const Slab::Core::Model::V2::FModelV2 &model,
+                                        const Slab::Core::Model::V2::FModelSemanticOverviewV2 &overview,
+                                        bool bUsesDraftPreview,
+                                        int hops) -> bool;
+    auto FocusModelSemanticGraphWindow() -> void;
+    auto EnsureOntologyWorkspaceData() -> void;
+    auto EnsureOntologyGraphWindows() -> void;
+    auto SyncOntologyGraphWindows() -> void;
+    auto FocusOntologyOverviewWindow() -> void;
+    auto SyncPlotWorkspaceWindows() -> void;
+    auto PruneClosedSlabWindows() -> bool;
+    [[nodiscard]] auto FindPlotHostedSurface(const Slab::Str &surfaceId) const -> FHostedSurfacePtr;
+    [[nodiscard]] auto FindHostedSurfaceByWindow(const FSlabWindowPtr &window) const -> FHostedSurfacePtr;
+    [[nodiscard]] static auto GetSlabWindowForHostedSurface(const FHostedSurfacePtr &surface) -> FSlabWindowPtr;
+    [[nodiscard]] auto GetWorkspaceForWindow(const FSlabWindowPtr &window) const -> EWorkspaceTab;
+    [[nodiscard]] auto GetWorkspaceWindows(EWorkspaceTab workspace) const -> FSlabWindowVec;
+    [[nodiscard]] auto IsWorkspaceWindowVisible(const FSlabWindowPtr &window, EWorkspaceTab workspace) const -> bool;
+    auto ArrangeTopLevelSlabWindows() -> bool;
+    auto DrawWorkspaceLauncher() -> void;
+    auto DrawWorkspaceTabs() -> void;
+    auto DrawWorkspaceStrip() -> void;
+    auto DrawDockspaceHost() -> void;
+    auto DrawDockedToolWindows() -> void;
+    [[nodiscard]] auto BuildWorkspaceVisibilityItems() -> std::vector<FWorkspaceVisibilityItem>;
+    auto BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfaceRegistration>;
+    auto DrawPanelSurface(const FPanelSurfaceRegistration &registration) -> void;
+    auto DrawSchemesInspectorPanel() -> void;
+    auto DrawSchemesBlueprintGraphPanel() -> void;
+    [[nodiscard]] auto PrepareModelWorkspaceViewState() -> FModelWorkspaceViewState;
+    auto InvalidateModelWorkspaceViewState() -> void;
+    auto PrefillModelNewDefinitionComposer(const Slab::Core::Model::V2::FModelV2 &model,
+                                           const Slab::Core::Model::V2::FDefinitionV2 &definition,
+                                           const Slab::Str &status) -> void;
+    auto PrefillModelNewDefinitionComposerForReferencedSymbol(
+        const Slab::Core::Model::V2::FModelV2 &model,
+        const Slab::Core::Model::V2::FReferencedSymbolSemanticV2 &symbol,
+        const Slab::Core::Model::V2::FSemanticAssumptionV2 *assumption = nullptr,
+        const Slab::Core::Model::V2::FModelSemanticOverviewV2 *overview = nullptr,
+        const Slab::Str &statusPrefix = {}) -> void;
+    auto SelectModelSemanticObject(const Slab::Core::Model::V2::FModelV2 &model,
+                                   const Slab::Core::Model::V2::FSemanticObjectRefV2 &ref,
+                                   bool bRequestScroll = false,
+                                   bool bUseDraftPreview = false) -> void;
+    auto DrawModelInspectorPanel() -> void;
+    auto DrawModelVocabularyPanel() -> void;
+    auto DrawModelDefinitionsPanel() -> void;
+    auto DrawModelRelationsPanel() -> void;
+    auto DrawModelEditorPanel() -> void;
+    auto DrawModelAssumptionsPanel() -> void;
+    auto DrawModelDetailsPanel() -> void;
+    auto DrawOntologyLayerPanel() -> void;
+    auto DrawOntologyDetailsPanel() -> void;
+    auto DrawGraphPlaygroundPanel() -> void;
+    auto MarkGraphPlaygroundDirty() -> void;
+    auto SaveGraphPlaygroundStateToFile() -> bool;
+    auto LoadGraphPlaygroundStateFromFile() -> bool;
+    auto DrawGraphPlaygroundPanelImpl() -> void;
+    auto MarkGraphPlaygroundDirtyImpl() -> void;
+    auto SaveGraphPlaygroundStateToFileImpl() -> bool;
+    auto LoadGraphPlaygroundStateFromFileImpl() -> bool;
+    auto DrawPlotsInspectorPanel() -> void;
+    auto DrawLegacySidePane() -> void;
+    [[nodiscard]] static auto GetWorkspaceDefinitions()
+        -> const std::array<Slab::Graphics::Windowing::V2::FWorkspaceDefinitionV2, WorkspaceCount> &;
+    [[nodiscard]] static auto GetWorkspaceDefinition(EWorkspaceTab workspace)
+        -> const Slab::Graphics::Windowing::V2::FWorkspaceDefinitionV2 &;
+    [[nodiscard]] static auto BuildDefaultWorkspaceDockLayout(EWorkspaceTab workspace)
+        -> Slab::Graphics::Windowing::V2::FWorkspaceDockLayoutV2;
+    [[nodiscard]] auto BuildReflectionInvocationContext() const -> Slab::Core::Reflection::V2::FInvocationContextV2;
+    [[nodiscard]] auto BuildSchemeParameterDraftKey(const Slab::Str &interfaceId, const Slab::Str &parameterId) const -> Slab::Str;
+    [[nodiscard]] auto BuildPlotParameterDraftKey(const Slab::Str &interfaceId, const Slab::Str &parameterId) const -> Slab::Str;
+    auto EnsureSchemeSelectionIsValid(const Slab::Core::Reflection::V2::FReflectionCatalogV2 &catalog) -> void;
+    auto EnsurePlotSelectionIsValid() -> void;
+    auto ApplySchemeOperationResult(const Slab::Str &interfaceId,
+                                    const Slab::Str &operationId,
+                                    const Slab::Core::Reflection::V2::FOperationResultV2 &result) -> void;
+    auto ApplyPlotOperationResult(const Slab::Str &interfaceId,
+                                  const Slab::Str &operationId,
+                                  const Slab::Core::Reflection::V2::FOperationResultV2 &result) -> void;
+    auto InvokeSelectedSchemeOperation(const Slab::Core::Reflection::V2::FInterfaceSchemaV2 &interfaceSchema,
+                                       const Slab::Str &operationId,
+                                       const Slab::Core::Reflection::V2::FInvocationContextV2 &context) -> void;
+    auto InvokeSelectedPlotOperation(const Slab::Core::Reflection::V2::FInterfaceSchemaV2 &interfaceSchema,
+                                     const Slab::Str &operationId,
+                                     const Slab::Core::Reflection::V2::FInvocationContextV2 &context) -> void;
+    auto DrawSubstrateGraphCanvasCommon(
+        const char *canvasId,
+        Slab::Core::Reflection::V2::FGraphDocumentV2 &document,
+        Slab::Vector<FLabV2SubstrateGraphVisualNode> &nodes,
+        float &bottomPanelHeight,
+        const std::function<Slab::Vector<FLabV2SubstrateGraphCanvasAction>(const ImVec2 &)> &buildAddNodeActions,
+        const std::function<Slab::Vector<FLabV2SubstrateGraphCanvasAction>(
+            const Slab::Core::Reflection::V2::FGraphNodeV2 &,
+            Slab::Core::Reflection::V2::FGraphPortV2 *,
+            Slab::Core::Reflection::V2::EGraphPortDirectionV2,
+            const ImVec2 &)> &buildConnectNodeActions,
+        const std::function<void()> &markDirty,
+        FLabV2SubstrateGraphCanvasInteraction *interaction = nullptr) -> void;
+    [[nodiscard]] auto GetTopMenuInset() const -> float;
+    auto RequestSimulationLauncherVisible() -> void;
+    auto SaveWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
+    auto LoadWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
+    auto SetActiveWorkspace(EWorkspaceTab workspace) -> void;
+    [[nodiscard]] auto WorkspaceUsesSlabWindows(EWorkspaceTab workspace) const -> bool;
+    [[nodiscard]] auto IsDockingEnabled() const -> bool;
+    [[nodiscard]] auto ShouldRenderSlabWindowsInWorkspace() const -> bool;
+    auto HideSlabWindowsOffscreen() -> void;
+    auto DrawViewManagerPanel() -> void;
+    auto FocusWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &window) -> void;
+    auto FocusHostedSurface(const FHostedSurfacePtr &surface) -> void;
+    auto RequestViewRetile(int stabilizationFrames = 3) -> void;
+    [[nodiscard]] auto FindTopWindowAtPoint(int x, int y) const -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
+    [[nodiscard]] auto FindKeyboardTargetWindow() const -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
+    auto SyncMousePositionFromImGui() -> void;
+    [[nodiscard]] auto GetWindowKey(const FSlabWindowPtr &window) const -> Slab::Str;
+    [[nodiscard]] auto FindWindowByKey(const Slab::Str &windowKey) const
+        -> Slab::TPointer<Slab::Graphics::FSlabWindow>;
+};
+
+#endif // STUDIOSLAB_LAB_V2_WINDOW_MANAGER_H

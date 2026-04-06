@@ -9,13 +9,13 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/Shockwave/SGPlaneWave.h"
 
 namespace Modes {
-    FPlaneWaveBC::FPlaneWaveBC(const KGRtoR::EquationState_constptr& prototype, DevFloat Q, DevFloat k)
-    : BoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ())
+    FPlaneWaveBC::FPlaneWaveBC(const KGRtoR::FEquationState_constptr& prototype, DevFloat Q, DevFloat k)
+    : FBoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ())
     , Q(Q), k(k)
     {
     }
 
-    void FPlaneWaveBC::ApplyKG(KGRtoR::EquationState& KGState, DevFloat t) const
+    void FPlaneWaveBC::ApplyKG(KGRtoR::FEquationState& KGState, DevFloat t) const
     {
         if(t==0.0)
         {
@@ -29,13 +29,13 @@ namespace Modes {
 
 
 
-    SignalBC::SignalBC(const KGRtoR::EquationState_ptr &prototype, const DevFloat A, const DevFloat ω)
-    : BoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ())
+    FSignalBC::FSignalBC(const KGRtoR::FEquationState_ptr &prototype, const DevFloat A, const DevFloat ω)
+    : FBoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ())
     , A(A)
     , ω(ω) {}
 
-    void SignalBC::ApplyKG(KGRtoR::EquationState &kgState, const DevFloat t) const {
-        if(t==0.0) BoundaryCondition::ApplyKG(kgState, t);
+    void FSignalBC::ApplyKG(KGRtoR::FEquationState &kgState, const DevFloat t) const {
+        if(t==0.0) FBoundaryCondition::ApplyKG(kgState, t);
 
         OUT ϕ   = kgState.getPhi();
         OUT 𝜕ₜϕ = kgState.getDPhiDt() ;
@@ -44,13 +44,13 @@ namespace Modes {
         𝜕ₜϕ.getSpace().getHostData()[0] = A*ω*cos(ω*t);
     }
 
-    DrivenBC::DrivenBC(const KGRtoR::EquationState_ptr &prototype, TPointer<SquareWave> sqrWave)
-    : BoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ()),
+    FDrivenBC::FDrivenBC(const KGRtoR::FEquationState_ptr &prototype, TPointer<FSquareWave> sqrWave)
+    : FBoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ()),
       sqrWave(std::move(sqrWave)) { }
 
-    void DrivenBC::ApplyKG(KGRtoR::EquationState &toFunction, DevFloat t) const {
+    void FDrivenBC::ApplyKG(KGRtoR::FEquationState &toFunction, DevFloat t) const {
         if(sqrWave != nullptr) sqrWave->set_t(t);
 
-        BoundaryCondition::Apply(toFunction, t);
+        FBoundaryCondition::Apply(toFunction, t);
     }
 }

@@ -8,10 +8,10 @@
 #include <utility>
 
 namespace Slab::Core {
-    SlabModule::SlabModule(Str name, bool reqGraphBack)
+    FSlabModule::FSlabModule(Str name, bool reqGraphBack)
     : Name(std::move(name)), bRequiresGraphicsBackend(reqGraphBack) { }
 
-    SlabModule::~SlabModule() {
-        Log::Info() << "Releasing module \'" << Log::FGBlue << Name << Log::ResetFormatting << "\'." << Log::Flush;
+    FSlabModule::~FSlabModule() {
+        FLog::Info() << "Releasing module \'" << FLog::FGBlue << Name << FLog::ResetFormatting << "\'." << FLog::Flush;
     }
 } // Core

@@ -47,6 +47,26 @@ Graphics::PlotStyle StrongStrokeStyle{StrokeColor, Graphics::LineLoop, false, Gr
 Graphics::PlotStyle RegularStrokeStyle{StrokeColor, Graphics::LineLoop, false, Graphics::Nil, Width_RegularStroke};
 Graphics::PlotStyle WeakStrokeStyle{StrokeColor, Graphics::LineLoop, false, Graphics::Nil, Width_WeakStroke};
 
+namespace {
+    Math::Real2D GetMousePositionInPlaneSpace(const Graphics::FMouseState& Mouse, const Graphics::RectR& Region,
+        const Graphics::RectI& VP, const int Proportion)
+    {
+        const auto MouseSpace = Graphics::FromViewportToSpaceCoord(
+            {static_cast<double>(Mouse.x), static_cast<double>(Mouse.y)}, Region, VP).ToReal2D();
+        return (MouseSpace - SideViewOrigin) * Proportion;
+    }
+
+    void TranslateBodyPart(FBodyPartDescriptor& Part, const Math::Real2D& Delta) {
+        if (Part.GetShape() == EShape::Circle) {
+            Part.Circle.Center += Delta;
+            return;
+        }
+
+        auto Moved = Part.GetPolygon().TranslateConst(Delta);
+        Part.Polygon = Math::Geometry::FPolygon{Moved};
+    }
+}
+
 FLittlePlaneBlueprint::FLittlePlaneBlueprint() : Region(), VP(), GlyphHeight(10) {
     // auto FontFile = Core::Resources::BuiltinFonts::EngineerHand();
     auto FontFile = Core::Resources::BuiltinFonts::Y145m2009();
@@ -113,14 +133,61 @@ void FLittlePlaneBlueprint::Startup(const Graphics::FPlatformWindow&) {
 }
 
 void FLittlePlaneBlueprint::HandleInputState(const FInputState InputState) {
-    fix MouseX = InputState.MouseState.x;
-    fix MouseY = InputState.MouseState.y;
+    auto Factory = GetPlaneFactory();
+    const auto &Mouse = InputState.MouseState;
 
-    fix MousePosSpace = (Graphics::FromViewportToSpaceCoord({MouseX, MouseY}, Region, VP).ToReal2D() - SideViewOrigin) * Proportion;
+    const auto MousePosSpace = GetMousePositionInPlaneSpace(Mouse, Region, VP, Proportion);
 
-    for (auto &Part : PlaneFactory->BodyPartDescriptors) {
+    int HoveredBodyPartIndex = -1;
+    for (size_t i = 0; i < Factory->BodyPartDescriptors.size(); ++i) {
+        auto &Part = Factory->BodyPartDescriptors[i];
         Part.IsHovered = FBodyPartRenderer{Part}.GetLeftView().Contains(MousePosSpace);
+        if (Part.IsHovered && HoveredBodyPartIndex < 0) HoveredBodyPartIndex = static_cast<int>(i);
     }
+
+    HoveredWingIndex = -1;
+    for (size_t i = 0; i < Factory->WingDescriptors.size(); ++i) {
+        const auto &Wing = Factory->WingDescriptors[i];
+        if (FWingDescriptorUtils{Wing}.GetLeftView().Contains(MousePosSpace)) {
+            HoveredWingIndex = static_cast<int>(i);
+            break;
+        }
+    }
+
+    const bool bLeftPressedNow = Mouse.IsLeftPressed();
+    const bool bLeftJustPressed = bLeftPressedNow && !bLeftMousePressed;
+    const bool bLeftJustReleased = !bLeftPressedNow && bLeftMousePressed;
+
+    if (bLeftJustPressed) {
+        bIsDragging = false;
+        if (HoveredBodyPartIndex >= 0 && !Factory->BodyPartDescriptors[HoveredBodyPartIndex].IsStatic) {
+            SelectedBodyPartIndex = HoveredBodyPartIndex;
+            SelectedWingIndex = -1;
+            bIsDragging = true;
+        } else if (HoveredWingIndex >= 0) {
+            SelectedWingIndex = HoveredWingIndex;
+            SelectedBodyPartIndex = -1;
+            bIsDragging = true;
+        } else {
+            SelectedBodyPartIndex = -1;
+            SelectedWingIndex = -1;
+        }
+        LastMousePosSpace = MousePosSpace;
+    } else if (bLeftPressedNow && bIsDragging) {
+        const auto Delta = MousePosSpace - LastMousePosSpace;
+        if (Delta.x != 0.0 || Delta.y != 0.0) {
+            if (SelectedBodyPartIndex >= 0) {
+                TranslateBodyPart(Factory->BodyPartDescriptors[SelectedBodyPartIndex], Delta);
+            } else if (SelectedWingIndex >= 0) {
+                Factory->WingDescriptors[SelectedWingIndex].RelativeLocation += Delta;
+            }
+            LastMousePosSpace = MousePosSpace;
+        }
+    } else if (bLeftJustReleased) {
+        bIsDragging = false;
+    }
+
+    bLeftMousePressed = bLeftPressedNow;
 }
 
 bool FLittlePlaneBlueprint::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) {
@@ -267,7 +334,10 @@ void FLittlePlaneBlueprint::DrawPlane() {
     ImGui::SetNextWindowBgAlpha(0.78);
     ImGui::Begin("Plane Parameters");
 
-    for (const auto &Part : GetPlaneFactory()->BodyPartDescriptors) {
+    auto Factory = GetPlaneFactory();
+
+    for (size_t i = 0; i < Factory->BodyPartDescriptors.size(); ++i) {
+        const auto &Part = Factory->BodyPartDescriptors[i];
         auto LeftViewPoints = FBodyPartRenderer{Part}.GetLeftView();
         auto TopViewPoints = FBodyPartRenderer{Part}.GetTopView();
 
@@ -283,8 +353,9 @@ void FLittlePlaneBlueprint::DrawPlane() {
         Mass += MyMass;
         HullMass += MyMass;
 
+        const bool bIsSelected = static_cast<int>(i) == SelectedBodyPartIndex;
         auto Style = StrongStrokeStyle;
-        if (Part.IsHovered) {
+        if (Part.IsHovered || bIsSelected) {
             if (Part.IsStatic) Style = UnavailableStrokeStyle;
             else  Style = SelectedStrokeStyle;
         }
@@ -292,8 +363,9 @@ void FLittlePlaneBlueprint::DrawPlane() {
         Draw::RenderPointSet(Dummy((TopViewPoints*=Scale).Translate(TopViewOrigin)), Style);
     }
 
-    for (const auto &Wing : GetPlaneFactory()->WingDescriptors) {
-        fix WingUtils = FWingDescriptorUtils {Wing};
+    for (size_t i = 0; i < Factory->WingDescriptors.size(); ++i) {
+        const auto &Wing = Factory->WingDescriptors[i];
+        fix WingUtils = FWingDescriptorUtils{Wing};
 
         if (ImGui::CollapsingHeader(ToStr("Wing: %s", Wing.Params.Name.c_str()).c_str())) {
             ImGui::Text("Airfoil: %s", Wing.Airfoil->GetName().c_str());
@@ -322,8 +394,12 @@ void FLittlePlaneBlueprint::DrawPlane() {
         Mass += MyMass;
         WingMass += MyMass;
 
-        Draw::RenderPointSet((SideViewPoints * Scale).Translate(SideViewOrigin), StrongStrokeStyle);
-        Draw::RenderPointSet((TopViewPoints * Scale).Translate(TopViewOrigin), StrongStrokeStyle);
+        const bool bIsSelected = static_cast<int>(i) == SelectedWingIndex;
+        const bool bIsHovered = static_cast<int>(i) == HoveredWingIndex;
+        auto WingStyle = (bIsSelected || bIsHovered) ? SelectedStrokeStyle : StrongStrokeStyle;
+
+        Draw::RenderPointSet((SideViewPoints * Scale).Translate(SideViewOrigin), WingStyle);
+        Draw::RenderPointSet((TopViewPoints * Scale).Translate(TopViewOrigin), WingStyle);
 
         // AddPartAnnotation(Wing.Airfoil->GetName(), MyCOM*Scale + SideViewOrigin );
     }
@@ -417,7 +493,7 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
     })
     .AddWing({
         .Density = LightPlaneDensity,
-        .Airfoil = New<Foil::ViternaAirfoil2412>(),
+        .Airfoil = New<Foil::FViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
             .Name = "Wing",
             .ChordLength = 1.15f,
@@ -430,7 +506,7 @@ TPointer<FPlaneFactory> SetupDefaultPlane() {
     })
     .AddWing({
         .Density = LightPlaneDensity,
-        .Airfoil = New<Foil::ViternaAirfoil2412>(),
+        .Airfoil = New<Foil::FViternaAirfoil2412>(),
         .Params = Foil::FAirfoilParams{
             .Name = "Winglet",
             .ChordLength = 0.6f,

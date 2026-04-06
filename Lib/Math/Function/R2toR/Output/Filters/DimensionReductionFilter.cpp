@@ -12,13 +12,13 @@
 
 namespace Slab::Math::R2toR {
 
-    DimensionReductionFilter::DimensionReductionFilter(UInt resolution, RtoR2::StraightLine alongLine, DevFloat L)
+    FDimensionReductionFilter::FDimensionReductionFilter(UInt resolution, RtoR2::StraightLine alongLine, DevFloat L)
             : line(alongLine), N_low(resolution), L(L) {
-        Core::Log::Info("DimensionReductionFilter") << " will interpolate straight line from " << alongLine.getx0()
-                                              << " to " << (alongLine.getx0() + alongLine.getr()) << Core::Log::Flush;
+        Core::FLog::Info("DimensionReductionFilter") << " will interpolate straight line from " << alongLine.getx0()
+                                              << " to " << (alongLine.getx0() + alongLine.getr()) << Core::FLog::Flush;
     }
 
-    DiscreteSpacePair DimensionReductionFilter::operator()(const FOutputPacket &outputInfo) {
+    DiscreteSpacePair FDimensionReductionFilter::operator()(const FOutputPacket &outputInfo) {
         IN kgState = *outputInfo.GetNakedStateData<R2toR::EquationState>();
         auto &f = dynamic_cast<R2toR::FNumericFunction&>(kgState.getPhi());
         // const DiscreteSpace &dPhiSpace = *outputInfo.getSpaceData().second;
@@ -64,7 +64,7 @@ namespace Slab::Math::R2toR {
         return {newPhi, nullptr};
     }
 
-    DimensionMetaData DimensionReductionFilter::getOutputDim() const {
+    DimensionMetaData FDimensionReductionFilter::getOutputDim() const {
         const DevFloat h_low = L / N_low;
         return DimensionMetaData({N_low}, {h_low});
     }

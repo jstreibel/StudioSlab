@@ -45,8 +45,8 @@ namespace Slab::Graphics{
         const auto DataResult = Image::LoadImageFile(path);
 
         if (DataResult.IsFailure()) {
-            Core::Log::Error("Failed to load texture: " + path + ": ") << DataResult.ToString()
-            << Core::Log::Flush;
+            Core::FLog::Error("Failed to load texture: " + path + ": ") << DataResult.ToString()
+            << Core::FLog::Flush;
 
             return nullptr;
         }

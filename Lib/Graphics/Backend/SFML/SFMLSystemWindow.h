@@ -13,15 +13,16 @@
 
 namespace Slab::Graphics {
 
-    class SFMLSystemWindow : public FPlatformWindow {
-        friend class SFMLBackend;
+    class FSFMLSystemWindow : public FPlatformWindow {
+        friend class FSFMLBackend;
 
-        Vector<TVolatile<SFMLListener>> sfml_listeners;
+        Vector<TVolatile<FSFMLListener>> sfml_listeners;
         sf::RenderWindow *sfml_native_window = nullptr;
         sf::Font font;
 
     public:
         void Clear(const FColor&) const override;
+        TPointer<IDrawBackend2D> GetRenderer() const override;
 
     private:
         sf::Text text;
@@ -35,9 +36,10 @@ namespace Slab::Graphics {
         void Flush() override;
 
     public:
-        SFMLSystemWindow();
+        FSFMLSystemWindow();
 
-        bool addSFMLListener(const TVolatile<SFMLListener>& sfmlListener);
+        bool AddSFMLListener(const TVolatile<FSFMLListener>& sfmlListener);
+        [[deprecated("Use AddSFMLListener()")]] bool addSFMLListener(const TVolatile<FSFMLListener>& sfmlListener) { return AddSFMLListener(sfmlListener); }
 
         Int GetHeight() const override;
 
@@ -47,6 +49,8 @@ namespace Slab::Graphics {
 
         void SignalClose() override;
     };
+
+    using SFMLSystemWindow [[deprecated("Use FSFMLSystemWindow")]] = FSFMLSystemWindow;
 
 } // Slab::Graphics
 

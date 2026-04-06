@@ -22,15 +22,15 @@ namespace Slab::Models::MolecularDynamics {
     , flippedSides(new bool[config->getN()]) {
         if(USE_NEW_EXPERIMENTAL_IMPLEMENTATION) {
             if (spaceHash.totalLength() != config->GetL()) {
-                Core::Log::ErrorFatal() << "NewtonMechanics Hashspace inconsistency. Hashspace total width is "
+                Core::FLog::ErrorFatal() << "NewtonMechanics Hashspace inconsistency. Hashspace total width is "
                              << spaceHash.totalLength()
                              << " while sim space is " << config->GetL();
 
                 throw Exception("Hashspace inconsistency");
 
             } else if (spaceHash.l <= CUTOFF_RADIUS) {
-                Core::Log::ErrorFatal() << "NewtonMechanics Hashspace inconsistency. Hashspace box length is " << spaceHash.l
-                             << " while molecule cutoff radius is " << CUTOFF_RADIUS << Core::Log::Flush;
+                Core::FLog::ErrorFatal() << "NewtonMechanics Hashspace inconsistency. Hashspace box length is " << spaceHash.l
+                             << " while molecule cutoff radius is " << CUTOFF_RADIUS << Core::FLog::Flush;
 
                 throw Exception("Hashspace inconsistency");
             }

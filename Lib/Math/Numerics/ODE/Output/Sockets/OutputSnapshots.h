@@ -6,7 +6,7 @@
 
 namespace Slab::Math {
 
-    class OutputSnapshot : public FOutputChannel {
+    class FOutputSnapshot : public FOutputChannel {
 
     private:
         Vector<size_t> snapSteps;
@@ -14,10 +14,10 @@ namespace Slab::Math {
 
         size_t T_fileNamePrecision;
     public:
-        explicit OutputSnapshot(Str customFileDescription = "",
-                       size_t fileNamePrecision = 4);
+        explicit FOutputSnapshot(Str customFileDescription = "",
+                                 size_t fileNamePrecision = 4);
 
-        ~OutputSnapshot() override;
+        ~FOutputSnapshot() override;
 
         void addSnapshotStep(size_t snapshotStep);
 
@@ -33,9 +33,11 @@ namespace Slab::Math {
         bool ShouldOutput(long unsigned timeStep) override;
 
         void HandleOutput(const FOutputPacket &outInfo) override {
-            OutputSnapshot::doOutput(outInfo, customFileDescription, 4);
+            FOutputSnapshot::doOutput(outInfo, customFileDescription, 4);
         }
     };
+
+    using OutputSnapshot [[deprecated("Use FOutputSnapshot")]] = FOutputSnapshot;
 
 
 }

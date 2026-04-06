@@ -9,17 +9,17 @@ namespace Studios::PureSG {
 
     using namespace Slab::Math;
 
-    InputPerturbations::InputPerturbations()
-            : Builder("Perturbations", "Perturbed oscillon in its reference frame") {
+    FInputPerturbations::FInputPerturbations()
+            : FBuilder("Perturbations", "Perturbed oscillon in its reference frame") {
         Interface->AddParameters({Naked(l), Naked(eps)});
     };
 
-    auto InputPerturbations::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
+    auto FInputPerturbations::GetBoundary() -> Math::Base::BoundaryConditions_ptr {
         auto proto = NewFieldState();
 
         auto pertOscillon = New <RtoR::PerturbedOscillonTimeDerivative> (l.GetValue(), eps.GetValue());
 
-        return New<BoundaryCondition>(proto,
+        return New<FBoundaryCondition>(proto,
                                       New <RtoR::NullFunction> (),
                                       pertOscillon);
     }

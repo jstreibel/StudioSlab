@@ -15,22 +15,22 @@ const int HEADER_SIZE_BYTES = 2048;
 
 namespace Slab::Math {
 
-    class OutputHistoryToFile : public HistoryKeeper {
+    class FOutputHistoryToFile : public FHistoryKeeper {
 
         const Str outFileName;
         std::ofstream file;
 
         /*! I manage this. */
-        OutputFormatterBase &outputFormatter;
+        FOutputFormatterBase &outputFormatter;
 
 
     public:
 
-        OutputHistoryToFile(UInt stepsInterval, SpaceFilterBase *spaceFilter,
-                            const Str &outputFileName,
-                            OutputFormatterBase *outputFormatter = new BinarySOF());
+        FOutputHistoryToFile(UInt stepsInterval, FSpaceFilterBase *spaceFilter,
+                             const Str &outputFileName,
+                             FOutputFormatterBase *outputFormatter = new FBinarySOF());
 
-        ~OutputHistoryToFile() override;
+        ~FOutputHistoryToFile() override;
 
 
     private:
@@ -41,6 +41,8 @@ namespace Slab::Math {
 
     public:
     };
+
+    using OutputHistoryToFile [[deprecated("Use FOutputHistoryToFile")]] = FOutputHistoryToFile;
 
 
 }

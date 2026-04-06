@@ -16,21 +16,21 @@
 
 namespace Slab::Math {
 
-    MathApp::MathApp(int argc, const char **argv, TPointer<Base::FNumericalRecipe> SimBuilder)
-            : AppBase(argc, argv), Recipe(std::move(SimBuilder)) {
+    FMathApp::FMathApp(int argc, const char **argv, TPointer<Base::FNumericalRecipe> SimBuilder)
+            : FAppBase(argc, argv), Recipe(std::move(SimBuilder)) {
 
-        Core::CLArgsManager::Parse(argc, argv);
+        Core::FCLArgsManager::Parse(argc, argv);
     }
 
-    auto MathApp::run() -> int {
+    auto FMathApp::run() -> int {
         const auto integrationTask = Slab::New<FNumericTask>(Recipe);
 
-        const auto TaskManager = dynamic_cast<Core::MTaskManager*>
-                (Core::BackendManager::GetModule("TaskManager").get());
+        const auto TaskManager = dynamic_cast<Core::FTaskManager*>
+                (Core::FBackendManager::GetModule("TaskManager").get());
 
         TaskManager->AddTask(integrationTask);
 
-        Core::BackendManager::GetBackend()->Run();
+        Core::FBackendManager::GetBackend()->Run();
 
         // If tasks are still running after backend has finished around, we abort all tasks.
         TaskManager->AbortAllTasks();

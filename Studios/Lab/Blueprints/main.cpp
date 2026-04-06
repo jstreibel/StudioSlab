@@ -7,18 +7,18 @@
 #include "BlueprintRenderer.h"
 #include "Graphics/SlabGraphics.h"
 
-class App : public Slab::FApplication {
+class FApp : public Slab::FApplication {
     Slab::TPointer<Slab::Blueprints::FBlueprintRenderer> BlueprintRenderer;
     Slab::TPointer<Slab::Blueprints::FBlueprint> Blueprint;
 
 public:
-    App(const int argc, const char *argv[])
+    FApp(const int argc, const char *argv[])
     : Slab::FApplication("Blueprints prototype", argc, argv) {
     }
 
 protected:
     Slab::TPointer<Slab::Platform> CreatePlatform() override {
-        return Slab::DynamicPointerCast<Slab::Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
+        return Slab::DynamicPointerCast<Slab::Graphics::FGraphicBackend>(Slab::CreatePlatform("GLFW"));
     }
 
 
@@ -75,5 +75,5 @@ protected:
 };
 
 int main(const int argc, const char **argv) {
-    return Slab::Run<App>(argc, argv);
+    return Slab::Run<FApp>(argc, argv);
 }

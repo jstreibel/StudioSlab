@@ -8,17 +8,19 @@
 #include "../ThermalBuilder.h"
 
 namespace Studios::Fields::RtoRThermal {
-    class ManyOscillonsBuilder  : public Builder {
+    class FManyOscillonsBuilder  : public FBuilder {
 
         IntegerParameter nOscillons = IntegerParameter(100, FParameterDescription{"n_osc", "Number of oscillons distributed."});
     public:
-        ManyOscillonsBuilder();
+        FManyOscillonsBuilder();
         auto GetBoundary() -> Base::BoundaryConditions_ptr override;
 
     protected:
         //auto buildOpenGLOutput() -> Monitor * override;
 
     };
+
+    using ManyOscillonsBuilder [[deprecated("Use FManyOscillonsBuilder")]] = FManyOscillonsBuilder;
 }
 
 

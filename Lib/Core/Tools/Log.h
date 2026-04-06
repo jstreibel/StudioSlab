@@ -20,14 +20,14 @@
 
 namespace Slab::Core {
 
-    class Log final : public Singleton<Log>, FInterfaceOwner {
-        static Log *pMyInstance;
+    class FLog final : public FSingleton<FLog>, FInterfaceOwner {
+        static FLog *pMyInstance;
 
         TPointer<BoolParameter> LogDebug = New<BoolParameter>(false, FParameterDescription{"log_debug", "Show debug messages."});
         TPointer<BoolParameter> LogNotes = New<BoolParameter>(false, FParameterDescription{"log_notes", "Show note messages."});
         TPointer<BoolParameter> Verbose =  New<BoolParameter>(false, FParameterDescription{"verbose", "Show note and debug messages."});
 
-        Log();
+        FLog();
 
         Str Prefix();
 
@@ -48,7 +48,7 @@ namespace Slab::Core {
         FTimer Timer;
 
     public:
-        static auto GetSingleton() -> Log &;
+        static auto GetSingleton() -> FLog &;
 
         const static Str StartFormat;
         const static Str SepFormat;
@@ -175,6 +175,8 @@ namespace Slab::Core {
         auto NotifyInterfaceSetupIsFinished() -> void override;
 
     };
+
+    using Log = FLog;
 
 
 }

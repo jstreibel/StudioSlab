@@ -4,8 +4,8 @@
 
 #include "Monitor.h"
 
-#include "Graphics/SlabGraphics.h"
 #include "Graphics/Backend/SFML/SFMLBackend.h"
+#include "Graphics/Backend/PlatformWindow.h"
 #include "Models/MolecularDynamics/Hamiltonians/Particle.h"
 
 #include "Hamiltonians/Lennard-Jones/LennardJonesParams.h"
@@ -23,7 +23,7 @@ namespace Slab::Models::MolecularDynamics {
 #define SHOW_RADIUS true
 #define SHOW_HASH_GRID false
 
-#define SFML_Backend DynamicPointerCast<Graphics::SFMLBackend>(Slab::Graphics::GetGraphicsBackend())
+#define SFML_Backend DynamicPointerCast<Graphics::FSFMLBackend>(Slab::Graphics::GetGraphicsBackend())
 
 FMolecularDynamicsMonitor::FMolecularDynamicsMonitor(const TPointer<Config>& config, Model model)
     : FOutputChannel("Particle dynamics monitor", 10)
@@ -96,7 +96,7 @@ FMolecularDynamicsMonitor::FMolecularDynamicsMonitor(const TPointer<Config>& con
             }
         }
 
-        Log::Info("ParticleDynamics::Monitor: ")
+        FLog::Info("ParticleDynamics::Monitor: ")
             << "\n\t\t\t\t\tNearest zero " << NearestZero.first << " @ r=" << NearestZero.second
             << "\n\t\t\t\t\tSmallest     " << Smallest.first << " @ r=" << Smallest.second
             << "\n\t\t\t\t\tLargest      " << Largest.first << " @ r=" << Largest.second;

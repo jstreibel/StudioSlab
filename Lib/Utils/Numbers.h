@@ -47,7 +47,7 @@ namespace Slab {
         return std::min(a, b);
     }
 
-    union DoubleAccess {
+    union FDoubleAccess {
         double val;
         char bytes[8];
 
@@ -56,6 +56,8 @@ namespace Slab {
 
         }
     };
+
+    using DoubleAccess [[deprecated("Use FDoubleAccess")]] = FDoubleAccess;
 
 }
 

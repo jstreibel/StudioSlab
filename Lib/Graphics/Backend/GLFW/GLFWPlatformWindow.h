@@ -17,7 +17,7 @@
 namespace Slab::Graphics {
 
     class FGLFWPlatformWindow : public FPlatformWindow {
-        friend class GLFWBackend;
+        friend class FGLFWBackend;
 
         TList<TVolatile<FGLFWListener>> GLFWListeners{};
 
@@ -35,6 +35,8 @@ namespace Slab::Graphics {
         void Tick() override;
         void Clear(const FColor&) const override;
         void Flush() override;
+
+        TPointer<IDrawBackend2D> GetRenderer() const override;
 
         Int GetWidth() const override;
 

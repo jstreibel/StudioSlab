@@ -46,8 +46,8 @@ void setup_viewer(const Slab::TPointer<Slab::Math::R2toR::NumericFunction_CPU>& 
     auto arts = Slab::Graphics::FPlotter::AddR2toRFunction(plot_window, field, "ϕ(t,x)");
     arts->setDataMutable(true);
 
-    auto viewer = Slab::New<Slab::Graphics::MainViewer>();
-    viewer->addViewer(Slab::New<Slab::Graphics::FourierViewer>(viewer->getGUIWindow()));
+    auto viewer = Slab::New<Slab::Graphics::FMainViewer>();
+    viewer->addViewer(Slab::New<Slab::Graphics::FFourierViewer>(viewer->getGUIWindow()));
     viewer->setFunction(field);
 
     auto wm = Slab::New<Slab::Graphics::FSlabWindowManager>();
@@ -60,10 +60,10 @@ void setup_viewer(const Slab::TPointer<Slab::Math::R2toR::NumericFunction_CPU>& 
 
 int run(int argc, const char **argv) {
     constexpr unsigned long max_steps = -1;
-    auto mc_recipe = Slab::New<Slab::Math::R2toRMetropolisRecipe>(max_steps);
+    auto mc_recipe = Slab::New<Slab::Math::FR2toRMetropolisRecipe>(max_steps);
     Slab::Core::RegisterCLInterface(mc_recipe->GetInterface());
 
-    auto prog = Slab::New<Slab::Math::MathApp> (argc, argv, mc_recipe);
+    auto prog = Slab::New<Slab::Math::FMathApp> (argc, argv, mc_recipe);
 
     setup_viewer(mc_recipe->getField());
 

@@ -30,7 +30,7 @@ namespace Slab::Core {
 
         auto GetAverage() const -> boost::timer::nanosecond_type;
 
-        void Print(OStream &out = Log::Info()) const;
+        void Print(OStream &out = FLog::Info()) const;
 
         friend OStream &operator<<(OStream &os, const FBenchmarkData &hist);
 

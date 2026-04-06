@@ -11,60 +11,60 @@
 #include <utility>
 
 namespace Slab::Core {
-    Str BackendManager::BackendName = "Uninitialized";
-    std::shared_ptr<FBackend> BackendManager::instance = nullptr;
+    Str FBackendManager::BackendName = "Uninitialized";
+    std::shared_ptr<FBackend> FBackendManager::instance = nullptr;
 
-    Map<FModuleIdentifier, FModuleAllocator> BackendManager::AvailableModules{};
-    Map<FModuleIdentifier , std::shared_ptr<SlabModule>> BackendManager::LoadedModules{};
-    Map<FBackendIdentifier, FBackendAllocator> BackendManager::AvailableBackends{};
+    Map<FModuleIdentifier, FModuleAllocator> FBackendManager::AvailableModules{};
+    Map<FModuleIdentifier , std::shared_ptr<FSlabModule>> FBackendManager::LoadedModules{};
+    Map<FBackendIdentifier, FBackendAllocator> FBackendManager::AvailableBackends{};
 
-    TPointer<FBackend>  BackendManager::GetBackend() {
-        if (!BackendManager::instance) {
-            BackendManager::Startup("Headless");
-            Log::Info() << "Backend initializing to default headless backend." << Log::Flush;
+    TPointer<FBackend>  FBackendManager::GetBackend() {
+        if (!FBackendManager::instance) {
+            FBackendManager::Startup("Headless");
+            FLog::Info() << "Backend initializing to default headless backend." << FLog::Flush;
         };
 
-        return BackendManager::instance;
+        return FBackendManager::instance;
     }
 
     /*
-    auto BackendManager::GetGUIBackend() -> GraphicBackend & {
-        auto &backend = BackendManager::GetBackend();
+    auto FBackendManager::GetGUIBackend() -> FGraphicBackend & {
+        auto &backend = FBackendManager::GetBackend();
 
         if(backend.isHeadless()) throw Exception("requiring graphic backend on headless run");
 
-        return dynamic_cast<GraphicBackend&>(backend);
+        return dynamic_cast<FGraphicBackend&>(backend);
     }
      */
 
-    void BackendManager::Startup(const FBackendIdentifier& backend_id) {
-        if(BackendManager::instance != nullptr)
+    void FBackendManager::Startup(const FBackendIdentifier& backend_id) {
+        if(FBackendManager::instance != nullptr)
             throw Exception("Backend already initialized");
         if(AvailableBackends.find(backend_id) == AvailableBackends.end() )
             throw Exception("Unknown backend '" + backend_id + "'");
 
-        BackendManager::BackendName = backend_id;
+        FBackendManager::BackendName = backend_id;
 
         auto alloc_backend = AvailableBackends[backend_id];
-        BackendManager::instance = alloc_backend();
+        FBackendManager::instance = alloc_backend();
     }
 
-    void BackendManager::LoadModule(const FModuleIdentifier& module_name) {
+    void FBackendManager::LoadModule(const FModuleIdentifier& module_name) {
         if(IsModuleLoaded(module_name)) return;
 
         if(!IsModuleAvailable(module_name)) throw Exception("Unkonwn module '" + module_name + "'");
 
         auto alloc_module = AvailableModules[module_name];
-        auto module = TPointer<SlabModule>(alloc_module());
+        auto module = TPointer<FSlabModule>(alloc_module());
 
-        LoadedModules[module_name] = TPointer<SlabModule>(module);
+        LoadedModules[module_name] = TPointer<FSlabModule>(module);
 
         GetBackend()->NotifyModuleLoaded(module);
 
-        Log::Info() << "Loaded module '" << Log::FGBlue << module_name << Log::ResetFormatting << "'." << Log::Flush;
+        FLog::Info() << "Loaded module '" << FLog::FGBlue << module_name << FLog::ResetFormatting << "'." << FLog::Flush;
     }
 
-    FModuleIdentifier BackendManager::ParseName(const FModuleIdentifier& requested_module_name) {
+    FModuleIdentifier FBackendManager::ParseName(const FModuleIdentifier& requested_module_name) {
         if(IsModuleAvailable(requested_module_name)) return requested_module_name;
 
         auto split_reqmod_name = Split(requested_module_name, ":");
@@ -84,51 +84,51 @@ namespace Slab::Core {
         }
 
         bad:
-        Log::Warning() << "Module '" << Log::FGBlue << requested_module_name << Log::ResetFormatting << "' not found." << Log::Flush;
-        Log::Info() << "Available modules:" << Log::Flush;
-        for(const auto& pair : AvailableModules) Log::Info() << "\t" << pair.first << Log::Flush;
+        FLog::Warning() << "Module '" << FLog::FGBlue << requested_module_name << FLog::ResetFormatting << "' not found." << FLog::Flush;
+        FLog::Info() << "Available modules:" << FLog::Flush;
+        for(const auto& pair : AvailableModules) FLog::Info() << "\t" << pair.first << FLog::Flush;
         throw Exception("Unknown module '" + requested_module_name + "'");
     }
 
-    StrVector BackendManager::GetAvailableModules() {
+    StrVector FBackendManager::GetAvailableModules() {
         StrVector modules;
         for(const auto& pair : AvailableModules) modules.push_back(pair.first);
         return modules;
     }
 
-    TPointer<SlabModule> BackendManager::GetModule(const FModuleIdentifier& module_name) {
+    TPointer<FSlabModule> FBackendManager::GetModule(const FModuleIdentifier& module_name) {
         auto parsed_name = ParseName(module_name);
 
         if(!IsModuleLoaded(parsed_name)) LoadModule(parsed_name);
 
         return LoadedModules[parsed_name];
     }
-    bool BackendManager::IsModuleAvailable(const FModuleIdentifier &module_name) {
+    bool FBackendManager::IsModuleAvailable(const FModuleIdentifier &module_name) {
         return Contains(AvailableModules, module_name);
     }
 
-    bool BackendManager::IsModuleLoaded(const FModuleIdentifier& module_name) {
+    bool FBackendManager::IsModuleLoaded(const FModuleIdentifier& module_name) {
         return Contains(LoadedModules, module_name);
     }
 
-    void BackendManager::RegisterAvailableBackend(const FBackendIdentifier &Name, FBackendAllocator Alloc) {
+    void FBackendManager::RegisterAvailableBackend(const FBackendIdentifier &Name, FBackendAllocator Alloc) {
 
-        BackendManager::AvailableBackends[Name] = std::move(Alloc);
+        FBackendManager::AvailableBackends[Name] = std::move(Alloc);
 
-        Log::Note() << "Backend '" << Log::FGBlue << Name << Log::ResetFormatting << "' available." << Log::Flush;
+        FLog::Note() << "Backend '" << FLog::FGBlue << Name << FLog::ResetFormatting << "' available." << FLog::Flush;
     }
 
-    void BackendManager::RegisterAvailableModule(const FModuleIdentifier &Name, FModuleAllocator Alloc) {
-        BackendManager::AvailableModules[Name] = std::move(Alloc);
+    void FBackendManager::RegisterAvailableModule(const FModuleIdentifier &Name, FModuleAllocator Alloc) {
+        FBackendManager::AvailableModules[Name] = std::move(Alloc);
 
-        Log::Note() << "Module '"  << Log::FGBlue << Name << Log::ResetFormatting << "' available." << Log::Flush;
+        FLog::Note() << "Module '"  << FLog::FGBlue << Name << FLog::ResetFormatting << "' available." << FLog::Flush;
     }
 
-    Str BackendManager::GetBackendName() {
+    Str FBackendManager::GetBackendName() {
         return BackendName;
     }
 
-    void BackendManager::UnloadAllModules() {
+    void FBackendManager::UnloadAllModules() {
         LoadedModules.clear();
     }
 

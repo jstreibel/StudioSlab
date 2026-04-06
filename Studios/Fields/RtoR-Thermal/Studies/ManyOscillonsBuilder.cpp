@@ -11,12 +11,12 @@ namespace Studios::Fields::RtoRThermal {
     using namespace Slab;
     using namespace Slab::Math;
 
-    ManyOscillonsBuilder::ManyOscillonsBuilder()
-            : Builder("Many oscillons", "General scattering of many oscillons.") {
+    FManyOscillonsBuilder::FManyOscillonsBuilder()
+            : FBuilder("Many oscillons", "General scattering of many oscillons.") {
         Interface->AddParameters({&nOscillons});
     }
 
-    auto ManyOscillonsBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
+    auto FManyOscillonsBuilder::GetBoundary() -> Base::BoundaryConditions_ptr {
         int n = *nOscillons;
         auto L = KGNumericConfig->GetL();
         auto xMin = KGNumericConfig->Get_xMin();
@@ -36,7 +36,7 @@ namespace Studios::Fields::RtoRThermal {
         }
 
         auto proto = NewFieldState();
-        return New<KGRtoR::BoundaryCondition>(proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
+        return New<KGRtoR::FBoundaryCondition>(proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
     }
 
 /*

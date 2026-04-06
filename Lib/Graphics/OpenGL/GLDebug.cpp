@@ -16,11 +16,11 @@ namespace Slab::Graphics::OpenGL {
                                GLsizei length,
                                const GLchar *message,
                                const void *userParam){
-        Log::Error() << "GL" << Log::Flush;
+        FLog::Error() << "GL" << FLog::Flush;
     }
 
     void StartupDebugLogging() {
         glDebugMessageCallback(OpenGL_Debug_Callback, nullptr);
-        Log::Info() << "Registered OpenGL debug callback" << Log::Flush;
+        FLog::Info() << "Registered OpenGL debug callback" << FLog::Flush;
     }
 }

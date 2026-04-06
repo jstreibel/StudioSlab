@@ -12,7 +12,7 @@
 
 namespace Slab::Math {
 
-    class XYMetropolisAlgorithm {
+    class FXYMetropolisAlgorithm {
     public:
 
         enum InitialConditions {
@@ -46,7 +46,7 @@ namespace Slab::Math {
         /** Total single-spin change accepted during last MCStep.  */
         int _totalAcceptedSSCLastMCStep = 0;
 
-        XYNetwork S;
+        FXYNetwork S;
 
         bool shouldAccept(DevFloat deltaE) const;
 
@@ -69,12 +69,12 @@ namespace Slab::Math {
          * @param dynamic
          * @param sweeping
          */
-        explicit XYMetropolisAlgorithm(int L, DevFloat T, DevFloat h,
-                                       InitialConditions ic,
-                                       Dynamic dynamic,
-                                       Sweeping sweeping);
+        explicit FXYMetropolisAlgorithm(int L, DevFloat T, DevFloat h,
+                                        InitialConditions ic,
+                                        Dynamic dynamic,
+                                        Sweeping sweeping);
 
-        ~XYMetropolisAlgorithm() = default;
+        ~FXYMetropolisAlgorithm() = default;
 
         void set_T(DevFloat T);
 
@@ -86,9 +86,11 @@ namespace Slab::Math {
 
         auto getData() -> Lost::ThermoOutput::OutputData;
 
-        const XYNetwork &getS() const { return S; }
+        const FXYNetwork& getS() const { return S; }
 
     };
+
+    using XYMetropolisAlgorithm [[deprecated("Use FXYMetropolisAlgorithm")]] = FXYMetropolisAlgorithm;
 
 
 }

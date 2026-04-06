@@ -6,21 +6,21 @@
 
 namespace Slab::Core {
 
-    CountType UniqueObject::Count = 0;
+    CountType FUniqueObject::Count = 0;
 
-    UniqueObject::UniqueObject() : Id(++Count) {
+    FUniqueObject::FUniqueObject() : Id(++Count) {
 
     }
 
-    Str UniqueObject::AddUniqueIdToString(const Str& str) const {
+    Str FUniqueObject::AddUniqueIdToString(const Str& str) const {
         return str + "##" + ToStr(Id);
     }
 
-    IdType UniqueObject::GetId() const {
+    IdType FUniqueObject::GetId() const {
         return Id;
     }
 
-    Str UniqueObject::GetIdString() const {
+    Str FUniqueObject::GetIdString() const {
         return ToStr(GetId());
     }
 

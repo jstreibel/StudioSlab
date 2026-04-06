@@ -59,7 +59,7 @@ void FSimulationManager::ExposeInterface(const Slab::TPointer<Slab::Core::FInter
         }
 
         for (const auto Parameters = Interface->GetParameters();
-            const auto &Parameter : Parameters) ParameterGUIRenderer::RenderParameter(Parameter);
+            const auto &Parameter : Parameters) FParameterGUIRenderer::RenderParameter(Parameter);
 
         ImGui::NewLine();
 
@@ -83,7 +83,7 @@ bool FSimulationManager::NotifyRender(const Slab::Graphics::FPlatformWindow& pla
 
         if (ImGui::Button("Run"))
         {
-            const auto TaskManager = Slab::Core::GetModule<Slab::Core::MTaskManager>("TaskManager");
+            const auto TaskManager = Slab::Core::GetModule<Slab::Core::FTaskManager>("TaskManager");
             const auto Task = Slab::New<Slab::Math::FNumericTask>(Material.GetRecipe(), false);
             Task->SetOutputManager(Material.BuildOutputManager());
             TaskManager->AddTask(Task);
@@ -108,7 +108,7 @@ void FSimulationManager::CreateBlueprint(const Slab::Graphics::FPlatformWindow& 
     AddResponder(BlueprintRenderer);
 
     Blueprint->SetupDemo();
-    const auto Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
+    const auto Recipe = Slab::New<Modes::FNumericalRecipePlaneWaves>();
 
     FBlueprintNode* Node;
     Node = Blueprint->SpawnNodeFromInterface(*Recipe->GetInterface());
@@ -154,14 +154,14 @@ void FSimulationManager::AddSimulationMenu()
             fix MaxSteps = NumericConfig->Get_n();
             fix xMin = NumericConfig->Get_xMin();
 
-            const auto SimHistory = Slab::New<Slab::Models::KGRtoR::SimHistory>(
+            const auto simHistory = Slab::New<Slab::Models::KGRtoR::FSimHistory>(
                 MaxSteps, t, NOut, MOut, xMin, L, KGRecipe->GetInterface()->GetName(), true);
 
-            auto Data = SimHistory->GetData();
+            auto Data = simHistory->GetData();
             Slab::Math::FDataManager::AddData(Data);
 
             auto OutputManager = Slab::New<Slab::Math::FOutputManager>(MaxSteps);
-            OutputManager->AddOutputChannel(SimHistory);
+            OutputManager->AddOutputChannel(simHistory);
 
             return OutputManager;
         };
@@ -185,15 +185,15 @@ void FSimulationManager::AddSimulationMenu()
                 {
                     Slab::TPointer<Slab::Models::KGRecipe> Recipe;
 
-                    if      (ItemString == "Plane Waves")                 Recipe = Slab::New<Modes::FNumericalRecipe_PlaneWaves>();
-                    else if (ItemString == "Monochromatic sine wave##1")  Recipe = Slab::New<Modes::NumericalRecipe_wkA>();
-                    else if (ItemString == "Monochromatic sine wave##2")  Recipe = Slab::New<Modes::NumericalRecipe_Ak2>();
-                    else if (ItemString == "Monochromatic signal")        Recipe = Slab::New<Modes::Signal_Ak2_Recipe>();
-                    else if (ItemString == "Symmetric Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::InputSymmetricOscillon>();
-                    else if (ItemString == "Perturbed Simple Oscillon")   Recipe = Slab::New<Studios::PureSG::InputPerturbations>();
-                    else if (ItemString == "General Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::InputGeneralOscillons>();
-                    else if (ItemString == "Shockwave")                   Recipe = Slab::New<Studios::PureSG::InputShockwave>();
-                    else if (ItemString == "Single Oscillon")             Recipe = Slab::New<Studios::PureSG::InputSingleOscillon>();
+                    if      (ItemString == "Plane Waves")                 Recipe = Slab::New<Modes::FNumericalRecipePlaneWaves>();
+                    else if (ItemString == "Monochromatic sine wave##1")  Recipe = Slab::New<Modes::FNumericalRecipeWkA>();
+                    else if (ItemString == "Monochromatic sine wave##2")  Recipe = Slab::New<Modes::FNumericalRecipeAk2>();
+                    else if (ItemString == "Monochromatic signal")        Recipe = Slab::New<Modes::FSignalAk2Recipe>();
+                    else if (ItemString == "Symmetric Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::FInputSymmetricOscillon>();
+                    else if (ItemString == "Perturbed Simple Oscillon")   Recipe = Slab::New<Studios::PureSG::FInputPerturbations>();
+                    else if (ItemString == "General Oscillon Scattering") Recipe = Slab::New<Studios::PureSG::FInputGeneralOscillons>();
+                    else if (ItemString == "Shockwave")                   Recipe = Slab::New<Studios::PureSG::FInputShockwave>();
+                    else if (ItemString == "Single Oscillon")             Recipe = Slab::New<Studios::PureSG::FInputSingleOscillon>();
 
                     if (Recipe == nullptr)
                     {
@@ -241,7 +241,7 @@ void FSimulationManager::AddSimulationMenu()
                 {
                     Slab::TPointer<Slab::Models::KGRecipe> Recipe;
 
-                    if (ItemString == "Shockwave") Recipe = Slab::New<Studios::Fields::R2toRLeadingDelta::Builder>();
+                    if (ItemString == "Shockwave") Recipe = Slab::New<Studios::Fields::R2toRLeadingDelta::FBuilder>();
 
                     if (Recipe == nullptr)
                     {

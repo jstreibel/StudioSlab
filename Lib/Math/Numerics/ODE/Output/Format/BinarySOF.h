@@ -11,11 +11,11 @@
 
 namespace Slab::Math {
 
-    class BinarySOF : public OutputFormatterBase {
+    class FBinarySOF : public FOutputFormatterBase {
     public:
         const int typeSize = sizeof(float);
 
-        explicit BinarySOF();
+        explicit FBinarySOF();
 
         auto operator()(const DevFloat &out) const -> ByteData override;
 
@@ -28,6 +28,8 @@ namespace Slab::Math {
     private:
         const std::string sep;
     };
+
+    using BinarySOF [[deprecated("Use FBinarySOF")]] = FBinarySOF;
 
 
 }

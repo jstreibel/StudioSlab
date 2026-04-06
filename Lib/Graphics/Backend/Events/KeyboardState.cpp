@@ -11,15 +11,15 @@ namespace Slab::Graphics {
     bool FKeyboardState::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         mod_keys = modKeys;
         LastKey = key;
-        SinceLastKeyEvent.reset();
+        SinceLastKeyEvent.Reset();
 
         auto &record = KeyStates[key];
 
         if (record.State != state) {
             record.State = state;
-            record.SinceStateChange.reset();
+            record.SinceStateChange.Reset();
         } else if (state == Repeat) {
-            record.SinceStateChange.reset();
+            record.SinceStateChange.Reset();
         }
 
         return false;
@@ -27,7 +27,7 @@ namespace Slab::Graphics {
 
     bool FKeyboardState::NotifyCharacter(UInt codepoint) {
         LastCodepoint = codepoint;
-        SinceLastCharacterEvent.reset();
+        SinceLastCharacterEvent.Reset();
         return false;
     }
 
@@ -60,9 +60,9 @@ namespace Slab::Graphics {
         KeyStates.clear();
         mod_keys = {};
         LastKey = EKeyMap::Key_UNKNOWN;
-        SinceLastKeyEvent.reset();
+        SinceLastKeyEvent.Reset();
         LastCodepoint = 0;
-        SinceLastCharacterEvent.reset();
+        SinceLastCharacterEvent.Reset();
     }
 
 }

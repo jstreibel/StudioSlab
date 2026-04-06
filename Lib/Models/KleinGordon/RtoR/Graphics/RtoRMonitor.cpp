@@ -22,7 +22,7 @@
 namespace Slab::Models::KGRtoR {
 
     Monitor::Monitor(const TPointer<FKGNumericConfig> &params, FKGEnergy &hamiltonian, const Str &name)
-    : BaseMonitor(params->Get_n(), Str("ℝ↦ℝ ") + name, 10)
+    : FBaseMonitor(params->Get_n(), Str("ℝ↦ℝ ") + name, 10)
     , Hamiltonian(hamiltonian)
     , FullHistoryGraph(   Slab::New<FPlot2DWindow>("Full field history"))
     , FullSFTHistoryGraph(Slab::New<FPlot2DWindow>("Full space FT history"))
@@ -43,7 +43,7 @@ namespace Slab::Models::KGRtoR {
         FullSFTHistoryGraph->SetAutoReviewGraphRanges(true);
 
 
-        auto currStyle = Graphics::PlotThemeManager::GetCurrent();
+        auto currStyle = Graphics::FPlotThemeManager::GetCurrent();
 
         AddDataView(Slab::New<FRealtimePanel>(params, hamiltonian, *GuiWindow));
         AddDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, *GuiWindow));
@@ -84,7 +84,7 @@ namespace Slab::Models::KGRtoR {
         for (const auto &dataView: DataViews)
             dataView->Output(outInfo);
 
-        Graphics::BaseMonitor::HandleOutput(outInfo);
+        Graphics::FBaseMonitor::HandleOutput(outInfo);
     }
 
     bool Monitor::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
@@ -96,7 +96,7 @@ namespace Slab::Models::KGRtoR {
             return true;
         }
 
-        return BaseMonitor::NotifyKeyboard(key, state, modKeys);
+        return FBaseMonitor::NotifyKeyboard(key, state, modKeys);
     }
 
     void Monitor::SetSimulationHistory(const TPointer<const R2toR::FNumericFunction> &simHistory) {
@@ -129,7 +129,7 @@ namespace Slab::Models::KGRtoR {
         if (not isSetup && LastPacket.hasValidData()) {
 
             auto &phi = dynamic_cast<RtoR::NumericFunction&>
-                    (LastPacket.GetNakedStateData<EquationState>()->getPhi());
+                    (LastPacket.GetNakedStateData<FEquationState>()->getPhi());
 
             if (phi.getLaplacianType() == RtoR::NumericFunction::Standard1D_PeriodicBorder)
                 FullHistoryArtist->set_xPeriodicOn();
@@ -165,7 +165,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void Monitor::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
-        const EquationState &fieldState = *LastPacket.GetNakedStateData<EquationState>();
+        const FEquationState &fieldState = *LastPacket.GetNakedStateData<FEquationState>();
 
         auto &phi = dynamic_cast<RtoR::NumericFunction&>(fieldState.getPhi());
         auto &ddtPhi = dynamic_cast<RtoR::NumericFunction&>(fieldState.getDPhiDt());
@@ -174,7 +174,7 @@ namespace Slab::Models::KGRtoR {
         UpdateHistoryGraph();
         UpdateSFTHistoryGraph();
 
-        BaseMonitor::ImmediateDraw(PlatformWindow);
+        FBaseMonitor::ImmediateDraw(PlatformWindow);
     }
 
 

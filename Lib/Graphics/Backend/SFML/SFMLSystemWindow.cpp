@@ -24,34 +24,38 @@ sf::RenderWindow* new_sfml_native_window() {
     return window;
 }
 
-SFMLSystemWindow::SFMLSystemWindow()
-    : FPlatformWindow(new_sfml_native_window(), New<SFMLEventTranslator>(this))
+FSFMLSystemWindow::FSFMLSystemWindow()
+    : FPlatformWindow(new_sfml_native_window(), New<FSFMLEventTranslator>(this))
       , sfml_native_window(static_cast<sf::RenderWindow*>(r_Window)) {
-    addSFMLListener(DynamicPointerCast<SFMLEventTranslator>(EventTranslator));
+    AddSFMLListener(DynamicPointerCast<FSFMLEventTranslator>(EventTranslator));
 }
 
-Int SFMLSystemWindow::GetWidth() const {
+Int FSFMLSystemWindow::GetWidth() const {
     return (Int)sfml_native_window->getSize().x;
 }
 
-Int SFMLSystemWindow::GetHeight() const {
+Int FSFMLSystemWindow::GetHeight() const {
     return (Int)sfml_native_window->getSize().y;
 }
 
-void SFMLSystemWindow::Tick() {
+void FSFMLSystemWindow::Tick() {
     auto win = sfml_native_window;
     IterateReferences(sfml_listeners, SLAB_FUNC_RUNTHROUGH(render, win));
 }
 
-void SFMLSystemWindow::Flush() {
+void FSFMLSystemWindow::Flush() {
     sfml_native_window->display();
 }
 
-void SFMLSystemWindow::Clear(const FColor&) const {
+void FSFMLSystemWindow::Clear(const FColor&) const {
     sfml_native_window->clear();
 }
 
-void SFMLSystemWindow::PollEvents() {
+TPointer<IDrawBackend2D> FSFMLSystemWindow::GetRenderer() const {
+    NOT_IMPLEMENTED_CLASS_METHOD
+}
+
+void FSFMLSystemWindow::PollEvents() {
     sf::Event event{};
 
     off_sync.lock();
@@ -70,7 +74,7 @@ void SFMLSystemWindow::PollEvents() {
     off_sync.unlock();
 }
 
-bool SFMLSystemWindow::addSFMLListener(const TVolatile<SFMLListener>& sfmlListener) {
+bool FSFMLSystemWindow::AddSFMLListener(const TVolatile<FSFMLListener>& sfmlListener) {
     if (ContainsReference(sfml_listeners, sfmlListener))
         return false;
 
@@ -79,7 +83,7 @@ bool SFMLSystemWindow::addSFMLListener(const TVolatile<SFMLListener>& sfmlListen
     return true;
 }
 
-void SFMLSystemWindow::SignalClose() {
+void FSFMLSystemWindow::SignalClose() {
     off_sync.lock();
 
     sfml_native_window->close();
@@ -88,7 +92,7 @@ void SFMLSystemWindow::SignalClose() {
     off_sync.unlock();
 }
 
-bool SFMLSystemWindow::ShouldClose() const {
+bool FSFMLSystemWindow::ShouldClose() const {
     return !sfml_native_window->isOpen();;
 }
 

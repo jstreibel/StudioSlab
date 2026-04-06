@@ -15,7 +15,7 @@ namespace Lab::Blueprints {
 
     auto FBlueprint::GetNodes() -> Vector<FBlueprintNode>& { return m_Nodes; }
 
-    auto FBlueprint::GetLinks() -> Vector<Link>& { return m_Links; }
+    auto FBlueprint::GetLinks() -> Vector<FLink>& { return m_Links; }
 
     FBlueprintNode *FBlueprint::FindNode(Editor::NodeId id) {
         for (auto& node : m_Nodes) if (node.ID == id) return &node;
@@ -23,13 +23,13 @@ namespace Lab::Blueprints {
         return nullptr;
     }
 
-    Link *FBlueprint::FindLink(Editor::LinkId id) {
+    FLink *FBlueprint::FindLink(Editor::LinkId id) {
         for (auto& link : m_Links) if (link.ID == id) return &link;
 
         return nullptr;
     }
 
-    Pin *FBlueprint::FindPin(Editor::PinId id) {
+    FPin *FBlueprint::FindPin(Editor::PinId id) {
         if (!id) return nullptr;
 
         for (auto& node : m_Nodes)
@@ -55,14 +55,14 @@ namespace Lab::Blueprints {
 
     FBlueprint::FNodeSpawnerMap FBlueprint::GetNodeSpawners() { return m_NodeSpawners; }
 
-    bool FBlueprint::CanCreateLink(Pin *a, Pin *b) {
+    bool FBlueprint::CanCreateLink(FPin *a, FPin *b) {
         if (!a || !b || a == b || a->Kind == b->Kind || a->Type != b->Type || a->Node == b->Node)
             return false;
 
         return true;
     }
 
-    bool FBlueprint::CreateLink(Pin &a, Pin &b) {
+    bool FBlueprint::CreateLink(FPin &a, FPin &b) {
         if(!CanCreateLink(&a, &b)) return false;
 
         m_Links.emplace_back(GetNextLinkId(), a.ID, b.ID);

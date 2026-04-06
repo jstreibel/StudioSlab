@@ -12,10 +12,10 @@ namespace Slab::Models::KGRtoR {
 
     // const auto nₒᵤₜ = (Resolution)(Nₒᵤₜ*t/L);
 
-    using Core::Log;
+    using Core::FLog;
 
-    SimHistory::SimHistory(CountType MaxSteps, const DevFloat tMax, Resolution N_x, Resolution N_t,
-    DevFloat xMin, DevFloat L, const Str &ChannelName, bool bManageData)
+    FSimHistory::FSimHistory(CountType MaxSteps, const DevFloat tMax, Resolution N_x, Resolution N_t,
+                             DevFloat xMin, DevFloat L, const Str &ChannelName, bool bManageData)
     : FOutputChannel(ChannelName, StepsInterval,
         "A specific history tracker designed to watch the full sim history through visual monitors.")
     , MaxSteps(MaxSteps), Max_t(tMax), N_x((int)N_x), N_t((int)N_t)
@@ -28,9 +28,9 @@ namespace Slab::Models::KGRtoR {
 
         const auto SizeMB = static_cast<DevFloat>(N_x) * TimeResolution * sizeof(DevFloat) / (1024 * 1024.);
 
-        Log::Critical() << ChannelName << " is about to allocate " << SizeMB
+        FLog::Critical() << ChannelName << " is about to allocate " << SizeMB
                         << "MB of data to store full " << N_x << 'x' << (int) TimeResolution + 1
-                        << "x8 bytes simulation history." << Log::Flush;
+                        << "x8 bytes simulation history." << FLog::Flush;
 
 
         fix SafeTimeResolution = TimeResolution + 1;
@@ -43,11 +43,11 @@ namespace Slab::Models::KGRtoR {
             Data = DataAlloc<R2toR::NumericFunction_CPU>(ChannelName, N_x, (int) SafeTimeResolution, xMin, 0.0, hx, ht);
         }
 
-        Log::Success() << ChannelName << " allocated " << SizeMB << " of data." << Log::Flush;
+        FLog::Success() << ChannelName << " allocated " << SizeMB << " of data." << FLog::Flush;
     }
 
-    auto SimHistory::Transfer(const FOutputPacket &Packet, ValarrayWrapper<DevFloat> &DataOut) -> void {
-        IN stateIn = *Packet.GetNakedStateData<EquationState>();
+    auto FSimHistory::Transfer(const FOutputPacket &Packet, FValarrayWrapper<DevFloat> &DataOut) -> void {
+        IN stateIn = *Packet.GetNakedStateData<FEquationState>();
 
         IN f_in = dynamic_cast<RtoR::NumericFunction&>(stateIn.getPhi());
         IN in = f_in.getSpace().getHostData(true);
@@ -63,11 +63,11 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void SimHistory::HandleOutput(const FOutputPacket &Packet) {
+    void FSimHistory::HandleOutput(const FOutputPacket &Packet) {
         if (Packet.GetSteps() > MaxSteps)
             return;
 
-        IN StateIn = Packet.GetNakedStateData<KGRtoR::EquationState>();
+        IN StateIn = Packet.GetNakedStateData<KGRtoR::FEquationState>();
 
 
         assert(&StateIn != nullptr);
@@ -78,19 +78,19 @@ namespace Slab::Models::KGRtoR {
 
         fix j_in = Packet.GetSteps();
         fix j_out = int(floor((DevFloat)j_in * t_ratio));
-        ValarrayWrapper InstantData(&Data->At(0, j_out), Data->getN());
+        FValarrayWrapper InstantData(&Data->At(0, j_out), Data->getN());
 
         Transfer(Packet, InstantData);
 
         Timesteps.emplace_back(Packet.GetSteps());
     }
 
-    auto SimHistory::GetData() const -> TPointer<const R2toR::FNumericFunction>
+    auto FSimHistory::GetData() const -> TPointer<const R2toR::FNumericFunction>
     {
         return Data;
     }
 
-    auto SimHistory::GetData() -> TPointer<R2toR::FNumericFunction>
+    auto FSimHistory::GetData() -> TPointer<R2toR::FNumericFunction>
     {
         return Data;
     }

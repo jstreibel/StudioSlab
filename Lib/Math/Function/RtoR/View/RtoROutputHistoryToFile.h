@@ -11,21 +11,23 @@
 #include <fstream>
 
 namespace Slab::Math::RtoR {
-    class OutputHistoryToFile : public HistoryKeeper {
+    class FOutputHistoryToFile : public FHistoryKeeper {
         void _dump(bool integrationIsFinished) override;
         void _printHeaderToFile();
 
         const Str outFileName;
         std::ofstream file;
 
-        OutputFormatterBase &outputFormatter;
+        FOutputFormatterBase &outputFormatter;
 
     public:
-        OutputHistoryToFile(UInt stepsInterval, SpaceFilterBase *spaceFilter, Str  outputFileName);
+        FOutputHistoryToFile(UInt stepsInterval, FSpaceFilterBase *spaceFilter, Str  outputFileName);
 
-        ~OutputHistoryToFile() override;
+        ~FOutputHistoryToFile() override;
 
     };
+
+    using OutputHistoryToFile [[deprecated("Use FOutputHistoryToFile")]] = FOutputHistoryToFile;
 }
 
 

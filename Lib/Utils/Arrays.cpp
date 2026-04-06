@@ -9,7 +9,7 @@
 
 namespace Slab::Utils {
 
-    MaxInfo GetMax(const RealArray &arr) {
+    FMaxInfo GetMax(const RealArray &arr) {
         double maxVal = arr[0];
         std::size_t maxIdx = 0;
 

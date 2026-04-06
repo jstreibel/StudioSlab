@@ -14,18 +14,20 @@
 
 namespace Slab::Graphics {
 
-    class NuklearModule : public FGUIModule {
+    class FNuklearModule : public FGUIModule {
     public:
-        explicit NuklearModule();
+        explicit FNuklearModule();
 
         // void beginEvents() override;
         // void endEvents() override;
 
-        static NuklearModule *BuildModule();
+        static FNuklearModule* BuildModule();
 
         auto CreateContext(FOwnerPlatformWindow window) -> TPointer<FGUIContext> override;
 
     };
+
+    using NuklearModule [[deprecated("Use FNuklearModule")]] = FNuklearModule;
 
 } // Core
 

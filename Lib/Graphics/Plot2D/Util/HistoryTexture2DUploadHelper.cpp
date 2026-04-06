@@ -39,10 +39,10 @@ namespace Slab::Graphics {
 
         if(!textureKontraption->upload(nextRow, totalRows))
         {
-            Core::Log::Error( __PRETTY_FUNCTION__ + Str(" failed uploading texture from row ")) << nextRow << " up to row " << upToRow << ", both inclusive'"
+            Core::FLog::Error( __PRETTY_FUNCTION__ + Str(" failed uploading texture from row ")) << nextRow << " up to row " << upToRow << ", both inclusive'"
                                                                                        << " which implies a total of " << totalRows
                                                                                        << " rows @ t=" << t
-                                                                                       << " with Δt=" << (t-lastUpdatedTime) << Core::Log::Flush;
+                                                                                       << " with Δt=" << (t-lastUpdatedTime) << Core::FLog::Flush;
 
         }
 

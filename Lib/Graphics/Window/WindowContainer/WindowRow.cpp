@@ -3,6 +3,7 @@
 //
 
 #include "WindowRow.h"
+#include "PaneFrameUtils.h"
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/Utils.h"
 #include "Core/Backend/BackendManager.h"
@@ -89,29 +90,35 @@ namespace Slab::Graphics {
 
         if (m == 0) return;
 
+        const auto gap = WindowStyle::TilingGapSize;
+        const auto innerWidth = std::max(0, GetWidth() - static_cast<int>((m + 1) * gap));
+        const auto innerHeight = std::max(0, GetHeight() - 2 * gap);
+
         Vector<int> computedWidths(m);
         auto widths = _widthsVector();
         auto freeWidths = CountLessThanZero(widths)
 
         if(freeWidths == m) {
-            computedWidths = Vector<int>(m, (int) (GetWidth() / m));
+            computedWidths = Vector<int>(m, m > 0 ? (int) (innerWidth / m) : 0);
         }
         else if (freeWidths == 0) {
             for (int i = 0; i < m; ++i) {
                 auto input_width = widths[i];
-                int computed_width = input_width < 1. ? int(GetHeight() * computed_width) : int(computed_width);
+                const int computed_width = input_width <= 1.
+                    ? static_cast<int>(innerWidth * input_width)
+                    : static_cast<int>(input_width);
                 computedWidths[i] = (int) computed_width;
             }
         } else /*if (freeWidths != m)*/ {
             auto reservedWidth = SumLargerThanZero(widths)
-            auto wFree = (float) GetWidth() * (1 - reservedWidth) / (float) freeWidths;
+            auto wFree = (float) innerWidth * (1 - reservedWidth) / (float) freeWidths;
 
             for (int i = 0; i < m; ++i) {
                 auto input_width = widths[i];
                 int computed_width;
                 if(input_width > 0) {
                     if(input_width <= 1)
-                        computed_width = (int)(GetWidth() * input_width);
+                        computed_width = (int)(innerWidth * input_width);
                     else
                         computed_width = (int)input_width;
                 } else
@@ -123,28 +130,23 @@ namespace Slab::Graphics {
 
         Vector<int> computed_xPositions(m);
         {
-            auto x = this->Get_x();
+            auto x = this->Get_x() + gap;
             for (int i = 0; i < m; ++i) {
                 computed_xPositions[i] = x;
-                x += computedWidths[i];
-            }
-
-            for (int i = 0; i < m; ++i) {
-                computed_xPositions[i] += WindowStyle::TilingGapSize;
-                computedWidths[i]      -= WindowStyle::TilingGapSize;
+                x += computedWidths[i] + gap;
             }
         }
 
         auto i = 0;
-        fix y = Get_y() + WindowStyle::TilingGapSize;
-        fix h = GetHeight() - WindowStyle::TilingGapSize;
+        const auto y = Get_y() + gap;
+        const auto h = innerHeight;
         for (auto &winMData: WindowsList) {
             OUT win = *winMData.window;
 
             win.Set_x(computed_xPositions[i]);
             win.Set_y(y);
 
-            win.NotifyReshape(computedWidths[i], h);
+            win.NotifyReshape(std::max(0, computedWidths[i]), std::max(0, h));
 
             i++;
         }
@@ -164,7 +166,7 @@ namespace Slab::Graphics {
         if (reserverdWidth < 1 - (float) freeWidths * 1.e-2)
             return true;
 
-        auto &log = Core::Log::Error() << "Inconsistent column widths: ";
+        auto &log = Core::FLog::Error() << "Inconsistent column widths: ";
 
         for (auto w: widths) log << (w == -1 ? Str("free") : ToStr(w)) << "; ";
 
@@ -176,9 +178,10 @@ namespace Slab::Graphics {
         for (auto & winData : std::ranges::reverse_view(WindowsList)) {
             auto &window = *winData.window;
 
+            WindowContainer::DrawContentPaneFrame(PlatformWindow, window);
             window.ImmediateDraw(PlatformWindow);
             OpenGL::CheckGLErrors(
-                    Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(&window));
+                    Str(__PRETTY_FUNCTION__) + " drawing " + Common::GetClassName(&window));
         }
     }
 
@@ -198,21 +201,25 @@ namespace Slab::Graphics {
     }
 
     bool FWindowRow::NotifyMouseMotion(int x, int y, int dx, int dy) {
+        auto Responded = false;
         for (auto & [Window, Width]: WindowsList)
         {
-            if (Window->IsMouseInside() && Window->NotifyMouseMotion(x, y, dx, dy))
-                return true;
+            if (Window->IsPointWithin(FPoint2D{DevFloat(x), DevFloat(y)})) {
+                Responded = Window->NotifyMouseMotion(x, y, dx, dy);
+            }
         }
+
+        if (Responded) return true;
+
+        return FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
 
         //auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
         //if(mouseState.leftPressed){
-        //    Log::Error() << "Resize not implemented" << Log::Flush;
+        //    FLog::Error() << "Resize not implemented" << FLog::Flush;
         //    for(auto &winData : windowsList) {
 //
         //    }
         //}
-
-        return false;
     }
 
     bool FWindowRow::NotifyMouseButton(EMouseButton button, EKeyState state,

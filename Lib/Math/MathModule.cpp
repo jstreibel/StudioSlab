@@ -9,19 +9,19 @@
 #include "Data/DataManager.h"
 
 namespace Slab::Math {
-    MathModule::MathModule() : Core::SlabModule("Math") {
+    FMathModule::FMathModule() : Core::FSlabModule("Math") {
 
     }
 
-    void MathModule::RegisterData(const FDataName &name, TPointer<Data> data) {
+    void FMathModule::RegisterData(const FDataName &name, TPointer<Data> data) {
         FDataRegistry::RegisterData(name, data);
     }
 
-    FDataWrap MathModule::GetData(const FDataName& name) {
+    FDataWrap FMathModule::GetData(const FDataName& name) {
         return FDataRegistry::GetData(name);
     }
 
-    Vector<FDataRegistry::EntryDescription> MathModule::GetDataEntries() {
+    Vector<FDataRegistry::EntryDescription> FMathModule::GetDataEntries() {
         return FDataRegistry::GetAllDataEntries();
     }
 

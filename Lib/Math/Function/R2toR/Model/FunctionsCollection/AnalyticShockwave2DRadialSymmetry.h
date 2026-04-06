@@ -9,7 +9,7 @@
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
 namespace Slab::Math::RtoR {
-class AnalyticShockwave2DRadialSymmetry : public RtoR::Function {
+class FAnalyticShockwave2DRadialSymmetry : public RtoR::Function {
         DevFloat t=0.;
 
         const UInt quant = 40;
@@ -28,15 +28,17 @@ class AnalyticShockwave2DRadialSymmetry : public RtoR::Function {
         DevFloat theta_k(UInt k, DevFloat z) const;
 
     public:
-        explicit AnalyticShockwave2DRadialSymmetry(DevFloat a0 = 1.0);
+        explicit FAnalyticShockwave2DRadialSymmetry(DevFloat a0 = 1.0);
 
-        DevFloat gett()const{return t;}
-        void sett(DevFloat t){this->t = t;}
+        DevFloat GetT() const { return t; }
+        void SetT(DevFloat tValue) { t = tValue; }
+        [[deprecated("Use GetT()")]] DevFloat gett() const { return GetT(); }
+        [[deprecated("Use SetT()")]] void sett(DevFloat tValue) { SetT(tValue); }
         DevFloat operator()(DevFloat r) const override;
     };
 
 
-    class AnalyticShockwave2DRadialSymmetryTimeDerivative : public RtoR::Function {
+    class FAnalyticShockwave2DRadialSymmetryTimeDerivative : public RtoR::Function {
         DevFloat t=0.;
 
         const UInt quant = 40;
@@ -55,22 +57,24 @@ class AnalyticShockwave2DRadialSymmetry : public RtoR::Function {
         DevFloat theta_k(UInt k, DevFloat z) const;
 
     public:
-        AnalyticShockwave2DRadialSymmetryTimeDerivative() {throw "Analytic shockwave time derivative: I'm not working.";}
+        FAnalyticShockwave2DRadialSymmetryTimeDerivative() {throw "Analytic shockwave time derivative: I'm not working.";}
 
-        void sett(DevFloat t){this->t = t;}
+        void SetT(DevFloat tValue) { t = tValue; }
+        [[deprecated("Use SetT()")]] void sett(DevFloat tValue) { SetT(tValue); }
         DevFloat operator()(DevFloat r) const override;
     };
 
-    class AnalyticShockwave2DRadialSymmetryTimeDerivativeB : public RtoR::Function {
+    class FAnalyticShockwave2DRadialSymmetryTimeDerivativeB : public RtoR::Function {
         DevFloat dt;
-        AnalyticShockwave2DRadialSymmetry shockwave1, shockwave2;
+        FAnalyticShockwave2DRadialSymmetry shockwave1, shockwave2;
 
     public:
-        AnalyticShockwave2DRadialSymmetryTimeDerivativeB(DevFloat dt=1.e-5) : dt(dt) { shockwave2.sett(0+dt); }
-        void sett(DevFloat t){
-            shockwave1.sett(t);
-            shockwave2.sett(t+dt);
+        FAnalyticShockwave2DRadialSymmetryTimeDerivativeB(DevFloat dt = 1.e-5) : dt(dt) { shockwave2.SetT(0 + dt); }
+        void SetT(DevFloat tValue) {
+            shockwave1.SetT(tValue);
+            shockwave2.SetT(tValue + dt);
         }
+        [[deprecated("Use SetT()")]] void sett(DevFloat tValue) { SetT(tValue); }
         DevFloat operator()(DevFloat r) const override {
             const DevFloat sw2 = shockwave2(r);
             const DevFloat sw1 = shockwave1(r);
@@ -78,6 +82,10 @@ class AnalyticShockwave2DRadialSymmetry : public RtoR::Function {
             return (sw2-sw1)/dt;
         };
     };
+
+    using AnalyticShockwave2DRadialSymmetry [[deprecated("Use FAnalyticShockwave2DRadialSymmetry")]] = FAnalyticShockwave2DRadialSymmetry;
+    using AnalyticShockwave2DRadialSymmetryTimeDerivative [[deprecated("Use FAnalyticShockwave2DRadialSymmetryTimeDerivative")]] = FAnalyticShockwave2DRadialSymmetryTimeDerivative;
+    using AnalyticShockwave2DRadialSymmetryTimeDerivativeB [[deprecated("Use FAnalyticShockwave2DRadialSymmetryTimeDerivativeB")]] = FAnalyticShockwave2DRadialSymmetryTimeDerivativeB;
 }
 
 

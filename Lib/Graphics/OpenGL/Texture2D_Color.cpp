@@ -10,7 +10,7 @@
 #define B 2
 #define A 3
 
-#define CHECK_GL_ERRORS(count) OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
+#define CHECK_GL_ERRORS(count) OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::GetClassName(this) + " (" + ToStr((count)) + ")");
 
 
 namespace Slab::Graphics::OpenGL {

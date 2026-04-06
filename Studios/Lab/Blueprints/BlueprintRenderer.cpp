@@ -19,6 +19,7 @@
 namespace Lab::Blueprints {
 
     using namespace ax;
+    using Layout = Slab::Graphics::FImGuiLayoutCompat;
 
     using ax::Widgets::IconType;
 
@@ -72,7 +73,7 @@ namespace Lab::Blueprints {
         m_SaveIcon         = Graphics::SlabTexture::LoadTextureFromImage(location + "ic_save_white_24dp.png");
         m_RestoreIcon      = Graphics::SlabTexture::LoadTextureFromImage(location + "ic_restore_white_24dp.png");
 
-        Builder = EditorUtil::BlueprintNodeBuilder(m_HeaderBackground, Graphics::SlabTexture::GetTextureWidth(m_HeaderBackground), Graphics::SlabTexture::GetTextureHeight(m_HeaderBackground));
+        Builder = EditorUtil::FBlueprintNodeBuilder(m_HeaderBackground, Graphics::SlabTexture::GetTextureWidth(m_HeaderBackground), Graphics::SlabTexture::GetTextureHeight(m_HeaderBackground));
     }
 
     void FBlueprintRenderer::TouchNode(const Editor::NodeId id) { m_NodeTouchTime[id] = m_TouchTime; }
@@ -237,7 +238,7 @@ namespace Lab::Blueprints {
                         else {
                             ShowLabel("+ Create Link", ImColor(32, 45, 32, 180));
                             if (Editor::AcceptNewItem(ImColor(128, 255, 128), 4.0f)) {
-                                m_Links.emplace_back(Link(FBlueprint::GetNextId(), startPinId, endPinId));
+                                m_Links.emplace_back(FLink(FBlueprint::GetNextId(), startPinId, endPinId));
                                 m_Links.back().Color = GetIconColor(StartPin->Type);
                             }
                         }
@@ -307,7 +308,7 @@ namespace Lab::Blueprints {
         }
     }
 
-    void FBlueprintRenderer::DrawPinIcon(const Pin &pin, const bool connected, const int alpha) const
+    void FBlueprintRenderer::DrawPinIcon(const FPin &pin, const bool connected, const int alpha) const
     {
         IconType iconType;
         ImColor  color = GetIconColor(pin.Type);
@@ -339,12 +340,12 @@ namespace Lab::Blueprints {
         auto paneWidth = ImGui::GetContentRegionAvail().x;
 
         auto& editorStyle = Editor::GetStyle();
-        ImGui::BeginHorizontal("Style buttons", ImVec2(paneWidth, 0), 1.0f);
+        Layout::BeginHorizontal("Style buttons", ImVec2(paneWidth, 0), 1.0f);
         ImGui::TextUnformatted("Values");
-        ImGui::Spring();
+        Layout::Spring();
         if (ImGui::Button("Reset to defaults"))
             editorStyle = Editor::Style();
-        ImGui::EndHorizontal();
+        Layout::EndHorizontal();
         ImGui::Spacing();
         ImGui::DragFloat4("Node Padding",               &editorStyle.NodePadding.x, 0.1f, 0.0f, 40.0f);
         ImGui::DragFloat("Node Rounding",               &editorStyle.NodeRounding, 0.1f, 0.0f, 40.0f);
@@ -375,15 +376,15 @@ namespace Lab::Blueprints {
         ImGui::Separator();
 
         static ImGuiColorEditFlags edit_mode = ImGuiColorEditFlags_DisplayRGB;
-        ImGui::BeginHorizontal("Color Mode", ImVec2(paneWidth, 0), 1.0f);
+        Layout::BeginHorizontal("Color Mode", ImVec2(paneWidth, 0), 1.0f);
         ImGui::TextUnformatted("Filter Colors");
-        ImGui::Spring();
+        Layout::Spring();
         ImGui::RadioButton("RGB", &edit_mode, ImGuiColorEditFlags_DisplayRGB);
-        ImGui::Spring(0);
+        Layout::Spring(0);
         ImGui::RadioButton("HSV", &edit_mode, ImGuiColorEditFlags_DisplayHSV);
-        ImGui::Spring(0);
+        Layout::Spring(0);
         ImGui::RadioButton("HEX", &edit_mode, ImGuiColorEditFlags_DisplayHex);
-        ImGui::EndHorizontal();
+        Layout::EndHorizontal();
 
         static ImGuiTextFilter filter;
         filter.Draw("##filter", paneWidth);
@@ -410,13 +411,14 @@ namespace Lab::Blueprints {
         ImGui::BeginChild("Selection", ImVec2(paneWidth, 0));
 
         paneWidth = ImGui::GetContentRegionAvail().x;
+        ImGui::TextDisabled("Layout provider: %s", Layout::GetProviderName());
 
         static bool showStyleEditor = false;
-        ImGui::BeginHorizontal("Style Editor", ImVec2(paneWidth, 0));
-        ImGui::Spring(0.0f, 0.0f);
+        Layout::BeginHorizontal("Style Editor", ImVec2(paneWidth, 0));
+        Layout::Spring(0.0f, 0.0f);
         if (ImGui::Button("Zoom to Content"))
             Editor::NavigateToContent();
-        ImGui::Spring(0.0f);
+        Layout::Spring(0.0f);
         if (ImGui::Button("Show Flow"))
         {
             if(Blueprint != nullptr) {
@@ -426,9 +428,9 @@ namespace Lab::Blueprints {
                     Editor::Flow(link.ID);
             }
         }
-        ImGui::Spring();
+        Layout::Spring();
         if constexpr (false) if (ImGui::Button("Edit Style")) showStyleEditor = true;
-        ImGui::EndHorizontal();
+        Layout::EndHorizontal();
         if constexpr (false) ImGui::Checkbox("Show Ordinals", &m_ShowOrdinals);
 
         if (showStyleEditor) ShowStyleEditor(&showStyleEditor);
@@ -575,12 +577,12 @@ namespace Lab::Blueprints {
         ImGui::Spacing(); ImGui::SameLine();
         ImGui::TextUnformatted("Selection");
 
-        ImGui::BeginHorizontal("Selection Stats", ImVec2(paneWidth, 0));
+        Layout::BeginHorizontal("Selection Stats", ImVec2(paneWidth, 0));
         ImGui::Text("Changed %d time%s", changeCount, changeCount > 1 ? "s" : "");
-        ImGui::Spring();
+        Layout::Spring();
         if (ImGui::Button("Deselect All"))
             Editor::ClearSelection();
-        ImGui::EndHorizontal();
+        Layout::EndHorizontal();
         ImGui::Indent();
         for (int i = 0; i < nodeCount; ++i) ImGui::Text("Node (%p)", selectedNodes[i].AsPointer());
         for (int i = 0; i < linkCount; ++i) ImGui::Text("Link (%p)", selectedLinks[i].AsPointer());

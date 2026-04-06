@@ -14,9 +14,9 @@
 
 namespace Slab::Math {
 
-    class OutputFormatterBase {
+    class FOutputFormatterBase {
     public:
-        virtual ~OutputFormatterBase() = default;
+        virtual ~FOutputFormatterBase() = default;
 
         virtual auto operator()(const DiscreteSpace &fOut) const -> ByteData = 0;
 
@@ -26,6 +26,8 @@ namespace Slab::Math {
 
         virtual auto getFormatDescription() const -> Str = 0;
     };
+
+    using OutputFormatterBase [[deprecated("Use FOutputFormatterBase")]] = FOutputFormatterBase;
 
 
 }

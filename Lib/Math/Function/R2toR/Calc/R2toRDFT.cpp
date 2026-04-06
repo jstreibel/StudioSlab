@@ -206,7 +206,7 @@ namespace Slab::Math::R2toR {
 
         for(int j=0; j<M; ++j) {
             memcpy(&data_in[0], &data[0 + j*N], N*sizeof(DevFloat));
-            auto result = RtoR::DFT::Compute(temp_slice);
+            auto result = RtoR::FDFT::Compute(temp_slice);
 
             IN re_pts = result.re->GetPoints();
             IN im_pts = result.im->GetPoints();

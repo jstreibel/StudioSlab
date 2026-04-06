@@ -18,7 +18,7 @@
 
 namespace Slab::Graphics{
 
-    class FourierViewer : public Viewer {
+    class FFourierViewer : public FViewer {
         using Function = TPointer<Math::R2toR::FNumericFunction>;
 
         R2toRFunctionArtist_ptr function_artist;
@@ -67,7 +67,7 @@ namespace Slab::Graphics{
         DevFloat kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
     protected:
-        void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
+        void refreshInverseDFT(RtoR::FDFTInverse::FFilter *filter);
         void computeTimeDFT();
 
         void computeSpaceDFT();
@@ -83,12 +83,14 @@ namespace Slab::Graphics{
 
         Str GetName() const override;
 
-        explicit FourierViewer(const TPointer<FGUIWindow>&);
+        explicit FFourierViewer(const TPointer<FGUIWindow>&);
 
         void SetFunction(Function func) override;
 
         void ImmediateDraw(const FPlatformWindow&) override;
     };
+
+    using FourierViewer [[deprecated("Use FFourierViewer")]] = FFourierViewer;
 
 } // Studios::Fields
 

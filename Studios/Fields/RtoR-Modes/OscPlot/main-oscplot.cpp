@@ -13,15 +13,15 @@
 
 #include "Core/SlabCore.h"
 
-class App : public Slab::Core::AppBase {
+class FApp : public Slab::Core::FAppBase {
 public:
-    App(int argc, const char **argv) : AppBase(argc, argv, false) {
+    FApp(int argc, const char **argv) : FAppBase(argc, argv, false) {
         // interface->addParameters({&snapshotDBFolders, &criticalParameter});
         Slab::Core::RegisterCLInterface(Interface);
 
-        Slab::Core::BackendManager::Startup("GLFW");
+        Slab::Core::FBackendManager::Startup("GLFW");
 
-        Slab::Graphics::PlotThemeManager::GetInstance();
+        Slab::Graphics::FPlotThemeManager::GetInstance();
 
         Slab::Core::ParseCLArgs(argc, argv);
     }
@@ -29,7 +29,7 @@ public:
     int run() override {
         auto gui_backend = Slab::Graphics::GetGraphicsBackend();
 
-        auto osc_plot = Slab::New<Studios::OscillonPlotting>();
+        auto osc_plot = Slab::New<Studios::FOscillonPlotting>();
 
         auto wm = Slab::New<Slab::Graphics::FSlabWindowManager>();
         wm->AddSlabWindow(osc_plot, false);
@@ -47,7 +47,7 @@ int main(int argc, const char **argv) {
     auto run =
             [](int argc, const char **argv)
             {
-                App app(argc, argv);
+                FApp app(argc, argv);
                 return app.run();
             };
 

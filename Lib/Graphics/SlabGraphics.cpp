@@ -23,30 +23,30 @@ namespace Slab::Graphics {
     };
 
     template<class ModuleClass>
-    Core::SlabModule* ModuleAllocator() {
+    Core::FSlabModule* ModuleAllocator() {
         return new ModuleClass();
     };
 
     void RegisterBackends() {
-        Core::BackendManager::RegisterAvailableBackend("GLFW",    BackendAllocator<GLFWBackend>);
-        //Core::BackendManager::RegisterAvailableBackend("GLUT",    BackendAllocator<GLUTBackend>);
-        Core::BackendManager::RegisterAvailableBackend("SFML",    BackendAllocator<SFMLBackend>);
-        Core::BackendManager::RegisterAvailableBackend("Default", BackendAllocator<SFMLBackend>);
-        Core::BackendManager::RegisterAvailableBackend("VTK", [] () { throw Exception("VTKBackend not implemented"); return nullptr; }) ;
+        Core::FBackendManager::RegisterAvailableBackend("GLFW",    BackendAllocator<FGLFWBackend>);
+        //Core::FBackendManager::RegisterAvailableBackend("GLUT",    BackendAllocator<GLUTBackend>);
+        Core::FBackendManager::RegisterAvailableBackend("SFML",    BackendAllocator<FSFMLBackend>);
+        Core::FBackendManager::RegisterAvailableBackend("Default", BackendAllocator<FSFMLBackend>);
+        Core::FBackendManager::RegisterAvailableBackend("VTK", [] () { throw Exception("FVTKBackend not implemented"); return nullptr; }) ;
     }
 
     void RegisterModules() {
-        Core::BackendManager::RegisterAvailableModule<SlabGraphicsModule>("Slab:Graphics");
+        Core::FBackendManager::RegisterAvailableModule<FSlabGraphicsModule>("Slab:Graphics");
 
-        Core::BackendManager::RegisterAvailableModule("GUI:ImGui",   [](){ return FImGuiModule::BuildModule(); });
-        Core::BackendManager::RegisterAvailableModule("GUI:Nuklear", [](){ return NuklearModule::BuildModule(); });
-        Core::BackendManager::RegisterAvailableModule("GUI:NanoGUI", []() {throw Exception("NanoGUI module not implemented"); return nullptr; });
+        Core::FBackendManager::RegisterAvailableModule("GUI:ImGui",   [](){ return FImGuiModule::BuildModule(); });
+        Core::FBackendManager::RegisterAvailableModule("GUI:Nuklear", [](){ return FNuklearModule::BuildModule(); });
+        Core::FBackendManager::RegisterAvailableModule("GUI:NanoGUI", []() {throw Exception("NanoGUI module not implemented"); return nullptr; });
 
-        Core::BackendManager::RegisterAvailableModule("RealTimeAnimation", ModuleAllocator<RealTimeAnimationModule>);
-        Core::BackendManager::RegisterAvailableModule("ModernOpenGL",      ModuleAllocator<ModernOpenGLModule>);
+        Core::FBackendManager::RegisterAvailableModule("RealTimeAnimation", ModuleAllocator<FRealTimeAnimationModule>);
+        Core::FBackendManager::RegisterAvailableModule("ModernOpenGL",      ModuleAllocator<FModernOpenGLModule>);
 
-        Core::BackendManager::RegisterAvailableModule("Jack", []() {throw Exception("Jack module not implemented"); return nullptr; });
-        Core::BackendManager::RegisterAvailableModule("NodeJS", []() {throw Exception("NodeJS module not implemented"); return nullptr; });
+        Core::FBackendManager::RegisterAvailableModule("Jack", []() {throw Exception("Jack module not implemented"); return nullptr; });
+        Core::FBackendManager::RegisterAvailableModule("NodeJS", []() {throw Exception("NodeJS module not implemented"); return nullptr; });
     }
 
     void Startup() {
@@ -58,8 +58,8 @@ namespace Slab::Graphics {
 
     }
 
-    TPointer<GraphicBackend> GetGraphicsBackend() {
-        return DynamicPointerCast<GraphicBackend>(Core::BackendManager::GetBackend());
+    TPointer<FGraphicBackend> GetGraphicsBackend() {
+        return DynamicPointerCast<FGraphicBackend>(Core::FBackendManager::GetBackend());
     }
 
 }

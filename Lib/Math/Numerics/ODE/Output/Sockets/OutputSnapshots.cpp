@@ -5,6 +5,7 @@
 #include "OutputSnapshots.h"
 
 #include "Math/Numerics/ODE/Output/Format/CustomStringSeparatedSOF.h"
+#include "Math/Numerics/ODE/Output/Util/FieldStateOutputInterface.h"
 #include "Math/Numerics/OutputChannel.h"
 #include "Core/Tools/Log.h"
 
@@ -12,29 +13,30 @@
 
 #include <fstream>
 #include <iomanip>
+#include <limits>
 #include <utility>
 
 
 namespace Slab::Math {
 
-    using Core::Log;
+    using Core::FLog;
 
-    OutputSnapshot::OutputSnapshot(Str customFileDescription,
-                                   const size_t T_fileNamePrecision)
+    FOutputSnapshot::FOutputSnapshot(Str customFileDescription,
+                                     const size_t T_fileNamePrecision)
             : FOutputChannel("Snapshot output", 1),
               customFileDescription(std::move(customFileDescription)),
               T_fileNamePrecision(T_fileNamePrecision) {}
 
-    OutputSnapshot::~OutputSnapshot() = default;
+    FOutputSnapshot::~FOutputSnapshot() = default;
 
-    void OutputSnapshot::addSnapshotStep(const size_t snapshotStep) {
+    void FOutputSnapshot::addSnapshotStep(const size_t snapshotStep) {
         snapSteps.push_back(snapshotStep);
 
-        Log::Attention() << "A snapshot will be taken at the step " << snapshotStep << Log::Flush;
+        FLog::Attention() << "A snapshot will be taken at the step " << snapshotStep << FLog::Flush;
     }
 
-    void OutputSnapshot::doOutput(const FOutputPacket &outInfo, const Str &customFileDescription,
-                                  const size_t T_fileNamePrecision) {
+    void FOutputSnapshot::doOutput(const FOutputPacket &outInfo, const Str &customFileDescription,
+                                   const size_t T_fileNamePrecision) {
         StringStream filePhiNameStream;
         filePhiNameStream.setf(std::ios::fixed, std::ios::floatfield);
         filePhiNameStream.precision(T_fileNamePrecision);
@@ -46,24 +48,24 @@ namespace Slab::Math {
         filePhiNameStream << ".oscs";
 
         Str fileName = filePhiNameStream.str();
-        auto &log = Log::Info();
+        auto &log = FLog::Info();
         log.setf(std::ios::fixed, std::ios::floatfield);
         log.precision(4);
 
-        log << "Saving snapshot for step = " << outInfo.GetSteps() << " in \'" << fileName << "\'... " << Log::Flush;
+        log << "Saving snapshot for step = " << outInfo.GetSteps() << " in \'" << fileName << "\'... " << FLog::Flush;
         {
             std::ofstream file;
             file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
 
             try {
                 file.open(fileName);
-                Log::Note() << "Opened file \"" << fileName << "\"" << Log::Flush;
+                FLog::Note() << "Opened file \"" << fileName << "\"" << FLog::Flush;
 
-                EqStateOutputInterface::format = EqStateOutputInterface::PythonDictionaryEntry;
-                EqStateOutputInterface::fDataOutType = EqStateOutputInterface::PhiAndDPhiDt;
+                FEqStateOutputInterface::format = FEqStateOutputInterface::PythonDictionaryEntry;
+                FEqStateOutputInterface::fDataOutType = FEqStateOutputInterface::PhiAndDPhiDt;
 
                 /*
-                CustomStringSeparatedSOF formatter(", ");
+                FCustomStringSeparatedSOF formatter(", ");
                 file << "# {" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() *//*<< ", " *//* << "\"t\": "
                      << t
                      << ", \"phi\": (" << formatter(*spaceData.first) << ")"
@@ -75,29 +77,34 @@ namespace Slab::Math {
 
                 file.flush();
             } catch (std::system_error &e) {
-                Log::Error() << "File not saved. std::system_error::code().message(): "
-                                "\"" << e.code().message() << "\"." << Log::Flush;
+                FLog::Error() << "File not saved. std::system_error::code().message(): "
+                                "\"" << e.code().message() << "\"." << FLog::Flush;
             }
 
             file.close();
-            Log::Note() << "Closed file \"" << fileName << "\"" << Log::Flush;
+            FLog::Note() << "Closed file \"" << fileName << "\"" << FLog::Flush;
 
         }
-        Log::Success() << "Snapshot saved! File '" << fileName << "'" << Log::Flush;
+        FLog::Success() << "Snapshot saved! File '" << fileName << "'" << FLog::Flush;
     }
 
-    bool OutputSnapshot::ShouldOutput(const long unsigned timeStep) {
+    bool FOutputSnapshot::ShouldOutput(const long unsigned timeStep) {
         for (const size_t step: snapSteps)
             if (step == timeStep) return true;
 
         return false;
     }
 
-    size_t OutputSnapshot::ComputeNextRecStep(UInt currStep) {
-        size_t smallest = snapSteps.back();
-        for (auto step: snapSteps) if (step < smallest) smallest = step;
+    size_t FOutputSnapshot::ComputeNextRecStep(UInt currStep) {
+        size_t nextStep = std::numeric_limits<size_t>::max();
 
-        return smallest;
+        for (const auto step : snapSteps) {
+            if (step > currStep && step < nextStep) {
+                nextStep = step;
+            }
+        }
+
+        return nextStep;
     }
 
 

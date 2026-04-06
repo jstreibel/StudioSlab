@@ -13,18 +13,18 @@
 int run(int argc, const char *argv[]) {
 
 #ifdef FIELDS_MODES_PlaneWaves
-    auto builder = new Modes::FNumericalRecipe_PlaneWaves();
+    auto builder = new Modes::FNumericalRecipePlaneWaves();
 #elif FIELDS_MODES_wkA
-    auto builder = new Modes::NumericalRecipe_wkA();
+    auto builder = new Modes::FNumericalRecipeWkA();
 #elif defined FIELDS_SIGNAL_Ak2
-    auto builder = new Modes::Signal_Ak2_Recipe();
+    auto builder = new Modes::FSignalAk2Recipe();
 #else
-    auto builder = new Modes::NumericalRecipe_Ak2();
+    auto builder = new Modes::FNumericalRecipeAk2();
 #endif
 
     using namespace Slab::Math;
 
-    auto prog = MathApp(argc, argv, Slab::Models::KGRtoR::FKGRtoR_Recipe_ptr(builder));
+    auto prog = FMathApp(argc, argv, Slab::Models::KGRtoR::FKGRtoR_Recipe_ptr(builder));
 
     return prog.run();
 }

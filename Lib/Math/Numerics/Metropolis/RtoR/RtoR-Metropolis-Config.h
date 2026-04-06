@@ -15,16 +15,18 @@ namespace Slab::Math {
 
     /* ********** CONFIG **************/
 
-    class MetropolisRtoRConfig : public FNumericConfig {
+    class FMetropolisRtoRConfig : public FNumericConfig {
         UInt max_steps;
 
     public:
-        explicit MetropolisRtoRConfig(UInt max_steps);
+        explicit FMetropolisRtoRConfig(UInt max_steps);
 
         auto Get_n() const -> UIntBig override;;
 
         auto to_string() const -> Str override;;
     };
+
+    using MetropolisRtoRConfig [[deprecated("Use FMetropolisRtoRConfig")]] = FMetropolisRtoRConfig;
 
     /* ********************************/
 }

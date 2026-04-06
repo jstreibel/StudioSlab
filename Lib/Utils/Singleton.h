@@ -13,22 +13,22 @@
 namespace Slab {
 
     template<typename T>
-    class Singleton {
+    class FSingleton {
     protected:
         const Str name;
         static T *singleInstance;
 
-        explicit Singleton(Str name) : name(std::move(name)) {
-            // Log::Info("Singleton \"") << name << "\" has been instantiated." << Log::Flush;
+        explicit FSingleton(Str name) : name(std::move(name)) {
+            // FLog::Info("Singleton \"") << name << "\" has been instantiated." << FLog::Flush;
         };
 
-        virtual ~Singleton() = default;
+        virtual ~FSingleton() = default;
 
     public:
-        Singleton(const Singleton &) = delete;
+        FSingleton(const FSingleton &) = delete;
 
         static T &GetInstance() {
-            if (Singleton::singleInstance == nullptr) singleInstance = new T();;
+            if (FSingleton::singleInstance == nullptr) singleInstance = new T();;
 
             return *singleInstance;
         }
@@ -38,11 +38,14 @@ namespace Slab {
             singleInstance = nullptr;
         }
 
-        Singleton &operator=(const Singleton &) = delete;
+        FSingleton &operator=(const FSingleton &) = delete;
     };
 
     template<typename T>
-    T *Singleton<T>::singleInstance = nullptr;
+    T *FSingleton<T>::singleInstance = nullptr;
+
+    template<typename T>
+    using Singleton [[deprecated("Use FSingleton")]] = FSingleton<T>;
 
 /*
 template <typename T>

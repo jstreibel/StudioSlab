@@ -8,10 +8,12 @@
 #include "../../Lib/Core/Controller/Parameter/Parameter.h"
 
 
-class ParameterGUIRenderer {
+class FParameterGUIRenderer {
 public:
     static void RenderParameter(const Slab::TPointer<Slab::Core::FParameter>&);
 };
+
+using ParameterGUIRenderer [[deprecated("Use FParameterGUIRenderer")]] = FParameterGUIRenderer;
 
 
 

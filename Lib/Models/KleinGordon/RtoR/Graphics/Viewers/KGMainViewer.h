@@ -10,24 +10,26 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class KGMainViewer : public Graphics::MainViewer {
-        Slab::Vector<Slab::TPointer<KGViewer>> kg_viewers;
+    class FKGMainViewer : public Graphics::FMainViewer {
+        Slab::Vector<Slab::TPointer<FKGViewer>> kg_viewers;
 
         TPointer<R2toR::FNumericFunction> ddtbase_function;
 
     protected:
         bool setCurrentViewer(Slab::Index i) override;
-        Slab::TPointer<KGViewer>
+        Slab::TPointer<FKGViewer>
         getCurrentKGViewer();
 
     public:
-        void addKGViewer(const Slab::TPointer<Slab::Models::KGRtoR::KGViewer>&);
+        void addKGViewer(const Slab::TPointer<Slab::Models::KGRtoR::FKGViewer>&);
 
         void
         setFunctionTimeDerivative(TPointer<R2toR::FNumericFunction>);
         virtual TPointer<R2toR::FNumericFunction>
         getFunctionTimeDerivative();
     };
+
+    using KGMainViewer [[deprecated("Use FKGMainViewer")]] = FKGMainViewer;
 
 } // Slab::Models::KGRtoR
 

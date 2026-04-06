@@ -38,7 +38,7 @@ set (STUDIO_EXTERNAL_SOURCES
         ../Fields/R2toR/LeadingDelta/Monitor.cpp
         )
 
-add_executable( StudioSlab
+add_executable( StudioSlabV1
         ${STUDIO_EXTERNAL_SOURCES}
         ${BLUEPRINT_SOURCES}
 
@@ -53,5 +53,5 @@ add_executable( StudioSlab
         ParameterGUIRenderer.cpp
         ParameterGUIRenderer.h
 )
-target_link_libraries( StudioSlab Slab )
-message(NOTICE "Added executable StudioSlab")
+target_link_libraries( StudioSlabV1 Slab )
+message(NOTICE "Added executable StudioSlabV1")

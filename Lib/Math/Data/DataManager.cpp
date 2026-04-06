@@ -5,19 +5,27 @@
 #include "DataManager.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionGPU.h"
+#include <mutex>
+
+namespace {
+    std::recursive_mutex gDataRegistryMutex;
+}
 
 namespace Slab::Math {
 
-    FDataRegistry::FDataRegistry() : Singleton("Data Manager") {}
+    FDataRegistry::FDataRegistry() : FSingleton("Data Manager") {}
 
     FDataName FDataRegistry::RegisterData(FDataName name, TPointer<Data> data) {
+        std::lock_guard lock(gDataRegistryMutex);
+
         if(name.empty()) name = ToStr(data->get_id());
 
         data->data_name = name;
-
-        Prune();
-
         auto &map = FDataRegistry::GetInstance().DataMap;
+        std::erase_if(map, [](const auto& pair) {
+            const FDataWrap& proxy = pair.second;
+            return !proxy.is_valid();
+        });
 
         if(map.contains(name))
             name += " (" + ToStr(data->id) + ")";
@@ -61,6 +69,7 @@ namespace Slab::Math {
     }
 
     void FDataRegistry::Prune() {
+        std::lock_guard lock(gDataRegistryMutex);
         auto &data_map = GetInstance().DataMap;
 
         std::erase_if(data_map, [](const auto& pair) {
@@ -70,6 +79,7 @@ namespace Slab::Math {
     }
 
     Vector<FDataRegistry::EntryDescription> FDataRegistry::GetAllDataEntries() {
+        std::lock_guard lock(gDataRegistryMutex);
         Vector<FDataRegistry::EntryDescription> entries;
         for(auto &entry : GetInstance().DataMap)
             entries.emplace_back(EntryDescription(entry.first, entry.second.get_type()) );
@@ -78,12 +88,13 @@ namespace Slab::Math {
     }
 
     FDataWrap FDataRegistry::GetData(const FDataName& name) {
+        std::lock_guard lock(gDataRegistryMutex);
         auto &data_map = FDataRegistry::GetInstance().DataMap;
 
         auto entry = data_map.find(name);
 
         if(entry == data_map.end()) {
-            Core::Log::Error("Could not find dataset '" + name + "'.") << Core::Log::Flush;
+            Core::FLog::Error("Could not find dataset '" + name + "'.") << Core::FLog::Flush;
 
             static class InvalidData : public Data {
             public:
@@ -99,9 +110,13 @@ namespace Slab::Math {
     }
 
     FDataName FDataRegistry::ChangeDataName(const FDataName &old_name, const FDataName &new_name) {
-        Prune();
+        std::lock_guard lock(gDataRegistryMutex);
 
         auto &map = GetInstance().DataMap;
+        std::erase_if(map, [](const auto& pair) {
+            const FDataWrap& proxy = pair.second;
+            return !proxy.is_valid();
+        });
         auto entry = map.find(old_name);
 
         if(entry == map.end()) return "";

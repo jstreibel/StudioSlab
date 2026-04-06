@@ -21,11 +21,23 @@ namespace Slab {
  * if character is a sequence character, and negative value
  * if unknown.
  */
-    int utf8_characterByteSize(const char *character);
+    int Utf8CharacterByteSize(const char *character);
+    [[deprecated("Use Utf8CharacterByteSize")]]
+    inline int utf8_characterByteSize(const char *character) {
+        return Utf8CharacterByteSize(character);
+    }
 
-    const Str &mapToSuperscript(char c);
+    const Str &MapToSuperscript(char c);
+    [[deprecated("Use MapToSuperscript")]]
+    inline const Str &mapToSuperscript(char c) {
+        return MapToSuperscript(c);
+    }
 
-    Str &elegantScientific(Str &stringScientificValue);
+    Str &ElegantScientific(Str &stringScientificValue);
+    [[deprecated("Use ElegantScientific")]]
+    inline Str &elegantScientific(Str &stringScientificValue) {
+        return ElegantScientific(stringScientificValue);
+    }
 
 }
 

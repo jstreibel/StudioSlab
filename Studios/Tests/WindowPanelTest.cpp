@@ -9,7 +9,7 @@
 #include "GLFreeTypeTests.h"
 //#include <Studios/Graphics/Graph.h>
 
-WindowPanelTest::WindowPanelTest()
+FWindowPanelTest::FWindowPanelTest()
 : FSlabWindow(Slab::Graphics::FSlabWindowConfig{"Panels test"})
 , panel(new Slab::Graphics::WindowPanel(Slab::Graphics::FSlabWindowConfig("Big Panellio"))) {
     FSlabWindow *window = nullptr;
@@ -31,7 +31,7 @@ WindowPanelTest::WindowPanelTest()
         panel->AddWindow(Ptr(window), true);
 
         window = new FSlabWindow(Cfg{"Win04"});
-        window = new GLFreeTypeTests;
+        window = new FGLFreeTypeTests;
         panel->AddWindow(Ptr(window));
 
         window = new FSlabWindow(Cfg{"Win05"});
@@ -53,13 +53,12 @@ WindowPanelTest::WindowPanelTest()
 }
 
 
-void WindowPanelTest::ImmediateDraw(const Slab::Graphics::FPlatformWindow& PlatformWindow) {
+void FWindowPanelTest::ImmediateDraw(const Slab::Graphics::FPlatformWindow& PlatformWindow) {
     panel->ImmediateDraw(PlatformWindow);
 }
 
-void WindowPanelTest::NotifyReshape(int width, int height) {
+void FWindowPanelTest::NotifyReshape(int width, int height) {
     panel->NotifyReshape(width, height);
 
     panel->ArrangeWindows();
 }
-

@@ -16,23 +16,23 @@
 
 namespace Slab::Graphics {
 
-    using Core::Log;
+    using Core::FLog;
 
-    BaseMonitor::BaseMonitor(const CountType MaxSteps, const Str &ChannelName, int StepsBetweenDraws)
-    : FOutputChannel(ChannelName, StepsBetweenDraws), WindowPanel(FSlabWindowConfig{{}}), MaxSteps(MaxSteps)
+    FBaseMonitor::FBaseMonitor(const CountType MaxSteps, const Str &ChannelName, int StepsBetweenDraws)
+    : FOutputChannel(ChannelName, StepsBetweenDraws), FWindowPanel(FSlabWindowConfig{{}}), MaxSteps(MaxSteps)
     , GuiWindow(New<FGUIWindow>(FSlabWindowConfig(ChannelName)))
     {
         AddWindow(GuiWindow);
         SetColumnRelativeWidth(0, 0.1);
 
-        Log::Status() << "Graphic monitor '" << ChannelName << "'. instantiated " << Log::Flush;
+        FLog::Status() << "Graphic monitor '" << ChannelName << "'. instantiated " << FLog::Flush;
     }
 
-    void BaseMonitor::HandleOutput(const FOutputPacket &outInfo) {
+    void FBaseMonitor::HandleOutput(const FOutputPacket &outInfo) {
         step = outInfo.GetSteps();
     }
 
-    void BaseMonitor::writeStats() {
+    void FBaseMonitor::writeStats() {
         static bool hasFinished = false;
         static bool isPaused = false;
         static CountType lastStep = 0;
@@ -43,7 +43,7 @@ namespace Slab::Graphics {
         isPaused = currStep == lastStep;
 
         static auto timer = FTimer();
-        auto elTime = timer.getElTime_msec();
+        auto elTime = timer.GetElapsedTimeMsec();
         timer = FTimer();
 
         // const auto &p = params;
@@ -89,9 +89,9 @@ namespace Slab::Graphics {
 
         static auto totalTime = FTimer();
 
-        if (hasFinished) totalTime.stop();
+        if (hasFinished) totalTime.Stop();
 
-        fix totalTimeIn_msec = (int) totalTime.getElTime_msec();
+        fix totalTimeIn_msec = (int) totalTime.GetElapsedTimeMsec();
         fix totalTimeMSecs = (totalTimeIn_msec % 1000);
         fix totalTimeSecs = (totalTimeIn_msec / 1000) % 60;
         fix totalTimeMins = (totalTimeIn_msec / 1000) / 60;
@@ -123,17 +123,17 @@ namespace Slab::Graphics {
         lastStep = step;
     }
 
-    void BaseMonitor::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+    void FBaseMonitor::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         assert(LastPacket.hasValidData());
 
         {
             writeStats();
-            WindowPanel::ImmediateDraw(PlatformWindow); // draw();
-            frameTimer.reset();
+            FWindowPanel::ImmediateDraw(PlatformWindow); // draw();
+            frameTimer.Reset();
         }
     }
 
-    bool BaseMonitor::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+    bool FBaseMonitor::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         static fix baseNSteps = Get_nSteps();
         static let multiplier = 1;
 
@@ -163,10 +163,10 @@ namespace Slab::Graphics {
             }
         }
 
-        return WindowPanel::NotifyKeyboard(key, state, modKeys);
+        return FWindowPanel::NotifyKeyboard(key, state, modKeys);
     }
 
-    FGUIWindow &BaseMonitor::getGUIWindow() const {
+    FGUIWindow &FBaseMonitor::getGUIWindow() const {
         return *GuiWindow;
     }
 

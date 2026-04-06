@@ -8,7 +8,7 @@
 namespace Slab {
     namespace Graphics {
 
-        DevFloat animationTimeSeconds = 0.2;
+        DevFloat animationTimeSeconds = 0.28;
 
         PlottingRegion2D::PlottingRegion2D(RectR rect) {
             xMin = New<DevFloat>(rect.xMin);
@@ -19,10 +19,10 @@ namespace Slab {
 
         RectR PlottingRegion2D::getRect() const {return {*xMin, *xMax, *yMin, *yMax}; }
 
-        void PlottingRegion2D::animate_xMin(DevFloat val) { Graphics::Animator::Set(*xMin, val, animationTimeSeconds);}
-        void PlottingRegion2D::animate_xMax(DevFloat val) { Graphics::Animator::Set(*xMax, val, animationTimeSeconds);}
-        void PlottingRegion2D::animate_yMin(DevFloat val) { Graphics::Animator::Set(*yMin, val, animationTimeSeconds);}
-        void PlottingRegion2D::animate_yMax(DevFloat val) { Graphics::Animator::Set(*yMax, val, animationTimeSeconds);}
+        void PlottingRegion2D::animate_xMin(DevFloat val) { Graphics::FAnimator::Set(*xMin, val, animationTimeSeconds);}
+        void PlottingRegion2D::animate_xMax(DevFloat val) { Graphics::FAnimator::Set(*xMax, val, animationTimeSeconds);}
+        void PlottingRegion2D::animate_yMin(DevFloat val) { Graphics::FAnimator::Set(*yMin, val, animationTimeSeconds);}
+        void PlottingRegion2D::animate_yMax(DevFloat val) { Graphics::FAnimator::Set(*yMax, val, animationTimeSeconds);}
 
         void PlottingRegion2D::setReference_xMin(TPointer<DevFloat> ref) {
             if(ref == nullptr) ref = New<DevFloat>(0.0);
@@ -52,10 +52,10 @@ namespace Slab {
         DevFloat PlottingRegion2D::yCenter() const { return (*yMax + *yMin) * .5; }
 
         bool PlottingRegion2D::isAnimating() const {
-            return Animator::Contains(*xMin) ||
-                   Animator::Contains(*xMax) ||
-                   Animator::Contains(*yMin) ||
-                   Animator::Contains(*yMax);
+            return FAnimator::Contains(*xMin) ||
+                   FAnimator::Contains(*xMax) ||
+                   FAnimator::Contains(*yMin) ||
+                   FAnimator::Contains(*yMax);
         }
 
         DevFloat PlottingRegion2D::getXMin() const {

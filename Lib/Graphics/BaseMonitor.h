@@ -12,7 +12,7 @@ namespace Slab::Graphics {
 
     using namespace Math;
 
-    class BaseMonitor : public FOutputChannel, public WindowPanel {
+    class FBaseMonitor : public FOutputChannel, public FWindowPanel {
         void writeStats();
 
     protected:
@@ -24,9 +24,9 @@ namespace Slab::Graphics {
         size_t step=0;
 
     public:
-        typedef std::shared_ptr<BaseMonitor> Ptr;
+        typedef std::shared_ptr<FBaseMonitor> Ptr;
 
-        explicit BaseMonitor(CountType MaxSteps,
+        explicit FBaseMonitor(CountType MaxSteps,
                              const Str& ChannelName="OpenGL monitor",
                              int StepsBetweenDraws=10);
 
@@ -41,6 +41,9 @@ namespace Slab::Graphics {
 
     };
 
+    using BaseMonitor = FBaseMonitor;
+
+    DefinePointers(FBaseMonitor)
     DefinePointers(BaseMonitor)
 }
 

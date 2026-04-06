@@ -32,23 +32,23 @@ Real t0 = 5;
  *    \________|(____  / \___  >|__|_ \      \____|__  /|____/ \____ | |__| \____/
  *                   \/      \/      \/              \/             \/
  */
-RtoR::Signal::JackOutput::JackOutput(const NumericConfig &params)
+RtoR::Signal::FJackOutput::FJackOutput(const NumericConfig &params)
 : Math::Socket(params, "Jack output", 1) {
-    JackServer::GetInstance();
+    FJackServer::GetInstance();
 
     auto delta = xInitDampCutoff_normalized*params.getL();
     auto xLeft = params.getxMin();
 
     jackProbeLocation = xLeft+delta;
 }
-void RtoR::Signal::JackOutput::handleOutput(const OutputPacket &packet) {
+void RtoR::Signal::FJackOutput::handleOutput(const OutputPacket &packet) {
     Function &field = packet.getEqStateData<RtoR::EquationState>()->getPhi();
 
     auto measure = field(jackProbeLocation);
 
-    *JackServer::GetInstance() << measure;
+    *FJackServer::GetInstance() << measure;
 }
-bool RtoR::Signal::JackOutput::shouldOutput(DevFloat t, unsigned long timestep) {
+bool RtoR::Signal::FJackOutput::shouldOutput(DevFloat t, unsigned long timestep) {
     return Socket::shouldOutput(t, timestep);
 }
 
@@ -61,18 +61,18 @@ bool RtoR::Signal::JackOutput::shouldOutput(DevFloat t, unsigned long timestep) 
  *    \_______  /|____/  |__|  |   __/ |____/  |__|        |___  /|____/ |__||____/\____ |  \___  > |__|
  *            \/               |__|                            \/                       \/      \/
  */
-auto RtoR::Signal::OutputBuilder::buildOpenGLOutput() -> RtoR::Monitor * {
+auto RtoR::Signal::FOutputBuilder::buildOpenGLOutput() -> RtoR::Monitor * {
     const DevFloat phiMin = -1.4;
     const DevFloat phiMax = -phiMin;
 
     const DevFloat xLeft = Numerics::Allocator::getInstance().getNumericParams().getxMin();
     const DevFloat xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();
 
-    return new RtoR::Signal::OutGL (xLeft, xRight, phiMin, phiMax); }
-OutputManager *RtoR::Signal::OutputBuilder::build(Str outputFileName) {
+    return new RtoR::Signal::FOutGL (xLeft, xRight, phiMin, phiMax); }
+OutputManager *RtoR::Signal::FOutputBuilder::build(Str outputFileName) {
     auto *builder = OutputStructureBuilderRtoR::build(outputFileName);
 
-    JackOutput *jack = new JackOutput();
+    FJackOutput *jack = new FJackOutput();
     builder->addOutputChannel(jack);
 
     return builder;
@@ -90,9 +90,9 @@ OutputManager *RtoR::Signal::OutputBuilder::build(Str outputFileName) {
  *     |______  / \____/ |____/ |___|  /\____ | (____  / |__|    / ____|        \___  > \____/ |___|  /\____ | |__| |__|  |__| \____/ |___|  /
  *            \/                     \/      \/      \/          \/                 \/              \/      \/                             \/
  */
-RtoR::Signal::BoundaryCondition::BoundaryCondition(DevFloat f, DevFloat A) : f(f), A(A) { }
-void RtoR::Signal::BoundaryCondition::apply(RtoR::EquationState &function, DevFloat t) const {
-    auto jackServer = JackServer::GetInstance();
+RtoR::Signal::FBoundaryCondition::FBoundaryCondition(DevFloat f, DevFloat A) : f(f), A(A) { }
+void RtoR::Signal::FBoundaryCondition::apply(RtoR::EquationState &function, DevFloat t) const {
+    auto jackServer = FJackServer::GetInstance();
 
     if(bufferNumber < jackServer->getInputBufferUpdateCount()){
         currentBuffer = jackServer->getInputBuffer();
@@ -192,23 +192,23 @@ void RtoR::Signal::BoundaryCondition::apply(RtoR::EquationState &function, DevFl
  *     \______  /|_______ \|___|
  *            \/         \/
  */
-RtoR::Signal::CLI::CLI() : RtoRBCInterface("(1+1)-d Signal studies platform.", "gh", new OutputBuilder) {
+RtoR::Signal::FCLI::FCLI() : RtoRBCInterface("(1+1)-d Signal studies platform.", "gh", new FOutputBuilder) {
     addParameters({&freq, &amplitude, &damping, &dampPercent}); }
-auto RtoR::Signal::CLI::getBoundary() const -> const void * {
+auto RtoR::Signal::FCLI::getBoundary() const -> const void * {
     const DevFloat f = *freq;
     const DevFloat A = *amplitude;
 
     dampFactor = *damping;
     xInitDampCutoff_normalized = 1-*dampPercent;
 
-    return new RtoR::Signal::BoundaryCondition(f, A); }
+    return new RtoR::Signal::FBoundaryCondition(f, A); }
 
-RtoR::Monitor *RtoR::Signal::CLI::buildOpenGLOutput() {
+RtoR::Monitor *RtoR::Signal::FCLI::buildOpenGLOutput() {
     const DevFloat phiMin = -1.4;
     const DevFloat phiMax = -phiMin;
 
     const DevFloat xLeft = numericParams.getxMin();
     const DevFloat xRight = numericParams.getxMax();
 
-    return new RtoR::Signal::OutGL(numericParams, phiMin, phiMax);
+    return new RtoR::Signal::FOutGL(numericParams, phiMin, phiMax);
 }

@@ -16,7 +16,7 @@ int processJack(jack_nframes_t nframes, void *arg);
 void testJack(jack_nframes_t nframes);
 void bypassJack(jack_nframes_t nframes);
 
-class JackServer {
+class FJackServer {
     jack_client_t *client;
     jack_port_t *output_processed_port;
     jack_port_t *output_bypass_port;
@@ -34,14 +34,14 @@ class JackServer {
     int totalLastOutputProcessedSamples, nframes_jack;
     enum SamplingFlags {UnderSampled, OverSampled, EvenSampled} samplingFlag = EvenSampled;
 
-    JackServer();
+    FJackServer();
 
     void recordInputBuffer(jack_nframes_t nframes);
 
     bool isRecordingInput = false;
 
 public:
-    static JackServer* GetInstance();
+    static FJackServer* GetInstance();
 
     size_t getInputBufferUpdateCount() { return totalInputBufferUpdates; };
 
@@ -69,6 +69,8 @@ public:
 
     Vector<float> getRecording();
 };
+
+using JackServer [[deprecated("Use FJackServer")]] = FJackServer;
 
 
 #endif //STUDIOSLAB_JACKSERVER_H

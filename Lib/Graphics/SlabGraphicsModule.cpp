@@ -7,6 +7,6 @@
 #include "3rdParty/ImGui.h"
 
 namespace Slab::Graphics {
-    SlabGraphicsModule::SlabGraphicsModule() : GraphicsModule("Slab:Graphics") {}
+    FSlabGraphicsModule::FSlabGraphicsModule() : FGraphicsModule("Slab:Graphics") {}
 
 } // Slab::Graphics

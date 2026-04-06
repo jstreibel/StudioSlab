@@ -1,0 +1,529 @@
+{
+  "meta": {
+    "format": "studioslab-ontology-graph",
+    "version": "0.1.0",
+    "doc_kind": "ontology",
+    "title": "Global Descent Ontology",
+    "description": "Shared model-independent ontology connecting semantic model structure to numerical descent structure."
+  },
+  "schema_info": {
+    "node_kinds": [
+      "SemanticClass",
+      "SemanticObject",
+      "DescentClass",
+      "RealizationClass",
+      "RecipeClass",
+      "SolverClass",
+      "ArtifactClass",
+      "Requirement",
+      "Study",
+      "StudyObject"
+    ],
+    "edge_kinds": [
+      "declares",
+      "defines",
+      "constrains",
+      "depends_on",
+      "acts_on",
+      "classifies_as",
+      "instance_of",
+      "specializes",
+      "can_descend_to",
+      "requires",
+      "requires_for_descent",
+      "admits_realization",
+      "admits_solver",
+      "represented_as",
+      "discretized_by",
+      "stepped_by",
+      "produces",
+      "activates",
+      "satisfies",
+      "blocks",
+      "binds"
+    ],
+    "layers": [
+      "ambient",
+      "semantic",
+      "descent",
+      "realization",
+      "recipe",
+      "artifact",
+      "study"
+    ],
+    "provenance_kinds": [
+      "declared",
+      "ambient",
+      "inferred_structural",
+      "inferred_ontological",
+      "inferred_analogical",
+      "derived_runtime"
+    ]
+  },
+  "nodes": [
+    {
+      "id": "ambient:RealNumbers",
+      "kind": "SemanticClass",
+      "title": "Set of real numbers",
+      "layer": "ambient",
+      "abstract": false,
+      "properties": {
+        "latex": "\\mathbb{R}",
+        "semantic_role": "scalar_set"
+      }
+    },
+    {
+      "id": "ambient:ComplexNumbers",
+      "kind": "SemanticClass",
+      "title": "Set of complex numbers",
+      "layer": "ambient",
+      "abstract": false,
+      "properties": {
+        "latex": "\\mathbb{C}",
+        "semantic_role": "scalar_set"
+      }
+    },
+    {
+      "id": "ambient:TimeCoordinate",
+      "kind": "SemanticClass",
+      "title": "Time coordinate",
+      "layer": "ambient",
+      "abstract": false,
+      "properties": {
+        "semantic_role": "coordinate"
+      }
+    },
+    {
+      "id": "ambient:DerivativeOperator",
+      "kind": "SemanticClass",
+      "title": "Derivative operator",
+      "layer": "ambient",
+      "abstract": false,
+      "properties": {
+        "semantic_role": "operator"
+      }
+    },
+    {
+      "id": "ambient:DAlembertOperator",
+      "kind": "SemanticClass",
+      "title": "d'Alembert operator",
+      "layer": "ambient",
+      "abstract": false,
+      "properties": {
+        "latex": "\\Box",
+        "semantic_role": "operator"
+      }
+    },
+    {
+      "id": "semantic:ScalarParameter",
+      "kind": "SemanticClass",
+      "title": "Scalar parameter",
+      "layer": "semantic",
+      "abstract": true,
+      "properties": {
+        "facets": [
+          "typing",
+          "role",
+          "constraint"
+        ]
+      }
+    },
+    {
+      "id": "semantic:StateVariable",
+      "kind": "SemanticClass",
+      "title": "State variable",
+      "layer": "semantic",
+      "abstract": true,
+      "properties": {
+        "facets": [
+          "typing",
+          "dependency",
+          "role"
+        ]
+      }
+    },
+    {
+      "id": "semantic:Field",
+      "kind": "SemanticClass",
+      "title": "Field",
+      "layer": "semantic",
+      "abstract": true,
+      "properties": {
+        "facets": [
+          "typing",
+          "dependency",
+          "domain",
+          "codomain",
+          "role"
+        ]
+      }
+    },
+    {
+      "id": "semantic:Observable",
+      "kind": "SemanticClass",
+      "title": "Observable",
+      "layer": "semantic",
+      "abstract": true,
+      "properties": {
+        "facets": [
+          "typing",
+          "definition",
+          "sampling"
+        ]
+      }
+    },
+    {
+      "id": "semantic:Relation",
+      "kind": "SemanticClass",
+      "title": "Relation",
+      "layer": "semantic",
+      "abstract": true,
+      "properties": {
+        "facets": [
+          "expression",
+          "classification"
+        ]
+      }
+    },
+    {
+      "id": "semantic:InitialCondition",
+      "kind": "SemanticClass",
+      "title": "Initial condition",
+      "layer": "semantic",
+      "abstract": true,
+      "properties": {
+        "facets": [
+          "target_state",
+          "time_anchor",
+          "value_specification"
+        ]
+      }
+    },
+    {
+      "id": "semantic:BoundaryCondition",
+      "kind": "SemanticClass",
+      "title": "Boundary condition",
+      "layer": "semantic",
+      "abstract": true,
+      "properties": {
+        "facets": [
+          "target_field",
+          "boundary_region",
+          "value_or_flux_specification"
+        ]
+      }
+    },
+    {
+      "id": "descent:FiniteDimensionalDynamicalSystem",
+      "kind": "DescentClass",
+      "title": "Finite-dimensional dynamical system",
+      "layer": "descent",
+      "abstract": true,
+      "properties": {
+        "family": "ode"
+      }
+    },
+    {
+      "id": "descent:SecondOrderODE",
+      "kind": "DescentClass",
+      "title": "Second-order ODE",
+      "layer": "descent",
+      "abstract": true,
+      "properties": {
+        "family": "ode"
+      }
+    },
+    {
+      "id": "descent:FirstOrderExplicitODE",
+      "kind": "DescentClass",
+      "title": "First-order explicit ODE",
+      "layer": "descent",
+      "abstract": true,
+      "properties": {
+        "family": "ode",
+        "runtime_shape": "y' = f(t, y, p)"
+      }
+    },
+    {
+      "id": "descent:PDEFieldSystem",
+      "kind": "DescentClass",
+      "title": "PDE field system",
+      "layer": "descent",
+      "abstract": true,
+      "properties": {
+        "family": "pde"
+      }
+    },
+    {
+      "id": "descent:FieldEquation",
+      "kind": "DescentClass",
+      "title": "Field equation",
+      "layer": "descent",
+      "abstract": true,
+      "properties": {
+        "family": "pde"
+      }
+    },
+    {
+      "id": "descent:HamiltonianSystem",
+      "kind": "DescentClass",
+      "title": "Hamiltonian system",
+      "layer": "descent",
+      "abstract": true,
+      "properties": {
+        "family": "hamiltonian"
+      }
+    },
+    {
+      "id": "realization:StateVectorRepresentation",
+      "kind": "RealizationClass",
+      "title": "State vector representation",
+      "layer": "realization",
+      "abstract": true,
+      "properties": {
+        "representation_kind": "finite_vector"
+      }
+    },
+    {
+      "id": "realization:RegularGrid",
+      "kind": "RealizationClass",
+      "title": "Regular grid",
+      "layer": "realization",
+      "abstract": false,
+      "properties": {
+        "topology": "cartesian",
+        "required_payload_fields": [
+          "axis_count",
+          "extents",
+          "resolution"
+        ]
+      }
+    },
+    {
+      "id": "realization:FiniteDifferenceDiscretization",
+      "kind": "RealizationClass",
+      "title": "Finite-difference discretization",
+      "layer": "realization",
+      "abstract": false,
+      "properties": {
+        "acts_on": "field_equations"
+      }
+    },
+    {
+      "id": "recipe:FixedTimestep",
+      "kind": "RecipeClass",
+      "title": "Fixed timestep schedule",
+      "layer": "recipe",
+      "abstract": false,
+      "properties": {
+        "required_payload_fields": [
+          "dt",
+          "t_start",
+          "t_end"
+        ]
+      }
+    },
+    {
+      "id": "solver:RK4",
+      "kind": "SolverClass",
+      "title": "Runge-Kutta 4",
+      "layer": "recipe",
+      "abstract": false,
+      "properties": {
+        "family": "explicit_time_integrator",
+        "order": 4,
+        "supports": [
+          "descent:FirstOrderExplicitODE"
+        ]
+      }
+    },
+    {
+      "id": "solver:VelocityVerlet",
+      "kind": "SolverClass",
+      "title": "Velocity Verlet",
+      "layer": "recipe",
+      "abstract": false,
+      "properties": {
+        "family": "symplectic_like",
+        "supports": [
+          "descent:HamiltonianSystem",
+          "descent:SecondOrderODE"
+        ]
+      }
+    },
+    {
+      "id": "artifact:TrajectorySeries",
+      "kind": "ArtifactClass",
+      "title": "Trajectory time series",
+      "layer": "artifact",
+      "abstract": false,
+      "properties": {
+        "payload": "time-indexed samples"
+      }
+    },
+    {
+      "id": "artifact:FieldSnapshotSeries",
+      "kind": "ArtifactClass",
+      "title": "Field snapshot series",
+      "layer": "artifact",
+      "abstract": false,
+      "properties": {
+        "payload": "time-indexed grid samples"
+      }
+    },
+    {
+      "id": "requirement:InitialConditionsForRealizedState",
+      "kind": "Requirement",
+      "title": "Initial conditions for realized state",
+      "layer": "descent",
+      "abstract": false,
+      "properties": {
+        "category": "semantic_requirement"
+      }
+    },
+    {
+      "id": "requirement:SpatialDomain",
+      "kind": "Requirement",
+      "title": "Spatial domain specification",
+      "layer": "descent",
+      "abstract": false,
+      "properties": {
+        "category": "semantic_requirement"
+      }
+    },
+    {
+      "id": "requirement:BoundaryConditions",
+      "kind": "Requirement",
+      "title": "Boundary condition specification",
+      "layer": "descent",
+      "abstract": false,
+      "properties": {
+        "category": "semantic_requirement"
+      }
+    },
+    {
+      "id": "requirement:MetricOrCoordinateSpecialization",
+      "kind": "Requirement",
+      "title": "Metric or coordinate specialization",
+      "layer": "descent",
+      "abstract": false,
+      "properties": {
+        "category": "semantic_requirement"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e001",
+      "type": "specializes",
+      "from": "descent:SecondOrderODE",
+      "to": "descent:FiniteDimensionalDynamicalSystem",
+      "properties": {}
+    },
+    {
+      "id": "e002",
+      "type": "can_descend_to",
+      "from": "descent:SecondOrderODE",
+      "to": "descent:FirstOrderExplicitODE",
+      "properties": {
+        "rule": "state_augmentation",
+        "lossless": true
+      }
+    },
+    {
+      "id": "e003",
+      "type": "requires_for_descent",
+      "from": "descent:FirstOrderExplicitODE",
+      "to": "requirement:InitialConditionsForRealizedState",
+      "properties": {}
+    },
+    {
+      "id": "e004",
+      "type": "admits_realization",
+      "from": "descent:FirstOrderExplicitODE",
+      "to": "realization:StateVectorRepresentation",
+      "properties": {}
+    },
+    {
+      "id": "e005",
+      "type": "admits_solver",
+      "from": "descent:FirstOrderExplicitODE",
+      "to": "solver:RK4",
+      "properties": {}
+    },
+    {
+      "id": "e006",
+      "type": "stepped_by",
+      "from": "solver:RK4",
+      "to": "recipe:FixedTimestep",
+      "properties": {
+        "mode": "common_configuration"
+      }
+    },
+    {
+      "id": "e007",
+      "type": "produces",
+      "from": "solver:RK4",
+      "to": "artifact:TrajectorySeries",
+      "properties": {}
+    },
+    {
+      "id": "e008",
+      "type": "specializes",
+      "from": "descent:FieldEquation",
+      "to": "descent:PDEFieldSystem",
+      "properties": {}
+    },
+    {
+      "id": "e009",
+      "type": "requires_for_descent",
+      "from": "descent:PDEFieldSystem",
+      "to": "requirement:SpatialDomain",
+      "properties": {}
+    },
+    {
+      "id": "e010",
+      "type": "requires_for_descent",
+      "from": "descent:PDEFieldSystem",
+      "to": "requirement:BoundaryConditions",
+      "properties": {}
+    },
+    {
+      "id": "e011",
+      "type": "requires_for_descent",
+      "from": "descent:FieldEquation",
+      "to": "requirement:MetricOrCoordinateSpecialization",
+      "properties": {}
+    },
+    {
+      "id": "e012",
+      "type": "admits_realization",
+      "from": "descent:PDEFieldSystem",
+      "to": "realization:RegularGrid",
+      "properties": {
+        "condition": "when_cartesian_grid_path_selected"
+      }
+    },
+    {
+      "id": "e013",
+      "type": "discretized_by",
+      "from": "realization:RegularGrid",
+      "to": "realization:FiniteDifferenceDiscretization",
+      "properties": {}
+    },
+    {
+      "id": "e014",
+      "type": "produces",
+      "from": "realization:FiniteDifferenceDiscretization",
+      "to": "artifact:FieldSnapshotSeries",
+      "properties": {}
+    },
+    {
+      "id": "e015",
+      "type": "admits_solver",
+      "from": "descent:HamiltonianSystem",
+      "to": "solver:VelocityVerlet",
+      "properties": {}
+    }
+  ]
+}

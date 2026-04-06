@@ -9,10 +9,12 @@
 #include "Math/Thermal/InputOutput.h"
 
 namespace Slab::Lost::ThermoOutput {
-    class ViewControlBase {
+    class FViewControlBase {
     public:
         virtual bool doOperate(SystemParams &params, OutputData &data) = 0;
     };
+
+    using ViewControlBase [[deprecated("Use FViewControlBase")]] = FViewControlBase;
 }
 
 #endif //ISING_VIEWCONTROLBASE_H

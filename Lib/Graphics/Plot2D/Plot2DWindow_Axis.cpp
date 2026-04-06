@@ -3,6 +3,7 @@
 //
 
 #include <ranges>
+#include <algorithm>
 
 #include "Plot2DWindow.h"
 
@@ -68,7 +69,7 @@ namespace Slab {
 
         if(!unaffected)
         {
-            auto currStyle = PlotThemeManager::GetCurrent();
+            auto currStyle = FPlotThemeManager::GetCurrent();
             auto pix = Slab::Graphics::PixelSizeInSpace(newRegion, GetViewport());
             auto Δx = static_cast<DevFloat>(currStyle->hAxisPaddingInPixels) * pix.x;
             auto Δy = static_cast<DevFloat>(currStyle->hAxisPaddingInPixels) * pix.y;
@@ -77,6 +78,20 @@ namespace Slab {
             newRegion.xMax += 2*Δx;
             newRegion.yMin -= 2*Δy;
             newRegion.yMax += 2*Δy;
+        }
+
+        if (LockUnitAspectRatio) {
+            const auto viewport = GetViewport();
+            const auto viewportWidth = static_cast<DevFloat>(std::max(1, viewport.GetWidth()));
+            const auto viewportHeight = static_cast<DevFloat>(std::max(1, viewport.GetHeight()));
+            const auto viewportAspect = viewportWidth / viewportHeight;
+            if (viewportAspect > 0.0) {
+                const auto yCenter = newRegion.yCenter();
+                const auto halfWidth = static_cast<DevFloat>(0.5 * newRegion.GetWidth());
+                const auto halfHeight = static_cast<DevFloat>(std::max(halfWidth / viewportAspect, DevFloat(1e-8)));
+                newRegion.yMin = yCenter - halfHeight;
+                newRegion.yMax = yCenter + halfHeight;
+            }
         }
 
         Region.animate_xMin(newRegion.xMin);

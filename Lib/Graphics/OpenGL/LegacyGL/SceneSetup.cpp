@@ -27,7 +27,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
     {
         if (IsInLegacyMode()) return;
 
-        if(!Core::BackendManager::IsModuleLoaded("ModernOpenGL")) return;
+        if(!Core::FBackendManager::IsModuleLoaded("ModernOpenGL")) return;
 
         GLint CurrentProgram;;
         glGetIntegerv(GL_CURRENT_PROGRAM, &CurrentProgram);
@@ -42,7 +42,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
 
     void RestoreFromLegacyMode()
     {
-        if(!Core::BackendManager::IsModuleLoaded("ModernOpenGL")) return;
+        if(!Core::FBackendManager::IsModuleLoaded("ModernOpenGL")) return;
 
         glUseProgram(LastProgramUsed);
 

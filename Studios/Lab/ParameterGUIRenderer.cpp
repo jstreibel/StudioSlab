@@ -93,7 +93,7 @@ void Handle(Slab::Core::FParameter& Parameter) {
     }
 }
 
-void ParameterGUIRenderer::RenderParameter(const Slab::TPointer<Slab::Core::FParameter>& Parameter)
+void FParameterGUIRenderer::RenderParameter(const Slab::TPointer<Slab::Core::FParameter>& Parameter)
 {
     Handle(*Parameter);
 }

@@ -9,14 +9,14 @@
 
 namespace Slab::Models::KGRtoR {
 
-    struct TimeDFTOutputConfig {
+    struct FTimeDFTOutputConfig {
         const Str &filename;
         Vector<DevFloat> x_measure;
         DevFloat t_start;
         DevFloat t_end;
     };
 
-    class CenterTimeDFTOutput final : public Math::FOutputChannel {
+    class FCenterTimeDFTOutput final : public Math::FOutputChannel {
         Str filename;
         Vector<FRealVector> dataset;
         Vector<DevFloat> x_measure;
@@ -25,6 +25,7 @@ namespace Slab::Models::KGRtoR {
 
     protected:
         auto HandleOutput(const Math::FOutputPacket &packet) -> void override;
+        auto ShouldOutput(long unsigned timestep) -> bool override;
 
     public:
         auto ComputeNextRecStep(UInt currStep) -> size_t override;
@@ -33,9 +34,12 @@ namespace Slab::Models::KGRtoR {
         auto NotifyIntegrationHasFinished(const Math::FOutputPacket &theVeryLastOutputInformation) -> bool override;
 
     public:
-        CenterTimeDFTOutput(DevFloat t_max, CountType max_steps, TimeDFTOutputConfig timeDFTSnapshotConfig);
+        FCenterTimeDFTOutput(DevFloat t_max, CountType max_steps, FTimeDFTOutputConfig timeDFTSnapshotConfig);
 
     };
+
+    using TimeDFTOutputConfig [[deprecated("Use FTimeDFTOutputConfig")]] = FTimeDFTOutputConfig;
+    using CenterTimeDFTOutput [[deprecated("Use FCenterTimeDFTOutput")]] = FCenterTimeDFTOutput;
 }
 
 #endif //STUDIOSLAB_CENTERTIMEDFTOUTPUT_H

@@ -15,16 +15,16 @@ namespace Slab::Models::KGRtoR {
 
     bool check_consistency(const RtoR::NumericFunction& a, const RtoR::NumericFunction& b) {
         if(a.getSpace().getMetaData().getN(0) != b.getSpace().getMetaData().getN(0)){
-            Log::Error() << "a.N!=b.N <=> " << a.getSpace().getMetaData().getN(0) << "!=" << b.getSpace().getMetaData().getN(0) << Log::Flush;
+            FLog::Error() << "a.N!=b.N <=> " << a.getSpace().getMetaData().getN(0) << "!=" << b.getSpace().getMetaData().getN(0) << FLog::Flush;
             return false;
         }
 
         if(!Common::AreEqual(a.xMin, b.xMin, 1.e-6)) {
-            Log::Error() << "a.x_min!=b.x_min <=> " << a.xMin << "!=" << b.xMin << Log::Flush;
+            FLog::Error() << "a.x_min!=b.x_min <=> " << a.xMin << "!=" << b.xMin << FLog::Flush;
 
             return false;
         }if(!Common::AreEqual(a.xMax, b.xMax, a.xMax*1.e-6)) {
-            Log::Error() << "a.x_max!=b.x_max <=> " << a.xMax << "!=" << b.xMax << Log::Flush;
+            FLog::Error() << "a.x_max!=b.x_max <=> " << a.xMax << "!=" << b.xMax << FLog::Flush;
             return false;
         }
 
@@ -36,7 +36,7 @@ namespace Slab::Models::KGRtoR {
 
     auto FKGEnergy::computeEnergies(const RtoR::NumericFunction& phi, const RtoR::NumericFunction& ddtPhi) -> const RtoR::NumericFunction & {
         if(!check_consistency(phi, ddtPhi)) {
-            Log::Error() << Str("Inconsistency at ") + __PRETTY_FUNCTION__ + ":" + ToStr(__LINE__) << Log::Flush;
+            FLog::Error() << Str("Inconsistency at ") + __PRETTY_FUNCTION__ + ":" + ToStr(__LINE__) << FLog::Flush;
             return *_oEnergyDensity;
         }
 

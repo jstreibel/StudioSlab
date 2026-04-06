@@ -20,23 +20,23 @@ namespace Modes::DatabaseViewer {
 
     using Log = Core::Log;
 
-    class DirtyDBException : public Exception {
+    class FDirtyDBException : public Exception {
     public:
-        explicit DirtyDBException(const Str &msg="") : Exception(Str("dirty snapshot database") + (!msg.empty()?": "+msg:""))  { }
+        explicit FDirtyDBException(const Str &msg="") : Exception(Str("dirty snapshot database") + (!msg.empty()?": "+msg:""))  { }
     };
 
     [[nodiscard]]
     double parse_filename_for_critical_parameter_value(const Str& fileName, const Str& criticalParameter) {
         const std::size_t pos = fileName.rfind(criticalParameter);
         if(pos == Str::npos)
-            throw DirtyDBException(Str("Database file '") + fileName + "' "
+            throw FDirtyDBException(Str("Database file '") + fileName + "' "
                                        + "does not contain critical parameter '" + criticalParameter + "'; "
                                        + "database deemed dirty");
 
         // Find the position of the '=' character that follows the criticalParam
         auto equalsPos = pos + criticalParameter.length(); // fileName.find('=', pos + criticalParameter.length());
         if (equalsPos == std::string::npos)
-            throw DirtyDBException("Could not find critical parameter '" +criticalParameter +
+            throw FDirtyDBException("Could not find critical parameter '" +criticalParameter +
                                    "' in filename '" + fileName + "'.");
 
         // Extract the substring starting from the position after '='
@@ -61,7 +61,7 @@ namespace Modes::DatabaseViewer {
             Core::Log::Info() << "While trying to convert string '" << valueStr << "' to double.";
             Core::Log::Info() << "While processing file '" << fileName << "." << Core::Log::Flush;
 
-            throw DirtyDBException();
+            throw FDirtyDBException();
         }
 
         return value;
@@ -87,7 +87,7 @@ namespace Modes::DatabaseViewer {
         NOT_IMPLEMENTED
     }
 
-    DBParser::DBParser(Str rootDBFolder, Str criticalParameter, Str snapshotsFolder)
+    FDBParser::FDBParser(Str rootDBFolder, Str criticalParameter, Str snapshotsFolder)
     : rootDatabaseFolder(std::move(rootDBFolder))
     , snapshotFolder(std::move(snapshotsFolder))
     , criticalParameter(std::move(criticalParameter))
@@ -106,7 +106,7 @@ namespace Modes::DatabaseViewer {
         checkIntervalConsistency();
     }
 
-    void DBParser::checkIntervalConsistency() const {
+    void FDBParser::checkIntervalConsistency() const {
         FRealVector values;
 
         for(IN [value, filename] : fileSet) {
@@ -124,18 +124,18 @@ namespace Modes::DatabaseViewer {
             DevFloat delta = values[i+1]-values[i];
 
             if(!Common::AreEqual(lastDelta, delta, eps)) {
-                Log::Fail() << "DBParser deltas differ for "
+                Log::Fail() << "FDBParser deltas differ for "
                 << criticalParameter << "=" << values[i-1] << "; "
                 << criticalParameter << "=" << values[i] << "; " << criticalParameter << "=" << values[i+1]
                 << ": lastDelta-delta = " << lastDelta << "-" << delta << " = " << lastDelta-delta << "; tolerance ε=" << eps << Log::Flush;
-                // throw DirtyDBException();
+                // throw FDirtyDBException();
             }
 
             lastDelta = delta;
         }
     }
 
-    void DBParser::readDatabase() {
+    void FDBParser::readDatabase() {
         fix dbPath = rootDatabaseFolder;
 
         for (fix snapshotsFolderIterator = std::filesystem::directory_iterator(dbPath + "/" + snapshotFolder);
@@ -149,13 +149,13 @@ namespace Modes::DatabaseViewer {
                              << "Conflicting files are \""
                              << Log::FGRed << fileSet[value] << Log::ResetFormatting << "\" and \""
                              << Log::FGRed << fileName << Log::ResetFormatting << "\"" << Log::Flush;
-                throw DirtyDBException();
+                throw FDirtyDBException();
             }
 
-            auto snapshotData = SnapshotFileLoader::Load(fileName);
+            auto snapshotData = FSnapshotFileLoader::Load(fileName);
             fix scaling = get_scaling_for_critical_parameter(criticalParameter, snapshotData.metaData);
 
-            const auto snapshotEntry = SnapshotEntry{snapshotData, value, criticalParameter, scaling};
+            const auto snapshotEntry = FSnapshotEntry{snapshotData, value, criticalParameter, scaling};
 
             fileSet[value] = fileName;
             fieldMap[value] = snapshotEntry;
@@ -169,10 +169,10 @@ namespace Modes::DatabaseViewer {
                         << filename << Log::Flush;
     }
 
-    auto DBParser::getFileSet()           const -> const std::map<DevFloat, Str> & { return fileSet; }
-    auto DBParser::getCriticalParameter() const -> Str { return criticalParameter; }
+    auto FDBParser::getFileSet()           const -> const std::map<DevFloat, Str> & { return fileSet; }
+    auto FDBParser::getCriticalParameter() const -> Str { return criticalParameter; }
 
-    auto DBParser::buildSnapshotMashup() const -> std::shared_ptr<Math::R2toR::NumericFunction_CPU> {
+    auto FDBParser::buildSnapshotMashup() const -> std::shared_ptr<Math::R2toR::NumericFunction_CPU> {
         IN sampleField = *fieldMap.begin()->second.snapshotData.data;
 
         fix N = fieldMap.size();
@@ -199,11 +199,11 @@ namespace Modes::DatabaseViewer {
         return std::shared_ptr<Math::R2toR::NumericFunction_CPU>(fullField);
     }
 
-    auto DBParser::getSnapshotMap() const -> const FieldMap & { return fieldMap; }
+    auto FDBParser::getSnapshotMap() const -> const FieldMap & { return fieldMap; }
 
-    auto DBParser::getRootDatabaseFolder() const -> const Str & { return rootDatabaseFolder; }
+    auto FDBParser::getRootDatabaseFolder() const -> const Str & { return rootDatabaseFolder; }
 
-    DatabaseType DBParser::evaluateDatabaseType() const {
+    EDatabaseType FDBParser::evaluateDatabaseType() const {
         fix baseSnapshotType = fieldMap.begin()->second.snapshotData.snapshotDataType;
 
         for(IN entry : fieldMap) {
@@ -213,10 +213,10 @@ namespace Modes::DatabaseViewer {
         }
 
         switch (baseSnapshotType) {
-            case SnapshotData::SpaceSnapshot:       return SpaceDBType;
-            case SnapshotData::TimeDFTSnapshot:     return TimeDFTDBType;
-            case SnapshotData::SpaceDFTSnapshot:    return SpaceDFTDBType;
-            case SnapshotData::unknownSnapshot:
+            case FSnapshotData::SpaceSnapshot:       return SpaceDBType;
+            case FSnapshotData::TimeDFTSnapshot:     return TimeDFTDBType;
+            case FSnapshotData::SpaceDFTSnapshot:    return SpaceDFTDBType;
+            case FSnapshotData::unknownSnapshot:
             default: ;
         }
 

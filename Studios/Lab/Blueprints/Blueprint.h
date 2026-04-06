@@ -34,21 +34,21 @@ namespace Lab::Blueprints {
         }
 
         auto GetNodes() -> Slab::Vector<FBlueprintNode>&;
-        auto GetLinks() -> Slab::Vector<Link>&;
+        auto GetLinks() -> Slab::Vector<FLink>&;
 
         FBlueprintNode* FindNode(Editor::NodeId id);
 
-        Link* FindLink(Editor::LinkId id);
+        FLink* FindLink(Editor::LinkId id);
 
-        Pin* FindPin(Editor::PinId id);
+        FPin* FindPin(Editor::PinId id);
 
         bool IsPinLinked(Editor::PinId id) const;
         FNodeSpawnerMap GetNodeSpawners();
 
         static
-        bool CanCreateLink(Pin* a, Pin* b);
+        bool CanCreateLink(FPin* a, FPin* b);
 
-        bool CreateLink(Pin&a, Pin&b);
+        bool CreateLink(FPin&a, FPin&b);
 
         static
         void BuildNode(FBlueprintNode* node);
@@ -68,7 +68,7 @@ namespace Lab::Blueprints {
         static Slab::Atomic<int>     m_NextId;
         const int              m_PinIconSize = 24;
         Slab::Vector<FBlueprintNode> m_Nodes;
-        Slab::Vector<Link>    m_Links;
+        Slab::Vector<FLink>    m_Links;
     };
 
 } // Slab::Prototype

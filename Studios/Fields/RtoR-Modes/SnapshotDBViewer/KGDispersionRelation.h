@@ -9,39 +9,44 @@
 
 namespace Slab::Math::RtoR {
 
-    enum KGDispersionRelationMode {
+    enum EKGDispersionRelationMode {
         ω_AsFunctionOf_k,
         k_AsFunctionOf_ω
     };
 
-    class KGDispersionRelation : public RtoR::Function {
+    using KGDispersionRelationMode [[deprecated("Use EKGDispersionRelationMode")]] = EKGDispersionRelationMode;
+
+    class FKGDispersionRelation : public RtoR::Function {
         DevFloat m²;
     public:
-        KGDispersionRelationMode mode;
+        EKGDispersionRelationMode mode;
 
         enum Branch {
             Positive,
             Negative
         } branch;
 
-        KGDispersionRelation(DevFloat mass, KGDispersionRelationMode, Branch branch=Positive);
+        FKGDispersionRelation(DevFloat mass, EKGDispersionRelationMode, Branch branch=Positive);
 
         DevFloat operator()(DevFloat x) const override;
 
         auto domainContainsPoint(DevFloat x) const -> bool override;
     };
 
-    class KGDispersionRelation_high_k : public RtoR::Function {
+    class FKGDispersionRelationHighK : public RtoR::Function {
         DevFloat m²;
     public:
-        KGDispersionRelationMode mode;
+        EKGDispersionRelationMode mode;
 
-        explicit KGDispersionRelation_high_k(DevFloat mass, KGDispersionRelationMode);
+        explicit FKGDispersionRelationHighK(DevFloat mass, EKGDispersionRelationMode);
 
         DevFloat operator()(DevFloat k) const override;
 
         auto domainContainsPoint(DevFloat k) const -> bool override;
     };
+
+    using KGDispersionRelation [[deprecated("Use FKGDispersionRelation")]] = FKGDispersionRelation;
+    using KGDispersionRelation_high_k [[deprecated("Use FKGDispersionRelationHighK")]] = FKGDispersionRelationHighK;
 
 }
 

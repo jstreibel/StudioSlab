@@ -42,7 +42,7 @@ namespace Slab::Models::KGR2toR {
 
     using namespace Core;
 
-    LastOutputVTKVisualizer::LastOutputVTKVisualizer(Count total_steps, int outN)
+    FLastOutputVTKVisualizer::FLastOutputVTKVisualizer(Count total_steps, int outN)
     : Math::Socket("LastOutVTKViz", -1, "VTK visualization of the last simulation output.")
     , outN(outN) {
 
@@ -52,13 +52,13 @@ namespace Slab::Models::KGR2toR {
     bool show(const OutputPacket& packet, int outN);
     bool show2(const OutputPacket& packet, int outN);
 
-    LastOutputVTKVisualizer::~LastOutputVTKVisualizer() {
+    FLastOutputVTKVisualizer::~FLastOutputVTKVisualizer() {
         // We output from destructor because it is called on the main thread.
         // show(lastPacket, outN);
         // test();
     }
 
-    bool LastOutputVTKVisualizer::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
+    bool FLastOutputVTKVisualizer::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
         Socket::notifyIntegrationHasFinished(theVeryLastOutputInformation);
 
         // show(theVeryLastOutputInformation, outN);
@@ -210,7 +210,7 @@ namespace Slab::Models::KGR2toR {
             cubeAxes->DrawZGridlinesOff();
             cubeAxes->SetZTitle("phi");
 
-            Log::Info("z (min,max) = (") << zMin << "," << zMax << ")" << Log::Flush;
+            FLog::Info("z (min,max) = (") << zMin << "," << zMax << ")" << FLog::Flush;
             cubeAxes->SetZAxisRange(zMin, zMax);
             //cubeAxes->SetZAxisRange(-0.5, 0.7);
             cubeAxes->SetTickLocationToOutside();
@@ -533,4 +533,3 @@ namespace Slab::Models::KGR2toR {
     }
 
 } // R2toR
-

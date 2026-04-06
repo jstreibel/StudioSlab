@@ -1,8 +1,6 @@
 #ifndef OUTPUTINFO_H
 #define OUTPUTINFO_H
 
-#include "FieldStateOutputInterface.h"
-
 #include "Math/Numerics/ODE/Solver/EquationState.h"
 
 #include <memory>

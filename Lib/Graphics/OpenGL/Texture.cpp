@@ -8,7 +8,7 @@
 #include "Utils.h"
 
 #define CHECK_GL_ERRORS(count) CheckGLErrors(Str(__PRETTY_FUNCTION__) \
-    + " from " + Common::getClassName(this)                                        \
+    + " from " + Common::GetClassName(this)                                        \
     + " (check " + ToStr((count)) + ")");
 
 namespace Slab::Graphics::OpenGL {
@@ -20,7 +20,7 @@ namespace Slab::Graphics::OpenGL {
     {
         glGenTextures(1, &m_Handle);
 
-        Core::Log::Debug() << "OpenGL::Texture " << m_Handle << " generated. Texture unit: " << TextureUnitToString(textureUnit) << " (" << (textureUnit-GL_TEXTURE0) << ")" << Core::Log::Flush;
+        Core::FLog::Debug() << "OpenGL::Texture " << m_Handle << " generated. Texture unit: " << TextureUnitToString(textureUnit) << " (" << (textureUnit-GL_TEXTURE0) << ")" << Core::FLog::Flush;
     }
 
     FTexture::~FTexture() {
@@ -95,7 +95,7 @@ namespace Slab::Graphics::OpenGL {
 
     void FTexture::Diagnose() const {
 
-        using Log = Core::Log;
+        using Core::FLog;
 
         GLint currentTexture = 0;
         GLenum bindingEnum;
@@ -106,7 +106,7 @@ namespace Slab::Graphics::OpenGL {
             case Texture_3D: bindingEnum = GL_TEXTURE_BINDING_3D; break;
             // Add more cases as needed
             default:
-                Log::Error() << "Diagnose error: unknown or unsupported texture target" << Log::Flush;
+                FLog::Error() << "Diagnose error: unknown or unsupported texture target" << FLog::Flush;
                 return;
         }
 
@@ -126,11 +126,11 @@ namespace Slab::Graphics::OpenGL {
         auto iFormat = (InternalFormat)internalFormat;
 
         fix pass = currentTexture==m_Handle && iFormat==m_Internalformat;
-        Log::Debug() << "OpenGL::Texture diagnose [" << (pass?Log::FGGreen+"PASS":Log::FGRed+"FAIL") << Log::ResetFormatting + "]: actual [expected]; "
+        FLog::Debug() << "OpenGL::Texture diagnose [" << (pass?FLog::FGGreen+"PASS":FLog::FGRed+"FAIL") << FLog::ResetFormatting + "]: actual [expected]; "
                      << "dimensions " << width << "x" << height << " [...]; "
                      << "bound texture id " << currentTexture << " [" << m_Handle << "]; "
                      << "internal format " << InternalFormatToString(iFormat) << " [" << InternalFormatToString(m_Internalformat) << "]; "
-                     << Log::Flush;
+                     << FLog::Flush;
 
         // Restore previously bound texture
         glBindTexture(m_Target, currentTexture);

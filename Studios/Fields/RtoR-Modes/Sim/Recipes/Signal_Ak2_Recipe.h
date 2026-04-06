@@ -14,7 +14,7 @@ namespace Modes {
     using namespace Slab::Math;
 
 
-    class Signal_Ak2_Recipe final : public Models::KGRtoR::FKGRtoR_Recipe {
+    class FSignalAk2Recipe final : public Models::KGRtoR::FKGRtoR_Recipe {
         RealParameter A              = RealParameter(1.0, FParameterDescription{'A',          "Amplitude of input sine wave"});
         RealParameter omega          = RealParameter(1.0, FParameterDescription{'w', "omega", "Angular frequency 'ω=2πT' of input signal."});
 
@@ -24,12 +24,14 @@ namespace Modes {
     public:
         [[nodiscard]] auto SuggestFileName() const -> Str override;
 
-        explicit Signal_Ak2_Recipe(bool doRegister=true);
+        explicit FSignalAk2Recipe(bool doRegister=true);
 
         auto GetBoundary() -> Base::BoundaryConditions_ptr override;
 
         auto NotifyInterfaceSetupIsFinished() -> void override;
     };
+
+    using Signal_Ak2_Recipe [[deprecated("Use FSignalAk2Recipe")]] = FSignalAk2Recipe;
 
 } // Modes
 

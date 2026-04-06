@@ -6,7 +6,7 @@
 #include "Core/Tools/Log.h"
 
 namespace Slab::Models {
-    using Core::Log;
+    using Core::FLog;
 
     FKGNumericConfig::FKGNumericConfig(bool do_register)
             : DynamicsNumericConfig(false)
@@ -34,15 +34,15 @@ namespace Slab::Models {
         switch (**dimMode) {
             case 0:
                 *h = **L / **N;
-                Log::Attention("NumericParams option --mode=0 => h = L/N = ") << *h;
+                FLog::Attention("NumericParams option --mode=0 => h = L/N = ") << *h;
                 break;
             case 1:
                 *L = **h * **N;
-                Log::Attention("NumericParams option --mode=1 => L = h*N = ") << *L;
+                FLog::Attention("NumericParams option --mode=1 => L = h*N = ") << *L;
                 break;
             case 2:
                 *N = int(ceil(**L / **h));
-                Log::Attention("NumericParams option --mode=2 => N = ceil(h*N) = ") << *N;
+                FLog::Attention("NumericParams option --mode=2 => N = ceil(h*N) = ") << *N;
                 break;
         }
     }

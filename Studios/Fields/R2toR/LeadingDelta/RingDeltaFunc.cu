@@ -83,7 +83,7 @@ struct RingDeltaGPU
 };
 
 
-bool Studios::Fields::R2toRLeadingDelta::RingDeltaFunc::renderToNumericFunction(
+bool Studios::Fields::R2toRLeadingDelta::FRingDeltaFunc::renderToNumericFunction(
         Slab::Math::Base::NumericFunction<Real2D, DevFloat> *toFunc) const {
     auto &func = *dynamic_cast<Slab::Math::R2toR::FNumericFunction*>(toFunc);
 

@@ -20,10 +20,10 @@ namespace Slab::Graphics {
     bool finishFlag = false;
 
     void errorCallback(int error_code, const char *description) {
-        Log::Error() << "GLFW error " << error_code << ": " << description << Log::Flush;
+        FLog::Error() << "GLFW error " << error_code << ": " << description << FLog::Flush;
     }
 
-    GLFWBackend::GLFWBackend() : GraphicBackend("GLFW Backend") {
+    FGLFWBackend::FGLFWBackend() : FGraphicBackend("GLFW Backend") {
         glfwSetErrorCallback(errorCallback);
 
         int major, minor, rev;
@@ -32,32 +32,32 @@ namespace Slab::Graphics {
         glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_FALSE);
 
         if (!glfwInit()) throw Exception("Error initializing GLFW");
-        Log::Info() << "GLFW runtime version " << major << "." << minor << "." << rev
+        FLog::Info() << "GLFW runtime version " << major << "." << minor << "." << rev
                        << " initialized to compile version " << GLFW_VERSION_MAJOR << "." << GLFW_VERSION_MINOR << "."
-                       << GLFW_VERSION_REVISION << "." << Log::Flush;
+                       << GLFW_VERSION_REVISION << "." << FLog::Flush;
 
-        if (glfwVulkanSupported()) Log::Note() << "Vulkan is supported." << Log::Flush;
+        if (glfwVulkanSupported()) FLog::Note() << "Vulkan is supported." << FLog::Flush;
 
     }
 
-    GLFWBackend::~GLFWBackend() {
+    FGLFWBackend::~FGLFWBackend() {
         SystemWindows.clear();
 
         glfwTerminate();
 
-        Log::Info() << "GLFWBackend terminated." << Log::Flush;
+        FLog::Info() << "GLFWBackend terminated." << FLog::Flush;
     }
 
-    void GLFWBackend::Run() {
+    void FGLFWBackend::Run() {
         MainLoop();
     }
 
-    void GLFWBackend::Terminate() {
+    void FGLFWBackend::Terminate() {
         // glfwSetWindowShouldClose(systemWindow, GLFW_TRUE);
         finishFlag = true;
     }
 
-    void GLFWBackend::MainLoop() {
+    void FGLFWBackend::MainLoop() {
 
         // static auto BeginEvents = FuncRun(beginEvents);
         // static auto EndEvents   = FuncRun(endEvents);
@@ -78,15 +78,15 @@ namespace Slab::Graphics {
         }
     }
 
-    GLFWBackend &GLFWBackend::GetInstance() {
-        // TODO: assert(Core::BackendManager::GetImplementation() == Core::GLFW);
+    FGLFWBackend& FGLFWBackend::GetInstance() {
+        // TODO: assert(Core::FBackendManager::GetImplementation() == Core::GLFW);
 
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
-        return *DynamicPointerCast<GLFWBackend>(guiBackend);
+        return *DynamicPointerCast<FGLFWBackend>(guiBackend);
     }
 
-    TPointer<FPlatformWindow> GLFWBackend::CreatePlatformWindow(const Str& title) {
+    TPointer<FPlatformWindow> FGLFWBackend::CreatePlatformWindow(const Str& title) {
         TPointer<FGLFWPlatformWindow> NewPlatformWindow = New<FGLFWPlatformWindow>();
         NewPlatformWindow->ProvideSelfReference(NewPlatformWindow);
 

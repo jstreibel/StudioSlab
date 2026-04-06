@@ -12,12 +12,12 @@
 namespace Slab::Graphics {
 
 
-    SFMLBackend::SFMLBackend()
-        : GraphicBackend("SFML backend")
+    FSFMLBackend::FSFMLBackend()
+        : FGraphicBackend("SFML backend")
     {
     }
 
-    void SFMLBackend::Run() {
+    void FSFMLBackend::Run() {
 
         sf::Clock timer;
         timer.restart();
@@ -26,7 +26,7 @@ namespace Slab::Graphics {
 
             // IterateReferences(graphicModules, FuncRun(beginEvents));
             for(const auto& system_window : SystemWindows)
-                DynamicPointerCast<SFMLSystemWindow>(system_window)->PollEvents();
+                DynamicPointerCast<FSFMLSystemWindow>(system_window)->PollEvents();
             // IterateReferences(graphicModules, FuncRun(endEvents));
 
             for(const auto& system_window : SystemWindows)
@@ -38,13 +38,13 @@ namespace Slab::Graphics {
         }
     }
 
-    SFMLBackend &SFMLBackend::GetInstance() {
+    FSFMLBackend& FSFMLBackend::GetInstance() {
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
-        return *DynamicPointerCast<SFMLBackend>(guiBackend);
+        return *DynamicPointerCast<FSFMLBackend>(guiBackend);
     }
 
-    void SFMLBackend::Terminate() {
+    void FSFMLBackend::Terminate() {
         off_sync.lock();
 
         // window->close();
@@ -54,8 +54,8 @@ namespace Slab::Graphics {
         off_sync.unlock();
     }
 
-    TPointer<FPlatformWindow> SFMLBackend::CreatePlatformWindow(const Str &title) {
-        return New<SFMLSystemWindow>();
+    TPointer<FPlatformWindow> FSFMLBackend::CreatePlatformWindow(const Str &title) {
+        return New<FSFMLSystemWindow>();
     }
 
 }

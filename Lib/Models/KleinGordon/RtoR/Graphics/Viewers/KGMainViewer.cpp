@@ -5,13 +5,13 @@
 #include "KGMainViewer.h"
 
 namespace Slab::Models::KGRtoR {
-    void KGMainViewer::addKGViewer(const TPointer<KGViewer> &kg_viewer) {
+    void FKGMainViewer::addKGViewer(const TPointer<FKGViewer> &kg_viewer) {
         kg_viewers.emplace_back(kg_viewer);
         addViewer(kg_viewer);
     }
 
-    bool KGMainViewer::setCurrentViewer(Slab::Index i) {
-        auto value = MainViewer::setCurrentViewer(i);
+    bool FKGMainViewer::setCurrentViewer(Slab::Index i) {
+        auto value = FMainViewer::setCurrentViewer(i);
 
         auto kg_viewer = getCurrentKGViewer();
         if(kg_viewer){
@@ -22,23 +22,23 @@ namespace Slab::Models::KGRtoR {
         return value;
     }
 
-    void KGMainViewer::setFunctionTimeDerivative(TPointer<R2toR::FNumericFunction> func) {
+    void FKGMainViewer::setFunctionTimeDerivative(TPointer<R2toR::FNumericFunction> func) {
         ddtbase_function = std::move(func);
 
         for(auto &kg_viewer : kg_viewers) kg_viewer->SetFunctionDerivative(ddtbase_function);
     }
 
-    TPointer<R2toR::FNumericFunction> KGMainViewer::getFunctionTimeDerivative() {
+    TPointer<R2toR::FNumericFunction> FKGMainViewer::getFunctionTimeDerivative() {
         return ddtbase_function;
     }
 
-    Slab::TPointer<KGViewer> KGMainViewer::getCurrentKGViewer() {
+    Slab::TPointer<FKGViewer> FKGMainViewer::getCurrentKGViewer() {
         auto curr_viewer = getCurrentViewer();
 
         if(!Slab::Contains(kg_viewers, curr_viewer))
             return nullptr;
 
-        return Slab::DynamicPointerCast<Slab::Models::KGRtoR::KGViewer>(curr_viewer);
+        return Slab::DynamicPointerCast<Slab::Models::KGRtoR::FKGViewer>(curr_viewer);
     }
 
 } // Slab::Models::KGRtoR

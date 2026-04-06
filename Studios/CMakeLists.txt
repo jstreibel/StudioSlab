@@ -2,8 +2,9 @@
 #set ( SlabLibs		Slab-Utils		Slab-Core		Slab-Math		Slab-Models		Slab-Graphics		)
 
 
-include_directories(../Lib)
+include_directories(../Lib ../Slab)
 
+add_subdirectory(CLI)
 add_subdirectory(MolecularDynamics)
 add_subdirectory(XY)
 add_subdirectory(Fields)
@@ -11,7 +12,9 @@ add_subdirectory(Tests)
 add_subdirectory(FunctionalMinimization)
 add_subdirectory(Prototype)
 add_subdirectory(Lab)
+add_subdirectory(LabV2)
 add_subdirectory(Little-Plane-Designer)
+add_subdirectory(WebGL-WASM)
 
 
 

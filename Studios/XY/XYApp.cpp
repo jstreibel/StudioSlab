@@ -18,25 +18,25 @@
 
 #define DONT_SELF_REGISTER false
 
-XY::App::App(int argc, const char **argv) : Slab::Core::AppBase(argc, argv, DONT_SELF_REGISTER) {
+XY::FApp::FApp(int argc, const char **argv) : Slab::Core::FAppBase(argc, argv, DONT_SELF_REGISTER) {
     Interface->AddParameters({&N, &T, &MCSteps, &transient});
 
     RegisterToManager();
 
-    Slab::Core::BackendManager::Startup("SFML");
+    Slab::Core::FBackendManager::Startup("SFML");
     // Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
     Slab::Core::LoadModule("Nuklear");
 
-    Slab::Core::CLArgsManager::Parse(argc, argv);
+    Slab::Core::FCLArgsManager::Parse(argc, argv);
 }
 
 
-int XY::App::App::run() {
+int XY::FApp::run() {
 
     auto viewControl = Slab::New<Slab::Lost::ThermoOutput::SingleSimViewController>(*N, *MCSteps, *transient);
 
-    using Algorithm = Slab::Math::XYMetropolisAlgorithm;
-    Slab::Math::XYMetropolisAlgorithm mcCalculator(*N, *T, .0,
+    using Algorithm = Slab::Math::FXYMetropolisAlgorithm;
+    Slab::Math::FXYMetropolisAlgorithm mcCalculator(*N, *T, .0,
                                                    Algorithm::InitialConditions::Ferromagnetic,
                                                    Algorithm::Dynamic::Metropolis,
                                                    Algorithm::Sweeping::Random);
@@ -44,8 +44,8 @@ int XY::App::App::run() {
     viewControl->setAlgorithm(&mcCalculator);
 
     auto backend = Slab::Graphics::GetGraphicsBackend();
-    Slab::DynamicPointerCast<Slab::Graphics::SFMLSystemWindow>
-            (backend->GetMainSystemWindow())->addSFMLListener(viewControl);
+    Slab::DynamicPointerCast<Slab::Graphics::FSFMLSystemWindow>
+            (backend->GetMainSystemWindow())->AddSFMLListener(viewControl);
     backend->Run();
 
     return 0;

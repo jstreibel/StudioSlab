@@ -12,7 +12,7 @@
 
 namespace Slab::Graphics {
 
-    class WindowColumn : public FSlabWindow {
+    class FWindowColumn : public FSlabWindow {
         std::list<TPointer<FSlabWindow>> Windows;
         FRealVector heights;
 
@@ -21,7 +21,7 @@ namespace Slab::Graphics {
 
 
     public:
-        WindowColumn();
+        FWindowColumn();
 
         void addWindow(const TPointer<FSlabWindow>& window, float windowHeight = -1);
 
@@ -32,6 +32,7 @@ namespace Slab::Graphics {
         void arrangeWindows();
 
         void ImmediateDraw(const FPlatformWindow&) override;
+        auto RegisterDeferredDrawCalls(const FPlatformWindow&) -> void override;
 
         void NotifyReshape(int newWinW, int newWinH) override;
 
@@ -49,6 +50,7 @@ namespace Slab::Graphics {
         auto Set_y(int y) -> void override;
     };
 
+    using WindowColumn = FWindowColumn;
 
 }
 

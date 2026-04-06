@@ -11,7 +11,7 @@
 
 namespace Slab {
 
-    using Platform = Graphics::GraphicBackend;
+    using Platform = Graphics::FGraphicBackend;
 
     /**
      * Application class

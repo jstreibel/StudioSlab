@@ -11,7 +11,7 @@
 
 namespace Slab::Graphics {
 
-    class Viewer : public WindowPanel {
+    class FViewer : public FWindowPanel {
         TPointer<Math::R2toR::FNumericFunction> base_function;
 
         bool is_visible = false;
@@ -20,7 +20,7 @@ namespace Slab::Graphics {
         TPointer<FGUIWindow> gui_window;
 
     public:
-        explicit Viewer(TPointer<FGUIWindow>, Slab::TPointer<Math::R2toR::FNumericFunction> = nullptr);
+        explicit FViewer(TPointer<FGUIWindow>, Slab::TPointer<Math::R2toR::FNumericFunction> = nullptr);
 
         virtual void SetFunction(TPointer<Math::R2toR::FNumericFunction> function);
         auto getFunction() const -> TPointer<const Math::R2toR::FNumericFunction>;
@@ -31,6 +31,8 @@ namespace Slab::Graphics {
         virtual void notifyBecameInvisible();
         bool isVisible() const;
     };
+
+    using Viewer [[deprecated("Use FViewer")]] = FViewer;
 
 } // Studios::Fields::Viewers
 

@@ -10,15 +10,15 @@ namespace Slab::Math {
     #define DO_REGISTER true
 
 
-    MetropolisConfig::MetropolisConfig(UInt max_steps)
+    FMetropolisConfig::FMetropolisConfig(UInt max_steps)
             : FNumericConfig(DONT_REGISTER), max_steps(max_steps) {
     }
 
-    UIntBig MetropolisConfig::Get_n() const {
+    UIntBig FMetropolisConfig::Get_n() const {
         return max_steps;
     }
 
-    Str MetropolisConfig::to_string() const {
+    Str FMetropolisConfig::to_string() const {
         return {};
     }
 

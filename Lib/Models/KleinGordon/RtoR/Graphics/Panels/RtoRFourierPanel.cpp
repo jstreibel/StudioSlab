@@ -128,10 +128,10 @@ namespace Slab::Models::KGRtoR {
 
                 if ((autoRefresh || ImGui::Button("Compute ℱₖ⁻¹")) && needRefresh) {
                     if (selected == 1) {
-                        RtoR::DFTInverse::LowPass lowPass(kFilterCutoff);
+                        RtoR::FDFTInverse::FLowPass lowPass(kFilterCutoff);
                         refreshInverseDFT(&lowPass);
                     } else if (selected == 0) {
-                        RtoR::DFTInverse::HighPass highPass(kFilterCutoff);
+                        RtoR::FDFTInverse::FHighPass highPass(kFilterCutoff);
                         refreshInverseDFT(&highPass);
                     }
 
@@ -165,7 +165,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void
@@ -180,10 +180,10 @@ namespace Slab::Models::KGRtoR {
 
         Graphics::FPlotter::AddCurve(kSpaceGraph,
                                     Slab::Naked(cutoffLine),
-                                    PlotThemeManager::GetCurrent()->FuncPlotStyles[0], "k cutoff");
+                                    FPlotThemeManager::GetCurrent()->FuncPlotStyles[0], "k cutoff");
     }
 
-    void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
+    void RtoRFourierPanel::refreshInverseDFT(RtoR::FDFTInverse::FFilter *filter) {
         assert((sizeof(DevFloat)==sizeof(double)) && " make sure this code is compatible with fftw3");
 
         fix xMin = FRtoRPanel::Params->Get_xMin();
@@ -201,7 +201,7 @@ namespace Slab::Models::KGRtoR {
         int _n = 0;
         for(auto &data : *dftData){
 
-            auto func = RtoR::DFTInverse::Compute(data.Result, xMin, L,
+            auto func = RtoR::FDFTInverse::Compute(data.Result, xMin, L,
                                                   filter);
 
             auto *out = &rebuiltHistory->At(0, _n);
@@ -238,7 +238,7 @@ namespace Slab::Models::KGRtoR {
 
             for(auto j=0; j<M; ++j) spaceData_temp[j] = simulationHistory->At(i, j₀+j);
 
-            auto dftMagnitudes = RtoR::DFT::Compute(tempSpace).getMagnitudes();
+            auto dftMagnitudes = RtoR::FDFT::Compute(tempSpace).getMagnitudes();
 
             assert(dftMagnitudes->Count()==m);
 

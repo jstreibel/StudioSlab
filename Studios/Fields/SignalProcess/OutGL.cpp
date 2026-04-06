@@ -20,7 +20,7 @@ Real __t=0;
 
 
 
-void RtoR::Signal::JackControl::draw( ) {
+void RtoR::Signal::FJackControl::draw( ) {
     Window::draw( );
 
     float w = float(this->w) - (float)2*this->hPadding,
@@ -47,7 +47,7 @@ void RtoR::Signal::JackControl::draw( ) {
     static bool isRecording = false;
 
     if (ImGui::Button("Rec", {120, 60}))
-        isRecording = JackServer::GetInstance()->toggleRecording();
+        isRecording = FJackServer::GetInstance()->toggleRecording();
 
     ImVec4 color = isRecording ? ImVec4(1.0f, 0.0f, 0.0f, 1.0f) : ImVec4(0.2f, .0f, .0f, 1.0f);
 
@@ -86,7 +86,7 @@ void RtoR::Signal::JackControl::draw( ) {
  *    \_______  /|   __/  \___  >|___|  / \______  /|_______ \
  *            \/ |__|         \/      \/         \/         \/
  */
-RtoR::Signal::OutGL::OutGL(const NumericConfig &params, DevFloat phiMin, DevFloat phiMax)
+RtoR::Signal::FOutGL::FOutGL(const NumericConfig &params, DevFloat phiMin, DevFloat phiMax)
         : RtoR::Monitor(params, phiMin, phiMax) {
 
     panel.addWindow(&jackControlWindow);
@@ -114,7 +114,7 @@ RtoR::Signal::OutGL::OutGL(const NumericConfig &params, DevFloat phiMin, DevFloa
         panel.addWindow(&fullRecordingGraph);
     }
 }
-void RtoR::Signal::OutGL::handleOutput(const OutputPacket &packet) {
+void RtoR::Signal::FOutGL::handleOutput(const OutputPacket &packet) {
     // OutputOpenGL::_out(outInfo);
 
     auto field = packet.getEqStateData<RtoR::EquationState>();
@@ -171,7 +171,7 @@ void renderMatrix(const Vector<Vector<Real>>& matrix)
     glDeleteTextures(1, &textureID);
 }
 
-void RtoR::Signal::OutGL::draw() {
+void RtoR::Signal::FOutGL::draw() {
     static size_t lastStep = 0;
 
     auto deltaSteps = 0;
@@ -180,7 +180,7 @@ void RtoR::Signal::OutGL::draw() {
         lastStep = lastData.getSteps();
     }
 
-    auto interval = frameTimer.getElTime_msec();
+    auto interval = frameTimer.GetElapsedTimeMsec();
 
     auto stepsPerSecond = 1e3*deltaSteps/interval;
 
@@ -194,7 +194,7 @@ void RtoR::Signal::OutGL::draw() {
     stats.addVolatileStat(Str("step ") + ToStr(lastData.getSteps()));
     stats.addVolatileStat("");
 
-    auto jackServer = JackServer::GetInstance();
+    auto jackServer = FJackServer::GetInstance();
     Color samplingStatusColor = jackServer->isSubSampled()?Color{1,0,0,1}:Color{0,1,0,1};
 
     stats.addVolatileStat("Jack I/O:");
@@ -211,7 +211,7 @@ void RtoR::Signal::OutGL::draw() {
     {
         static RtoR::NumericFunction_CPU *func = nullptr;
 
-        Vector<float> rec_f = JackServer::GetInstance()->getRecording();
+        Vector<float> rec_f = FJackServer::GetInstance()->getRecording();
         RealArray rec(rec_f.begin(), rec_f.end());
         auto recTime =  rec.size()/48000.;
 
@@ -235,7 +235,7 @@ void RtoR::Signal::OutGL::draw() {
         static RtoR::NumericFunction_CPU *func1 = nullptr,
                                           *func2 = nullptr;
 
-        auto probed = JackServer::GetInstance()->getLastOutputData();
+        auto probed = FJackServer::GetInstance()->getLastOutputData();
 
         const auto intervalSec = 1. / (48000 / 1024.);
         if(probed.size()>0) {
@@ -288,10 +288,10 @@ void RtoR::Signal::OutGL::draw() {
             for(auto i=0; i<func.N; i++) in[i] = F[i];
 
             {
-                auto floats = Studios::Utils::resample(in, NMore);
+                auto floats = Studios::Utils::Resample(in, NMore);
                 for (auto i = 0; i < floats.size(); i++) FMore[i] = floats[i];
             } {
-                auto floats = Studios::Utils::resample(in, NLess);
+                auto floats = Studios::Utils::Resample(in, NLess);
                 for (auto i = 0; i < floats.size(); i++) FLess[i] = floats[i];
             }
 
@@ -359,16 +359,16 @@ void RtoR::Signal::OutGL::draw() {
 
 
 }
-auto RtoR::Signal::OutGL::getWindowSizeHint() -> IntPair {
+auto RtoR::Signal::FOutGL::getWindowSizeHint() -> IntPair {
     return {2600, 1700}; }
 
-bool RtoR::Signal::OutGL::notifyKeyboard(unsigned char key, int x, int y) {
+bool RtoR::Signal::FOutGL::notifyKeyboard(unsigned char key, int x, int y) {
     GUIEventListener::notifyKeyboard(key, x, y);
 
     if(key == 13) t0 = lastData.getSimTime();
 }
 
-Vector<Vector<Real>> RtoR::Signal::OutGL::getHistoryMatrixData() {
+Vector<Vector<Real>> RtoR::Signal::FOutGL::getHistoryMatrixData() {
     auto M = history.size();
 
     Vector<Vector<Real>> outputData(M);

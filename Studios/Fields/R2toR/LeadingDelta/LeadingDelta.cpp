@@ -9,25 +9,25 @@
 #include "Monitor.h"
 
 namespace Studios::Fields::R2toRLeadingDelta {
-    TPointer<RingDeltaFunc> ringDelta1;
+    TPointer<FRingDeltaFunc> ringDelta1;
 
-    BoundaryCondition::BoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
-                                         TPointer<RingDeltaFunc> ringDelta,
-                                         DevFloat tf,
-                                         bool deltaOperatesOnSpeed)
-            : Slab::Math::Base::BoundaryConditions(prototype)
-            , ringDelta(std::move(ringDelta))
-            , tf(tf)
-            , deltaSpeedOp(deltaOperatesOnSpeed) { }
+    FBoundaryCondition::FBoundaryCondition(const TPointer<const R2toR::EquationState>& prototype,
+                                           TPointer<FRingDeltaFunc> ringDelta,
+                                           DevFloat tf,
+                                           bool deltaOperatesOnSpeed)
+    : Slab::Math::Base::BoundaryConditions(prototype)
+    , ringDelta(std::move(ringDelta))
+    , tf(tf)
+    , deltaSpeedOp(deltaOperatesOnSpeed) { }
 
-    void BoundaryCondition::Apply(Slab::Math::Base::EquationState &state, DevFloat t) const {
+    void FBoundaryCondition::Apply(Slab::Math::Base::EquationState &state, DevFloat t) const {
         const bool applyDelta = t<tf || tf<0;
 
         auto stateKG = dynamic_cast<Slab::Math::R2toR::EquationState&>(state);
 
         if (t == 0) {
             RtoR::NullFunction nullFunction;
-            R2toR::FunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
+            R2toR::FFunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
 
             stateKG.SetPhi(fullNull);
             stateKG.SetDPhiDt(fullNull);
@@ -79,14 +79,14 @@ namespace Studios::Fields::R2toRLeadingDelta {
     }
 
 
-    Builder::Builder(bool do_register) : Models::KGR2toR::Builder("Leading Delta", "simulation builder for (2+1)-d "
-                                                                     "signum-Gordon shockwave as the "
-                                                                     "trail of a driving delta.", false) {
+    FBuilder::FBuilder(bool do_register) : Models::KGR2toR::FKGR2toRBuilder("Leading Delta", "simulation builder for (2+1)-d "
+                                                                               "signum-Gordon shockwave as the "
+                                                                               "trail of a driving delta.", false) {
         Interface->AddParameters({&W_0, &eps, &deltaDuration});
 
         if(do_register) RegisterToManager();
     }
-    auto Builder::NotifyInterfaceSetupIsFinished()    ->       void {
+    auto FBuilder::NotifyInterfaceSetupIsFinished()    ->       void {
         FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
         auto &p = *KGNumericConfig;
@@ -99,31 +99,29 @@ namespace Studios::Fields::R2toRLeadingDelta {
         if(!asTheta) coef *= 2*eps;
 
         // p.sett(L*.5 - eps);
-        drivingFunc = New<RingDeltaFunc>(*eps, coef, dt, asTheta);
+        drivingFunc = New<FRingDeltaFunc>(*eps, coef, dt, asTheta);
         ringDelta1 = drivingFunc;
     }
 
-    auto Builder::getBoundary() -> TPointer<Base::BoundaryConditions> {
+    auto FBuilder::getBoundary() -> TPointer<Base::BoundaryConditions> {
         auto eqStatePrototype = newFieldState();
 
-        return New<BoundaryCondition>(eqStatePrototype, drivingFunc, *deltaDuration, false);
+        return New<FBoundaryCondition>(eqStatePrototype, drivingFunc, *deltaDuration, false);
     }
 
-    auto Builder::buildOpenGLOutput() -> Models::KGR2toR::OutputOpenGL * {
-        return new OutGL(KGNumericConfig->Get_n(), ringDelta1);
+    auto FBuilder::buildOpenGLOutput() -> Models::KGR2toR::FOutputOpenGL * {
+        return new FOutGL(KGNumericConfig->Get_n(), ringDelta1);
     }
 
-    Str Builder::SuggestFileName() const {
+    Str FBuilder::SuggestFileName() const {
         auto fname = FNumericalRecipe::SuggestFileName();
 
         return fname + " " + Interface->ToString({"W", "eps", "delta_duration"});
     }
 
-    void *Builder::getHamiltonian() {
+    void *FBuilder::getHamiltonian() {
         return nullptr;
     }
 
 
 }
-
-

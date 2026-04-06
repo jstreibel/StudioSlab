@@ -3,13 +3,16 @@
 //
 
 #include "OMPUtils.h"
-#include "omp.h"
+
+#if OMP_SUPPORT == true
+#include <omp.h>
+#endif
 
 
 namespace Slab {
 
-    IntPair getBeginAndEndForThreadedFor(int N) {
-#ifdef USE_OMP
+    IntPair GetBeginAndEndForThreadedFor(int N) {
+#if OMP_SUPPORT == true
         const int nThreads = omp_get_num_threads();
         const int myThreadRank = omp_get_thread_num();
         const int block_size = N / nThreads;

@@ -11,8 +11,8 @@
 
 namespace Slab::Math::RtoR {
 
-    DFTInverse::LowPass::LowPass(int kThreshold) : kThreshold(kThreshold)   {    }
-    Complex DFTInverse::LowPass::operator()(const Complex &A, DevFloat k) {
+    FDFTInverse::FLowPass::FLowPass(int kThreshold) : kThreshold(kThreshold)   {    }
+    Complex FDFTInverse::FLowPass::operator()(const Complex &A, DevFloat k) {
         fix fabsk = fabs(k);
         if(fabsk>kMax) kMax = fabsk;
 
@@ -20,8 +20,8 @@ namespace Slab::Math::RtoR {
 
         return A;
     }
-    DFTInverse::HighPass::HighPass(int kThreshold) : kThreshold(kThreshold) {    }
-    Complex DFTInverse::HighPass::operator()(const Complex &A, DevFloat k) {
+    FDFTInverse::FHighPass::FHighPass(int kThreshold) : kThreshold(kThreshold) {    }
+    Complex FDFTInverse::FHighPass::operator()(const Complex &A, DevFloat k) {
         fix fabsk = fabs(k);
         if(fabsk>kMax) kMax = fabsk;
 
@@ -30,13 +30,13 @@ namespace Slab::Math::RtoR {
         return A;
     }
 
-    TPointer<DFTInverse::DFTInverseFunction> DFTInverse::Compute(const DFTResult &dftResult,
-                                                           DevFloat xMin,
-                                                           DevFloat L,
-                                                           Filter *filter)
+    TPointer<FDFTInverse::FDFTInverseFunction> FDFTInverse::Compute(const FDFTResult &dftResult,
+                                                                    DevFloat xMin,
+                                                                    DevFloat L,
+                                                                    FFilter *filter)
 
     {
-        Filter tempFilter;
+        FFilter tempFilter;
         if(filter== nullptr) filter = &tempFilter;
 
 
@@ -84,7 +84,7 @@ namespace Slab::Math::RtoR {
         fftw_execute(p);
 
         // Move data to function
-        TPointer<DFTInverseFunction> func(new NumericFunction_CPU(N, xMin, xMin+L));
+        TPointer<FDFTInverseFunction> func(new NumericFunction_CPU(N, xMin, xMin+L));
         auto &vals = func->getSpace().getHostData(true);
         // fix N_inv = 1./N;
         for(int i=0; i<N; ++i)

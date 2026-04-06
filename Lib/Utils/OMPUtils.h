@@ -11,19 +11,24 @@
 
 namespace Slab {
 
-    IntPair getBeginAndEndForThreadedFor(int N);
+    IntPair GetBeginAndEndForThreadedFor(int N);
+
+    [[deprecated("Use GetBeginAndEndForThreadedFor")]]
+    inline IntPair getBeginAndEndForThreadedFor(const int N) {
+        return GetBeginAndEndForThreadedFor(N);
+    }
 
 #if OMP_SUPPORT==true
 
 #define OMP_GET_BEGIN_END(beginVarName, endVarName, NSites) \
-    IntPair be = getBeginAndEndForThreadedFor(NSites); \
+    IntPair be = GetBeginAndEndForThreadedFor(NSites); \
     int beginVarName = be.first, endVarName = be.second;
 
 /** Esse for espera estar em um ambiente (um escopo) onde globalmente seja valida
  * uma chamada a
  * #pragma omp parallel num_threads(NUM_THREADS) */
 #define OMP_PARALLEL_FOR(indexLabel, NSites) \
-    IntPair be = getBeginAndEndForThreadedFor(NSites); \
+    IntPair be = GetBeginAndEndForThreadedFor(NSites); \
     for(UInt indexLabel=be.first; indexLabel<be.second; indexLabel++)
 
 #else

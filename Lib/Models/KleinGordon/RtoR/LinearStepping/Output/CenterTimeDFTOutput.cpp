@@ -11,10 +11,12 @@
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 #include "SnapshotOutput.h"
 
+#include <limits>
+
 namespace Slab::Models::KGRtoR {
 
-    Slab::Models::KGRtoR::CenterTimeDFTOutput::CenterTimeDFTOutput(
-            DevFloat t_max, CountType max_steps, TimeDFTOutputConfig dftConfig)
+    Slab::Models::KGRtoR::FCenterTimeDFTOutput::FCenterTimeDFTOutput(
+            DevFloat t_max, CountType max_steps, FTimeDFTOutputConfig dftConfig)
     : FOutputChannel(Str("Single-location time-DFT"), 10,
              Str("t_start=")    + ToStr(Common::max(dftConfig.t_start, 0.0)) +
              Str(" ... t_end=") + ToStr(Common::min(dftConfig.t_end, t_max)))
@@ -27,13 +29,13 @@ namespace Slab::Models::KGRtoR {
     , step_end  ((int)(t_end  /t_max * (DevFloat)max_steps))
     {    }
 
-    void Slab::Models::KGRtoR::CenterTimeDFTOutput::HandleOutput(const Slab::Math::FOutputPacket &packet) {
+    void Slab::Models::KGRtoR::FCenterTimeDFTOutput::HandleOutput(const Slab::Math::FOutputPacket &packet) {
         assert(x_measure.size() == dataset.size());
 
         fix curr_step = packet.GetSteps();
         if(curr_step < step_start || curr_step > step_end) return;
 
-        auto funky = packet.GetNakedStateData<KGRtoR::EquationState>();
+        auto funky = packet.GetNakedStateData<KGRtoR::FEquationState>();
 
         IN phi = funky->getPhi();
         auto i=0;
@@ -43,22 +45,47 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    size_t CenterTimeDFTOutput::ComputeNextRecStep(UInt currStep) {
-        if(currStep < step_start)
-            return step_start;
+    auto FCenterTimeDFTOutput::ShouldOutput(long unsigned timestep) -> bool {
+        if (step_start > step_end) return false;
 
-        return FOutputChannel::ComputeNextRecStep(currStep);
+        const auto step = static_cast<size_t>(timestep);
+        const auto start = static_cast<size_t>(step_start);
+        const auto end = static_cast<size_t>(step_end);
+
+        if (step < start || step > end) return false;
+
+        const auto interval = static_cast<size_t>(Get_nSteps());
+        return ((step - start) % interval) == 0;
     }
 
-    bool CenterTimeDFTOutput::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
+    size_t FCenterTimeDFTOutput::ComputeNextRecStep(UInt currStep) {
+        if (step_start > step_end) {
+            return std::numeric_limits<size_t>::max();
+        }
+
+        const auto curr = static_cast<size_t>(currStep);
+        const auto start = static_cast<size_t>(step_start);
+        const auto end = static_cast<size_t>(step_end);
+
+        if (curr < start) {
+            return start;
+        }
+
+        const auto interval = static_cast<size_t>(Get_nSteps());
+        const auto next = start + (((curr - start) / interval) + 1) * interval;
+
+        return next <= end ? next : std::numeric_limits<size_t>::max();
+    }
+
+    bool FCenterTimeDFTOutput::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
         FOutputChannel::NotifyIntegrationHasFinished(theVeryLastOutputInformation);
-        using DFT = Slab::Math::RtoR::DFT;
+        using FDFT = Slab::Math::RtoR::FDFT;
 
         Vector<TPointer<RtoR::NumericFunction>> maggies;
         for(auto &data : dataset) {
             auto slice = New<Math::RtoR::NumericFunction_CPU>(RealArray(data.data(), data.size()), t_start, t_end);
-            auto result = DFT::Compute(*slice.get());
-            maggies.emplace_back(DFT::Magnitudes(result));
+            auto result = FDFT::Compute(*slice.get());
+            maggies.emplace_back(FDFT::Magnitudes(result));
         }
 
         auto average = maggies[0];
@@ -77,7 +104,7 @@ namespace Slab::Models::KGRtoR {
         py_entries.emplace_back("t_start",        ToStr(t_start)    );
         py_entries.emplace_back("t_end",          ToStr(t_end)      );
 
-        return SnapshotOutput::OutputNumericFunction(average->getSpace(), filename, py_entries);
+        return FSnapshotOutput::OutputNumericFunction(average->getSpace(), filename, py_entries);
     }
 
 }

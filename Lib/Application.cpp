@@ -10,12 +10,13 @@
 #include "Application.h"
 
 #include <utility>
+#include "Graphics/Backend/PlatformWindow.h"
 
 namespace Slab {
 
 
     TPointer<Platform> FApplication::CreatePlatform() {
-        return Slab::DynamicPointerCast<Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
+        return Slab::DynamicPointerCast<Graphics::FGraphicBackend>(Slab::CreatePlatform("GLFW"));
     }
 
     FApplication::FApplication(Str name, const int argc, const char *argv[])
@@ -25,15 +26,15 @@ namespace Slab {
     {
         Slab::Startup();
 
-        Core::Log::Info() << "Compiled with " << USED_CXX_COMPILER << Core::Log::Flush;
-        // Log::Info() << "Compiler: " << COMPILER_NAME << Log::Flush;
-        Core::Log::Info() << "PWD: " << Common::GetPWD() << Core::Log::Flush;
+        Core::FLog::Info() << "Compiled with " << USED_CXX_COMPILER << Core::FLog::Flush;
+        // FLog::Info() << "Compiler: " << COMPILER_NAME << FLog::Flush;
+        Core::FLog::Info() << "PWD: " << Common::GetPWD() << Core::FLog::Flush;
     }
 
     FApplication::~FApplication() {
         if (p_Platform != nullptr) p_Platform->Terminate();
 
-        Core::BackendManager::UnloadAllModules();
+        Core::FBackendManager::UnloadAllModules();
     }
 
     bool FApplication::Create(Resolution width, Resolution height) {

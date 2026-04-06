@@ -12,15 +12,15 @@
 namespace Slab::Math::RtoR {
 
     class InverseFourier : public RtoR::Function {
-        DFTResult modes;
+        FDFTResult modes;
     public:
         InverseFourier() = default;
-        explicit InverseFourier(DFTResult modes, DevFloat L)
+        explicit InverseFourier(FDFTResult modes, DevFloat L)
         : modes(std::move(modes)) {};
 
         DevFloat operator()(DevFloat x) const override;
 
-        void setModes(DFTResult _modes) { modes = std::move(_modes); }
+        void setModes(FDFTResult _modes) { modes = std::move(_modes); }
     };
 
 } // RtoR

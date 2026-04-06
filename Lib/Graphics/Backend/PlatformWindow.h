@@ -14,6 +14,8 @@
 #include "Graphics/Backend/Events/MouseState.h"
 #include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
 #include "Graphics/Interfaces/IResolutionProvider.h"
+#include "../Interfaces/IDrawBackend2D.h"
+#include "Graphics/Interfaces/IDrawBackend2DProvider.h"
 #include "Graphics/Modules/GUIModule/GUIContext.h"
 #include "Graphics/Styles/Colors.h"
 
@@ -21,27 +23,8 @@ namespace Slab::Graphics {
 
     using FPlatformWindow_RawPointer = void*;
 
-    class FPlatformWindow : public IResolutionProvider {
-        friend class GraphicBackend;
-
-        Vector<TPointer<FPlatformWindowEventListener>> Stash;
-        TPointer<FGUIContext> GuiContext = nullptr;
-
-        TVolatile<FPlatformWindow> SelfReference;
-
-    protected:
-        virtual bool ProvideSelfReference(const TVolatile<FPlatformWindow>&);
-
-        TPointer<FEventTranslator> EventTranslator;
-        FPlatformWindow_RawPointer r_Window;
-
-        virtual void ClearListeners();
-
-        TPointer<FMouseState> MouseState = nullptr;
-        TPointer<FKeyboardState> KeyboardState = nullptr;
-
-        virtual void Tick() = 0;
-        virtual void Flush() = 0;
+    class FPlatformWindow : public IResolutionProvider, public IDrawBackend2DProvider {
+        friend class FGraphicBackend;
     public:
         FPlatformWindow() = delete;
         explicit FPlatformWindow(void *window_ptr, TPointer<FEventTranslator>);
@@ -68,6 +51,27 @@ namespace Slab::Graphics {
 
         [[nodiscard]] TPointer<FGUIContext> GetGUIContext() const;
         TPointer<FGUIContext> SetupGUIContext();
+
+    protected:
+        virtual bool ProvideSelfReference(const TVolatile<FPlatformWindow>&);
+
+        TPointer<FEventTranslator> EventTranslator;
+        FPlatformWindow_RawPointer r_Window;
+
+        virtual void ClearListeners();
+
+        TPointer<FMouseState> MouseState = nullptr;
+        TPointer<FKeyboardState> KeyboardState = nullptr;
+
+        virtual void Tick() = 0;
+        virtual void Flush() = 0;
+
+    private:
+        Vector<TPointer<FPlatformWindowEventListener>> Stash;
+        TPointer<FGUIContext> GuiContext = nullptr;
+        TPointer<IDrawBackend2D> Renderer = nullptr;
+
+        TVolatile<FPlatformWindow> SelfReference;
     };
 
 } // Slab::Core

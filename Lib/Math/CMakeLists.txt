@@ -56,6 +56,19 @@ set ( NUMERICS_SOURCES
 		Numerics/OutputManager.cpp
 
         Numerics/OutputChannel.cpp
+		../../Slab/Math/Numerics/V2/Listeners/ConsoleProgressListenerV2.cpp
+		../../Slab/Math/Numerics/V2/Listeners/CursorHistoryListenerV2.cpp
+		../../Slab/Math/Numerics/V2/Listeners/DummyListenerV2.cpp
+		../../Slab/Math/Numerics/V2/Listeners/OutputDispatcherV2.cpp
+		../../Slab/Math/Numerics/V2/Listeners/ScalarTimeDFTListenerV2.cpp
+		../../Slab/Math/Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.cpp
+		../../Slab/Math/Numerics/V2/Listeners/StateSnapshotListenerV2.cpp
+		../../Slab/Math/Numerics/V2/Scheduling/OutputSchedulerV2.cpp
+		../../Slab/Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.cpp
+		../../Slab/Math/Numerics/V2/Scheduling/EveryWallClockTriggerV2.cpp
+		../../Slab/Math/Numerics/V2/Scheduling/WindowedEveryNStepsTriggerV2.cpp
+		../../Slab/Math/Numerics/V2/Runtime/StepperSessionV2.cpp
+		../../Slab/Math/Numerics/V2/Task/NumericTaskV2.cpp
 		Numerics/ODE/Output/Sockets/OutputConsoleMonitor.cpp
 		Numerics/ODE/Output/Sockets/HistoryKeeper.cpp
 		Numerics/ODE/Output/Sockets/OutputHistoryToFile.cpp
@@ -75,6 +88,16 @@ set ( NUMERICS_SOURCES
 		Function/NativeFunction.h
 		Data/DataManager.cpp
 		Data/DataManager.h
+		../../Slab/Math/Data/V2/LiveTopicsV2.cpp
+		../../Slab/Math/Data/V2/LiveTopicsV2.h
+		../../Slab/Math/Data/V2/LiveDataHubV2.cpp
+		../../Slab/Math/Data/V2/LiveDataHubV2.h
+		../../Slab/Math/Data/V2/SessionLiveViewV2.cpp
+		../../Slab/Math/Data/V2/SessionLiveViewV2.h
+		../../Slab/Math/Data/V2/LiveControlTopicsV2.cpp
+		../../Slab/Math/Data/V2/LiveControlTopicsV2.h
+		../../Slab/Math/Data/V2/LiveControlHubV2.cpp
+		../../Slab/Math/Data/V2/LiveControlHubV2.h
 		Numerics/ODE/Solver/LinearStepSolver.cpp
 		Numerics/ODE/Solver/EquationState.cpp
 		Numerics/ODE/Solver/BoundaryConditions.cpp
@@ -96,7 +119,6 @@ set ( THERMO_SOURCES
 		Function/CommonFunctions.h
 		Function/FunctionProduct.h
 		Numerics/ODE/Odeint/OdeintSignatureHelper.h
-        ../Models/KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.cpp
 		Numerics/Metropolis/RtoR/RtoR-Metropolis-Config.cpp
 		Numerics/Metropolis/RtoR/RtoR-Metropolis-Config.h
 )

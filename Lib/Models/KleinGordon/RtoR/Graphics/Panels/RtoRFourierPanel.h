@@ -49,7 +49,7 @@ namespace Slab::Models::KGRtoR {
 
         DevFloat kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
-        void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
+        void refreshInverseDFT(RtoR::FDFTInverse::FFilter *filter);
         void computeTimeDFT(DevFloat tMin, DevFloat tMax);
 
     public:

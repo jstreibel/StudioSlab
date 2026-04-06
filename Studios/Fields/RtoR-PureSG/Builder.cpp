@@ -5,11 +5,11 @@
 #include "Builder.h"
 #include "../RtoR-Modes/Sim/Monitor.h"
 
-namespace Studios:: PureSG {
-    Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister)
+namespace Studios::PureSG {
+    FBuilder::FBuilder(const Str &name, const Str &generalDescription, bool doRegister)
     : FKGRtoR_Recipe(name, generalDescription, doRegister) {}
 
-    void *Builder::BuildOpenGLOutput() {
+    void *FBuilder::BuildOpenGLOutput() {
         return new Monitor(KGNumericConfig, *static_cast<FKGEnergy *>(getHamiltonian()));
     }
 

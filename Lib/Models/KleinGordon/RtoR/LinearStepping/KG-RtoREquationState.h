@@ -14,10 +14,10 @@ namespace Slab::Models::KGRtoR {
 
 
 
-    class EquationState : public Models::KGState<DevFloat> {
+    class FEquationState : public Models::KGState<DevFloat> {
         typedef Models::KGState<DevFloat>::Field_ptr Field_ptr;
     public:
-        EquationState(Field_ptr phi, Field_ptr dPhiDt)
+        FEquationState(Field_ptr phi, Field_ptr dPhiDt)
         : Models::KGState<DevFloat>(std::move(phi), std::move(dPhiDt)) {}
 
         void outputPhi(OStream &out, Str separator) const override {
@@ -36,7 +36,7 @@ namespace Slab::Models::KGRtoR {
                 out << vDPhiDt[n] << separator;
         }
 
-        [[nodiscard]] EqStateOutputInterface *Copy(UInt N) const override {
+        [[nodiscard]] FEqStateOutputInterface *Copy(UInt N) const override {
             NOT_IMPLEMENTED_CLASS_METHOD
             // new EquationState(dynamic_cast<RtoR::NumericFunction*>(phi->CloneWithSize(N)),
             //                   dynamic_cast<RtoR::NumericFunction*>(dPhiDt->CloneWithSize(N)));
@@ -49,7 +49,13 @@ namespace Slab::Models::KGRtoR {
         [[nodiscard]] auto category() const -> Str override;
     };
 
-    DefinePointers(EquationState)
+    DefinePointers(FEquationState)
+
+    using EquationState [[deprecated("Use FEquationState")]] = FEquationState;
+    using EquationState_ptr [[deprecated("Use FEquationState_ptr")]] = FEquationState_ptr;
+    using EquationState_constptr [[deprecated("Use FEquationState_constptr")]] = FEquationState_constptr;
+    using EquationState_ref [[deprecated("Use FEquationState_ref")]] = FEquationState_ref;
+    using EquationState_constref [[deprecated("Use FEquationState_constref")]] = FEquationState_constref;
 }
 
 #endif //V_SHAPE_EQSTATERTOR_H

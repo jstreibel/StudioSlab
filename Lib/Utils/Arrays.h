@@ -40,14 +40,14 @@ namespace Slab {
     typedef Vector<Str> StrVector;
 
     template<typename T>
-    class ValarrayWrapper {
+    class FValarrayWrapper {
     private:
         T *data_;
         std::size_t size_;
 
     public:
         // Construct from existing data
-        ValarrayWrapper(T *data, std::size_t size) : data_(data), size_(size) {}
+        FValarrayWrapper(T *data, std::size_t size) : data_(data), size_(size) {}
 
         // Mimic the valarray interface you need
         T &operator[](std::size_t i) { return data_[i]; }
@@ -65,17 +65,22 @@ namespace Slab {
         }
     };
 
+    template<typename T>
+    using ValarrayWrapper [[deprecated("Use FValarrayWrapper")]] = FValarrayWrapper<T>;
+
     namespace Utils {
 
         typedef DevFloat MaxValue_type;
         typedef size_t MaxValue_index;
 
-        struct MaxInfo {
+        struct FMaxInfo {
             MaxValue_type value;
             MaxValue_index idx;
         };
 
-        MaxInfo GetMax(const RealArray &arr);
+        using MaxInfo [[deprecated("Use FMaxInfo")]] = FMaxInfo;
+
+        FMaxInfo GetMax(const RealArray &arr);
 
     }
 

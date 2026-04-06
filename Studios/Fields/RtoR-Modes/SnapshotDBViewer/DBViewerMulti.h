@@ -20,11 +20,11 @@ namespace Modes::DatabaseViewer {
 
     using namespace Slab;
 
-    class DBViewerMulti : public Graphics::FWindowRow {
+    class FDBViewerMulti : public Graphics::FWindowRow {
         Graphics::FGUIWindow guiWindow;
         FWindowRow topRow;
 
-        Vector<DBParser::Ptr> dbParsers;
+        Vector<FDBParser::Ptr> dbParsers;
         Graphics::FPlot2DWindow allDataDisplay;
         Graphics::FPlot2DWindow fullParticularHistoryDisplay;
         Graphics::R2toRFunctionArtist_ptr currentFullParticularHistoryArtist;
@@ -45,7 +45,7 @@ namespace Modes::DatabaseViewer {
         using FullField_ptr = TPointer<Math::R2toR::NumericFunction_CPU>;
         Vector<FullField_ptr> fullFields;
         Vector<Graphics::R2toRFunctionArtist_ptr> fullFieldsArtist;
-        Vector<Utils::MaxInfo> maxValues;
+        Vector<Utils::FMaxInfo> maxValues;
 
         std::map<Str, TPointer<Math::R2toR::NumericFunction_CPU>> fullHistoriesMap;
 
@@ -61,7 +61,7 @@ namespace Modes::DatabaseViewer {
 
         Graphics::EKeyState shiftKey = Graphics::Release;
     public:
-        explicit DBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam);
+        explicit FDBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam);
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
@@ -71,6 +71,8 @@ namespace Modes::DatabaseViewer {
 
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
     };
+
+    using DBViewerMulti [[deprecated("Use FDBViewerMulti")]] = FDBViewerMulti;
 }
 
 

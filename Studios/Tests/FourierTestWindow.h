@@ -17,7 +17,7 @@ namespace Tests {
 
     using namespace Slab;
 
-    class FourierTestWindow : public Graphics::FWindowRow {
+    class FFourierTestWindow : public Graphics::FWindowRow {
         TPointer<Graphics::PlottingTheme> theme;
 
         Graphics::WindowColumn col;
@@ -36,10 +36,12 @@ namespace Tests {
 
         void updateGraphs();
     public:
-        FourierTestWindow();
+        FFourierTestWindow();
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
     };
+
+    using FourierTestWindow [[deprecated("Use FFourierTestWindow")]] = FFourierTestWindow;
 
 } // Tests
 

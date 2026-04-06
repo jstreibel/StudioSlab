@@ -11,7 +11,7 @@ namespace Studios::PureSG {
 
     using namespace Slab::Core;
 
-    class InputSingleOscillon : public Builder {
+    class FInputSingleOscillon : public FBuilder {
         RealParameter v      = RealParameter(.0,    FParameterDescription{"v",           "Oscillon's border speed."});
         RealParameter V      = RealParameter(.0,    FParameterDescription{"u",           "Oscillon's speed."});
         RealParameter alpha  = RealParameter(.0,    FParameterDescription{'a', "alpha",  "Oscillon's initial phase (alpha)."});
@@ -19,12 +19,14 @@ namespace Studios::PureSG {
         BoolParameter mirror = BoolParameter(false, FParameterDescription{"mirror",      "Flag to signal use of negative relative signal between input oscillons field value."});
 
     public:
-        InputSingleOscillon();
+        FInputSingleOscillon();
 
         auto GetBoundary() -> Math::Base::BoundaryConditions_ptr override;
 
 
     };
+
+    using InputSingleOscillon [[deprecated("Use FInputSingleOscillon")]] = FInputSingleOscillon;
 }
 
 #endif //FIELDS_INPUTSINGLEOSCILLON_H

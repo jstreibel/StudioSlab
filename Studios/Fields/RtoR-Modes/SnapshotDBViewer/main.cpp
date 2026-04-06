@@ -20,23 +20,24 @@
 #include "Graphics/Window/SlabWindowManager.h"
 #include "../../../../Lib/Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Core/SlabCore.h"
+#include "Graphics/SlabGraphics.h"
 
 using namespace Slab;
 
-class App : public Core::AppBase {
+class FApp : public Core::FAppBase {
     Core::MultiStringParameter snapshotDBFolders = Core::MultiStringParameter({"./"}, Core::FParameterDescription{"db_folders", "the location of the snapshots database folders"});
     Core::StringParameter      criticalParameter = Core::StringParameter("harmonic",  Core::FParameterDescription{"param", "the critical param of the db set; should be the only changing value both on the filenames and snapshot header"});
 
 public:
-    App(int argc, const char **argv)
-    : AppBase(argc, argv, false)
+    FApp(int argc, const char **argv)
+    : FAppBase(argc, argv, false)
     {
         Interface->AddParameters({&snapshotDBFolders, &criticalParameter});
         Core::RegisterCLInterface(Interface);
 
-        Core::BackendManager::Startup("GLFW");
+        Core::FBackendManager::Startup("GLFW");
 
-        // Graphics::PlotThemeManager::G
+        // Graphics::FPlotThemeManager::G
 
         Core::ParseCLArgs(argc, argv);
     }
@@ -46,8 +47,8 @@ public:
 
         const auto GuiBackend = Slab::Graphics::GetGraphicsBackend();
 
-        // auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerMulti>(dbLocations, *criticalParameter);
-        const auto Viewer = Slab::New<Modes::DatabaseViewer::DBViewerSequence>(dbLocations, *criticalParameter);
+        // auto viewer = Slab::New<Modes::DatabaseViewer::FDBViewerMulti>(dbLocations, *criticalParameter);
+        const auto Viewer = Slab::New<Modes::DatabaseViewer::FDBViewerSequence>(dbLocations, *criticalParameter);
 
 
         const auto WindowManager = Slab::New<Graphics::FSlabWindowManager>();
@@ -64,7 +65,7 @@ int main(int argc, const char* argv[]) {
     return Slab::SafetyNet::jump(
     [](int argc, const char **argv)
     {
-        App app(argc, argv);
+        FApp app(argc, argv);
         return app.run();
     }, argc, argv);
 }

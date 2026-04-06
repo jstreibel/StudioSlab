@@ -69,7 +69,7 @@ void FTerrain::Setup(const b2WorldId World, const FTerrainDescriptor& Descriptor
     b_IsInitialized = true;
 }
 
-void FTerrain::Draw(const Slab::Graphics::FDraw2DParams&) {
+void FTerrain::Draw(const Slab::Graphics::FDraw2DParams& Params) {
     if (!b_IsInitialized) return;
 
     using namespace Slab;
@@ -77,17 +77,19 @@ void FTerrain::Draw(const Slab::Graphics::FDraw2DParams&) {
     const Graphics::PlotStyle GroundStyle{
         Graphics::DarkGrass,
         Graphics::Triangles,
-        false,
+        true,
+        Graphics::DarkGrass,
+        3.0f
     };
 
-    Graphics::PlotStyle SurfStyle{
+    const Graphics::PlotStyle SurfStyle{
         Graphics::GrassGreen,
         Graphics::LineStrip,
         false,
+        Graphics::Nil,
+        3.0f
     };
-    SurfStyle.thickness = 3.0f;
 
-    Draw::RenderPointSet(MeshPoints, GroundStyle);
-
-    Draw::RenderPointSet(SurfPoints, SurfStyle);
+    Params.Backend->DrawPointSet(MeshPoints, GroundStyle);
+    Params.Backend->DrawPointSet(SurfPoints, SurfStyle);
 }

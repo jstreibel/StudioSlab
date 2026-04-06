@@ -16,7 +16,7 @@
 
 namespace Slab::Graphics {
 
-    class ModesHistoryViewer : public Viewer {
+    class FModesHistoryViewer : public FViewer {
         TPointer<Math::R2toC::NumericFunction> xFourierTransform = nullptr;
         TPointer<Math::R2toR::FNumericFunction> xft_amplitudes = nullptr;
 
@@ -34,7 +34,7 @@ namespace Slab::Graphics {
         void computeTransform();
         void setupModes();
     public:
-        explicit ModesHistoryViewer(const TPointer<FGUIWindow> &);
+        explicit FModesHistoryViewer(const TPointer<FGUIWindow> &);
 
         Str GetName() const override;
 
@@ -44,6 +44,8 @@ namespace Slab::Graphics {
 
         void NotifyBecameVisible() override;
     };
+
+    using ModesHistoryViewer [[deprecated("Use FModesHistoryViewer")]] = FModesHistoryViewer;
 
 } // Slab::Graphics
 

@@ -6,6 +6,7 @@
 #define STUDIOSLAB_PLOT2DWINDOW_H
 
 #include <memory>
+#include <optional>
 
 #include "Graphics/Plot2D/Artists/LabelsArtist.h"
 
@@ -33,13 +34,32 @@ namespace Slab::Graphics {
         static std::map<Str, FPlot2DWindow*> GraphMap;
         bool b_DrawGUI = true;
 
-    protected:
-        typedef Int zOrder_t;
-
     public:
+        typedef Int zOrder_t;
         typedef std::multimap<zOrder_t, FArtist_ptr> ContentMap;
 
+        struct FOverlayControlsStyle {
+            float ToolbarButtonSizeMultiplier = 1.0f;
+            float RightButtonSizeMultiplier = 1.0f;
+            float ToolbarBackgroundAlpha = 0.82f;
+            float RightBackgroundAlpha = 0.80f;
+            float EdgeMargin = 8.0f;
+            float StripPadding = 6.0f;
+            float StripSpacing = 6.0f;
+            float RightStripTopOffset = 0.0f;
+            bool bTransparentBackground = false;
+            bool bRightStripAlignTop = false;
+            bool bRightStripAvoidDetailPanel = false;
+        };
+
+        static void SetGlobalOverlayControlsStyle(const FOverlayControlsStyle&);
+        static auto GetGlobalOverlayControlsStyle() -> FOverlayControlsStyle;
+
         explicit FPlot2DWindow(Str Title);
+        ~FPlot2DWindow() override;
+
+        [[nodiscard]] static auto GetLiveWindows() -> Vector<FPlot2DWindow *>;
+        [[nodiscard]] static auto FindLiveWindowByTitle(const Str &title) -> FPlot2DWindow *;
 
         void ImmediateDraw(const FPlatformWindow&) override;
         auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
@@ -50,11 +70,19 @@ namespace Slab::Graphics {
         void RemoveArtists(const Vector<FArtist_ptr> &artists);
 
         FAxisArtist &GetAxisArtist();
+        [[nodiscard]] auto GetWindowNumericId() const -> CountType;
+        [[nodiscard]] auto GetStableWindowIdV2() const -> Str;
+        [[nodiscard]] auto GetWindowTitle() const -> const Str &;
+        [[nodiscard]] auto GetArtists() const -> const ContentMap &;
+        [[nodiscard]] auto GetArtists() -> ContentMap &;
+        [[nodiscard]] auto TryGetArtistZOrder(const FArtist_ptr &pArtist, zOrder_t &zOrderOut) const -> bool;
+        auto SetArtistZOrder(const FArtist_ptr &pArtist, zOrder_t zOrder) -> bool;
 
         auto GetLastXHairPosition() const -> FPoint2D;
         Str GetXHairLabel(const FPoint2D &coords) const;
 
         void SetAutoReviewGraphRanges(bool);
+        [[nodiscard]] auto GetAutoReviewGraphRanges() const -> bool;
         void ReviewGraphRanges();
 
         auto GetRegion() const -> const PlottingRegion2D&;
@@ -97,11 +125,13 @@ namespace Slab::Graphics {
 
     private:
         ContentMap Content;
+        static FOverlayControlsStyle OverlayControlsStyle;
 
         bool ShowInterface = false;
 
         bool PopupOn = false;
         bool AutoReviewGraphRanges=false;
+        bool LockUnitAspectRatio = false;
 
         PlottingRegion2D Region;
 
@@ -110,6 +140,7 @@ namespace Slab::Graphics {
         // FImGuiWindowContext WindowContext;
 
         void SetupOrtho() const;
+        void EnforceUnitAspectRatio(bool animate);
 
 
     };

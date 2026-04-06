@@ -14,7 +14,7 @@
 #include "../Render/PlaneStats.h"
 
 struct FPlaneStats;
-using CAirfoil = Foil::ViternaAirfoil2412;
+using CAirfoil = Foil::FViternaAirfoil2412;
 
 auto PrettyDraw = true;
 auto DebugDraw = false;
@@ -72,13 +72,19 @@ void FBigHill::Tick(const Seconds ElapsedTime) {
 void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
     fix WinHeight = DrawInput.Window.GetHeight();
     fix WinWidth = DrawInput.Window.GetWidth();
+    const auto Renderer = DrawInput.Window.GetRenderer();
+    const Graphics::RectI Viewport{0, WinWidth, 0, WinHeight};
 
     // fix KeyboardState = PlatformWindow.GetKeyboardState();
     // HandleInputs(*KeyboardState);
 
-    Graphics::OpenGL::SetViewport(Graphics::RectI{0, WinWidth, 0, WinHeight});
-    Draw::ResetModelView();
-    Draw::SetupOrtho(Camera->GetView());
+    if (Renderer != nullptr) {
+        Renderer->BeginFrame(Viewport, Camera->GetView());
+    } else {
+        Graphics::OpenGL::SetViewport(Viewport);
+        Draw::ResetModelView();
+        Draw::SetupOrtho(Camera->GetView());
+    }
 
     if constexpr (false) GUIContext->AddDrawCall([this] {
         ImGui::Begin("Wings");
@@ -89,7 +95,7 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
     if (PrettyDraw) {
         Draw::SetupLegacyGL();
 
-        const Graphics::FDraw2DParams Params = {WinWidth, WinHeight, Camera->GetView()};
+        const Graphics::FDraw2DParams Params{WinWidth, WinHeight, Camera->GetView(), Viewport, Renderer};
         for (const auto& Drawable : Drawables) {
             Drawable->Draw(Params);
         }
@@ -126,6 +132,10 @@ void FBigHill::Draw(const Graphics::FDrawInput& DrawInput) {
     */
 
     // PlaneStats->Draw(Providers);
+
+    if (Renderer != nullptr) {
+        Renderer->EndFrame();
+    }
 }
 
 void FBigHill::HandleInputState(const FInputState InputState) {
@@ -185,11 +195,11 @@ void FBigHill::SetupMonitors() {
         Ref->SetNoGUI();
         Ref->SetRegion(PlotRegion(PlotRegionWidth, 3.0));
 
-        auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        auto Style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         Style.lineColor = Graphics::LightGrey;
         Plotter::AddRtoRFunction(Ref, C_l, Style, "C_l");
 
-        Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
+        Style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         Style.lineColor = Graphics::DarkGrass;
         Plotter::AddRtoRFunction(Ref, C_d, Style, "C_d");
 
@@ -210,7 +220,7 @@ void FBigHill::SetupMonitors() {
         Ref->TieRegion_xMaxMin(*Plots[0]);
         Ref->GetRegion().set_y_limits(-.08, .08);
 
-        auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        auto Style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         Style.lineColor = Graphics::LightGrey;
         Plotter::AddRtoRFunction(Plots[1], C_mc4, Style, "C_mc4");
 
@@ -219,7 +229,7 @@ void FBigHill::SetupMonitors() {
         Style.lineColor = Graphics::White;
         Plotter::AddPointSet(Plots[1], CurrentTorquePolar, Style, "", false);
 
-        const auto Theme = Graphics::PlotThemeManager::GetCurrent();
+        const auto Theme = Graphics::FPlotThemeManager::GetCurrent();
         const TPointer<Graphics::OpenGL::FWriterOpenGL> Writer = Slab::New<Graphics::OpenGL::FWriterOpenGL>(Core::Resources::GetIndexedFontFileName(3), 24);
         Theme->graphBackground.a = 0.25f;
         Theme->LabelsWriter = Writer;
@@ -238,7 +248,7 @@ void FBigHill::SetupMonitors() {
         Ref->GetAxisArtist().setVerticalAxisLabel("|F|");
         Ref->GetAxisArtist().SetHorizontalAxisLabel("t");
 
-        auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[3];
+        auto Style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[3];
         Plotter::AddPointSet(Plots[2], ForcesTimeSeries, Style, "Forces");
     }
 
@@ -253,7 +263,7 @@ void FBigHill::SetupMonitors() {
         Ref->GetAxisArtist().setVerticalAxisLabel("E");
         Ref->GetAxisArtist().SetHorizontalAxisLabel("t");
 
-        auto Style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        auto Style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         Style.lineColor = Graphics::White;
         Plotter::AddPointSet(Ref, EnergyTotalTimeSeries, Style, "E");
         Style.lineColor = Graphics::GrassGreen;
@@ -279,14 +289,14 @@ void FBigHill::SetupScenario() {
             .H = [](const float t) {
                 constexpr auto BaseFreq =  0.1f*static_cast<float>(M_PI);
 
-                struct AOhm { float A; float ohm; };
+                struct FAOhm { float A; float ohm; };
                 auto MultiplyNoise = [](const float Freq) {
                     // return static_cast<float>(Freq * RandUtils::RandomUniformReal(1.005, 0.995));
                     return static_cast<float>(Freq);
                 };
 
                 int n=1;
-                const auto A = Vector<AOhm>{
+                const auto A = Vector<FAOhm>{
                     {0.75f, MultiplyNoise(BaseFreq*n++)},
                     {0.25f, MultiplyNoise(BaseFreq*n++)},
                     {0.10f, MultiplyNoise(BaseFreq*n++)}};

@@ -10,17 +10,19 @@
 
 namespace Slab::Models::KGR2toR {
 
-    class KG2DSnapshotOutput : public Math::FOutputChannel {
+    class FKG2DSnapshotOutput : public Math::FOutputChannel {
         Str filename;
 
     protected:
         auto HandleOutput(const Math::FOutputPacket &packet) -> void override;
 
     public:
-        explicit KG2DSnapshotOutput(Str filename);
+        explicit FKG2DSnapshotOutput(Str filename);
 
         auto NotifyIntegrationHasFinished(const Math::FOutputPacket &theVeryLastOutputInformation) -> bool override;
     };
+
+    using KG2DSnapshotOutput [[deprecated("Use FKG2DSnapshotOutput")]] = FKG2DSnapshotOutput;
 
 }
 

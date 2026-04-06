@@ -12,21 +12,26 @@
 
 namespace Slab::Math {
 
-    using RtoRMetropolis = MetropolisAlgorithm<UInt, DevFloat>;
+    using FRtoRRandomSite = UInt;
+    using FRtoRNewValue = DevFloat;
+    using FRtoRMetropolis = FMetropolisAlgorithm<FRtoRRandomSite, FRtoRNewValue>;
+    using RtoRMetropolis [[deprecated("Use FRtoRMetropolis")]] = FRtoRMetropolis;
 
-    class RtoRActionMetropolisRecipe : public Base::FNumericalRecipe {
+    class FRtoRActionMetropolisRecipe : public Base::FNumericalRecipe {
         TPointer<RtoR::NumericFunction_CPU> field_data;
-        using RtoRMetropolisSetup = MetropolisSetup<UInt, DevFloat>;
+        using FRtoRMetropolisSetup = FMetropolisSetup<FRtoRRandomSite, FRtoRNewValue>;
 
     public:
         auto getField() -> TPointer<RtoR::NumericFunction_CPU>;
 
-        explicit RtoRActionMetropolisRecipe(UInt max_steps);
+        explicit FRtoRActionMetropolisRecipe(UInt max_steps);
 
         auto BuildOutputSockets() -> Vector<TPointer<FOutputChannel>> override;
 
         auto BuildStepper() -> TPointer<FStepper> override;
     };
+
+    using RtoRActionMetropolisRecipe [[deprecated("Use FRtoRActionMetropolisRecipe")]] = FRtoRActionMetropolisRecipe;
 
 } // Slab::Math
 

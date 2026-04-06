@@ -9,10 +9,10 @@
 #include "Graphics/Plot3D/Actors/R2toRFunctionActor.h"
 
 namespace Tests {
-    Graph3DTests::Graph3DTests() : Slab::Graphics::FWindowRow("Plot3D test") {
+    FGraph3DTests::FGraph3DTests() : Slab::Graphics::FWindowRow("Plot3D test") {
         using namespace Slab;
 
-        auto graph3d = New<Graphics::Scene3DWindow>();
+        auto graph3d = New<Graphics::FScene3DWindow>();
 
         AddWindow(graph3d);
 
@@ -36,12 +36,12 @@ namespace Tests {
                 funky->At(i, j) = exp(-(x*x + y*y));
             }
 
-        auto actor = New<Graphics::R2toRFunctionActor>(funky);
+        auto actor = New<Graphics::FR2toRFunctionActor>(funky);
 
         graph3d->addActor(actor);
     }
 
-    void Graph3DTests::ImmediateDraw(const Slab::Graphics::FPlatformWindow& PlatformWindow) {
+    void FGraph3DTests::ImmediateDraw(const Slab::Graphics::FPlatformWindow& PlatformWindow) {
         FWindowRow::ImmediateDraw(PlatformWindow);
     }
 } // Tests

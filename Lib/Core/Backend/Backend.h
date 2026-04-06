@@ -11,11 +11,11 @@
 namespace Slab::Core {
 
     class FBackend : public FInterfaceOwner {
-        friend class BackendManager;
+        friend class FBackendManager;
 
         Str Name;
 
-        virtual void NotifyModuleLoaded(const TPointer<SlabModule>&) {};
+        virtual void NotifyModuleLoaded(const TPointer<FSlabModule>&) {};
     protected:
         explicit FBackend(const Str& Name);
 

@@ -8,7 +8,7 @@
 
 
 namespace Slab::Math {
-    RungeKutta4::RungeKutta4(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt, Slab::CountType totalSwapStates)
+    FRungeKutta4::FRungeKutta4(const TPointer<Base::LinearStepSolver> &solver, DevFloat dt, Slab::CountType totalSwapStates)
     : FStepper()
     , _H(solver)
     , _f(solver->NewEqState("RK4 'f'"))
@@ -25,8 +25,8 @@ namespace Slab::Math {
         _H->applyBC(*_f, .0, .0);
     }
 
-    void RungeKutta4::Step(const CountType n_steps) {
-        auto swap = swapsIterator.next();
+    void FRungeKutta4::Step(const CountType n_steps) {
+        auto swap = swapsIterator.Next();
         swap->setData(*_f);
 
         auto &H = *_H;
@@ -39,28 +39,32 @@ namespace Slab::Math {
 
         for (CountType i = 0; i < n_steps; ++i) {
             const DevFloat t = (steps + i) * dt;
+            const DevFloat t_half = t + dt / 2;
+            const DevFloat t_full = t + dt;
 
-            {
-                H.startStep(f, t, dt);
-                H.applyBC(f, t, dt);
+            H.startStep(f, t, dt);
+            H.applyBC(f, t, dt);
 
-                temp = f + (H(f, k1, t)*=dt/2);
-                temp = f + (H(temp, k2, t)*=dt/2);
-                temp = f + (H(temp, k3, t)*=dt);
+            temp = f + (H(f, k1, t) *= dt / 2);
+            H.applyBC(temp, t_half, dt);
+            temp = f + (H(temp, k2, t_half) *= dt / 2);
 
-                H(temp, k4, t) *= dt;
+            H.applyBC(temp, t_half, dt);
+            temp = f + (H(temp, k3, t_half) *= dt);
 
-                ((k2 *= 2.0) += k3) *= 2.0;
-                (k1 *= 2.0) += k4;
-                temp = k1 + k2;
-                f += (temp*=(1./6));
+            H.applyBC(temp, t_full, dt);
+            H(temp, k4, t_full) *= dt;
 
-                H.finishStep(f, t, dt);
-            }
+            ((k2 *= 2.0) += k3) *= 2.0;
+            (k1 *= 2.0) += k4;
+            temp = k1 + k2;
+            f += (temp *= (1. / 6));
+
+            H.finishStep(f, t, dt);
         }
         steps += n_steps;
     }
 
-    auto RungeKutta4::GetCurrentState() const -> Base::EquationState_constptr { return _f; }
+    auto FRungeKutta4::GetCurrentState() const -> Base::EquationState_constptr { return _f; }
 
 }

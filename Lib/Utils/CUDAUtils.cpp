@@ -9,13 +9,17 @@
 namespace Slab::CUDA {
 
 #if USE_CUDA
-    void cew(cudaError err) {
+    void CheckCudaError(cudaError err) {
 
         auto errStr = cudaGetErrorString(err);
 
         auto errMsg = Str("CUDA error ") + Str(errStr);
 
         if (err != cudaError::cudaSuccess) throw Exception(errMsg);
+    }
+
+    void cew(cudaError err) {
+        CheckCudaError(err);
     }
 
 #endif

@@ -20,19 +20,19 @@ namespace Modes::DatabaseViewer {
 
     using namespace Slab;
 
-    class DBViewerSequence final : public Graphics::FWindowRow {
+    class FDBViewerSequence final : public Graphics::FWindowRow {
         Graphics::FGUIWindow guiWindow;
         FWindowRow topRow;
 
         int current_database = -1;
 
-        Vector<DBParser::Ptr> dbParsers;
+        Vector<FDBParser::Ptr> dbParsers;
         Graphics::FPlot2DWindow mashupDisplay;
 
         using SnapshotMashup = Math::R2toR::NumericFunction_CPU;
         Vector<TPointer<SnapshotMashup>> allMashups;
         Vector<Graphics::R2toRFunctionArtist_ptr> mashupArtists;
-        Vector<Utils::MaxInfo> maxValues;
+        Vector<Utils::FMaxInfo> maxValues;
 
         TPointer<SnapshotMashup> currentMashup;
         Graphics::R2toRFunctionArtist_ptr currentMeshupArtist;
@@ -60,12 +60,14 @@ namespace Modes::DatabaseViewer {
 
         Graphics::EKeyState shiftKey = Graphics::Release;
     public:
-        explicit DBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam);
+        explicit FDBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam);
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
         bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override;
     };
+
+    using DBViewerSequence [[deprecated("Use FDBViewerSequence")]] = FDBViewerSequence;
 }
 
 #endif //STUDIOSLAB_DBVIEWERSEQUENCE_H

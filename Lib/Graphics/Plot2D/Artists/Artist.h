@@ -14,7 +14,19 @@ namespace Slab::Graphics {
     class FPlot2DWindow;
 
     class FArtist {
+    public:
+        struct FLegacyParameterDescriptorV2 {
+            Str ParameterId;
+            Str DisplayName;
+            Str Description;
+            Str TypeId;
+            bool bWritable = false;
+            bool bRestartRequired = false;
+        };
+
+    private:
         Str label = "<unnamed artist>";
+        Str artistId;
 
         bool visible = true;
         bool affectGraphRanges = false;
@@ -50,6 +62,16 @@ namespace Slab::Graphics {
 
         virtual void SetVisibility(bool);
         auto IsVisible() const -> bool;
+
+        virtual void SetArtistId(Str artistId);
+        [[nodiscard]] virtual auto GetArtistId() const -> const Str &;
+        [[nodiscard]] virtual auto GetArtistTypeIdV2() const -> Str;
+
+        [[nodiscard]] virtual auto DescribeV2Parameters() const -> Vector<FLegacyParameterDescriptorV2>;
+        virtual auto TryGetV2ParameterValue(const Str &parameterId, Str &encodedValue) const -> bool;
+        virtual auto TrySetV2ParameterValue(const Str &parameterId,
+                                            const Str &encodedValue,
+                                            Str *pErrorMessage = nullptr) -> bool;
 
         DevFloat GetPreferredRatio() const;
 

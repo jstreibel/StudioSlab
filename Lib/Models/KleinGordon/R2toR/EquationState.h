@@ -17,7 +17,7 @@ namespace Slab::Math::R2toR {
         {
         }
 
-        [[nodiscard]] EqStateOutputInterface *Copy(UInt N) const override {
+        [[nodiscard]] FEqStateOutputInterface *Copy(UInt N) const override {
             NOT_IMPLEMENTED_CLASS_METHOD
         }
 

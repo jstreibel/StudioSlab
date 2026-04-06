@@ -16,12 +16,14 @@ namespace Modes {
 
     using KGNumericConfig = Models::FKGNumericConfig;
 
-    class Monitor : public Slab::Models::KGRtoR::Monitor {
+    class FMonitor : public Slab::Models::KGRtoR::Monitor {
     public:
-        Monitor(const TPointer<KGNumericConfig> &params, Slab::Models::KGRtoR::FKGEnergy &hamiltonian, const Str &name);
+        FMonitor(const TPointer<KGNumericConfig> &params, Slab::Models::KGRtoR::FKGEnergy &hamiltonian, const Str &name);
 
         void setInputModes(FRealVector A, const FRealVector& k, FRealVector Ω);
     };
+
+    using Monitor [[deprecated("Use FMonitor")]] = FMonitor;
 
 } // Modes
 

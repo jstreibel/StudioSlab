@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+  --font-sans: "Satoshi", "Avenir Next", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SFMono-Regular", "Consolas", monospace;
+  --color-slab-ink: #081019;
+  --color-slab-deep: #112235;
+  --color-slab-panel: #172c42;
+  --color-slab-line: #2b4b66;
+  --color-slab-cyan: #8ad8eb;
+  --color-slab-gold: #e6ab63;
+  --color-slab-lime: #8fde86;
+  --color-slab-rose: #f08d7a;
+  --color-slab-cream: #f7efe3;
+  --shadow-panel: 0 24px 70px rgba(3, 7, 18, 0.44);
+  --shadow-ember: 0 0 0 1px rgba(230, 171, 99, 0.22), 0 20px 50px rgba(230, 171, 99, 0.14);
+  color: var(--color-slab-cream);
+  background:
+    radial-gradient(circle at top left, rgba(138, 216, 235, 0.12), transparent 28%),
+    linear-gradient(180deg, #0a131e 0%, #081019 46%, #071018 100%);
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(230, 171, 99, 0.28);
+  color: var(--color-slab-cream);
+}

@@ -15,7 +15,7 @@
 
 namespace Slab::Graphics {
 
-    class Scene3DWindow : public FSlabWindow {
+    class FScene3DWindow : public FSlabWindow {
         static CountType WindowCount;
         CountType id;
 
@@ -28,12 +28,12 @@ namespace Slab::Graphics {
 
         bool showInterface = false;
 
-        std::list<Actor_ptr> content;
+        std::list<FActor_ptr> content;
 
         void updateCamera();
         void drawGUI();
     public:
-        Scene3DWindow();
+        FScene3DWindow();
 
         void ImmediateDraw(const FPlatformWindow&) override;
         auto getCamera() const -> const Camera&;
@@ -43,10 +43,16 @@ namespace Slab::Graphics {
 
         bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
-        bool addActor(const Actor_ptr& actor);
+        bool addActor(const FActor_ptr& actor);
     };
 
-    DefinePointers(Scene3DWindow)
+    DefinePointers(FScene3DWindow)
+
+    using Scene3DWindow [[deprecated("Use FScene3DWindow")]] = FScene3DWindow;
+    using Scene3DWindow_ptr [[deprecated("Use FScene3DWindow_ptr")]] = FScene3DWindow_ptr;
+    using Scene3DWindow_constptr [[deprecated("Use FScene3DWindow_constptr")]] = FScene3DWindow_constptr;
+    using Scene3DWindow_ref [[deprecated("Use FScene3DWindow_ref")]] = FScene3DWindow_ref;
+    using Scene3DWindow_constref [[deprecated("Use FScene3DWindow_constref")]] = FScene3DWindow_constref;
 
 } // Graphics
 

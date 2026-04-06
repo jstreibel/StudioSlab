@@ -196,6 +196,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/Artists/Overlay.h        		OpenGL/Artists/Overlay.cpp
 		OpenGL/Artists/ColorBarArtist.h			OpenGL/Artists/ColorBarArtist.cpp
 		OpenGL/LegacyGL/PointSetRenderer.h    	OpenGL/LegacyGL/PointSetRenderer.cpp
+		OpenGL/LegacyGL/LegacyDrawBackend2D.h   OpenGL/LegacyGL/LegacyDrawBackend2D.cpp
+		OpenGL/ModernGL/ModernDrawBackend2D.h   OpenGL/ModernGL/ModernDrawBackend2D.cpp
 
         Plot2D/Artists/Artist.cpp
 		Plot2D/Plot2DWindow.cpp
@@ -265,11 +267,21 @@ add_library(${LIB_GRAPHICS} STATIC
         Plot2D/Util/PlottingRegion2D.h
 		ImGui/ImGui-SingleSlabWindow-Wrapper.cpp
 		ImGui/ImGui-SingleSlabWindow-Wrapper.h
+		Typesetting/TypesettingService.cpp
+		Typesetting/TypesettingService.h
+		Typesetting/ImGuiTypesetting.cpp
+		Typesetting/ImGuiTypesetting.h
         Plot2D/Util/FieldTextureKontraption.cpp
         Plot2D/Util/PlotStyleGUI.cpp
         Plot2D/Util/PlotStyleGUI.h
-        Window/WindowProxy.cpp
+		Window/WindowProxy.cpp
         Window/WindowProxy.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Window/V2/WorkspaceLayoutV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Window/V2/WorkspaceLayoutV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Window/V2/HostedSurfaceV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Window/V2/HostedSurfaceV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Window/V2/WorkspaceShellV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Window/V2/WorkspaceShellV2.h
         Plot2D/Artists/Painters/Painter.cpp
         Plot2D/Artists/Painters/Painter.h
         Plot2D/Artists/Painters/Colormap1DPainter.cpp
@@ -278,6 +290,39 @@ add_library(${LIB_GRAPHICS} STATIC
         Plot2D/Artists/Painters/RealValued2DPainter.h
         Plot2D/Artists/Painters/HeightmapShadingPainter.cpp
         Plot2D/Artists/Painters/HeightmapShadingPainter.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DDrawListV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DDrawListV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DRenderBackendV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DWindowV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DWindowV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DWindowHostV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DWindowHostV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotReflectionSchemaV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/PlotReflectionCatalogV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/LegacyPlotReflectionAdapterV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/LegacyPlotReflectionAdapterV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Plot2DV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/AxisArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/AxisArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/BackgroundArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/BackgroundArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/ModelSemanticGraphArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/ModelSemanticGraphArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/OntologyGraphArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/OntologyGraphArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/PointSetArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/PointSetArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/R2SectionArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/R2SectionArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/RtoRFunctionArtistV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Artists/RtoRFunctionArtistV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Backends/RecordingRenderBackendV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Backends/RecordingRenderBackendV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Backends/OpenGLRenderBackendV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Graphics/Plot2D/V2/Backends/OpenGLRenderBackendV2.h
 		DataViewers/Viewers/HistoryViewer.cpp
 		DataViewers/Viewers/HistoryViewer.h
 		DataViewers/Viewers/ModesHistoryViewer.cpp
@@ -325,7 +370,9 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/LegacyGL/LegacyMode.cpp
 		OpenGL/LegacyGL/LegacyMode.h
 		Backend/Events/KeyboardState.cpp
-		IDrawBackend2D.h
+		Interfaces/IDrawBackend2D.h
+		Interfaces/IDrawBackend2DProvider.cpp
+		Interfaces/IDrawBackend2DProvider.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui
@@ -334,6 +381,7 @@ target_link_libraries(${LIB_GRAPHICS}
 		Slab-Math
 
 		${NANOTEX_LIBS}
+		freetype
 )
 target_include_directories(${LIB_GRAPHICS} PUBLIC ${NANOTEX_DIR}/src)
 

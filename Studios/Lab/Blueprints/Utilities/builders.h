@@ -22,9 +22,9 @@ namespace Utilities {
 
 
 //------------------------------------------------------------------------------
-struct BlueprintNodeBuilder
+struct FBlueprintNodeBuilder
 {
-    BlueprintNodeBuilder(ImTextureID texture = nullptr, int textureWidth = 0, int textureHeight = 0);
+    FBlueprintNodeBuilder(ImTextureID texture = nullptr, int textureWidth = 0, int textureHeight = 0);
 
     void Begin(NodeId id);
     void End();
@@ -73,6 +73,8 @@ private:
     ImVec2      ContentMax;
     bool        HasHeader;
 };
+
+using BlueprintNodeBuilder [[deprecated("Use FBlueprintNodeBuilder")]] = FBlueprintNodeBuilder;
 
 
 

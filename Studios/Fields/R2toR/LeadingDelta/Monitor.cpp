@@ -21,12 +21,12 @@
 #define xMin params.getxMin()
 #define xMax params.getxMax()
 
-Slab::Math::R2toR::FunctionAzimuthalSymmetry nullFunc(new Slab::Math::RtoR::NullFunction);
+Slab::Math::R2toR::FFunctionAzimuthalSymmetry nullFunc(new Slab::Math::RtoR::NullFunction);
 
 namespace Studios::Fields::R2toRLeadingDelta {
 
-    OutGL::OutGL(CountType max_steps, TPointer<Slab::Math::R2toR::Function> drivingFunction)
-    : Models::KGR2toR::OutputOpenGL(max_steps), drivingFunction(std::move(drivingFunction))
+    FOutGL::FOutGL(CountType max_steps, TPointer<Slab::Math::R2toR::Function> drivingFunction)
+    : Models::KGR2toR::FOutputOpenGL(max_steps), drivingFunction(std::move(drivingFunction))
     , mTotalEnergyGraph ("Total energy")
     , mEnergyGraph      ("Energy")
     , mEnergyRatioGraph ("Energy ratio")
@@ -35,7 +35,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     {
         energyRatioData = New<FPointSet>();
 
-        auto theme = Graphics::PlotThemeManager::GetCurrent();
+        auto theme = Graphics::FPlotThemeManager::GetCurrent();
         using Plotter = Graphics::FPlotter;
 
         Plotter::AddPointSet(Dummy(mEnergyRatioGraph), energyRatioData,
@@ -65,11 +65,11 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
     }
 
-    void OutGL::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FOutGL::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if (!LastPacket.hasValidData()) return;
 
         static auto timer = FTimer();
-        // auto elTime = timer.getElTime_msec();
+        // auto elTime = timer.GetElapsedTimeMsec();
         timer = FTimer();
 
         auto &rd = *ringDelta1;

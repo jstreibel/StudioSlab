@@ -12,7 +12,7 @@
 
 namespace Studios::Fields {
 
-    class DataView : public Slab::Graphics::WindowPanel {
+    class FDataView : public Slab::Graphics::WindowPanel {
         using DataFunction = Slab::Math::Pointer<const R2toR::FNumericFunction>
 ;
         using DataArtist = Slab::Graphics::R2toRFunctionArtist_ptr;
@@ -21,13 +21,15 @@ namespace Studios::Fields {
         DataArtist artist;
 
     public:
-        DataView(DataFunction func=nullptr);
+        FDataView(DataFunction func=nullptr);
 
         virtual void setData(DataFunction func);
 
         virtual void notifyBecameVisible()   {};
         virtual void notifyBecameInvisible() {};
     };
+
+    using DataView [[deprecated("Use FDataView")]] = FDataView;
 
 } // Fields
 

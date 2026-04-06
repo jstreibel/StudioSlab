@@ -12,9 +12,9 @@
 
 namespace Slab::Graphics {
 
-    typedef Vector<WindowColumn> WindowColumns;
+    typedef Vector<FWindowColumn> WindowColumns;
 
-    class WindowPanel : public FSlabWindow {
+    class FWindowPanel : public FSlabWindow {
         WindowColumns columns = WindowColumns(1);
         Vector<float> widths = {-1};
 
@@ -26,7 +26,7 @@ namespace Slab::Graphics {
         void assertConsistency() const;
 
     public:
-        explicit WindowPanel(FSlabWindowConfig);
+        explicit FWindowPanel(FSlabWindowConfig);
 
         void AddWindow(const TPointer<FSlabWindow>& window, bool newColumn = false, float newColumnWidth = -1);
 
@@ -51,6 +51,7 @@ namespace Slab::Graphics {
 
 
         void ImmediateDraw(const FPlatformWindow&) override;
+        auto RegisterDeferredDrawCalls(const FPlatformWindow&) -> void override;
 
         void NotifyReshape(int newWinW, int newWinH) override;
 
@@ -67,6 +68,8 @@ namespace Slab::Graphics {
 
         auto Set_y(int y) -> void override;
     };
+
+    using WindowPanel = FWindowPanel;
 
 }
 

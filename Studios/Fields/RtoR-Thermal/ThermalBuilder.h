@@ -14,19 +14,21 @@ namespace Studios::Fields::RtoRThermal {
     using namespace Slab::Math;
     using namespace Slab::Models;
 
-    class Builder : public KGRtoR::FKGRtoR_Recipe {
+    class FBuilder : public KGRtoR::FKGRtoR_Recipe {
         RealParameter temperature    = RealParameter(.0, FParameterDescription{'T', "temperature", "The Langevin temperature reservoir's temperature"});
         RealParameter dissipation    = RealParameter(.0, FParameterDescription{'k', "dissipation_coefficient", "The dynamics dissipation coefficient"});
         RealParameter transientGuess = RealParameter(.0, FParameterDescription{'i', "transient_guess", "User guess for transient value"});
 
     public:
-        Builder(const Str &name, const Str &generalDescription, bool doRegister=false);
+        FBuilder(const Str &name, const Str &generalDescription, bool doRegister=false);
 
         auto buildSolver() -> TPointer<Base::LinearStepSolver> override;
 
         auto SuggestFileName() const -> Str override;
 
     };
+
+    using Builder [[deprecated("Use FBuilder")]] = FBuilder;
 }
 
 

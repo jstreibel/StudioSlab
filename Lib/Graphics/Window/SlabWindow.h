@@ -39,7 +39,7 @@ namespace Slab::Graphics {
         Int Flags = 0x0;
     };
 
-    class FSlabWindow : protected Core::UniqueObject, public FPlatformWindowEventListener {
+    class FSlabWindow : protected Core::FUniqueObject, public FPlatformWindowEventListener {
 
     public:
 
@@ -48,6 +48,7 @@ namespace Slab::Graphics {
         ~FSlabWindow() override;
 
         [[nodiscard]] auto GetUniqueName() const -> Str;
+        [[nodiscard]] auto GetStableWindowKey() const -> Str;
 
         auto GetConfig() -> FSlabWindowConfig&;
 

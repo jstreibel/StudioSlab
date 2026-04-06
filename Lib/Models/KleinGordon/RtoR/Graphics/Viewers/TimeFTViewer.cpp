@@ -13,14 +13,14 @@
 
 namespace Slab::Models::KGRtoR {
 
-    Str TimeFTViewer::GetName() const { return "Time-DFT space-average viewer"; }
+    Str FTimeFTViewer::GetName() const { return "Time-DFT space-average viewer"; }
 
-    TimeFTViewer::TimeFTViewer(const TPointer<Graphics::FGUIWindow> &GuiWindow,
+    FTimeFTViewer::FTimeFTViewer(const TPointer<Graphics::FGUIWindow> &GuiWindow,
                                const TPointer<R2toR::FNumericFunction> &func,
                                const TPointer<R2toR::FNumericFunction> &ddtFunc)
-    : KGViewer(GuiWindow, func, ddtFunc) {
+    : FKGViewer(GuiWindow, func, ddtFunc) {
         using Plotter = Graphics::FPlotter;
-        using Themes = Graphics::PlotThemeManager;
+        using Themes = Graphics::FPlotThemeManager;
 
         auto window = New<Graphics::FPlot2DWindow>("Time-DFT space-average");
         timeDFTAverageArtist =
@@ -40,8 +40,8 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void TimeFTViewer::compute() {
-        // auto filtered = Graphics::FourierViewer::FilterSpace(getFunction(), t_min, t_max);
+    void FTimeFTViewer::compute() {
+        // auto filtered = Graphics::FFourierViewer::FilterSpace(getFunction(), t_min, t_max);
 
         auto function = getFunction();
 
@@ -77,7 +77,7 @@ namespace Slab::Models::KGRtoR {
 
             for(auto j=0; j<M; ++j) spaceData_temp[j] = function->At(i, j_0+j);
 
-            auto dftMagnitudes = RtoR::DFT::Compute(tempSpace).getMagnitudes();
+            auto dftMagnitudes = RtoR::FDFT::Compute(tempSpace).getMagnitudes();
 
             assert(dftMagnitudes->Count()==m);
 
@@ -98,9 +98,9 @@ namespace Slab::Models::KGRtoR {
         timeDFTAverageArtist->SetLabel(Str("∫dx ϕ(ω,x), ") + timeInterval);
     }
 
-    void TimeFTViewer::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FTimeFTViewer::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         auto function = getFunction();
-        if(function== nullptr){ WindowPanel::ImmediateDraw(PlatformWindow); return;}
+        if(function== nullptr){ FWindowPanel::ImmediateDraw(PlatformWindow); return;}
 
         gui_window->AddExternalDraw([this](){
             auto function = getFunction();
@@ -170,11 +170,11 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void TimeFTViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
-        Viewer::SetFunction(function);
+    void FTimeFTViewer::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
+        FViewer::SetFunction(function);
 
         t0 = (float)getFunction()->getDomain().yMin;
         Δt = (float)getFunction()->getDomain().getLy();
@@ -182,12 +182,12 @@ namespace Slab::Models::KGRtoR {
         if(isVisible()) compute();
     }
 
-    void TimeFTViewer::SetFunctionDerivative(FuncPointer pointer) {
-        KGViewer::SetFunctionDerivative(pointer);
+    void FTimeFTViewer::SetFunctionDerivative(FuncPointer pointer) {
+        FKGViewer::SetFunctionDerivative(pointer);
     }
 
-    void TimeFTViewer::NotifyBecameVisible() {
-        Viewer::NotifyBecameVisible();
+    void FTimeFTViewer::NotifyBecameVisible() {
+        FViewer::NotifyBecameVisible();
 
         if(getFunction() != nullptr) compute();
     }

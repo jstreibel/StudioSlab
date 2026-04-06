@@ -8,7 +8,7 @@
 
 
 int run(int argc, const char **argv){
-    Slab::Core::AppBase *prog = new TestsApp(argc, argv);
+    Slab::Core::FAppBase *prog = new FTestsApp(argc, argv);
 
     return prog->run();
 }
@@ -17,5 +17,4 @@ int run(int argc, const char **argv){
 int main(int argc, const char **argv) {
     return Slab::SafetyNet::jump(run, argc, argv);
 }
-
 

@@ -33,8 +33,8 @@ namespace Slab::Models::KGR2toR {
         NOT_IMPLEMENTED
     }
 
-    OutputOpenGL::OutputOpenGL(CountType max_steps)
-    : BaseMonitor(max_steps, "ℝ²↦ℝ OpenGL monitor", 1)
+    FOutputOpenGL::FOutputOpenGL(CountType max_steps)
+    : FBaseMonitor(max_steps, "ℝ²↦ℝ OpenGL monitor", 1)
     , mSectionGraph("Sections")
     , mFieldDisplay("Field")
     {
@@ -44,10 +44,10 @@ namespace Slab::Models::KGR2toR {
         AddWindow(Naked(mFieldDisplay), ADD_TO_NEW_COLUMN, .25);
     }
 
-    void OutputOpenGL::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FOutputOpenGL::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if (!LastPacket.hasValidData()) return;
 
-        BaseMonitor::ImmediateDraw(PlatformWindow);
+        FBaseMonitor::ImmediateDraw(PlatformWindow);
 
         if (sectionArtist.getFunction() == nullptr) {
             auto phi = getPhi(LastPacket);
@@ -61,7 +61,7 @@ namespace Slab::Models::KGR2toR {
 
             fix line = Slab::New<RtoR2::StraightLine>(Real2D{0, yMin}, Real2D{0, yMax}, yMin, yMax);
 
-            sectionArtist.addSection(line, Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone(), "section 1");
+            sectionArtist.addSection(line, Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone(), "section 1");
         }
     }
 

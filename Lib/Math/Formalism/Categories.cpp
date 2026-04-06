@@ -17,9 +17,9 @@ namespace Slab::Math {
             auto oVal = (DevFloat) i / 7.;
             auto lVal = Common::RoundToMostSignificantDigits(oVal, 2);
             Rational rat(lVal, 1e-9);
-            auto color = rat.denominator != 0 ? Log::FGBlack + Log::BGGreen : "";
-            Log::Info() << i << ": " << oVal << "   " << color << lVal << " --> " << rat << Log::ResetFormatting
-                        << Log::Flush;
+            auto color = rat.denominator != 0 ? FLog::FGBlack + FLog::BGGreen : "";
+            FLog::Info() << i << ": " << oVal << "   " << color << lVal << " --> " << rat << FLog::ResetFormatting
+                        << FLog::Flush;
         }
         exit(0);
     }

@@ -13,17 +13,19 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class SystemGordonGPU : Fields::KleinGordon::Solver<EquationState> {
+    class FSystemGordonGPU : Fields::KleinGordon::Solver<FEquationState> {
     public:
-        SystemGordonGPU(const NumericConfig &params,
-                        MyBase::EqBoundaryCondition &du,
-                        PotentialFunc &potential);
+        FSystemGordonGPU(const NumericConfig &params,
+                         MyBase::EqBoundaryCondition &du,
+                         PotentialFunc &potential);
 
-        EquationState &dtF(const EquationState &in, EquationState &out, DevFloat t, DevFloat dt) override;
+        FEquationState &dtF(const FEquationState &in, FEquationState &out, DevFloat t, DevFloat dt) override;
 
     private:
         DeviceVector temp;
     };
+
+    using SystemGordonGPU [[deprecated("Use FSystemGordonGPU")]] = FSystemGordonGPU;
 
 }
 

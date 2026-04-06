@@ -12,11 +12,11 @@
 namespace Slab::Math {
 
 
-    XYNetwork::XYNetwork(int L) : L(L), N(L * L), ThetaField(L * L) {
+    FXYNetwork::FXYNetwork(int L) : L(L), N(L * L), ThetaField(L * L) {
 
     }
 
-    int XYNetwork::ij_to_k_periodic(int i, int j) const {
+    int FXYNetwork::ij_to_k_periodic(int i, int j) const {
         // TODO: while? Deve ter um jeito mais eficiente de fazer isso.....
 
         while (i < 0) i += L;
@@ -27,22 +27,22 @@ namespace Slab::Math {
         return j + i * L; // cond. periodicas de contorno
     }
 
-    int XYNetwork::ij_to_k_abs(int i, int j) const {
+    int FXYNetwork::ij_to_k_abs(int i, int j) const {
         if (i < 0 || i >= L || j < 0 || j >= L) throw "tidak bagus";
 
         return j + i * L;
     }
 
-    DevFloat XYNetwork::theta(int i, int j) const {
+    DevFloat FXYNetwork::theta(int i, int j) const {
         const int k = ij_to_k_periodic(i, j);
         return theta(k);
     }
 
-    DevFloat XYNetwork::theta(int k) const {
+    DevFloat FXYNetwork::theta(int k) const {
         return ThetaField[k];
     }
 
-    DevFloat XYNetwork::E(DevFloat h) const {
+    DevFloat FXYNetwork::E(DevFloat h) const {
         DevFloat soma = 0;
         for (int i = 0; i < L; i++)
             for (int j = 0; j < L; j++) {
@@ -56,7 +56,7 @@ namespace Slab::Math {
         return soma;
     }
 
-    DevFloat XYNetwork::M() const {
+    DevFloat FXYNetwork::M() const {
         // obs m_i=s_i
 
         DevFloat magx = 0;
@@ -71,7 +71,7 @@ namespace Slab::Math {
         return sqrt(magx * magx + magy * magy);
     }
 
-    bool XYNetwork::areNeighbors(int i1, int j1, int i2, int j2) const {
+    bool FXYNetwork::areNeighbors(int i1, int j1, int i2, int j2) const {
         // It is expected that the two sites are not the same: !(i1==i2 && j1==j2).
 
         if (i1 == i2) { if (j1 == j2 - 1 || j1 == j2 + 1) return true; }
@@ -80,7 +80,7 @@ namespace Slab::Math {
         return false;
     }
 
-    DevFloat XYNetwork::ssrDeltaE(int i, int j, DevFloat h, DevFloat delta) const {
+    DevFloat FXYNetwork::ssrDeltaE(int i, int j, DevFloat h, DevFloat delta) const {
         auto thC = theta(i, j);
 
         auto thN = theta(i, j - 1),
@@ -98,12 +98,12 @@ namespace Slab::Math {
         return vizN_deltaE + vizS_deltaE + vizE_deltaE + vizW_deltaE;
     }
 
-    DevFloat XYNetwork::ssorrDeltaE(int i, int j, DevFloat h, DevFloat delta) const {
+    DevFloat FXYNetwork::ssorrDeltaE(int i, int j, DevFloat h, DevFloat delta) const {
         throw "Not implemented.";
         return 0;
     }
 
-    void XYNetwork::overrelax(int i, int j) {
+    void FXYNetwork::overrelax(int i, int j) {
         const auto θ = theta(i, j),
                 θN = theta(i, j + 1),
                 θS = theta(i, j - 1),
@@ -129,7 +129,7 @@ namespace Slab::Math {
         set(ij_to_k_abs(i, j), newθ);
     }
 
-    double XYNetwork::tseDeltaE(int s1, int s2, double h) const {
+    double FXYNetwork::tseDeltaE(int s1, int s2, double h) const {
         throw "Not implemented tseDeltaE";
 
         const auto i1 = (s1 - s1 % L) / L,
@@ -150,22 +150,22 @@ namespace Slab::Math {
         return (dE1 + dE2);
     }
 
-    void XYNetwork::rotate(int k, DevFloat angle) {
+    void FXYNetwork::rotate(int k, DevFloat angle) {
         ThetaField[k] += angle;
     }
 
-    void XYNetwork::rotate(int i, int j, DevFloat angle) {
+    void FXYNetwork::rotate(int i, int j, DevFloat angle) {
         rotate(ij_to_k_abs(i, j), angle);
     }
 
-    void XYNetwork::operator=(const StateType S) { this->ThetaField = S; }
+    void FXYNetwork::operator=(const StateType S) { this->ThetaField = S; }
 
 
-    void XYNetwork::set(int k, DevFloat value) {
+    void FXYNetwork::set(int k, DevFloat value) {
         ThetaField[k] = value;
     }
 
-    DevFloat XYNetwork::e(int i, int j) const {
+    DevFloat FXYNetwork::e(int i, int j) const {
         auto thC = theta(i, j);
 
         auto thN = theta(i, j - 1),

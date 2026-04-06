@@ -16,7 +16,7 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    class SnapshotOutput : public FOutputChannel {
+    class FSnapshotOutput : public FOutputChannel {
         Str outputFileName;
 
     protected:
@@ -24,15 +24,17 @@ namespace Slab::Models::KGRtoR {
 
         virtual auto filterData(const FOutputPacket &packet) -> RtoR::NumericFunction_CPU;
 
-        SnapshotOutput(const Str &fileName, const Str &socketName, const Str &description);
+        FSnapshotOutput(const Str &fileName, const Str &socketName, const Str &description);
     public:
-        explicit SnapshotOutput(const Str &fileName);
+        explicit FSnapshotOutput(const Str &fileName);
 
         auto NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) -> bool override;
 
         static bool
         OutputNumericFunction(const Math::DiscreteSpace&, const Str& filename, const Vector<Pair<Str,Str>>& xtraPyDictEntries={});
     };
+
+    using SnapshotOutput [[deprecated("Use FSnapshotOutput")]] = FSnapshotOutput;
 
 } // KleinGordon::RtoR
 

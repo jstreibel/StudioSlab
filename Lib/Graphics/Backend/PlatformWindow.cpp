@@ -63,11 +63,11 @@ namespace Slab::Graphics {
     }
 
     void FPlatformWindow::SetSystemWindowTitle(const Str& title) {
-        Core::Log::Warning()
+        Core::FLog::Warning()
         << "Could not set SystemWindow title to \""
         << title
         << "\": Current SystemWindow implementation does allow for changing window title."
-        << Core::Log::Flush;
+        << Core::FLog::Flush;
     }
 
     bool FPlatformWindow::ProvideSelfReference(const TVolatile<FPlatformWindow>& _SelfReference)
@@ -76,7 +76,7 @@ namespace Slab::Graphics {
         {
             if (SelfReferencePtr.get() != this)
             {
-                Core::Log::Error() << "PlatformWindow was provided self-pointer to different PlatformWindow." << Core::Log::Flush;
+                Core::FLog::Error() << "PlatformWindow was provided self-pointer to different PlatformWindow." << Core::FLog::Flush;
                 return false;
             }
         }

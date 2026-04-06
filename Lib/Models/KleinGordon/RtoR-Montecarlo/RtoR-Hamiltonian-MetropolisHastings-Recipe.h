@@ -15,22 +15,29 @@ namespace Slab::Models::KGRtoR::Metropolis {
     using namespace Slab::Math;
 
     // Site type is Int (not UInt) to help with periodic BC.
-    using RtoRMetropolis = MetropolisAlgorithm<Int, RealPair>;
-    struct FieldPair { TPointer<RtoR::NumericFunction_CPU> ϕ, π; };
+    using FRtoRRandomSite = Int;
+    using FRtoRNewValue = RealPair;
+    using FRtoRMetropolis = FMetropolisAlgorithm<FRtoRRandomSite, FRtoRNewValue>;
+    using RtoRMetropolis [[deprecated("Use FRtoRMetropolis")]] = FRtoRMetropolis;
+    struct FFieldPair { TPointer<RtoR::NumericFunction_CPU> ϕ, π; };
+    using FieldPair [[deprecated("Use FFieldPair")]] = FFieldPair;
 
-    class RtoRHamiltonianMetropolisHastingsRecipe : public Base::FNumericalRecipe {
-        FieldPair field_data;
-        using RtoRMetropolisSetup = MetropolisSetup<Int, RealPair>;
+    class FRtoRHamiltonianMetropolisHastingsRecipe : public Base::FNumericalRecipe {
+        FFieldPair field_data;
+        using FRtoRMetropolisSetup = FMetropolisSetup<FRtoRRandomSite, FRtoRNewValue>;
 
     public:
-        explicit RtoRHamiltonianMetropolisHastingsRecipe(UInt max_steps);
+        explicit FRtoRHamiltonianMetropolisHastingsRecipe(UInt max_steps);
 
-        auto getField() -> FieldPair;
+        auto getField() -> FFieldPair;
 
         auto BuildOutputSockets() -> Vector<TPointer<FOutputChannel>> override;
 
         auto BuildStepper() -> TPointer<FStepper> override;
     };
+
+    using RtoRHamiltonianMetropolisHastingsRecipe [[deprecated("Use FRtoRHamiltonianMetropolisHastingsRecipe")]] =
+            FRtoRHamiltonianMetropolisHastingsRecipe;
 
 } // Slab::Math
 

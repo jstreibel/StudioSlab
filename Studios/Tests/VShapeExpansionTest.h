@@ -13,7 +13,7 @@
 
 namespace Tests {
 
-    class VShapeExpansionTest : public Slab::Graphics::FWindowRow {
+    class FVShapeExpansionTest : public Slab::Graphics::FWindowRow {
         Slab::Graphics::FGUIWindow stats;
         Slab::Graphics::FPlot2DWindow graph;
 
@@ -21,10 +21,12 @@ namespace Tests {
         Slab::TPointer<Slab::Math::Base::FunctionT<Slab::DevFloat, Slab::DevFloat>> derivs;
 
     public:
-        VShapeExpansionTest();
+        FVShapeExpansionTest();
 
         void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
     };
+
+    using VShapeExpansionTest [[deprecated("Use FVShapeExpansionTest")]] = FVShapeExpansionTest;
 
 } // Tests
 

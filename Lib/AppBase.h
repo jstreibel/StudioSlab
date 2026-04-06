@@ -10,16 +10,18 @@
 
 namespace Slab::Core {
 
-    class AppBase : public FInterfaceOwner {
+    class FAppBase : public FInterfaceOwner {
 
     protected:
-        AppBase(int argc, const char *argv[], bool doRegister = true);
+        FAppBase(int argc, const char *argv[], bool doRegister = true);
 
-        virtual ~AppBase();
+        virtual ~FAppBase();
 
     public:
         virtual int run() = 0;
     };
+
+    using AppBase [[deprecated("Use FAppBase")]] = FAppBase;
 
 
 }

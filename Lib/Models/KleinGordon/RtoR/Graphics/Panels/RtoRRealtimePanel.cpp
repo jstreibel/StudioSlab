@@ -22,7 +22,7 @@
         firstTimer = false;         \
         code                        \
     }
-#define CHECK_GL_ERRORS(count) Graphics::OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
+#define CHECK_GL_ERRORS(count) Graphics::OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::GetClassName(this) + " (" + ToStr((count)) + ")");
 
 // Ok to touch these:
 #define HISTOGRAM_SHOULD_BE_PRETTY false
@@ -49,7 +49,7 @@ namespace Slab::Models::KGRtoR {
     // , imGuiWindow(Naked(mEnergyGraph))
     {
         {
-            const auto CurrStyle = PlotThemeManager::GetCurrent();
+            const auto CurrStyle = FPlotThemeManager::GetCurrent();
 
             auto sty = CurrStyle->FuncPlotStyles.begin();
 

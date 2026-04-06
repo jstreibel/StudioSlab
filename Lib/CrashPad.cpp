@@ -26,21 +26,21 @@ namespace Slab::SafetyNet {
 
     void none() {
 #ifndef RELEASE_COMPILE
-        Log::ErrorFatal() << "Stacktrace:\n" << boost::stacktrace::stacktrace() << Log::Flush;
+        FLog::ErrorFatal() << "Stacktrace:\n" << boost::stacktrace::stacktrace() << FLog::Flush;
 #endif
     }
 
     void showHelp()
     {
         if(true) none();
-        else CLArgsManager::ShowHelp();
+        else FCLArgsManager::ShowHelp();
     }
 
     Str FORMAT;
 
 #define LogException(description, what, exitFunc)                                       \
-    { Log::ErrorFatal() << description << ": " << FORMAT << " " << what << " " << Log::ResetFormatting   \
-                   << ". Application will now exit." << Log::Flush;                    \
+    { FLog::ErrorFatal() << description << ": " << FORMAT << " " << what << " " << FLog::ResetFormatting   \
+                   << ". Application will now exit." << FLog::Flush;                    \
       exitFunc();                                                                       \
       return EXIT_FAILURE; }
 
@@ -49,7 +49,7 @@ namespace Slab::SafetyNet {
         try
 #endif
         {
-            FORMAT = Log::BGRed + Log::BoldFace + Log::FGBlack;
+            FORMAT = FLog::BGRed + FLog::BoldFace + FLog::FGBlack;
             return pFunction(argc, argv);
         }
 #if defined(RELEASE_COMPILE) || defined(WITH_STACK_TRACE)
@@ -74,7 +74,7 @@ namespace Slab::SafetyNet {
 #endif
         {
             app.Create();
-            FORMAT = Log::BGRed + Log::BoldFace + Log::FGBlack;
+            FORMAT = FLog::BGRed + FLog::BoldFace + FLog::FGBlack;
             return app.Run();
         }
 #if defined(RELEASE_COMPILE) || defined(WITH_STACK_TRACE)

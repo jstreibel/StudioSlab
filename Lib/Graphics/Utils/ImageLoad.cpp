@@ -16,7 +16,7 @@ namespace Slab::Graphics::Image {
         int width = 0, height = 0, channels_in_file = 0;
         if (const auto data = stbi_load(image_file.c_str(), &width, &height, &channels_in_file, 4))
         {
-            Core::Log::Info() << "Loaded image " << image_file;
+            Core::FLog::Info() << "Loaded image " << image_file;
 
             return TResult<StbiImageInfo>::OkInPlace(
                 TPointer<StbiImage>(data, [](StbiImage* image) { stbi_image_free(image); }),

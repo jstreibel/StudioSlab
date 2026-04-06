@@ -16,23 +16,23 @@
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRRealtimePanel.h"
 #include "Models/Stochastic-Path-Integral/SPI-Recipe.h"
 
-class SPIApp final : public Slab::FApplication {
+class FSPIApp final : public Slab::FApplication {
     Slab::TPointer<Slab::Models::StochasticPathIntegrals::SPIRecipe> recipe;
     Slab::TPointer<Slab::Math::FNumericTask> numeric_task;
 
 public:
-    SPIApp(const int argc, const char *argv[])
+    FSPIApp(const int argc, const char *argv[])
     : FApplication("SPI-App", argc, argv)
     , recipe(Slab::New<Slab::Models::StochasticPathIntegrals::SPIRecipe>())
     , numeric_task(Slab::New<Slab::Math::FNumericTask>(recipe, false))
     {    }
 
-    ~SPIApp() override = default;
+    ~FSPIApp() override = default;
 
 protected:
-    Slab::TPointer<Slab::Graphics::MainViewer> main_viewer;
+    Slab::TPointer<Slab::Graphics::FMainViewer> main_viewer;
     void OnStart() override {
-        GET task_manager = Slab::GetModule<Slab::Core::MTaskManager>("TaskManager");
+        GET task_manager = Slab::GetModule<Slab::Core::FTaskManager>("TaskManager");
 
         numeric_task->Init();
 
@@ -41,7 +41,7 @@ protected:
 };
 
 int main(const int argc, const char **argv) {
-    SPIApp app(argc, argv);
+    FSPIApp app(argc, argv);
 
     Slab::SafetyNet::Jump(app);
 

@@ -11,6 +11,7 @@
 #include "SPI-Solver.h"
 #include "SPI-State.h"
 #include "SPI-BC.h"
+#include "Graphics/SlabGraphics.h"
 
 #include "Math/Function/R2toR/Model/FunctionsCollection/AnalyticOscillon1p1_FourierImpl.h"
 #include "Math/Numerics/ODE/Steppers/Euler.h"
@@ -33,7 +34,7 @@ namespace Slab::Models::StochasticPathIntegrals {
     auto SPIRecipe::BuildOutputSockets() -> Base::OutputSockets {
         Base::OutputSockets sockets;
 
-        auto monitor = New<KGR2toR::OutputOpenGL>(SPI_NumericConfig->Get_n());
+        auto monitor = New<KGR2toR::FOutputOpenGL>(SPI_NumericConfig->Get_n());
         auto manager = Slab::New<Graphics::FSlabWindowManager>();
         manager->AddSlabWindow(monitor, false);
 
@@ -60,10 +61,10 @@ namespace Slab::Models::StochasticPathIntegrals {
         auto du = New<SPIBC>(prototypeState);
         auto solver = New<SPISolver>(du);
 
-        return New<Euler>(solver, dT);
+        return New<FEuler>(solver, dT);
 
         // return New<Odeint::StepperRK4>();
 
-        // return New<RungeKutta4>(solver, dT);
+        // return New<FRungeKutta4>(solver, dT);
     }
 } // StochasticPathIntegrals::Models::Slab

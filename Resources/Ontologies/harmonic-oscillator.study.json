@@ -1,0 +1,311 @@
+{
+  "meta": {
+    "format": "studioslab-ontology-graph",
+    "version": "0.1.0",
+    "doc_kind": "study",
+    "title": "Harmonic Oscillator Study",
+    "description": "Combined model+study document for a harmonic oscillator example."
+  },
+  "ontology_ref": {
+    "path": "global-descent.ontology.json",
+    "version": "0.1.0"
+  },
+  "study": {
+    "id": "study:ho",
+    "title": "Harmonic oscillator",
+    "description": "Finite-dimensional ODE example with a reachable RK4 path.",
+    "base_vocabulary": "classical_mechanics",
+    "notation_context": {
+      "preferred_source": "latex-like",
+      "time_symbol": "t"
+    }
+  },
+  "nodes": [
+    {
+      "id": "study:ho",
+      "kind": "Study",
+      "title": "Harmonic oscillator",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "description": "Worked example of finite-dimensional ODE descent"
+      }
+    },
+    {
+      "id": "study:ho:t",
+      "kind": "StudyObject",
+      "title": "t",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "latex": "t",
+        "provenance": "declared",
+        "typing_facet": "ambient:RealNumbers",
+        "role_facet": "coordinate",
+        "semantic_facet": "time"
+      }
+    },
+    {
+      "id": "study:ho:x",
+      "kind": "StudyObject",
+      "title": "x",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "latex": "x",
+        "provenance": "declared",
+        "typing_facet": "mapping",
+        "domain": [
+          "study:ho:t"
+        ],
+        "codomain": "ambient:RealNumbers",
+        "role_facet": "state_variable"
+      }
+    },
+    {
+      "id": "study:ho:m",
+      "kind": "StudyObject",
+      "title": "m",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "latex": "m",
+        "provenance": "inferred_structural",
+        "typing_facet": "ambient:RealNumbers",
+        "role_facet": "scalar_parameter",
+        "candidate_semantic_facets": [
+          "mass"
+        ]
+      }
+    },
+    {
+      "id": "study:ho:k",
+      "kind": "StudyObject",
+      "title": "k",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "latex": "k",
+        "provenance": "inferred_structural",
+        "typing_facet": "ambient:RealNumbers",
+        "role_facet": "scalar_parameter",
+        "candidate_semantic_facets": [
+          "stiffness"
+        ]
+      }
+    },
+    {
+      "id": "study:ho:eq_motion",
+      "kind": "StudyObject",
+      "title": "Equation of motion",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "expression_latex": "m \\ddot{x}(t) + k x(t) = 0",
+        "provenance": "declared",
+        "relation_kind": "equation"
+      }
+    },
+    {
+      "id": "study:ho:ic_x",
+      "kind": "StudyObject",
+      "title": "Initial position",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "expression_latex": "x(0) = x_0",
+        "provenance": "declared",
+        "relation_kind": "initial_condition"
+      }
+    },
+    {
+      "id": "study:ho:ic_v",
+      "kind": "StudyObject",
+      "title": "Initial velocity",
+      "layer": "study",
+      "abstract": false,
+      "properties": {
+        "expression_latex": "\\dot{x}(0) = v_0",
+        "provenance": "declared",
+        "relation_kind": "initial_condition"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e101",
+      "type": "declares",
+      "from": "study:ho",
+      "to": "study:ho:t",
+      "properties": {}
+    },
+    {
+      "id": "e102",
+      "type": "declares",
+      "from": "study:ho",
+      "to": "study:ho:x",
+      "properties": {}
+    },
+    {
+      "id": "e103",
+      "type": "classifies_as",
+      "from": "study:ho:x",
+      "to": "semantic:StateVariable",
+      "properties": {
+        "confidence": 1.0,
+        "provenance": "declared"
+      }
+    },
+    {
+      "id": "e104",
+      "type": "classifies_as",
+      "from": "study:ho:m",
+      "to": "semantic:ScalarParameter",
+      "properties": {
+        "confidence": 0.8,
+        "provenance": "inferred_structural"
+      }
+    },
+    {
+      "id": "e105",
+      "type": "classifies_as",
+      "from": "study:ho:k",
+      "to": "semantic:ScalarParameter",
+      "properties": {
+        "confidence": 0.8,
+        "provenance": "inferred_structural"
+      }
+    },
+    {
+      "id": "e106",
+      "type": "declares",
+      "from": "study:ho",
+      "to": "study:ho:eq_motion",
+      "properties": {}
+    },
+    {
+      "id": "e107",
+      "type": "constrains",
+      "from": "study:ho:eq_motion",
+      "to": "study:ho:x",
+      "properties": {}
+    },
+    {
+      "id": "e108",
+      "type": "depends_on",
+      "from": "study:ho:eq_motion",
+      "to": "study:ho:m",
+      "properties": {}
+    },
+    {
+      "id": "e109",
+      "type": "depends_on",
+      "from": "study:ho:eq_motion",
+      "to": "study:ho:k",
+      "properties": {}
+    },
+    {
+      "id": "e110",
+      "type": "classifies_as",
+      "from": "study:ho:eq_motion",
+      "to": "descent:SecondOrderODE",
+      "properties": {
+        "confidence": 0.95,
+        "provenance": "inferred_ontological"
+      }
+    },
+    {
+      "id": "e111",
+      "type": "declares",
+      "from": "study:ho",
+      "to": "study:ho:ic_x",
+      "properties": {}
+    },
+    {
+      "id": "e112",
+      "type": "declares",
+      "from": "study:ho",
+      "to": "study:ho:ic_v",
+      "properties": {}
+    },
+    {
+      "id": "e113",
+      "type": "satisfies",
+      "from": "study:ho:ic_x",
+      "to": "requirement:InitialConditionsForRealizedState",
+      "properties": {
+        "status": "satisfied"
+      }
+    },
+    {
+      "id": "e114",
+      "type": "satisfies",
+      "from": "study:ho:ic_v",
+      "to": "requirement:InitialConditionsForRealizedState",
+      "properties": {
+        "status": "satisfied"
+      }
+    },
+    {
+      "id": "e115",
+      "type": "activates",
+      "from": "study:ho",
+      "to": "descent:SecondOrderODE",
+      "properties": {
+        "status": "active"
+      }
+    },
+    {
+      "id": "e116",
+      "type": "activates",
+      "from": "study:ho",
+      "to": "descent:FirstOrderExplicitODE",
+      "properties": {
+        "status": "reachable",
+        "via": "descent:SecondOrderODE -> descent:FirstOrderExplicitODE"
+      }
+    },
+    {
+      "id": "e117",
+      "type": "activates",
+      "from": "study:ho",
+      "to": "solver:RK4",
+      "properties": {
+        "status": "reachable"
+      }
+    },
+    {
+      "id": "e118",
+      "type": "activates",
+      "from": "study:ho",
+      "to": "artifact:TrajectorySeries",
+      "properties": {
+        "status": "reachable"
+      }
+    }
+  ],
+  "activation_summary": {
+    "active": [
+      "descent:SecondOrderODE"
+    ],
+    "reachable": [
+      "descent:FirstOrderExplicitODE",
+      "solver:RK4",
+      "artifact:TrajectorySeries"
+    ],
+    "satisfied": [
+      "requirement:InitialConditionsForRealizedState"
+    ],
+    "blocked": [],
+    "unresolved": []
+  },
+  "realization_frontier": {
+    "status": "reachable",
+    "next_targets": [
+      "realization:StateVectorRepresentation",
+      "solver:RK4",
+      "recipe:FixedTimestep"
+    ],
+    "notes": "The study reaches an explicit first-order ODE and standard explicit integrator path."
+  }
+}

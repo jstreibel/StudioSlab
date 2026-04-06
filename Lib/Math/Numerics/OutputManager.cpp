@@ -29,20 +29,20 @@ namespace Slab::Math {
             if (const size_t NextRecStep = Channel->ComputeNextRecStep(CurrStep); NextRecStep < nSteps) nSteps = NextRecStep;
         }
 
-        return nSteps < CurrStep ? 1 : nSteps - CurrStep;
+        return nSteps <= CurrStep ? 1 : nSteps - CurrStep;
     }
 
     void FOutputManager::AddOutputChannel(FOutputChannel_ptr out) {
         Outputs.push_back(out);
 
-        Core::Log::Status() << "Output manager added "
-                      << Core::Log::FGBlue    << out->GetName()
-                      << Core::Log::FGMagenta << " : "
-                      << Core::Log::FGBlue    << out->GetDescription()
-                      << Core::Log::ResetFormatting << " output channel. Updates every "
-                      << Core::Log::FGGreen << out->Get_nSteps()
-                      << Core::Log::ResetFormatting << " sim steps."
-                      << Core::Log::Flush;
+        Core::FLog::Status() << "Output manager added "
+                      << Core::FLog::FGBlue    << out->GetName()
+                      << Core::FLog::FGMagenta << " : "
+                      << Core::FLog::FGBlue    << out->GetDescription()
+                      << Core::FLog::ResetFormatting << " output channel. Updates every "
+                      << Core::FLog::FGGreen << out->Get_nSteps()
+                      << Core::FLog::ResetFormatting << " sim steps."
+                      << Core::FLog::Flush;
     }
 
     void FOutputManager::SetMaxSteps(UInt MaxSteps)
@@ -54,7 +54,7 @@ namespace Slab::Math {
     {
         for (const auto& output: Outputs) {
             if (!output->NotifyIntegrationHasFinished(theVeryLastOutputInformation))
-                Core::Log::Error() << "Error while finishing " << output->GetName() << "..." << Core::Log::Flush;
+                Core::FLog::Error() << "Error while finishing " << output->GetName() << "..." << Core::FLog::Flush;
         }
     }
 

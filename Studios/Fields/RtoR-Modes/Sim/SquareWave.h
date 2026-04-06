@@ -12,12 +12,12 @@ namespace Modes {
     using namespace Slab;
     using namespace Slab::Math;
 
-    class SquareWave : public RtoR::Function {
+    class FSquareWave : public RtoR::Function {
         DevFloat t=0;
         DevFloat len=1;
         DevFloat k=2*M_PI/len;
     public:
-        explicit SquareWave(DevFloat wavelength);
+        explicit FSquareWave(DevFloat wavelength);
 
         DevFloat operator()(DevFloat x) const override;
 
@@ -27,6 +27,8 @@ namespace Modes {
 
         Str generalName() const override;
     };
+
+    using SquareWave [[deprecated("Use FSquareWave")]] = FSquareWave;
 
 } // Modes
 

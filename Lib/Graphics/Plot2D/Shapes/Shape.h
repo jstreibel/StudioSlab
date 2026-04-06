@@ -22,6 +22,7 @@ private:
 struct FRectangleShape final : FShape {
     FPoint2D top_left, bottom_right;
 
+    explicit FRectangleShape(const RectR&);
     FRectangleShape(FPoint2D top_left, FPoint2D bottom_right);
 
     void Draw(const FPlot2DWindow &window) override;
@@ -32,10 +33,10 @@ struct FRectangleShape final : FShape {
 };
 
 struct FRectangleShapeBuilder {
-    FRectangleShapeBuilder WithWidth(double w) const;
-    FRectangleShapeBuilder WithHeight(double h) const;
-    FRectangleShapeBuilder At(double x, double y) const;
-    FRectangleShapeBuilder At(FPoint2D Loc) const;
+    FRectangleShapeBuilder WithWidth(double) const;
+    FRectangleShapeBuilder WithHeight(double) const;
+    FRectangleShapeBuilder At(double, double) const;
+    FRectangleShapeBuilder At(const FPoint2D&) const;
 
     FRectangleShape Build() const;
 

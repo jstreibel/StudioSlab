@@ -21,6 +21,7 @@
 #include "Math/Numerics/ODE/Output/Sockets/OutputConsoleMonitor.h"
 
 #include "Graphics/Window/SlabWindowManager.h"
+#include "Graphics/Backend/PlatformWindow.h"
 
 namespace Slab::Models::MolecularDynamics {
     FMolecularDynamicsRecipe::FMolecularDynamicsRecipe()
@@ -36,7 +37,7 @@ namespace Slab::Models::MolecularDynamics {
 
         auto numericConfig = DynamicPointerCast<MolDynNumericConfig>(NumericConfig);
 
-        sockets.emplace_back(Slab::New <Math::OutputConsoleMonitor> (numericConfig->Get_n()));
+        sockets.emplace_back(Slab::New <Math::FOutputConsoleMonitor> (numericConfig->Get_n()));
 
         FMolecularDynamicsMonitor::Model simModel = *Model==0
                 ? FMolecularDynamicsMonitor::Model::LennardJones
@@ -79,7 +80,7 @@ namespace Slab::Models::MolecularDynamics {
     void FMolecularDynamicsRecipe::NotifyInterfaceSetupIsFinished() {
         FInterfaceOwner::NotifyInterfaceSetupIsFinished();
 
-        // Log::Attention() << "ParticleDynamics::Builder will ignore NumericParams '-t' argument and set it to negative.";
+        // FLog::Attention() << "ParticleDynamics::Builder will ignore NumericParams '-t' argument and set it to negative.";
         // DynamicPointerCast<MolDynNumericConfig>(GetNumericConfig())->Set_t(-1);
     }
 

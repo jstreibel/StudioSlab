@@ -23,7 +23,7 @@ namespace Slab::Models::KGRtoR {
     using Section = Math::RtoR::Section1D;
     using Function = Math::R2toR::FNumericFunction;
 
-    class TwoPointCorrelationViewer_KG : public KGViewer {
+    class FTwoPointCorrelationViewer_KG : public FKGViewer {
         TPointer<FunctionArtist> twoPointArtist = New<FunctionArtist>();
         TPointer<SectionArtist> sectionArtist = New<SectionArtist>();
         TPointer<Graphics::RtoRFunctionArtist> ddt2ptSection;
@@ -42,7 +42,7 @@ namespace Slab::Models::KGRtoR {
         float Δt{1};
         void computeTwoPointCorrelation();
     public:
-        explicit TwoPointCorrelationViewer_KG(const TPointer<Graphics::FGUIWindow> &guiWindow,
+        explicit FTwoPointCorrelationViewer_KG(const TPointer<Graphics::FGUIWindow> &guiWindow,
                                      const TPointer<R2toR::FNumericFunction> &func = nullptr,
                                      const TPointer<R2toR::FNumericFunction> &ddtFunc = nullptr);
 
@@ -52,6 +52,8 @@ namespace Slab::Models::KGRtoR {
 
         void ImmediateDraw(const Graphics::FPlatformWindow&) override;
     };
+
+    using TwoPointCorrelationViewer_KG [[deprecated("Use FTwoPointCorrelationViewer_KG")]] = FTwoPointCorrelationViewer_KG;
 
 } // Slab::Models::KGRtoR
 

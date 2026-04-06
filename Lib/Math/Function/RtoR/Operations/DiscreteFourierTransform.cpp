@@ -16,7 +16,7 @@
 
 namespace Slab::Math::RtoR {
 
-    DFTResult DFT::Compute(const RtoR::NumericFunction &inFunc) {
+    FDFTResult FDFT::Compute(const RtoR::NumericFunction &inFunc) {
         if(inFunc.getSpace().IsDataOnGPU()) throw Exception("DFT of GPU data is not implemented");
 
         fix N = (int)inFunc.N;
@@ -32,7 +32,7 @@ namespace Slab::Math::RtoR {
         fftw_execute(p);
 
         fix Δk = 2 * Constants::pi / L;  // Delta k
-        DFTResult result(true);
+        FDFTResult result(true);
 
         fix N⁻¹ = 1./N;
         for( auto n=0; n<N/2+1; ++n) {
@@ -56,7 +56,7 @@ namespace Slab::Math::RtoR {
         return result;
     }
 
-    DFTResult DFT::Compute(const Function &f, NumberOfModes N, DevFloat xMin, DevFloat xMax) {
+    FDFTResult FDFT::Compute(const Function &f, NumberOfModes N, DevFloat xMin, DevFloat xMax) {
         fix L = xMax - xMin;
         fix dx = L / (DevFloat) N;
 
@@ -74,7 +74,7 @@ namespace Slab::Math::RtoR {
         fftw_execute(p);
 
         fix Δk = 2 * Constants::pi / L;  // Delta k
-        DFTResult result(true);
+        FDFTResult result(true);
 
         fix scale = 1./(double)Nₒᵤₜ;
         for( auto n=0; n<Nₒᵤₜ; ++n) {
@@ -95,11 +95,11 @@ namespace Slab::Math::RtoR {
         return result;
     }
 
-    TPointer<RtoR::NumericFunction> DFT::Magnitudes(const DFTResult &dftResult) {
+    TPointer<RtoR::NumericFunction> FDFT::Magnitudes(const FDFTResult &dftResult) {
         auto mags = dftResult.getMagnitudes()->GetPoints();
 
         auto Δk = mags.back().x;
-        Core::Log::Debug() << "Computing magnitudes for dft result with Δk=" << Δk << Core::Log::Flush;
+        Core::FLog::Debug() << "Computing magnitudes for dft result with Δk=" << Δk << Core::FLog::Flush;
         fix n = mags.size();
 
         auto func = DataAlloc<NumericFunction_CPU>("dft_result", n, 0, Δk);

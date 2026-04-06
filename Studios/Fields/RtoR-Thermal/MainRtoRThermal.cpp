@@ -19,10 +19,10 @@ int run(int argc, const char **argv){
 
     FCommandLineInterfaceSelector selector("Dynamic thermal");
     Vector<Slab::Models::KGRtoR::FKGRtoR_Recipe*>
-            options = { new StatisticalBuilder,
-                        new MachineGunBuilder,
-                        new ManyOscillonsBuilder,
-                        new RandomEnergyOverDotPhiBuilder };
+            options = { new FStatisticalBuilder,
+                        new FMachineGunBuilder,
+                        new FManyOscillonsBuilder,
+                        new FRandomEnergyOverDotPhiBuilder };
 
     for(auto &opt : options)
         selector.RegisterOption(opt->GetInterface());
@@ -30,7 +30,7 @@ int run(int argc, const char **argv){
     auto selection = dynamic_cast<Slab::Models::KGRtoR::FKGRtoR_Recipe*>(
             selector.PreParse(argc, argv).GetCurrentCandidate()->GetOwner());
 
-    auto prog = MathApp(argc, argv, Slab::Models::KGRtoR::FKGRtoR_Recipe_ptr(selection));
+    auto prog = FMathApp(argc, argv, Slab::Models::KGRtoR::FKGRtoR_Recipe_ptr(selection));
 
     return prog.run();
 }
@@ -38,5 +38,4 @@ int run(int argc, const char **argv){
 int main(int argc, const char **argv) {
     return Slab::SafetyNet::jump(run, argc, argv);
 }
-
 

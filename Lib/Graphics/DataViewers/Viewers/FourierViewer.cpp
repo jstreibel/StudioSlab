@@ -22,7 +22,7 @@ namespace Slab::Graphics {
 
     constexpr auto KeepRedundantModes = false;
 
-    FourierViewer::FourierViewer(const TPointer<FGUIWindow>& gui_window) : Viewer(gui_window)
+    FFourierViewer::FFourierViewer(const TPointer<FGUIWindow>& gui_window) : FViewer(gui_window)
     {
         kSpaceGraph  = New<FPlot2DWindow>("ℱₓ");
         ωSpaceGraph  = New<FPlot2DWindow>("ℱₜ");
@@ -101,7 +101,7 @@ namespace Slab::Graphics {
         ArrangeWindows();
     }
 
-    void FourierViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+    void FFourierViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         auto function = getFunction();
         if(function == nullptr) return;
 
@@ -133,10 +133,10 @@ namespace Slab::Graphics {
 
                 if ((autoRefresh || ImGui::Button("Compute ℱₖ⁻¹")) && needRefresh) {
                     if (selected == 1) {
-                        RtoR::DFTInverse::LowPass lowPass((int) kFilterCutoff);
+                        RtoR::FDFTInverse::FLowPass lowPass((int) kFilterCutoff);
                         refreshInverseDFT(&lowPass);
                     } else if (selected == 0) {
-                        RtoR::DFTInverse::HighPass highPass((int) kFilterCutoff);
+                        RtoR::FDFTInverse::FHighPass highPass((int) kFilterCutoff);
                         refreshInverseDFT(&highPass);
                     }
 
@@ -169,10 +169,10 @@ namespace Slab::Graphics {
             }
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
-    auto FourierViewer::FilterSpace(const TPointer<const R2toR::FNumericFunction>& func, DevFloat tMin,
+    auto FFourierViewer::FilterSpace(const TPointer<const R2toR::FNumericFunction>& func, DevFloat tMin,
                                     DevFloat tMax) -> TPointer<R2toR::FNumericFunction> {
 
         fix t_min = func->getDomain().yMin;
@@ -203,14 +203,14 @@ namespace Slab::Graphics {
         return out;
     }
 
-    void FourierViewer::computeAll() {
+    void FFourierViewer::computeAll() {
         if(fix function = getFunction(); function == nullptr) return;
 
         computeFullDFT2D(KeepRedundantModes);
         computeTwoPointCorrelations();
     }
 
-    void FourierViewer::computeFullDFT2D(bool discardRedundantModes) {
+    void FFourierViewer::computeFullDFT2D(bool discardRedundantModes) {
         const auto function = getFunction();
 
         if(function == nullptr) return;
@@ -240,7 +240,7 @@ namespace Slab::Graphics {
         imagPartsArtist ->setFunction(ftImagParts);
     }
 
-    void FourierViewer::computeTwoPointCorrelations() {
+    void FFourierViewer::computeTwoPointCorrelations() {
         // if(function == nullptr) return;
         if(dft2DFunction == nullptr) return;
 
@@ -258,7 +258,7 @@ namespace Slab::Graphics {
 
     }
 
-    void FourierViewer::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
+    void FFourierViewer::refreshInverseDFT(RtoR::FDFTInverse::FFilter *filter) {
         auto function = getFunction();
 
         if(function == nullptr) return;
@@ -289,7 +289,7 @@ namespace Slab::Graphics {
         int _n = 0;
         for(auto &data : *dftData){
 
-            auto func = RtoR::DFTInverse::Compute(data.result, xMin, L,
+            auto func = RtoR::FDFTInverse::Compute(data.result, xMin, L,
                                                   filter);
 
             auto *out = &rebuiltHistory->At(0, _n);
@@ -304,7 +304,7 @@ namespace Slab::Graphics {
         */
     }
 
-    void FourierViewer::computeTimeDFT() {
+    void FFourierViewer::computeTimeDFT() {
         auto function = getFunction();
 
         if(function == nullptr) return;
@@ -339,7 +339,7 @@ namespace Slab::Graphics {
 
             for(auto j=0; j<M; ++j) spaceData_temp[j] = function->At(i, j₀+j);
 
-            auto dftMagnitudes = RtoR::DFT::Compute(tempSpace).getMagnitudes();
+            auto dftMagnitudes = RtoR::FDFT::Compute(tempSpace).getMagnitudes();
 
             assert(dftMagnitudes->Count()==m);
 
@@ -359,8 +359,8 @@ namespace Slab::Graphics {
 
 
 
-    void FourierViewer::SetFunction(const FourierViewer::Function func) {
-        Viewer::SetFunction(func);
+    void FFourierViewer::SetFunction(const FFourierViewer::Function func) {
+        FViewer::SetFunction(func);
 
         fix function = getFunction();
 
@@ -387,15 +387,15 @@ namespace Slab::Graphics {
         computeSpaceDFT();
     }
 
-    bool FourierViewer::is_Ft_auto_updating() const {
+    bool FFourierViewer::is_Ft_auto_updating() const {
         return auto_update_Ft;
     }
 
-    bool FourierViewer::is_Ftx_auto_updating() const {
+    bool FFourierViewer::is_Ftx_auto_updating() const {
         return auto_update_Ftx;
     }
 
-    void FourierViewer::computeSpaceDFT() {
+    void FFourierViewer::computeSpaceDFT() {
         auto function = getFunction();
 
         if(function == nullptr) return;
@@ -417,7 +417,7 @@ namespace Slab::Graphics {
 
     }
 
-    Str FourierViewer::GetName() const {
+    Str FFourierViewer::GetName() const {
         return "Fourier transforms viewer";
     }
 

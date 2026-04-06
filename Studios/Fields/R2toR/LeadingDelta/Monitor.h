@@ -14,7 +14,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     using namespace Slab;
     using namespace Math;
 
-    class OutGL : public Models::KGR2toR::OutputOpenGL {
+    class FOutGL : public Models::KGR2toR::FOutputOpenGL {
 
         TPointer<R2toR::Function> drivingFunction;
 
@@ -33,11 +33,13 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
     public:
 
-        OutGL(CountType max_steps, TPointer<R2toR::Function> drivingFunction);
+        FOutGL(CountType max_steps, TPointer<R2toR::Function> drivingFunction);
 
         auto ImmediateDraw(const Graphics::FPlatformWindow&) -> void override;
 
     };
+
+    using OutGL [[deprecated("Use FOutGL")]] = FOutGL;
 }
 
 

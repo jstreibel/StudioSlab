@@ -1,5 +1,9 @@
 #include "NumericTask.h"
 
+#include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
+
+#include <algorithm>
+
 #define ATTEMP_REALTIME false
 #if ATTEMP_REALTIME
 #include <sched.h>
@@ -8,7 +12,10 @@
 
 namespace Slab::Math {
 
-    using Core::Log;
+    using Core::FLog;
+    namespace {
+        constexpr size_t MaxIntegrationBatchSteps = 2048;
+    }
 
     FNumericTask::FNumericTask(const TPointer <Base::FNumericalRecipe> &recipe, const bool pre_init)
     : FTask("Numeric Integration")
@@ -20,7 +27,9 @@ namespace Slab::Math {
     }
 
     FNumericTask::~FNumericTask() {
-        Log::Note() << "Avg. integration time: " << BenchmarkData << Log::Flush;
+        if (BenchmarkData == nullptr) return;
+
+        FLog::Note() << "Avg. integration time: " << *BenchmarkData << FLog::Flush;
     }
 
     void FNumericTask::Init() {
@@ -52,9 +61,9 @@ namespace Slab::Math {
             // Set the scheduling policy and priority of the current process.
             int ret = sched_setscheduler(0, SCHED_FIFO, &param);
             if (ret == -1) {
-                Log::Error() << "Couldn't set realtime scheduling: " << std::strerror(errno) << Log::Flush;
+                FLog::Error() << "Couldn't set realtime scheduling: " << std::strerror(errno) << FLog::Flush;
             } else {
-                Log::Info() << "Program running with realtime priority." << Log::Flush;
+                FLog::Info() << "Program running with realtime priority." << FLog::Flush;
             }
         }
 #endif
@@ -88,18 +97,24 @@ namespace Slab::Math {
         return true;
     }
 
-    bool FNumericTask::CycleUntilOutputOrFinish() {
-        const size_t nCyclesToNextOutput = OutputManager->ComputeNStepsToNextOutput(StepsConcluded);
+    auto FNumericTask::ComputeCycleSize(const size_t remainingSteps) -> size_t {
+        if (remainingSteps == 0) return 0;
 
-        if (nCyclesToNextOutput > 50000) {
-            Log::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << Log::Flush;
+        auto nCycles = std::min(remainingSteps, MaxIntegrationBatchSteps);
+
+        if (OutputManager != nullptr) {
+            const size_t nCyclesToNextOutput = OutputManager->ComputeNStepsToNextOutput(StepsConcluded);
+
+            if (nCyclesToNextOutput == 0) {
+                FLog::WarningImportant() << "Output manager requested 0 cycle size at step "
+                                         << StepsConcluded << ". Falling back to integration batch." << FLog::Flush;
+                return nCycles;
+            }
+
+            nCycles = std::min(nCycles, nCyclesToNextOutput);
         }
 
-        if (nCyclesToNextOutput == 0) {
-            return false;
-        }
-
-        return Cycle(nCyclesToNextOutput);
+        return nCycles;
     }
 
     void FNumericTask::Output(const bool force) {
@@ -120,6 +135,8 @@ namespace Slab::Math {
 
     float FNumericTask::GetProgress() const
     {
+        if (TotalSteps == 0) return 1.0f;
+
         return static_cast<float>(StepsConcluded) / static_cast<float>(TotalSteps);
     }
 
@@ -130,12 +147,15 @@ namespace Slab::Math {
 
         const size_t n = TotalSteps;
 
-        while (!forceStopFlag && StepsConcluded < n && CycleUntilOutputOrFinish()) { }
+        while (!forceStopFlag && StepsConcluded < n) {
+            const size_t remainingSteps = n - StepsConcluded;
+            const size_t nCycles = ComputeCycleSize(remainingSteps);
 
-        if(forceStopFlag)                                       return Core::TaskAborted;
+            if (nCycles == 0) return Core::TaskError;
+            if (!Cycle(nCycles)) return forceStopFlag ? Core::TaskAborted : Core::TaskError;
+        }
 
-        // Para cumprir com os steps quebrados faltantes:
-        if (StepsConcluded < n) if(!Cycle(n - StepsConcluded)) return Core::TaskError;
+        if (forceStopFlag) return Core::TaskAborted;
 
         OutputManager->NotifyIntegrationFinished(GetOutputInfo());
 

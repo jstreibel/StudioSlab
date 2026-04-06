@@ -14,13 +14,13 @@
 
 namespace Slab::Graphics {
 
-    class PlotThemeManager : public Singleton<PlotThemeManager>, public FPlatformWindowEventListener {
+    class FPlotThemeManager : public FSingleton<FPlotThemeManager>, public FPlatformWindowEventListener {
     protected:
-        friend Singleton<PlotThemeManager>;
+        friend FSingleton<FPlotThemeManager>;
         friend GraphTheme_ptr LoadStyle(const Str& style);
         Str current;
 
-        PlotThemeManager();
+        FPlotThemeManager();
 
     public:
         static GraphTheme_ptr GetCurrent();
@@ -31,6 +31,8 @@ namespace Slab::Graphics {
         static bool SetTheme(const Str& theme);
         static StrVector GetThemes();
     };
+
+    using PlotThemeManager [[deprecated("Use FPlotThemeManager")]] = FPlotThemeManager;
 
 } // Graphics
 

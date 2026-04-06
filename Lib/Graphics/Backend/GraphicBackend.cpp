@@ -11,21 +11,23 @@
 #include "Core/Tools/Log.h"
 #include "Graphics/Modules/GUIModule/GUIModule.h"
 
+#include "PlatformWindow.h"
+
 namespace Slab::Graphics {
 
-    GraphicBackend::GraphicBackend(const Str &name)
+    FGraphicBackend::FGraphicBackend(const Str &name)
     : FBackend(name) {}
 
-    GraphicBackend::~GraphicBackend() = default;
+    FGraphicBackend::~FGraphicBackend() = default;
 
 
-    void GraphicBackend::AddGraphicsModule(const TVolatile<GraphicsModule> &module) { GraphicModules.emplace_back(module); }
+    void FGraphicBackend::AddGraphicsModule(const TVolatile<FGraphicsModule>& module) { GraphicModules.emplace_back(module); }
 
-    const Vector<TVolatile<GraphicsModule>> &GraphicBackend::GetGraphicsModules() { return GraphicModules; }
+    const Vector<TVolatile<FGraphicsModule>>& FGraphicBackend::GetGraphicsModules() { return GraphicModules; }
 
-    bool GraphicBackend::IsHeadless() const { return false; }
+    bool FGraphicBackend::IsHeadless() const { return false; }
 
-    TPointer<FPlatformWindow> GraphicBackend::NewSystemWindow(const Str&title) {
+    TPointer<FPlatformWindow> FGraphicBackend::NewSystemWindow(const Str&title) {
         auto win = this->CreatePlatformWindow(title);
 
         SystemWindows.emplace_back(win);
@@ -33,30 +35,30 @@ namespace Slab::Graphics {
         return win;
     }
 
-    void GraphicBackend::UnloadAllModules() { GraphicModules.clear(); }
+    void FGraphicBackend::UnloadAllModules() { GraphicModules.clear(); }
 
-    void GraphicBackend::ClearModules() { GraphicModules.clear(); }
+    void FGraphicBackend::ClearModules() { GraphicModules.clear(); }
 
-    void GraphicBackend::Terminate() { UnloadAllModules(); }
+    void FGraphicBackend::Terminate() { UnloadAllModules(); }
 
-    void GraphicBackend::NotifyModuleLoaded(const TPointer<Core::SlabModule> &module) {
+    void FGraphicBackend::NotifyModuleLoaded(const TPointer<Core::FSlabModule> &module) {
         if(module->bRequiresGraphicsBackend) {
-            auto GraphicModule = DynamicPointerCast<GraphicsModule>(module);
+            auto GraphicModule = DynamicPointerCast<FGraphicsModule>(module);
 
             AddGraphicsModule(GraphicModule);
         }
     }
 
-    TPointer<FPlatformWindow> GraphicBackend::GetMainSystemWindow() {
+    TPointer<FPlatformWindow> FGraphicBackend::GetMainSystemWindow() {
         if(SystemWindows.empty()) return NewSystemWindow("Main window");
 
         return SystemWindows.front();
     }
 
-    void GraphicBackend::SetupGUIForPlatformWindow(const FPlatformWindow *PlatformWindow_RawPtr) const {
+    void FGraphicBackend::SetupGUIForPlatformWindow(const FPlatformWindow *PlatformWindow_RawPtr) const {
         if(PlatformWindow_RawPtr == nullptr)
         {
-            Core::Log::Error("While trying to setup a GUI context for nullptr SystemWindow.");
+            Core::FLog::Error("While trying to setup a GUI context for nullptr SystemWindow.");
             return;
         }
 
@@ -74,6 +76,6 @@ namespace Slab::Graphics {
             }
         }
 
-        Core::Log::Error("Failed to setup GUI for platform window; window not found in backend data.");
+        Core::FLog::Error("Failed to setup GUI for platform window; window not found in backend data.");
     }
 }

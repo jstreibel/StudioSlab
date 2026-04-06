@@ -28,7 +28,7 @@ namespace Tests {
     file_browser browser;
     media media;
 
-    NuklearTests::NuklearTests() {
+    FNuklearTests::FNuklearTests() {
         Core::LoadModule("Nuklear");
 
         {
@@ -52,8 +52,8 @@ namespace Tests {
         }
     }
 
-    bool NuklearTests::NotifyRender(const Graphics::FPlatformWindow&) {
-        auto& nkModule = dynamic_cast<Graphics::NuklearModule&>(*Core::BackendManager::GetModule("Nuklear"));
+    bool FNuklearTests::NotifyRender(const Graphics::FPlatformWindow&) {
+        auto& nkModule = dynamic_cast<Graphics::FNuklearModule&>(*Core::FBackendManager::GetModule("Nuklear"));
         NOT_IMPLEMENTED
         // auto *nkContext =  nkModule.getContext();
         nk_context *nkContext; // dumb var

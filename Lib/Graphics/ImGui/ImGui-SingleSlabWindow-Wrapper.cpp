@@ -13,7 +13,6 @@
 #include <utility>
 #include <Graphics/Modules/ImGui/ImGuiModule.h>
 
-#include "imgui_internal.h"
 #include "3rdParty/freetype-gl/vertex-attribute.h"
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/GLStateGuard.h"
@@ -47,6 +46,13 @@ namespace Slab::Graphics {
 
         constexpr bool bPopupMenu = false;
 
+        // This wrapper bridges platform events and ImGui hit-testing across frames.
+        // Reset per-frame states before rebuilding the canvas region.
+        IsFocused = false;
+        Hovered = false;
+        Active = false;
+        bCanvasBoundsValid = false;
+
         CallBackData.SlabWindow = SlabWindow.get();
         CallBackData.PlatformWindow = &PlatformWindow;
 
@@ -74,22 +80,32 @@ namespace Slab::Graphics {
                 ImGuiButtonFlags_MouseButtonLeft | ImGuiButtonFlags_MouseButtonRight |
                 ImGuiButtonFlags_MouseButtonMiddle);
 
+            CanvasMinX = p0.x;
+            CanvasMinY = p0.y;
+            CanvasMaxX = p0.x + avail.x;
+            CanvasMaxY = p0.y + avail.y;
+            bCanvasBoundsValid = avail.x > 0.0f && avail.y > 0.0f;
+
             // States
             Hovered = ImGui::IsItemHovered();
             Active  = ImGui::IsItemActive();
+            {
+                const auto& io = ImGui::GetIO();
+                if (io.MousePos.x > -FLT_MAX && io.MousePos.y > -FLT_MAX)
+                {
+                    bHasLastMousePosition = true;
+                    LastMouseX = static_cast<int>(io.MousePos.x);
+                    LastMouseY = static_cast<int>(io.MousePos.y);
+                }
+            }
 
             // 4) Consume mouse wheel here (prevents parent scroll)
             if (Hovered) {
                 fix &IO = ImGui::GetIO();
 
                 if (fix Wheel = IO.MouseWheel; Wheel != 0.0f) {
-                    ImGui::SetItemUsingMouseWheel(); // tells ImGui we used the wheel
-
-                    // SlabWindow->NotifyMouseWheel(0.0, Wheel);
+                    ImGui::SetNextFrameWantCaptureMouse(true);
                 }
-
-                constexpr int MAX_MOUSE_BUTTONS = 5;
-                auto MouseClicked = IO.MouseClicked;
             }
 
             // 5) Mouse interactions while active/hovered
@@ -164,6 +180,15 @@ namespace Slab::Graphics {
         if (bOpen == false) this->Close();
     }
 
+    auto FSlabWindow_ImGuiWrapper::IsPointInsideCanvas(const int x, const int y) const -> bool
+    {
+        if (!bCanvasBoundsValid) return false;
+
+        const auto px = static_cast<float>(x);
+        const auto py = static_cast<float>(y);
+        return px >= CanvasMinX && px <= CanvasMaxX && py >= CanvasMinY && py <= CanvasMaxY;
+    }
+
     bool FSlabWindow_ImGuiWrapper::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys)
     {
         if (!IsFocused) return false;
@@ -181,21 +206,27 @@ namespace Slab::Graphics {
     bool FSlabWindow_ImGuiWrapper::NotifyMouseButton(EMouseButton mouse_button, EKeyState key_state,
         EModKeys mod_keys)
     {
-        if (!IsFocused) return false;
+        const bool bMouseInCanvas = bHasLastMousePosition && IsPointInsideCanvas(LastMouseX, LastMouseY);
+        if (!(bMouseInCanvas || Hovered || Active || IsFocused)) return false;
 
         return FSlabWindow::NotifyMouseButton(mouse_button, key_state, mod_keys);
     }
 
     bool FSlabWindow_ImGuiWrapper::NotifyMouseMotion(int x, int y, int dx, int dy)
     {
-        if (!IsFocused) return false;
+        bHasLastMousePosition = true;
+        LastMouseX = x;
+        LastMouseY = y;
+        const bool bMouseInCanvas = IsPointInsideCanvas(x, y);
+        if (!(bMouseInCanvas || Hovered || Active || IsFocused)) return false;
 
         return FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
     }
 
     bool FSlabWindow_ImGuiWrapper::NotifyMouseWheel(double dx, double dy)
     {
-        if (!IsFocused) return false;
+        const bool bMouseInCanvas = bHasLastMousePosition && IsPointInsideCanvas(LastMouseX, LastMouseY);
+        if (!(bMouseInCanvas || Hovered || Active || IsFocused)) return false;
 
         return FSlabWindow::NotifyMouseWheel(dx, dy);
     }

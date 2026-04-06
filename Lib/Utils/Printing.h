@@ -8,11 +8,29 @@
 #include "Types.h"
 
 namespace Slab::Printing {
-    auto getDPI() -> int;
-    auto getTextWidthInches() -> DevFloat;
+    auto GetDPI() -> int;
+    [[deprecated("Use GetDPI")]]
+    inline auto getDPI() -> int {
+        return GetDPI();
+    }
 
-    auto getTotalHorizontalDots(DevFloat proportionOfTextWidth) -> int;
-    auto getTotalVerticalDots(DevFloat proportionOfTextWidth) -> int;
+    auto GetTextWidthInches() -> DevFloat;
+    [[deprecated("Use GetTextWidthInches")]]
+    inline auto getTextWidthInches() -> DevFloat {
+        return GetTextWidthInches();
+    }
+
+    auto GetTotalHorizontalDots(DevFloat proportionOfTextWidth) -> int;
+    [[deprecated("Use GetTotalHorizontalDots")]]
+    inline auto getTotalHorizontalDots(const DevFloat proportionOfTextWidth) -> int {
+        return GetTotalHorizontalDots(proportionOfTextWidth);
+    }
+
+    auto GetTotalVerticalDots(DevFloat proportionOfTextWidth) -> int;
+    [[deprecated("Use GetTotalVerticalDots")]]
+    inline auto getTotalVerticalDots(const DevFloat proportionOfTextWidth) -> int {
+        return GetTotalVerticalDots(proportionOfTextWidth);
+    }
 }
 
 

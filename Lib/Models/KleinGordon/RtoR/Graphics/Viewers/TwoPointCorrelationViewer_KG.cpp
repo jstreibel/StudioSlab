@@ -13,12 +13,12 @@
 namespace Slab::Models::KGRtoR {
 
     using Plotter = Graphics::FPlotter;
-    using Themes = Graphics::PlotThemeManager;
+    using Themes = Graphics::FPlotThemeManager;
 
-    TwoPointCorrelationViewer_KG::TwoPointCorrelationViewer_KG(const TPointer<Graphics::FGUIWindow> &guiWindow,
+    FTwoPointCorrelationViewer_KG::FTwoPointCorrelationViewer_KG(const TPointer<Graphics::FGUIWindow> &guiWindow,
                                                                const TPointer<R2toR::FNumericFunction> &func,
                                                                const TPointer<R2toR::FNumericFunction> &ddtFunc)
-    : KGViewer(guiWindow, func, ddtFunc)
+    : FKGViewer(guiWindow, func, ddtFunc)
     {
         twoPointArtist->SetLabel("avg[ϕ(x)ϕ(x+r)]");
 
@@ -40,8 +40,8 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    void TwoPointCorrelationViewer_KG::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
-        Viewer::SetFunction(function);
+    void FTwoPointCorrelationViewer_KG::SetFunction(TPointer<Math::R2toR::FNumericFunction> function) {
+        FViewer::SetFunction(function);
 
         {
             fix t_min = (float)function->getDomain().yMin;
@@ -78,7 +78,7 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void TwoPointCorrelationViewer_KG::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FTwoPointCorrelationViewer_KG::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if(getFunction() == nullptr) return;
 
         gui_window->AddExternalDraw([this](){
@@ -190,17 +190,17 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void TwoPointCorrelationViewer_KG::computeTwoPointCorrelation() {
+    void FTwoPointCorrelationViewer_KG::computeTwoPointCorrelation() {
         auto function = getFunction();
         if(function == nullptr) return;
 
         // Fourier transform *********************************************************************************
         DevFloat t_0 = (DevFloat)t0;
         DevFloat t_f = t_0 + (DevFloat)Δt;
-        auto toFT = Graphics::FourierViewer::FilterSpace(function, t_0, t_f);
+        auto toFT = Graphics::FFourierViewer::FilterSpace(function, t_0, t_f);
         auto dft2DFunction = Math::R2toR::R2toRDFT::DFTReal(*toFT);
 
         // Power spectrum ************************************************************************************
@@ -223,7 +223,7 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    Str TwoPointCorrelationViewer_KG::GetName() const {
+    Str FTwoPointCorrelationViewer_KG::GetName() const {
         return "[KG] 2-point correlation viewer";
     }
 } // Slab::Models::KGRtoR

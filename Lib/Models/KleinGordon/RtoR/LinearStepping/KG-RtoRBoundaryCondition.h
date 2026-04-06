@@ -15,7 +15,7 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    class BoundaryCondition : public Base::BoundaryConditions {
+    class FBoundaryCondition : public Base::BoundaryConditions {
         RtoR::Function_ptr initialPhiCondition;
         RtoR::Function_ptr leftPhiBoundaryCondition;
         RtoR::Function_ptr rightPhiBoundaryCondition;
@@ -25,23 +25,25 @@ namespace Slab::Models::KGRtoR {
 
     protected:
 
-        virtual void ApplyKG(EquationState &kgState, DevFloat t) const;
+        virtual void ApplyKG(FEquationState &kgState, DevFloat t) const;
 
     public:
-        BoundaryCondition(const KGRtoR::EquationState_constptr &prototype,
-                          RtoR::Function_ptr initialPhiCondition,
-                          RtoR::Function_ptr initialdPhiDtCondition,
-                          RtoR::Function_ptr leftPhiBoundaryCondition = nullptr,
-                          RtoR::Function_ptr leftdPhiDtBoundaryCondition = nullptr,
-                          RtoR::Function_ptr rightPhiBoundaryCondition = nullptr,
-                          RtoR::Function_ptr rightdPhiDtBoundaryCondition = nullptr);
+        FBoundaryCondition(const KGRtoR::FEquationState_constptr &prototype,
+                           RtoR::Function_ptr initialPhiCondition,
+                           RtoR::Function_ptr initialdPhiDtCondition,
+                           RtoR::Function_ptr leftPhiBoundaryCondition = nullptr,
+                           RtoR::Function_ptr leftdPhiDtBoundaryCondition = nullptr,
+                           RtoR::Function_ptr rightPhiBoundaryCondition = nullptr,
+                           RtoR::Function_ptr rightdPhiDtBoundaryCondition = nullptr);
 
-        ~BoundaryCondition() override;
+        ~FBoundaryCondition() override;
 
         void Apply(Base::EquationState &state, DevFloat t) const final;
     };
 
-    DefinePointers(BoundaryCondition)
+    using BoundaryCondition [[deprecated("Use FBoundaryCondition")]] = FBoundaryCondition;
+
+    DefinePointers(FBoundaryCondition)
 }
 
 

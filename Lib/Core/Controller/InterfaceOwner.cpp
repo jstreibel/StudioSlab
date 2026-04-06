@@ -14,7 +14,7 @@
 namespace Slab::Core {
 
     FInterfaceOwner::FInterfaceOwner(bool IKnowIMustCallLateStart) {
-        if (!IKnowIMustCallLateStart) Log::WarningImportant("Remember to call LateStart!") << Log::Flush;
+        if (!IKnowIMustCallLateStart) FLog::WarningImportant("Remember to call LateStart!") << FLog::Flush;
     }
 
     FInterfaceOwner::FInterfaceOwner(Str InterfaceName, int priority, bool DoRegister) {
@@ -26,17 +26,17 @@ namespace Slab::Core {
 
         if (DoRegister) RegisterToManager();
         else
-            Log::Debug() << Common::getClassName(this) << ": interface \"" << Interface->GetName()
-                         << "\" did NOT immediately register to InterfaceManager." << Log::Flush;
+            FLog::Debug() << Common::GetClassName(this) << ": interface \"" << Interface->GetName()
+                         << "\" did NOT immediately register to InterfaceManager." << FLog::Flush;
     }
 
     void FInterfaceOwner::NotifyInterfaceSetupIsFinished() {
-        // Log::Info() << "Interface " << Log::FGCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting
+        // FLog::Info() << "Interface " << FLog::FGCyan << FLog::BoldFace << interface->getName() << FLog::ResetFormatting
         //               << " (priority " << interface->priority << ") "
-        //               << "has been setup from command-line." << Log::Flush;
+        //               << "has been setup from command-line." << FLog::Flush;
 
-        auto &note = Log::Note() << "Interface " << Log::FGCyan << Log::BoldFace
-                                 << Interface->GetName() << Log::ResetFormatting
+        auto &note = FLog::Note() << "Interface " << FLog::FGCyan << FLog::BoldFace
+                                 << Interface->GetName() << FLog::ResetFormatting
                                  << " (priority " << Interface->Priority
                                  << ") initialized with the following values from command line:";
 
@@ -44,7 +44,7 @@ namespace Slab::Core {
             note << "\n\t\t\t\t\t\t--" << std::left << std::setw(20) << param->GetFullCommandLineName() << ": "
                  << param->ValueToString();
 
-        note << Log::Flush;
+        note << FLog::Flush;
     }
 
     auto FInterfaceOwner::NotifyAllInterfacesSetupIsFinished() -> void
@@ -74,7 +74,7 @@ namespace Slab::Core {
             NotifyAllInterfacesSetupIsFinished();
 
         // else
-        //     Log::WarningImportant( "Interface " << Log::FGCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting
+        //     FLog::WarningImportant( "Interface " << FLog::FGCyan << FLog::BoldFace << interface->getName() << FLog::ResetFormatting
         //                                 << " (priority " << interface->priority << ") "
         //                                 << "received a message that it does not know how to handle."
     }

@@ -2,6 +2,7 @@
 // Created by joao on 11/18/24.
 //
 
+#include "Graphics/OpenGL/OpenGL.h"
 #include "NuklearContext.h"
 #include "3rdParty/Nuklear/nuklear_glfw_gl4.h"
 
@@ -13,15 +14,15 @@ namespace Slab::Graphics {
     constexpr Int Max_Vertex_Buffer  = 2*1024*1024;
     constexpr Int Max_Element_Buffer = 2*1024*1024;
 
-    void NuklearContext::NewFrame() {
+    void FNuklearContext::NewFrame() {
         nk_input_begin(context);
     }
 
-    void NuklearContext::AddMainMenuItem(MainMenuItem item) {
+    void FNuklearContext::AddMainMenuItem(MainMenuItem item) {
 
     }
 
-    void NuklearContext::SetParentPlatformWindow(FOwnerPlatformWindow NewOwner)
+    void FNuklearContext::SetParentPlatformWindow(FOwnerPlatformWindow NewOwner)
     {
         // nkContext = nk_sfml_init(renderWindow);
         // /* Load Fonts: if none of these are loaded a default font will be used  */
@@ -39,7 +40,7 @@ namespace Slab::Graphics {
         // nk_sfml_font_stash_end();
         //
         // /* nk_style_load_all_cursors(ctx, atlas->cursors);*/
-        // if(droid == nullptr) Core::Log::Error() << "Could not load font '" << font_filename << "'. Using default Nuklear font." << Core::Log::Flush;
+        // if(droid == nullptr) Core::FLog::Error() << "Could not load font '" << font_filename << "'. Using default Nuklear font." << Core::FLog::Flush;
         // else nk_style_set_font(nkContext, &droid->handle);
 
         if (IN Owner = NewOwner.lock())
@@ -66,15 +67,15 @@ namespace Slab::Graphics {
         }
     }
 
-    void NuklearContext::Bind() {
+    void FNuklearContext::Bind() {
         
     }
 
-    void NuklearContext::Render() {
+    void FNuklearContext::Render() {
 
     }
 
-    void *NuklearContext::GetContextPointer() {
+    void *FNuklearContext::GetContextPointer() {
         return context;
     }
 

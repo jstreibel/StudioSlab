@@ -16,7 +16,7 @@
 
 
 namespace Slab::Lost::ThermoOutput {
-    class QuenchViewController : public ViewControlBase {
+    class QuenchViewController : public FViewControlBase {
         double T;
         int MCStep{};
 
@@ -39,7 +39,7 @@ namespace Slab::Lost::ThermoOutput {
 
         Vector<DevFloat> av_e, av_e2, av_m, av_m2, av_m4, T_values;
 
-        typedef Pair<XYMetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
+        typedef Pair<FXYMetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
 
         sf::Image helperBitmap;
         Vector<sf::Drawable *> drawables;
@@ -57,7 +57,7 @@ namespace Slab::Lost::ThermoOutput {
     private:
         void _stepSims();
 
-        void __updateIsingGraph(const XYNetwork &S, sf::Texture &networkTexture);
+        void __updateIsingGraph(const FXYNetwork& S, sf::Texture& networkTexture);
 
         void _treatEvents();
 

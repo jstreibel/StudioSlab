@@ -14,16 +14,16 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    class SimHistory : public FOutputChannel {
+    class FSimHistory : public FOutputChannel {
 
     public:
-        SimHistory(CountType MaxSteps, DevFloat tMax,
-                   Resolution N_x,
-                   Resolution N_t,
-                   DevFloat xMin,
-                   DevFloat L,
-                   const Str &ChannelName = "SimulationHistory",
-                   bool bManageData = false);
+        FSimHistory(CountType MaxSteps, DevFloat tMax,
+                    Resolution N_x,
+                    Resolution N_t,
+                    DevFloat xMin,
+                    DevFloat L,
+                    const Str &ChannelName = "SimulationHistory",
+                    bool bManageData = false);
 
         [[nodiscard]] auto GetData() const -> TPointer<const R2toR::FNumericFunction>;
         [[nodiscard]] auto GetData()       -> TPointer<R2toR::FNumericFunction>;
@@ -39,9 +39,11 @@ namespace Slab::Models::KGRtoR {
         R2toR::FNumericFunction_ptr Data;
         IntVector Timesteps;
 
-        virtual auto Transfer(const FOutputPacket &Packet, ValarrayWrapper <DevFloat> &DataOut) -> void;
+        virtual auto Transfer(const FOutputPacket &Packet, FValarrayWrapper <DevFloat> &DataOut) -> void;
 
     };
+
+    using SimHistory [[deprecated("Use FSimHistory")]] = FSimHistory;
 
 
 }

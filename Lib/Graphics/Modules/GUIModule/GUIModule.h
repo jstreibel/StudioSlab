@@ -10,7 +10,7 @@
 
 namespace Slab::Graphics {
 
-    class FGUIModule : public GraphicsModule {
+    class FGUIModule : public FGraphicsModule {
     public:
         explicit FGUIModule(const Str& name);
         ~FGUIModule() override = default;

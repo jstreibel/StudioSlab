@@ -13,31 +13,31 @@ const int HEADER_SIZE_BYTES = 2048;
 
 namespace Slab::Math {
 
-    using Core::Log;
+    using Core::FLog;
 
-    RtoR::OutputHistoryToFile::OutputHistoryToFile(UInt stepsInterval,
-                                                   SpaceFilterBase *spaceFilter,
+    RtoR::FOutputHistoryToFile::FOutputHistoryToFile(UInt stepsInterval,
+                                                   FSpaceFilterBase *spaceFilter,
                                                    Str outputFileName)
-            : HistoryKeeper(stepsInterval, spaceFilter),
+            : FHistoryKeeper(stepsInterval, spaceFilter),
               outFileName(std::move(outputFileName)),
-              outputFormatter(*(new BinarySOF())) {
+              outputFormatter(*(new FBinarySOF())) {
         this->Name = "Full (1+1) history output";
 
         file.open(outFileName, std::ios::out);
 
-        if (!file) throw "OutputHistoryToFile: nao abriu arquivo.";
+        if (!file) throw "FOutputHistoryToFile: nao abriu arquivo.";
 
-        Log::Info() << "Sim history will be saved in '" << outFileName << "'. " << Log::Flush;
+        FLog::Info() << "Sim history will be saved in '" << outFileName << "'. " << FLog::Flush;
 
         file << Str(HEADER_SIZE_BYTES - 1, ' ') << '\n';
     }
 
-    RtoR::OutputHistoryToFile::~OutputHistoryToFile() {
+    RtoR::FOutputHistoryToFile::~FOutputHistoryToFile() {
         auto *f = &outputFormatter;
         delete f;
     }
 
-    void RtoR::OutputHistoryToFile::_dump(bool integrationIsFinished) {
+    void RtoR::FOutputHistoryToFile::_dump(bool integrationIsFinished) {
         if (integrationIsFinished) {
             _printHeaderToFile();
 
@@ -51,10 +51,10 @@ namespace Slab::Math {
         FTimer timer;
 
         for (size_t Ti = 0; Ti < count; Ti++) {
-            if (timer.GetElapsedTime_Seconds() > 1) {
-                timer.reset();
-                Log::Info() << std::setprecision(3) << "Flushing " << (DevFloat) Ti / DevFloat(count) * 100.0 << "%"
-                            << Log::Flush;
+            if (timer.GetElapsedTimeSeconds() > 1) {
+                timer.Reset();
+                FLog::Info() << std::setprecision(3) << "Flushing " << (DevFloat) Ti / DevFloat(count) * 100.0 << "%"
+                            << FLog::Flush;
             }
 
             file << outputFormatter(stepHistory[int(Ti)]);
@@ -69,11 +69,11 @@ namespace Slab::Math {
 
         file.flush();
 
-        Log::Success() << "Flushed " << "100%" << Log::Flush;
+        FLog::Success() << "Flushed " << "100%" << FLog::Flush;
     }
 
 
-    void RtoR::OutputHistoryToFile::_printHeaderToFile() {
+    void RtoR::FOutputHistoryToFile::_printHeaderToFile() {
         // Allocator &builder = Allocator::getInstance();
 
 

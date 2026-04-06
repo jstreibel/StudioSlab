@@ -10,7 +10,7 @@
 namespace Tests {
     using namespace Slab;
 
-    VShapeExpansionTest::VShapeExpansionTest()
+    FVShapeExpansionTest::FVShapeExpansionTest()
     : FWindowRow("V-shape expansion test")
     , graph("V-Shape expansion")
     , stats(Graphics::FSlabWindowConfig{"Stats"})
@@ -19,7 +19,7 @@ namespace Tests {
         derivs = potential->diff(0);
 
         auto window = New<Graphics::FPlot2DWindow>("V-shape series test");
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         style.filled = false;
         Graphics::FPlotter::AddRtoRFunction(window, potential, style, "KG V-shape");
         Graphics::FPlotter::AddRtoRFunction(window, derivs, style, "V'");
@@ -28,7 +28,7 @@ namespace Tests {
         AddWindow(window);
     }
 
-    void VShapeExpansionTest::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FVShapeExpansionTest::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         stats.AddExternalDraw([this](){
             auto A = (float) potential->getA();
             auto s = (float) potential->get_s();

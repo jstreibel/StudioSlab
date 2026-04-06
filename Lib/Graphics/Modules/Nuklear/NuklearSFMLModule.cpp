@@ -18,18 +18,18 @@
 
 namespace Slab::Graphics {
 
-    NuklearSFMLModule::NuklearSFMLModule() {
+    FNuklearSFMLModule::FNuklearSFMLModule() {
         try {
-            auto sfmlBackend = DynamicPointerCast<SFMLBackend>(Core::GetBackend());
+            auto sfmlBackend = DynamicPointerCast<FSFMLBackend>(Core::GetBackend());
             // renderWindow = &sfmlBackend->GetMainSystemWindow();
 
             static auto myReference = Naked(*this);
-            DynamicPointerCast<SFMLSystemWindow>
-                    (sfmlBackend->GetMainSystemWindow())->addSFMLListener(myReference);
+            DynamicPointerCast<FSFMLSystemWindow>
+                    (sfmlBackend->GetMainSystemWindow())->AddSFMLListener(myReference);
 
         } catch (std::bad_cast &e) {
-            Core::Log::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
-                            "to be SFML." << Core::Log::Flush;
+            Core::FLog::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
+                            "to be SFML." << Core::FLog::Flush;
             return;
         }
 
@@ -38,15 +38,15 @@ namespace Slab::Graphics {
 
     }
 
-    NuklearSFMLModule::~NuklearSFMLModule() { nk_sfml_shutdown(); }
+    FNuklearSFMLModule::~FNuklearSFMLModule() { nk_sfml_shutdown(); }
 
-    void NuklearSFMLModule::event(const sf::Event &event) {
+    void FNuklearSFMLModule::event(const sf::Event &event) {
         nk_sfml_handle_event(&const_cast<sf::Event &>(event));
     }
 
 
-    void NuklearSFMLModule::Update() {
-        GraphicsModule::Update();
+    void FNuklearSFMLModule::Update() {
+        FGraphicsModule::Update();
 
         /* IMPORTANT: `nk_sfml_render` modifies some global OpenGL state
         * with blending, scissor, face culling and depth test and defaults everything

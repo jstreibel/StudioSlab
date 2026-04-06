@@ -23,7 +23,7 @@ namespace Slab::Core {
 
         AddListener(pOwner);
 
-        Log::Note() << "Interface '" << Log::FGGreen << Name << Log::ResetFormatting << "' created. " << Log::Flush;
+        FLog::Note() << "Interface '" << FLog::FGGreen << Name << FLog::ResetFormatting << "' created. " << FLog::Flush;
     }
 
     auto FInterface::GetParameters() const -> Vector<TPointer<const FParameter>> {
@@ -55,7 +55,7 @@ namespace Slab::Core {
         }
 
         auto quotename = Str("\"") + parameter->GetFullCommandLineName() + "\"";
-        Log::Note() << "Parameter " << std::setw(25) << std::left << quotename << " registered to interface \"" << GetName()
+        FLog::Note() << "Parameter " << std::setw(25) << std::left << quotename << " registered to interface \"" << GetName()
                     << "\".";
     }
 
@@ -136,7 +136,7 @@ namespace Slab::Core {
                 Listener->SendMessage(FPayload::CommandLineParsingFinished);
 
         } catch (cxxopts::exceptions::exception &exception) {
-            Log::Error() << "Exception happened in Interface \"" << GetGeneralDescription() << "\"" << Log::Flush;
+            FLog::Error() << "Exception happened in Interface \"" << GetGeneralDescription() << "\"" << FLog::Flush;
             throw;
         }
     }

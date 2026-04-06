@@ -5,6 +5,7 @@
 #include "SlabWindowManager.h"
 #include "Decorator.h"
 #include "WindowStyles.h"
+#include "Graphics/Backend/PlatformWindow.h"
 #include "Graphics/SlabGraphics.h"
 
 #include "Core/SlabCore.h"
@@ -56,7 +57,7 @@ namespace Slab::Graphics {
 
                 auto &window = CurrentlyFocused->Window;
                 constexpr Int N=10000;
-                Animator::SetCallback(0, N, AnimationTimeInSeconds,
+                FAnimator::SetCallback(0, N, AnimationTimeInSeconds,
                                       [&window, rect_0, Δrect](Int i) {
                                           fix s = (DevFloat(i)/N);
                                            fix rect = rect_0 + Δrect*s ;
@@ -86,7 +87,7 @@ namespace Slab::Graphics {
                 auto &window = CurrentlyFocused->Window;
                 constexpr Int N=10000;
 
-                Animator::SetCallback(0, N, AnimationTimeInSeconds,
+                FAnimator::SetCallback(0, N, AnimationTimeInSeconds,
                     [&window, rect_0, Δrect](Int i) {
                         fix s = (DevFloat(i)/N);
                         fix rect = rect_0 + Δrect*s ;
@@ -111,7 +112,7 @@ namespace Slab::Graphics {
         FWindowManager::NotifyMouseButton(button, state, keys); // Update delegates
 
         if(state==Press) {
-            const auto First = FindFirst_If(SlabWindows, [this](const TPointer<FWindowMetaInformation> &meta) {
+            const auto First = FindFirstIf(SlabWindows, [this](const TPointer<FWindowMetaInformation> &meta) {
                 fix is_mouse_in = meta->Window->IsMouseInside();
                 fix is_decorated = !(meta->Window->GetFlags() & SlabWindowNoDecoration);
                 fix is_mouse_over_grab_region = Decorator.IsMouseOverGrabRegion(*meta->Window,
@@ -215,10 +216,11 @@ namespace Slab::Graphics {
 
     bool FSlabWindowManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
         Decorator.SetSystemWindowShape(WidthSysWin, HeightSysWin);
+        PlatformWindow.Clear(WindowStyle::PlatformWindow_BackgroundColor);
 
         for (IN MetaSlabWindow : std::ranges::reverse_view(SlabWindows)) {
             Decorator.BeginDecoration(*MetaSlabWindow->Window, MouseState->x, MouseState->y);
-            MetaSlabWindow->Window->ImmediateDraw(PlatformWindow);
+            MetaSlabWindow->Window->NotifyRender(PlatformWindow);
             Decorator.FinishDecoration(*MetaSlabWindow->Window, MouseState->x, MouseState->y);
         }
 

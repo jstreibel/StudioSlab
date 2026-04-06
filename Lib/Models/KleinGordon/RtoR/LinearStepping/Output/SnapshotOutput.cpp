@@ -5,36 +5,38 @@
 #include "SnapshotOutput.h"
 
 #include "../../../../../Core/Controller/InterfaceManager.h"
+#include "../KG-RtoREquationState.h"
 
 namespace Slab::Models::KGRtoR {
 
     const Str suffix = ".simsnap";
 
-    SnapshotOutput::SnapshotOutput(const Str &fileName,
-                                   const Str &socketName, const Str &description)
+    FSnapshotOutput::FSnapshotOutput(const Str &fileName,
+                                     const Str &socketName, const Str &description)
     : FOutputChannel(socketName, -1, description)
     , outputFileName(fileName + suffix)
     {    }
 
-    SnapshotOutput::SnapshotOutput(const Str &fileName)
-    : SnapshotOutput(fileName, "Snapshot output", "outputs the last simulation instant")
+    FSnapshotOutput::FSnapshotOutput(const Str &fileName)
+    : FSnapshotOutput(fileName, "Snapshot output", "outputs the last simulation instant")
     {    }
 
 
-    void SnapshotOutput::HandleOutput(const FOutputPacket &) { /* do nothing */ }
+    void FSnapshotOutput::HandleOutput(const FOutputPacket &) { /* do nothing */ }
 
 
-    auto SnapshotOutput::filterData(const FOutputPacket &packet) -> RtoR::NumericFunction_CPU {
-        NOT_IMPLEMENTED
-        /*
-        auto &phi = packet.GetNakedStateData<EquationState>()->getPhi();
+    auto FSnapshotOutput::filterData(const FOutputPacket &packet) -> RtoR::NumericFunction_CPU {
+        const auto *state = packet.GetNakedStateData<FEquationState>();
+        if (state == nullptr) {
+            throw Exception("Snapshot output expected KGRtoR::FEquationState data.");
+        }
 
+        const auto &phi = dynamic_cast<const RtoR::NumericFunction &>(state->getPhi());
         return RtoR::NumericFunction_CPU(phi);
-         */
     }
 
 
-    bool SnapshotOutput::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
+    bool FSnapshotOutput::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) {
         FOutputChannel::NotifyIntegrationHasFinished(theVeryLastOutputInformation);
 
         auto f = filterData(theVeryLastOutputInformation);
@@ -42,13 +44,13 @@ namespace Slab::Models::KGRtoR {
         return OutputNumericFunction(f.getSpace(), outputFileName);
     }
 
-    bool SnapshotOutput::OutputNumericFunction(const Math::DiscreteSpace& space,
-                                               const Str& outputFileName,
-                                               const Vector<Pair<Str,Str>>& xtraPyDictEntries)
+    bool FSnapshotOutput::OutputNumericFunction(const Math::DiscreteSpace& space,
+                                                const Str& outputFileName,
+                                                const Vector<Pair<Str,Str>>& xtraPyDictEntries)
     {
         std::ofstream outputFile(outputFileName, std::ios::out | std::ios::binary);
         if(!outputFile){
-            Core::Log::Error() << "Could not open '" << outputFileName << "' for snapshot output." << Core::Log::Flush;
+            Core::FLog::Error() << "Could not open '" << outputFileName << "' for snapshot output." << Core::FLog::Flush;
             return false;
         }
 
@@ -67,7 +69,7 @@ namespace Slab::Models::KGRtoR {
         outputFile.write(reinterpret_cast<const char*>(&data[0]), (long)(data.size()*sizeof(DevFloat)));
 
         outputFile.close();
-        Core::Log::Success() << "Snapshot saved to '" << outputFileName << "'." << Core::Log::Flush;
+        Core::FLog::Success() << "Snapshot saved to '" << outputFileName << "'." << Core::FLog::Flush;
 
         return true;
     }

@@ -7,6 +7,7 @@
 #include "../Utils.h"
 
 #include "../Render/Draw.h"
+#include "Graphics/SlabGraphics.h"
 
 
 constexpr int SubSteps = 1;

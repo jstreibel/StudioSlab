@@ -93,7 +93,7 @@ namespace Slab::Graphics::OpenGL {
         state = DIRTY;
         primitive = GL_TRIANGLES;
 
-        Core::Log::Debug() << "Instantiated new VertexBuffer" << Core::Log::Flush;
+        Core::FLog::Debug() << "Instantiated new VertexBuffer" << Core::FLog::Flush;
     }
 
     FVertexBuffer::~FVertexBuffer() {

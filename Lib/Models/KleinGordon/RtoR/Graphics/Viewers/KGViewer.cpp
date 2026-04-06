@@ -8,27 +8,27 @@
 
 namespace Slab::Models::KGRtoR {
 
-    KGViewer::KGViewer(const TPointer<Graphics::FGUIWindow> &gui_window,
+    FKGViewer::FKGViewer(const TPointer<Graphics::FGUIWindow> &gui_window,
                        const TPointer<Math::R2toR::FNumericFunction> &func,
                        const TPointer<Math::R2toR::FNumericFunction> &ddt_func)
-    : Viewer(gui_window, func), ddt_base_function(ddt_func) {}
+    : FViewer(gui_window, func), ddt_base_function(ddt_func) {}
 
-    void KGViewer::SetFunctionDerivative(FuncPointer derivs) {
+    void FKGViewer::SetFunctionDerivative(FuncPointer derivs) {
         ddt_base_function = std::move(derivs);
     }
 
-    auto KGViewer::getFunctionDerivative() const -> ConstFuncPointer {
+    auto FKGViewer::getFunctionDerivative() const -> ConstFuncPointer {
         return ddt_base_function;
     }
 
-    FKGEnergy KGViewer::getHamiltonian() {
+    FKGEnergy FKGViewer::getHamiltonian() {
         static Math::RtoR::AbsFunction abs;
         static FKGEnergy hamiltonian(Naked(abs));
 
         return hamiltonian;
     }
 
-    bool KGViewer::areFunctionsConsistent() const {
+    bool FKGViewer::areFunctionsConsistent() const {
         auto a = getFunction();
         auto b = getFunctionDerivative();
 

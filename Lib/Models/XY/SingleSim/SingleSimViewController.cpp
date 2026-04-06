@@ -58,7 +58,7 @@ namespace Slab::Lost::ThermoOutput {
     {
         auto main_syswin = Graphics::GetGraphicsBackend()->GetMainSystemWindow();
         auto nkModule_abstract = Core::GetModule("Nuklear");
-        auto &nkModule = *dynamic_cast<Graphics::NuklearModule*>(nkModule_abstract.get());
+        auto &nkModule = *dynamic_cast<Graphics::FNuklearModule*>(nkModule_abstract.get());
         nkContext = nkModule.CreateContext(main_syswin);
         timer.restart();
 
@@ -254,7 +254,7 @@ namespace Slab::Lost::ThermoOutput {
     }
 
     void SingleSimViewController::updateIsingGraph() {
-        const XYNetwork &S = algorithm->getData().S;
+        const FXYNetwork &S = algorithm->getData().S;
 
         float eMin=100, eMax=-100;
         for(int i=0; i<S.L; ++i) {
@@ -640,7 +640,7 @@ namespace Slab::Lost::ThermoOutput {
         myfile.close();
     }
 
-    void SingleSimViewController::setAlgorithm(XYMetropolisAlgorithm *pAlgorithm) {
+    void SingleSimViewController::setAlgorithm(FXYMetropolisAlgorithm *pAlgorithm) {
         this->algorithm = pAlgorithm;
     }
 

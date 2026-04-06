@@ -69,10 +69,10 @@ namespace Slab::Models::KGRtoR {
 
         void *getHamiltonian() override;
 
-        [[nodiscard]] auto getInitialState() const      -> KGRtoR::EquationState_ptr;
+        [[nodiscard]] auto getInitialState() const      -> KGRtoR::FEquationState_ptr;
         virtual auto GetBoundary()  -> Base::BoundaryConditions_ptr = 0;
         [[nodiscard]] auto newFunctionArbitrary() const -> Math::RtoR::NumericFunction_ptr;
-        [[nodiscard]] auto NewFieldState() const        -> KGRtoR::EquationState_ptr;
+        [[nodiscard]] auto NewFieldState() const        -> KGRtoR::FEquationState_ptr;
 
     };
 

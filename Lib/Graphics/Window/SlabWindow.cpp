@@ -12,6 +12,7 @@
 #include "Core/Tools/Log.h"
 #include "Graphics/Utils.h"
 
+#include "Graphics/Backend/PlatformWindow.h"
 
 namespace Slab::Graphics {
 
@@ -45,6 +46,10 @@ namespace Slab::Graphics {
         return AddUniqueIdToString(GetTitle());
     }
 
+    auto FSlabWindow::GetStableWindowKey() const -> Str {
+        return GetIdString();
+    }
+
     auto FSlabWindow::GetConfig() -> FSlabWindowConfig& {
         return Config;
     }
@@ -75,7 +80,7 @@ namespace Slab::Graphics {
 
         if (Width<=0 || Height<=0)
         {
-            Core::Log::Warning("Refuse to set glViewport for values w=") << Width << ", h=" << Height;
+            Core::FLog::Warning("Refuse to set glViewport for values w=") << Width << ", h=" << Height;
             return false;
         }
 

@@ -16,7 +16,7 @@
 
 #include "Models/KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.h"
 
-using Themes = Slab::Graphics::PlotThemeManager;
+using Themes = Slab::Graphics::FPlotThemeManager;
 
 void setup_viewer(Slab::TPointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
     Slab::Core::StartBackend("GLFW");
@@ -34,11 +34,11 @@ void setup_viewer(Slab::TPointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
 
 int run(int argc, const char **argv) {
     constexpr unsigned max_steps = -1;
-    using Recipe = Slab::Models::KGRtoR::Metropolis::RtoRHamiltonianMetropolisHastingsRecipe;
+    using Recipe = Slab::Models::KGRtoR::Metropolis::FRtoRHamiltonianMetropolisHastingsRecipe;
     auto mc_recipe = Slab::New<Recipe>(max_steps);
     Slab::Core::RegisterCLInterface(mc_recipe->GetInterface());
 
-    auto prog = Slab::New<Slab::Math::MathApp> (argc, argv, mc_recipe);
+    auto prog = Slab::New<Slab::Math::FMathApp> (argc, argv, mc_recipe);
 
     setup_viewer(mc_recipe->getField().ϕ);
 

@@ -16,7 +16,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class HistoryViewer : public KGViewer {
+    class FHistoryViewer_KG : public FKGViewer {
         TPointer<Graphics::FPlot2DWindow> history_window = nullptr;
         TPointer<Graphics::FPlot2DWindow> slice_window = nullptr;
 
@@ -37,7 +37,7 @@ namespace Slab::Models::KGRtoR {
         int curr_ti = 0;
 
     public:
-        explicit HistoryViewer(const TPointer<Graphics::FGUIWindow> &guiWindow);
+        explicit FHistoryViewer_KG(const TPointer<Graphics::FGUIWindow> &guiWindow);
 
         Str GetName() const override;
 
@@ -47,6 +47,8 @@ namespace Slab::Models::KGRtoR {
 
         void SetFunctionDerivative(FuncPointer pointer) override;
     };
+
+    using HistoryViewer [[deprecated("Use FHistoryViewer_KG")]] = FHistoryViewer_KG;
 
 } // Slab::Models::KGRtoR
 

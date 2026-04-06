@@ -10,15 +10,15 @@
 
 namespace Slab::Graphics {
 
-    class SFMLSystemWindow;
+    class FSFMLSystemWindow;
 
-    class SFMLEventTranslator final : public FEventTranslator, public SFMLListener {
-        SFMLSystemWindow *Owner;
+    class FSFMLEventTranslator final : public FEventTranslator, public FSFMLListener {
+        FSFMLSystemWindow* Owner;
 
     public:
-        SFMLEventTranslator() = delete;
+        FSFMLEventTranslator() = delete;
 
-        explicit SFMLEventTranslator(SFMLSystemWindow* owner);
+        explicit FSFMLEventTranslator(FSFMLSystemWindow* owner);
 
         void event(const sf::Event &event) override;
 
@@ -26,6 +26,8 @@ namespace Slab::Graphics {
 
 
     };
+
+    using SFMLEventTranslator [[deprecated("Use FSFMLEventTranslator")]] = FSFMLEventTranslator;
 
 } // Core
 

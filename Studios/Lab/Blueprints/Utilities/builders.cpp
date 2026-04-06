@@ -9,14 +9,15 @@
 //------------------------------------------------------------------------------
 # define IMGUI_DEFINE_MATH_OPERATORS
 # include "builders.h"
-# include <imgui_internal.h>
+# include "Graphics/Modules/ImGui/ImGuiLayoutCompat.h"
 
 
 //------------------------------------------------------------------------------
 namespace ed   = ax::NodeEditor;
 namespace util = ax::NodeEditor::Utilities;
+using Layout = Slab::Graphics::FImGuiLayoutCompat;
 
-util::BlueprintNodeBuilder::BlueprintNodeBuilder(ImTextureID texture, int textureWidth, int textureHeight):
+util::FBlueprintNodeBuilder::FBlueprintNodeBuilder(ImTextureID texture, int textureWidth, int textureHeight):
     HeaderTextureId(texture),
     HeaderTextureWidth(textureWidth),
     HeaderTextureHeight(textureHeight),
@@ -26,7 +27,7 @@ util::BlueprintNodeBuilder::BlueprintNodeBuilder(ImTextureID texture, int textur
 {
 }
 
-void util::BlueprintNodeBuilder::Begin(ed::NodeId id)
+void util::FBlueprintNodeBuilder::Begin(ed::NodeId id)
 {
     HasHeader  = false;
     HeaderMin = HeaderMax = ImVec2();
@@ -41,7 +42,7 @@ void util::BlueprintNodeBuilder::Begin(ed::NodeId id)
     SetStage(Stage::Begin);
 }
 
-void util::BlueprintNodeBuilder::End()
+void util::FBlueprintNodeBuilder::End()
 {
     SetStage(Stage::End);
 
@@ -91,18 +92,18 @@ void util::BlueprintNodeBuilder::End()
     SetStage(Stage::Invalid);
 }
 
-void util::BlueprintNodeBuilder::Header(const ImVec4& color)
+void util::FBlueprintNodeBuilder::Header(const ImVec4& color)
 {
     HeaderColor = ImColor(color);
     SetStage(Stage::Header);
 }
 
-void util::BlueprintNodeBuilder::EndHeader()
+void util::FBlueprintNodeBuilder::EndHeader()
 {
     SetStage(Stage::Content);
 }
 
-void util::BlueprintNodeBuilder::Input(ed::PinId id)
+void util::FBlueprintNodeBuilder::Input(ed::PinId id)
 {
     if (CurrentStage == Stage::Begin)
         SetStage(Stage::Content);
@@ -112,21 +113,21 @@ void util::BlueprintNodeBuilder::Input(ed::PinId id)
     SetStage(Stage::Input);
 
     if (applyPadding)
-        ImGui::Spring(0);
+        Layout::Spring(0);
 
     Pin(id, PinKind::Input);
 
-    ImGui::BeginHorizontal(id.AsPointer());
+    Layout::BeginHorizontal(id.AsPointer());
 }
 
-void util::BlueprintNodeBuilder::EndInput()
+void util::FBlueprintNodeBuilder::EndInput()
 {
-    ImGui::EndHorizontal();
+    Layout::EndHorizontal();
 
     EndPin();
 }
 
-void util::BlueprintNodeBuilder::Middle()
+void util::FBlueprintNodeBuilder::Middle()
 {
     if (CurrentStage == Stage::Begin)
         SetStage(Stage::Content);
@@ -134,7 +135,7 @@ void util::BlueprintNodeBuilder::Middle()
     SetStage(Stage::Middle);
 }
 
-void util::BlueprintNodeBuilder::Output(ed::PinId id)
+void util::FBlueprintNodeBuilder::Output(ed::PinId id)
 {
     if (CurrentStage == Stage::Begin)
         SetStage(Stage::Content);
@@ -144,21 +145,21 @@ void util::BlueprintNodeBuilder::Output(ed::PinId id)
     SetStage(Stage::Output);
 
     if (applyPadding)
-        ImGui::Spring(0);
+        Layout::Spring(0);
 
     Pin(id, PinKind::Output);
 
-    ImGui::BeginHorizontal(id.AsPointer());
+    Layout::BeginHorizontal(id.AsPointer());
 }
 
-void util::BlueprintNodeBuilder::EndOutput()
+void util::FBlueprintNodeBuilder::EndOutput()
 {
-    ImGui::EndHorizontal();
+    Layout::EndHorizontal();
 
     EndPin();
 }
 
-bool util::BlueprintNodeBuilder::SetStage(Stage stage)
+bool util::FBlueprintNodeBuilder::SetStage(Stage stage)
 {
     if (stage == CurrentStage)
         return false;
@@ -173,12 +174,12 @@ bool util::BlueprintNodeBuilder::SetStage(Stage stage)
             break;
 
         case Stage::Header:
-            ImGui::EndHorizontal();
+            Layout::EndHorizontal();
             HeaderMin = ImGui::GetItemRectMin();
             HeaderMax = ImGui::GetItemRectMax();
 
             // spacing between header and content
-            ImGui::Spring(0, ImGui::GetStyle().ItemSpacing.y * 2.0f);
+            Layout::Spring(0, ImGui::GetStyle().ItemSpacing.y * 2.0f);
 
             break;
 
@@ -188,8 +189,8 @@ bool util::BlueprintNodeBuilder::SetStage(Stage stage)
         case Stage::Input:
             ed::PopStyleVar(2);
 
-            ImGui::Spring(1, 0);
-            ImGui::EndVertical();
+            Layout::Spring(1, 0);
+            Layout::EndVertical();
 
             // #debug
             // ImGui::GetWindowDrawList()->AddRect(
@@ -198,7 +199,7 @@ bool util::BlueprintNodeBuilder::SetStage(Stage stage)
             break;
 
         case Stage::Middle:
-            ImGui::EndVertical();
+            Layout::EndVertical();
 
             // #debug
             // ImGui::GetWindowDrawList()->AddRect(
@@ -209,8 +210,8 @@ bool util::BlueprintNodeBuilder::SetStage(Stage stage)
         case Stage::Output:
             ed::PopStyleVar(2);
 
-            ImGui::Spring(1, 0);
-            ImGui::EndVertical();
+            Layout::Spring(1, 0);
+            Layout::EndVertical();
 
             // #debug
             // ImGui::GetWindowDrawList()->AddRect(
@@ -228,62 +229,62 @@ bool util::BlueprintNodeBuilder::SetStage(Stage stage)
     switch (stage)
     {
         case Stage::Begin:
-            ImGui::BeginVertical("node");
+            Layout::BeginVertical("node");
             break;
 
         case Stage::Header:
             HasHeader = true;
 
-            ImGui::BeginHorizontal("header");
+            Layout::BeginHorizontal("header");
             break;
 
         case Stage::Content:
             if (oldStage == Stage::Begin)
-                ImGui::Spring(0);
+                Layout::Spring(0);
 
-            ImGui::BeginHorizontal("content");
-            ImGui::Spring(0, 0);
+            Layout::BeginHorizontal("content");
+            Layout::Spring(0, 0);
             break;
 
         case Stage::Input:
-            ImGui::BeginVertical("inputs", ImVec2(0, 0), 0.0f);
+            Layout::BeginVertical("inputs", ImVec2(0, 0), 0.0f);
 
             ed::PushStyleVar(ed::StyleVar_PivotAlignment, ImVec2(0, 0.5f));
             ed::PushStyleVar(ed::StyleVar_PivotSize, ImVec2(0, 0));
 
             if (!HasHeader)
-                ImGui::Spring(1, 0);
+                Layout::Spring(1, 0);
             break;
 
         case Stage::Middle:
-            ImGui::Spring(1);
-            ImGui::BeginVertical("middle", ImVec2(0, 0), 1.0f);
+            Layout::Spring(1);
+            Layout::BeginVertical("middle", ImVec2(0, 0), 1.0f);
             break;
 
         case Stage::Output:
             if (oldStage == Stage::Middle || oldStage == Stage::Input)
-                ImGui::Spring(1);
+                Layout::Spring(1);
             else
-                ImGui::Spring(1, 0);
-            ImGui::BeginVertical("outputs", ImVec2(0, 0), 1.0f);
+                Layout::Spring(1, 0);
+            Layout::BeginVertical("outputs", ImVec2(0, 0), 1.0f);
 
             ed::PushStyleVar(ed::StyleVar_PivotAlignment, ImVec2(1.0f, 0.5f));
             ed::PushStyleVar(ed::StyleVar_PivotSize, ImVec2(0, 0));
 
             if (!HasHeader)
-                ImGui::Spring(1, 0);
+                Layout::Spring(1, 0);
             break;
 
         case Stage::End:
             if (oldStage == Stage::Input)
-                ImGui::Spring(1, 0);
+                Layout::Spring(1, 0);
             if (oldStage != Stage::Begin)
-                ImGui::EndHorizontal();
+                Layout::EndHorizontal();
             ContentMin = ImGui::GetItemRectMin();
             ContentMax = ImGui::GetItemRectMax();
 
-            //ImGui::Spring(0);
-            ImGui::EndVertical();
+            //Layout::Spring(0);
+            Layout::EndVertical();
             NodeMin = ImGui::GetItemRectMin();
             NodeMax = ImGui::GetItemRectMax();
             break;
@@ -295,12 +296,12 @@ bool util::BlueprintNodeBuilder::SetStage(Stage stage)
     return true;
 }
 
-void util::BlueprintNodeBuilder::Pin(ed::PinId id, ed::PinKind kind)
+void util::FBlueprintNodeBuilder::Pin(ed::PinId id, ed::PinKind kind)
 {
     ed::BeginPin(id, kind);
 }
 
-void util::BlueprintNodeBuilder::EndPin()
+void util::FBlueprintNodeBuilder::EndPin()
 {
     ed::EndPin();
 

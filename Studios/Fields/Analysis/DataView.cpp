@@ -5,9 +5,9 @@
 #include "DataView.h"
 
 namespace Studios::Fields {
-    DataView::DataView(DataView::DataFunction func) : function(func) {
+    FDataView::FDataView(FDataView::DataFunction func) : function(func) {
 
     }
 
-    void DataView::setData(DataView::DataFunction func) { function = func; }
+    void FDataView::setData(FDataView::DataFunction func) { function = func; }
 } // Fields

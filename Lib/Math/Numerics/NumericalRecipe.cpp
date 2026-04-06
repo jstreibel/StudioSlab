@@ -5,6 +5,7 @@
 #include "../../Core/Controller/CommandLine/CommandLineInterfaceSelector.h"
 #include "Core/SlabCore.h"
 #include "Core/Tools/Log.h"
+#include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
 #include "NumericalRecipe.h"
 
 #define GENERATE_FOR_NTHREADS(STEPPER_TYPE, N) \
@@ -31,8 +32,8 @@ namespace Slab::Math::Base {
             Core::RegisterCLInterface(Interface);
         }
 
-        Core::Log::Status() << "SimulationBuilder '" << Interface->GetName() << "': \""
-                      << Interface->GetGeneralDescription() << "\" instantiated." << Core::Log::Flush;
+        Core::FLog::Status() << "SimulationBuilder '" << Interface->GetName() << "': \""
+                      << Interface->GetGeneralDescription() << "\" instantiated." << Core::FLog::Flush;
     }
 
     auto FNumericalRecipe::GetNumericConfig() const -> const TPointer<FNumericConfig> & {

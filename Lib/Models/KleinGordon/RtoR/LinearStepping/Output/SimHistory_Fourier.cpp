@@ -10,28 +10,28 @@
 
 namespace Slab::Models::KGRtoR {
 
-    SimHistory_DFT::SimHistory_DFT(CountType max_steps, DevFloat t_max, Resolution N, DevFloat L, Resolution N_time)
-            : SimHistory(max_steps, t_max, NDFTModes, N_time, 0, kMaxDFT, "SimulationHistory (k-space DFT)") {}
+    FSimHistoryDFT::FSimHistoryDFT(CountType max_steps, DevFloat t_max, Resolution N, DevFloat L, Resolution N_time)
+            : FSimHistory(max_steps, t_max, NDFTModes, N_time, 0, kMaxDFT, "SimulationHistory (k-space DFT)") {}
 
-    auto SimHistory_DFT::Transfer(const FOutputPacket &Input, ValarrayWrapper<DevFloat> &DataOut) -> void {
-        IN stateIn = *Input.GetNakedStateData<KGRtoR::EquationState>();
+    auto FSimHistoryDFT::Transfer(const FOutputPacket &Input, FValarrayWrapper<DevFloat> &DataOut) -> void {
+        IN stateIn = *Input.GetNakedStateData<KGRtoR::FEquationState>();
 
         IN phi = dynamic_cast<RtoR::NumericFunction&>(stateIn.getPhi());
 
-        auto DftNewData = RtoR::DFT::Compute(phi);
+        auto fdftNewData = RtoR::FDFT::Compute(phi);
 
         fix dt = Max_t / (DevFloat)MaxSteps;
-        auto result = DFTInstantResult{Input.GetSteps()*dt, DftNewData};
+        auto result = FDFTInstantResult{Input.GetSteps()*dt, fdftNewData};
         DFTDataHistory.emplace_back(result);
 
-        fix pts = DftNewData.getMagnitudes()->GetPoints();
+        fix pts = fdftNewData.getMagnitudes()->GetPoints();
         assert(N_x == pts.size());
 
         for (auto i = 0; i < N_x; ++i)
             DataOut[i] = pts[i].y;
     }
 
-    const FDFTDataHistory &SimHistory_DFT::GetDFTDataHistory() const {
+    const FDFTDataHistory &FSimHistoryDFT::GetDFTDataHistory() const {
         return DFTDataHistory;
     }
 

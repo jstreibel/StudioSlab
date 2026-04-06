@@ -29,7 +29,7 @@ struct FLittlePlaneDesignerPhysicsEngine final : IUpdateable, Graphics::IDrawabl
 private:
     // TPointer<Graphics::FImGuiContext> ImGuiContext;
 
-    LegacyGLDebugDraw DebugDraw;
+    FLegacyGLDebugDraw DebugDraw;
     TPointer<FLittlePlane> Plane;
     b2WorldId World;
     bool b_IsRunning = true;

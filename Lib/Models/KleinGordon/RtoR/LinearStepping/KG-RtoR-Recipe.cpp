@@ -14,6 +14,7 @@
 
 #include "KG-RtoRSolver.h"
 #include "KG-RtoRBoundaryCondition.h"
+#include "Graphics/SlabGraphics.h"
 #include "Graphics/Window/SingleWindowManager.h"
 
 #include "Math/Data/DataAllocator.h"
@@ -56,13 +57,13 @@ namespace Slab::Models::KGRtoR {
         if (bDoRegister) RegisterCLInterface(Interface);
     }
 
-    class Filter1D final : public Math::SpaceFilterBase{
+    class Filter1D final : public Math::FSpaceFilterBase{
         DimensionMetaData dim;
     public:
         explicit Filter1D(DimensionMetaData dim) : dim(std::move(dim)) {}
 
         auto operator()(const FOutputPacket &outputInfo) -> DiscreteSpacePair override {
-            auto nakedData = outputInfo.GetNakedStateData<KGRtoR::EquationState>();
+            auto nakedData = outputInfo.GetNakedStateData<KGRtoR::FEquationState>();
 
             auto N_new = dim.getN(0);
 
@@ -98,8 +99,8 @@ namespace Slab::Models::KGRtoR {
         const auto shouldOutputOpenGL = *OutputOptions.VisualMonitor;
         const auto shouldOutputHistory = !*OutputOptions.NoHistoryToFile;
 
-        // if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
-        // else                Core::BackendManager::Startup("Headless");
+        // if (*VisualMonitor) Core::FBackendManager::Startup("GLFW");
+        // else                Core::FBackendManager::Startup("Headless");
 
         const FKGNumericConfig &p = dynamic_cast<FKGNumericConfig&>(*NumericConfig);
 
@@ -119,14 +120,14 @@ namespace Slab::Models::KGRtoR {
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + SuggestFileName();
-            Sockets.emplace_back(Slab::New<SnapshotOutput>(snapshotFilename));
+            Sockets.emplace_back(Slab::New<FSnapshotOutput>(snapshotFilename));
         }
         if (*OutputOptions.TakeSpaceDFTSnapshot) {
             const auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + SuggestFileName();
-            Sockets.emplace_back(Slab::New<DFTSnapshotOutput>(N, L, snapshotFilename));
+            Sockets.emplace_back(Slab::New<FDFTSnapshotOutput>(N, L, snapshotFilename));
         }
         if(*OutputOptions.TakeTimeDFTSnapshot) {
             auto time_dftsnapshots = getTimeDFTSnapshots();
@@ -141,15 +142,15 @@ namespace Slab::Models::KGRtoR {
            *************************** HISTORY OUTPUT *********************************************
            **************************************************************************************** */
         if (shouldOutputHistory) {
-            OutputFormatterBase *outputFilter = new BinarySOF;
+            FOutputFormatterBase *outputFilter = new FBinarySOF;
 
             const auto dimData = DimensionMetaData({(unsigned) *OutputOptions.OutputResolution}, {L / *OutputOptions.OutputResolution});
-            // auto *spaceFilter = new ResolutionReductionFilter(dimData);
+            // auto *spaceFilter = new FResolutionReductionFilter(dimData);
             auto *spaceFilter = new Filter1D(dimData);
 
             fix stepsInterval = static_cast<UInt>(N / (Nₒᵤₜ * r));
 
-            FOutputChannel_ptr out = Slab::New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
+            FOutputChannel_ptr out = Slab::New<FOutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
             Sockets.emplace_back(out);
         }
 
@@ -159,20 +160,20 @@ namespace Slab::Models::KGRtoR {
            *************************** VISUAL MONITOR *********************************************
            **************************************************************************************** */
         if (shouldOutputOpenGL) {
-            auto GuiBackend = Slab::Graphics::GetGraphicsBackend();
+            auto GuiBackend = Graphics::GetGraphicsBackend();
 
             auto outputOpenGL = TPointer<Monitor>(static_cast<Monitor *>(BuildOpenGLOutput()));
 
             if (t > 0) {
                 fix nₒᵤₜ = ((Nₒᵤₜ / L) * t);
 
-                auto simHistory = Slab::New<SimHistory>(max_steps, t,
-                                                 static_cast<Resolution>(Nₒᵤₜ),
-                                                 (Resolution) nₒᵤₜ,
-                                                 xMin,
-                                                 L);
+                auto simHistory = Slab::New<FSimHistory>(max_steps, t,
+                                                         static_cast<Resolution>(Nₒᵤₜ),
+                                                         (Resolution) nₒᵤₜ,
+                                                         xMin,
+                                                         L);
 
-                auto ftHistory = Slab::New<SimHistory_DFT>(max_steps, t, N, L, nₒᵤₜ);
+                auto ftHistory = Slab::New<FSimHistoryDFT>(max_steps, t, N, L, nₒᵤₜ);
 
                 Sockets.emplace_back(simHistory);
                 Sockets.emplace_back(ftHistory);
@@ -191,7 +192,7 @@ namespace Slab::Models::KGRtoR {
 
             Sockets.emplace_back(outputOpenGL);
         } else {
-            Sockets.emplace_back(Slab::New<OutputConsoleMonitor>(max_steps, max_steps/2));
+            Sockets.emplace_back(Slab::New<FOutputConsoleMonitor>(max_steps, max_steps/2));
         }
 
         return Sockets;
@@ -257,10 +258,10 @@ namespace Slab::Models::KGRtoR {
         Utils::TouchFolder(folder);
 
         const auto snapshotFilename = folder + SuggestFileName();
-        TimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, t_start, t_end};
+        FTimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, t_start, t_end};
 
         fix &conf = *KGNumericConfig;
-        return Slab::New<CenterTimeDFTOutput>(conf.Get_t(), conf.Get_n(), dftConfig);
+        return Slab::New<FCenterTimeDFTOutput>(conf.Get_t(), conf.Get_n(), dftConfig);
     }
 
     RtoR::NumericFunction_ptr FKGRtoR_Recipe::newFunctionArbitrary() const {
@@ -285,9 +286,9 @@ namespace Slab::Models::KGRtoR {
         throw Exception("Error while instantiating Field: device not recognized.");
     }
 
-    EquationState_ptr FKGRtoR_Recipe::NewFieldState() const {
-        return New<EquationState>(this->newFunctionArbitrary(),
-                                       this->newFunctionArbitrary());
+    FEquationState_ptr FKGRtoR_Recipe::NewFieldState() const {
+        return New<FEquationState>(this->newFunctionArbitrary(),
+                                   this->newFunctionArbitrary());
     }
 
     TPointer<Base::LinearStepSolver> FKGRtoR_Recipe::buildSolver() {
@@ -298,7 +299,7 @@ namespace Slab::Models::KGRtoR {
 #if USE_CUDA == true
         /*
         if(simulationConfig.dev == device::GPU) {
-            return New<RtoR::SystemGordonGPU>(simulationConfig.numericConfig, *dphi, *potential);
+            return New<RtoR::FSystemGordonGPU>(simulationConfig.numericConfig, *dphi, *potential);
         }
          */
 #endif
@@ -313,7 +314,7 @@ namespace Slab::Models::KGRtoR {
         return new Monitor(KGNumericConfig, *static_cast<FKGEnergy *>(getHamiltonian()));
     }
 
-    auto FKGRtoR_Recipe::getInitialState() const -> KGRtoR::EquationState_ptr {
+    auto FKGRtoR_Recipe::getInitialState() const -> KGRtoR::FEquationState_ptr {
         auto u_0 = NewFieldState();
 
         u_0->SetPhi(RtoR::NullFunction());
@@ -334,7 +335,7 @@ namespace Slab::Models::KGRtoR {
             return Slab::New<RtoR::NullFunction>();
         }
         if (*PotentialOptions.Potential == KLEIN_GORDON_POTENTIAL) {
-            return Slab::New<RtoR::HarmonicPotential>(*PotentialOptions.MassSquared);
+            return Slab::New<RtoR::FHarmonicPotential>(*PotentialOptions.MassSquared);
         }
         if (*PotentialOptions.Potential == SIGNUM_GORDON_POTENTIAL) {
             return Slab::New<RtoR::AbsFunction>();
@@ -353,12 +354,12 @@ namespace Slab::Models::KGRtoR {
     }
 
     void FKGRtoR_Recipe::SetLaplacianPeriodicBC() {
-        Log::Attention() << "KGBuilder Laplacian forced to PERIODIC borders." << Log::Flush;
+        FLog::Attention() << "KGBuilder Laplacian forced to PERIODIC borders." << FLog::Flush;
         force_periodicBC = true;
     }
 
     void FKGRtoR_Recipe::SetLaplacianFixedBC() {
-        // Log::Info() << "KGBuilder Laplacian set to FIXED borders." << Log::Flush;
+        // FLog::Info() << "KGBuilder Laplacian set to FIXED borders." << FLog::Flush;
         force_periodicBC = false;
     }
 

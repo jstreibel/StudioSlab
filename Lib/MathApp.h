@@ -10,15 +10,17 @@
 
 namespace Slab::Math {
 
-    class MathApp : public Core::AppBase {
+    class FMathApp : public Core::FAppBase {
         TPointer<Base::FNumericalRecipe> Recipe;
 
     public:
-        MathApp(int argc, const char **argv, TPointer<Base::FNumericalRecipe> SimBuilder);
+        FMathApp(int argc, const char **argv, TPointer<Base::FNumericalRecipe> SimBuilder);
 
         auto run() -> int override;
 
     };
+
+    using MathApp [[deprecated("Use FMathApp")]] = FMathApp;
 }
 
 #endif //STUDIOSLAB_MOLDYNAPP_H

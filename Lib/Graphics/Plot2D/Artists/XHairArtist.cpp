@@ -26,7 +26,7 @@ namespace Slab::Graphics {
 
         auto label = PlotWindow.GetXHairLabel(XHairLocation);
 
-        auto currStyle = PlotThemeManager::GetCurrent();
+        auto currStyle = FPlotThemeManager::GetCurrent();
         currStyle->TicksWriter->Write(label,
             {
                 MouseLocal.x + 20,

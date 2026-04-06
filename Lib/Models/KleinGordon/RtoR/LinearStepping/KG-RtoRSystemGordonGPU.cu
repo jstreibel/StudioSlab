@@ -13,10 +13,10 @@
 using namespace Slab::Models::KGRtoR;
 
 
-SystemGordonGPU::SystemGordonGPU(const NumericConfig &params,
-                                 MyBase::EqBoundaryCondition &du,
-                                 PotentialFunc &potential)
-: Fields::KleinGordon::Solver<EquationState>(params, du, potential)
+FSystemGordonGPU::FSystemGordonGPU(const NumericConfig &params,
+                                   MyBase::EqBoundaryCondition &du,
+                                   PotentialFunc &potential)
+: Fields::KleinGordon::Solver<FEquationState>(params, du, potential)
 , temp(params.getN()) { }
 
 struct GPUHamiltonianStepper
@@ -37,7 +37,7 @@ struct GPUHamiltonianStepper
     }
 };
 
-EquationState &SystemGordonGPU::dtF(const EquationState &in, EquationState &out, DevFloat t, DevFloat dt) {
+FEquationState &FSystemGordonGPU::dtF(const FEquationState &in, FEquationState &out, DevFloat t, DevFloat dt) {
     cast(inPhi, const NumericFunctionGPU&, in.getPhi());
     cast(inDPhiDt, const NumericFunctionGPU&, in.getDPhiDt());
     cast(outPhi, NumericFunctionGPU&, out.getPhi());

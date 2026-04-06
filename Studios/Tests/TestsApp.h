@@ -9,14 +9,16 @@
 #include "AppBase.h"
 
 
-class TestsApp : public Slab::Core::AppBase {
+class FTestsApp : public Slab::Core::FAppBase {
 
 public:
-    TestsApp(int argc, const char**argv);
+    FTestsApp(int argc, const char**argv);
 
     int run() override;
 
 };
+
+using TestsApp [[deprecated("Use FTestsApp")]] = FTestsApp;
 
 
 #endif //V_SHAPE_TESTSAPP_H

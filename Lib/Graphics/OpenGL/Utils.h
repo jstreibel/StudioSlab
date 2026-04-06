@@ -5,9 +5,9 @@
 #ifndef STUDIOSLAB_OPENGLUTILS_H
 #define STUDIOSLAB_OPENGLUTILS_H
 
+#include "Graphics/OpenGL/OpenGL.h"
 #include "Graphics/Types2D.h"
 #include "Graphics/Window/SlabWindow.h"
-#include "Graphics/OpenGL/OpenGL.h"
 #include "Graphics/Styles/Colors.h"
 
 

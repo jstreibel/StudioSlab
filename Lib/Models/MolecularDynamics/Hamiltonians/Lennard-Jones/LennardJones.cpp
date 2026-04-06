@@ -81,7 +81,7 @@ namespace Slab::Models::MolecularDynamics {
             distSqr = r.LengthSqr();
             if (distSqr < SIGMA_SQR) {
                 const DevFloat dist = sqrt(distSqr);
-                const DoubleAccess arg = {1 - dist / σ};
+                const FDoubleAccess arg = {1 - dist / σ};
 
                 return ε / 1. * pow(arg.val, 1.) * arg.isPositive();
             }

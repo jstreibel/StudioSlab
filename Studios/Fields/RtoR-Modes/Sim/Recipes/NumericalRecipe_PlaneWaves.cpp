@@ -15,7 +15,7 @@ namespace Modes {
 
     // using namespace Slab::Models;
 
-    FNumericalRecipe_PlaneWaves::FNumericalRecipe_PlaneWaves()
+    FNumericalRecipePlaneWaves::FNumericalRecipePlaneWaves()
     : FKGRtoR_Recipe("Plane Waves", "Analytic plane waves initial condition", DONT_REGISTER)
     {
         Interface->AddParameters({&Q, &harmonic});
@@ -25,7 +25,7 @@ namespace Modes {
         this->SetLaplacianPeriodicBC();
     }
 
-    Base::BoundaryConditions_ptr FNumericalRecipe_PlaneWaves::GetBoundary() {
+    Base::BoundaryConditions_ptr FNumericalRecipePlaneWaves::GetBoundary() {
         fix L = DynamicPointerCast<FKGNumericConfig>(this->GetNumericConfig())->GetL();
         // k=2πn/L
         fix n = static_cast<DevFloat>(*harmonic);
@@ -35,7 +35,7 @@ namespace Modes {
         return New <FPlaneWaveBC> (NewFieldState(), *Q,  k);
     }
 
-    Str FNumericalRecipe_PlaneWaves::SuggestFileName() const {
+    Str FNumericalRecipePlaneWaves::SuggestFileName() const {
         const auto SEPARATOR = " ";
 
         const StrVector Params = {"Q", "harmonic"};

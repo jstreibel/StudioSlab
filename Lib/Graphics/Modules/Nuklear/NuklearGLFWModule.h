@@ -15,12 +15,12 @@
 
 namespace Slab::Graphics {
 
-    class NuklearGLFWModule : public NuklearModule, public FGLFWListener{
+    class FNuklearGLFWModule : public FNuklearModule, public FGLFWListener{
         GLFWwindow *renderWindow = nullptr;
         StrVector text;
 
     public:
-        ~NuklearGLFWModule() override;
+        ~FNuklearGLFWModule() override;
 
         // void beginEvents() override;
 
@@ -30,6 +30,8 @@ namespace Slab::Graphics {
 
         bool MouseWheel(GLFWwindow *window, double xoffset, double yoffset) override;
     };
+
+    using NuklearGLFWModule [[deprecated("Use FNuklearGLFWModule")]] = FNuklearGLFWModule;
 
 } // Core
 

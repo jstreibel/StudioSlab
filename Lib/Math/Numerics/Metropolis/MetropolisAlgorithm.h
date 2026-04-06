@@ -13,11 +13,11 @@ namespace Slab::Math {
     using Temperature = DevFloat;
 
     template<typename SiteType, typename NewValueType>
-    class MetropolisAlgorithm {
+    class FMetropolisAlgorithm {
     public:
-        using Setup = MetropolisSetup<SiteType, NewValueType>;
+        using Setup = FMetropolisSetup<SiteType, NewValueType>;
 
-        explicit MetropolisAlgorithm(Setup setup) : algorithms(setup) { };
+        explicit FMetropolisAlgorithm(Setup setup) : algorithms(setup) { };
 
         void step() {
             for(IN site : algorithms.sample_locations()) {
@@ -32,6 +32,9 @@ namespace Slab::Math {
         Setup algorithms;
 
     };
+
+    template<typename SiteType, typename NewValueType>
+    using MetropolisAlgorithm [[deprecated("Use FMetropolisAlgorithm")]] = FMetropolisAlgorithm<SiteType, NewValueType>;
 
 
 

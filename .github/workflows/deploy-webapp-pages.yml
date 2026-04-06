@@ -1,0 +1,86 @@
+name: Deploy StudioSlab WebApp
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/deploy-webapp-pages.yml'
+      - 'Docs/status-v2.md'
+      - 'README.md'
+      - 'Studios/WebApp/**'
+      - 'Studios/WebGL-WASM/**'
+      - 'Slab/Graphics/Window/V2/**'
+      - 'cmake/StudioSlabWasm.cmake'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Initialize ImGui submodule
+        run: git submodule update --init --depth 1 Lib/3rdParty/imgui
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: npm
+          cache-dependency-path: Studios/WebApp/package-lock.json
+
+      - name: Install Emscripten SDK
+        run: |
+          git clone https://github.com/emscripten-core/emsdk.git "$RUNNER_TEMP/emsdk"
+          cd "$RUNNER_TEMP/emsdk"
+          ./emsdk install 3.1.6
+          ./emsdk activate 3.1.6
+
+      - name: Build Ising wasm target
+        run: |
+          source "$RUNNER_TEMP/emsdk/emsdk_env.sh"
+          emcmake cmake -S Studios/WebGL-WASM -B cmake-build-webgl-wasm
+          cmake --build cmake-build-webgl-wasm --target WasmIsingWorkspaceSandbox -j2
+
+      - name: Install WebApp dependencies
+        working-directory: Studios/WebApp
+        run: npm ci
+
+      - name: Build WebApp
+        working-directory: Studios/WebApp
+        run: npm run build
+
+      - name: Disable Jekyll processing
+        run: touch Studios/WebApp/dist/.nojekyll
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: Studios/WebApp/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

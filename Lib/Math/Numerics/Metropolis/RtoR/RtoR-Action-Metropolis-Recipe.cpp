@@ -17,7 +17,7 @@ namespace Slab::Math {
 
     // inline DevFloat sqr(const DevFloat &v){ return v*v; }
 
-    auto RtoRActionMetropolisRecipe::getField() -> TPointer<RtoR::NumericFunction_CPU> {
+    auto FRtoRActionMetropolisRecipe::getField() -> TPointer<RtoR::NumericFunction_CPU> {
         if(field_data == nullptr){
             fix t_min=0.;
             fix t=2.;
@@ -29,22 +29,22 @@ namespace Slab::Math {
         return field_data;
     }
 
-    RtoRActionMetropolisRecipe::RtoRActionMetropolisRecipe(UInt max_steps)
-    : Base::FNumericalRecipe(New<MetropolisRtoRConfig>(max_steps), "Metropolis R2->R", "", DONT_REGISTER) {
+    FRtoRActionMetropolisRecipe::FRtoRActionMetropolisRecipe(UInt max_steps)
+    : Base::FNumericalRecipe(New<FMetropolisRtoRConfig>(max_steps), "Metropolis R2->R", "", DONT_REGISTER) {
         // Core::RegisterCLInterface(interface);
     }
 
-    Vector<TPointer<FOutputChannel>> RtoRActionMetropolisRecipe::BuildOutputSockets() {
+    Vector<TPointer<FOutputChannel>> FRtoRActionMetropolisRecipe::BuildOutputSockets() {
         fix total_steps = GetNumericConfig()->Get_n();
 
-        auto console_monitor = New<OutputConsoleMonitor>(total_steps);
+        auto console_monitor = New<FOutputConsoleMonitor>(total_steps);
         console_monitor->Set_nSteps((int)1000);
 
         return {console_monitor};
     }
 
-    TPointer<FStepper> RtoRActionMetropolisRecipe::BuildStepper() {
-        RtoRMetropolisSetup setup;
+    TPointer<FStepper> FRtoRActionMetropolisRecipe::BuildStepper() {
+        FRtoRMetropolisSetup setup;
 
         Temperature T=1E-2;
         constexpr auto δϕₘₐₓ = 1e-2;
@@ -63,15 +63,15 @@ namespace Slab::Math {
         if(T!=0) setup.should_accept = acceptance_thermal;
         else     setup.should_accept = acceptance_action;
 
-        using RandomSite = RtoRMetropolisSetup::RandomSite;
-        using NewValue = RtoRMetropolisSetup::NewValue;
+        using FRtoRRandomSite = FRtoRMetropolisSetup::FRandomSite;
+        using FRtoRNewValue = FRtoRMetropolisSetup::FNewValue;
 
-        setup.draw_value = [field](RandomSite site){
+        setup.draw_value = [field](FRtoRRandomSite site){
             fix old_val = field->getSpace().getHostData()[site];
             return RandUtils::RandomUniformReal(old_val-δϕₘₐₓ, old_val+δϕₘₐₓ);
         };
 
-        auto Δ_δSδϕ          = [field](RandomSite n, NewValue new_val) {
+        auto Δ_δSδϕ          = [field](FRtoRRandomSite n, FRtoRNewValue new_val) {
             auto q = [field](int n) { return field->getSpace().getHostData()[n]; };
 
             fix qₒₗ = q(n);
@@ -82,7 +82,7 @@ namespace Slab::Math {
 
             fix N = field->N;
 
-            Vector<RandomSite> affected_sites;
+            Vector<FRtoRRandomSite> affected_sites;
             if(n==1) affected_sites = {n, n+1};
             else if(n==N-2) affected_sites = {n, n-1};
             else affected_sites = {n+1, n, n-1};
@@ -111,7 +111,7 @@ namespace Slab::Math {
         setup.sample_locations = [field](){
             constexpr auto border_size = 1;
 
-            Vector<RandomSite> samples(field->N);
+            Vector<FRtoRRandomSite> samples(field->N);
 
             for(auto &site : samples)
                 site = border_size + RandUtils::RandomUniformUInt() % (field->N - 2 * border_size);
@@ -119,13 +119,13 @@ namespace Slab::Math {
             return samples;
         };
 
-        setup.modify = [field](RandomSite n, NewValue value){
+        setup.modify = [field](FRtoRRandomSite n, FRtoRNewValue value){
             field->getSpace().getHostData()[n] = value;
         };
 
-        auto metropolis = New<RtoRMetropolis>(setup);
+        auto metropolis = New<FRtoRMetropolis>(setup);
 
-        return New<MontecarloStepper<RandomSite, NewValue>>(metropolis);
+        return New<FMontecarloStepper<FRtoRRandomSite, FRtoRNewValue>>(metropolis);
     }
 
 } // Slab::Math

@@ -21,7 +21,7 @@ namespace Slab::Math {
     }
 
 
-    XYMetropolisAlgorithm::XYMetropolisAlgorithm(
+    FXYMetropolisAlgorithm::FXYMetropolisAlgorithm(
             int L,
             DevFloat T,
             DevFloat h,
@@ -33,7 +33,7 @@ namespace Slab::Math {
     }
 
 
-    void XYMetropolisAlgorithm::_shake(double h) {
+    void FXYMetropolisAlgorithm::_shake(double h) {
         if (ic == Ferromagnetic) {
             auto angle = 2 * M_PI * RandUtils::RandomUniformReal01();
 
@@ -49,7 +49,7 @@ namespace Slab::Math {
     }
 
 
-    inline bool XYMetropolisAlgorithm::shouldAccept(const DevFloat deltaE) const {
+    inline bool FXYMetropolisAlgorithm::shouldAccept(const DevFloat deltaE) const {
         if (deltaE < 0) return true;
 
         const double r = RandUtils::RandomUniformReal01();
@@ -60,7 +60,7 @@ namespace Slab::Math {
     }
 
 
-    void XYMetropolisAlgorithm::MCStep() {
+    void FXYMetropolisAlgorithm::MCStep() {
         switch (aDynamic) {
             case Metropolis:
                 MCStepMetropolis();
@@ -71,7 +71,7 @@ namespace Slab::Math {
         }
     }
 
-    void XYMetropolisAlgorithm::MCStepMetropolis() {
+    void FXYMetropolisAlgorithm::MCStepMetropolis() {
         _totalAcceptedSSCLastMCStep = 0;
 
         if (sweeping == Random) {
@@ -113,7 +113,7 @@ namespace Slab::Math {
         }
     }
 
-    void XYMetropolisAlgorithm::MCStepKawasaki() {
+    void FXYMetropolisAlgorithm::MCStepKawasaki() {
         auto N = S.N;
 
         for (int ssf = 0; ssf < N; ++ssf) {
@@ -134,19 +134,19 @@ namespace Slab::Math {
     }
 
 
-    void XYMetropolisAlgorithm::set_T(DevFloat T) {
+    void FXYMetropolisAlgorithm::set_T(DevFloat T) {
         this->T = T;
     }
 
-    void XYMetropolisAlgorithm::set_h(DevFloat h) {
+    void FXYMetropolisAlgorithm::set_h(DevFloat h) {
         this->h = h;
     }
 
-    Lost::ThermoOutput::SystemParams XYMetropolisAlgorithm::getParams() {
+    Lost::ThermoOutput::SystemParams FXYMetropolisAlgorithm::getParams() {
         return {T, h, δ, shouldRun, shouldOverrelax};
     }
 
-    auto XYMetropolisAlgorithm::getData() -> Lost::ThermoOutput::OutputData {
+    auto FXYMetropolisAlgorithm::getData() -> Lost::ThermoOutput::OutputData {
         return {S, h, _totalAcceptedSSCLastMCStep, S.N - _totalAcceptedSSCLastMCStep};
     }
 

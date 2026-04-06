@@ -10,7 +10,7 @@
 
 namespace Slab::Graphics {
 
-    class NuklearContext : public FGUIContext {
+    class FNuklearContext : public FGUIContext {
         nk_context *context;
     public:
         void Bind() override;
@@ -26,6 +26,8 @@ namespace Slab::Graphics {
     protected:
         void SetParentPlatformWindow(FOwnerPlatformWindow);
     };
+
+    using NuklearContext [[deprecated("Use FNuklearContext")]] = FNuklearContext;
 
 } // Slab::Graphics
 

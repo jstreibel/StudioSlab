@@ -10,24 +10,24 @@
 
 #include "Graphics/SlabGraphics.h"
 
-#define SFML_Backend dynamic_cast<Graphics::SFMLBackend&>(Graphics::GetGraphicsBackend())
+#define SFML_Backend dynamic_cast<Graphics::FSFMLBackend&>(Graphics::GetGraphicsBackend())
 
 namespace Studios::MolecularDynamics {
 
     static Slab::Models::MolecularDynamics::FMolecularDynamicsRecipe Recipe;
 
-    MolecularDynamics::App::App(int argc, const char **argv)
-            : AppBase(argc, argv) {
-        Slab::Core::BackendManager::Startup("SFML");
+    MolecularDynamics::FApp::FApp(int argc, const char **argv)
+            : FAppBase(argc, argv) {
+        Slab::Core::FBackendManager::Startup("SFML");
 
-        Slab::Core::CLArgsManager::Parse(argc, argv);
+        Slab::Core::FCLArgsManager::Parse(argc, argv);
     }
 
-    int MolecularDynamics::App::run() {
+    int MolecularDynamics::FApp::run() {
 
         NumericTask = Slab::New<Slab::Math::FNumericTask>(Slab::Dummy(Recipe));
 
-        auto taskManager = Slab::DynamicPointerCast<Slab::Core::MTaskManager>(Slab::Core::GetModule("TaskManager"));
+        auto taskManager = Slab::DynamicPointerCast<Slab::Core::FTaskManager>(Slab::Core::GetModule("TaskManager"));
         taskManager->AddTask(NumericTask);
 
         Slab::Graphics::GetGraphicsBackend()->Run();

@@ -14,8 +14,8 @@
 
 namespace Slab::Models::KGRtoR {
 
-    HistogramsViewer_KG::HistogramsViewer_KG(const TPointer<Graphics::FGUIWindow> &gui_window)
-    : KGViewer(gui_window) {
+    FHistogramsViewer_KG::FHistogramsViewer_KG(const TPointer<Graphics::FGUIWindow> &gui_window)
+    : FKGViewer(gui_window) {
 
         auto energy_window    = New<PlotWindow>("Energy histogram");
         auto kinetic_window   = New<PlotWindow>("Kinetic energy histogram");
@@ -30,7 +30,7 @@ namespace Slab::Models::KGRtoR {
         AddWindow(potential_window, true);
         AddWindow(kinetic_window);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
+        auto style = Graphics::FPlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
 
         Graphics::FPlotter::AddPointSet(energy_window,
                                        Naked(histogram_data_energy),
@@ -46,7 +46,7 @@ namespace Slab::Models::KGRtoR {
                                        *style++, "V")->SetAffectGraphRanges(true);
     }
 
-    void HistogramsViewer_KG::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    void FHistogramsViewer_KG::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         gui_window->AddExternalDraw([this](){
             fix func = getFunction();
             if(func == nullptr) return;
@@ -71,14 +71,14 @@ namespace Slab::Models::KGRtoR {
             ImGui::Text("Sheer data size: %i", (int)sheer_size);
         });
 
-        WindowPanel::ImmediateDraw(PlatformWindow);
+        FWindowPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void HistogramsViewer_KG::updateHistograms() {
-        Slab::Math::RtoR::Histogram histogram;
+    void FHistogramsViewer_KG::updateHistograms() {
+        Slab::Math::RtoR::FHistogram histogram;
 
         if(getFunction() == nullptr || getFunctionDerivative() == nullptr) {
-            Slab::Core::Log::Error() << "At " << __PRETTY_FUNCTION__ << ":" << __LINE__ << Slab::Core::Log::Flush;
+            Slab::Core::FLog::Error() << "At " << __PRETTY_FUNCTION__ << ":" << __LINE__ << Slab::Core::FLog::Flush;
             return;
         }
 
@@ -101,23 +101,23 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    void HistogramsViewer_KG::SetFunction(Slab::TPointer<Slab::Math::R2toR::FNumericFunction> function) {
+    void FHistogramsViewer_KG::SetFunction(Slab::TPointer<Slab::Math::R2toR::FNumericFunction> function) {
         auto domain = function->getDomain();
 
         t_min = domain.yMin;
         t_delta = domain.yMax-t_min;
 
-        Viewer::SetFunction(function);
+        FViewer::SetFunction(function);
     }
 
-    void HistogramsViewer_KG::SetFunctionDerivative(FuncPointer pointer) {
-        KGViewer::SetFunctionDerivative(pointer);
+    void FHistogramsViewer_KG::SetFunctionDerivative(FuncPointer pointer) {
+        FKGViewer::SetFunctionDerivative(pointer);
 
         if(isVisible() && areFunctionsConsistent()) updateHistograms();
     }
 
-    HistogramsViewer_KG::HarnessData
-    HistogramsViewer_KG::harness() {
+    FHistogramsViewer_KG::HarnessData
+    FHistogramsViewer_KG::harness() {
         auto f = getFunction();
 
         fix N = f->getSpace().getMetaData().getN(0);
@@ -130,7 +130,7 @@ namespace Slab::Models::KGRtoR {
 
         sheer_size = (j_end-j_begin+1) * f->getN();
 
-        HistogramsViewer_KG::HarnessData data { sheer_size };
+        FHistogramsViewer_KG::HarnessData data { sheer_size };
 
         auto Slicer = Slab::Math::RtoR::FromR2toR;
         auto laplacian_type = Math::RtoR::NumericFunction::Standard1D_PeriodicBorder;
@@ -141,7 +141,7 @@ namespace Slab::Models::KGRtoR {
             auto ddt_phi = Slicer(getFunctionDerivative(), j, laplacian_type);
 
             if(phi==nullptr || ddt_phi==nullptr) {
-                Slab::Core::Log::Error() << "At " << __PRETTY_FUNCTION__ << ":" << __LINE__ << Slab::Core::Log::Flush;
+                Slab::Core::FLog::Error() << "At " << __PRETTY_FUNCTION__ << ":" << __LINE__ << Slab::Core::FLog::Flush;
                 return data;
             }
 
@@ -170,7 +170,7 @@ namespace Slab::Models::KGRtoR {
         return data;
     }
 
-    Str HistogramsViewer_KG::GetName() const {
+    Str FHistogramsViewer_KG::GetName() const {
         return "[KG] Histograms viewer";
     }
 

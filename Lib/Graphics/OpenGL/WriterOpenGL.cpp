@@ -7,6 +7,7 @@
 #include "Core/Tools/Resources.h"
 #include "Core/Tools/Log.h"
 
+#include <algorithm>
 #include <string>
 #include <map>
 #include <regex>
@@ -35,8 +36,8 @@ namespace Slab::Graphics::OpenGL {
 
         if(Font == nullptr) throw Exception(Str("Bad font file: ") + fontFile);
 
-        Core::Log::Info() << "WriterOpenGL instantiation with font '" << fontFile << "' with size " << ptSize << "pts instantiated."
-                             << Core::Log::Flush;
+        Core::FLog::Info() << "WriterOpenGL instantiation with font '" << fontFile << "' with size " << ptSize << "pts instantiated."
+                             << Core::FLog::Flush;
 
         FColor white = {1, 1, 1, 1};
         glGenTextures(1, &Atlas->id);
@@ -58,10 +59,10 @@ namespace Slab::Graphics::OpenGL {
 
         const Str name = Font->filename;
         try {
-            Core::Log::Warning() << "TODO: fix problematic font deletion. Font '" << name << "' was not deleted." << Core::Log::Flush;
+            Core::FLog::Warning() << "TODO: fix problematic font deletion. Font '" << name << "' was not deleted." << Core::FLog::Flush;
             //texture_font_delete(font); // TODO: problematik
         } catch(...) {
-            Core::Log::Warning() << "Deletion of font '" << name << "' did not go smooth." << Core::Log::Flush;
+            Core::FLog::Warning() << "Deletion of font '" << name << "' did not go smooth." << Core::FLog::Flush;
         }
         Font = nullptr;
     }
@@ -91,14 +92,14 @@ namespace Slab::Graphics::OpenGL {
         size_t i;
         float r = Color.r, g = Color.g, b = Color.b, a = Color.a;
         auto text = Text.c_str();
-        for (i = 0; i < strlen(text); i += utf8_characterByteSize(text + i)) {
+        for (i = 0; i < strlen(text); i += Utf8CharacterByteSize(text + i)) {
             auto code_point = text + i;
 
             texture_glyph_t *glyph = texture_font_get_glyph(Font, code_point);
 
             if(glyph == nullptr){
-                Core::Log::Error() << "Graphics::OpenGL::WriterOpenGL could not load glyph '" << code_point << "' "
-                                   << "for font '" << Font->filename << "'." << Core::Log::Flush;
+                Core::FLog::Error() << "Graphics::OpenGL::WriterOpenGL could not load glyph '" << code_point << "' "
+                                   << "for font '" << Font->filename << "'." << Core::FLog::Flush;
             }
             else // if (glyph != nullptr)
             {
@@ -194,6 +195,49 @@ namespace Slab::Graphics::OpenGL {
 
     DevFloat FWriterOpenGL::GetFontHeightInPixels() const { return Font->height; }
 
+    DevFloat FWriterOpenGL::GetLineAdvanceInPixels() const {
+        if (Font == nullptr) return 0.0;
+        return Font->height;
+    }
+
+    DevFloat FWriterOpenGL::MeasureTextWidthInPixels(const Str &text) const {
+        if (Font == nullptr || text.empty()) return 0.0;
+
+        DevFloat penX = 0.0;
+        DevFloat minX = 0.0;
+        DevFloat maxX = 0.0;
+        bool haveGlyph = false;
+        const char *previousCodePoint = nullptr;
+        const auto *raw = text.c_str();
+
+        for (size_t i = 0; i < text.size(); i += Utf8CharacterByteSize(raw + i)) {
+            const auto *codePoint = raw + i;
+            auto *glyph = texture_font_get_glyph(Font, codePoint);
+            if (glyph == nullptr) continue;
+
+            if (previousCodePoint != nullptr) {
+                penX += texture_glyph_get_kerning(glyph, previousCodePoint);
+            }
+
+            const auto x0 = penX + static_cast<DevFloat>(glyph->offset_x);
+            const auto x1 = x0 + static_cast<DevFloat>(glyph->width);
+            if (!haveGlyph) {
+                minX = x0;
+                maxX = x1;
+                haveGlyph = true;
+            } else {
+                minX = std::min(minX, x0);
+                maxX = std::max(maxX, x1);
+            }
+
+            penX += static_cast<DevFloat>(glyph->advance_x);
+            previousCodePoint = codePoint;
+        }
+
+        if (!haveGlyph) return 0.0;
+        return std::max(maxX, penX) - std::min<DevFloat>(0.0, minX);
+    }
+
     void FWriterOpenGL::Reshape(int w, int h) {
         mat4_set_orthographic(&m_Projection, 0, (float) w, 0, (float) h, -1, 1);
     }
@@ -212,6 +256,10 @@ namespace Slab::Graphics::OpenGL {
 
     void FWriterOpenGL::SetPenPositionTransform(const FPenTransformFunction& PenTranform) {
         m_PenTransform = PenTranform;
+    }
+
+    void FWriterOpenGL::ResetPenPositionTransform() {
+        m_PenTransform = [](const FPoint2D &p) { return p; };
     }
 
 
