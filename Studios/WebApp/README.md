@@ -65,3 +65,23 @@ The initial scaffold is a generic StudioSlab web shell:
 - browser-oriented landing surface for future StudioSlab web features
 
 This is separate from the bounded wasm sandboxes in `Studios/WebGL-WASM`.
+
+## GitHub Pages Deployment
+
+The repository now includes `.github/workflows/deploy-webapp-pages.yml`.
+
+On every push to `main`, that workflow:
+- initializes the `Lib/3rdParty/imgui` submodule
+- installs Emscripten `3.1.6`
+- builds `WasmIsingWorkspaceSandbox`
+- builds this web app
+- deploys `Studios/WebApp/dist` to GitHub Pages
+
+One-time GitHub-side setup:
+- open `Settings` for the `jstreibel/StudioSlab` repository
+- open `Pages`
+- set `Build and deployment` -> `Source` to `GitHub Actions`
+
+Default published URLs:
+- site: `https://jstreibel.github.io/StudioSlab/`
+- Ising sandbox: `https://jstreibel.github.io/StudioSlab/wasm/ising-workspace-wasm-sandbox.html`

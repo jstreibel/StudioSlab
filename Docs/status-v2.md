@@ -2,11 +2,23 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-04-04`
-- Last implementation update: `2026-04-04` (`Studios/WebApp` local React frontend scaffold)
+- Snapshot date: `2026-04-05`
+- Last implementation update: `2026-04-05` (`Studios/WebApp` GitHub Pages deployment workflow)
 - Last architecture-doc update: `2026-04-03` (windowing migration plan/status refresh)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
 - Build-target sanity check date: `2026-04-03` (`StudioSlab` builds in `cmake-build-debug` after the shared workspace shell extraction; `emcmake` configure plus `WebGLWasmSandbox` / `WasmImGuiSandbox` / `WasmWorkspaceSandbox` / `WasmIsingWorkspaceSandbox` build locally in `cmake-build-webgl-wasm` with `Emscripten 3.1.6`; `[Plot2DV2]` still fails on an existing HUD-text assertion)
+
+## Recent Updates (`2026-04-05`, web app deployment)
+
+- Added `.github/workflows/deploy-webapp-pages.yml` to publish `Studios/WebApp` to GitHub Pages on pushes to `main`.
+- The workflow builds the bounded wasm dependency first:
+  - initializes the `Lib/3rdParty/imgui` submodule only
+  - installs Emscripten `3.1.6`
+  - builds `WasmIsingWorkspaceSandbox`
+- After the wasm artifacts exist, the workflow builds `Studios/WebApp`, uploads `Studios/WebApp/dist`, and deploys it through the GitHub Pages Actions path.
+- The intended default published URLs are:
+  - `https://jstreibel.github.io/StudioSlab/`
+  - `https://jstreibel.github.io/StudioSlab/wasm/ising-workspace-wasm-sandbox.html`
 
 ## Recent Updates (`2026-04-04`, web app scaffold)
 

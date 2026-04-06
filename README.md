@@ -90,3 +90,22 @@ Build it with:
 cd Studios/WebApp
 npm run build
 ```
+
+## GitHub Pages
+
+The repo now includes a GitHub Pages workflow at `.github/workflows/deploy-webapp-pages.yml`.
+
+Publishing flow:
+- push to `main`
+- GitHub Actions builds `WasmIsingWorkspaceSandbox`
+- GitHub Actions builds `Studios/WebApp`
+- `Studios/WebApp/dist` is deployed to GitHub Pages
+
+One-time GitHub setup:
+- open the repository `Settings`
+- go to `Pages`
+- under `Build and deployment`, set `Source` to `GitHub Actions`
+
+Default Pages URLs for this repository:
+- site: `https://jstreibel.github.io/StudioSlab/`
+- Ising sandbox: `https://jstreibel.github.io/StudioSlab/wasm/ising-workspace-wasm-sandbox.html`
