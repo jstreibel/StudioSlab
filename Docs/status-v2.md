@@ -24,7 +24,7 @@
 
 - `WasmIsingWorkspaceSandbox` now uses a target-local Emscripten shell template at `Studios/WebGL-WASM/ising_shell.html`.
 - The browser page title for the Ising wasm target is now `StudioSlab Ising study` instead of the default Dear ImGui Emscripten example title.
-- The Ising wasm sandbox now allows lattice sizes up to `L = 256` in `Ising Controls`.
+- The Ising wasm sandbox now caps lattice size at `L = 127`, which is the highest safe value for the current single-draw-list spin-lattice renderer.
 
 ## Recent Updates (`2026-04-04`, web app scaffold)
 

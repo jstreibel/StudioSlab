@@ -478,7 +478,9 @@ namespace {
     }
 
     [[nodiscard]] auto ClampIsingLatticeSize(const int value) -> int {
-        return std::clamp(value, 8, 256);
+        // The spin-lattice panel draws one filled rect per cell in a single ImGui draw list.
+        // L = 127 stays under the default 16-bit vertex-index limit; L = 128 crosses it.
+        return std::clamp(value, 8, 127);
     }
 
     [[nodiscard]] auto IsingCellIndex(const FIsingMetropolisStateWasm &ising, const int i, const int j) -> std::size_t {
@@ -1097,7 +1099,7 @@ namespace {
                 ImGui::Separator();
 
                 int latticeSize = ising.L;
-                if (ImGui::SliderInt("Lattice L", &latticeSize, 16, 256)) {
+                if (ImGui::SliderInt("Lattice L", &latticeSize, 16, 127)) {
                     if (latticeSize != ising.L) {
                         ising.L = latticeSize;
                         ising.bPendingReset = true;
