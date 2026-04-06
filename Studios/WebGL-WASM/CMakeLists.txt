@@ -34,6 +34,8 @@ studioslab_add_imgui_wasm_app(WasmWorkspaceSandbox
 
 studioslab_add_imgui_wasm_app(WasmIsingWorkspaceSandbox
     OUTPUT_NAME "ising-workspace-wasm-sandbox"
+    SHELL_FILE
+        "${CMAKE_CURRENT_LIST_DIR}/ising_shell.html"
     SOURCES
         workspace_main.cpp
         "${STUDIOSLAB_REPO_ROOT}/Slab/Graphics/Window/V2/WorkspaceLayoutV2.cpp"

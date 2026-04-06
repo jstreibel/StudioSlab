@@ -478,9 +478,7 @@ namespace {
     }
 
     [[nodiscard]] auto ClampIsingLatticeSize(const int value) -> int {
-        // Keep the browser sandbox below the reported failure threshold until the
-        // larger-lattice issue is traced in the wasm runtime path.
-        return std::clamp(value, 8, 127);
+        return std::clamp(value, 8, 256);
     }
 
     [[nodiscard]] auto IsingCellIndex(const FIsingMetropolisStateWasm &ising, const int i, const int j) -> std::size_t {
@@ -1099,7 +1097,7 @@ namespace {
                 ImGui::Separator();
 
                 int latticeSize = ising.L;
-                if (ImGui::SliderInt("Lattice L", &latticeSize, 16, 127)) {
+                if (ImGui::SliderInt("Lattice L", &latticeSize, 16, 256)) {
                     if (latticeSize != ising.L) {
                         ising.L = latticeSize;
                         ising.bPendingReset = true;
