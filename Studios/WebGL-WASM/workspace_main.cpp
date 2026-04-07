@@ -1098,14 +1098,6 @@ namespace {
                 ImGui::TextDisabled("Browser-local Metropolis kernel");
                 ImGui::Separator();
 
-                int latticeSize = ising.L;
-                if (ImGui::SliderInt("Lattice L", &latticeSize, 16, 127)) {
-                    if (latticeSize != ising.L) {
-                        ising.L = latticeSize;
-                        ising.bPendingReset = true;
-                    }
-                }
-
                 float temperature = static_cast<float>(ising.Temperature);
                 if (ImGui::SliderFloat("Temperature", &temperature, 0.10f, 5.00f, "%.3f")) {
                     ising.Temperature = temperature;
@@ -1116,71 +1108,79 @@ namespace {
                     ising.ExternalField = externalField;
                 }
 
-                int seedValue = static_cast<int>(ising.Seed);
-                if (ImGui::InputInt("Seed", &seedValue)) {
-                    ising.Seed = static_cast<unsigned int>(std::max(seedValue, 1));
-                    ising.bPendingReset = true;
+                if (ImGui::CollapsingHeader("Simulation Controls")) {
+                    int latticeSize = ising.L;
+                    if (ImGui::SliderInt("Lattice L", &latticeSize, 16, 127)) {
+                        if (latticeSize != ising.L) {
+                            ising.L = latticeSize;
+                            ising.bPendingReset = true;
+                        }
+                    }
+
+                    int seedValue = static_cast<int>(ising.Seed);
+                    if (ImGui::InputInt("Seed", &seedValue)) {
+                        ising.Seed = static_cast<unsigned int>(std::max(seedValue, 1));
+                        ising.bPendingReset = true;
+                    }
+
+                    int sweepsPerFrame = ising.SweepsPerFrame;
+                    if (ImGui::SliderInt("Sweeps / frame", &sweepsPerFrame, 1, 16)) {
+                        ising.SweepsPerFrame = sweepsPerFrame;
+                    }
+
+                    bool bFerromagneticInitial = ising.bFerromagneticInitial;
+                    if (ImGui::Checkbox("Ferromagnetic init", &bFerromagneticInitial)) {
+                        ising.bFerromagneticInitial = bFerromagneticInitial;
+                        ising.bPendingReset = true;
+                    }
+
+                    if (ising.bPendingReset) {
+                        ImGui::TextColored(ImVec4(0.93f, 0.72f, 0.35f, 1.0f), "Reset required to apply lattice changes.");
+                    } else {
+                        ImGui::TextDisabled("Periodic boundaries, J = 1, one sweep = L^2 proposals.");
+                    }
+
+                    if (ImGui::Button(ising.bRunning ? "Pause" : "Run")) {
+                        ising.bRunning = !ising.bRunning;
+                        AppendEvent(app, ising.bRunning ? "Resumed browser Ising run" : "Paused browser Ising run");
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Reset lattice")) {
+                        ResetIsingState(app);
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Single sweep")) {
+                        if (ising.Spins.empty() || ising.bPendingReset) ResetIsingState(app, false);
+                        RunIsingSweep(ising);
+                    }
+
+                    if (ImGui::Button("Advance 50 sweeps")) {
+                        if (ising.Spins.empty() || ising.bPendingReset) ResetIsingState(app, false);
+                        for (int i = 0; i < 50; ++i) RunIsingSweep(ising);
+                        AppendEvent(app, "Advanced Ising run by 50 sweeps");
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Jitter seed")) {
+                        ++ising.Seed;
+                        ising.bPendingReset = true;
+                    }
+
+                    ImGui::Separator();
+
+                    int historyPointBudget = ising.HistoryPointBudget;
+                    if (ImGui::SliderInt("History points", &historyPointBudget, 32, 960)) {
+                        ising.HistoryPointBudget = historyPointBudget;
+                        TrimAllIsingHistories(ising);
+                    }
+                    ImGui::TextDisabled("Applies to Observable History and the h x m loop trace.");
                 }
 
-                ImGui::Separator();
+                if (ImGui::CollapsingHeader("Presets")) {
+                    DrawIsingPresetControls(app);
 
-                int sweepsPerFrame = ising.SweepsPerFrame;
-                if (ImGui::SliderInt("Sweeps / frame", &sweepsPerFrame, 1, 16)) {
-                    ising.SweepsPerFrame = sweepsPerFrame;
+                    ImGui::Spacing();
+                    ImGui::TextDisabled("Critical temperature Tc ~= 2.269185");
                 }
-
-                bool bFerromagneticInitial = ising.bFerromagneticInitial;
-                if (ImGui::Checkbox("Ferromagnetic init", &bFerromagneticInitial)) {
-                    ising.bFerromagneticInitial = bFerromagneticInitial;
-                    ising.bPendingReset = true;
-                }
-
-                if (ising.bPendingReset) {
-                    ImGui::TextColored(ImVec4(0.93f, 0.72f, 0.35f, 1.0f), "Reset required to apply lattice changes.");
-                } else {
-                    ImGui::TextDisabled("Periodic boundaries, J = 1, one sweep = L^2 proposals.");
-                }
-
-                if (ImGui::Button(ising.bRunning ? "Pause" : "Run")) {
-                    ising.bRunning = !ising.bRunning;
-                    AppendEvent(app, ising.bRunning ? "Resumed browser Ising run" : "Paused browser Ising run");
-                }
-                ImGui::SameLine();
-                if (ImGui::Button("Reset lattice")) {
-                    ResetIsingState(app);
-                }
-                ImGui::SameLine();
-                if (ImGui::Button("Single sweep")) {
-                    if (ising.Spins.empty() || ising.bPendingReset) ResetIsingState(app, false);
-                    RunIsingSweep(ising);
-                }
-
-                if (ImGui::Button("Advance 50 sweeps")) {
-                    if (ising.Spins.empty() || ising.bPendingReset) ResetIsingState(app, false);
-                    for (int i = 0; i < 50; ++i) RunIsingSweep(ising);
-                    AppendEvent(app, "Advanced Ising run by 50 sweeps");
-                }
-                ImGui::SameLine();
-                if (ImGui::Button("Jitter seed")) {
-                    ++ising.Seed;
-                    ising.bPendingReset = true;
-                }
-
-                ImGui::Separator();
-
-                int historyPointBudget = ising.HistoryPointBudget;
-                if (ImGui::SliderInt("History points", &historyPointBudget, 32, 960)) {
-                    ising.HistoryPointBudget = historyPointBudget;
-                    TrimAllIsingHistories(ising);
-                }
-                ImGui::TextDisabled("Applies to Observable History and the h x m loop trace.");
-
-                ImGui::Separator();
-                ImGui::TextDisabled("Browser presets");
-                DrawIsingPresetControls(app);
-
-                ImGui::Spacing();
-                ImGui::TextDisabled("Critical temperature Tc ~= 2.269185");
             }
         });
 
