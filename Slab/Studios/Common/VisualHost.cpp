@@ -1,5 +1,6 @@
 #include "VisualHost.h"
 
+#include "Core/Composition/V2/LegacyRuntimeBootstrapV2.h"
 #include "Core/SlabCore.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/SlabGraphics.h"
@@ -53,8 +54,9 @@ namespace Slab::Studios::Common {
     } // namespace
 
     auto CreateGLFWVisualHost(const Str &windowTitle) -> FVisualHostContext {
-        Slab::Startup();
-        Core::StartBackend("GLFW");
+        Core::Composition::V2::EnsureLegacyBackendStartedV2(
+            Core::Composition::V2::GetLegacyBackendIdForPlatformHostKindV2(
+                Core::Composition::V2::ELegacyPlatformHostKindV2::GLFW));
         Core::LoadModule("ModernOpenGL");
         Graphics::FPlotThemeManager::GetInstance();
 

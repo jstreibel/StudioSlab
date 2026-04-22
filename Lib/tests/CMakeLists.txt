@@ -3,6 +3,7 @@ find_package(Catch2 3 REQUIRED)          # from v3, installs a CMake package
 
 add_executable(testsuite
         test.cpp
+        test_composition_v2.cpp
         test_result.cpp
         test_model_v2.cpp
         test_numerics_characterization.cpp

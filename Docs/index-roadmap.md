@@ -29,6 +29,7 @@ Use this order when docs disagree:
   - `Docs/handoff-ode-realization-rz03.md`
 - Focused plan docs:
   - `Docs/ode-realization-descent-plan.md`
+  - `Docs/backends-platforms-modules-v2-plan.md`
   - `Docs/platform-wasm-feasibility.md`
   - `Docs/functional-minimization-v2-slice-scope.md`
   - `Docs/plot-v2-node-graph-plan.md`

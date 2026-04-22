@@ -29,6 +29,21 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
         Controller/CommandLine/CommandLineHelpers.h
 		Controller/Parameter/ParameterBuilder.cpp
 		Controller/Parameter/ParameterBuilder.h
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/CompositionTypesV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/LegacyRuntimeBootstrapV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/LegacyRuntimeBootstrapV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/Modules/LegacyBridgeModuleV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/Modules/LegacyBridgeModuleV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/ServiceRegistryV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/Services/ReflectionServiceV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/Services/ReflectionServiceV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/Services/TaskServiceV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/Services/TaskServiceV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/RuntimeContextV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/RuntimeContextV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Core/Platform/V2/PlatformHostV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Core/Platform/V2/LegacyPlatformHostV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Core/Platform/V2/LegacyPlatformHostV2.h
 
 )
 

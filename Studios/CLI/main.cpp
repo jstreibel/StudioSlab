@@ -1,7 +1,10 @@
 #include "CrashPad.h"
 
+#include "Core/Composition/V2/LegacyRuntimeBootstrapV2.h"
+#include "Core/Composition/V2/Modules/LegacyBridgeModuleV2.h"
+#include "Core/Composition/V2/Services/ReflectionServiceV2.h"
+#include "Core/Composition/V2/Services/TaskServiceV2.h"
 #include "Core/Controller/CommandLine/CommandLineParserDefs.h"
-#include "Core/Reflection/V2/LegacyInterfaceAdapterV2.h"
 #include "Core/SlabCore.h"
 
 #include "StudioSlab.h"
@@ -16,10 +19,12 @@
 #include <algorithm>
 #include <cctype>
 #include <iostream>
+#include <optional>
 
 namespace {
 
     using namespace Slab;
+    namespace CompositionV2 = Slab::Core::Composition::V2;
     namespace StudiosSimV2 = Slab::Studios::Common::Simulations::V2;
     using StudiosSimV2::FMetropolisExecutionConfigV2;
     using StudiosSimV2::FR2toRBaselineExecutionConfig;
@@ -80,6 +85,60 @@ namespace {
 
     auto PrintList() -> void {
         std::cout << "reflect\nmetropolis\nspi\nrtor\nkg2d\nmoldyn\nxy\nising\n";
+    }
+
+    auto IsHelpToken(const Str &arg) -> bool {
+        return arg == "--help" || arg == "-h" || arg == "help";
+    }
+
+    auto NormalizeProfileToken(Str token) -> Str {
+        std::transform(token.begin(), token.end(), token.begin(), [](const unsigned char c) {
+            if (std::isalnum(c)) return static_cast<char>(std::tolower(c));
+            return '_';
+        });
+        return token;
+    }
+
+    auto DetectRootCommandId(const int argc, const char **argv) -> Str {
+        if (argc <= 1) return "root";
+
+        const Str first = argv[1];
+        if (first == "run" && argc > 2) return NormalizeProfileToken(argv[2]);
+        if (IsHelpToken(first) || first == "list") return "root";
+        return NormalizeProfileToken(first);
+    }
+
+    auto ShouldBootstrapCLIRuntimeV2(const int argc, const char **argv) -> bool {
+        if (argc <= 1) return false;
+
+        const Str first = argv[1];
+        if (IsHelpToken(first) || first == "list") return false;
+
+        for (int i = 2; i < argc; ++i) {
+            if (IsHelpToken(argv[i])) return false;
+        }
+
+        return true;
+    }
+
+    auto InferCLIPlatformHostKindV2(const int argc, const char **argv) -> CompositionV2::ELegacyPlatformHostKindV2 {
+        for (int i = 1; i < argc; ++i) {
+            if (Str(argv[i]) == "--gl") return CompositionV2::ELegacyPlatformHostKindV2::GLFW;
+        }
+
+        return CompositionV2::ELegacyPlatformHostKindV2::Headless;
+    }
+
+    auto BuildCLIRuntimeProfileV2(const int argc, const char **argv) -> CompositionV2::FRuntimeProfileV2 {
+        const auto hostKind = InferCLIPlatformHostKindV2(argc, argv);
+
+        CompositionV2::FRuntimeProfileV2 profile;
+        profile.ProfileId = "studios_cli_" + DetectRootCommandId(argc, argv) + "_" +
+            CompositionV2::GetPlatformHostIdForLegacyPlatformHostKindV2(hostKind);
+        profile.DisplayName = hostKind == CompositionV2::ELegacyPlatformHostKindV2::GLFW
+            ? "Studios CLI (GLFW)"
+            : "Studios CLI (Headless)";
+        return profile;
     }
 
     auto NormalizeShortLongSingleLetterOption(const Str &arg) -> Str {
@@ -154,7 +213,9 @@ namespace {
         return result.IsOk() ? 0 : 1;
     }
 
-    auto RunReflectCommand(const int argc, const char **argv) -> int {
+    auto RunReflectCommand(const CompositionV2::FRuntimeContextV2 *runtimeContext,
+                           const int argc,
+                           const char **argv) -> int {
         using namespace Slab::Core::Reflection::V2;
 
         CLOptionsDescription options(
@@ -183,15 +244,26 @@ namespace {
             return 0;
         }
 
-        Slab::Startup();
+        if (runtimeContext == nullptr) {
+            throw Exception("Studios reflect requires a runtime context.");
+        }
 
-        FLegacyReflectionCatalogAdapterV2 adapter;
-        adapter.RefreshFromLegacyInterfaces();
-        const auto &catalog = adapter.GetCatalog();
+        const auto reflectionService = runtimeContext->GetServices().Resolve<CompositionV2::IReflectionServiceV2>();
+        if (reflectionService == nullptr) {
+            throw Exception("ReflectionService V2 not available in runtime context.");
+        }
+
+        reflectionService->Refresh();
+        const auto catalog = reflectionService->GetMergedCatalog();
 
         FInvocationContextV2 context;
         context.CurrentThread = ParseThreadAffinity(result["thread"].as<Str>());
-        context.bRuntimeRunning = result.count("running") > 0;
+        if (result.count("running") > 0) {
+            context.bRuntimeRunning = true;
+        } else if (const auto taskService = runtimeContext->GetServices().Resolve<CompositionV2::ITaskServiceV2>();
+            taskService != nullptr) {
+            context.bRuntimeRunning = taskService->HasRunningTasks();
+        }
 
         Str action = result["action"].as<Str>();
         std::transform(action.begin(), action.end(), action.begin(), [](const unsigned char c) {
@@ -235,7 +307,11 @@ namespace {
 
             FValueMapV2 inputs;
             inputs["parameter_id"] = MakeStringValue(result["parameter"].as<Str>());
-            const auto invokeResult = adapter.Invoke(interfaceId, COperationIdQueryGetParameter, inputs, context);
+            const auto invokeResult = reflectionService->Invoke(
+                interfaceId,
+                COperationIdQueryGetParameter,
+                inputs,
+                context);
             return PrintOperationResult(invokeResult);
         }
 
@@ -248,7 +324,10 @@ namespace {
             }
 
             const auto parameterId = result["parameter"].as<Str>();
-            const auto *parameterSchema = adapter.GetParameter(interfaceId, parameterId);
+            const auto *interfaceSchema = FindInterfaceById(catalog, interfaceId);
+            const auto *parameterSchema = interfaceSchema == nullptr
+                ? nullptr
+                : FindParameterById(*interfaceSchema, parameterId);
             if (parameterSchema == nullptr) {
                 throw Exception(
                     "Parameter '" + parameterId + "' not found in interface '" + interfaceId + "'.");
@@ -257,12 +336,20 @@ namespace {
             FValueMapV2 inputs;
             inputs["parameter_id"] = MakeStringValue(parameterId);
             inputs["value"] = FReflectionValueV2(parameterSchema->TypeId, result["value"].as<Str>());
-            const auto invokeResult = adapter.Invoke(interfaceId, COperationIdCommandSetParameter, inputs, context);
+            const auto invokeResult = reflectionService->Invoke(
+                interfaceId,
+                COperationIdCommandSetParameter,
+                inputs,
+                context);
             return PrintOperationResult(invokeResult);
         }
 
         if (action == "apply") {
-            const auto invokeResult = adapter.Invoke(interfaceId, COperationIdCommandApplyPending, {}, context);
+            const auto invokeResult = reflectionService->Invoke(
+                interfaceId,
+                COperationIdCommandApplyPending,
+                {},
+                context);
             return PrintOperationResult(invokeResult);
         }
 
@@ -286,7 +373,7 @@ namespace {
                 }
             }
 
-            const auto invokeResult = adapter.Invoke(
+            const auto invokeResult = reflectionService->Invoke(
                 interfaceId,
                 result["operation"].as<Str>(),
                 inputs,
@@ -682,7 +769,9 @@ namespace {
         return name == "ising" || name == "ising-v2" || name == "v2-ising";
     }
 
-    auto DispatchRoot(const int argc, const char **argv) -> int {
+    auto DispatchRoot(const CompositionV2::FRuntimeContextV2 *runtimeContext,
+                      const int argc,
+                      const char **argv) -> int {
         if (argc <= 1) {
             PrintRootUsage();
             return 0;
@@ -705,7 +794,7 @@ namespace {
             if (argc <= 2) throw Exception("Missing subprogram after 'run'.");
 
             const Str sub = argv[2];
-            if (IsReflectCommand(sub)) return RunReflectCommand(argc - 2, argv + 2);
+            if (IsReflectCommand(sub)) return RunReflectCommand(runtimeContext, argc - 2, argv + 2);
             if (IsMetropolisCommand(sub)) return RunMetropolisCommand(argc - 2, argv + 2);
             if (IsSPICommand(sub)) return RunSPICommand(argc - 2, argv + 2);
             if (IsRtoRCommand(sub)) return RunRtoRCommand(argc - 2, argv + 2);
@@ -717,7 +806,7 @@ namespace {
             throw Exception("Unknown subprogram '" + sub + "'. Use 'Studios list'.");
         }
 
-        if (IsReflectCommand(first)) return RunReflectCommand(argc - 1, argv + 1);
+        if (IsReflectCommand(first)) return RunReflectCommand(runtimeContext, argc - 1, argv + 1);
         if (IsMetropolisCommand(first)) return RunMetropolisCommand(argc - 1, argv + 1);
         if (IsSPICommand(first)) return RunSPICommand(argc - 1, argv + 1);
         if (IsRtoRCommand(first)) return RunRtoRCommand(argc - 1, argv + 1);
@@ -730,7 +819,17 @@ namespace {
     }
 
     auto RunMain(const int argc, const char **argv) -> int {
-        return DispatchRoot(argc, argv);
+        std::optional<CompositionV2::FRuntimeContextV2> runtimeContext = std::nullopt;
+        if (ShouldBootstrapCLIRuntimeV2(argc, argv)) {
+            runtimeContext.emplace(
+                CompositionV2::BuildLegacyRuntimeContextV2(
+                    BuildCLIRuntimeProfileV2(argc, argv),
+                    InferCLIPlatformHostKindV2(argc, argv)));
+            runtimeContext->InstallModule(CompositionV2::MakeLegacyBridgeModuleV2());
+            CompositionV2::StartupLegacyRuntimeV2(*runtimeContext);
+        }
+
+        return DispatchRoot(runtimeContext ? &*runtimeContext : nullptr, argc, argv);
     }
 
 } // namespace
