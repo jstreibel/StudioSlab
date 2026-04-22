@@ -1,9 +1,13 @@
 #include <catch2/catch_all.hpp>
 
+#include <chrono>
+#include <thread>
+
 #include "Core/Model/V2/ModelAuthoringV2.h"
 #include "Core/Model/V2/ModelRealizationV2.h"
 #include "Core/Model/V2/ModelRealizationRuntimeV2.h"
 #include "Core/Model/V2/ModelSeedsV2.h"
+#include "Math/Numerics/V2/Task/NumericTaskV2.h"
 
 namespace {
 
@@ -34,6 +38,31 @@ namespace {
     auto SelectionContains(const std::set<Slab::Str> &keys,
                            const Slab::Core::Model::V2::FSemanticObjectRefV2 &ref) -> bool {
         return keys.contains(Slab::Core::Model::V2::MakeSemanticObjectKeyV2(ref));
+    }
+
+    auto RunTaskAndWait(Slab::Core::FTask &task) -> Slab::Core::ETaskStatus {
+        std::thread worker([&task] { task.Start(); });
+
+        while (true) {
+            const auto status = task.GetStatus();
+            if (status != Slab::Core::TaskNotInitialized && status != Slab::Core::TaskRunning) {
+                task.Release();
+                worker.join();
+                return status;
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
+    }
+
+    auto FindArtifactByDefinitionId(
+        const Slab::Vector<Slab::Core::Model::V2::FODETimeSeriesArtifactV2> &artifacts,
+        const Slab::Str &definitionId) -> const Slab::Core::Model::V2::FODETimeSeriesArtifactV2 * {
+        const auto it = std::find_if(artifacts.begin(), artifacts.end(), [&](const auto &artifact) {
+            return artifact.DefinitionId == definitionId;
+        });
+        if (it == artifacts.end()) return nullptr;
+        return &*it;
     }
 
 } // namespace
@@ -1318,17 +1347,28 @@ TEST_CASE("Model V2 ODE runtime bridge builds explicit oscillator runtime", "[Mo
     REQUIRE(runtime.IsReady());
     REQUIRE(runtime.System != nullptr);
     REQUIRE(runtime.Recipe != nullptr);
+    REQUIRE(runtime.StateArtifacts.size() == 2);
+    REQUIRE(runtime.ObservableArtifacts.size() == 1);
     CHECK(runtime.System->GetInitialTime() == Catch::Approx(0.0));
     CHECK(runtime.System->GetStateDefinitionIds() == Slab::Vector<Slab::Str>{"state.x", "state.p"});
     REQUIRE(runtime.System->GetInitialStateValues().size() == 2);
     CHECK(runtime.System->GetInitialStateValues()[0] == Catch::Approx(1.5));
     CHECK(runtime.System->GetInitialStateValues()[1] == Catch::Approx(-0.25));
+    REQUIRE(runtime.System->GetObservableSpecs().size() == 1);
+    CHECK(runtime.System->GetObservableSpecs()[0].DefinitionId == "obs.energy");
 
     const auto rhs = runtime.System->EvaluateRhs(runtime.System->GetInitialStateValues(), runtime.System->GetInitialTime());
     REQUIRE(rhs.has_value());
     REQUIRE(rhs->size() == 2);
     CHECK((*rhs)[0] == Catch::Approx(-0.125));
     CHECK((*rhs)[1] == Catch::Approx(-12.0));
+
+    const auto initialEnergy = runtime.System->EvaluateObservable(
+        "obs.energy",
+        runtime.System->GetInitialStateValues(),
+        runtime.System->GetInitialTime());
+    REQUIRE(initialEnergy.has_value());
+    CHECK(*initialEnergy == Catch::Approx(9.015625));
 
     const auto session = runtime.Recipe->BuildSession();
     REQUIRE(session != nullptr);
@@ -1350,6 +1390,60 @@ TEST_CASE("Model V2 ODE runtime bridge builds explicit oscillator runtime", "[Mo
     REQUIRE(afterValues->size() == 2);
     CHECK((*afterValues)[0] != Catch::Approx((*beforeValues)[0]));
     CHECK((*afterValues)[1] != Catch::Approx((*beforeValues)[1]));
+
+    SECTION("runtime recipe publishes state and observable artifacts") {
+        FODEExplicitFirstOrderRuntimeConfigV2 artifactConfig = config;
+        artifactConfig.MaxSteps = 12;
+        artifactConfig.ArtifactSampleIntervalSteps = 3;
+        artifactConfig.MaxArtifactSamples = 32;
+
+        const auto artifactRuntime = BuildODEExplicitFirstOrderRuntimeV2(model, descriptor, artifactConfig);
+        REQUIRE(artifactRuntime.IsReady());
+        REQUIRE(artifactRuntime.StateArtifacts.size() == 2);
+        REQUIRE(artifactRuntime.ObservableArtifacts.size() == 1);
+
+        const auto *xArtifact = FindArtifactByDefinitionId(artifactRuntime.StateArtifacts, "state.x");
+        const auto *pArtifact = FindArtifactByDefinitionId(artifactRuntime.StateArtifacts, "state.p");
+        const auto *energyArtifact = FindArtifactByDefinitionId(artifactRuntime.ObservableArtifacts, "obs.energy");
+        REQUIRE(xArtifact != nullptr);
+        REQUIRE(pArtifact != nullptr);
+        REQUIRE(energyArtifact != nullptr);
+        REQUIRE(xArtifact->Listener != nullptr);
+        REQUIRE(pArtifact->Listener != nullptr);
+        REQUIRE(energyArtifact->Listener != nullptr);
+
+        auto task = Slab::New<Slab::Math::Numerics::V2::FNumericTaskV2>(artifactRuntime.Recipe, false);
+        REQUIRE(RunTaskAndWait(*task) == Slab::Core::TaskSuccess);
+
+        CHECK(xArtifact->Listener->GetSampleCount() == 5);
+        CHECK(pArtifact->Listener->GetSampleCount() == 5);
+        CHECK(energyArtifact->Listener->GetSampleCount() == 5);
+
+        const auto xLatest = xArtifact->Listener->TryGetLatestSample();
+        const auto pLatest = pArtifact->Listener->TryGetLatestSample();
+        const auto energyLatest = energyArtifact->Listener->TryGetLatestSample();
+        REQUIRE(xLatest.has_value());
+        REQUIRE(pLatest.has_value());
+        REQUIRE(energyLatest.has_value());
+
+        CHECK(xLatest->Cursor.Step == 12);
+        CHECK(pLatest->Cursor.Step == 12);
+        CHECK(energyLatest->Cursor.Step == 12);
+        REQUIRE(xLatest->Cursor.SimulationTime.has_value());
+        REQUIRE(pLatest->Cursor.SimulationTime.has_value());
+        REQUIRE(energyLatest->Cursor.SimulationTime.has_value());
+        CHECK(*xLatest->Cursor.SimulationTime == Catch::Approx(0.6));
+        CHECK(*pLatest->Cursor.SimulationTime == Catch::Approx(0.6));
+        CHECK(*energyLatest->Cursor.SimulationTime == Catch::Approx(0.6));
+
+        const Slab::Vector<Slab::DevFloat> latestState = {xLatest->Value, pLatest->Value};
+        const auto expectedEnergy = artifactRuntime.System->EvaluateObservable(
+            "obs.energy",
+            latestState,
+            *energyLatest->Cursor.SimulationTime);
+        REQUIRE(expectedEnergy.has_value());
+        CHECK(energyLatest->Value == Catch::Approx(*expectedEnergy));
+    }
 }
 
 TEST_CASE("Model V2 ODE runtime bridge supports damped oscillator RHS", "[ModelV2][Realization][Runtime]") {

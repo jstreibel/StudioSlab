@@ -6,12 +6,15 @@
 
 #include "Math/Data/V2/LiveDataHubV2.h"
 #include "Math/Data/V2/LiveControlHubV2.h"
+#include "Math/Numerics/V2/Listeners/ScalarTimeSeriesListenerV2.h"
+#include "Math/Numerics/V2/Task/NumericTaskV2.h"
 #include "Core/Reflection/V2/LegacyInterfaceAdapterV2.h"
 #include "Core/Reflection/V2/ReflectionCatalogRegistryV2.h"
 #include "Core/Reflection/V2/GraphSubstrateV2.h"
 #include "Core/Reflection/V2/SemanticTypesV1.h"
 #include "Core/Model/V2/ModelTypesV2.h"
 #include "Core/Model/V2/ModelAuthoringV2.h"
+#include "Core/Model/V2/ModelRealizationRuntimeV2.h"
 #include "Core/Ontology/V2/OntologyGraphV2.h"
 #include "Graphics/Plot2D/V2/PlotReflectionCatalogV2.h"
 #include "Graphics/Plot2D/V2/Plot2DWindowV2.h"
@@ -22,6 +25,7 @@
 
 #include <functional>
 #include <array>
+#include <chrono>
 #include <deque>
 #include <filesystem>
 #include <map>
@@ -86,6 +90,7 @@ private:
 
     enum class EWorkspaceTab : unsigned char {
         Simulations = 0,
+        Artifacts,
         Schemes,
         Models,
         Ontology,
@@ -93,7 +98,7 @@ private:
         Plots
     };
 
-    static constexpr std::size_t WorkspaceCount = 6;
+    static constexpr std::size_t WorkspaceCount = 7;
     using FSlabWindowPtr = Slab::TPointer<Slab::Graphics::FSlabWindow>;
     using FSlabWindowVec = Slab::Vector<FSlabWindowPtr>;
     using FHostedSurfacePtr = Slab::Graphics::Windowing::V2::FHostedSurfaceV2_ptr;
@@ -220,10 +225,26 @@ private:
         Slab::DevFloat TimeStep = 0.05;
         Slab::UIntBig MaxSteps = 1024;
         bool bOpenEnded = false;
+        Slab::UIntBig ArtifactSampleIntervalSteps = 1;
+        Slab::UIntBig MaxArtifactSamples = 4096;
+        bool bUnlimitedArtifactSamples = false;
         std::map<Slab::Str, Slab::Str> ScalarBindingDraftByDefinitionId;
         Slab::Str Status;
     };
     std::map<Slab::Str, FModelODERuntimeDraftState> ModelODERuntimeDraftStateByModelId;
+    struct FModelArtifactRunState {
+        Slab::Str RunId;
+        Slab::Str ModelId;
+        Slab::Str ModelName;
+        Slab::Str TaskName;
+        Slab::Math::Numerics::V2::FNumericTaskV2_ptr Task = nullptr;
+        Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 Runtime;
+        std::chrono::steady_clock::time_point CreatedAt = std::chrono::steady_clock::now();
+    };
+    Slab::Vector<FModelArtifactRunState> ModelArtifactRuns;
+    std::size_t ModelArtifactRunCounter = 0;
+    int SelectedArtifactRunIndex = 0;
+    Slab::Str SelectedArtifactDefinitionId;
 
     struct FModelWorkspaceViewState {
         bool bAvailable = false;
@@ -375,6 +396,7 @@ private:
     EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Simulations;
     bool bShowWindowLab = true;
     bool bShowWindowSimulationLauncher = true;
+    bool bShowWindowArtifacts = true;
     bool bShowWindowTasks = true;
     bool bShowWindowLiveData = true;
     bool bShowWindowLiveControl = true;
@@ -430,6 +452,7 @@ private:
     auto DrawPanelSurface(const FPanelSurfaceRegistration &registration) -> void;
     auto DrawSchemesInspectorPanel() -> void;
     auto DrawSchemesBlueprintGraphPanel() -> void;
+    auto DrawArtifactsPanel() -> void;
     [[nodiscard]] auto PrepareModelWorkspaceViewState() -> FModelWorkspaceViewState;
     auto InvalidateModelWorkspaceViewState() -> void;
     auto PrefillModelNewDefinitionComposer(const Slab::Core::Model::V2::FModelV2 &model,
@@ -502,6 +525,9 @@ private:
         FLabV2SubstrateGraphCanvasInteraction *interaction = nullptr) -> void;
     [[nodiscard]] auto GetTopMenuInset() const -> float;
     auto RequestSimulationLauncherVisible() -> void;
+    auto RecordModelArtifactRun(const Slab::Core::Model::V2::FModelV2 &model,
+                                const Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 &runtime,
+                                const Slab::Math::Numerics::V2::FNumericTaskV2_ptr &task) -> void;
     auto SaveWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
     auto LoadWorkspacePanelVisibility(EWorkspaceTab workspace) -> void;
     auto SetActiveWorkspace(EWorkspaceTab workspace) -> void;

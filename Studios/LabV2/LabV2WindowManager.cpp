@@ -113,6 +113,7 @@ namespace {
     constexpr auto WindowTitleLiveInteraction = "Live Interaction";
     constexpr auto WindowTitleViews = "Views";
     constexpr auto WindowTitleSimulationLauncher = "Simulation Launcher";
+    constexpr auto WindowTitleArtifacts = "Artifacts";
     constexpr auto WindowTitleSchemesInspector = "Interface Inspector";
     constexpr auto WindowTitleBlueprintGraph = "Blueprint Graph";
     constexpr auto WindowTitleModelInspector = "Model Layer";
@@ -132,6 +133,7 @@ namespace {
     constexpr auto PopupBlueprintGraphContext = "SchemesBlueprintGraphContext";
     constexpr auto DockspaceHostName = "##LabDockspaceHost";
     constexpr auto WorkspaceTabSimulations = "Simulations";
+    constexpr auto WorkspaceTabArtifacts = "Artifacts";
     constexpr auto WorkspaceTabSchemes = "Schemes";
     constexpr auto WorkspaceTabModels = "Model";
     constexpr auto WorkspaceTabOntology = "Ontology";
@@ -837,6 +839,7 @@ auto FLabV2WindowManager::GetWorkspaceDefinitions()
     -> const std::array<WindowingV2::FWorkspaceDefinitionV2, WorkspaceCount> & {
     static const std::array<WindowingV2::FWorkspaceDefinitionV2, WorkspaceCount> Definitions = {{
         {"simulations", WorkspaceTabSimulations, true},
+        {"artifacts", WorkspaceTabArtifacts, false},
         {"schemes", WorkspaceTabSchemes, false},
         {"models", WorkspaceTabModels, true},
         {"ontology", WorkspaceTabOntology, true},
@@ -885,6 +888,13 @@ auto FLabV2WindowManager::BuildDefaultWorkspaceDockLayout(const EWorkspaceTab wo
         layout.Placements = {
             FDockWindowPlacementV2{WindowTitleSchemesInspector, "dock_left"},
             FDockWindowPlacementV2{WindowTitleBlueprintGraph, "main"}
+        };
+        return layout;
+    }
+
+    if (workspace == EWorkspaceTab::Artifacts) {
+        layout.Placements = {
+            FDockWindowPlacementV2{WindowTitleArtifacts, "main"}
         };
         return layout;
     }
@@ -2271,7 +2281,7 @@ auto FLabV2WindowManager::HideSlabWindowsOffscreen() -> void {
 
 auto FLabV2WindowManager::BuildWorkspaceVisibilityItems() -> std::vector<FWorkspaceVisibilityItem> {
     std::vector<FWorkspaceVisibilityItem> items;
-    items.reserve(23);
+    items.reserve(24);
 
     const auto addItem = [&](const char *itemId,
                              const EWorkspaceTab workspace,
@@ -2294,6 +2304,7 @@ auto FLabV2WindowManager::BuildWorkspaceVisibilityItems() -> std::vector<FWorksp
     addItem("live_data", EWorkspaceTab::Simulations, "Live Data", &bShowWindowLiveData, true);
     addItem("live_control", EWorkspaceTab::Simulations, "Live Control", &bShowWindowLiveControl, true);
     addItem("live_interaction", EWorkspaceTab::Simulations, "Live Interaction", &bShowWindowLiveInteraction, true);
+    addItem("artifacts", EWorkspaceTab::Artifacts, "Artifacts", &bShowWindowArtifacts, true);
     addItem("scheme_inspector", EWorkspaceTab::Schemes, "Inspector", &bShowWindowSchemeInspector, true);
     addItem("blueprint_graph", EWorkspaceTab::Schemes, "Blueprint Graph", &bShowWindowBlueprintGraph, true);
     addItem("model_inspector", EWorkspaceTab::Models, "Summary", &bShowWindowModelInspector, false);
@@ -2337,6 +2348,31 @@ auto FLabV2WindowManager::RequestSimulationLauncherVisible() -> void {
     bShowWindowSimulationLauncher = true;
     if (LauncherInitialDockId != 0) {
         bRequestLauncherInitialDock = true;
+    }
+}
+
+auto FLabV2WindowManager::RecordModelArtifactRun(
+    const Slab::Core::Model::V2::FModelV2 &model,
+    const Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 &runtime,
+    const Slab::Math::Numerics::V2::FNumericTaskV2_ptr &task) -> void {
+    FModelArtifactRunState run;
+    run.RunId = "artifact.run." + Slab::ToStr(++ModelArtifactRunCounter);
+    run.ModelId = model.ModelId;
+    run.ModelName = model.Name;
+    run.TaskName = task != nullptr ? task->GetName() : ("Model ODE - " + model.Name);
+    run.Task = task;
+    run.Runtime = runtime;
+    run.CreatedAt = std::chrono::steady_clock::now();
+
+    ModelArtifactRuns.push_back(std::move(run));
+    SelectedArtifactRunIndex = static_cast<int>(ModelArtifactRuns.size()) - 1;
+
+    if (!runtime.ObservableArtifacts.empty()) {
+        SelectedArtifactDefinitionId = runtime.ObservableArtifacts.front().DefinitionId;
+    } else if (!runtime.StateArtifacts.empty()) {
+        SelectedArtifactDefinitionId = runtime.StateArtifacts.front().DefinitionId;
+    } else {
+        SelectedArtifactDefinitionId.clear();
     }
 }
 
@@ -2399,6 +2435,7 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
         GetTopMenuInset(),
         [this](const Slab::Str &workspaceId) {
             SetActiveWorkspace([&workspaceId]() {
+                if (workspaceId == "artifacts") return EWorkspaceTab::Artifacts;
                 if (workspaceId == "schemes") return EWorkspaceTab::Schemes;
                 if (workspaceId == "models") return EWorkspaceTab::Models;
                 if (workspaceId == "ontology") return EWorkspaceTab::Ontology;
@@ -2437,6 +2474,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
         GetTopMenuInset(),
         [this](const Slab::Str &workspaceId) {
             const auto workspace = [&workspaceId]() {
+                if (workspaceId == "artifacts") return EWorkspaceTab::Artifacts;
                 if (workspaceId == "schemes") return EWorkspaceTab::Schemes;
                 if (workspaceId == "models") return EWorkspaceTab::Models;
                 if (workspaceId == "ontology") return EWorkspaceTab::Ontology;
@@ -2463,7 +2501,7 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
 
 auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfaceRegistration> {
     std::vector<FPanelSurfaceRegistration> registry;
-    registry.reserve(20);
+    registry.reserve(21);
 
     registry.push_back(FPanelSurfaceRegistration{
         "lab",
@@ -2484,6 +2522,8 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
             ImGui::SeparatorText("Panels");
             if (ActiveWorkspace == EWorkspaceTab::Simulations) {
                 ImGui::Checkbox("Simulation Launcher", &bShowWindowSimulationLauncher);
+            } else if (ActiveWorkspace == EWorkspaceTab::Artifacts) {
+                ImGui::Checkbox("Artifacts", &bShowWindowArtifacts);
             }
             ImGui::Checkbox("Tasks", &bShowWindowTasks);
             ImGui::Checkbox("Live Data", &bShowWindowLiveData);
@@ -2592,6 +2632,18 @@ auto FLabV2WindowManager::BuildPanelSurfaceRegistry() -> std::vector<FPanelSurfa
             Slab::Studios::LabV2::Panels::ShowLiveInteractionPanel(
                 LiveControlHub,
                 LiveInteractionTopicFilter);
+        }
+    });
+
+    registry.push_back(FPanelSurfaceRegistration{
+        "artifacts",
+        WindowTitleArtifacts,
+        GetWorkspaceDefinition(EWorkspaceTab::Artifacts).WorkspaceId,
+        &bShowWindowArtifacts,
+        false,
+        false,
+        [this]() {
+            DrawArtifactsPanel();
         }
     });
 
@@ -2831,6 +2883,7 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
         ImGui::Checkbox("Live Control", &bShowWindowLiveControl);
         ImGui::Checkbox("Live Interaction", &bShowWindowLiveInteraction);
         ImGui::Checkbox("Views", &bShowWindowViews);
+        ImGui::Checkbox("Artifacts", &bShowWindowArtifacts);
         ImGui::Checkbox("Model Layer", &bShowWindowModelInspector);
         ImGui::Checkbox("Model Vocabulary", &bShowWindowModelVocabulary);
         ImGui::Checkbox("Model Definitions", &bShowWindowModelDefinitions);
@@ -2868,6 +2921,10 @@ auto FLabV2WindowManager::DrawLegacySidePane() -> void {
 
         if (bShowWindowViews) {
             DrawViewManagerPanel();
+        }
+
+        if (bShowWindowArtifacts) {
+            DrawArtifactsPanel();
         }
 
         if (bShowWindowModelInspector) {

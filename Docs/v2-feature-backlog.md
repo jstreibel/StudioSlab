@@ -173,6 +173,51 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - `LabV2` plot-host routing now tracks hosted surfaces instead of raw plot-host windows for sync, visibility, and focus-preparation flow
   - next work is widening hosted-surface coverage beyond plot hosts, then WebGL2 renderer parity
 
+## Progress Notes (2026-04-17)
+
+- `BM-00` done: terminology + migration contract locked in `Docs/backends-platforms-modules-v2-plan.md`.
+- `BM-01` done: composition foundation seed landed under `Slab/Core/Composition/V2/`.
+  - added typed runtime-profile/module/backend vocabulary
+  - added `FServiceRegistryV2` for typed/named service lookup
+  - added `FRuntimeContextV2` for explicit runtime state instead of hidden global startup
+- `BM-02` done: platform-host boundary seed landed under `Slab/Core/Platform/V2/`.
+  - added `FPlatformHostDescriptorV2`
+  - added `IPlatformHostV2`
+  - locked V2 terminology to `PlatformHost` for `Headless` / `GLFW` / `SDL` / `SFML` / browser-style runtime hosts
+- `BM-03` done: first legacy bridge landed.
+  - added `FLegacyBackendPlatformHostV2` over the current `FBackendManager` path
+  - factory helpers currently cover `headless`, `glfw`, and `sfml`
+  - bridge is intentionally narrow and does not try to wrap all legacy backend/module behavior yet
+- `BM-04` done: first composition-root adoption landed in `Studios/CLI`.
+  - added `LegacyRuntimeBootstrapV2` to build explicit runtime contexts over legacy platform-host choices
+  - CLI help/list paths stay cold while real subcommands now choose `headless` vs `glfw` explicitly before dispatch
+  - `RunReflectCommand` no longer performs its own direct `Slab::Startup()` call
+  - shared visual-host startup now reuses a compatible preselected `GLFW` backend instead of always forcing a fresh backend start
+- `BM-05` done: first typed legacy service bridge landed.
+  - added `IReflectionServiceV2` / `FLegacyReflectionServiceV2`
+  - added `ITaskServiceV2` / `FLegacyTaskServiceV2`
+  - added `LegacyBridgeModuleV2` to register those services through the V2 module path
+  - `Studios/CLI reflect` now resolves reflection/runtime-state behavior from typed services instead of constructing the legacy adapter inline
+- Validation:
+  - `cmake --build cmake-build-debug --target testsuite -j8`
+  - `./Build/bin/testsuite "[CompositionV2]"`
+  - `cmake --build cmake-build-debug --target Studios -j8`
+  - `./Build/bin/Studios reflect --action list`
+  - `./Build/bin/Studios reflect --action get --interface legacy.log_manager --parameter verbose`
+
+## Progress Notes (2026-04-21)
+
+- `RZ-04` done: ODE launch/binding follow-up is now complete in the current narrow slice.
+  - Model workspace numeric-binding authoring remains lab-local
+  - oscillator-family ODE-ready models launch directly into a numeric task from the descriptor-driven bridge
+- `RZ-05` done: first listener-backed ODE artifact slice landed.
+  - runtime recipes now publish state and observable scalar time-series artifacts for the harmonic-oscillator path
+  - `obs.energy` now evaluates through the runtime bridge instead of remaining descriptor-only metadata
+  - LabV2 now has a top-level `Artifacts` workspace with a minimal series viewer for launched model-driven ODE runs
+- Validation:
+  - `cmake --build cmake-build-debug --target StudioSlab testsuite -j4`
+  - `./Build/bin/testsuite "[ModelV2][Realization][Runtime]"`
+
 ### `P0` `RV2-00` — Reflection V2 contract freeze — done
 - Define `Interface`/`Parameter`/`Operation` schema contracts.
 - Define operation invocation result shape and policy enums.
@@ -308,15 +353,44 @@ Goal: enable the first north-star interaction loop (field + monitor + live contr
   - handoff reference: `Docs/handoff-ode-realization-rz03.md`
   - build one descriptor-driven recipe/session/stepper path for oscillator-family models
   - keep diagnostics explicit and state ordering deterministic
-- `P1` `RZ-04` — ODE launch/binding follow-up
+- `P1` `RZ-04` — ODE launch/binding follow-up — done
   - expose the minimal numeric scalar-binding story required by the runtime bridge
   - add one LabV2 launch path from an ODE-ready model into that bridge
+- `P1` `RZ-05` — ODE artifact capture / viewer — done
+  - publish listener-backed state and observable history from the descriptor-driven runtime recipe
+  - add a minimal LabV2 `Artifacts` workspace viewer for launched oscillator-family runs
+- `P2` `RZ-06` — ODE artifact manifest / runtime follow-up
+  - add artifact manifest/provenance/export for model-driven runs
+  - improve the Hamiltonian/oscillator solver path before widening beyond the current RK4-first slice
 
 ### Coverage Portfolio
 - `P1` `CVG-01` — MD V2 scoping — done
 - `P1` `CVG-02` — MD `V2-H` -> `V2-M` — done
 - `P1` `CVG-03` — XY/Ising V2 lattice slices (`V2-H` -> `V2-M`) — done
 - `P2` `CVG-04` — Functional minimization V2 slice
+
+### Runtime Composition / Platform Foundation
+- `P1` `BM-00` — Backends / Platforms / Modules V2 terminology and migration contract — done
+  - plan reference: `Docs/backends-platforms-modules-v2-plan.md`
+  - lock the distinction between `PlatformHost`, capability `Backend`, and composition `Module`
+  - define placement rules for GUI, rendering, networking, audio, and composition/runtime helpers
+- `P1` `BM-01` — Composition V2 seed — done
+  - add shared runtime-profile, module, backend-selection, and typed service-registry contracts
+  - keep the layer reusable and domain-agnostic under `Slab/Core/Composition/V2/`
+- `P1` `BM-02` — PlatformHost V2 seed — done
+  - add host descriptors and a minimal lifecycle contract under `Slab/Core/Platform/V2/`
+  - keep concrete graphical hosts out of the composition layer
+- `P1` `BM-03` — Legacy platform bridge — done
+  - adapt the current `FBackendManager` startup/run/terminate path through `FLegacyBackendPlatformHostV2`
+  - avoid a big-bang rewrite while new composition roots are still absent
+- `P1` `BM-04` — First composition-root adoption — done
+  - moved the bounded `Studios/CLI` path onto explicit runtime-context + platform-host selection
+  - help/list remain cold; real commands now choose `headless` or `glfw` before dispatch
+- `P1` `BM-05` — Legacy module/backend bridge follow-up — done
+  - exposed the first typed legacy-backed services actually needed by current V2-facing code: reflection and task/runtime-state
+  - kept the bridge bounded; there is still no blanket `GetModule(name)` V2 wrapper
+- `P2` `BM-06` — Capability backend families
+  - grow explicit backend seams for execution, asset store, GUI, rendering, networking, and audio as real consumers appear
 
 ### Platform Targets
 - `P2` `PLAT-00` — Web/wasm feasibility spike

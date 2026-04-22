@@ -6,10 +6,13 @@
 #include "Math/Numerics/ODE/Solver/BoundaryConditions.h"
 #include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
 #include "Math/Numerics/ODE/Steppers/RungeKutta4.h"
+#include "Math/Numerics/V2/Listeners/ScalarTimeSeriesListenerV2.h"
 #include "Math/Numerics/V2/Runtime/SimulationRecipeV2.h"
+#include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Runtime/StepperSessionV2.h"
 #include "Utils/Exception.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <limits>
@@ -20,7 +23,30 @@ namespace Slab::Core::Model::V2 {
     struct FODEExplicitFirstOrderRuntimeConfigV2 {
         DevFloat TimeStep = 0.01;
         TOptional<UIntBig> MaxSteps = std::nullopt;
+        bool bCaptureStateHistory = true;
+        bool bCaptureObservableHistory = true;
+        UIntBig ArtifactSampleIntervalSteps = 1;
+        TOptional<UIntBig> MaxArtifactSamples = UIntBig(4096);
         std::map<Str, DevFloat> ScalarBindingsByDefinitionId;
+    };
+
+    struct FODEObservableRuntimeSpecV2 {
+        Str DefinitionId;
+        Str DisplayLabel;
+        Str CanonicalNotation;
+        Str RelationId;
+        FExpressionPtrV2 Expression = nullptr;
+    };
+
+    struct FODETimeSeriesArtifactV2 {
+        Str DefinitionId;
+        Str DisplayLabel;
+        Str CanonicalNotation;
+        Math::Numerics::V2::FScalarTimeSeriesListenerV2_ptr Listener = nullptr;
+
+        [[nodiscard]] auto IsValid() const -> bool {
+            return !DefinitionId.empty() && Listener != nullptr;
+        }
     };
 
     class FODEExplicitFirstOrderRuntimeSystemV2 {
@@ -31,6 +57,8 @@ namespace Slab::Core::Model::V2 {
         Vector<Str> StateDisplayLabels;
         std::map<Str, std::size_t> StateIndexByDefinitionId;
         Vector<FExpressionPtrV2> OrderedExplicitExpressions;
+        Vector<FODEObservableRuntimeSpecV2> ObservableSpecs;
+        std::map<Str, std::size_t> ObservableIndexByDefinitionId;
         std::map<Str, DevFloat> ScalarBindingsByDefinitionId;
         DevFloat InitialTime = 0.0;
         Vector<DevFloat> InitialStateValues;
@@ -106,6 +134,18 @@ namespace Slab::Core::Model::V2 {
             return OrderedExplicitExpressions;
         }
 
+        auto SetObservableSpecs(Vector<FODEObservableRuntimeSpecV2> observableSpecs) -> void {
+            ObservableSpecs = std::move(observableSpecs);
+            ObservableIndexByDefinitionId.clear();
+            for (std::size_t i = 0; i < ObservableSpecs.size(); ++i) {
+                ObservableIndexByDefinitionId[ObservableSpecs[i].DefinitionId] = i;
+            }
+        }
+
+        [[nodiscard]] auto GetObservableSpecs() const -> const Vector<FODEObservableRuntimeSpecV2> & {
+            return ObservableSpecs;
+        }
+
         auto SetInitialStateValues(Vector<DevFloat> initialStateValues) -> void {
             InitialStateValues = std::move(initialStateValues);
         }
@@ -117,6 +157,12 @@ namespace Slab::Core::Model::V2 {
         [[nodiscard]] auto FindStateIndex(const Str &stateDefinitionId) const -> TOptional<std::size_t> {
             const auto it = StateIndexByDefinitionId.find(stateDefinitionId);
             if (it == StateIndexByDefinitionId.end()) return std::nullopt;
+            return it->second;
+        }
+
+        [[nodiscard]] auto FindObservableIndex(const Str &observableDefinitionId) const -> TOptional<std::size_t> {
+            const auto it = ObservableIndexByDefinitionId.find(observableDefinitionId);
+            if (it == ObservableIndexByDefinitionId.end()) return std::nullopt;
             return it->second;
         }
 
@@ -159,6 +205,11 @@ namespace Slab::Core::Model::V2 {
         [[nodiscard]] auto EvaluateRhs(const Vector<DevFloat> &stateValues,
                                        const DevFloat time,
                                        Str *pError = nullptr) const -> TOptional<Vector<DevFloat>>;
+
+        [[nodiscard]] auto EvaluateObservable(const Str &observableDefinitionId,
+                                              const Vector<DevFloat> &stateValues,
+                                              const DevFloat time,
+                                              Str *pError = nullptr) const -> TOptional<DevFloat>;
     };
 
     DefinePointers(FODEExplicitFirstOrderRuntimeSystemV2)
@@ -166,6 +217,8 @@ namespace Slab::Core::Model::V2 {
     struct FODEExplicitFirstOrderRuntimeBuildResultV2 {
         FODEExplicitFirstOrderRuntimeSystemV2_ptr System = nullptr;
         Math::Numerics::V2::FSimulationRecipeV2_ptr Recipe = nullptr;
+        Vector<FODETimeSeriesArtifactV2> StateArtifacts;
+        Vector<FODETimeSeriesArtifactV2> ObservableArtifacts;
         Vector<FODERealizationDiagnosticV2> Diagnostics;
 
         [[nodiscard]] auto IsReady() const -> bool {
@@ -311,13 +364,14 @@ namespace Slab::Core::Model::V2 {
                                                           const Str &timeCoordinateDefinitionId,
                                                           const std::set<Str> &stateDefinitionIds,
                                                           const std::map<Str, DevFloat> &scalarBindingsByDefinitionId,
-                                                          Vector<FODERealizationDiagnosticV2> &diagnostics) -> void {
+                                                          Vector<FODERealizationDiagnosticV2> &diagnostics,
+                                                          const EValidationSeverityV2 severity = EValidationSeverityV2::Error) -> void {
             VisitExpressionDepthFirstV2(expression, [&](const FExpressionV2 &node) {
                 if (node.Kind == EExpressionKindV2::FunctionApplication) {
                     RealizationDetail::AppendRealizationDiagnosticUniqueV2(
                         diagnostics,
                         FODERealizationDiagnosticV2{
-                            .Severity = EValidationSeverityV2::Error,
+                            .Severity = severity,
                             .Code = "unsupported_runtime_function_application",
                             .Source = std::nullopt,
                             .Message = "The first ODE runtime bridge does not support function-application expressions yet."
@@ -329,7 +383,7 @@ namespace Slab::Core::Model::V2 {
                     RealizationDetail::AppendRealizationDiagnosticUniqueV2(
                         diagnostics,
                         FODERealizationDiagnosticV2{
-                            .Severity = EValidationSeverityV2::Error,
+                            .Severity = severity,
                             .Code = "unsupported_runtime_operator_application",
                             .Source = std::nullopt,
                             .Message = "The first ODE runtime bridge does not support operator-application expressions yet."
@@ -341,7 +395,7 @@ namespace Slab::Core::Model::V2 {
                     RealizationDetail::AppendRealizationDiagnosticUniqueV2(
                         diagnostics,
                         FODERealizationDiagnosticV2{
-                            .Severity = EValidationSeverityV2::Error,
+                            .Severity = severity,
                             .Code = "unsupported_runtime_derivative_expression",
                             .Source = std::nullopt,
                             .Message = "The first ODE runtime bridge expects explicit derivative-free RHS expressions."
@@ -354,7 +408,7 @@ namespace Slab::Core::Model::V2 {
                     RealizationDetail::AppendRealizationDiagnosticUniqueV2(
                         diagnostics,
                         FODERealizationDiagnosticV2{
-                            .Severity = EValidationSeverityV2::Error,
+                            .Severity = severity,
                             .Code = "unresolved_runtime_symbol",
                             .Source = std::nullopt,
                             .Message = "The first ODE runtime bridge cannot evaluate unresolved symbol '" +
@@ -371,12 +425,59 @@ namespace Slab::Core::Model::V2 {
                 RealizationDetail::AppendRealizationDiagnosticUniqueV2(
                     diagnostics,
                     FODERealizationDiagnosticV2{
-                        .Severity = EValidationSeverityV2::Error,
+                        .Severity = severity,
                         .Code = "missing_numeric_binding",
                         .Source = MakeDefinitionObjectRefV2(referenceId),
                         .Message = "The first ODE runtime bridge requires one numeric binding for '" + referenceId + "'."
                     });
             });
+        }
+
+        struct FObservableIdentityCandidateV2 {
+            const FRelationV2 *Relation = nullptr;
+            FExpressionPtrV2 Expression = nullptr;
+        };
+
+        inline auto TryExtractBoundSymbolReferenceIdV2(const FExpressionPtrV2 &expression) -> TOptional<Str> {
+            if (expression == nullptr) return std::nullopt;
+            if (expression->Kind != EExpressionKindV2::Symbol) return std::nullopt;
+            if (!expression->Reference.IsBound()) return std::nullopt;
+            if (expression->Reference.ReferenceId.empty()) return std::nullopt;
+            return expression->Reference.ReferenceId;
+        }
+
+        inline auto CollectObservableIdentityCandidatesV2(const FModelV2 &model, const Str &observableDefinitionId)
+            -> Vector<FObservableIdentityCandidateV2> {
+            Vector<FObservableIdentityCandidateV2> candidates;
+
+            for (const auto &relation : model.Relations) {
+                if (relation.Kind != ERelationKindV2::Identity) continue;
+
+                const auto leftId = TryExtractBoundSymbolReferenceIdV2(relation.Left);
+                if (leftId.has_value() && *leftId == observableDefinitionId) {
+                    candidates.push_back(FObservableIdentityCandidateV2{
+                        .Relation = &relation,
+                        .Expression = relation.Right
+                    });
+                }
+
+                const auto rightId = TryExtractBoundSymbolReferenceIdV2(relation.Right);
+                if (rightId.has_value() && *rightId == observableDefinitionId) {
+                    candidates.push_back(FObservableIdentityCandidateV2{
+                        .Relation = &relation,
+                        .Expression = relation.Left
+                    });
+                }
+            }
+
+            return candidates;
+        }
+
+        inline auto NormalizeArtifactMaxSamplesV2(const TOptional<UIntBig> &maxSamples) -> std::optional<std::size_t> {
+            if (!maxSamples.has_value()) return std::nullopt;
+
+            const auto limit = static_cast<UIntBig>(std::numeric_limits<std::size_t>::max());
+            return static_cast<std::size_t>(std::min(*maxSamples, limit));
         }
 
         class FScalarVectorEquationStateV2 final : public Math::Base::EquationState {
@@ -530,12 +631,15 @@ namespace Slab::Core::Model::V2 {
         class FExplicitFirstOrderSimulationRecipeV2 final : public Math::Numerics::V2::FSimulationRecipeV2 {
             FODEExplicitFirstOrderRuntimeSystemV2_ptr System;
             FODEExplicitFirstOrderRuntimeConfigV2 Config;
+            Vector<Math::Numerics::V2::FSubscriptionV2> DefaultSubscriptions;
 
         public:
             FExplicitFirstOrderSimulationRecipeV2(FODEExplicitFirstOrderRuntimeSystemV2_ptr system,
-                                                  FODEExplicitFirstOrderRuntimeConfigV2 config)
+                                                  FODEExplicitFirstOrderRuntimeConfigV2 config,
+                                                  Vector<Math::Numerics::V2::FSubscriptionV2> defaultSubscriptions)
             : System(std::move(system))
-            , Config(std::move(config)) {
+            , Config(std::move(config))
+            , DefaultSubscriptions(std::move(defaultSubscriptions)) {
             }
 
             auto BuildSession() -> TPointer<Math::Numerics::V2::FSimulationSessionV2> override {
@@ -553,7 +657,7 @@ namespace Slab::Core::Model::V2 {
             }
 
             auto BuildDefaultSubscriptions() -> Vector<Math::Numerics::V2::FSubscriptionV2> override {
-                return {};
+                return DefaultSubscriptions;
             }
 
             [[nodiscard]] auto GetRunLimits() const -> Math::Numerics::V2::FRunLimitsV2 override {
@@ -600,6 +704,41 @@ namespace Slab::Core::Model::V2 {
             rhs[i] = *value;
         }
         return rhs;
+    }
+
+    inline auto FODEExplicitFirstOrderRuntimeSystemV2::EvaluateObservable(const Str &observableDefinitionId,
+                                                                          const Vector<DevFloat> &stateValues,
+                                                                          const DevFloat time,
+                                                                          Str *pError) const -> TOptional<DevFloat> {
+        const auto fail = [&](const Str &message) -> TOptional<DevFloat> {
+            if (pError != nullptr) *pError = message;
+            return std::nullopt;
+        };
+
+        const auto observableIndex = FindObservableIndex(observableDefinitionId);
+        if (!observableIndex.has_value()) {
+            return fail("runtime observable '" + observableDefinitionId + "' is not available");
+        }
+
+        const auto &spec = ObservableSpecs[*observableIndex];
+        if (spec.Expression == nullptr) {
+            return fail("runtime observable '" + observableDefinitionId + "' does not have an expression");
+        }
+
+        Str error;
+        const auto value = RuntimeDetail::EvaluateScalarExpressionV2(
+            spec.Expression,
+            *this,
+            &stateValues,
+            time,
+            true,
+            true,
+            &error);
+        if (!value.has_value()) {
+            return fail("observable '" + observableDefinitionId + "' failed: " + error);
+        }
+
+        return value;
     }
 
     inline auto TryExtractODEExplicitFirstOrderRuntimeStateValuesV2(const Math::Base::EquationState &state)
@@ -683,6 +822,13 @@ namespace Slab::Core::Model::V2 {
             collectExpressionBindings(explicitExpression, relationBindingIds);
         }
 
+        std::set<Str> observableBindingIds;
+        for (const auto &observable : descriptor.Observables) {
+            const auto candidates = RuntimeDetail::CollectObservableIdentityCandidatesV2(model, observable.DefinitionId);
+            if (candidates.size() != 1 || candidates.front().Expression == nullptr) continue;
+            collectExpressionBindings(candidates.front().Expression, observableBindingIds);
+        }
+
         std::set<Str> initialBindingIds;
         if (model.InitialConditions.has_value()) {
             collectExpressionBindings(model.InitialConditions->TimeExpression, initialBindingIds);
@@ -710,6 +856,7 @@ namespace Slab::Core::Model::V2 {
         };
 
         appendBindingsInModelDefinitionOrder(relationBindingIds);
+        appendBindingsInModelDefinitionOrder(observableBindingIds);
         appendBindingsInModelDefinitionOrder(initialBindingIds);
 
         return requiredBindings;
@@ -844,6 +991,72 @@ namespace Slab::Core::Model::V2 {
                 result.Diagnostics);
         }
 
+        Vector<FODEObservableRuntimeSpecV2> observableSpecs;
+        observableSpecs.reserve(descriptor.Observables.size());
+        for (const auto &observable : descriptor.Observables) {
+            const auto candidates = RuntimeDetail::CollectObservableIdentityCandidatesV2(model, observable.DefinitionId);
+            if (candidates.empty()) {
+                RealizationDetail::AppendRealizationDiagnosticUniqueV2(
+                    result.Diagnostics,
+                    FODERealizationDiagnosticV2{
+                        .Severity = EValidationSeverityV2::Warning,
+                        .Code = "observable_runtime_identity_missing",
+                        .Source = MakeDefinitionObjectRefV2(observable.DefinitionId),
+                        .Message = "Explicit first-order runtime bridge could not find an identity relation for observable '" +
+                            observable.DefinitionId + "'."
+                    });
+                continue;
+            }
+
+            if (candidates.size() > 1) {
+                RealizationDetail::AppendRealizationDiagnosticUniqueV2(
+                    result.Diagnostics,
+                    FODERealizationDiagnosticV2{
+                        .Severity = EValidationSeverityV2::Warning,
+                        .Code = "observable_runtime_identity_ambiguous",
+                        .Source = MakeDefinitionObjectRefV2(observable.DefinitionId),
+                        .Message = "Explicit first-order runtime bridge found multiple identity relations for observable '" +
+                            observable.DefinitionId + "' and skipped artifact wiring for now."
+                    });
+                continue;
+            }
+
+            if (candidates.front().Expression == nullptr || candidates.front().Relation == nullptr) {
+                RealizationDetail::AppendRealizationDiagnosticUniqueV2(
+                    result.Diagnostics,
+                    FODERealizationDiagnosticV2{
+                        .Severity = EValidationSeverityV2::Warning,
+                        .Code = "observable_runtime_identity_invalid",
+                        .Source = MakeDefinitionObjectRefV2(observable.DefinitionId),
+                        .Message = "Explicit first-order runtime bridge found an invalid identity mapping for observable '" +
+                            observable.DefinitionId + "'."
+                    });
+                continue;
+            }
+
+            auto expression = RuntimeDetail::CloneExpressionTreeV2(candidates.front().Expression);
+            Vector<FODERealizationDiagnosticV2> observableDiagnostics;
+            RuntimeDetail::CollectRuntimeExpressionDiagnosticsV2(
+                expression,
+                system->GetTimeCoordinateDefinitionId(),
+                stateDefinitionIdSet,
+                config.ScalarBindingsByDefinitionId,
+                observableDiagnostics,
+                EValidationSeverityV2::Warning);
+            for (const auto &diagnostic : observableDiagnostics) {
+                RealizationDetail::AppendRealizationDiagnosticUniqueV2(result.Diagnostics, diagnostic);
+            }
+            if (!observableDiagnostics.empty()) continue;
+
+            observableSpecs.push_back(FODEObservableRuntimeSpecV2{
+                .DefinitionId = observable.DefinitionId,
+                .DisplayLabel = observable.DisplayLabel,
+                .CanonicalNotation = observable.CanonicalNotation,
+                .RelationId = candidates.front().Relation->RelationId,
+                .Expression = std::move(expression)
+            });
+        }
+
         if (!model.InitialConditions.has_value()) {
             RealizationDetail::AppendRealizationDiagnosticUniqueV2(
                 result.Diagnostics,
@@ -955,9 +1168,81 @@ namespace Slab::Core::Model::V2 {
 
         system->SetInitialStateValues(std::move(initialStateValues));
         system->SetOrderedExplicitExpressions(std::move(orderedExplicitExpressions));
+        system->SetObservableSpecs(std::move(observableSpecs));
+
+        const auto artifactSampleInterval = std::max<UIntBig>(UIntBig(1), config.ArtifactSampleIntervalSteps);
+        const auto artifactMaxSamples = RuntimeDetail::NormalizeArtifactMaxSamplesV2(config.MaxArtifactSamples);
+
+        Vector<Math::Numerics::V2::FSubscriptionV2> defaultSubscriptions;
+
+        if (config.bCaptureStateHistory) {
+            for (std::size_t i = 0; i < descriptor.StateVariables.size(); ++i) {
+                const auto &state = descriptor.StateVariables[i];
+                auto listener = New<Math::Numerics::V2::FScalarTimeSeriesListenerV2>(
+                    [stateIndex = i](const Math::Numerics::V2::FSimulationEventV2 &event) -> std::optional<DevFloat> {
+                        if (event.State == nullptr) return std::nullopt;
+                        const auto stateValues = TryExtractODEExplicitFirstOrderRuntimeStateValuesV2(*event.State);
+                        if (!stateValues.has_value() || stateIndex >= stateValues->size()) return std::nullopt;
+                        return (*stateValues)[stateIndex];
+                    },
+                    "State History - " + state.DisplayLabel,
+                    artifactMaxSamples);
+
+                Math::Numerics::V2::FSubscriptionV2 subscription;
+                subscription.Trigger = New<Math::Numerics::V2::FEveryNStepsTriggerV2>(artifactSampleInterval);
+                subscription.Listener = listener;
+                subscription.bWantsInitialEvent = true;
+                subscription.bWantsFinalEvent = true;
+                defaultSubscriptions.push_back(subscription);
+
+                result.StateArtifacts.push_back(FODETimeSeriesArtifactV2{
+                    .DefinitionId = state.DefinitionId,
+                    .DisplayLabel = state.DisplayLabel,
+                    .CanonicalNotation = state.CanonicalNotation,
+                    .Listener = std::move(listener)
+                });
+            }
+        }
+
+        if (config.bCaptureObservableHistory) {
+            for (const auto &observable : system->GetObservableSpecs()) {
+                auto listener = New<Math::Numerics::V2::FScalarTimeSeriesListenerV2>(
+                    [system, observableDefinitionId = observable.DefinitionId](
+                            const Math::Numerics::V2::FSimulationEventV2 &event) -> std::optional<DevFloat> {
+                        if (system == nullptr || event.State == nullptr) return std::nullopt;
+
+                        const auto stateValues = TryExtractODEExplicitFirstOrderRuntimeStateValuesV2(*event.State);
+                        if (!stateValues.has_value()) return std::nullopt;
+
+                        const auto time = event.Cursor.SimulationTime.has_value()
+                            ? *event.Cursor.SimulationTime
+                            : system->GetInitialTime();
+                        return system->EvaluateObservable(observableDefinitionId, *stateValues, time);
+                    },
+                    "Observable History - " + observable.DisplayLabel,
+                    artifactMaxSamples);
+
+                Math::Numerics::V2::FSubscriptionV2 subscription;
+                subscription.Trigger = New<Math::Numerics::V2::FEveryNStepsTriggerV2>(artifactSampleInterval);
+                subscription.Listener = listener;
+                subscription.bWantsInitialEvent = true;
+                subscription.bWantsFinalEvent = true;
+                defaultSubscriptions.push_back(subscription);
+
+                result.ObservableArtifacts.push_back(FODETimeSeriesArtifactV2{
+                    .DefinitionId = observable.DefinitionId,
+                    .DisplayLabel = observable.DisplayLabel,
+                    .CanonicalNotation = observable.CanonicalNotation,
+                    .Listener = std::move(listener)
+                });
+            }
+        }
 
         result.System = system;
-        result.Recipe = New<RuntimeDetail::FExplicitFirstOrderSimulationRecipeV2>(system, config);
+        result.Recipe = New<RuntimeDetail::FExplicitFirstOrderSimulationRecipeV2>(
+            system,
+            config,
+            std::move(defaultSubscriptions));
         return result;
     }
 

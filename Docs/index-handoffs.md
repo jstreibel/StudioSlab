@@ -19,4 +19,4 @@ Handoffs are restart aids. They do not override `Docs/status-v2.md` or the codeb
 
 - `Docs/handoff-ode-realization-rz03.md`
   - post-`RZ-03` follow-up after the core descriptor-driven runtime bridge landed
-  - targets the remaining launch and numeric-binding follow-up work
+  - targets the remaining post-launch artifact/provenance and runtime follow-up work

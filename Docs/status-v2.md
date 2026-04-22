@@ -2,11 +2,107 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-04-05`
-- Last implementation update: `2026-04-05` (`Studios/WebApp` GitHub Pages deployment workflow)
-- Last architecture-doc update: `2026-04-03` (windowing migration plan/status refresh)
+- Snapshot date: `2026-04-21`
+- Last implementation update: `2026-04-21` (ODE artifact capture + LabV2 Artifacts workspace)
+- Last architecture-doc update: `2026-04-21` (ODE runtime follow-up docs refresh)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
-- Build-target sanity check date: `2026-04-03` (`StudioSlab` builds in `cmake-build-debug` after the shared workspace shell extraction; `emcmake` configure plus `WebGLWasmSandbox` / `WasmImGuiSandbox` / `WasmWorkspaceSandbox` / `WasmIsingWorkspaceSandbox` build locally in `cmake-build-webgl-wasm` with `Emscripten 3.1.6`; `[Plot2DV2]` still fails on an existing HUD-text assertion)
+- Build-target sanity check date: `2026-04-21` (`StudioSlab` and `testsuite` build in `cmake-build-debug`; `[ModelV2][Realization][Runtime]` passes locally after the ODE artifact slice; prior composition and broader desktop + wasm sanity notes remain recorded below)
+
+## Recent Updates (`2026-04-21`, ODE artifact capture / Artifacts workspace)
+
+- The first model-driven ODE artifact slice landed for the harmonic oscillator:
+  - `ModelRealizationRuntimeV2` now resolves simple observable identity relations into runtime expressions
+  - the runtime bridge now evaluates observable values alongside state values instead of carrying observables as descriptor-only metadata
+  - default recipe subscriptions can capture listener-backed state and observable time-series artifacts
+- Added `FScalarTimeSeriesListenerV2` under `Slab/Math/Numerics/V2/Listeners/`:
+  - stores scalar samples with step/time cursor metadata and event reason
+  - is now the narrow artifact sink used by the ODE-first harmonic-oscillator path
+- LabV2 now has a top-level `Artifacts` workspace:
+  - launched model-driven ODE runs register their runtime/task/artifact handles there
+  - the first minimal viewer shows available state/observable series, latest sample, a simple line plot, and a recent-samples table
+- Validation for the slice now includes emitted artifact coverage:
+  - `ModelV2` runtime tests verify `obs.energy`
+  - `ModelV2` runtime tests also verify real state/observable time-series publication from `FNumericTaskV2`
+- Current boundary remains intentionally narrow:
+  - oscillator-family launch path only
+  - headless numeric task execution with the current RK4 recipe path
+  - no shared `SessionLiveViewV2` / monitor-topic presentation yet
+  - no model-owned numeric-binding or artifact-manifest/provenance authoring yet
+
+## Recent Updates (`2026-04-19`, BM-05 legacy service bridge)
+
+- Added the first typed legacy-backed bridge services under `Slab/Core/Composition/V2/Services/`:
+  - `IReflectionServiceV2` / `FLegacyReflectionServiceV2`
+  - `ITaskServiceV2` / `FLegacyTaskServiceV2`
+- Added `Slab/Core/Composition/V2/Modules/LegacyBridgeModuleV2.*`:
+  - installs the reflection and task services into a runtime context through the existing V2 module mechanism
+  - keeps the bridge bounded to services already needed by current V2-facing code
+- `Studios/CLI` now installs `LegacyBridgeModuleV2` into its runtime context before startup.
+- The `reflect` command no longer constructs `FLegacyReflectionCatalogAdapterV2` directly:
+  - it now resolves `IReflectionServiceV2` from the runtime context
+  - runtime-running inference now comes from `ITaskServiceV2` unless `--running` is set explicitly
+- The task service is deliberately split into:
+  - read-only cold-safe queries that do not auto-load `TaskManager`
+  - task submission / clear paths that bridge into the legacy task manager when required
+- This is still a bridge slice, not a full app migration:
+  - `LabV2` still reaches legacy task/reflection paths directly
+  - `VisualHost`/GUI/runtime services are not yet represented as typed composition services
+- Validation:
+  - `cmake --build cmake-build-debug --target testsuite Studios -j8`
+  - `./Build/bin/testsuite "[CompositionV2]"`
+  - `./Build/bin/Studios reflect --action list`
+  - `./Build/bin/Studios reflect --action get --interface legacy.log_manager --parameter verbose`
+  - `./Build/bin/Studios metropolis --steps 1 --interval 1 --batch 1`
+
+## Recent Updates (`2026-04-17`, composition / platform foundation)
+
+- Added `Docs/backends-platforms-modules-v2-plan.md` to lock the V2 terminology and placement rules:
+  - `PlatformHost` for process/window/event-loop hosts such as `Headless`, `GLFW`, `SDL`, `SFML`, and browser shells
+  - `Backend` for capability-scoped interchangeable implementations
+  - `Module` for registration/composition bundles
+- Added the first shared runtime-composition seed under `Slab/Core/Composition/V2/`:
+  - `FBackendSelectionV2`
+  - `FModuleDescriptorV2`
+  - `FRuntimeProfileV2`
+  - `IModuleV2`
+  - `FServiceRegistryV2`
+  - `FRuntimeContextV2`
+- Added the first shared platform-host seed under `Slab/Core/Platform/V2/`:
+  - `FPlatformHostDescriptorV2`
+  - `IPlatformHostV2`
+  - `FLegacyBackendPlatformHostV2`
+- The first bridge is intentionally adapter-first:
+  - `FLegacyBackendPlatformHostV2` wraps the existing `FBackendManager` startup/run/terminate path
+  - factory helpers currently expose `headless`, `glfw`, and `sfml`
+- This was foundation first, before broader consumer migration:
+  - the initial goal of the seed was to lock the reusable contracts and prove they integrate cleanly with the current build graph
+  - broader `LabV2`, GUI, rendering, networking, and audio adoption still remains future work
+- Validation:
+  - `cmake --build cmake-build-debug --target testsuite -j8`
+  - `./Build/bin/testsuite "[CompositionV2]"`
+
+## Recent Updates (`2026-04-17`, first CLI composition-root adoption)
+
+- `BM-04` landed in the bounded `Studios/CLI` path instead of jumping directly into `LabV2`.
+- Added `Slab/Core/Composition/V2/LegacyRuntimeBootstrapV2.*`:
+  - legacy-platform-host kind selection (`Headless`, `GLFW`, `SFML`)
+  - explicit runtime-context construction over the V2 composition/platform contracts
+  - compatibility helper for reusing an already-selected legacy backend when startup paths converge
+- `Studios/CLI` now selects an explicit runtime before dispatching most real commands:
+  - help/list paths remain cold
+  - headless commands select the `headless` platform host
+  - `--gl` commands select the `glfw` platform host
+- `RunReflectCommand` no longer owns its own direct `Slab::Startup()` call; the composition root now does the startup decision.
+- `Slab/Studios/Common/VisualHost.cpp` no longer blindly calls `Core::StartBackend("GLFW")`:
+  - it now reuses a compatible preselected `GLFW` backend when the composition root already chose one
+  - it still throws if a conflicting backend was already locked in
+- Validation:
+  - `cmake --build cmake-build-debug --target testsuite Studios -j8`
+  - `./Build/bin/testsuite "[CompositionV2]"`
+  - `./Build/bin/Studios list`
+  - `./Build/bin/Studios reflect --help`
+  - `./Build/bin/Studios reflect --action list`
+  - `./Build/bin/Studios metropolis --steps 1 --interval 1 --batch 1`
 
 ## Recent Updates (`2026-04-05`, web app deployment)
 
@@ -496,16 +592,20 @@
   - `RZ-01`: done
   - `RZ-02`: done
   - `RZ-03`: done
+  - `RZ-04`: done
+  - `RZ-05`: done
 
 ## Planned Next Slice (Follow-up)
 
 - ODE-first descent from `Model V2` into `Realization` is now documented in:
   - `Docs/ode-realization-descent-plan.md`
-- original `RZ-00`..`RZ-03` ladder is now implemented
+- original `RZ-00`..`RZ-03` ladder is now implemented, plus the first launch/binding and artifact-viewer follow-up slices
 - current recommendation:
-  - keep the current model-driven launch path narrow and stable
+  - keep the current model-driven launch and artifact path narrow and stable
   - decide whether numeric bindings should remain lab-local or gain a model-owned authoring story
-  - add a dedicated monitor/live-data presentation only when there is a concrete ODE-runtime visualization target
+  - add artifact manifest/export/provenance before widening the path
+  - add a shared monitor/live-data topic presentation only if the current listener-backed artifact view is no longer enough for a concrete ODE-runtime visualization target
+  - improve the Hamiltonian/oscillator solver story before generalizing from the current RK4 path
   - keep PDE/field realization out of follow-up work
 
 ## Known Missing Pieces
@@ -519,7 +619,8 @@
 - exact notation-span navigation from diagnostics/selection is not implemented
 - dedicated initial-condition authoring/persistence flow is not implemented
 - model-owned numeric scalar binding/parameter authoring for the runtime bridge is not implemented
-- dedicated monitor/live-data visualization for model-driven ODE runtime runs is not implemented
+- artifact manifest/export/provenance for model-driven ODE runtime runs is not implemented
+- shared monitor/live-data topic visualization for model-driven ODE runtime runs is not implemented
 - ontology graph editing / JSON write-back is not implemented
 - multi-study ontology comparison is not implemented
 

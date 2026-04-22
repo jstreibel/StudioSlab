@@ -61,6 +61,7 @@ set ( NUMERICS_SOURCES
 		../../Slab/Math/Numerics/V2/Listeners/DummyListenerV2.cpp
 		../../Slab/Math/Numerics/V2/Listeners/OutputDispatcherV2.cpp
 		../../Slab/Math/Numerics/V2/Listeners/ScalarTimeDFTListenerV2.cpp
+		../../Slab/Math/Numerics/V2/Listeners/ScalarTimeSeriesListenerV2.cpp
 		../../Slab/Math/Numerics/V2/Listeners/SessionLiveViewPublisherListenerV2.cpp
 		../../Slab/Math/Numerics/V2/Listeners/StateSnapshotListenerV2.cpp
 		../../Slab/Math/Numerics/V2/Scheduling/OutputSchedulerV2.cpp

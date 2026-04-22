@@ -1,5 +1,6 @@
 #include "LabV2WindowManager.h"
 
+#include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Core/Model/V2/ModelRealizationV2.h"
 #include "Core/Model/V2/ModelRealizationRuntimeV2.h"
 #include "Core/Model/V2/ModelSeedsV2.h"
@@ -159,6 +160,93 @@ namespace {
                 FormatRuntimeScalarValueV2(values[i]);
         }
         return summary;
+    }
+
+    auto BuildRuntimeInitialObservableSummariesV2(const ModelV2::FODEExplicitFirstOrderRuntimeSystemV2 &system)
+        -> Slab::Vector<Slab::Str> {
+        Slab::Vector<Slab::Str> summaries;
+        const auto &stateValues = system.GetInitialStateValues();
+        if (stateValues.size() != system.GetStateDefinitionIds().size()) return summaries;
+
+        for (const auto &observable : system.GetObservableSpecs()) {
+            const auto label = observable.DisplayLabel.empty() ? observable.DefinitionId : observable.DisplayLabel;
+
+            Slab::Str error;
+            const auto value = system.EvaluateObservable(
+                observable.DefinitionId,
+                stateValues,
+                system.GetInitialTime(),
+                &error);
+            if (!value.has_value()) {
+                summaries.push_back(label + " = <" + error + ">");
+                continue;
+            }
+
+            summaries.push_back(label + " = " + FormatRuntimeScalarValueV2(*value));
+        }
+
+        return summaries;
+    }
+
+    auto FindArtifactByDefinitionId(
+        const Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 &runtime,
+        const Slab::Str &definitionId) -> const Slab::Core::Model::V2::FODETimeSeriesArtifactV2 * {
+        const auto findIn = [&](const auto &artifacts) -> const Slab::Core::Model::V2::FODETimeSeriesArtifactV2 * {
+            const auto it = std::find_if(artifacts.begin(), artifacts.end(), [&](const auto &artifact) {
+                return artifact.DefinitionId == definitionId;
+            });
+            if (it == artifacts.end()) return nullptr;
+            return &(*it);
+        };
+
+        if (const auto *artifact = findIn(runtime.ObservableArtifacts); artifact != nullptr) return artifact;
+        return findIn(runtime.StateArtifacts);
+    }
+
+    auto FindFirstArtifactDefinitionId(
+        const Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 &runtime) -> Slab::Str {
+        if (!runtime.ObservableArtifacts.empty()) return runtime.ObservableArtifacts.front().DefinitionId;
+        if (!runtime.StateArtifacts.empty()) return runtime.StateArtifacts.front().DefinitionId;
+        return {};
+    }
+
+    auto FindArtifactDisplayLabel(
+        const Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 &runtime,
+        const Slab::Str &definitionId) -> Slab::Str {
+        if (const auto *artifact = FindArtifactByDefinitionId(runtime, definitionId); artifact != nullptr) {
+            return artifact->DisplayLabel.empty() ? artifact->DefinitionId : artifact->DisplayLabel;
+        }
+        return definitionId;
+    }
+
+    auto IsObservableArtifact(
+        const Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 &runtime,
+        const Slab::Str &definitionId) -> bool {
+        return std::any_of(runtime.ObservableArtifacts.begin(), runtime.ObservableArtifacts.end(), [&](const auto &artifact) {
+            return artifact.DefinitionId == definitionId;
+        });
+    }
+
+    auto ToTaskStatusLabel(const Slab::Core::ETaskStatus status) -> const char * {
+        switch (status) {
+            case Slab::Core::TaskRunning: return "Running";
+            case Slab::Core::TaskSuccess: return "Success";
+            case Slab::Core::TaskError: return "Error";
+            case Slab::Core::TaskAborted: return "Aborted";
+            case Slab::Core::TaskNotInitialized: return "NotInitialized";
+        }
+        return "Unknown";
+    }
+
+    auto ToTaskStatusColor(const Slab::Core::ETaskStatus status) -> ImVec4 {
+        switch (status) {
+            case Slab::Core::TaskRunning: return ImVec4(0.2f, 0.6f, 1.0f, 1.0f);
+            case Slab::Core::TaskSuccess: return ImVec4(0.2f, 0.9f, 0.2f, 1.0f);
+            case Slab::Core::TaskError: return ImVec4(1.0f, 0.2f, 0.7f, 1.0f);
+            case Slab::Core::TaskAborted: return ImVec4(0.9f, 0.5f, 0.1f, 1.0f);
+            case Slab::Core::TaskNotInitialized: return ImVec4(1.0f, 1.0f, 0.2f, 1.0f);
+        }
+        return ImVec4(0.7f, 0.7f, 0.7f, 1.0f);
     }
 
     auto MakeMathRequest(const Slab::Str &latex, const float fontPixels) -> Typesetting::FTypesetRequest {
@@ -1596,6 +1684,10 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         ModelV2::FODEExplicitFirstOrderRuntimeConfigV2 runtimeConfig;
         runtimeConfig.TimeStep = odeRuntimeDraftState.TimeStep;
         runtimeConfig.MaxSteps = odeRuntimeDraftState.bOpenEnded ? std::nullopt : std::make_optional(odeRuntimeDraftState.MaxSteps);
+        runtimeConfig.ArtifactSampleIntervalSteps = std::max<Slab::UIntBig>(Slab::UIntBig(1), odeRuntimeDraftState.ArtifactSampleIntervalSteps);
+        runtimeConfig.MaxArtifactSamples = odeRuntimeDraftState.bUnlimitedArtifactSamples
+            ? std::nullopt
+            : std::make_optional(std::max<Slab::UIntBig>(Slab::UIntBig(1), odeRuntimeDraftState.MaxArtifactSamples));
         runtimeConfig.ScalarBindingsByDefinitionId = parsedRuntimeBindingsByDefinitionId;
         odeRuntimePreview = BuildODEExplicitFirstOrderRuntimeV2(model, odeDescriptor, runtimeConfig);
         bHasODERuntimePreview = true;
@@ -1724,6 +1816,25 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         }
         AddTooltipForLastItem("Run without a finite step limit until the task is aborted.");
 
+        DragUIntBig(
+            "Artifact every N steps##ModelODERuntime",
+            odeRuntimeDraftState.ArtifactSampleIntervalSteps,
+            Slab::UIntBig(1),
+            Slab::UIntBig(1ull << 20),
+            1.0f,
+            "Publish state and observable artifact samples every N integration steps.");
+        if (!odeRuntimeDraftState.bUnlimitedArtifactSamples) {
+            DragUIntBig(
+                "Max artifact samples##ModelODERuntime",
+                odeRuntimeDraftState.MaxArtifactSamples,
+                Slab::UIntBig(1),
+                Slab::UIntBig(1ull << 22),
+                1.0f,
+                "Upper bound for retained samples per captured state or observable series.");
+        }
+        ImGui::Checkbox("Unlimited artifact history##ModelODERuntime", &odeRuntimeDraftState.bUnlimitedArtifactSamples);
+        AddTooltipForLastItem("Disable the per-series sample cap for the captured runtime artifacts.");
+
         if (runtimeRequiredBindings.empty()) {
             ImGui::TextDisabled("Required scalar bindings: none");
         } else {
@@ -1771,6 +1882,29 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
             if (!initialStateSummary.empty()) {
                 ImGui::TextDisabled("Initial state: %s", initialStateSummary.c_str());
             }
+
+            const auto initialObservableSummaries = BuildRuntimeInitialObservableSummariesV2(*odeRuntimePreview.System);
+            if (!initialObservableSummaries.empty()) {
+                ImGui::TextDisabled("Initial observables:");
+                for (const auto &summary : initialObservableSummaries) {
+                    ImGui::BulletText("%s", summary.c_str());
+                }
+            }
+
+            if (!odeRuntimePreview.StateArtifacts.empty() || !odeRuntimePreview.ObservableArtifacts.empty()) {
+                ImGui::TextDisabled(
+                    "Artifact streams: %d state, %d observable",
+                    static_cast<int>(odeRuntimePreview.StateArtifacts.size()),
+                    static_cast<int>(odeRuntimePreview.ObservableArtifacts.size()));
+                for (const auto &artifact : odeRuntimePreview.StateArtifacts) {
+                    ImGui::BulletText("state: %s", artifact.DisplayLabel.c_str());
+                    AddTooltipForLastItem(artifact.CanonicalNotation);
+                }
+                for (const auto &artifact : odeRuntimePreview.ObservableArtifacts) {
+                    ImGui::BulletText("observable: %s", artifact.DisplayLabel.c_str());
+                    AddTooltipForLastItem(artifact.CanonicalNotation);
+                }
+            }
         }
 
         const bool bOscillatorLaunchSupported = IsOscillatorFamilyModelV2(model);
@@ -1783,17 +1917,19 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         const bool bCanLaunchODERuntime =
             bOscillatorLaunchSupported &&
             bHasODERuntimePreview &&
-            odeRuntimePreview.IsReady() &&
-            SimulationManager != nullptr;
+            odeRuntimePreview.IsReady();
         ImGui::BeginDisabled(!bCanLaunchODERuntime);
         if (ImGui::Button("Run (Headless)##ModelODERuntime")) {
             try {
-                SimulationManager->LaunchRecipe(
-                    odeRuntimePreview.Recipe,
-                    "Model ODE - " + model.Name);
+                const auto taskManager = Slab::Core::GetModule<Slab::Core::FTaskManager>("TaskManager");
+                if (taskManager == nullptr) throw Exception("TaskManager module not available.");
+
+                auto task = Slab::New<Slab::Math::Numerics::V2::FNumericTaskV2>(odeRuntimePreview.Recipe, false);
+                taskManager->AddTask(task);
+                RecordModelArtifactRun(model, odeRuntimePreview, task);
                 odeRuntimeDraftState.Status =
                     "[Ok] Launched headless runtime task for '" + model.Name +
-                    "'. See Simulations -> Tasks for task state.";
+                    "'. See Artifacts for captured series and Simulations -> Tasks for task state.";
             } catch (const std::exception &e) {
                 odeRuntimeDraftState.Status =
                     "[Error] Could not launch '" + model.Name + "': " + e.what();
@@ -3684,4 +3820,224 @@ auto FLabV2WindowManager::DrawModelDetailsPanel() -> void {
     } else {
         ImGui::TextDisabled("Select a vocabulary entry, definition, relation, or assumption.");
     }
+}
+
+auto FLabV2WindowManager::DrawArtifactsPanel() -> void {
+    ImGui::SeparatorText("Model Artifact Runs");
+
+    if (ModelArtifactRuns.empty()) {
+        ImGui::TextDisabled("No model-runtime artifact runs yet.");
+        ImGui::TextDisabled("Launch a harmonic-oscillator ODE runtime from the Model workspace to populate this view.");
+        return;
+    }
+
+    if (ImGui::SmallButton("Clear Finished")) {
+        ModelArtifactRuns.erase(
+            std::remove_if(
+                ModelArtifactRuns.begin(),
+                ModelArtifactRuns.end(),
+                [](const auto &run) {
+                    return run.Task != nullptr && run.Task->GetStatus() != Slab::Core::TaskRunning;
+                }),
+            ModelArtifactRuns.end());
+        if (SelectedArtifactRunIndex >= static_cast<int>(ModelArtifactRuns.size())) {
+            SelectedArtifactRunIndex = static_cast<int>(ModelArtifactRuns.size()) - 1;
+        }
+    }
+    ImGui::SameLine();
+    if (ImGui::SmallButton("Clear All")) {
+        ModelArtifactRuns.clear();
+        SelectedArtifactRunIndex = 0;
+        SelectedArtifactDefinitionId.clear();
+    }
+
+    if (ModelArtifactRuns.empty()) {
+        ImGui::TextDisabled("Artifact history cleared.");
+        return;
+    }
+
+    SelectedArtifactRunIndex = std::clamp(
+        SelectedArtifactRunIndex,
+        0,
+        static_cast<int>(ModelArtifactRuns.size()) - 1);
+
+    auto &selectedRun = ModelArtifactRuns[static_cast<std::size_t>(SelectedArtifactRunIndex)];
+    if (SelectedArtifactDefinitionId.empty() ||
+        FindArtifactByDefinitionId(selectedRun.Runtime, SelectedArtifactDefinitionId) == nullptr) {
+        SelectedArtifactDefinitionId = FindFirstArtifactDefinitionId(selectedRun.Runtime);
+    }
+
+    if (ImGui::BeginChild("ArtifactsRunList", ImVec2(ImGui::GetFontSize() * 20.0f, 0.0f), true)) {
+        for (std::size_t i = 0; i < ModelArtifactRuns.size(); ++i) {
+            const auto &run = ModelArtifactRuns[i];
+            const auto status = run.Task != nullptr ? run.Task->GetStatus() : Slab::Core::TaskNotInitialized;
+            const auto label = run.ModelName + " [" + run.RunId + "]";
+            if (ImGui::Selectable(label.c_str(), SelectedArtifactRunIndex == static_cast<int>(i))) {
+                SelectedArtifactRunIndex = static_cast<int>(i);
+                SelectedArtifactDefinitionId = FindFirstArtifactDefinitionId(run.Runtime);
+            }
+            if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort)) {
+                ImGui::BeginTooltip();
+                ImGui::TextUnformatted(run.ModelId.c_str());
+                ImGui::TextColored(ToTaskStatusColor(status), "%s", ToTaskStatusLabel(status));
+                ImGui::Text(
+                    "%d state / %d observable",
+                    static_cast<int>(run.Runtime.StateArtifacts.size()),
+                    static_cast<int>(run.Runtime.ObservableArtifacts.size()));
+                ImGui::EndTooltip();
+            }
+        }
+    }
+    ImGui::EndChild();
+
+    ImGui::SameLine();
+
+    if (!ImGui::BeginChild("ArtifactsRunDetails", ImVec2(0.0f, 0.0f), false)) {
+        ImGui::EndChild();
+        return;
+    }
+
+    const auto taskStatus = selectedRun.Task != nullptr ? selectedRun.Task->GetStatus() : Slab::Core::TaskNotInitialized;
+    ImGui::Text("Model: %s", selectedRun.ModelName.c_str());
+    ImGui::TextDisabled("%s", selectedRun.ModelId.c_str());
+    ImGui::SameLine();
+    ImGui::TextDisabled("|");
+    ImGui::SameLine();
+    ImGui::TextDisabled("%s", selectedRun.RunId.c_str());
+    ImGui::TextColored(ToTaskStatusColor(taskStatus), "Task: %s", ToTaskStatusLabel(taskStatus));
+    if (selectedRun.Task != nullptr) {
+        const auto cursor = selectedRun.Task->GetCursor();
+        if (cursor.SimulationTime.has_value()) {
+            ImGui::Text(
+                "Cursor: s=%llu  t=%s",
+                static_cast<unsigned long long>(cursor.Step),
+                Slab::ToStr(*cursor.SimulationTime, 6, true).c_str());
+        } else {
+            ImGui::Text("Cursor: s=%llu", static_cast<unsigned long long>(cursor.Step));
+        }
+    }
+
+    ImGui::SeparatorText("Artifacts");
+    for (const auto &artifact : selectedRun.Runtime.ObservableArtifacts) {
+        const auto label = "obs: " + (artifact.DisplayLabel.empty() ? artifact.DefinitionId : artifact.DisplayLabel);
+        if (ImGui::Selectable(label.c_str(), SelectedArtifactDefinitionId == artifact.DefinitionId)) {
+            SelectedArtifactDefinitionId = artifact.DefinitionId;
+        }
+        AddTooltipForLastItem(artifact.CanonicalNotation);
+    }
+    for (const auto &artifact : selectedRun.Runtime.StateArtifacts) {
+        const auto label = "state: " + (artifact.DisplayLabel.empty() ? artifact.DefinitionId : artifact.DisplayLabel);
+        if (ImGui::Selectable(label.c_str(), SelectedArtifactDefinitionId == artifact.DefinitionId)) {
+            SelectedArtifactDefinitionId = artifact.DefinitionId;
+        }
+        AddTooltipForLastItem(artifact.CanonicalNotation);
+    }
+
+    const auto *selectedArtifact = FindArtifactByDefinitionId(selectedRun.Runtime, SelectedArtifactDefinitionId);
+    if (selectedArtifact == nullptr || selectedArtifact->Listener == nullptr) {
+        ImGui::SeparatorText("Series");
+        ImGui::TextDisabled("Select an artifact stream.");
+        ImGui::EndChild();
+        return;
+    }
+
+    const auto samples = selectedArtifact->Listener->GetSamples();
+    ImGui::SeparatorText("Series");
+    ImGui::Text(
+        "%s (%s)",
+        FindArtifactDisplayLabel(selectedRun.Runtime, selectedArtifact->DefinitionId).c_str(),
+        IsObservableArtifact(selectedRun.Runtime, selectedArtifact->DefinitionId) ? "observable" : "state");
+    ImGui::TextDisabled("%s", selectedArtifact->DefinitionId.c_str());
+
+    if (samples.empty()) {
+        ImGui::TextDisabled("No samples captured yet.");
+        ImGui::EndChild();
+        return;
+    }
+
+    if (const auto latest = selectedArtifact->Listener->TryGetLatestSample(); latest.has_value()) {
+        if (latest->Cursor.SimulationTime.has_value()) {
+            ImGui::Text(
+                "Latest: step=%llu  t=%s  value=%s",
+                static_cast<unsigned long long>(latest->Cursor.Step),
+                Slab::ToStr(*latest->Cursor.SimulationTime, 6, true).c_str(),
+                FormatRuntimeScalarValueV2(latest->Value).c_str());
+        } else {
+            ImGui::Text(
+                "Latest: step=%llu  value=%s",
+                static_cast<unsigned long long>(latest->Cursor.Step),
+                FormatRuntimeScalarValueV2(latest->Value).c_str());
+        }
+    }
+
+    std::vector<float> plotValues;
+    plotValues.reserve(samples.size());
+    for (const auto &sample : samples) {
+        plotValues.push_back(static_cast<float>(sample.Value));
+    }
+
+    ImGui::PlotLines(
+        "##ArtifactSeriesPlot",
+        plotValues.data(),
+        static_cast<int>(plotValues.size()),
+        0,
+        nullptr,
+        FLT_MAX,
+        FLT_MAX,
+        ImVec2(0.0f, 220.0f));
+
+    ImGui::TextDisabled("Samples: %d", static_cast<int>(samples.size()));
+
+    constexpr auto tableFlags =
+        ImGuiTableFlags_Borders |
+        ImGuiTableFlags_RowBg |
+        ImGuiTableFlags_SizingFixedFit;
+    if (ImGui::BeginTable("ArtifactSamplesTable", 4, tableFlags)) {
+        ImGui::TableSetupColumn("Step");
+        ImGui::TableSetupColumn("Time");
+        ImGui::TableSetupColumn("Value");
+        ImGui::TableSetupColumn("Reason");
+        ImGui::TableHeadersRow();
+
+        const auto firstRow = samples.size() > 10 ? samples.size() - 10 : 0;
+        for (std::size_t i = firstRow; i < samples.size(); ++i) {
+            const auto &sample = samples[i];
+            ImGui::TableNextRow();
+
+            ImGui::TableSetColumnIndex(0);
+            ImGui::Text("%llu", static_cast<unsigned long long>(sample.Cursor.Step));
+
+            ImGui::TableSetColumnIndex(1);
+            if (sample.Cursor.SimulationTime.has_value()) {
+                ImGui::Text("%s", Slab::ToStr(*sample.Cursor.SimulationTime, 6, true).c_str());
+            } else {
+                ImGui::TextDisabled("-");
+            }
+
+            ImGui::TableSetColumnIndex(2);
+            ImGui::Text("%s", FormatRuntimeScalarValueV2(sample.Value).c_str());
+
+            ImGui::TableSetColumnIndex(3);
+            switch (sample.Reason) {
+                case Slab::Math::Numerics::V2::EEventReasonV2::Initial:
+                    ImGui::TextUnformatted("Initial");
+                    break;
+                case Slab::Math::Numerics::V2::EEventReasonV2::Scheduled:
+                    ImGui::TextUnformatted("Scheduled");
+                    break;
+                case Slab::Math::Numerics::V2::EEventReasonV2::Forced:
+                    ImGui::TextUnformatted("Forced");
+                    break;
+                case Slab::Math::Numerics::V2::EEventReasonV2::Final:
+                    ImGui::TextUnformatted("Final");
+                    break;
+                case Slab::Math::Numerics::V2::EEventReasonV2::AbortFinal:
+                    ImGui::TextUnformatted("AbortFinal");
+                    break;
+            }
+        }
+        ImGui::EndTable();
+    }
+
+    ImGui::EndChild();
 }

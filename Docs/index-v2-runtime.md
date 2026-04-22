@@ -37,10 +37,13 @@ Implemented already:
 - explicit numeric scalar bindings for parameters/initial symbols at runtime-build time
 - LabV2 Model workspace numeric-binding config surface for the bridge-required scalar symbols
 - first LabV2 launch path from oscillator-family ODE-ready models into the runtime bridge (headless task path)
+- listener-backed state/observable time-series artifact capture from the model-driven ODE runtime recipe
+- first LabV2 `Artifacts` workspace viewer for launched harmonic-oscillator runs
 
 Still missing:
 - model-owned numeric scalar binding authoring/configuration
-- dedicated monitor/live-data path for the model-driven ODE runtime bridge
+- artifact manifest/export/provenance for model-driven ODE runs
+- shared `SessionLiveViewV2` / monitor-topic path for the model-driven ODE runtime bridge
 
 Use `Docs/handoff-ode-realization-rz03.md` for the post-`RZ-03` follow-up.
 
@@ -88,6 +91,7 @@ Quick start for new monitored slices:
 - Shared monitors/listeners:
   - `Slab/Studios/Common/Monitors/V2/*.h`
   - `Slab/Studios/Common/Monitors/V2/*.cpp`
+  - `Slab/Math/Numerics/V2/Listeners/ScalarTimeSeriesListenerV2.h`
 - Shared task/run glue:
   - `Slab/Studios/Common/NumericsV2TaskUtils.h`
   - `Slab/Studios/Common/V2SimulationRunners.h`
@@ -111,6 +115,8 @@ Quick start for new monitored slices:
   - `cmake --build cmake-build-debug --target testsuite -j8`
 - Tests:
   - `ctest --test-dir cmake-build-debug --output-on-failure`
+- Focused ODE runtime tests:
+  - `./Build/bin/testsuite "[ModelV2][Realization][Runtime]"`
 - Graphics/runtime smoke when relevant:
   - `cmake --build cmake-build-debug --target SlabTests StudioSlab -j8`
   - `./Build/bin/SlabTests list`
