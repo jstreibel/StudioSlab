@@ -838,13 +838,13 @@ namespace {
 auto FLabV2WindowManager::GetWorkspaceDefinitions()
     -> const std::array<WindowingV2::FWorkspaceDefinitionV2, WorkspaceCount> & {
     static const std::array<WindowingV2::FWorkspaceDefinitionV2, WorkspaceCount> Definitions = {{
+        {"models", WorkspaceTabModels, true},
         {"simulations", WorkspaceTabSimulations, true},
         {"artifacts", WorkspaceTabArtifacts, false},
+        {"plots", WorkspaceTabPlots, true},
         {"schemes", WorkspaceTabSchemes, false},
-        {"models", WorkspaceTabModels, true},
         {"ontology", WorkspaceTabOntology, true},
-        {"graph_playground", WorkspaceTabGraphPlayground, false},
-        {"plots", WorkspaceTabPlots, true}
+        {"graph_playground", WorkspaceTabGraphPlayground, false}
     }};
 
     return Definitions;
@@ -1414,11 +1414,12 @@ auto FLabV2WindowManager::QueueHostedSurface(const FHostedSurfacePtr &surface) -
 
     const auto &workspaceId = surface->GetPreferredWorkspaceId();
     const auto workspace = [&workspaceId]() {
-        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Schemes).WorkspaceId) return EWorkspaceTab::Schemes;
         if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Models).WorkspaceId) return EWorkspaceTab::Models;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Artifacts).WorkspaceId) return EWorkspaceTab::Artifacts;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Plots).WorkspaceId) return EWorkspaceTab::Plots;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Schemes).WorkspaceId) return EWorkspaceTab::Schemes;
         if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Ontology).WorkspaceId) return EWorkspaceTab::Ontology;
         if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::GraphPlayground).WorkspaceId) return EWorkspaceTab::GraphPlayground;
-        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Plots).WorkspaceId) return EWorkspaceTab::Plots;
         return EWorkspaceTab::Simulations;
     }();
 
@@ -1517,11 +1518,12 @@ auto FLabV2WindowManager::GetWorkspaceForWindow(const FSlabWindowPtr &window) co
 
     if (const auto surface = FindHostedSurfaceByWindow(window); surface != nullptr) {
         const auto &workspaceId = surface->GetPreferredWorkspaceId();
-        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Schemes).WorkspaceId) return EWorkspaceTab::Schemes;
         if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Models).WorkspaceId) return EWorkspaceTab::Models;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Artifacts).WorkspaceId) return EWorkspaceTab::Artifacts;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Plots).WorkspaceId) return EWorkspaceTab::Plots;
+        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Schemes).WorkspaceId) return EWorkspaceTab::Schemes;
         if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Ontology).WorkspaceId) return EWorkspaceTab::Ontology;
         if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::GraphPlayground).WorkspaceId) return EWorkspaceTab::GraphPlayground;
-        if (workspaceId == GetWorkspaceDefinition(EWorkspaceTab::Plots).WorkspaceId) return EWorkspaceTab::Plots;
         return EWorkspaceTab::Simulations;
     }
 
@@ -2435,12 +2437,13 @@ auto FLabV2WindowManager::DrawWorkspaceTabs() -> void {
         GetTopMenuInset(),
         [this](const Slab::Str &workspaceId) {
             SetActiveWorkspace([&workspaceId]() {
-                if (workspaceId == "artifacts") return EWorkspaceTab::Artifacts;
-                if (workspaceId == "schemes") return EWorkspaceTab::Schemes;
                 if (workspaceId == "models") return EWorkspaceTab::Models;
+                if (workspaceId == "simulations") return EWorkspaceTab::Simulations;
+                if (workspaceId == "artifacts") return EWorkspaceTab::Artifacts;
+                if (workspaceId == "plots") return EWorkspaceTab::Plots;
+                if (workspaceId == "schemes") return EWorkspaceTab::Schemes;
                 if (workspaceId == "ontology") return EWorkspaceTab::Ontology;
                 if (workspaceId == "graph_playground") return EWorkspaceTab::GraphPlayground;
-                if (workspaceId == "plots") return EWorkspaceTab::Plots;
                 return EWorkspaceTab::Simulations;
             }());
         },
@@ -2474,12 +2477,13 @@ auto FLabV2WindowManager::DrawDockspaceHost() -> void {
         GetTopMenuInset(),
         [this](const Slab::Str &workspaceId) {
             const auto workspace = [&workspaceId]() {
-                if (workspaceId == "artifacts") return EWorkspaceTab::Artifacts;
-                if (workspaceId == "schemes") return EWorkspaceTab::Schemes;
                 if (workspaceId == "models") return EWorkspaceTab::Models;
+                if (workspaceId == "simulations") return EWorkspaceTab::Simulations;
+                if (workspaceId == "artifacts") return EWorkspaceTab::Artifacts;
+                if (workspaceId == "plots") return EWorkspaceTab::Plots;
+                if (workspaceId == "schemes") return EWorkspaceTab::Schemes;
                 if (workspaceId == "ontology") return EWorkspaceTab::Ontology;
                 if (workspaceId == "graph_playground") return EWorkspaceTab::GraphPlayground;
-                if (workspaceId == "plots") return EWorkspaceTab::Plots;
                 return EWorkspaceTab::Simulations;
             }();
             return BuildDefaultWorkspaceDockLayout(workspace);

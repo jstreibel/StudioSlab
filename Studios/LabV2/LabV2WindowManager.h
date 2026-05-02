@@ -89,13 +89,13 @@ private:
     friend class FLabV2GraphPlaygroundController;
 
     enum class EWorkspaceTab : unsigned char {
-        Simulations = 0,
+        Models = 0,
+        Simulations,
         Artifacts,
+        Plots,
         Schemes,
-        Models,
         Ontology,
-        GraphPlayground,
-        Plots
+        GraphPlayground
     };
 
     static constexpr std::size_t WorkspaceCount = 7;
@@ -393,7 +393,7 @@ private:
     int RetileStabilizationFramesRemaining = 0;
     bool bRequestLauncherInitialDock = false;
     unsigned int LauncherInitialDockId = 0;
-    EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Simulations;
+    EWorkspaceTab ActiveWorkspace = EWorkspaceTab::Models;
     bool bShowWindowLab = true;
     bool bShowWindowSimulationLauncher = true;
     bool bShowWindowArtifacts = true;
