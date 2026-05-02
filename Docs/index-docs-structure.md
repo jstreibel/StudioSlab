@@ -38,6 +38,7 @@ Use this first when you need to know what is already implemented.
 ### Plans / Active Next Work
 
 - `Docs/v2-feature-backlog.md`
+- `Docs/v2-platform-architecture-roadmap.md`
 - `Docs/v2-model-coverage-matrix.md`
 - `Docs/ode-realization-descent-plan.md`
 - `Docs/*-v2-slice-scope.md`
@@ -48,6 +49,7 @@ Use these to decide what should happen next, not as proof that it already happen
 ### Reference / Design Intent
 
 - `Docs/repo-architecture-overview.md`
+- `Docs/v2-architecture-charter.md`
 - `Docs/product-direction.md`
 - `Docs/product-vocabulary.md`
 - `Docs/domain-model-ux-surfaces-spec.md`

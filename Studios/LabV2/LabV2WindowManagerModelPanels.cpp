@@ -1,6 +1,7 @@
 #include "LabV2WindowManager.h"
 
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
+#include "Core/Model/V2/ModelNumericsDescentV2.h"
 #include "Core/Model/V2/ModelRealizationV2.h"
 #include "Core/Model/V2/ModelRealizationRuntimeV2.h"
 #include "Core/Model/V2/ModelSeedsV2.h"
@@ -9,11 +10,9 @@
 #include "imgui.h"
 
 #include <algorithm>
-#include <cerrno>
 #include <cfloat>
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>
 
 namespace {
 
@@ -96,52 +95,6 @@ namespace {
         return changed;
     }
 
-    struct FScalarBindingDraftParseResultV2 {
-        bool bProvided = false;
-        bool bValid = false;
-        Slab::DevFloat Value = 0.0;
-        Slab::Str Message;
-    };
-
-    auto ParseScalarBindingDraftV2(const Slab::Str &draft) -> FScalarBindingDraftParseResultV2 {
-        FScalarBindingDraftParseResultV2 result;
-        const auto trimmed = ModelV2::TrimAsciiCopyV2(draft);
-        result.bProvided = !trimmed.empty();
-        if (!result.bProvided) {
-            result.Message = "missing";
-            return result;
-        }
-
-        errno = 0;
-        char *end = nullptr;
-        const auto parsedValue = std::strtod(trimmed.c_str(), &end);
-        if (end == trimmed.c_str() || end == nullptr || *end != '\0' || errno == ERANGE || !std::isfinite(parsedValue)) {
-            result.Message = "invalid scalar literal";
-            return result;
-        }
-
-        result.bValid = true;
-        result.Value = static_cast<Slab::DevFloat>(parsedValue);
-        result.Message = "ready";
-        return result;
-    }
-
-    auto IsOscillatorFamilyModelV2(const ModelV2::FModelV2 &model) -> bool {
-        return model.ModelId == "model.harmonic_oscillator" ||
-            model.ModelId == "model.damped_harmonic_oscillator";
-    }
-
-    auto GetDefaultModelODERuntimeBindingDraftV2(const ModelV2::FModelV2 &model,
-                                                 const Slab::Str &definitionId) -> Slab::Str {
-        if (!IsOscillatorFamilyModelV2(model)) return {};
-        if (definitionId == "param.m") return "1";
-        if (definitionId == "param.k") return "1";
-        if (definitionId == "param.x0") return "1";
-        if (definitionId == "param.p0") return "0";
-        if (definitionId == "param.gamma") return "0.15";
-        return {};
-    }
-
     auto FormatRuntimeScalarValueV2(const Slab::DevFloat value) -> Slab::Str {
         char buffer[64];
         std::snprintf(buffer, sizeof(buffer), "%.6g", value);
@@ -186,45 +139,6 @@ namespace {
         }
 
         return summaries;
-    }
-
-    auto FindArtifactByDefinitionId(
-        const Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 &runtime,
-        const Slab::Str &definitionId) -> const Slab::Core::Model::V2::FODETimeSeriesArtifactV2 * {
-        const auto findIn = [&](const auto &artifacts) -> const Slab::Core::Model::V2::FODETimeSeriesArtifactV2 * {
-            const auto it = std::find_if(artifacts.begin(), artifacts.end(), [&](const auto &artifact) {
-                return artifact.DefinitionId == definitionId;
-            });
-            if (it == artifacts.end()) return nullptr;
-            return &(*it);
-        };
-
-        if (const auto *artifact = findIn(runtime.ObservableArtifacts); artifact != nullptr) return artifact;
-        return findIn(runtime.StateArtifacts);
-    }
-
-    auto FindFirstArtifactDefinitionId(
-        const Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 &runtime) -> Slab::Str {
-        if (!runtime.ObservableArtifacts.empty()) return runtime.ObservableArtifacts.front().DefinitionId;
-        if (!runtime.StateArtifacts.empty()) return runtime.StateArtifacts.front().DefinitionId;
-        return {};
-    }
-
-    auto FindArtifactDisplayLabel(
-        const Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 &runtime,
-        const Slab::Str &definitionId) -> Slab::Str {
-        if (const auto *artifact = FindArtifactByDefinitionId(runtime, definitionId); artifact != nullptr) {
-            return artifact->DisplayLabel.empty() ? artifact->DefinitionId : artifact->DisplayLabel;
-        }
-        return definitionId;
-    }
-
-    auto IsObservableArtifact(
-        const Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 &runtime,
-        const Slab::Str &definitionId) -> bool {
-        return std::any_of(runtime.ObservableArtifacts.begin(), runtime.ObservableArtifacts.end(), [&](const auto &artifact) {
-            return artifact.DefinitionId == definitionId;
-        });
     }
 
     auto ToTaskStatusLabel(const Slab::Core::ETaskStatus status) -> const char * {
@@ -1662,15 +1576,15 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
         const auto [it, bInserted] =
             odeRuntimeDraftState.ScalarBindingDraftByDefinitionId.try_emplace(binding.DefinitionId);
         if (bInserted) {
-            it->second = GetDefaultModelODERuntimeBindingDraftV2(model, binding.DefinitionId);
+            it->second = ModelV2::GetDefaultODEExplicitFirstOrderBindingDraftV2(model, binding.DefinitionId);
         }
     }
 
-    std::map<Slab::Str, FScalarBindingDraftParseResultV2> runtimeBindingParseResults;
+    std::map<Slab::Str, ModelV2::FScalarRuntimeBindingParseResultV2> runtimeBindingParseResults;
     std::map<Slab::Str, Slab::DevFloat> parsedRuntimeBindingsByDefinitionId;
     for (const auto &binding : runtimeRequiredBindings) {
         const auto draftIt = odeRuntimeDraftState.ScalarBindingDraftByDefinitionId.find(binding.DefinitionId);
-        const auto parseResult = ParseScalarBindingDraftV2(
+        const auto parseResult = ModelV2::ParseScalarRuntimeBindingDraftV2(
             draftIt != odeRuntimeDraftState.ScalarBindingDraftByDefinitionId.end() ? draftIt->second : Slab::Str{});
         runtimeBindingParseResults[binding.DefinitionId] = parseResult;
         if (parseResult.bValid) {
@@ -1681,14 +1595,14 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
     ModelV2::FODEExplicitFirstOrderRuntimeBuildResultV2 odeRuntimePreview;
     bool bHasODERuntimePreview = false;
     if (odeDescriptor.IsReady()) {
-        ModelV2::FODEExplicitFirstOrderRuntimeConfigV2 runtimeConfig;
-        runtimeConfig.TimeStep = odeRuntimeDraftState.TimeStep;
-        runtimeConfig.MaxSteps = odeRuntimeDraftState.bOpenEnded ? std::nullopt : std::make_optional(odeRuntimeDraftState.MaxSteps);
-        runtimeConfig.ArtifactSampleIntervalSteps = std::max<Slab::UIntBig>(Slab::UIntBig(1), odeRuntimeDraftState.ArtifactSampleIntervalSteps);
-        runtimeConfig.MaxArtifactSamples = odeRuntimeDraftState.bUnlimitedArtifactSamples
+        const auto runtimeConfig = ModelV2::MakeODEExplicitFirstOrderRuntimeConfigV2(
+            odeRuntimeDraftState.TimeStep,
+            odeRuntimeDraftState.bOpenEnded ? std::nullopt : std::make_optional(odeRuntimeDraftState.MaxSteps),
+            odeRuntimeDraftState.ArtifactSampleIntervalSteps,
+            odeRuntimeDraftState.bUnlimitedArtifactSamples
             ? std::nullopt
-            : std::make_optional(std::max<Slab::UIntBig>(Slab::UIntBig(1), odeRuntimeDraftState.MaxArtifactSamples));
-        runtimeConfig.ScalarBindingsByDefinitionId = parsedRuntimeBindingsByDefinitionId;
+            : std::make_optional(odeRuntimeDraftState.MaxArtifactSamples),
+            parsedRuntimeBindingsByDefinitionId);
         odeRuntimePreview = BuildODEExplicitFirstOrderRuntimeV2(model, odeDescriptor, runtimeConfig);
         bHasODERuntimePreview = true;
     }
@@ -1845,7 +1759,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
                 const auto parseResult =
                     parseResultIt != runtimeBindingParseResults.end()
                         ? parseResultIt->second
-                        : FScalarBindingDraftParseResultV2{};
+                        : ModelV2::FScalarRuntimeBindingParseResultV2{};
 
                 ImGui::PushID(binding.DefinitionId.c_str());
                 if (ImGui::SmallButton(binding.DisplayLabel.c_str())) {
@@ -1907,7 +1821,7 @@ auto FLabV2WindowManager::DrawModelInspectorPanel() -> void {
             }
         }
 
-        const bool bOscillatorLaunchSupported = IsOscillatorFamilyModelV2(model);
+        const bool bOscillatorLaunchSupported = ModelV2::IsODEExplicitFirstOrderSeedLaunchSupportedV2(model);
         if (!bOscillatorLaunchSupported) {
             ImGui::TextDisabled("Run path: the first LabV2 launch path is currently limited to oscillator-family models.");
         } else {
@@ -3863,8 +3777,8 @@ auto FLabV2WindowManager::DrawArtifactsPanel() -> void {
 
     auto &selectedRun = ModelArtifactRuns[static_cast<std::size_t>(SelectedArtifactRunIndex)];
     if (SelectedArtifactDefinitionId.empty() ||
-        FindArtifactByDefinitionId(selectedRun.Runtime, SelectedArtifactDefinitionId) == nullptr) {
-        SelectedArtifactDefinitionId = FindFirstArtifactDefinitionId(selectedRun.Runtime);
+        ModelV2::FindODETimeSeriesArtifactByDefinitionIdV2(selectedRun.Runtime, SelectedArtifactDefinitionId) == nullptr) {
+        SelectedArtifactDefinitionId = ModelV2::FindFirstODETimeSeriesArtifactDefinitionIdV2(selectedRun.Runtime);
     }
 
     if (ImGui::BeginChild("ArtifactsRunList", ImVec2(ImGui::GetFontSize() * 20.0f, 0.0f), true)) {
@@ -3874,7 +3788,7 @@ auto FLabV2WindowManager::DrawArtifactsPanel() -> void {
             const auto label = run.ModelName + " [" + run.RunId + "]";
             if (ImGui::Selectable(label.c_str(), SelectedArtifactRunIndex == static_cast<int>(i))) {
                 SelectedArtifactRunIndex = static_cast<int>(i);
-                SelectedArtifactDefinitionId = FindFirstArtifactDefinitionId(run.Runtime);
+                SelectedArtifactDefinitionId = ModelV2::FindFirstODETimeSeriesArtifactDefinitionIdV2(run.Runtime);
             }
             if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort)) {
                 ImGui::BeginTooltip();
@@ -3933,7 +3847,9 @@ auto FLabV2WindowManager::DrawArtifactsPanel() -> void {
         AddTooltipForLastItem(artifact.CanonicalNotation);
     }
 
-    const auto *selectedArtifact = FindArtifactByDefinitionId(selectedRun.Runtime, SelectedArtifactDefinitionId);
+    const auto *selectedArtifact = ModelV2::FindODETimeSeriesArtifactByDefinitionIdV2(
+        selectedRun.Runtime,
+        SelectedArtifactDefinitionId);
     if (selectedArtifact == nullptr || selectedArtifact->Listener == nullptr) {
         ImGui::SeparatorText("Series");
         ImGui::TextDisabled("Select an artifact stream.");
@@ -3945,8 +3861,10 @@ auto FLabV2WindowManager::DrawArtifactsPanel() -> void {
     ImGui::SeparatorText("Series");
     ImGui::Text(
         "%s (%s)",
-        FindArtifactDisplayLabel(selectedRun.Runtime, selectedArtifact->DefinitionId).c_str(),
-        IsObservableArtifact(selectedRun.Runtime, selectedArtifact->DefinitionId) ? "observable" : "state");
+        ModelV2::FindODETimeSeriesArtifactDisplayLabelV2(selectedRun.Runtime, selectedArtifact->DefinitionId).c_str(),
+        ModelV2::IsODEObservableTimeSeriesArtifactV2(selectedRun.Runtime, selectedArtifact->DefinitionId)
+            ? "observable"
+            : "state");
     ImGui::TextDisabled("%s", selectedArtifact->DefinitionId.c_str());
 
     if (samples.empty()) {

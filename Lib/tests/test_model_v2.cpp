@@ -4,6 +4,7 @@
 #include <thread>
 
 #include "Core/Model/V2/ModelAuthoringV2.h"
+#include "Core/Model/V2/ModelNumericsDescentV2.h"
 #include "Core/Model/V2/ModelRealizationV2.h"
 #include "Core/Model/V2/ModelRealizationRuntimeV2.h"
 #include "Core/Model/V2/ModelSeedsV2.h"
@@ -53,16 +54,6 @@ namespace {
 
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }
-    }
-
-    auto FindArtifactByDefinitionId(
-        const Slab::Vector<Slab::Core::Model::V2::FODETimeSeriesArtifactV2> &artifacts,
-        const Slab::Str &definitionId) -> const Slab::Core::Model::V2::FODETimeSeriesArtifactV2 * {
-        const auto it = std::find_if(artifacts.begin(), artifacts.end(), [&](const auto &artifact) {
-            return artifact.DefinitionId == definitionId;
-        });
-        if (it == artifacts.end()) return nullptr;
-        return &*it;
     }
 
 } // namespace
@@ -1325,6 +1316,50 @@ TEST_CASE("Model V2 ODE runtime binding requirements stay narrow for oscillator 
     CHECK(collectIds(dampedBindings) == Slab::Vector<Slab::Str>{"param.m", "param.k", "param.gamma", "param.x0", "param.p0"});
 }
 
+TEST_CASE("Model V2 ODE numerics descent helpers keep Lab-neutral launch policy", "[ModelV2][Realization][Runtime][Descent]") {
+    using namespace Slab::Core::Model::V2;
+
+    const auto harmonicModel = BuildHarmonicOscillatorModelV2();
+    const auto dampedModel = BuildDampedHarmonicOscillatorModelV2();
+    const auto kgModel = BuildKleinGordonModelV2();
+
+    CHECK(IsODEExplicitFirstOrderSeedLaunchSupportedV2(harmonicModel));
+    CHECK(IsODEExplicitFirstOrderSeedLaunchSupportedV2(dampedModel));
+    CHECK_FALSE(IsODEExplicitFirstOrderSeedLaunchSupportedV2(kgModel));
+
+    CHECK(GetDefaultODEExplicitFirstOrderBindingDraftV2(harmonicModel, "param.m") == "1");
+    CHECK(GetDefaultODEExplicitFirstOrderBindingDraftV2(dampedModel, "param.gamma") == "0.15");
+    CHECK(GetDefaultODEExplicitFirstOrderBindingDraftV2(kgModel, "param.m").empty());
+
+    const auto parsed = ParseScalarRuntimeBindingDraftV2(" 2.5 ");
+    REQUIRE(parsed.bProvided);
+    REQUIRE(parsed.bValid);
+    CHECK(parsed.Value == Catch::Approx(2.5));
+
+    const auto missing = ParseScalarRuntimeBindingDraftV2(" ");
+    CHECK_FALSE(missing.bProvided);
+    CHECK_FALSE(missing.bValid);
+    CHECK(missing.Message == "missing");
+
+    const auto invalid = ParseScalarRuntimeBindingDraftV2("1 + x");
+    CHECK(invalid.bProvided);
+    CHECK_FALSE(invalid.bValid);
+    CHECK(invalid.Message == "invalid scalar literal");
+
+    auto config = MakeODEExplicitFirstOrderRuntimeConfigV2(
+        0.05,
+        Slab::UIntBig(24),
+        Slab::UIntBig(0),
+        Slab::UIntBig(0),
+        {{"param.m", 1.0}});
+    CHECK(config.MaxSteps.has_value());
+    CHECK(*config.MaxSteps == 24);
+    CHECK(config.ArtifactSampleIntervalSteps == 1);
+    REQUIRE(config.MaxArtifactSamples.has_value());
+    CHECK(*config.MaxArtifactSamples == 1);
+    CHECK(config.ScalarBindingsByDefinitionId.at("param.m") == Catch::Approx(1.0));
+}
+
 TEST_CASE("Model V2 ODE runtime bridge builds explicit oscillator runtime", "[ModelV2][Realization][Runtime]") {
     using namespace Slab::Core::Model::V2;
 
@@ -1402,12 +1437,16 @@ TEST_CASE("Model V2 ODE runtime bridge builds explicit oscillator runtime", "[Mo
         REQUIRE(artifactRuntime.StateArtifacts.size() == 2);
         REQUIRE(artifactRuntime.ObservableArtifacts.size() == 1);
 
-        const auto *xArtifact = FindArtifactByDefinitionId(artifactRuntime.StateArtifacts, "state.x");
-        const auto *pArtifact = FindArtifactByDefinitionId(artifactRuntime.StateArtifacts, "state.p");
-        const auto *energyArtifact = FindArtifactByDefinitionId(artifactRuntime.ObservableArtifacts, "obs.energy");
+        const auto *xArtifact = FindODETimeSeriesArtifactByDefinitionIdV2(artifactRuntime.StateArtifacts, "state.x");
+        const auto *pArtifact = FindODETimeSeriesArtifactByDefinitionIdV2(artifactRuntime.StateArtifacts, "state.p");
+        const auto *energyArtifact = FindODETimeSeriesArtifactByDefinitionIdV2(artifactRuntime, "obs.energy");
         REQUIRE(xArtifact != nullptr);
         REQUIRE(pArtifact != nullptr);
         REQUIRE(energyArtifact != nullptr);
+        CHECK(FindFirstODETimeSeriesArtifactDefinitionIdV2(artifactRuntime) == "obs.energy");
+        CHECK(FindODETimeSeriesArtifactDisplayLabelV2(artifactRuntime, "state.x") == xArtifact->DisplayLabel);
+        CHECK(IsODEObservableTimeSeriesArtifactV2(artifactRuntime, "obs.energy"));
+        CHECK_FALSE(IsODEObservableTimeSeriesArtifactV2(artifactRuntime, "state.x"));
         REQUIRE(xArtifact->Listener != nullptr);
         REQUIRE(pArtifact->Listener != nullptr);
         REQUIRE(energyArtifact->Listener != nullptr);

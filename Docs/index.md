@@ -22,6 +22,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 
 - Docs taxonomy / what kind of doc to update: `Docs/index-docs-structure.md`
 - Repo architecture / placement rules / naming: `Docs/repo-architecture-overview.md`
+- V2 architecture charter / boundary rules / review checklist: `Docs/v2-architecture-charter.md`
 - Resume an in-progress slice quickly: `Docs/index-handoffs.md`
 - Split-file ontology graph viewer / `Resources/Ontologies`: `Docs/index-ontology-v2.md`
 - Model semantic graph / ontology / realization boundary: `Docs/index-model-semantic-graph.md`
@@ -42,6 +43,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 - Planning index: `Docs/index-roadmap.md`
 - Active handoffs: `Docs/index-handoffs.md`
 - Compact backlog: `Docs/v2-feature-backlog.md`
+- V2 platform architecture roadmap: `Docs/v2-platform-architecture-roadmap.md`
 - Platforms/backends/modules V2 planning: `Docs/backends-platforms-modules-v2-plan.md`
 - Plot node-graph planning: `Docs/plot-v2-node-graph-plan.md`
 - Coverage planning: `Docs/v2-model-coverage-matrix.md`
@@ -50,6 +52,8 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 ## Reference / Design Intent (Read Only If Needed)
 
 - Repo shape / naming / placement: `Docs/repo-architecture-overview.md`
+- V2 architecture charter / boundary rules: `Docs/v2-architecture-charter.md`
+- V2 platform architecture roadmap: `Docs/v2-platform-architecture-roadmap.md`
 - Product/domain: `Docs/product-direction.md`, `Docs/product-vocabulary.md`, `Docs/domain-model-ux-surfaces-spec.md`, `Docs/study-model-spec.md`, `Docs/sequence-control-spec.md`
 - V2 planning/slices: `Docs/v2-feature-backlog.md`, `Docs/v2-model-coverage-matrix.md`, `Docs/live-control-v2-spec.md`, `Docs/live-parameters-v2-slice-scope.md`, `Docs/kg-r2tor-v2-slice-scope.md`, `Docs/md-v2-slice-scope.md`, `Docs/functional-minimization-v2-slice-scope.md`
 - Model -> realization descent: `Docs/ode-realization-descent-plan.md`

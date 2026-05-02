@@ -3,10 +3,10 @@
 ## Snapshot Metadata
 
 - Snapshot date: `2026-04-21`
-- Last implementation update: `2026-04-21` (ODE artifact capture + LabV2 Artifacts workspace)
-- Last architecture-doc update: `2026-04-21` (ODE runtime follow-up docs refresh)
+- Last implementation update: `2026-04-26` (model-numerics descent helper seam for Lab-neutral launch/artifact helpers)
+- Last architecture-doc update: `2026-04-26` (V2 architecture charter + platform roadmap added)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
-- Build-target sanity check date: `2026-04-21` (`StudioSlab` and `testsuite` build in `cmake-build-debug`; `[ModelV2][Realization][Runtime]` passes locally after the ODE artifact slice; prior composition and broader desktop + wasm sanity notes remain recorded below)
+- Build-target sanity check date: `2026-04-26` (`testsuite` and `StudioSlab` build in `cmake-build-debug`; `ctest --test-dir cmake-build-debug --output-on-failure` passes locally after the model-numerics descent helper seam)
 
 ## Recent Updates (`2026-04-21`, ODE artifact capture / Artifacts workspace)
 
@@ -28,6 +28,27 @@
   - headless numeric task execution with the current RK4 recipe path
   - no shared `SessionLiveViewV2` / monitor-topic presentation yet
   - no model-owned numeric-binding or artifact-manifest/provenance authoring yet
+
+## Recent Updates (`2026-04-26`, model-numerics descent entropy pass)
+
+- Added `Slab/Core/Model/V2/ModelNumericsDescentV2.h` as the current Lab-neutral helper seam for ODE explicit-first-order descent:
+  - scalar runtime-binding draft parsing
+  - current seed launch support gating for oscillator-family models
+  - default scalar binding drafts for supported seed models
+  - runtime config normalization for artifact cadence/history limits
+  - ODE time-series artifact lookup/display helpers
+- `LabV2` model panels now consume these helpers instead of owning the launch-support and artifact-lookup policy locally.
+- `FMoleculesState::Replicate` now returns an owned copy so MolecularDynamics V2 can participate in LiveData snapshot publication.
+- The Plot2D semantic graph diagnostic-HUD regression test now uses an explicit diagnostic projection fixture instead of relying on current model-inference warnings.
+- This is intentionally not the full module platform:
+  - task submission remains Lab/legacy-task-manager backed
+  - artifact persistence/provenance is still future work
+  - monitor/LiveData presentation is still not wired into the model-driven ODE launch path
+- Validation:
+  - `cmake --build cmake-build-debug --target testsuite -j8`
+  - `cmake --build cmake-build-debug --target StudioSlab -j8`
+  - `./Build/bin/testsuite "[ModelV2][Realization][Runtime]"`
+  - `ctest --test-dir cmake-build-debug --output-on-failure`
 
 ## Recent Updates (`2026-04-19`, BM-05 legacy service bridge)
 

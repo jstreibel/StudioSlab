@@ -700,9 +700,29 @@ TEST_CASE("Plot2D V2 semantic graph emits screen-space HUD for hovered edges", "
 }
 
 TEST_CASE("Plot2D V2 semantic graph surfaces node diagnostics in HUD cards", "[Plot2DV2][ModelGraph]") {
-    const auto overview = ModelV2::BuildModelSemanticOverviewV2(ModelV2::BuildHarmonicOscillatorModelV2());
+    ModelV2::FModelSemanticGraphProjectionV2 projection;
+    projection.CenteredObject = ModelV2::MakeDefinitionObjectRefV2("param.m");
+    projection.Nodes.push_back(ModelV2::FSemanticGraphNodeV2{
+        .Ref = projection.CenteredObject,
+        .NodeId = "node.param.m",
+        .Label = "m",
+        .FullLabel = "Mass",
+        .KindLabel = "ObservableSymbol",
+        .CanonicalNotation = "m \\in \\mathbb{R}",
+        .Kind = ModelV2::ESemanticObjectKindV2::Definition,
+        .Diagnostics = {
+            ModelV2::FSemanticDiagnosticV2{
+                .Severity = ModelV2::EValidationSeverityV2::Warning,
+                .Code = "declared_inferred_mismatch",
+                .EntityId = "param.m",
+                .Context = "Definition",
+                .Message = "Declared kind disagrees with inferred role."
+            }
+        }
+    });
+
     auto artist = New<FModelSemanticGraphArtistV2>();
-    artist->SetSemanticOverview(overview, ModelV2::MakeDefinitionObjectRefV2("obs.energy"));
+    artist->SetSemanticGraphProjection(projection);
 
     FPlot2DWindowV2 window("Semantic Graph Diagnostic HUD Test", {-12.0, 12.0, -10.0, 10.0}, {0, 800, 0, 600});
     window.AddArtist(artist);

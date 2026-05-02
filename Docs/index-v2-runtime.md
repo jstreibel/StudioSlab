@@ -73,6 +73,7 @@ Quick start for new monitored slices:
   - `Slab/Core/Model/V2/ModelTypesV2.h`
   - `Slab/Core/Model/V2/ModelRealizationV2.h`
   - `Slab/Core/Model/V2/ModelRealizationRuntimeV2.h`
+  - `Slab/Core/Model/V2/ModelNumericsDescentV2.h`
   - `Slab/Core/Model/V2/ModelSeedsV2.h`
 - Live topics/hubs:
   - `Slab/Math/Data/V2/LiveDataHubV2.h`

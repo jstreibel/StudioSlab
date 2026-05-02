@@ -10,6 +10,9 @@
 
 #include "OpDefs.h"
 
+#include <memory>
+#include <utility>
+
 namespace Slab::Models::MolecularDynamics {
 
     // Used for Verlet
@@ -17,6 +20,7 @@ namespace Slab::Models::MolecularDynamics {
     typedef Pair<Graphics::PointContainer, Graphics::PointContainer> VerletMoleculeContainer;
 
     class FMoleculesState final : public Math::Base::EquationState {
+        std::shared_ptr<VerletMoleculeContainer> OwnedData;
         Pair<Graphics::PointContainer &, Graphics::PointContainer &> Data;
 
         static auto& Cast(const auto &eqState)
@@ -28,13 +32,18 @@ namespace Slab::Models::MolecularDynamics {
     public:
         FMoleculesState(Graphics::PointContainer &q, Graphics::PointContainer &p) : Data(q, p) {};
 
+        explicit FMoleculesState(VerletMoleculeContainer ownedData)
+            : OwnedData(std::make_shared<VerletMoleculeContainer>(std::move(ownedData)))
+            , Data(OwnedData->first, OwnedData->second) {}
+
         [[nodiscard]] Graphics::PointContainer &first() const { return Data.first; }
         [[nodiscard]] Graphics::PointContainer &second() const { return Data.second; }
 
         [[nodiscard]] auto category() const -> Str override;
 
         auto Replicate(std::optional<Str> Name) const -> TPointer<EquationState> override {
-            NOT_IMPLEMENTED_CLASS_METHOD
+            (void) Name;
+            return New<FMoleculesState>(VerletMoleculeContainer{Data.first, Data.second});
         }
 
         auto setData (const EquationState &eqState) -> void            override Operation(=)

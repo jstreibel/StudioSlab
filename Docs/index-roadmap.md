@@ -28,6 +28,7 @@ Use this order when docs disagree:
   - `Docs/index-handoffs.md`
   - `Docs/handoff-ode-realization-rz03.md`
 - Focused plan docs:
+  - `Docs/v2-platform-architecture-roadmap.md`
   - `Docs/ode-realization-descent-plan.md`
   - `Docs/backends-platforms-modules-v2-plan.md`
   - `Docs/platform-wasm-feasibility.md`
