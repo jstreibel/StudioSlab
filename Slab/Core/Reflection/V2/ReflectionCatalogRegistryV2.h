@@ -44,8 +44,7 @@ namespace Slab::Core::Reflection::V2 {
             for (const auto &[sourceId, source] : SourcesById) {
                 if (!source.GetCatalog) continue;
 
-                const auto &catalog = source.GetCatalog();
-                for (const auto &interfaceSchema : catalog.Interfaces) {
+                for (const auto & [_, interfaces] = source.GetCatalog(); const auto &interfaceSchema : interfaces) {
                     if (interfaceSchema.InterfaceId.empty()) continue;
                     InterfaceSourceById.try_emplace(interfaceSchema.InterfaceId, sourceId);
                 }

@@ -50,23 +50,22 @@ namespace Slab::Core::Composition::V2 {
     auto FRuntimeContextV2::InstallModule(const IModuleV2_ptr &module) -> void {
         if (module == nullptr) return;
 
-        const auto &descriptor = module->GetDescriptor();
-        if (!descriptor.ModuleId.empty()) {
-            const auto existing = std::find_if(
-                InstalledModules.begin(),
-                InstalledModules.end(),
+        const auto & [ModuleId, DisplayName] = module->GetDescriptor();
+        if (!ModuleId.empty()) {
+            const auto existing = std::ranges::find_if(
+                InstalledModules,
                 [&](const auto &installedModule) {
                     return installedModule != nullptr &&
-                        installedModule->GetDescriptor().ModuleId == descriptor.ModuleId;
-                });
+                        installedModule->GetDescriptor().ModuleId == ModuleId;
+            });
             if (existing != InstalledModules.end()) return;
         }
 
         InstalledModules.push_back(module);
 
-        if (!descriptor.ModuleId.empty() &&
-            !std::ranges::contains(Profile.ModuleIds, descriptor.ModuleId)) {
-            Profile.ModuleIds.push_back(descriptor.ModuleId);
+        if (!ModuleId.empty() &&
+            !std::ranges::contains(Profile.ModuleIds, ModuleId)) {
+            Profile.ModuleIds.push_back(ModuleId);
         }
 
         module->RegisterServices(*this);

@@ -59,23 +59,23 @@ namespace Slab::Graphics::Windowing::V2 {
         std::map<Str, ImGuiID> dockNodes;
         dockNodes["main"] = dockspaceId;
 
-        for (const auto &split : layout.Splits) {
-            if (split.NewNodeId.empty() || split.RemainingNodeId.empty()) return false;
+        for (const auto & [SourceNodeId, NewNodeId, RemainingNodeId, Direction, Ratio] : layout.Splits) {
+            if (NewNodeId.empty() || RemainingNodeId.empty()) return false;
 
-            const auto sourceIt = dockNodes.find(split.SourceNodeId);
+            const auto sourceIt = dockNodes.find(SourceNodeId);
             if (sourceIt == dockNodes.end()) return false;
 
             ImGuiID newNode = 0;
             ImGuiID remainingNode = 0;
             ImGui::DockBuilderSplitNode(
                 sourceIt->second,
-                ToImGuiDir(split.Direction),
-                std::clamp(split.Ratio, 0.05f, 0.95f),
+                ToImGuiDir(Direction),
+                std::clamp(Ratio, 0.05f, 0.95f),
                 &newNode,
                 &remainingNode);
 
-            dockNodes[split.NewNodeId] = newNode;
-            dockNodes[split.RemainingNodeId] = remainingNode;
+            dockNodes[NewNodeId] = newNode;
+            dockNodes[RemainingNodeId] = remainingNode;
         }
 
         if (outDockNodes != nullptr) {
