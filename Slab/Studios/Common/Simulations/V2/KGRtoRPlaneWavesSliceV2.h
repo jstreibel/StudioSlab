@@ -9,13 +9,14 @@
 
 #include <optional>
 
-namespace Slab::Models::KGRtoR::PlaneWaves::V2 {
-    struct FKGRtoRPlaneWavesConfigV2;
-}
-
 namespace Slab::Studios::Common::Simulations::V2 {
 
-    struct FRtoRPlaneWavesExecutionConfig {
+    enum class ERtoRInitialConditionV2 {
+        PlaneWave,
+        PerturbedOscillon
+    };
+
+    struct FRtoRExecutionConfig {
         UIntBig Steps = 200;
         bool bRunEndless = false;
         DevFloat Dt = -1.0;
@@ -24,6 +25,9 @@ namespace Slab::Studios::Common::Simulations::V2 {
         DevFloat XCenter = 0.0;
         DevFloat Q = 1.0;
         UInt Harmonic = 2;
+        DevFloat Lambda = 1.0;
+        DevFloat Epsilon = 1.0;
+        ERtoRInitialConditionV2 InitialCondition = ERtoRInitialConditionV2::PlaneWave;
         UIntBig Interval = 20;
         UIntBig MonitorInterval = 20;
         UIntBig DFTInterval = 0; // 0 => follow Interval
@@ -34,20 +38,17 @@ namespace Slab::Studios::Common::Simulations::V2 {
         std::optional<UInt> DFTProbeIndex = std::nullopt;
     };
 
-    auto FinalizeRtoRPlaneWavesExecutionConfigV2(FRtoRPlaneWavesExecutionConfig &cfg) -> void;
+    auto FinalizeRtoRExecutionConfigV2(FRtoRExecutionConfig &cfg) -> void;
 
-    auto BuildRtoRPlaneWavesRecipeConfigV2(const FRtoRPlaneWavesExecutionConfig &cfg)
-        -> Slab::Models::KGRtoR::PlaneWaves::V2::FKGRtoRPlaneWavesConfigV2;
-
-    auto BuildRtoRPlaneWavesRecipeV2(const FRtoRPlaneWavesExecutionConfig &cfg,
-                                     const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr)
+    auto BuildRtoRRecipeV2(const FRtoRExecutionConfig &cfg,
+                           const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView = nullptr)
         -> TPointer<Math::Numerics::V2::FSimulationRecipeV2>;
 
-    auto BuildRtoRPlaneWavesPassiveMonitorWindowV2(
-        const FRtoRPlaneWavesExecutionConfig &cfg,
+    auto BuildRtoRPassiveMonitorWindowV2(
+        const FRtoRExecutionConfig &cfg,
         const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView) -> TPointer<Graphics::FSlabWindow>;
 
-    auto RunRtoRPlaneWavesV2(const FRtoRPlaneWavesExecutionConfig &cfg) -> int;
+    auto RunRtoRV2(const FRtoRExecutionConfig &cfg) -> int;
 
 } // namespace Slab::Studios::Common::Simulations::V2
 

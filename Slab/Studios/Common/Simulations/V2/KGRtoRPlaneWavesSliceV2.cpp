@@ -15,6 +15,7 @@
 #include "Math/Numerics/V2/Scheduling/EveryNStepsTriggerV2.h"
 
 #include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PerturbedOscillon-RecipeV2.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PlaneWaves-RecipeV2.h"
 
 #include <algorithm>
@@ -22,8 +23,15 @@
 
 namespace Slab::Studios::Common::Simulations::V2 {
 
-    auto FinalizeRtoRPlaneWavesExecutionConfigV2(FRtoRPlaneWavesExecutionConfig &cfg) -> void {
-        if (cfg.N == 0) throw Exception("RtoR requires N > 0.");
+    auto FinalizeRtoRExecutionConfigV2(FRtoRExecutionConfig &cfg) -> void {
+        if (cfg.N < 4) throw Exception("RtoR requires N >= 4.");
+        if (cfg.L <= 0.0) throw Exception("RtoR requires L > 0.");
+        if (cfg.InitialCondition == ERtoRInitialConditionV2::PlaneWave && cfg.Harmonic == 0) {
+            throw Exception("RtoR plane-wave initial condition requires harmonic >= 1.");
+        }
+        if (cfg.InitialCondition == ERtoRInitialConditionV2::PerturbedOscillon && cfg.Lambda <= 0.0) {
+            throw Exception("RtoR perturbed-oscillon initial condition requires lambda > 0.");
+        }
 
         if (cfg.Dt <= 0.0) {
             const auto h = cfg.L / static_cast<DevFloat>(cfg.N);
@@ -40,7 +48,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
     namespace {
 
-        struct FRtoRPlaneWavesAnalysisHandlesV2 {
+        struct FRtoRAnalysisHandlesV2 {
             Math::Numerics::V2::FCursorHistoryListenerV2_ptr CursorHistory = nullptr;
             Math::Numerics::V2::FStateSnapshotListenerV2_ptr FinalSnapshot = nullptr;
             Math::Numerics::V2::FScalarTimeDFTListenerV2_ptr ScalarDFT = nullptr;
@@ -69,15 +77,15 @@ namespace Slab::Studios::Common::Simulations::V2 {
             };
         }
 
-        auto BuildAnalysisSubscriptions(const FRtoRPlaneWavesExecutionConfig &cfg,
-                                        FRtoRPlaneWavesAnalysisHandlesV2 &handles)
+        auto BuildAnalysisSubscriptions(const FRtoRExecutionConfig &cfg,
+                                        FRtoRAnalysisHandlesV2 &handles)
             -> Vector<Math::Numerics::V2::FSubscriptionV2> {
             using namespace Math::Numerics::V2;
 
             Vector<FSubscriptionV2> subscriptions;
 
             if (cfg.bHistorySummary) {
-                handles.CursorHistory = New<FCursorHistoryListenerV2>("KGRtoR Plane Waves Cursor History");
+                handles.CursorHistory = New<FCursorHistoryListenerV2>("KGRtoR Cursor History");
                 subscriptions.push_back({
                     New<FEveryNStepsTriggerV2>(std::max<UIntBig>(UIntBig(1), cfg.Interval)),
                     handles.CursorHistory,
@@ -88,7 +96,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
             }
 
             if (cfg.bSnapshotSummary) {
-                handles.FinalSnapshot = New<FStateSnapshotListenerV2>("KGRtoR Plane Waves Final Snapshot");
+                handles.FinalSnapshot = New<FStateSnapshotListenerV2>("KGRtoR Final Snapshot");
                 subscriptions.push_back({
                     nullptr,
                     handles.FinalSnapshot,
@@ -102,7 +110,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
                 handles.DFTProbeIndex = cfg.DFTProbeIndex;
                 handles.ScalarDFT = New<FScalarTimeDFTListenerV2>(
                     BuildPhiProbeExtractor(*cfg.DFTProbeIndex),
-                    "KGRtoR Plane Waves Scalar DFT");
+                    "KGRtoR Scalar DFT");
                 subscriptions.push_back({
                     New<FEveryNStepsTriggerV2>(std::max<UIntBig>(UIntBig(1), cfg.DFTInterval)),
                     handles.ScalarDFT,
@@ -115,7 +123,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
             return subscriptions;
         }
 
-        auto PrintHistorySummary(const FRtoRPlaneWavesAnalysisHandlesV2 &handles) -> void {
+        auto PrintHistorySummary(const FRtoRAnalysisHandlesV2 &handles) -> void {
             if (handles.CursorHistory == nullptr) return;
 
             const auto &samples = handles.CursorHistory->GetSamples();
@@ -133,7 +141,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
             std::cout << '\n';
         }
 
-        auto PrintSnapshotSummary(const FRtoRPlaneWavesAnalysisHandlesV2 &handles) -> void {
+        auto PrintSnapshotSummary(const FRtoRAnalysisHandlesV2 &handles) -> void {
             if (handles.FinalSnapshot == nullptr) return;
 
             std::cout << "  FinalSnapshot: ";
@@ -164,7 +172,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
             std::cout << '\n';
         }
 
-        auto PrintDFTSummary(const FRtoRPlaneWavesAnalysisHandlesV2 &handles) -> void {
+        auto PrintDFTSummary(const FRtoRAnalysisHandlesV2 &handles) -> void {
             if (handles.ScalarDFT == nullptr) return;
 
             std::cout << "  ScalarDFT";
@@ -198,7 +206,7 @@ namespace Slab::Studios::Common::Simulations::V2 {
                       << ")\n";
         }
 
-        auto PrintAnalysisSummary(const FRtoRPlaneWavesAnalysisHandlesV2 &handles) -> void {
+        auto PrintAnalysisSummary(const FRtoRAnalysisHandlesV2 &handles) -> void {
             if (!handles.HasAny()) return;
             std::cout << "Analysis:\n";
             PrintHistorySummary(handles);
@@ -206,8 +214,8 @@ namespace Slab::Studios::Common::Simulations::V2 {
             PrintDFTSummary(handles);
         }
 
-        auto BuildAnalysisAttachment(const FRtoRPlaneWavesExecutionConfig &cfg,
-                                     FRtoRPlaneWavesAnalysisHandlesV2 &handles) -> FAnalysisAttachmentV2 {
+        auto BuildAnalysisAttachment(const FRtoRExecutionConfig &cfg,
+                                     FRtoRAnalysisHandlesV2 &handles) -> FAnalysisAttachmentV2 {
             FAnalysisAttachmentV2 attachment;
             attachment.ExtraSubscriptions = BuildAnalysisSubscriptions(cfg, handles);
             if (handles.HasAny()) {
@@ -218,9 +226,34 @@ namespace Slab::Studios::Common::Simulations::V2 {
 
     } // namespace
 
-    auto BuildRtoRPlaneWavesRecipeConfigV2(const FRtoRPlaneWavesExecutionConfig &cfg)
-        -> Slab::Models::KGRtoR::PlaneWaves::V2::FKGRtoRPlaneWavesConfigV2 {
-        Slab::Models::KGRtoR::PlaneWaves::V2::FKGRtoRPlaneWavesConfigV2 recipeCfg;
+    auto BuildRtoRRecipeV2(
+        const FRtoRExecutionConfig &cfg,
+        const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
+        -> TPointer<Math::Numerics::V2::FSimulationRecipeV2> {
+        if (cfg.InitialCondition == ERtoRInitialConditionV2::PerturbedOscillon) {
+            using namespace Slab::Models::KGRtoR::PerturbedOscillon::V2;
+
+            FKGRtoRPerturbedOscillonConfigV2 recipeCfg;
+            recipeCfg.N = cfg.N;
+            recipeCfg.L = cfg.L;
+            recipeCfg.Dt = cfg.Dt;
+            recipeCfg.Steps = cfg.Steps;
+            recipeCfg.XCenter = cfg.XCenter;
+            recipeCfg.Lambda = cfg.Lambda;
+            recipeCfg.Epsilon = cfg.Epsilon;
+
+            auto recipe = New<FKGRtoRPerturbedOscillonRecipeV2>(
+                recipeCfg,
+                cfg.Interval,
+                liveView,
+                cfg.bRunEndless);
+            if (liveView != nullptr) recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
+            return recipe;
+        }
+
+        using namespace Slab::Models::KGRtoR::PlaneWaves::V2;
+
+        FKGRtoRPlaneWavesConfigV2 recipeCfg;
         recipeCfg.N = cfg.N;
         recipeCfg.L = cfg.L;
         recipeCfg.Dt = cfg.Dt;
@@ -228,26 +261,18 @@ namespace Slab::Studios::Common::Simulations::V2 {
         recipeCfg.XCenter = cfg.XCenter;
         recipeCfg.Q = cfg.Q;
         recipeCfg.Harmonic = cfg.Harmonic;
-        return recipeCfg;
+
+        auto recipe = New<FKGRtoRPlaneWavesRecipeV2>(
+            recipeCfg,
+            cfg.Interval,
+            liveView,
+            cfg.bRunEndless);
+        if (liveView != nullptr) recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
+        return recipe;
     }
 
-    auto BuildRtoRPlaneWavesRecipeV2(const FRtoRPlaneWavesExecutionConfig &cfg,
-                                     const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView)
-        -> TPointer<Math::Numerics::V2::FSimulationRecipeV2> {
-        using namespace Slab::Models::KGRtoR::PlaneWaves::V2;
-
-        const auto recipeCfg = BuildRtoRPlaneWavesRecipeConfigV2(cfg);
-        if (liveView != nullptr) {
-            auto recipe = New<FKGRtoRPlaneWavesRecipeV2>(recipeCfg, cfg.Interval, liveView, cfg.bRunEndless);
-            recipe->SetLiveViewIntervalSteps(cfg.MonitorInterval);
-            return recipe;
-        }
-
-        return New<FKGRtoRPlaneWavesRecipeV2>(recipeCfg, cfg.Interval, nullptr, cfg.bRunEndless);
-    }
-
-    auto BuildRtoRPlaneWavesPassiveMonitorWindowV2(
-        const FRtoRPlaneWavesExecutionConfig &cfg,
+    auto BuildRtoRPassiveMonitorWindowV2(
+        const FRtoRExecutionConfig &cfg,
         const TPointer<Math::LiveData::V2::FSessionLiveViewV2> &liveView) -> TPointer<Graphics::FSlabWindow> {
         if (liveView == nullptr) throw Exception("RtoR passive monitor requires a live view.");
         return New<Slab::Studios::Common::Monitors::V2::FRtoRPlaneWavesPassiveMonitorWindowV2>(
@@ -255,29 +280,29 @@ namespace Slab::Studios::Common::Simulations::V2 {
             cfg.bRunEndless ? UIntBig(0) : cfg.Steps);
     }
 
-    auto RunRtoRPlaneWavesV2(const FRtoRPlaneWavesExecutionConfig &cfg) -> int {
+    auto RunRtoRV2(const FRtoRExecutionConfig &cfg) -> int {
         using namespace Slab::Math::Numerics::V2;
 
         auto runCfg = cfg;
-        FinalizeRtoRPlaneWavesExecutionConfigV2(runCfg);
-        FRtoRPlaneWavesAnalysisHandlesV2 analysisHandles;
+        FinalizeRtoRExecutionConfigV2(runCfg);
+        FRtoRAnalysisHandlesV2 analysisHandles;
         const auto analysisAttachment = BuildAnalysisAttachment(runCfg, analysisHandles);
 
         if (runCfg.bEnableGLMonitor) {
             auto liveView = New<Math::LiveData::V2::FSessionLiveViewV2>();
             auto recipe = WrapRecipeWithAnalysisAttachmentV2(
-                BuildRtoRPlaneWavesRecipeV2(runCfg, liveView),
+                BuildRtoRRecipeV2(runCfg, liveView),
                 analysisAttachment);
-            auto monitor = BuildRtoRPlaneWavesPassiveMonitorWindowV2(runCfg, liveView);
+            auto monitor = BuildRtoRPassiveMonitorWindowV2(runCfg, liveView);
             return Slab::Studios::Common::RunGLFWMonitoredNumericTaskV2(
-                "Studios KGRtoR Plane Waves Monitor",
+                "Studios KGRtoR Monitor",
                 recipe,
                 monitor,
                 static_cast<size_t>(runCfg.Batch),
                 [&](const FNumericTaskV2 &) { InvokePostRunSummaryV2(analysisAttachment); });
         }
 
-        auto recipe = WrapRecipeWithAnalysisAttachmentV2(BuildRtoRPlaneWavesRecipeV2(runCfg), analysisAttachment);
+        auto recipe = WrapRecipeWithAnalysisAttachmentV2(BuildRtoRRecipeV2(runCfg), analysisAttachment);
         auto task = New<FNumericTaskV2>(recipe, false, static_cast<size_t>(runCfg.Batch));
         const auto status = Slab::Studios::Common::RunTaskAndWait(*task);
         Slab::Studios::Common::PrintNumericTaskSummary(*task);

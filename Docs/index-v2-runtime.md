@@ -47,6 +47,14 @@ Still missing:
 
 Use `Docs/handoff-ode-realization-rz03.md` for the post-`RZ-03` follow-up.
 
+## Current KGRtoR CLI Slice
+
+- `Studios rtor` defaults to the existing plane-wave initial condition.
+- Select the legacy compact triangular velocity profile with:
+  - `Studios rtor --initial-condition perturbed-oscillon --lambda 1 --epsilon 1`
+- Both modes use the shared V2 task, listener, live-view, and passive-monitor path.
+- The perturbed-oscillon recipe uses fixed-border fields; the plane-wave recipe remains periodic.
+
 ## Monitor Data Contract (Current)
 
 - Default monitor data flow is push-to-snapshot via `SessionLiveViewV2`:

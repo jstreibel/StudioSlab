@@ -28,7 +28,7 @@ namespace {
     namespace StudiosSimV2 = Slab::Studios::Common::Simulations::V2;
     using StudiosSimV2::FMetropolisExecutionConfigV2;
     using StudiosSimV2::FR2toRBaselineExecutionConfig;
-    using StudiosSimV2::FRtoRPlaneWavesExecutionConfig;
+    using StudiosSimV2::FRtoRExecutionConfig;
     using StudiosSimV2::FMolecularDynamicsExecutionConfigV2;
     using StudiosSimV2::FSPIExecutionConfig;
     using StudiosSimV2::FXYExecutionConfigV2;
@@ -46,7 +46,7 @@ namespace {
                 << "               (list/get/set/apply/invoke)\n\n"
                 << "  metropolis   Run V2 Hamiltonian RtoR Metropolis slice\n"
                 << "  spi          Run V2 SPI ODE/time-aware slice\n"
-                << "  rtor         Run V2 KGRtoR plane-waves slice\n\n"
+                << "  rtor         Run V2 KGRtoR signum-Gordon slice\n\n"
                 << "  kg2d         Run V2 KGR2toR baseline slice\n\n"
                 << "  moldyn       Run V2 Molecular Dynamics baseline slice\n\n"
                 << "  xy           Run V2 XY Metropolis lattice slice\n\n"
@@ -69,6 +69,7 @@ namespace {
                 << "  Studios spi --steps 8 --dt 0.125 --time 0.5 --N 16 --interval 2\n"
                 << "  Studios spi --gl --steps 2000 --interval 50 --monitor-interval 2\n"
                 << "  Studios rtor --steps 500 --dt 0.01 --L 10 --N 256 --Q 1 --harmonic 2\n"
+                << "  Studios rtor --initial-condition perturbed-oscillon --lambda 1 --epsilon 1 --steps 500\n"
                 << "  Studios rtor --gl --steps 2000 --interval 50 --monitor-interval 2\n"
                 << "  Studios kg2d --steps 300 --L 12 --N 128 --rdt 0.1 --pulse-width 0.35\n"
                 << "  Studios kg2d --gl --steps 500 --interval 20 --monitor-interval 2\n"
@@ -466,10 +467,13 @@ namespace {
     auto RunRtoRCommand(const int argc, const char **argv) -> int {
         using namespace Slab::Math::Numerics::V2;
 
-        CLOptionsDescription options("Studios rtor", "Run the native V2 KGRtoR plane-waves slice.");
+        CLOptionsDescription options("Studios rtor", "Run the native V2 KGRtoR signum-Gordon slice.");
         options.add_options()
             ("h,help", "Show this help")
             ("gl", "Run with passive OpenGL monitor (real app loop)")
+            ("initial-condition",
+             "Initial condition: plane-wave or perturbed-oscillon",
+             cxxopts::value<Str>()->default_value("plane-wave"))
             ("steps", "Integration steps", cxxopts::value<UIntBig>()->default_value("200"))
             ("dt", "Timestep override; if omitted, uses legacy dt = 0.1*(L/N)", cxxopts::value<DevFloat>())
             ("L", "Spatial length", cxxopts::value<DevFloat>()->default_value("10.0"))
@@ -477,6 +481,8 @@ namespace {
             ("x-center", "Space center", cxxopts::value<DevFloat>()->default_value("0.0"))
             ("Q", "Plane-wave scale-invariant Q", cxxopts::value<DevFloat>()->default_value("1.0"))
             ("harmonic", "Plane-wave harmonic n (k=2*pi*n/L)", cxxopts::value<UInt>()->default_value("2"))
+            ("lambda", "Perturbed-oscillon compact-support width", cxxopts::value<DevFloat>()->default_value("1.0"))
+            ("epsilon", "Perturbed-oscillon dphi/dt amplitude", cxxopts::value<DevFloat>()->default_value("1.0"))
             ("interval", "Output/listener interval (steps)", cxxopts::value<UIntBig>()->default_value("20"))
             ("monitor-interval",
              "Live-view publish interval (steps) for --gl; defaults to --interval",
@@ -497,13 +503,26 @@ namespace {
             return 0;
         }
 
-        FRtoRPlaneWavesExecutionConfig cfg;
+        FRtoRExecutionConfig cfg;
+        const auto initialCondition = NormalizeProfileToken(result["initial-condition"].as<Str>());
+        if (initialCondition == "plane_wave") {
+            cfg.InitialCondition = StudiosSimV2::ERtoRInitialConditionV2::PlaneWave;
+        } else if (initialCondition == "perturbed_oscillon") {
+            cfg.InitialCondition = StudiosSimV2::ERtoRInitialConditionV2::PerturbedOscillon;
+        } else {
+            throw Exception(
+                "Unknown RtoR initial condition '" + result["initial-condition"].as<Str>()
+                + "'. Expected plane-wave or perturbed-oscillon.");
+        }
+
         cfg.Steps = result["steps"].as<UIntBig>();
         cfg.L = result["L"].as<DevFloat>();
         cfg.N = result["N"].as<UInt>();
         cfg.XCenter = result["x-center"].as<DevFloat>();
         cfg.Q = result["Q"].as<DevFloat>();
         cfg.Harmonic = result["harmonic"].as<UInt>();
+        cfg.Lambda = result["lambda"].as<DevFloat>();
+        cfg.Epsilon = result["epsilon"].as<DevFloat>();
         cfg.Interval = result["interval"].as<UIntBig>();
         cfg.MonitorInterval = result.count("monitor-interval") > 0
             ? result["monitor-interval"].as<UIntBig>()
@@ -522,7 +541,7 @@ namespace {
         if (result.count("dft-probe-index") > 0) {
             cfg.DFTProbeIndex = result["dft-probe-index"].as<UInt>();
         }
-        return StudiosSimV2::RunRtoRPlaneWavesV2(cfg);
+        return StudiosSimV2::RunRtoRV2(cfg);
     }
 
     auto RunKG2DCommand(const int argc, const char **argv) -> int {

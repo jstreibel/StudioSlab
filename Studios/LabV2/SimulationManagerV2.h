@@ -50,7 +50,7 @@ private:
     Slab::UIntBig CommonBatch = 1;
 
     Slab::Studios::Common::Simulations::V2::FSPIExecutionConfig SPICfg;
-    Slab::Studios::Common::Simulations::V2::FRtoRPlaneWavesExecutionConfig RtoRCfg;
+    Slab::Studios::Common::Simulations::V2::FRtoRExecutionConfig RtoRCfg;
     Slab::Studios::Common::Simulations::V2::FR2toRBaselineExecutionConfig R2toRCfg;
     Slab::Studios::Common::Simulations::V2::FMolecularDynamicsExecutionConfigV2 MolecularDynamicsCfg;
     Slab::Studios::Common::Simulations::V2::FMetropolisExecutionConfigV2 MetropolisCfg;

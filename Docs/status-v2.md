@@ -2,11 +2,26 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-04-21`
-- Last implementation update: `2026-04-26` (model-numerics descent helper seam for Lab-neutral launch/artifact helpers)
+- Snapshot date: `2026-09-22`
+- Last implementation update: `2026-09-22` (legacy perturbed-oscillon initial condition in the shared KGRtoR V2 slice)
 - Last architecture-doc update: `2026-04-26` (V2 architecture charter + platform roadmap added)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
-- Build-target sanity check date: `2026-04-26` (`testsuite` and `StudioSlab` build in `cmake-build-debug`; `ctest --test-dir cmake-build-debug --output-on-failure` passes locally after the model-numerics descent helper seam)
+- Build-target sanity check date: `2026-09-22` (`testsuite`, `Studios`, and `StudioSlab` build in `cmake-build-debug-no-gpu`; all 150 CTest cases pass)
+
+## Recent Updates (`2026-09-22`, KGRtoR perturbed-oscillon initial condition)
+
+- The shared KGRtoR V2 slice now selects between the existing plane-wave initial condition and the legacy perturbed-oscillon profile.
+- The perturbed-oscillon recipe preserves the old definition exactly:
+  - `phi(x, 0) = 0`
+  - triangular compact-support `dphi/dt` parameterized by `lambda` and `epsilon`
+  - fixed-border CPU field, signum potential, and RK4 stepping
+- `Studios rtor` exposes the mode through `--initial-condition perturbed-oscillon --lambda ... --epsilon ...`; plane wave remains the default.
+- Focused tests cover the legacy profile values, fixed-border sampled state, and finite V2 evolution.
+- Validation:
+  - `cmake --build cmake-build-debug-no-gpu --target testsuite Studios StudioSlab -j8`
+  - `./Build/bin/testsuite "[V2][KGRtoR][RtoR][PerturbedOscillon]"`
+  - perturbed-oscillon and plane-wave `Studios rtor` smoke runs
+  - `ctest --test-dir cmake-build-debug-no-gpu --output-on-failure` (150/150 passed)
 
 ## Recent Updates (`2026-04-21`, ODE artifact capture / Artifacts workspace)
 

@@ -504,17 +504,17 @@ auto FSimulationManagerV2::LaunchRtoR(const bool enableMonitor) -> void {
     ApplyCommonExecutionSettings(cfg, CommonInterval, CommonMonitorInterval, CommonBatch);
     cfg.bEnableGLMonitor = enableMonitor;
     cfg.bRunEndless = bOpenEnded;
-    FinalizeRtoRPlaneWavesExecutionConfigV2(cfg);
+    FinalizeRtoRExecutionConfigV2(cfg);
 
     const bool bNeedLiveView = enableMonitor || bPublishLiveDataWhenHeadless;
     auto liveView = GetOrCreateLiveViewIfNeeded(bNeedLiveView, "rtor", RtoRRunCounter);
 
-    auto recipe = BuildRtoRPlaneWavesRecipeV2(cfg, liveView);
+    auto recipe = BuildRtoRRecipeV2(cfg, liveView);
     if (enableMonitor) {
         if (liveView == nullptr) throw Exception("RtoR GL monitor requires a live view.");
         AttachMonitorWindowOrThrow(
-            BuildRtoRPlaneWavesPassiveMonitorWindowV2(cfg, liveView),
-            "BuildRtoRPlaneWavesPassiveMonitorWindow");
+            BuildRtoRPassiveMonitorWindowV2(cfg, liveView),
+            "BuildRtoRPassiveMonitorWindow");
     }
 
     LaunchNumericTask(recipe, cfg.Batch, "Klein-Gordon 1+1 dim");

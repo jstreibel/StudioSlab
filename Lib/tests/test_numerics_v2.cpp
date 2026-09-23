@@ -13,6 +13,8 @@
 #include "Math/Data/V2/LiveControlHubV2.h"
 #include "Math/Data/V2/LiveControlTopicsV2.h"
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/PerturbedOscillonTimeDerivative.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunction.h"
 #include "Math/Numerics/V2/Listeners/ConsoleProgressListenerV2.h"
 #include "Math/Numerics/V2/Listeners/CursorHistoryListenerV2.h"
 #include "Math/Numerics/V2/Listeners/DummyListenerV2.h"
@@ -25,6 +27,7 @@
 #include "Math/Numerics/V2/Scheduling/OutputSchedulerV2.h"
 #include "Math/Numerics/V2/Scheduling/WindowedEveryNStepsTriggerV2.h"
 #include "Math/Numerics/V2/Task/NumericTaskV2.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PerturbedOscillon-RecipeV2.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/V2/KG-RtoR-PlaneWaves-RecipeV2.h"
 #include "Models/KleinGordon/R2toR/V2/KG-R2toR-Baseline-RecipeV2.h"
 #include "Models/KleinGordon/RtoR-Montecarlo/V2/RtoR-Hamiltonian-MetropolisHastings-RecipeV2.h"
@@ -769,6 +772,86 @@ TEST_CASE("PhaseR0 V2 - KGRtoR plane waves recipe runs with finite time cursor s
     const auto phiAbs = SumAbsValues(phiData);
     const auto dPhiDtAbs = SumAbsValues(dPhiDtData);
 
+    CAPTURE(phiAbs, dPhiDtAbs);
+    CHECK(std::isfinite(phiAbs));
+    CHECK(std::isfinite(dPhiDtAbs));
+    CHECK(phiAbs > 0.0);
+    CHECK(dPhiDtAbs > 0.0);
+}
+
+TEST_CASE("KGRtoR perturbed oscillon preserves the legacy triangular dphi/dt profile",
+          "[V2][KGRtoR][RtoR][PerturbedOscillon]") {
+    using Slab::Math::RtoR::PerturbedOscillonTimeDerivative;
+
+    const PerturbedOscillonTimeDerivative profile(2.0, 3.0);
+
+    CHECK(profile(-1.1) == Catch::Approx(0.0));
+    CHECK(profile(-1.0) == Catch::Approx(0.0));
+    CHECK(profile(-0.5) == Catch::Approx(1.5));
+    CHECK(profile(0.0) == Catch::Approx(3.0));
+    CHECK(profile(0.5) == Catch::Approx(1.5));
+    CHECK(profile(1.0) == Catch::Approx(0.0));
+    CHECK(profile(1.1) == Catch::Approx(0.0));
+}
+
+TEST_CASE("KGRtoR perturbed-oscillon V2 recipe samples the legacy initial condition and runs",
+          "[V2][KGRtoR][RtoR][PerturbedOscillon][Task]") {
+    using namespace Slab;
+    using namespace Slab::Math::Numerics::V2;
+    using namespace Slab::Models::KGRtoR::PerturbedOscillon::V2;
+
+    FKGRtoRPerturbedOscillonConfigV2 config;
+    config.N = 80;
+    config.L = 4.0;
+    config.Dt = 0.001;
+    config.Steps = 4;
+    config.XCenter = 0.0;
+    config.Lambda = 1.0;
+    config.Epsilon = 0.8;
+
+    auto recipe = New<FKGRtoRPerturbedOscillonRecipeV2>(config, 1000);
+    auto initialSession = recipe->BuildSession();
+    auto initialLease = initialSession->AcquireReadLease();
+    REQUIRE(initialLease.OwnsLock());
+
+    auto initialState =
+        std::dynamic_pointer_cast<const Slab::Models::KGRtoR::FEquationState>(initialLease.GetState());
+    REQUIRE(initialState != nullptr);
+
+    auto *phi = dynamic_cast<Math::RtoR::NumericFunction *>(&initialState->getPhi());
+    auto *dPhiDt = dynamic_cast<Math::RtoR::NumericFunction *>(&initialState->getDPhiDt());
+    REQUIRE(phi != nullptr);
+    REQUIRE(dPhiDt != nullptr);
+    CHECK(phi->getLaplacianType() == Math::RtoR::NumericFunction::Standard1D_FixedBorder);
+    CHECK(dPhiDt->getLaplacianType() == Math::RtoR::NumericFunction::Standard1D_FixedBorder);
+
+    const Math::RtoR::PerturbedOscillonTimeDerivative expected(config.Lambda, config.Epsilon);
+    const auto &phiData = phi->getSpace().getHostData(true);
+    const auto &dPhiDtData = dPhiDt->getSpace().getHostData(true);
+    const auto xMin = config.XCenter - config.L * 0.5;
+    const auto dx = config.L / static_cast<DevFloat>(config.N);
+    REQUIRE(phiData.size() == config.N);
+    REQUIRE(dPhiDtData.size() == config.N);
+    for (UInt i = 0; i < config.N; ++i) {
+        const auto x = xMin + static_cast<DevFloat>(i) * dx;
+        CHECK(phiData[i] == Catch::Approx(0.0));
+        CHECK(dPhiDtData[i] == Catch::Approx(expected(x)).margin(1e-12));
+    }
+
+    initialLease = {};
+    auto task = New<FNumericTaskV2>(recipe, false, 8);
+    REQUIRE(RunTaskAndWait(*task) == Core::TaskSuccess);
+    CHECK(task->GetCursor().Step == config.Steps);
+
+    const auto *session = task->GetSession();
+    REQUIRE(session != nullptr);
+    auto finalLease = session->AcquireReadLease();
+    auto finalState =
+        std::dynamic_pointer_cast<const Slab::Models::KGRtoR::FEquationState>(finalLease.GetState());
+    REQUIRE(finalState != nullptr);
+
+    const auto phiAbs = SumAbsValues(finalState->getPhi().getSpace().getHostData(true));
+    const auto dPhiDtAbs = SumAbsValues(finalState->getDPhiDt().getSpace().getHostData(true));
     CAPTURE(phiAbs, dPhiDtAbs);
     CHECK(std::isfinite(phiAbs));
     CHECK(std::isfinite(dPhiDtAbs));
