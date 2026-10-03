@@ -3,6 +3,8 @@
 #include "LabV2WindowManager.h"
 
 #include "Core/SlabCore.h"
+#include "Core/Artifacts/V2/ArtifactStoreV2.h"
+#include "Core/Composition/V2/Modules/ArtifactModuleV2.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 
 FStudioSlabV2App::FStudioSlabV2App(const int argc, const char *argv[])
@@ -32,6 +34,10 @@ void FStudioSlabV2App::OnStart() {
     plotOverlayStyle.bRightStripAvoidDetailPanel = false;
     Slab::Graphics::FPlot2DWindow::SetGlobalOverlayControlsStyle(plotOverlayStyle);
 
-    const auto windowManager = Slab::New<FLabV2WindowManager>();
+    RuntimeContext = Slab::New<Slab::Core::Composition::V2::FRuntimeContextV2>();
+    RuntimeContext->InstallModule(Slab::Core::Composition::V2::MakeArtifactModuleV2());
+    const auto artifactStore = RuntimeContext->GetServices().Resolve<Slab::Core::Artifacts::V2::IArtifactStoreV2>();
+
+    const auto windowManager = Slab::New<FLabV2WindowManager>(artifactStore);
     GetPlatform()->GetMainSystemWindow()->AddAndOwnEventListener(windowManager);
 }

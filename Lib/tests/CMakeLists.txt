@@ -4,6 +4,7 @@ find_package(Catch2 3 REQUIRED)          # from v3, installs a CMake package
 add_executable(testsuite
         test.cpp
         test_composition_v2.cpp
+        test_artifact_v2.cpp
         test_result.cpp
         test_model_v2.cpp
         test_numerics_characterization.cpp
@@ -15,6 +16,10 @@ add_executable(testsuite
         test_typesetting_service.cpp
         ../Utils/StringFormatting.cpp
 )
+if (STUDIOSLAB_HDF5_SUPPORT)
+    target_sources(testsuite PRIVATE test_hdf5_artifact_store_v2.cpp)
+endif()
+
 target_link_libraries(testsuite PRIVATE
         Catch2::Catch2WithMain
         Slab-Math

@@ -8,6 +8,7 @@
 #include "Core/Backend/Modules/TaskManager/Task.h"
 
 #include <atomic>
+#include <cstdint>
 #include <optional>
 
 namespace Slab::Math::Numerics::V2 {
@@ -29,6 +30,8 @@ namespace Slab::Math::Numerics::V2 {
         std::atomic<bool> bCachedHasSimulationTime = false;
         std::atomic<float> CachedProgress01 = 0.0f;
         std::atomic<bool> bCachedHasProgress = false;
+        std::atomic<std::int64_t> StartedUtcUnixNanoseconds = 0;
+        std::atomic<std::int64_t> FinishedUtcUnixNanoseconds = 0;
 
         size_t MaxBatchSteps = 2048;
         bool bInitialized = false;
@@ -59,6 +62,8 @@ namespace Slab::Math::Numerics::V2 {
         [[nodiscard]] auto GetCursor() const -> FSimulationCursorV2;
         [[nodiscard]] auto GetProgress01() const -> std::optional<float>;
         [[nodiscard]] auto GetSession() const -> const FSimulationSessionV2 *;
+        [[nodiscard]] auto GetStartedUtcUnixNanoseconds() const -> std::optional<std::int64_t>;
+        [[nodiscard]] auto GetFinishedUtcUnixNanoseconds() const -> std::optional<std::int64_t>;
     };
 
     DefinePointers(FNumericTaskV2)

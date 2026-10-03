@@ -3,6 +3,28 @@
 #include <algorithm>
 #include <chrono>
 
+namespace {
+
+    [[nodiscard]] auto UtcNowUnixNanoseconds() -> std::int64_t {
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(
+            std::chrono::system_clock::now().time_since_epoch()).count();
+    }
+
+    class FCompletionTimestampGuard {
+        std::atomic<std::int64_t> &Timestamp;
+
+    public:
+        explicit FCompletionTimestampGuard(std::atomic<std::int64_t> &timestamp)
+        : Timestamp(timestamp) {
+        }
+
+        ~FCompletionTimestampGuard() {
+            Timestamp.store(UtcNowUnixNanoseconds(), std::memory_order_release);
+        }
+    };
+
+} // namespace
+
 namespace Slab::Math::Numerics::V2 {
 
     FNumericTaskV2::FNumericTaskV2(const TPointer<FSimulationRecipeV2> &recipe,
@@ -52,6 +74,18 @@ namespace Slab::Math::Numerics::V2 {
 
     auto FNumericTaskV2::GetSession() const -> const FSimulationSessionV2 * {
         return Session.get();
+    }
+
+    auto FNumericTaskV2::GetStartedUtcUnixNanoseconds() const -> std::optional<std::int64_t> {
+        const auto value = StartedUtcUnixNanoseconds.load(std::memory_order_acquire);
+        if (value == 0) return std::nullopt;
+        return value;
+    }
+
+    auto FNumericTaskV2::GetFinishedUtcUnixNanoseconds() const -> std::optional<std::int64_t> {
+        const auto value = FinishedUtcUnixNanoseconds.load(std::memory_order_acquire);
+        if (value == 0) return std::nullopt;
+        return value;
     }
 
     auto FNumericTaskV2::HasReachedFiniteLimit(const FSimulationCursorV2 &cursor) const -> bool {
@@ -134,8 +168,10 @@ namespace Slab::Math::Numerics::V2 {
     }
 
     auto FNumericTaskV2::Run() -> Core::ETaskStatus {
-        if (!IsInitialized()) Init();
+        StartedUtcUnixNanoseconds.store(UtcNowUnixNanoseconds(), std::memory_order_release);
+        FCompletionTimestampGuard completionTimestampGuard(FinishedUtcUnixNanoseconds);
 
+        if (!IsInitialized()) Init();
         if (Recipe == nullptr || Session == nullptr) return Core::TaskError;
 
         if (RunLimits.Mode == ERunModeV2::FiniteSimulationTime &&

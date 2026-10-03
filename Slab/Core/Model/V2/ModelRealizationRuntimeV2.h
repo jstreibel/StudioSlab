@@ -216,6 +216,7 @@ namespace Slab::Core::Model::V2 {
 
     struct FODEExplicitFirstOrderRuntimeBuildResultV2 {
         FODEExplicitFirstOrderRuntimeSystemV2_ptr System = nullptr;
+        FODEExplicitFirstOrderRuntimeConfigV2 RuntimeConfig;
         Math::Numerics::V2::FSimulationRecipeV2_ptr Recipe = nullptr;
         Vector<FODETimeSeriesArtifactV2> StateArtifacts;
         Vector<FODETimeSeriesArtifactV2> ObservableArtifacts;
@@ -867,6 +868,7 @@ namespace Slab::Core::Model::V2 {
                                                     const FODEExplicitFirstOrderRuntimeConfigV2 &config)
         -> FODEExplicitFirstOrderRuntimeBuildResultV2 {
         FODEExplicitFirstOrderRuntimeBuildResultV2 result;
+        result.RuntimeConfig = config;
 
         if (!descriptor.IsReady()) {
             RealizationDetail::AppendRealizationDiagnosticUniqueV2(

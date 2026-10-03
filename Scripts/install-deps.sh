@@ -60,6 +60,7 @@ case "$PM" in
       libfontconfig1-dev libcairomm-1.0-dev libpangomm-1.4-dev
       libboost-locale1.83-dev libboost-random1.83-dev libboost-timer1.83-dev
       libfftw3-dev libtinyxml2-dev
+      libhdf5-dev hdf5-tools
       libfreeimage-dev libfreeimageplus-dev
       catch2
     )
@@ -75,6 +76,7 @@ case "$PM" in
       libcairomm-1.0-dev libpangomm-1.4-dev
       libboost-locale1.83.0 libboost-random1.83.0 libboost-timer1.83.0
       libfftw3-bin libtinyxml2-10
+      libhdf5-cpp-103-1t64
       libfreeimage3 libfreeimageplus3
     )
     ;;
@@ -87,14 +89,14 @@ case "$PM" in
       cairomm-devel pangomm-devel
       boost-locale-devel boost-random-devel boost-timer-devel
       freeglut-devel glfw-devel
-      fftw-devel tinyxml2-devel glm-devel freeimageplus-devel
+      fftw-devel tinyxml2-devel glm-devel freeimageplus-devel hdf5-devel
     )
     DEPLOY_PKGS=(
       SFML mesa-libGL mesa-libEGL
       freetype glew fontconfig
       cairomm pangomm
       boost-locale boost-random boost-timer
-      freeglut glfw fftw tinyxml2 glm freeimageplus
+      freeglut glfw fftw tinyxml2 glm freeimageplus hdf5
     )
     ;;
 
@@ -102,11 +104,11 @@ case "$PM" in
     DEV_PKGS=(
       base-devel cmake git
       sfml mesa freetype2 glew fontconfig cairomm pangomm
-      boost freeglut glfw fftw tinyxml2 glm freeimageplus
+      boost freeglut glfw fftw tinyxml2 glm freeimageplus hdf5
     )
     DEPLOY_PKGS=(
       sfml mesa freetype2 glew fontconfig cairomm pangomm
-      boost freeglut glfw fftw tinyxml2 glm freeimageplus
+      boost freeglut glfw fftw tinyxml2 glm freeimageplus hdf5
     )
     ;;
 
@@ -115,11 +117,11 @@ case "$PM" in
       build-base cmake git
       sfml-dev mesa-dev freetype-dev glew-dev fontconfig-dev
       cairomm-dev pangomm-dev
-      boost-dev freeglut-dev glfw-dev fftw-dev tinyxml2-dev glm-dev freeimageplus-dev
+      boost-dev freeglut-dev glfw-dev fftw-dev tinyxml2-dev glm-dev freeimageplus-dev hdf5-dev
     )
     DEPLOY_PKGS=(
       sfml mesa freetype glew fontconfig
-      cairomm pangomm boost freeglut glfw fftw tinyxml2 glm freeimageplus
+      cairomm pangomm boost freeglut glfw fftw tinyxml2 glm freeimageplus hdf5
     )
     ;;
 
@@ -131,13 +133,13 @@ case "$PM" in
       cairomm-devel pangomm-devel
       libboost_locale-devel libboost_random-devel libboost_timer-devel
       freeglut-devel libglfw3-devel
-      fftw3-devel tinyxml2-devel glm-devel libfreeimageplus-devel
+      fftw3-devel tinyxml2-devel glm-devel libfreeimageplus-devel hdf5-devel
     )
     DEPLOY_PKGS=(
       libsfml6 libGL1 libEGL1 freetype2 libGLEW2
       fontconfig1 cairomm pangomm
       libboost_locale1_74_0 libboost_random1_74_0 libboost_timer1_74_0
-      freeglut3 libglfw3 fftw3 libtinyxml2-6 glm libfreeimageplus3
+      freeglut3 libglfw3 fftw3 libtinyxml2-6 glm libfreeimageplus3 hdf5
     )
     ;;
 esac

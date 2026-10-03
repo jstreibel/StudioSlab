@@ -21,6 +21,10 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		Controller/Payload.h
 		Controller/Message.cpp
 		Controller/Message.h
+		${CMAKE_SOURCE_DIR}/Slab/Core/Artifacts/V2/ArtifactTypesV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Core/Artifacts/V2/ArtifactTypesV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Core/Artifacts/V2/ArtifactStoreV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Core/Artifacts/V2/ArtifactStoreV2.h
         Tools/UniqueObject.cpp
         Tools/UniqueObject.h
 		Backend/Backend.cpp
@@ -30,6 +34,8 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		Controller/Parameter/ParameterBuilder.cpp
 		Controller/Parameter/ParameterBuilder.h
 		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/CompositionTypesV2.h
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/Modules/ArtifactModuleV2.cpp
+		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/Modules/ArtifactModuleV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/LegacyRuntimeBootstrapV2.cpp
 		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/LegacyRuntimeBootstrapV2.h
 		${CMAKE_SOURCE_DIR}/Slab/Core/Composition/V2/Modules/LegacyBridgeModuleV2.cpp
@@ -46,6 +52,16 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		${CMAKE_SOURCE_DIR}/Slab/Core/Platform/V2/LegacyPlatformHostV2.h
 
 )
+
+if (STUDIOSLAB_HDF5_SUPPORT)
+	target_sources(${STUDIOS_LIB_BASE_NAME} PRIVATE
+			${CMAKE_SOURCE_DIR}/Slab/Core/Artifacts/V2/HDF5ArtifactStoreV2.cpp
+			${CMAKE_SOURCE_DIR}/Slab/Core/Artifacts/V2/HDF5ArtifactStoreV2.h)
+	target_compile_definitions(${STUDIOS_LIB_BASE_NAME} PRIVATE STUDIOSLAB_HDF5_SUPPORT=1)
+	target_link_libraries(${STUDIOS_LIB_BASE_NAME} HDF5::HDF5)
+else()
+	target_compile_definitions(${STUDIOS_LIB_BASE_NAME} PRIVATE STUDIOSLAB_HDF5_SUPPORT=0)
+endif()
 
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}
 		Slab-Utils

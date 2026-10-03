@@ -583,6 +583,8 @@ Exit criteria:
 
 ### Phase 8: Artifact And Provenance Platform
 
+First implemented slice (`2026-09-28`): optional HDF5 V1 persistence for one completed ODE run per file, runtime-provenance seed, typed artifact-store/module boundary, and explicit LabV2 import/export. This establishes the file/store boundary; catalog and schema-registry work remains.
+
 Goals:
 - promote early ODE time-series capture into a shared artifact platform
 - make runs, datasets, snapshots, and provenance discoverable

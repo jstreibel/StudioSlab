@@ -3,6 +3,7 @@
 #include <chrono>
 #include <thread>
 
+#include "Core/Model/V2/ModelArtifactV2.h"
 #include "Core/Model/V2/ModelAuthoringV2.h"
 #include "Core/Model/V2/ModelNumericsDescentV2.h"
 #include "Core/Model/V2/ModelRealizationV2.h"
@@ -1453,6 +1454,24 @@ TEST_CASE("Model V2 ODE runtime bridge builds explicit oscillator runtime", "[Mo
 
         auto task = Slab::New<Slab::Math::Numerics::V2::FNumericTaskV2>(artifactRuntime.Recipe, false);
         REQUIRE(RunTaskAndWait(*task) == Slab::Core::TaskSuccess);
+        REQUIRE(task->GetStartedUtcUnixNanoseconds().has_value());
+        REQUIRE(task->GetFinishedUtcUnixNanoseconds().has_value());
+        CHECK(*task->GetFinishedUtcUnixNanoseconds() >= *task->GetStartedUtcUnixNanoseconds());
+        CHECK(artifactRuntime.RuntimeConfig.TimeStep == Catch::Approx(artifactConfig.TimeStep));
+        CHECK(artifactRuntime.RuntimeConfig.MaxSteps == artifactConfig.MaxSteps);
+
+        const auto materialized = MaterializeODEArtifactRunV2(
+            "run.test",
+            model,
+            artifactRuntime,
+            task,
+            1,
+            *task->GetFinishedUtcUnixNanoseconds() + 1);
+        REQUIRE(materialized.IsSuccess());
+        CHECK(materialized.Value().Status == Slab::Core::Artifacts::V2::EArtifactRunStatusV2::Success);
+        CHECK(materialized.Value().Provenance.ScalarBindings.size() == 4);
+        CHECK(materialized.Value().Provenance.InitialState.size() == 2);
+        CHECK(materialized.Value().Artifacts.size() == 3);
 
         CHECK(xArtifact->Listener->GetSampleCount() == 5);
         CHECK(pArtifact->Listener->GetSampleCount() == 5);

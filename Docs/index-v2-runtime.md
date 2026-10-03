@@ -39,10 +39,13 @@ Implemented already:
 - first LabV2 launch path from oscillator-family ODE-ready models into the runtime bridge (headless task path)
 - listener-backed state/observable time-series artifact capture from the model-driven ODE runtime recipe
 - first LabV2 `Artifacts` workspace viewer for launched harmonic-oscillator runs
+- optional, default-enabled HDF5 persistence behind `IArtifactStoreV2` / `FArtifactModuleV2`
+- explicit completed-run export and read-only import in the LabV2 Artifacts workspace
+- one-run-per-file open schema documented in `Docs/artifact-hdf5-schema-v1.md`
 
 Still missing:
 - model-owned numeric scalar binding authoring/configuration
-- artifact manifest/export/provenance for model-driven ODE runs
+- artifact catalog/discovery and broader provenance beyond the current ODE runtime seed
 - shared `SessionLiveViewV2` / monitor-topic path for the model-driven ODE runtime bridge
 
 Use `Docs/handoff-ode-realization-rz03.md` for the post-`RZ-03` follow-up.
@@ -83,6 +86,11 @@ Quick start for new monitored slices:
   - `Slab/Core/Model/V2/ModelRealizationRuntimeV2.h`
   - `Slab/Core/Model/V2/ModelNumericsDescentV2.h`
   - `Slab/Core/Model/V2/ModelSeedsV2.h`
+  - `Slab/Core/Model/V2/ModelArtifactV2.h`
+- Artifact persistence:
+  - `Slab/Core/Artifacts/V2/ArtifactStoreV2.h`
+  - `Slab/Core/Artifacts/V2/HDF5ArtifactStoreV2.h`
+  - `Docs/artifact-hdf5-schema-v1.md`
 - Live topics/hubs:
   - `Slab/Math/Data/V2/LiveDataHubV2.h`
   - `Slab/Math/Data/V2/LiveControlHubV2.h`

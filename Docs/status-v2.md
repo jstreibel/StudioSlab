@@ -2,11 +2,23 @@
 
 ## Snapshot Metadata
 
-- Snapshot date: `2026-09-22`
-- Last implementation update: `2026-09-22` (legacy perturbed-oscillon initial condition in the shared KGRtoR V2 slice)
+- Snapshot date: `2026-09-28`
+- Last implementation update: `2026-09-28` (portable HDF5 V1 artifact persistence for completed Model V2 ODE runs)
 - Last architecture-doc update: `2026-04-26` (V2 architecture charter + platform roadmap added)
 - Progress baseline: `Docs/v2-feature-backlog.md` progress notes dated `2026-03-14`
-- Build-target sanity check date: `2026-09-22` (`testsuite`, `Studios`, and `StudioSlab` build in `cmake-build-debug-no-gpu`; all 150 CTest cases pass)
+- Build-target sanity check date: `2026-09-28` (`testsuite` and `StudioSlab` build with HDF5 enabled and disabled; all 155 enabled and 153 disabled CTest cases pass)
+
+## Recent Updates (`2026-09-28`, portable HDF5 artifact run slice)
+
+- Added an optional, default-enabled HDF5 artifact backend behind `IArtifactStoreV2` and `FArtifactModuleV2`; builds can opt out with `-DSTUDIOSLAB_HDF5_SUPPORT=OFF`.
+- The first persisted unit is one completed Model V2 ODE run per file, with terminal status, UTC lifecycle timestamps, runtime provenance seed, scalar bindings, initial state, and state/observable scalar series.
+- The open V1 schema uses ordinary groups, attributes, and column datasets for direct scientific-tool access; see `Docs/artifact-hdf5-schema-v1.md`.
+- LabV2 installs the artifact module through its runtime context. The Artifacts workspace can explicitly save a completed live run or load a file as a read-only viewer entry. Existing files are not overwritten.
+- This remains a deliberately narrow first slice: no artifact catalog/database, executable-model serialization, autosave, or non-ODE artifact families.
+- Validation:
+  - HDF5-enabled `testsuite` and `StudioSlab` builds pass; `ctest` passes 155/155 cases.
+  - HDF5-disabled `testsuite` and `StudioSlab` builds pass; `ctest` passes 153/153 cases.
+  - An independent `h5dump` inspection confirms the documented groups, attributes, little-endian column types, and chunked/shuffled/deflated storage for long series.
 
 ## Recent Updates (`2026-09-22`, KGRtoR perturbed-oscillon initial condition)
 
@@ -57,7 +69,7 @@
 - The Plot2D semantic graph diagnostic-HUD regression test now uses an explicit diagnostic projection fixture instead of relying on current model-inference warnings.
 - This is intentionally not the full module platform:
   - task submission remains Lab/legacy-task-manager backed
-  - artifact persistence/provenance is still future work
+  - artifact persistence/provenance was still future work at this 2026-04-26 snapshot; the first HDF5 slice landed on 2026-09-28
   - monitor/LiveData presentation is still not wired into the model-driven ODE launch path
 - Validation:
   - `cmake --build cmake-build-debug --target testsuite -j8`
@@ -639,7 +651,7 @@
 - current recommendation:
   - keep the current model-driven launch and artifact path narrow and stable
   - decide whether numeric bindings should remain lab-local or gain a model-owned authoring story
-  - add artifact manifest/export/provenance before widening the path
+  - keep the portable V1 ODE run schema stable while later slices add catalog/discovery above the store boundary
   - add a shared monitor/live-data topic presentation only if the current listener-backed artifact view is no longer enough for a concrete ODE-runtime visualization target
   - improve the Hamiltonian/oscillator solver story before generalizing from the current RK4 path
   - keep PDE/field realization out of follow-up work
@@ -655,7 +667,7 @@
 - exact notation-span navigation from diagnostics/selection is not implemented
 - dedicated initial-condition authoring/persistence flow is not implemented
 - model-owned numeric scalar binding/parameter authoring for the runtime bridge is not implemented
-- artifact manifest/export/provenance for model-driven ODE runtime runs is not implemented
+- artifact catalog/discovery and provenance beyond the portable ODE runtime seed are not implemented
 - shared monitor/live-data topic visualization for model-driven ODE runtime runs is not implemented
 - ontology graph editing / JSON write-back is not implemented
 - multi-study ontology comparison is not implemented

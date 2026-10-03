@@ -4,6 +4,7 @@ option( STUDIOSLAB_CUDA_SUPPORT "Enable CUDA support in StudioSlab libraries" ON
 option( STUDIOSLAB_OMP_SUPPORT "Enable OpenMP support in StudioSlab libraries" OFF )
 option( STUDIOSLAB_SFML2_SUPPORT "Enable SFML 2 support in StudioSlab" ON )
 option( STUDIOSLAB_VTK_SUPPORT "Enable VTK support in StudioSlab libraries" OFF )
+option( STUDIOSLAB_HDF5_SUPPORT "Enable HDF5 artifact persistence in StudioSlab" ON )
 option( STUDIOSLAB_USE_SINGLE_PRECISION "Use single precision instead of doubles." OFF)
 option( STUDIOSLAB_FAST_COMPILE "Disable O3 etc." OFF)
 option( STUDIOSLAB_IMGUI_LAYOUT_USE_FORK "DEPRECATED: use legacy fork-native ImGui stack layout API when available." OFF )
@@ -44,6 +45,13 @@ set ( OpenGL_GL_PREFERENCE GLVND )
 find_package( GLEW )
 find_package( GLUT )
 find_package( OpenGL )
+
+if ( STUDIOSLAB_HDF5_SUPPORT )
+    find_package( HDF5 1.10 REQUIRED COMPONENTS CXX )
+    message(STATUS "StudioSlab HDF5 artifact persistence is ENABLED (${HDF5_VERSION}).")
+else ()
+    message(STATUS "StudioSlab HDF5 artifact persistence is DISABLED.")
+endif ()
 
 set( CMAKE_PREFIX_PATH /usr/share/cmake/Modules)
 

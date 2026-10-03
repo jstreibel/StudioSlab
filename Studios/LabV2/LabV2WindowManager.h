@@ -1,6 +1,7 @@
 #ifndef STUDIOSLAB_LAB_V2_WINDOW_MANAGER_H
 #define STUDIOSLAB_LAB_V2_WINDOW_MANAGER_H
 
+#include "Core/Artifacts/V2/ArtifactStoreV2.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 #include "Graphics/Window/WindowManager.h"
 
@@ -25,7 +26,6 @@
 
 #include <functional>
 #include <array>
-#include <chrono>
 #include <deque>
 #include <filesystem>
 #include <map>
@@ -63,7 +63,7 @@ struct FLabV2SubstrateGraphCanvasInteraction {
 
 class FLabV2WindowManager final : public Slab::Graphics::FWindowManager {
 public:
-    explicit FLabV2WindowManager();
+    explicit FLabV2WindowManager(Slab::Core::Artifacts::V2::IArtifactStoreV2_ptr artifactStore = nullptr);
     ~FLabV2WindowManager() override;
 
     void AddSlabWindow(const Slab::TPointer<Slab::Graphics::FSlabWindow> &) override;
@@ -120,6 +120,7 @@ private:
     Slab::TPointer<Slab::Graphics::FImGuiContext> ImGuiContext;
     Slab::TPointer<Slab::Math::LiveData::V2::FLiveDataHubV2> LiveDataHub;
     Slab::TPointer<Slab::Math::LiveControl::V2::FLiveControlHubV2> LiveControlHub;
+    Slab::Core::Artifacts::V2::IArtifactStoreV2_ptr ArtifactStore;
     Slab::TPointer<class FSimulationManagerV2> SimulationManager;
     std::unique_ptr<FLabV2GraphPlaygroundController> GraphPlaygroundController;
     Slab::Core::Reflection::V2::FLegacyReflectionCatalogAdapterV2 ReflectionAdapter;
@@ -239,12 +240,16 @@ private:
         Slab::Str TaskName;
         Slab::Math::Numerics::V2::FNumericTaskV2_ptr Task = nullptr;
         Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 Runtime;
-        std::chrono::steady_clock::time_point CreatedAt = std::chrono::steady_clock::now();
+        Slab::TOptional<Slab::Core::Artifacts::V2::FArtifactRunV2> ImportedRecord;
+        Slab::Str SourcePath;
+        std::int64_t CreatedUtcUnixNanoseconds = 0;
     };
     Slab::Vector<FModelArtifactRunState> ModelArtifactRuns;
     std::size_t ModelArtifactRunCounter = 0;
     int SelectedArtifactRunIndex = 0;
     Slab::Str SelectedArtifactDefinitionId;
+    Slab::Str ArtifactPersistenceFilePath = "Build/artifacts/run.h5";
+    Slab::Str ArtifactPersistenceStatus;
 
     struct FModelWorkspaceViewState {
         bool bAvailable = false;
@@ -453,6 +458,8 @@ private:
     auto DrawSchemesInspectorPanel() -> void;
     auto DrawSchemesBlueprintGraphPanel() -> void;
     auto DrawArtifactsPanel() -> void;
+    auto SaveSelectedArtifactRunToFile() -> bool;
+    auto LoadArtifactRunFromFile() -> bool;
     [[nodiscard]] auto PrepareModelWorkspaceViewState() -> FModelWorkspaceViewState;
     auto InvalidateModelWorkspaceViewState() -> void;
     auto PrefillModelNewDefinitionComposer(const Slab::Core::Model::V2::FModelV2 &model,

@@ -3,6 +3,7 @@ add_executable( StudioSlab
         StudioSlabV2App.cpp
         StudioSlabV2App.h
         LabV2WindowManager.cpp
+        LabV2WindowManagerArtifacts.cpp
         LabV2WindowManagerSchemesPanels.cpp
         LabV2WindowManagerModelPanels.cpp
         LabV2WindowManagerOntologyPanels.cpp

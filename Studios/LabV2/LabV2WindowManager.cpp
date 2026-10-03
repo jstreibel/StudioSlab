@@ -950,8 +950,9 @@ auto FLabV2WindowManager::BuildDefaultWorkspaceDockLayout(const EWorkspaceTab wo
     return layout;
 }
 
-FLabV2WindowManager::FLabV2WindowManager()
-: SidePaneWidth(FStudioConfigV2::SidePaneWidth) {
+FLabV2WindowManager::FLabV2WindowManager(Slab::Core::Artifacts::V2::IArtifactStoreV2_ptr artifactStore)
+: ArtifactStore(std::move(artifactStore))
+, SidePaneWidth(FStudioConfigV2::SidePaneWidth) {
     ModelDemoCatalog = Slab::Core::Model::V2::BuildDemoModelsV2();
 
     SchemesBlueprintDocument.Mode = Slab::Core::Reflection::V2::EGraphModeV2::SchemesBlueprint;
@@ -2358,16 +2359,21 @@ auto FLabV2WindowManager::RecordModelArtifactRun(
     const Slab::Core::Model::V2::FODEExplicitFirstOrderRuntimeBuildResultV2 &runtime,
     const Slab::Math::Numerics::V2::FNumericTaskV2_ptr &task) -> void {
     FModelArtifactRunState run;
-    run.RunId = "artifact.run." + Slab::ToStr(++ModelArtifactRunCounter);
+    run.CreatedUtcUnixNanoseconds = std::chrono::duration_cast<std::chrono::nanoseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count();
+    run.RunId = "artifact.run." + Slab::ToStr(run.CreatedUtcUnixNanoseconds) + "." +
+        Slab::ToStr(++ModelArtifactRunCounter);
     run.ModelId = model.ModelId;
     run.ModelName = model.Name;
     run.TaskName = task != nullptr ? task->GetName() : ("Model ODE - " + model.Name);
     run.Task = task;
     run.Runtime = runtime;
-    run.CreatedAt = std::chrono::steady_clock::now();
 
     ModelArtifactRuns.push_back(std::move(run));
     SelectedArtifactRunIndex = static_cast<int>(ModelArtifactRuns.size()) - 1;
+    ArtifactPersistenceFilePath = "Build/artifacts/" +
+        ModelArtifactRuns.back().RunId + ".h5";
+    ArtifactPersistenceStatus.clear();
 
     if (!runtime.ObservableArtifacts.empty()) {
         SelectedArtifactDefinitionId = runtime.ObservableArtifacts.front().DefinitionId;
