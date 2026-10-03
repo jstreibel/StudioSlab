@@ -15,6 +15,9 @@ namespace Slab::Math {
         virtual void _dump(bool integrationIsFinished) = 0;
 
         void HandleOutput(const FOutputPacket &outInfo) final;
+        void ClearBufferedHistory();
+
+        size_t MaxBufferedBytes;
 
     protected:
         FSpaceFilterBase &spaceFilter;
@@ -25,7 +28,8 @@ namespace Slab::Math {
         size_t countTotal;
 
     public:
-        FHistoryKeeper(size_t nStepsInterval, FSpaceFilterBase *filter);
+        FHistoryKeeper(size_t nStepsInterval, FSpaceFilterBase *filter,
+                       size_t maxBufferedBytes = 4ULL * 1024ULL * 1024ULL * 1024ULL);
 
         ~FHistoryKeeper() override;
 

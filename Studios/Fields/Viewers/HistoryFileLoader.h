@@ -8,21 +8,44 @@
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Utils/PythonUtils.h"
 
+#include <fstream>
+
 namespace Modes {
 
-    using namespace Slab;
+using namespace Slab;
 
-    class FHistoryFileLoader {
-        enum EDataType { fp32, fp64 };
+struct FLoadedHistory {
+    TPointer<Math::R2toR::NumericFunction_CPU> Phi;
+    TPointer<Math::R2toR::NumericFunction_CPU> DPhiDt;
+    FRealVector Timestamps;
+    PythonUtils::PyDict MetaData;
 
-        static auto ReadPyDict(std::ifstream& file) -> PythonUtils::PyDict;
-        static auto ReadData(std::ifstream &filePath, PythonUtils::PyDict pyDict) -> RealArray ;
-    public:
-        static auto Load(const Str &filename) -> TPointer<Math::R2toR::NumericFunction_CPU>;
+    [[nodiscard]] auto HasStoredTimeDerivative() const -> bool {
+        return DPhiDt != nullptr;
+    }
+};
+
+class FHistoryFileLoader {
+    enum EDataType { fp32, fp64 };
+
+    struct FDecodedData {
+        FRealVector Timestamps;
+        FRealVector Phi;
+        FRealVector DPhiDt;
+        long N = 0;
+        long M = 0;
+        long Channels = 0;
     };
 
-    using HistoryFileLoader [[deprecated("Use FHistoryFileLoader")]] = FHistoryFileLoader;
+    static auto ReadPyDict(std::ifstream& file) -> PythonUtils::PyDict;
+    static auto ReadData(std::ifstream& file, const PythonUtils::PyDict& pyDict) -> FDecodedData;
 
-} // Modes
+  public:
+    static auto Load(const Str& filename) -> FLoadedHistory;
+};
 
-#endif //STUDIOSLAB_HISTORYFILELOADER_H
+using HistoryFileLoader [[deprecated("Use FHistoryFileLoader")]] = FHistoryFileLoader;
+
+} // namespace Modes
+
+#endif // STUDIOSLAB_HISTORYFILELOADER_H

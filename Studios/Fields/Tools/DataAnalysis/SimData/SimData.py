@@ -27,6 +27,10 @@ class SimData(object):
     def dPhidt(self):
         return self._dphidt
 
+    @property
+    def TimeStamps(self):
+        return self._timeStamps
+
 
     def getItems(self, keyIterable):
         return [self._metaData[a] for a in keyIterable]
@@ -35,7 +39,7 @@ class SimData(object):
         return key in self._metaData
 
     def __getitem__(self, item):
-        if item == 'phi': return self.Data
+        if item == 'phi': return self.Phi
 
         if item == 'T':
             print("Trying to access SimData metadata key 'T'. Assuming it is time. This is deprecated and in the future"
@@ -55,8 +59,17 @@ class SimData(object):
         metaData, headerSizeInBytes = self._testFileAndRetrieveMetadata(filename)
 
         outresX = metaData['outresX']
-        dataSize = 4 # bytes
+        dataType = metaData['data_type']
+        if dataType == 'fp32':
+            numpyDataType, dataSize = np.float32, 4
+        elif dataType == 'fp64':
+            numpyDataType, dataSize = np.float64, 8
+        else:
+            raise NotImplementedError("Unsupported OSCB data type " + str(dataType))
+
         channels = metaData['data_channels']
+        if channels not in (1, 2):
+            raise ValueError("Unsupported OSCB channel count " + str(channels))
         entriesPerInstant = outresX*channels
 
         entriesPerInstant += 1*metaData['lines_contain_timestamp']
@@ -69,6 +82,7 @@ class SimData(object):
         self._metaData = metaData
         self._totalChannels = channels
         self._totalBytesPerInstant = totalBytesPerInstant
+        self._numpyDataType = numpyDataType
 
         self._buildFieldData()
 
@@ -91,11 +105,11 @@ class SimData(object):
             raise Exception("Supported .oscb file by current SimData class is version 4 only. "
                             "For earlier versions using .osc, use class SimData_old.")
 
-        if metaData['data_type'] != 'fp32':
-            raise NotImplementedError
-
         if not metaData['lines_contain_timestamp']:
             raise Exception("Instants should contain timestamps")
+
+        if 'xCenter' not in metaData and 'xcenter' in metaData:
+            metaData['xCenter'] = metaData['xcenter']
 
         headerSizeInBytes = len(headerData)
 
@@ -120,7 +134,7 @@ class SimData(object):
 
         entriesPerInstant = self._entriesPerInstant
 
-        numericData = np.frombuffer(buffer, np.float32)
+        numericData = np.frombuffer(buffer, self._numpyDataType)
         numericData.shape = (outresT, entriesPerInstant)
 
         timeStamps = numericData[:,0]
@@ -134,7 +148,13 @@ class SimData(object):
         outresX = self._metaData['outresX']
 
         self._phi = self._fieldData[:, :outresX]
-        self._dphidt = self._fieldData[:,outresX:outresX*2]
+        if self._totalChannels == 2:
+            self._dphidt = self._fieldData[:, outresX:outresX*2]
+        elif outresT > 1:
+            effectiveDt = self._metaData['t'] / float(outresT)
+            self._dphidt = np.gradient(self._phi, effectiveDt, axis=0)
+        else:
+            self._dphidt = np.zeros_like(self._phi)
 
         return numericData
 

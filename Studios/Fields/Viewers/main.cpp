@@ -57,8 +57,10 @@ public:
     }
 
     auto run() -> int override {
-        auto function = Modes::FHistoryFileLoader::Load(*filename);
-        auto ddt_function = DynamicPointerCast<Slab::Math::R2toR::FNumericFunction>(function->diff(1));
+        auto history = Modes::FHistoryFileLoader::Load(*filename);
+        auto function = history.Phi;
+        auto ddt_function = history.DPhiDt ? DynamicPointerCast<Slab::Math::R2toR::FNumericFunction>(history.DPhiDt)
+                                           : DynamicPointerCast<Slab::Math::R2toR::FNumericFunction>(function->diff(1));
 
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
         guiBackend->GetMainSystemWindow()->SetSystemWindowTitle(*filename);

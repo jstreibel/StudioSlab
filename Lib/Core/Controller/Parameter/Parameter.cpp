@@ -34,7 +34,17 @@ namespace Slab::Core {
     }
 
     auto FParameter::GetCommandLineArgumentName(bool LongNameIfPresent) const -> Str {
-        if (LongNameIfPresent) return SanitizeToValidLongOption(Description.Name, Description.Formatting);
+        if (LongNameIfPresent) {
+            const auto RubricStr = Description.Rubric != '\0' ? Str(1, Description.Rubric) : Str();
+
+            // A one-character parameter such as N or L is registered in cxxopts
+            // under that exact key. Lower-casing it here makes SetupFromCommandLine
+            // look up a different, non-existent option ("n" or "l").
+            if (!RubricStr.empty() && RubricStr == Description.Name)
+                return RubricStr;
+
+            return SanitizeToValidLongOption(Description.Name, Description.Formatting);
+        }
 
         return Description.Rubric != '\0' ? Str(1, Description.Rubric) : SanitizeToValidLongOption(Description.Name, Description.Formatting);
     }

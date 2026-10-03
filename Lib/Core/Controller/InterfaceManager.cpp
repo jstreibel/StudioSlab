@@ -7,6 +7,38 @@
 #include "Utils/Utils.h"
 #include "Core/Tools/Log.h"
 
+namespace {
+    auto EscapePythonString(const Slab::Str &value) -> Slab::Str {
+        Slab::Str escaped;
+        escaped.reserve(value.size());
+
+        for (const auto character: value) {
+            switch (character) {
+                case '\\':
+                    escaped += "\\\\";
+                    break;
+                case '"':
+                    escaped += "\\\"";
+                    break;
+                case '\n':
+                    escaped += "\\n";
+                    break;
+                case '\r':
+                    escaped += "\\r";
+                    break;
+                case '\t':
+                    escaped += "\\t";
+                    break;
+                default:
+                    escaped += character;
+                    break;
+            }
+        }
+
+        return escaped;
+    }
+}
+
 
 namespace Slab::Core {
 
@@ -59,10 +91,11 @@ namespace Slab::Core {
 
         auto comp = [](const TPointer<FInterface> &a, const TPointer<FInterface> &b) { return *a < *b; };
         std::sort(Interfaces.begin(), Interfaces.end(), comp);
+        auto interfaces = Interfaces;
 
         auto &log = FLog::Debug();
         log << "[priority] Interface";
-        for (const auto &interface: Interfaces) {
+        for (const auto &interface: interfaces) {
 
             log << "\n\t\t\t\t\t  [" << interface->Priority << "] " << interface->GetName();
 
@@ -71,14 +104,17 @@ namespace Slab::Core {
         }
         log << FLog::Flush;
 
-        for (const auto &interface: Interfaces) {
+        for (const auto &interface: interfaces) {
             // TODO passar (somehow) para as interfaces somente as variaveis que importam, e não todas o tempo todo.
             // Ocorre que, passando todas sempre, certas interfaces terao acesso a informacao que nao lhes interessa.
 
             interface->SetupFromCommandLine(vm);
         }
 
-        for (const auto &Interface: Interfaces) {
+        // All-interface callbacks may start backends and register additional
+        // interfaces. Iterate the same stable batch used above so those
+        // registrations cannot invalidate this loop.
+        for (const auto &Interface: interfaces) {
             for (auto Listener: Interface->Listeners)
                 Listener->SendMessage(FPayload::AllCommandLineParsingFinished);
                 // listener->NotifyAllCLArgsSetupFinished();
@@ -92,8 +128,17 @@ namespace Slab::Core {
         StringStream ss;
         for (const auto &interface: Interfaces) {
             auto parameters = interface->GetParameters();
-            for (const auto &parameter: parameters)
-                ss << "\"" << parameter->GetCommandLineArgumentName(true) << "\": " << parameter->ValueToString() << ", ";
+            for (const auto &parameter: parameters) {
+                ss << "\"" << parameter->GetCommandLineArgumentName(true) << "\": ";
+
+                const auto type = parameter->GetType();
+                if (type == EParameterType::ParameterType_String || type == EParameterType::ParameterType_MultiString)
+                    ss << "\"" << EscapePythonString(parameter->ValueToString()) << "\"";
+                else
+                    ss << parameter->ValueToString();
+
+                ss << ", ";
+            }
         }
 
         return ss.str();

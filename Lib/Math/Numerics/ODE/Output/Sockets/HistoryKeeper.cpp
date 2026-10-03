@@ -10,27 +10,25 @@ namespace Slab::Math {
 
     const long long unsigned int ONE_GB = 1073741824;
 
-    FHistoryKeeper::FHistoryKeeper(size_t recordStepsInterval, FSpaceFilterBase *filter)
-            : FOutputChannel("History output", static_cast<int>(recordStepsInterval)), spaceFilter(*filter),
-              count(0), countTotal(0) {
+    FHistoryKeeper::FHistoryKeeper(size_t recordStepsInterval, FSpaceFilterBase *filter, size_t maxBufferedBytes)
+            : FOutputChannel("History output", static_cast<int>(recordStepsInterval)),
+              MaxBufferedBytes(maxBufferedBytes), spaceFilter(*filter), count(0), countTotal(0) {
         // TODO: assert(ModelBuilder::getInstance().getParams().getN()>=outputResolutionX);
     }
 
     FHistoryKeeper::~FHistoryKeeper() {
+        ClearBufferedHistory();
         delete &spaceFilter;
     }
 
     auto FHistoryKeeper::getUtilMemLoadBytes() const -> long long unsigned int {
-        // TODO fazer esse calculo baseado no tamanho de cada instante de tempo do campo, e contemplando o modelo de fato
-        //  em que estamos trabalhando (1d, 2d, escalar, SU(2), etc.).
-        //  Em outras palavras: o calculo abaixo esta errado.
+        if (spaceDataHistory.empty()) return 0;
 
-        if(spaceDataHistory.empty()) return 0;
+        const auto &reference = spaceDataHistory.front();
+        const auto phiSites = reference.first != nullptr ? reference.first->getTotalDiscreteSites() : 0;
+        const auto dPhiDtSites = reference.second != nullptr ? reference.second->getTotalDiscreteSites() : 0;
 
-        IN reference = spaceDataHistory.front().first;
-        fix N = reference->getTotalDiscreteSites();
-
-        return count * N * sizeof(DevFloat);
+        return count * ((phiSites + dPhiDtSites) * sizeof(DevFloat) + sizeof(FRealVector::value_type));
     }
 
     auto FHistoryKeeper::ShouldOutput(long unsigned timestep) -> bool {
@@ -42,12 +40,14 @@ namespace Slab::Math {
     }
 
     void FHistoryKeeper::HandleOutput(const FOutputPacket &packet) {
-        if (getUtilMemLoadBytes() > 4 * ONE_GB) {
-            Core::FLog::Critical() << "Dumping " << (getUtilMemLoadBytes() * 4e-6) << "GB of data." << Core::FLog::Flush;
+        if (count > 0 && getUtilMemLoadBytes() >= MaxBufferedBytes) {
+            Core::FLog::Critical() << "Dumping "
+                                   << static_cast<DevFloat>(getUtilMemLoadBytes()) / static_cast<DevFloat>(ONE_GB)
+                                   << "GB of data." << Core::FLog::Flush;
             this->_dump(false);
             countTotal += count;
             count = 0;
-            spaceDataHistory.clear(); // TODO compute total liberated memory from this history
+            ClearBufferedHistory();
             Core::FLog::Success() << "Memory dump successful." << Core::FLog::Flush;
         }
 
@@ -59,7 +59,20 @@ namespace Slab::Math {
 
     auto FHistoryKeeper::NotifyIntegrationHasFinished(const FOutputPacket &theVeryLastOutputInformation) -> bool {
         _dump(true);
+        countTotal += count;
+        count = 0;
+        ClearBufferedHistory();
         return true;
+    }
+
+    void FHistoryKeeper::ClearBufferedHistory() {
+        for (const auto &[phi, dPhiDt]: spaceDataHistory) {
+            delete phi;
+            if (dPhiDt != phi) delete dPhiDt;
+        }
+
+        spaceDataHistory.clear();
+        stepHistory.clear();
     }
 
     auto FHistoryKeeper::renderMetaDataAsPythonDictionary() const -> Str {

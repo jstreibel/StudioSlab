@@ -32,6 +32,7 @@ Small entrypoint for AI agents and contributors. Route quickly to the smallest r
 - LabV2 UI/panel/launcher work: `Docs/index-labv2.md`
 - Planning, priority, migration state: `Docs/index-roadmap.md`
 - Build, tests, and smoke validation: `Docs/index-testing.md`
+- Legacy 1+1 perturbed-oscillon OSCB run/read/analyze workflow: `Docs/legacy-oscb-1p1-workflow.md`
 
 ## Status Source Of Truth
 

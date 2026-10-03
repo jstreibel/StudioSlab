@@ -3,6 +3,9 @@ find_package(Catch2 3 REQUIRED)          # from v3, installs a CMake package
 
 add_executable(testsuite
         test.cpp
+        test_legacy_history.cpp
+        test_legacy_oscb.cpp
+        ../../Studios/Fields/Viewers/HistoryFileLoader.cpp
         test_composition_v2.cpp
         test_artifact_v2.cpp
         test_result.cpp

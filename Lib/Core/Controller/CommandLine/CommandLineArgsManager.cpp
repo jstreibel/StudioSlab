@@ -29,12 +29,12 @@ namespace Slab::Core {
 
         let result = allOptions.parse(argc, argv);
 
-        FInterfaceManager::GetInstance().FeedInterfaces(result);
-
         if (result.count("help")) {
             std::cout << allOptions.help();
             exit(0);
         }
+
+        FInterfaceManager::GetInstance().FeedInterfaces(result);
 
         FLog::Info() << "FCLArgsManager finished parsing command line options." << FLog::Flush;
     }

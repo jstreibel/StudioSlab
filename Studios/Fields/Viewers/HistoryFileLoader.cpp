@@ -4,130 +4,212 @@
 
 #include "HistoryFileLoader.h"
 
-#include <fstream>
-#include <iomanip>
+#include <cctype>
 #include <filesystem>
+#include <limits>
 
+namespace {
+using namespace Slab;
+
+auto HasOnlyDictionarySuffix(const char* remainder) -> bool {
+    while (*remainder != '\0' && std::isspace(static_cast<unsigned char>(*remainder)))
+        ++remainder;
+    if (*remainder == '}') {
+        ++remainder;
+        while (*remainder != '\0' && std::isspace(static_cast<unsigned char>(*remainder)))
+            ++remainder;
+    }
+    return *remainder == '\0';
+}
+
+auto RequireValue(const PythonUtils::PyDict& dictionary, const Str& key) -> const PythonUtils::Value& {
+    const auto value = dictionary.find(key);
+    if (value == dictionary.end())
+        throw Exception("OSCB header is missing required key '" + key + "'.");
+    return value->second;
+}
+
+auto ReadLong(const PythonUtils::PyDict& dictionary, const Str& key) -> long {
+    const auto& value = RequireValue(dictionary, key).first;
+    char* end = nullptr;
+    const auto parsed = std::strtol(value.c_str(), &end, 10);
+    if (end == value.c_str() || !HasOnlyDictionarySuffix(end))
+        throw Exception("OSCB header key '" + key + "' is not an integer.");
+    return parsed;
+}
+
+auto ReadReal(const PythonUtils::PyDict& dictionary, const Str& key) -> DevFloat {
+    const auto& value = RequireValue(dictionary, key).first;
+    char* end = nullptr;
+    const auto parsed = std::strtod(value.c_str(), &end);
+    if (end == value.c_str() || !HasOnlyDictionarySuffix(end))
+        throw Exception("OSCB header key '" + key + "' is not numeric.");
+    return parsed;
+}
+
+auto ReadOptionalReal(const PythonUtils::PyDict& dictionary, const Str& preferredKey, const Str& compatibilityKey,
+                      DevFloat fallback) -> DevFloat {
+    if (dictionary.contains(preferredKey))
+        return ReadReal(dictionary, preferredKey);
+    if (dictionary.contains(compatibilityKey))
+        return ReadReal(dictionary, compatibilityKey);
+    return fallback;
+}
+
+auto ReadBool(const PythonUtils::PyDict& dictionary, const Str& key) -> bool {
+    const auto& value = RequireValue(dictionary, key).first;
+    if (value == "True")
+        return true;
+    if (value == "False")
+        return false;
+    throw Exception("OSCB header key '" + key + "' is not a boolean.");
+}
+
+auto CheckedProduct(size_t lhs, size_t rhs, const Str& description) -> size_t {
+    if (lhs != 0 && rhs > std::numeric_limits<size_t>::max() / lhs)
+        throw Exception("OSCB " + description + " exceeds addressable size.");
+    return lhs * rhs;
+}
+} // namespace
 
 namespace Modes {
-    using namespace Slab;
+using namespace Slab;
 
-    using Log = Core::Log;
+using Log = Core::Log;
 
-    FRealVector remove_first_column(FRealVector &vec, Int N, Int M) {
-        assert(vec.size()/N==M);
+auto FHistoryFileLoader::Load(const Str& filename) -> FLoadedHistory {
+    const auto baseMessage = Str("Error opening file '") + filename + "'";
 
-        auto N_new = N-1;
-        FRealVector new_vec(N_new * M);
+    if (!std::filesystem::exists(filename))
+        throw Exception(baseMessage + ": file does not exist.");
 
-        // Iterate over each row
-        for (int j = 0; j < M; ++j) {
-            // Iterate over each column, starting from the second column (i.e., i = 1)
-            for (int i = 1; i <= N; ++i) {
-                // Copy the element from the original vector to the new vector
-                new_vec[(i-1) + j * N_new] = vec[i + j * N];
-            }
-        }
+    std::ifstream file(filename, std::ios::binary);
+    if (!file)
+        throw Exception(baseMessage + ": unable to open for binary reading.");
 
-        return new_vec;
+    auto metadata = ReadPyDict(file);
+    auto decoded = ReadData(file, metadata);
+
+    const auto totalTime = ReadReal(metadata, "t");
+    const auto length = ReadReal(metadata, "L");
+    const auto xCenter = ReadOptionalReal(metadata, "xCenter", "xcenter", 0.0);
+    const auto xMin = xCenter - 0.5 * length;
+    const auto hx = length / static_cast<DevFloat>(decoded.N);
+    const auto ht = totalTime / static_cast<DevFloat>(decoded.M);
+
+    auto phi = Math::DataAlloc<Math::R2toR::NumericFunction_CPU>("ϕ(t,x)", static_cast<UInt>(decoded.N),
+                                                                 static_cast<UInt>(decoded.M), xMin, 0.0, hx, ht);
+
+    for (long j = 0; j < decoded.M; ++j)
+        for (long i = 0; i < decoded.N; ++i)
+            phi->At(static_cast<UInt>(i), static_cast<UInt>(j)) = decoded.Phi[static_cast<size_t>(i + j * decoded.N)];
+
+    TPointer<Math::R2toR::NumericFunction_CPU> dPhiDt;
+    if (decoded.Channels == 2) {
+        dPhiDt = Math::DataAlloc<Math::R2toR::NumericFunction_CPU>("∂ϕ/∂t(t,x)", static_cast<UInt>(decoded.N),
+                                                                   static_cast<UInt>(decoded.M), xMin, 0.0, hx, ht);
+
+        for (long j = 0; j < decoded.M; ++j)
+            for (long i = 0; i < decoded.N; ++i)
+                dPhiDt->At(static_cast<UInt>(i), static_cast<UInt>(j)) =
+                    decoded.DPhiDt[static_cast<size_t>(i + j * decoded.N)];
     }
 
-    auto FHistoryFileLoader::Load(const Str &filename) -> TPointer<Math::R2toR::NumericFunction_CPU> {
-        fix base_msg = Str("Error opening file '") + filename + "'";
+    Log::Info() << "Loaded " << filename << " as " << decoded.N << " x " << decoded.M << " OSCB history with "
+                << decoded.Channels << " channel(s)." << Log::Flush;
 
-        if(!std::filesystem::exists(filename)) throw Exception(base_msg + ": file does not exist.");
+    return FLoadedHistory{
+        .Phi = std::move(phi),
+        .DPhiDt = std::move(dPhiDt),
+        .Timestamps = std::move(decoded.Timestamps),
+        .MetaData = std::move(metadata),
+    };
+}
 
-        std::ifstream inFile(filename, std::ios::binary);
-        if (!inFile) {
-            if (inFile.eof())  throw Exception(base_msg + ": file seems empty.");
-            if (inFile.bad())  throw Exception(base_msg + ": A serious I/O error occurred.");
-            if (inFile.fail()) throw Exception(base_msg + ": Logical error on i/o operation.");
+auto FHistoryFileLoader::ReadPyDict(std::ifstream& file) -> PythonUtils::PyDict {
+    Str line;
+    if (std::getline(file, line))
+        return PythonUtils::ParsePythonDict(line);
 
-            throw Exception(base_msg + ": unkown error.");
-        }
+    throw Exception("OSCB file does not contain a readable dictionary header.");
+}
 
-        auto pyDict = ReadPyDict(inFile);
-        auto data = ReadData(inFile, pyDict);
+auto FHistoryFileLoader::ReadData(std::ifstream& file, const PythonUtils::PyDict& pyDict) -> FDecodedData {
+    const auto N = ReadLong(pyDict, "outresX");
+    const auto M = ReadLong(pyDict, "outresT");
+    const auto channels = pyDict.contains("data_channels") ? ReadLong(pyDict, "data_channels") : 1;
+    const auto containsTimestamp = ReadBool(pyDict, "lines_contain_timestamp");
 
-        inFile.close();
+    if (N <= 0 || M <= 0)
+        throw Exception("OSCB dimensions outresX and outresT must be positive.");
+    if (channels != 1 && channels != 2)
+        throw Exception("Unsupported OSCB data channel count " + ToStr(channels) + "; expected 1 or 2.");
+    if (static_cast<unsigned long>(N) > std::numeric_limits<UInt>::max() ||
+        static_cast<unsigned long>(M) > std::numeric_limits<UInt>::max())
+        throw Exception("OSCB dimensions exceed the NumericFunction index range.");
 
-        Log::Info() << "Loaded " << filename << Log::Flush;
+    const auto& dataTypeName = RequireValue(pyDict, "data_type").first;
+    const auto dataType = dataTypeName == "fp32" ? fp32
+                          : dataTypeName == "fp64"
+                              ? fp64
+                              : throw Exception("Unknown data type '" + dataTypeName + "' in OSCB file.");
 
-        auto &outresX = pyDict["outresX"];
-        auto &outresT = pyDict["outresT"];
-        assert(outresX.second == PythonUtils::Integer);
-        assert(outresT.second == PythonUtils::Integer);
-        auto N = strtol(outresX.first.c_str(), nullptr, 10);
-        auto M = strtol(outresT.first.c_str(), nullptr, 10);
-        auto NxM = N*M;
+    const auto timestampElements = containsTimestamp ? size_t{1} : size_t{0};
+    const auto channelElements = CheckedProduct(static_cast<size_t>(N), static_cast<size_t>(channels), "row width");
+    const auto rowElements = timestampElements + channelElements;
+    const auto totalElements = CheckedProduct(rowElements, static_cast<size_t>(M), "payload element count");
+    const auto elementSize = dataType == fp32 ? sizeof(float) : sizeof(double);
+    const auto expectedBytes = CheckedProduct(totalElements, elementSize, "payload byte count");
 
-        auto t0 = 0.0;
-        auto t = strtod(pyDict["t"].first.c_str(), nullptr);
-        auto L = strtod(pyDict["L"].first.c_str(), nullptr);
-        auto xCenter = strtod(pyDict["xCenter"].first.c_str(), nullptr);
-        auto xMin = xCenter - .5*L;
-        auto xMax = xCenter + .5*L;
-        auto hx = L/(DevFloat)N;
-        auto hy = t/(DevFloat)M;
+    const auto payloadStart = file.tellg();
+    if (payloadStart < 0)
+        throw Exception("Unable to locate the OSCB payload.");
+    file.seekg(0, std::ios::end);
+    const auto payloadEnd = file.tellg();
+    if (payloadEnd < payloadStart)
+        throw Exception("Invalid OSCB payload bounds.");
+    const auto availableBytes = static_cast<size_t>(payloadEnd - payloadStart);
+    if (availableBytes != expectedBytes)
+        throw Exception("OSCB payload size mismatch: expected " + ToStr(expectedBytes) + " bytes, found " +
+                        ToStr(availableBytes) + ".");
+    file.seekg(payloadStart);
 
-        auto field = Math::DataAlloc<Math::R2toR::NumericFunction_CPU>("ϕ(t,x)", N, M, xMin, t0, hx, hy);
+    FRealVector values(totalElements);
+    if (dataType == fp32) {
+        Vector<float> input(totalElements);
+        file.read(reinterpret_cast<char*>(input.data()), static_cast<std::streamsize>(expectedBytes));
+        for (size_t i = 0; i < totalElements; ++i)
+            values[i] = static_cast<DevFloat>(input[i]);
+    } else {
+        Vector<double> input(totalElements);
+        file.read(reinterpret_cast<char*>(input.data()), static_cast<std::streamsize>(expectedBytes));
+        for (size_t i = 0; i < totalElements; ++i)
+            values[i] = static_cast<DevFloat>(input[i]);
+    }
+    if (!file)
+        throw Exception("Failed while reading the OSCB payload.");
 
-        if(data.size() != N*M) {
-            Log::Error() << "data.size() should yield NxM = " << N << "x" << M << " = " << N*M << " but was " << data.size() << Log::Flush;
-            throw Exception(Str("Assertion data.size()==N*M failed @ ") + __PRETTY_FUNCTION__ + ":" + ToStr(__LINE__));
-        }
+    FDecodedData decoded;
+    decoded.N = N;
+    decoded.M = M;
+    decoded.Channels = channels;
+    decoded.Timestamps.resize(static_cast<size_t>(M));
+    decoded.Phi.resize(CheckedProduct(static_cast<size_t>(N), static_cast<size_t>(M), "field size"));
+    if (channels == 2)
+        decoded.DPhiDt.resize(decoded.Phi.size());
 
-        for (int i=0; i<N; ++i) for (int j=0; j<M; ++j) field->At(i, j) = data[i + j*N];
+    for (long j = 0; j < M; ++j) {
+        const auto row = static_cast<size_t>(j) * rowElements;
+        auto cursor = row;
+        decoded.Timestamps[static_cast<size_t>(j)] = containsTimestamp ? values[cursor++] : static_cast<DevFloat>(j);
 
-        Log::Info() << "Instantiated and filled " << N << " x " << M << " NumericFunction_CPU with field data." << Log::Flush;
-
-        return field;
+        for (long i = 0; i < N; ++i)
+            decoded.Phi[static_cast<size_t>(i + j * N)] = values[cursor++];
+        if (channels == 2)
+            for (long i = 0; i < N; ++i)
+                decoded.DPhiDt[static_cast<size_t>(i + j * N)] = values[cursor++];
     }
 
-    auto FHistoryFileLoader::ReadPyDict(std::ifstream &file) -> PythonUtils::PyDict {
-        Str line;
-        if (std::getline(file, line))
-            if(!PythonUtils::BadPythonDictionary(line))
-                return PythonUtils::ParsePythonDict(line);
-
-        Log::Fail() << "First line is not a Python dictionary" << Log::Flush;
-        throw Exception("file does not contain Python dictionary header");
-    }
-
-    auto FHistoryFileLoader::ReadData(std::ifstream &file, PythonUtils::PyDict pyDict) -> RealArray {
-        IN outresX = pyDict["outresX"];
-        IN outresT = pyDict["outresT"];
-        IN dataType = pyDict["data_type"].first=="fp32" ? fp32 : pyDict["data_type"].first=="fp64" ? fp64 : throw Exception("Unknown data type in .oscb file");
-        IN lct = pyDict["lines_contain_timestamp"].first;
-        bool lines_contain_timestamp =
-                lct == "True" || !(lct == "False");// TODO: && throw Exception("Unknown data type in .oscb file");
-        assert(outresX.second == PythonUtils::Integer);
-        assert(outresT.second == PythonUtils::Integer);
-        long N = strtol(outresX.first.c_str(), nullptr, 10);
-        long M = strtol(outresT.first.c_str(), nullptr, 10);
-
-        size_t timestamp_size = lines_contain_timestamp ? 1 : 0;
-        size_t data_count = (N+timestamp_size)*M;
-        FRealVector double_data(data_count);
-
-        if(dataType == fp32){
-            auto type_size = sizeof(float);
-            auto data_size = (std::streamsize)(data_count*type_size);
-
-            auto data = static_cast<RealData>(malloc(data_size));
-            file.read(reinterpret_cast<char *>(data), data_size);
-
-            for(auto i=0; i<data_count; ++i) double_data[i] = (double)data[i];
-        } else if(dataType == fp64){
-            auto type_size = sizeof(double);
-            auto data_size = (std::streamsize)(data_count*type_size);
-
-            file.read(reinterpret_cast<char *>(&double_data[0]), data_size);
-        }
-
-        if(lines_contain_timestamp)
-            double_data = remove_first_column(double_data, N+1, M);
-
-        return {&double_data[0], double_data.size()};
-    }
-} // Modes
+    return decoded;
+}
+} // namespace Modes

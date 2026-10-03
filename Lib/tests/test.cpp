@@ -7,6 +7,7 @@
 #include <Math/Formalism/Categories.h>
 
 #include "Core/Controller/CommandLine/CommandLineHelpers.h"
+#include "Core/Controller/Parameter/BuiltinParameters.h"
 #include "Graphics/Window/SlabWindow.h"
 #include "Utils/StringFormatting.h"
 
@@ -78,6 +79,16 @@ TEST_CASE("Convert string to snake case", "[Str]")
         }
     }
 
+}
+
+TEST_CASE("Single-character command-line parameter keys preserve case", "[CLI]") {
+    Slab::Core::IntegerParameter siteCount(128, Slab::Core::FParameterDescription{'N', "Site count"});
+    Slab::Core::RealParameter length(100.0, Slab::Core::FParameterDescription{'L', "Domain length"});
+
+    REQUIRE(siteCount.GetFullCommandLineName() == "N");
+    REQUIRE(siteCount.GetCommandLineArgumentName(true) == "N");
+    REQUIRE(length.GetFullCommandLineName() == "L");
+    REQUIRE(length.GetCommandLineArgumentName(true) == "L");
 }
 
 TEST_CASE("Real2D explicit constructor initializes x and y correctly", "[Real2D]") {

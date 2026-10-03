@@ -35,7 +35,7 @@ namespace Slab::Math {
 
     private:
 
-        void _printHeaderToFile(Vector<std::string> channelNames);
+        void _printHeaderToFile(const Vector<std::string> &channelNames);
 
         void _dump(bool integrationIsFinished) override;
 

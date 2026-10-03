@@ -23,7 +23,7 @@ namespace Slab::Math {
     , outFileName(outputFilename)
     , outputFormatter(*outputFormatter)
     {
-        file.open(outFileName, std::ios::out);
+        file.open(outFileName, std::ios::out | std::ios::binary | std::ios::trunc);
 
         using Core::FLog;
 
@@ -32,7 +32,8 @@ namespace Slab::Math {
             throw Exception("OutputHistoryToFile couldn't open file.");
         }
 
-        FLog::Info() << "Sim history data file is \'" << Common::GetPWD() << "/" << outFileName << "\'. " << FLog::Flush;
+        const auto outputPath = outFileName.starts_with("/") ? outFileName : Common::GetPWD() + "/" + outFileName;
+        FLog::Info() << "Sim history data file is \'" << outputPath << "\'. " << FLog::Flush;
         Str spaces(HEADER_SIZE_BYTES - 1, ' ');
 
         file << spaces << '\n';
@@ -45,7 +46,7 @@ namespace Slab::Math {
 
     void FOutputHistoryToFile::_dump(bool integrationIsFinished) {
         if (integrationIsFinished) {
-            _printHeaderToFile({"phi"});
+            _printHeaderToFile({"phi", "ddtphi"});
 
             auto shouldNotDump = !LastPacket.hasValidData();
             if (shouldNotDump) {
@@ -69,10 +70,10 @@ namespace Slab::Math {
 
             const auto &fieldPair = spaceDataHistory[Ti];
             const DiscreteSpace &phiOut = *fieldPair.first;
-            //const DiscreteSpace &ddtPhiOut = *fieldPair.second;
+            const DiscreteSpace &ddtPhiOut = *fieldPair.second;
 
             file << outputFormatter(phiOut);
-            //file << outputFormatter(ddtPhiOut);
+            file << outputFormatter(ddtPhiOut);
         }
 
         file.flush();
@@ -80,7 +81,7 @@ namespace Slab::Math {
         FLog::Success() << "Flushed " << "100% " << FLog::Flush;
     }
 
-    void FOutputHistoryToFile::_printHeaderToFile(Vector<std::string> channelNames) {
+    void FOutputHistoryToFile::_printHeaderToFile(const Vector<std::string> &channelNames) {
         std::ostringstream oss;
 
         oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal + count);
@@ -89,27 +90,35 @@ namespace Slab::Math {
         Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
         for (UInt i = 0; i < recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
 
-
         oss << R"(, "data_type": ")" << outputFormatter.getFormatDescription() << "\"";
-        if (0) {
-            oss << R"(, "data_channels": 2)";
-            oss << R"str(, "data_channel_names": ("phi", "ddtphi") )str";
-        } else {
-            assert(channelNames.size() != 0);
 
-            oss << R"(, "data_channels": )" << channelNames.size();
-            oss << R"str(, "data_channel_names": ()str";
-            for (auto name: channelNames)
-                oss << "\"" << name << "\", ";
-            oss << ") ";
-        }
+        if (channelNames.empty())
+            throw Exception("OSCB history must contain at least one data channel.");
 
-        oss << ", " << Core::FInterfaceManager::GetInstance().RenderAsPythonDictionaryEntries() << "}" << std::endl;
+        oss << R"(, "data_channels": )" << channelNames.size();
+        oss << R"str(, "data_channel_names": ()str";
+        for (const auto &name: channelNames)
+            oss << "\"" << name << "\", ";
+        oss << ") ";
 
-        const auto &s = oss.str();
+        oss << ", " << Core::FInterfaceManager::GetInstance().RenderAsPythonDictionaryEntries() << "}";
 
-        file.seekp(0);
-        file.write(s.c_str(), (long) s.size());
+        auto header = oss.str();
+        if (header.size() >= HEADER_SIZE_BYTES)
+            throw Exception("OSCB header exceeds the reserved " + ToStr(HEADER_SIZE_BYTES) + " bytes.");
+
+        header.resize(HEADER_SIZE_BYTES - 1, ' ');
+        header.push_back('\n');
+
+        file.seekp(0, std::ios::beg);
+        file.write(header.data(), static_cast<std::streamsize>(header.size()));
+        if (!file)
+            throw Exception("Failed to write OSCB header.");
+
+        // Partial history dumps already live after the reserved header. Resume at
+        // the physical end so the final buffered block is appended, not written
+        // over the header padding or an earlier block.
+        file.seekp(0, std::ios::end);
     }
 
 
