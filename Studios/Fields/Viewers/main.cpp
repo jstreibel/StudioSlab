@@ -63,7 +63,9 @@ public:
                                            : DynamicPointerCast<Slab::Math::R2toR::FNumericFunction>(function->diff(1));
 
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
-        guiBackend->GetMainSystemWindow()->SetSystemWindowTitle(*filename);
+        auto mainSystemWindow = guiBackend->GetMainSystemWindow();
+        mainSystemWindow->SetupGUIContext();
+        mainSystemWindow->SetSystemWindowTitle(*filename);
 
         auto viewer = Slab::New<Slab::Models::KGRtoR::FKGMainViewer>();
 
@@ -83,7 +85,7 @@ public:
 
         auto wm = Slab::New<Slab::Graphics::FSlabWindowManager>();
         wm->AddSlabWindow(viewer, false);
-        guiBackend->GetMainSystemWindow()->AddEventListener(wm);
+        mainSystemWindow->AddEventListener(wm);
 
         guiBackend->Run();
 

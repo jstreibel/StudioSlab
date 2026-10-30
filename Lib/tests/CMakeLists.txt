@@ -17,6 +17,7 @@ add_executable(testsuite
         test_plot2d_legacy_reflection_bridge.cpp
         test_reflection_semantics_v1.cpp
         test_typesetting_service.cpp
+        test_window_input.cpp
         ../Utils/StringFormatting.cpp
 )
 if (STUDIOSLAB_HDF5_SUPPORT)

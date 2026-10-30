@@ -155,10 +155,10 @@ namespace Slab::Graphics {
     }
 
     bool FWindowPanel::NotifyMouseMotion(int x, int y, int dx, int dy) {
-        auto Responded = false;
+        auto Responded = FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
         for (auto &col: columns)
             if (col.IsPointWithin({x, y}))
-                Responded = col.NotifyMouseMotion(x, y, dx, dy);
+                Responded = col.NotifyMouseMotion(x, y, dx, dy) || Responded;
 
         return Responded;
     }
@@ -182,19 +182,25 @@ namespace Slab::Graphics {
 
     bool FWindowPanel::NotifyMouseButton(EMouseButton button, EKeyState state,
                                         EModKeys keys) {
-        constexpr bool AlwaysPropagate = false; // state==Core::Release;
+        auto Responded = FSlabWindow::NotifyMouseButton(button, state, keys);
+        fix Mouse = GetMouseState();
+        fix MousePosition = FPoint2D{static_cast<DevFloat>(Mouse->x), static_cast<DevFloat>(Mouse->y)};
 
-        auto Responded = false;
         for (auto &Col: columns)
-            if(Col.IsMouseInside() || AlwaysPropagate) Responded = Col.NotifyMouseButton(button, state, keys);
+            if (state == EKeyState::Release || Col.IsPointWithin(MousePosition))
+                Responded = Col.NotifyMouseButton(button, state, keys) || Responded;
 
         return Responded;
     }
 
     bool FWindowPanel::NotifyMouseWheel(double dx, double dy) {
-        auto Responded = false;
+        auto Responded = FSlabWindow::NotifyMouseWheel(dx, dy);
+        fix Mouse = GetMouseState();
+        fix MousePosition = FPoint2D{static_cast<DevFloat>(Mouse->x), static_cast<DevFloat>(Mouse->y)};
+
         for (auto &Col: columns)
-            if (Col.IsMouseInside()) Responded = Col.NotifyMouseWheel(dx, dy);
+            if (Col.IsPointWithin(MousePosition))
+                Responded = Col.NotifyMouseWheel(dx, dy) || Responded;
 
         return Responded;
     }

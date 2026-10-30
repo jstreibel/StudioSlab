@@ -90,8 +90,6 @@ namespace Slab::Graphics {
     }
 
     auto FSlabWindow::IsPointWithin(const FPoint2D &Point) const -> bool {
-        auto GuiBackend = Slab::Graphics::GetGraphicsBackend();
-
         const auto Rect = GetViewport();
 
         fix x = Rect.xMin;

@@ -803,7 +803,7 @@ namespace Slab::Graphics {
             ImGui::End();
         };
 
-        if (b_DrawGUI) DrawCall();
+        if (b_DrawGUI && ImGui::GetCurrentContext() != nullptr) DrawCall();
     }
 
     void FPlot2DWindow::EnforceUnitAspectRatio(const bool animate) {
